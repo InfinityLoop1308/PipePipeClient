@@ -741,4 +741,7 @@
     <string name="enumeration_comma">,</string>
     <string name="toggle_all">Toggle all</string>
     <string name="show_replies">Show Replies</string>
+    <string name="remove_duplicates">Remove duplicates</string>
+    <string name="remove_duplicates_popup_title">Remove duplicate streams?</string>
+    <string name="remove_duplicates_popup_warning">Duplicate streams in the playlist will be removed.\n\nAre you sure? This cannot be undone!</string>
 </resources>
