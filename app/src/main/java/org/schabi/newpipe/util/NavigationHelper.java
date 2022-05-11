@@ -61,6 +61,7 @@ import org.schabi.newpipe.settings.SettingsActivity;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public final class NavigationHelper {
     public static final String MAIN_FRAGMENT_TAG = "main_fragment_tag";
@@ -170,6 +171,21 @@ public final class NavigationHelper {
                                               final boolean resumePlayback) {
         Toast.makeText(context, R.string.background_player_playing_toast, Toast.LENGTH_SHORT)
                 .show();
+
+        final Intent intent = getPlayerIntent(context, MainPlayer.class, queue, resumePlayback);
+        intent.putExtra(Player.PLAYER_TYPE, MainPlayer.PlayerType.AUDIO.ordinal());
+        ContextCompat.startForegroundService(context, intent);
+    }
+
+    public static void playOnBackgroundPlayerShuffled(final Context context,
+                                                      final PlayQueue queue,
+                                                      final boolean resumePlayback) {
+        Toast.makeText(context, R.string.background_player_playing_toast, Toast.LENGTH_SHORT)
+                .show();
+
+        final PlayQueue temp = queue;
+        queue.shuffle();
+        queue.setIndex(new Random().nextInt(queue.getStreams().size()));
 
         final Intent intent = getPlayerIntent(context, MainPlayer.class, queue, resumePlayback);
         intent.putExtra(Player.PLAYER_TYPE, MainPlayer.PlayerType.AUDIO.ordinal());
