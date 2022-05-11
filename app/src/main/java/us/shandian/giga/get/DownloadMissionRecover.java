@@ -183,6 +183,7 @@ public class DownloadMissionRecover extends Thread {
         try {
             mConn = mMission.openConnection(url, true, mMission.length - 10, mMission.length);
             mConn.setRequestProperty("If-Range", mRecovery.getValidateCondition());
+            mConn.setRequestProperty("Referer", "https://www.bilibili.com");
             mMission.establishConnection(mID, mConn);
 
             int code = mConn.getResponseCode();

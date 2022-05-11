@@ -18,6 +18,8 @@ import com.google.android.exoplayer2.upstream.TransferListener;
 
 import androidx.annotation.NonNull;
 
+import java.util.Map;
+
 public class PlayerDataSource {
 
     public static final int LIVE_STREAM_EDGE_GAP_MILLIS = 10000;
@@ -42,7 +44,8 @@ public class PlayerDataSource {
         continueLoadingCheckIntervalBytes = PlayerHelper.getProgressiveLoadIntervalBytes(context);
         cacheDataSourceFactory = new CacheFactory(context, userAgent, transferListener);
         cachelessDataSourceFactory = new DefaultDataSource
-                .Factory(context, new DefaultHttpDataSource.Factory().setUserAgent(userAgent))
+                .Factory(context, new DefaultHttpDataSource.Factory().setUserAgent(userAgent)
+                .setDefaultRequestProperties(Map.of("Referer", "https://www.bilibili.com")))
                 .setTransferListener(transferListener);
     }
 

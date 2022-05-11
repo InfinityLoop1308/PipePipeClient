@@ -223,6 +223,7 @@ public class DownloadMission extends Mission {
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         conn.setInstanceFollowRedirects(true);
         conn.setRequestProperty("User-Agent", DownloaderImpl.USER_AGENT);
+        conn.setRequestProperty("Referer", "https://www.bilibili.com");
         conn.setRequestProperty("Accept", "*/*");
         conn.setRequestProperty("Accept-Encoding", "*");
 

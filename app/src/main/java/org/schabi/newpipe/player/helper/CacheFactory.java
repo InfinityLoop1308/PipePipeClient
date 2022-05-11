@@ -15,6 +15,7 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 
 import java.io.File;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 
@@ -50,7 +51,8 @@ import androidx.annotation.NonNull;
         this.maxFileSize = maxFileSize;
 
         dataSourceFactory = new DefaultDataSource
-                .Factory(context, new DefaultHttpDataSource.Factory().setUserAgent(userAgent))
+                .Factory(context, new DefaultHttpDataSource.Factory().setUserAgent(userAgent)
+                .setDefaultRequestProperties(Map.of("Referer", "https://www.bilibili.com")))
                 .setTransferListener(transferListener);
         cacheDir = new File(context.getExternalCacheDir(), CACHE_FOLDER_NAME);
         if (!cacheDir.exists()) {
