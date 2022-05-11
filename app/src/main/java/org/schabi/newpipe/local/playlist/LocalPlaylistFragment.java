@@ -45,6 +45,7 @@ import org.schabi.newpipe.local.BaseLocalListFragment;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.MainPlayer.PlayerType;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
+import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
@@ -171,6 +172,16 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                             ((PlaylistStreamEntry) selectedItem).getStreamEntity();
                     NavigationHelper.openVideoDetailFragment(requireContext(), getFM(),
                             item.getServiceId(), item.getUrl(), item.getTitle(), null, false);
+                    final List<PlayQueueItem> streams = getPlayQueue().getStreams();
+                    int targetIndex = 0;
+                    for (int i = 0; i < streams.size(); i++) {
+                        if (streams.get(i).getUrl().equals(item.getUrl())) {
+                            targetIndex = i;
+                        }
+                    }
+                    final PlayQueue temp = getPlayQueue();
+                    temp.setIndex(targetIndex);
+                    NavigationHelper.playOnBackgroundPlayer(activity, temp, false);
                 }
             }
 
