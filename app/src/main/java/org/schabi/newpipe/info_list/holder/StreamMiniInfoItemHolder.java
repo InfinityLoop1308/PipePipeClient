@@ -98,7 +98,6 @@ public class StreamMiniInfoItemHolder extends InfoItemHolder {
             case AUDIO_LIVE_STREAM:
                 enableLongClick(item);
                 break;
-            case FILE:
             case NONE:
             default:
                 disableLongClick();
