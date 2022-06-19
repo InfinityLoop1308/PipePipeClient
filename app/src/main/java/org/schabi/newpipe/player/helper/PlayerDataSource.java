@@ -1,6 +1,9 @@
 package org.schabi.newpipe.player.helper;
 
+import static org.schabi.newpipe.extractor.ServiceList.Niconico;
+
 import android.content.Context;
+import android.net.Uri;
 
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.SingleSampleMediaSource;
@@ -14,10 +17,26 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultLoadErrorHandlingPolicy;
+import com.google.android.exoplayer2.upstream.ResolvingDataSource;
 import com.google.android.exoplayer2.upstream.TransferListener;
+import com.grack.nanojson.JsonObject;
+import com.grack.nanojson.JsonParser;
+import com.grack.nanojson.JsonParserException;
 
 import androidx.annotation.NonNull;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.schabi.newpipe.DownloaderImpl;
+import org.schabi.newpipe.extractor.downloader.Response;
+import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
+import org.schabi.newpipe.extractor.services.niconico.NiconicoService;
+import org.schabi.newpipe.extractor.services.niconico.extractors.NiconicoDMCPayloadBuilder;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PlayerDataSource {
@@ -47,6 +66,38 @@ public class PlayerDataSource {
                 .Factory(context, new DefaultHttpDataSource.Factory().setUserAgent(userAgent)
                 .setDefaultRequestProperties(Map.of("Referer", "https://www.bilibili.com")))
                 .setTransferListener(transferListener);
+    }
+
+    public ProgressiveMediaSource.Factory getNicoDataSource() {
+
+        final Map<String, List<String>> headers = new HashMap<>();
+        headers.put("Content-Type", Collections.singletonList("application/json"));
+
+        DataSource.Factory newFactory = new ResolvingDataSource.Factory(cachelessDataSourceFactory, dataSpec -> {
+            DownloaderImpl downloader = DownloaderImpl.getInstance();
+            Response response;
+            try {
+                response = downloader.get(String.valueOf(dataSpec.uri), null, NiconicoService.LOCALE);
+                final Document page = Jsoup.parse(response.responseBody());
+                JsonObject watch = JsonParser.object().from(
+                        page.getElementById("js-initial-watch-data").attr("data-api-data"));
+                final JsonObject session
+                        = watch.getObject("media").getObject("delivery").getObject("movie");
+                final String s = NiconicoDMCPayloadBuilder.buildJSON(session.getObject("session"));
+                response = downloader.post("https://api.dmc.nico/api/sessions?_format=json", headers, s.getBytes(StandardCharsets.UTF_8), NiconicoService.LOCALE);
+                final JsonObject content = JsonParser.object().from(response.responseBody());
+                final String contentURL = content.getObject("data").getObject("session")
+                        .getString("content_uri");
+                return dataSpec.withUri(Uri.parse(contentURL));
+            } catch (ReCaptchaException | JsonParserException e) {
+                e.printStackTrace();
+            }
+            return dataSpec;
+        });
+        return new ProgressiveMediaSource.Factory(newFactory)
+                .setContinueLoadingCheckIntervalBytes(continueLoadingCheckIntervalBytes)
+                .setLoadErrorHandlingPolicy(
+                        new DefaultLoadErrorHandlingPolicy(EXTRACTOR_MINIMUM_RETRY));
     }
 
     public SsMediaSource.Factory getLiveSsMediaSourceFactory() {

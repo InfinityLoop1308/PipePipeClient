@@ -83,7 +83,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
         @C.ContentType final int type = TextUtils.isEmpty(overrideExtension)
                 ? Util.inferContentType(uri) : Util.inferContentType("." + overrideExtension);
 
-        final MediaSource.Factory factory;
+        MediaSource.Factory factory;
         switch (type) {
             case C.TYPE_SS:
                 factory = dataSource.getLiveSsMediaSourceFactory();
@@ -99,6 +99,10 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                 break;
             default:
                 throw new IllegalStateException("Unsupported type: " + type);
+        }
+
+        if(sourceUrl.contains("nicovideo")){
+            factory = dataSource.getNicoDataSource();
         }
 
         return factory.createMediaSource(
