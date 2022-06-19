@@ -169,7 +169,7 @@ afterEvaluate {
     if (!System.properties.containsKey('skipFormatKtlint')) {
         preDebugBuild.dependsOn formatKtlint
     }
-    preDebugBuild.dependsOn runCheckstyle, runKtlint
+    preDebugBuild.dependsOn runKtlint
 }
 
 sonarqube {
