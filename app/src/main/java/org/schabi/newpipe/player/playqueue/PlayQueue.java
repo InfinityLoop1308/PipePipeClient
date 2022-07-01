@@ -528,7 +528,7 @@ public abstract class PlayQueue implements Serializable {
             return false;
         }
         final PlayQueue other = (PlayQueue) obj;
-        if (size() != other.size()) {
+        if (size() != other.size() || getIndex() != other.getIndex() ) {
             return false;
         }
         for (int i = 0; i < size(); i++) {
