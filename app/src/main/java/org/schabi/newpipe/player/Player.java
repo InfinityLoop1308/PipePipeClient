@@ -3351,6 +3351,10 @@ public final class Player implements
     @Override // own playback listener
     @Nullable
     public MediaSource sourceOf(final PlayQueueItem item, final StreamInfo info) {
+        if(info.getUrl().contains("nicovideo.jp")){
+            return videoResolver.resolve(info); //there is no audio-only track of niconico
+        }
+
         if (audioPlayerSelected()) {
             return audioResolver.resolve(info);
         }
