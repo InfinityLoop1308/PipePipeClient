@@ -1093,8 +1093,6 @@ public final class VideoDetailFragment
     }
 
     private void openBackgroundPlayer(final boolean append) {
-        final AudioStream audioStream = currentInfo.getAudioStreams()
-                .get(ListHelper.getDefaultAudioFormat(activity, currentInfo.getAudioStreams()));
 
         final boolean useExternalAudioPlayer = PreferenceManager
                 .getDefaultSharedPreferences(activity)
@@ -1110,6 +1108,8 @@ public final class VideoDetailFragment
         if (!useExternalAudioPlayer) {
             openNormalBackgroundPlayer(append);
         } else {
+            final AudioStream audioStream = currentInfo.getAudioStreams()
+                    .get(ListHelper.getDefaultAudioFormat(activity, currentInfo.getAudioStreams()));
             startOnExternalPlayer(activity, currentInfo, audioStream);
         }
     }
@@ -1648,8 +1648,6 @@ public final class VideoDetailFragment
 
         binding.detailControlsDownload.setVisibility(info.getStreamType() == StreamType.LIVE_STREAM
                 || info.getStreamType() == StreamType.AUDIO_LIVE_STREAM ? View.GONE : View.VISIBLE);
-        binding.detailControlsBackground.setVisibility(info.getAudioStreams().isEmpty()
-                ? View.GONE : View.VISIBLE);
 
         final boolean noVideoStreams =
                 info.getVideoStreams().isEmpty() && info.getVideoOnlyStreams().isEmpty();

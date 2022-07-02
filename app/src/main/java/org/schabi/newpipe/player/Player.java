@@ -3351,12 +3351,8 @@ public final class Player implements
     @Override // own playback listener
     @Nullable
     public MediaSource sourceOf(final PlayQueueItem item, final StreamInfo info) {
-        if(info.getUrl().contains("nicovideo.jp")){
-            return videoResolver.resolve(info); //there is no audio-only track of niconico
-        }
-
         if (audioPlayerSelected()) {
-            return audioResolver.resolve(info);
+            return Optional.ofNullable(audioResolver.resolve(info)).orElse(videoResolver.resolve(info)) ;
         }
 
         if (isAudioOnly && videoResolver.getStreamSourceType().orElse(
@@ -3365,7 +3361,7 @@ public final class Player implements
             // If the current info has only video streams with audio and if the stream is played as
             // audio, we need to use the audio resolver, otherwise the video stream will be played
             // in background.
-            return audioResolver.resolve(info);
+            return Optional.ofNullable(audioResolver.resolve(info)).orElse(videoResolver.resolve(info)) ;
         }
 
         // Even if the stream is played in background, we need to use the video resolver if the
