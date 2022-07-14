@@ -7,7 +7,16 @@ import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.util.Util;
+import com.grack.nanojson.JsonObject;
+import com.grack.nanojson.JsonParser;
+import com.grack.nanojson.JsonParserException;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.schabi.newpipe.DownloaderImpl;
+import org.schabi.newpipe.extractor.downloader.Response;
+import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
+import org.schabi.newpipe.extractor.services.niconico.NiconicoService;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
@@ -19,6 +28,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import static org.schabi.newpipe.player.helper.PlayerDataSource.LIVE_STREAM_EDGE_GAP_MILLIS;
+
+import java.io.IOException;
 
 public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
 
@@ -79,7 +90,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                                          @NonNull final String cacheKey,
                                          @NonNull final String overrideExtension,
                                          @NonNull final MediaItemTag metadata) {
-        final Uri uri = Uri.parse(sourceUrl);
+        Uri uri = Uri.parse(sourceUrl);
         @C.ContentType final int type = TextUtils.isEmpty(overrideExtension)
                 ? Util.inferContentType(uri) : Util.inferContentType("." + overrideExtension);
 
@@ -102,7 +113,34 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
         }
 
         if(sourceUrl.contains("nicovideo")){
-            factory = dataSource.getNicoDataSource();
+            DownloaderImpl downloader = DownloaderImpl.getInstance();
+            boolean flag = false;
+            Response response;
+            try
+            {
+                response = downloader.get(sourceUrl, null, NiconicoService.LOCALE);
+                final Document page = Jsoup.parse(response.responseBody());
+                if( page.getElementById("js-initial-watch-data") == null){
+                    throw new Exception("Needs login");
+                }
+                JsonObject watch = JsonParser.object().from(
+                        page.getElementById("js-initial-watch-data").attr("data-api-data"));
+                final JsonObject session
+                        = watch.getObject("media").getObject("delivery").getObject("movie");
+                flag = (session.getObject("session").getArray("protocols").getString(0).equals("hls"));
+            } catch (JsonParserException | ReCaptchaException | IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                throw new RuntimeException("Needs login");
+            }
+            if(flag){
+                factory = dataSource.getNicoHlsMediaSourceFactory();
+                uri = Uri.parse(dataSource.getNicoUrl(String.valueOf(uri)));
+            }
+            else{
+                factory = dataSource.getNicoDataSource();
+            }
+
         }
 
         return factory.createMediaSource(

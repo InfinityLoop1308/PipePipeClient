@@ -1,10 +1,9 @@
 package org.schabi.newpipe.player.helper;
 
-import static org.schabi.newpipe.extractor.ServiceList.Niconico;
-
 import android.content.Context;
 import android.net.Uri;
 
+import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.SingleSampleMediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
@@ -33,11 +32,13 @@ import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
 import org.schabi.newpipe.extractor.services.niconico.NiconicoService;
 import org.schabi.newpipe.extractor.services.niconico.extractors.NiconicoDMCPayloadBuilder;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PlayerDataSource {
 
@@ -56,6 +57,7 @@ public class PlayerDataSource {
     private final int continueLoadingCheckIntervalBytes;
     private final DataSource.Factory cacheDataSourceFactory;
     private final DataSource.Factory cachelessDataSourceFactory;
+    private final DataSource.Factory nicoCachelessDataSourceFactory;
 
     public PlayerDataSource(@NonNull final Context context,
                             @NonNull final String userAgent,
@@ -66,38 +68,63 @@ public class PlayerDataSource {
                 .Factory(context, new DefaultHttpDataSource.Factory().setUserAgent(userAgent)
                 .setDefaultRequestProperties(Map.of("Referer", "https://www.bilibili.com")))
                 .setTransferListener(transferListener);
+        nicoCachelessDataSourceFactory = new DefaultDataSource
+                .Factory(context, new DefaultHttpDataSource.Factory().setUserAgent(userAgent)
+                .setDefaultRequestProperties(Map.of("Referer", "https://www.nicovideo.jp/",
+                        "Origin", "https://www.nicovideo.jp",
+                        "X-Frontend-ID", "6",
+                        "X-Frontend-Version", "0",
+                        "X-Niconico-Language", "en-us"
+                )))
+                .setTransferListener(transferListener);
     }
 
-    public ProgressiveMediaSource.Factory getNicoDataSource() {
-
+    public String getNicoUrl(String url){
         final Map<String, List<String>> headers = new HashMap<>();
         headers.put("Content-Type", Collections.singletonList("application/json"));
+        DownloaderImpl downloader = DownloaderImpl.getInstance();
+        Response response;
+        try {
+            response = downloader.get(String.valueOf(url), null, NiconicoService.LOCALE); // NiconicoService.LOCALE = Localization.fromLocalizationCode("ja-JP")
+            final Document page = Jsoup.parse(response.responseBody());
+            JsonObject watch = JsonParser.object().from(
+                    page.getElementById("js-initial-watch-data").attr("data-api-data"));
+            final JsonObject session
+                    = watch.getObject("media").getObject("delivery").getObject("movie");
 
-        DataSource.Factory newFactory = new ResolvingDataSource.Factory(cachelessDataSourceFactory, dataSpec -> {
-            DownloaderImpl downloader = DownloaderImpl.getInstance();
-            Response response;
-            try {
-                response = downloader.get(String.valueOf(dataSpec.uri), null, NiconicoService.LOCALE);
-                final Document page = Jsoup.parse(response.responseBody());
-                JsonObject watch = JsonParser.object().from(
-                        page.getElementById("js-initial-watch-data").attr("data-api-data"));
-                final JsonObject session
-                        = watch.getObject("media").getObject("delivery").getObject("movie");
-                final String s = NiconicoDMCPayloadBuilder.buildJSON(session.getObject("session"));
-                response = downloader.post("https://api.dmc.nico/api/sessions?_format=json", headers, s.getBytes(StandardCharsets.UTF_8), NiconicoService.LOCALE);
-                final JsonObject content = JsonParser.object().from(response.responseBody());
-                final String contentURL = content.getObject("data").getObject("session")
-                        .getString("content_uri");
-                return dataSpec.withUri(Uri.parse(contentURL));
-            } catch (ReCaptchaException | JsonParserException e) {
-                e.printStackTrace();
-            }
-            return dataSpec;
+            final JsonObject encryption = watch.getObject("media").getObject("delivery").getObject("encryption");
+            final String s = NiconicoDMCPayloadBuilder.buildJSON(session.getObject("session"), encryption);
+            response = downloader.post("https://api.dmc.nico/api/sessions?_format=json", headers, s.getBytes(StandardCharsets.UTF_8), NiconicoService.LOCALE);
+            final JsonObject content = JsonParser.object().from(response.responseBody());
+            final String contentURL = content.getObject("data").getObject("session")
+                    .getString("content_uri");
+            return String.valueOf(Uri.parse(contentURL));
+        } catch (ReCaptchaException | JsonParserException | IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public MediaSource.Factory getNicoDataSource() {
+        DataSource.Factory newFactory = new ResolvingDataSource.Factory(nicoCachelessDataSourceFactory, dataSpec -> {
+            return dataSpec.withUri(Uri.parse(getNicoUrl(String.valueOf(dataSpec.uri))));
         });
         return new ProgressiveMediaSource.Factory(newFactory)
                 .setContinueLoadingCheckIntervalBytes(continueLoadingCheckIntervalBytes)
                 .setLoadErrorHandlingPolicy(
                         new DefaultLoadErrorHandlingPolicy(EXTRACTOR_MINIMUM_RETRY));
+    }
+
+    public HlsMediaSource.Factory getNicoHlsMediaSourceFactory() {
+        DataSource.Factory newFactory = new ResolvingDataSource.Factory(cacheDataSourceFactory, dataSpec -> {
+            return dataSpec.withAdditionalHeaders(Map.of("Referer", "https://www.nicovideo.jp/",
+                    "Origin", "https://www.nicovideo.jp",
+                    "X-Frontend-ID", "6",
+                    "X-Frontend-Version", "0",
+                    "X-Niconico-Language", "en-us"
+            ));
+        });
+        return new HlsMediaSource.Factory(newFactory);
     }
 
     public SsMediaSource.Factory getLiveSsMediaSourceFactory() {
@@ -138,7 +165,7 @@ public class PlayerDataSource {
     }
 
     public HlsMediaSource.Factory getHlsMediaSourceFactory() {
-        return new HlsMediaSource.Factory(cacheDataSourceFactory);
+        return new HlsMediaSource.Factory(cachelessDataSourceFactory);
     }
 
     public DashMediaSource.Factory getDashMediaSourceFactory() {
