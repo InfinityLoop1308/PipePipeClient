@@ -510,8 +510,8 @@
     <string name="mute">Sem som</string>
     <string name="help">Ajuda</string>
     <string name="videos_string">Vídeos</string>
-    <string name="content_not_supported">Este conteúdo ainda não é suportado pelo NewPipe. 
-\n 
+    <string name="content_not_supported">Este conteúdo ainda não é suportado pelo NewPipe.
+\n
 \nEsperamos que seja suportado numa versão futura.</string>
     <string name="infinite_videos">∞ vídeos</string>
     <string name="more_than_100_videos">+100 vídeos</string>

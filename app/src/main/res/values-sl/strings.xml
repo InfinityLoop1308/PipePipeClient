@@ -88,7 +88,7 @@
     <string name="short_million">mio</string>
     <string name="short_billion">mrd</string>
     <string name="open_in_popup_mode">Odpri v pojavnem načinu</string>
-    <string name="msg_popup_permission">To dovoljenje je potrebno za odpiranje 
+    <string name="msg_popup_permission">To dovoljenje je potrebno za odpiranje
 \nv pojavnem načinu</string>
     <string name="popup_playing_toast">Predvajanje v pojavnem načinu</string>
     <string name="disabled">Onemogočeno</string>

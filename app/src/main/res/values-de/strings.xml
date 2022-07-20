@@ -250,8 +250,8 @@
     <string name="export_ongoing">Exportiere …</string>
     <string name="import_file_title">Datei importieren</string>
     <string name="previous_export">Vorheriger Export</string>
-    <string name="import_network_expensive_warning">Beachte, dass diese Aktion das Netzwerk stark belasten kann. 
-\n 
+    <string name="import_network_expensive_warning">Beachte, dass diese Aktion das Netzwerk stark belasten kann.
+\n
 \nMöchtest du fortfahren\?</string>
     <string name="download_thumbnail_title">Vorschaubilder laden</string>
     <string name="thumbnail_cache_wipe_complete_notice">Bilder-Cache gelöscht</string>

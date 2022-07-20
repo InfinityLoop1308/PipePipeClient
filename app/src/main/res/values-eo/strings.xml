@@ -176,10 +176,10 @@
 \n5. Click on the \"Download\" button after it appears and
 \n6. From the downloaded takeout zip extract the .json file (usually under \"YouTube and YouTube Music/subscriptions/subscriptions.json\") and import it here.</string>
     <string name="import_soundcloud_instructions">Importu Soundcloud-n profilon tajpante ĉu la ligilon, ĉu vian ID :
-\n 
+\n
 \n1. Ebligu komputilon modon en retumilon (la retejo malhaveblas por poŝtelefonoj)
 \n2. Iru tien: %1$s
-\n3. Ensalutu kiam oni petas vin 
+\n3. Ensalutu kiam oni petas vin
 \n4. Kopiu la ligilon de profilo ke oni kondikis vin.</string>
     <string name="download_thumbnail_summary">Malŝaltu por malebligi ŝarĝajn bildetojn por konservi datumuzadon kaj memoruzadon. Ŝanĝoj vakigi ambaŭ en memoran kaj en diskan bildkaŝmemoron</string>
     <string name="thumbnail_cache_wipe_complete_notice">Bildokaŝmemoro vakigis</string>

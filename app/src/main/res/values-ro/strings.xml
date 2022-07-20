@@ -79,7 +79,7 @@
     <string name="msg_copied">Copiat în clipboard</string>
     <string name="no_available_dir">Vă rugăm să definiți un folder de descărcare mai târziu în setări</string>
     <string name="open_in_popup_mode">Deschide în modul popup</string>
-    <string name="msg_popup_permission">Această permisiune este necesară pentru a 
+    <string name="msg_popup_permission">Această permisiune este necesară pentru a
 \ndeschide în mod pop-up</string>
     <string name="title_activity_recaptcha">Provocare reCAPTCHA</string>
     <string name="recaptcha_request_toast">Provocare reCAPTCHA solicitată</string>

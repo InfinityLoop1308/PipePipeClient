@@ -271,16 +271,16 @@
     <string name="previous_export">Претходно изнесување</string>
     <string name="subscriptions_import_unsuccessful">Неуспешно внесување членства</string>
     <string name="subscriptions_export_unsuccessful">Неуспешно изнесување членства</string>
-    <string name="import_youtube_instructions">Внеси YouTube членства, преку симнување на извозен фајл: 
-\n 
-\n1. Оди на оваа врска: %1$s 
-\n2. Пријави се на твојот профил 
+    <string name="import_youtube_instructions">Внеси YouTube членства, преку симнување на извозен фајл:
+\n
+\n1. Оди на оваа врска: %1$s
+\n2. Пријави се на твојот профил
 \n3. Ќе започне превземање (тој фајл ти треба)</string>
-    <string name="import_soundcloud_instructions">Внеси SoundCloud членства, преку внесување URL или ID на профилот: 
-\n 
-\n1. Вклучете „десктоп режим“ во вашиот пребарувач (страната не е достапна за мобилни уреди) 
-\n2. Одете на оваа врска: %1$s 
-\n3. Пријавете се на вашиот профил 
+    <string name="import_soundcloud_instructions">Внеси SoundCloud членства, преку внесување URL или ID на профилот:
+\n
+\n1. Вклучете „десктоп режим“ во вашиот пребарувач (страната не е достапна за мобилни уреди)
+\n2. Одете на оваа врска: %1$s
+\n3. Пријавете се на вашиот профил
 \n4. Копирајте го URL-то на кое бевте пренасочени (тоа е URL-то на вашиот профил).</string>
     <string name="import_soundcloud_instructions_hint">korisnickoime, soundcloud.com/korisnickoime</string>
     <string name="import_network_expensive_warning">Треба да знаеш дека оваа операција троши многу интернет.

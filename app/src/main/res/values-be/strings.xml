@@ -199,7 +199,7 @@
     <string name="msg_wait">Пачакайце…</string>
     <string name="msg_copied">Скапіявана ў буфер абмену</string>
     <string name="no_available_dir">Абярыце тэчку для загрузкі пазней у наладах</string>
-    <string name="msg_popup_permission">Гэтае разрозненне трэба для 
+    <string name="msg_popup_permission">Гэтае разрозненне трэба для
 \nпрайгравання ў акне</string>
     <string name="one_item_deleted">1 элемент выдалены.</string>
     <string name="title_activity_recaptcha">Запыт reCAPTCHA</string>
@@ -226,7 +226,7 @@
     <string name="website_title">Вэб-сайт</string>
     <string name="website_encouragement">Дзеля атрымання больш падрабязнай інфармацыі і апошніх навін аб NewPipe наведайце наш вэб-сайт.</string>
     <string name="privacy_policy_title">Палітыка прыватнасці NewPipe</string>
-    <string name="privacy_policy_encouragement">Праект NewPipe вельмі сур\'ёзна ставіцца да вашай прыватнасці. Таму прыкладанне не збірае ніякіх дадзеных без вашай згоды. 
+    <string name="privacy_policy_encouragement">Праект NewPipe вельмі сур\'ёзна ставіцца да вашай прыватнасці. Таму прыкладанне не збірае ніякіх дадзеных без вашай згоды.
 \nПалітыка прыватнасці NewPipe падрабязна тлумачыць, якія дадзеныя адпраўляюцца і захоўваюцца пры адпраўцы справаздачы аб збоях.</string>
     <string name="read_privacy_policy">Прачытаць палітыку</string>
     <string name="app_license_title">Ліцэнзія NewPipe</string>
@@ -299,20 +299,20 @@
     <string name="previous_export">Папярэдні экспарт</string>
     <string name="subscriptions_import_unsuccessful">Не атрымалася імпартаваць падпіскі</string>
     <string name="subscriptions_export_unsuccessful">Не атрымалася экспартаваць падпіскі</string>
-    <string name="import_youtube_instructions">Імпарт падпісак з YouTube загрузкай файла экспарту: 
-\n 
-\n1. Перайдзіце на: %1$s 
-\n2. Увайдзіце, калі неабходна 
+    <string name="import_youtube_instructions">Імпарт падпісак з YouTube загрузкай файла экспарту:
+\n
+\n1. Перайдзіце на: %1$s
+\n2. Увайдзіце, калі неабходна
 \n3. Павінна пачацца загрузка (гэта будзе файл экспарту)</string>
-    <string name="import_soundcloud_instructions">Імпарт падпісак з SoundCloud набраўшы альбо URL, альбо ваш ID: 
-\n 
-\n1. Уключыце \"рэжым працоўнага стала\" у браўзэры (сайт недаступны на тэлефоне) 
-\n2. Перайдзіце на: %1$s 
-\n3. Увайдзіце, калі неабходна 
+    <string name="import_soundcloud_instructions">Імпарт падпісак з SoundCloud набраўшы альбо URL, альбо ваш ID:
+\n
+\n1. Уключыце \"рэжым працоўнага стала\" у браўзэры (сайт недаступны на тэлефоне)
+\n2. Перайдзіце на: %1$s
+\n3. Увайдзіце, калі неабходна
 \n4. Скапіруйце адрас з адраснага радка.</string>
     <string name="import_soundcloud_instructions_hint">вашID, soundcloud.com/вашID</string>
-    <string name="import_network_expensive_warning">Гэтае дзеянне можа выклікаць вялікі расход трафіку. 
-\n 
+    <string name="import_network_expensive_warning">Гэтае дзеянне можа выклікаць вялікі расход трафіку.
+\n
 \nПрацягнуць?</string>
     <string name="playback_speed_control">Кіраванне хуткасцю прайгравання</string>
     <string name="playback_tempo">Тэмп</string>
@@ -321,7 +321,7 @@
     <string name="skip_silence_checkbox">Прапускаць цішыню</string>
     <string name="playback_step">Крок</string>
     <string name="playback_reset">Скід</string>
-    <string name="start_accept_privacy_policy">У адпаведнасці з Агульным рэгламентам па абароне дадзеных ЕС (GDPR), звяртаем вашу ўвагу на палітыку прыватнасці NewPipe. Калі ласка, уважліва азнаёмцеся з ёй. 
+    <string name="start_accept_privacy_policy">У адпаведнасці з Агульным рэгламентам па абароне дадзеных ЕС (GDPR), звяртаем вашу ўвагу на палітыку прыватнасці NewPipe. Калі ласка, уважліва азнаёмцеся з ёй.
 \nВам неабходна прыняць яе ўмовы, каб адправіць нам справаздачу пра памылку.</string>
     <string name="accept">Прыняць</string>
     <string name="decline">Адмовіцца</string>

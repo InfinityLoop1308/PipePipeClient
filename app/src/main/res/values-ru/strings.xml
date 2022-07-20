@@ -288,15 +288,15 @@
 \n5. Нажмите кнопку \"Скачать\", когда она появится
 \n6. Нажмите ИМПОРТ ФАЙЛА внизу и выберите скачанный ZIP-архив
 \n7. [Если импортировать ZIP-файл не удалось] Из скачанного ZIP-архива распакуйте CSV-файл (обычно это \"YouTube и YouTube Music/подписки/подписки.csv\"), нажмите ИМПОРТ ФАЙЛА и выберите этот CSV-файл</string>
-    <string name="import_soundcloud_instructions">Импортируйте профиль SoundCloud, введя его URL или ID: 
-\n 
+    <string name="import_soundcloud_instructions">Импортируйте профиль SoundCloud, введя его URL или ID:
+\n
 \n1. Включите режим \"Полная версия сайта\" в браузере.
 \n2. Перейдите по ссылке %1$s
 \n3. Выполните вход.
 \n4. Скопируйте URL профиля из адресной строки.</string>
     <string name="import_soundcloud_instructions_hint">вашID, soundcloud.com/вашID</string>
     <string name="import_network_expensive_warning">Это действие может вызвать большой расход трафика.
-\n 
+\n
 \nПродолжить?</string>
     <string name="download_thumbnail_title">Загружать миниатюры</string>
     <string name="download_thumbnail_summary">Отключите, чтобы не загружать миниатюры и сэкономить трафик и память. Изменение настройки очистит кэш изображений</string>
@@ -530,8 +530,8 @@
     <string name="restricted_video">Это видео имеет возрастное ограничение.
 \n
 \nВключите \"%1$s\" в настройках, если хотите его видеть.</string>
-    <string name="content_not_supported">NewPipe не поддерживает этот контент. 
-\n 
+    <string name="content_not_supported">NewPipe не поддерживает этот контент.
+\n
 \nВозможно, поддержка появится в следующих версиях.</string>
     <string name="infinite_videos">∞ видео</string>
     <string name="more_than_100_videos">100+ видео</string>

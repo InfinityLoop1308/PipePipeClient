@@ -282,7 +282,7 @@
 \n4. Copiare l\'URL del profilo a cui si viene indirizzati.</string>
     <string name="import_soundcloud_instructions_hint">iltuoID, soundcloud.com/iltuoid</string>
     <string name="import_network_expensive_warning">Tieni presente che questa operazione può consumare una grande quantità di traffico dati.
-\n 
+\n
 \nVuoi continuare?</string>
     <string name="download_thumbnail_title">Carica copertine</string>
     <string name="download_thumbnail_summary">Disabilita per prevenire il caricamento delle copertine, risparmiando dati e memoria. La modifica di questa opzione cancellerà la cache delle immagini in memoria e sul disco</string>
@@ -510,8 +510,8 @@
 \n
 \nLa scelta va fatta in base alle proprie preferenze: velocità o informazioni precise.</string>
     <string name="feed_group_dialog_empty_name">Gruppo senza nome</string>
-    <string name="content_not_supported">Questo contenuto non è supportato da NewPipe. 
-\n 
+    <string name="content_not_supported">Questo contenuto non è supportato da NewPipe.
+\n
 \nSi spera che possa essere supportato in una versione futura.</string>
     <string name="infinite_videos">∞ video</string>
     <string name="more_than_100_videos">100+ video</string>
