@@ -1021,14 +1021,15 @@ public class DownloadDialog extends DialogFragment
 
         if (secondaryStream == null) {
             urls = new String[]{
-                    selectedStream.getUrl()
+                    selectedStream.getUrl().contains("nicovideo.jp/watch")? null:selectedStream.getUrl()
             };
             recoveryInfo = new MissionRecoveryInfo[]{
                     new MissionRecoveryInfo(selectedStream)
             };
         } else {
             urls = new String[]{
-                    selectedStream.getUrl(), secondaryStream.getUrl()
+                    selectedStream.getUrl().contains("nicovideo.jp/watch")? null:selectedStream.getUrl(),
+                    secondaryStream.getUrl().contains("nicovideo.jp/watch")? null:secondaryStream.getUrl()
             };
             recoveryInfo = new MissionRecoveryInfo[]{new MissionRecoveryInfo(selectedStream),
                     new MissionRecoveryInfo(secondaryStream)};
