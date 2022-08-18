@@ -548,6 +548,11 @@
     <string name="list">List</string>
     <string name="grid">Grid</string>
     <string name="auto">Auto</string>
+    <string name="search_filter_ui">Select Search Filter UI</string>
+    <string name="search_filter_ui_dialog">Simple Dialog (default)</string>
+    <string name="search_filter_ui_style">Action Menu styled Dialog</string>
+    <string name="search_filter_ui_legacy">Action Menu (legacy)</string>
+    <string name="search_filter_ui_chip_dialog">Chip Dialog</string>
     <!-- Seekbar Preview Thumbnail-->
     <string name="seekbar_preview_thumbnail_title">Seekbar thumbnail preview</string>
     <string name="high_quality_larger">High quality (larger)</string>
@@ -769,4 +774,5 @@
     <string name="channel_tab_info">Info</string>
     <string name="show_channel_tabs">Channel tabs</string>
     <string name="show_channel_tabs_summary">What tabs are shown on the channel pages</string>
+    <string name="filter">Sort</string>
 </resources>

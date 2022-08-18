@@ -1,15 +1,17 @@
 <resources>
 
     <!-- Opening Theme -->
-    <style name="Base.V19.OpeningTheme" parent="Theme.AppCompat.DayNight.NoActionBar"/>
-    <style name="Base.OpeningTheme" parent="Base.V19.OpeningTheme"/>
-    <style name="OpeningTheme" parent="Base.OpeningTheme">
+    <style name="Base.V19.OpeningTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="colorPrimary">@android:color/transparent</item>
         <item name="colorPrimaryDark">@android:color/transparent</item>
         <item name="colorAccent">@android:color/transparent</item>
 
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
+    <style name="Base.OpeningTheme" parent="Base.V19.OpeningTheme">
+        <item name="android:navigationBarColor">@color/light_youtube_primary_color</item>
+    </style>
+    <style name="OpeningTheme" parent="Base.OpeningTheme" />
 
     <!-- Base Theme -->
     <style name="Base.V19" parent="Theme.AppCompat.DayNight.NoActionBar">
@@ -130,20 +132,35 @@
         <item name="colorAccent">@color/black_settings_accent_color</item>
     </style>
 
-    <style name="RouterActivityThemeLight" parent="LightTheme">
+    <!-- Router Activity -->
+    <style name="Base.RouterActivityThemeLight" parent="LightTheme">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="RouterActivityThemeDark" parent="DarkTheme">
+    <style name="RouterActivityThemeLight" parent="Base.RouterActivityThemeLight" />
+
+    <style name="Base.RouterActivityThemeDark" parent="DarkTheme">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="RouterActivityThemeDark" parent="Base.RouterActivityThemeDark" />
+
+    <!-- custom Chip style for SearchFilterDialogFragment -->
+    <style name="ChipSearchFilter" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="checkedIconEnabled">false</item>
+        <item name="checkedIcon">@null</item>
+        <item name="chipBackgroundColor">@color/mtrl_search_filter_chip_background_color</item>
+        <item name="chipStrokeWidth">0.1dp</item>
     </style>
 
 </resources>
