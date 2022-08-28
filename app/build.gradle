@@ -17,7 +17,7 @@ android {
         minSdk 19
         targetSdk 29
         versionCode 986
-        versionName "1.7.4"
+        versionName "1.7.5"
 
         multiDexEnabled true
 
