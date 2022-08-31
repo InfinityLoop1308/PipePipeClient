@@ -1,2 +1,0 @@
-# Behoden
-- erneuter Hotfix des Entschlüsselungsfunktionsfehlers.

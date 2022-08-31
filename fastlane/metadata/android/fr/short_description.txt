@@ -1,1 +1,0 @@
-Lecteur multimédia libre et léger pour Android.

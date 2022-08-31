@@ -17,7 +17,7 @@ android {
         minSdk 19
         //noinspection ExpiredTargetSdkVersion
         targetSdk 29
-        versionCode 986
+        versionCode 1000
         versionName "1.8.0"
 
         multiDexEnabled true
