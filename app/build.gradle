@@ -18,7 +18,7 @@ android {
         //noinspection ExpiredTargetSdkVersion
         targetSdk 29
         versionCode 1000
-        versionName "1.8.0"
+        versionName "1.8.1"
 
         multiDexEnabled true
 
