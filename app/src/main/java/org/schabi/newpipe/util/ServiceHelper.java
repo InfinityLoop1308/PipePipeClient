@@ -20,7 +20,7 @@ import org.schabi.newpipe.extractor.services.peertube.PeertubeInstance;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.schabi.newpipe.extractor.ServiceList.Niconico;
+import static org.schabi.newpipe.extractor.ServiceList.NicoNico;
 import static org.schabi.newpipe.extractor.ServiceList.SoundCloud;
 
 public final class ServiceHelper {
@@ -41,6 +41,9 @@ public final class ServiceHelper {
                 return R.drawable.place_holder_peertube;
             case 4:
                 return R.drawable.place_holder_bandcamp;
+            case 5:
+            case 6:
+                return R.drawable.place_holder_niconico;
             default:
                 return R.drawable.place_holder_circle;
         }
@@ -158,7 +161,7 @@ public final class ServiceHelper {
     public static long getCacheExpirationMillis(final int serviceId) {
         if (serviceId == SoundCloud.getServiceId()) {
             return TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES);
-        } else if (serviceId == Niconico.getServiceId()) {
+        } else if (serviceId == NicoNico.getServiceId()) {
             return TimeUnit.MILLISECONDS.convert(2, TimeUnit.MINUTES);
         } else {
             return TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS);
@@ -168,6 +171,8 @@ public final class ServiceHelper {
     public static boolean isBeta(final StreamingService s) {
         switch (s.getServiceInfo().getName()) {
             case "YouTube":
+            case "BiliBili":
+            case "NicoNico":
                 return false;
             default:
                 return true;
