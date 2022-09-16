@@ -885,8 +885,11 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         selectedContentFilter = (ArrayList<FilterItem>) theSelectedContentFilter;
         selectedSortFilter = (ArrayList<FilterItem>) theSelectedSortFilter;
 
-        if (!isInit && !TextUtils.isEmpty(searchString)) {
+        if (!TextUtils.isEmpty(searchString)) {
             search(searchString, selectedContentFilter, selectedSortFilter);
+        }
+        else if(!isInit && !TextUtils.isEmpty(searchEditText.getText().toString())){
+            search(searchEditText.getText().toString(), selectedContentFilter, selectedSortFilter);
         }
     }
 
