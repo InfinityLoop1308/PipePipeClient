@@ -17,6 +17,8 @@ import org.schabi.newpipe.util.InfoCache;
 import org.schabi.newpipe.util.TLSSocketFactoryCompat;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -38,6 +40,8 @@ import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import okio.Buffer;
+import okio.BufferedSource;
 
 import static org.schabi.newpipe.MainActivity.DEBUG;
 
@@ -242,11 +246,14 @@ public final class DownloaderImpl extends Downloader {
         String responseBodyToReturn = null;
 
         if (body != null) {
-            responseBodyToReturn = body.string();
+            BufferedSource source = body.source();
+            source.request(Long.MAX_VALUE);
+            Buffer buffer = source.buffer();
+            responseBodyToReturn = buffer.clone().readString(StandardCharsets.UTF_8);
         }
 
         final String latestUrl = response.request().url().toString();
         return new Response(response.code(), response.message(), response.headers().toMultimap(),
-                responseBodyToReturn, latestUrl);
+                responseBodyToReturn, body, latestUrl);
     }
 }

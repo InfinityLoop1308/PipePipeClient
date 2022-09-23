@@ -284,6 +284,21 @@
                     </FrameLayout>
 
                     <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/switchCommentsVisibility"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:contentDescription="Switch comment visibility"
+                        android:focusable="true"
+                        android:padding="@dimen/player_main_buttons_padding"
+                        android:scaleType="fitXY"
+                        app:srcCompat="@drawable/ic_comment"
+                        app:tint="@color/white"
+                        tools:ignore="RtlHardcoded" />
+
+                    <androidx.appcompat.widget.AppCompatImageButton
                         android:id="@+id/playWithKodi"
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"
@@ -765,5 +780,10 @@
         android:layout_height="match_parent"
         android:alpha="0"
         android:visibility="invisible" /> <!-- Required for the first appearance fading correctly -->
+
+    <org.schabi.newpipe.views.BulletCommentsView
+        android:id="@+id/bulletCommentsView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

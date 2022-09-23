@@ -47,6 +47,7 @@ import org.schabi.newpipe.extractor.comments.CommentsInfo;
 import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
 import org.schabi.newpipe.extractor.feed.FeedExtractor;
 import org.schabi.newpipe.extractor.feed.FeedInfo;
+import org.schabi.newpipe.extractor.bulletComments.BulletCommentsInfo;
 import org.schabi.newpipe.extractor.kiosk.KioskInfo;
 import org.schabi.newpipe.extractor.playlist.PlaylistInfo;
 import org.schabi.newpipe.extractor.search.SearchInfo;
@@ -160,6 +161,15 @@ public final class ExtractorHelper {
                         CommentsInfo.getInfo(NewPipe.getService(serviceId), url)));
     }
 
+    public static Single<BulletCommentsInfo> getBulletCommentsInfo(final int serviceId,
+                                                                   final String url,
+                                                                   final boolean forceLoad) {
+        checkServiceId(serviceId);
+        return checkCache(forceLoad, serviceId, url, InfoItem.InfoType.BULLET_COMMENT,
+                Single.fromCallable(() ->
+                        BulletCommentsInfo.getInfo(NewPipe.getService(serviceId), url)));
+    }
+
     public static Single<InfoItemsPage<CommentsInfoItem>> getMoreCommentItems(
             final int serviceId,
             final CommentsInfo info,
@@ -230,7 +240,7 @@ public final class ExtractorHelper {
             load = actualLoadFromNetwork;
         } else {
             load = Maybe.concat(ExtractorHelper.loadFromCache(serviceId, url, infoType),
-                    actualLoadFromNetwork.toMaybe())
+                            actualLoadFromNetwork.toMaybe())
                     .firstElement() // Take the first valid
                     .toSingle();
         }
@@ -241,10 +251,10 @@ public final class ExtractorHelper {
     /**
      * Default implementation uses the {@link InfoCache} to get cached results.
      *
-     * @param <I>             the item type's class that extends {@link Info}
-     * @param serviceId       the service to load from
-     * @param url             the URL to load
-     * @param infoType        the {@link InfoItem.InfoType} of the item
+     * @param <I>       the item type's class that extends {@link Info}
+     * @param serviceId the service to load from
+     * @param url       the URL to load
+     * @param infoType  the {@link InfoItem.InfoType} of the item
      * @return a {@link Single} that loads the item
      */
     private static <I extends Info> Maybe<I> loadFromCache(final int serviceId, final String url,
@@ -275,11 +285,12 @@ public final class ExtractorHelper {
      * Formats the text contained in the meta info list as HTML and puts it into the text view,
      * while also making the separator visible. If the list is null or empty, or the user chose not
      * to see meta information, both the text view and the separator are hidden
-     * @param metaInfos a list of meta information, can be null or empty
-     * @param metaInfoTextView the text view in which to show the formatted HTML
+     *
+     * @param metaInfos         a list of meta information, can be null or empty
+     * @param metaInfoTextView  the text view in which to show the formatted HTML
      * @param metaInfoSeparator another view to be shown or hidden accordingly to the text view
-     * @param disposables disposables created by the method are added here and their lifecycle
-     *                    should be handled by the calling class
+     * @param disposables       disposables created by the method are added here and their lifecycle
+     *                          should be handled by the calling class
      */
     public static void showMetaInfoInTextView(@Nullable final List<MetaInfo> metaInfos,
                                               final TextView metaInfoTextView,
@@ -288,7 +299,7 @@ public final class ExtractorHelper {
         final Context context = metaInfoTextView.getContext();
         if (metaInfos == null || metaInfos.isEmpty()
                 || !PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
-                        context.getString(R.string.show_meta_info_key), true)) {
+                context.getString(R.string.show_meta_info_key), true)) {
             metaInfoTextView.setVisibility(View.GONE);
             metaInfoSeparator.setVisibility(View.GONE);
 

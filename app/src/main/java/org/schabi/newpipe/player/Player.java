@@ -161,6 +161,9 @@ import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.Info;
 import org.schabi.newpipe.extractor.MediaFormat;
+import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.StreamingService;
+import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamSegment;
 import org.schabi.newpipe.extractor.stream.StreamType;
@@ -172,6 +175,7 @@ import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.MainPlayer.PlayerType;
+import org.schabi.newpipe.player.bulletComments.MovieBulletCommentsPlayer;
 import org.schabi.newpipe.player.event.DisplayPortion;
 import org.schabi.newpipe.player.event.PlayerEventListener;
 import org.schabi.newpipe.player.event.PlayerGestureListener;
@@ -210,10 +214,12 @@ import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.views.ExpandableSurfaceView;
 import org.schabi.newpipe.views.player.PlayerFastSeekOverlay;
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -578,6 +584,7 @@ public final class Player implements
         binding.share.setOnLongClickListener(this);
         binding.fullScreenButton.setOnClickListener(this);
         binding.screenRotationButton.setOnClickListener(this);
+        binding.switchCommentsVisibility.setOnClickListener(this);
         binding.playWithKodi.setOnClickListener(this);
         binding.openInBrowser.setOnClickListener(this);
         binding.playerCloseButton.setOnClickListener(this);
@@ -1099,6 +1106,7 @@ public final class Player implements
             binding.secondaryControls.setVisibility(View.VISIBLE);
             binding.secondaryControls.setTranslationY(0);
             binding.share.setVisibility(View.GONE);
+            binding.switchCommentsVisibility.setVisibility(View.GONE);
             binding.playWithKodi.setVisibility(View.GONE);
             binding.openInBrowser.setVisibility(View.GONE);
             binding.switchMute.setVisibility(View.GONE);
@@ -1121,6 +1129,7 @@ public final class Player implements
             binding.moreOptionsButton.setImageDrawable(AppCompatResources.getDrawable(context,
                     R.drawable.ic_expand_more));
             binding.share.setVisibility(View.VISIBLE);
+            binding.switchCommentsVisibility.setVisibility(View.VISIBLE);
             binding.openInBrowser.setVisibility(View.VISIBLE);
             binding.switchMute.setVisibility(View.VISIBLE);
             binding.playerCloseButton.setVisibility(isFullscreen ? View.GONE : View.VISIBLE);
@@ -1766,7 +1775,7 @@ public final class Player implements
 
     private Disposable getProgressUpdateDisposable() {
         return Observable.interval(PROGRESS_LOOP_INTERVAL_MILLIS, MILLISECONDS,
-                AndroidSchedulers.mainThread())
+                        AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(ignored -> triggerProgressUpdate(),
                         error -> Log.e(TAG, "Progress update failure: ", error));
@@ -2117,22 +2126,148 @@ public final class Player implements
                 break;
             case STATE_PLAYING:
                 onPlaying();
+                initBCPlayer();
+                startBCPlayer();
                 break;
             case STATE_BUFFERING:
                 onBuffering();
                 break;
             case STATE_PAUSED:
                 onPaused();
+                pauseBCPlayer();
                 break;
             case STATE_PAUSED_SEEK:
                 onPausedSeek();
+                pauseBCPlayer();
                 break;
             case STATE_COMPLETED:
                 onCompleted();
+                completeBCPlayer();
                 break;
         }
         notifyPlaybackUpdateToListeners();
     }
+
+    private MovieBulletCommentsPlayer bcPlayer = null;
+
+    private Duration getCurrentPositionDuration() {
+        if (currentItem == null) {
+            return null;
+        }
+        return Duration.ofMillis(simpleExoPlayer.getCurrentPosition());
+    }
+
+    private Duration getDurationInDuration() {
+        if (currentItem == null) {
+            return null;
+        }
+        return Duration.ofMillis(simpleExoPlayer.getDuration());
+    }
+
+    /*////////////////////////////////////////////////
+     * BulletCommentsPlayer
+     *////////////////////////////////////////////////
+    //region BulletCommentsPlayer
+    private void initBCPlayer() {
+        try {
+            if (currentMetadata != null && NewPipe.getService(currentMetadata.getServiceId())
+                    .getServiceInfo()
+                    .getMediaCapabilities()
+                    .contains(StreamingService.ServiceInfo.MediaCapability.BULLET_COMMENTS)) {
+                clearBCPlayer();
+                bcPlayer = new MovieBulletCommentsPlayer(binding.bulletCommentsView);
+                bcPlayer.setInitialData(currentMetadata.getServiceId(),
+                        currentMetadata.getStreamUrl());
+                bcPlayer.init();
+                Log.d(TAG, "BulletCommentsView initialized.");
+            } else {
+                Log.i(TAG, "Current service does not have MediaCapability of BULLET_COMMENTS"
+                        + ", skipping BulletCommentsView initialization.");
+            }
+        } catch (final ExtractionException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+        }
+        isBCPlayerVisible = prefs.getBoolean("isBCPlayerVisible", true);
+        Log.i(TAG, "BulletCommentPlayer initial visibility: " + isBCPlayerVisible);
+        if (bcPlayer == null) {
+            // If set to INVISIBLE, the space remains.
+            binding.switchCommentsVisibility.setVisibility(View.GONE);
+        } else {
+            binding.switchCommentsVisibility.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private Disposable bcPlayerDrawCommentsObservable = null;
+
+    private void startBCPlayer() {
+        if (bcPlayer == null | bcPlayerDrawCommentsObservable != null | !isBCPlayerVisible) {
+            return;
+        }
+        bcPlayer.start(getCurrentPositionDuration());
+        bcPlayerDrawCommentsObservable = Observable.interval(
+                        bcPlayer.INTERVAL.toMillis(),
+                        TimeUnit.MILLISECONDS
+                )
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(s -> getCurrentPositionDuration())
+                .filter(Objects::nonNull)
+                .filter(s -> currentMetadata != null)
+                .subscribe(s ->  {
+                            bcPlayer.drawComments(s.plus(bcPlayer.INTERVAL));
+                        },
+                        e -> Log.e(TAG, Log.getStackTraceString(e))
+                );
+        Log.d(TAG, "BulletCommentsView started.");
+    }
+
+    private void completeBCPlayer() {
+        if (bcPlayer == null | !isBCPlayerVisible | currentMetadata == null) {
+            return;
+        }
+        bcPlayer.complete(Objects.requireNonNull(getDurationInDuration()));
+        Log.d(TAG, "BulletCommentsView completed.");
+    }
+
+    private void pauseBCPlayer() {
+        if (bcPlayer == null) {
+            return;
+        }
+        if (bcPlayerDrawCommentsObservable != null) {
+            bcPlayerDrawCommentsObservable.dispose();
+            bcPlayerDrawCommentsObservable = null;
+            Log.d(TAG, "BulletCommentsView observable disposed.");
+        }
+        bcPlayer.pause();
+        Log.d(TAG, "BulletCommentsView paused.");
+    }
+
+    private void clearBCPlayer() {
+        if (bcPlayer == null) {
+            return;
+        }
+        if (bcPlayerDrawCommentsObservable != null) {
+            bcPlayerDrawCommentsObservable.dispose();
+            bcPlayerDrawCommentsObservable = null;
+            Log.d(TAG, "BulletCommentsView observable disposed.");
+        }
+        bcPlayer.clear();
+        Log.d(TAG, "BulletCommentsView cleared.");
+    }
+
+    private boolean isBCPlayerVisible;
+
+    private void onSwitchBCPlayerVisibilityClicked() {
+        isBCPlayerVisible = !isBCPlayerVisible;
+        prefs.edit().putBoolean("isBCPlayerVisible", isBCPlayerVisible).apply();
+        Log.i(TAG, "BulletCommentPlayer visibility changed to " + isBCPlayerVisible);
+        if (isBCPlayerVisible) {
+            startBCPlayer();
+        } else {
+            clearBCPlayer();
+        }
+    }
+
+    //endregion BulletCommentsPlayer
 
     private void onPrepared(final boolean playWhenReady) {
         if (DEBUG) {
@@ -2604,6 +2739,7 @@ public final class Player implements
     // Errors
     //////////////////////////////////////////////////////////////////////////*/
     //region Errors
+
     /**
      * Process exceptions produced by {@link com.google.android.exoplayer2.ExoPlayer ExoPlayer}.
      * <p>There are multiple types of errors:</p>
@@ -2846,6 +2982,7 @@ public final class Player implements
 
     /**
      * Sets the video duration time into all control components (e.g. seekbar).
+     *
      * @param duration
      */
     private void setVideoDurationToControls(final int duration) {
@@ -3764,7 +3901,9 @@ public final class Player implements
             onMoreOptionsClicked();
         } else if (v.getId() == binding.share.getId()) {
             ShareUtils.shareText(context, getVideoTitle(), getVideoUrlAtCurrentTime(),
-                            currentItem.getThumbnailUrl());
+                    currentItem.getThumbnailUrl());
+        } else if (v.getId() == binding.switchCommentsVisibility.getId()) {
+            onSwitchBCPlayerVisibilityClicked();
         } else if (v.getId() == binding.playWithKodi.getId()) {
             onPlayWithKodiClicked();
         } else if (v.getId() == binding.openInBrowser.getId()) {
@@ -4318,7 +4457,7 @@ public final class Player implements
         // be the same
         if ((streamType == StreamType.AUDIO_STREAM || streamType == StreamType.AUDIO_LIVE_STREAM)
                 || (streamType == StreamType.LIVE_STREAM
-                        && sourceType == SourceType.LIVE_STREAM)) {
+                && sourceType == SourceType.LIVE_STREAM)) {
             return false;
         }
 
