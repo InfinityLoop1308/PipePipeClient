@@ -17,8 +17,8 @@ android {
         minSdk 19
         //noinspection ExpiredTargetSdkVersion
         targetSdk 29
-        versionCode 1002
-        versionName "1.9.1"
+        versionCode 1003
+        versionName "1.9.2"
 
         multiDexEnabled true
 
@@ -39,7 +39,7 @@ android {
             // suffix the app id and the app name with git branch name
             def workingBranch = getGitWorkingBranch()
             def normalizedWorkingBranch = workingBranch.replaceFirst("^[^A-Za-z]+", "").replaceAll("[^0-9A-Za-z]+", "")
-            if (normalizedWorkingBranch.isEmpty() || workingBranch == "master" || workingBranch == "dev") {
+            if (true) {
                 // default values when branch name could not be determined or is master or dev
                 applicationIdSuffix ".debug"
                 resValue "string", "app_name", "AnimePipe Debug"
