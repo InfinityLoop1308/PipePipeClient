@@ -30,7 +30,6 @@ import org.schabi.newpipe.extractor.playlist.PlaylistInfoItem;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.fragments.BaseStateFragment;
 import org.schabi.newpipe.fragments.OnScrollBelowItemsListener;
-import org.schabi.newpipe.fragments.list.comments.CommentReplyDialog;
 import org.schabi.newpipe.info_list.InfoListAdapter;
 import org.schabi.newpipe.info_list.dialog.InfoItemDialog;
 import org.schabi.newpipe.info_list.InfoListAdapter;
@@ -252,6 +251,12 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         }
     }
 
+    protected void onItemCallback(final InfoItem selectedItem) throws Exception {
+        if (DEBUG) {
+            Log.d(TAG, "onItemCallback() called with: selectedItem = [" + selectedItem + "]");
+        }
+    }
+
     @Override
     protected void initListeners() {
         super.initListeners();
@@ -311,10 +316,7 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
                     @Override
                     public void selected(final CommentsInfoItem selectedItem) {
                         try {
-                            onItemSelected(selectedItem);
-                            final Page reply = selectedItem.getReplies();
-                            CommentReplyDialog.show(getFM(), selectedItem.getServiceId(),
-                                    reply != null ? reply.getUrl() : null, selectedItem.getName(), reply);
+                            onItemCallback(selectedItem);
                         } catch (final Exception e) {
                             e.printStackTrace();
                         }

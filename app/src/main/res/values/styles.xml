@@ -27,6 +27,7 @@
         <item name="colorAccent">@color/light_youtube_accent_color</item>
         <item name="android:windowBackground">@color/light_background_color</item>
         <item name="windowBackground">@color/light_background_color</item>
+        <item name="bottomSheetDialogTheme">@style/BottomSheetDialogTheme.Light.Base</item>
 
         <item name="separator_color">@color/light_separator_color</item>
         <item name="contrast_background_color">@color/light_contrast_background_color</item>
@@ -51,6 +52,7 @@
         <item name="colorAccent">@color/dark_youtube_accent_color</item>
         <item name="android:windowBackground">@color/dark_background_color</item>
         <item name="windowBackground">@color/dark_background_color</item>
+        <item name="bottomSheetDialogTheme">@style/BottomSheetDialogTheme.Dark.Base</item>
 
         <item name="separator_color">@color/dark_separator_color</item>
         <item name="contrast_background_color">@color/dark_contrast_background_color</item>
@@ -72,6 +74,7 @@
     <style name="Base.V19.BlackTheme" parent="DarkTheme">
         <item name="android:windowBackground">@color/black_background_color</item>
         <item name="windowBackground">@color/black_background_color</item>
+        <item name="bottomSheetDialogTheme">@style/BottomSheetDialogTheme.Black</item>
 
         <item name="separator_color">@color/black_separator_color</item>
         <item name="contrast_background_color">@color/black_contrast_background_color</item>
@@ -144,6 +147,29 @@
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
+
+    <style name="BottomSheetDialogTheme.Light.V19" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/white</item>
+    </style>
+    <style name="BottomSheetDialogTheme.Light.Base" parent="BottomSheetDialogTheme.Light.V19"/>
+
+    <style name="BottomSheetDialogTheme.Dark.V19" parent="Theme.Design.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/dark_bottom_sheet_color</item>
+    </style>
+    <style name="BottomSheetDialogTheme.Dark.Base" parent="BottomSheetDialogTheme.Dark.V19"/>
+
+    <style name="BottomSheetDialogTheme.Black" parent="BottomSheetDialogTheme.Dark.Base">
+        <item name="android:navigationBarColor">#121212</item>
+        <item name="bottomSheetStyle">@style/BottomSheetStyle.Black</item>
+    </style>
+    <style name="BottomSheetStyle.Black" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@color/black_bottom_sheet_color</item>
     </style>
 
 </resources>

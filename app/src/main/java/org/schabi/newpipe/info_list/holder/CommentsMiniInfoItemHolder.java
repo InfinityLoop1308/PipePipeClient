@@ -1,6 +1,5 @@
 package org.schabi.newpipe.info_list.holder;
 
-import android.content.res.Resources;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
@@ -125,16 +124,15 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
         }
 
         if (item.getReplies() != null) {
-            final Resources resources = itemView.getResources();
-            final String commentCountText = resources.getQuantityString(
-                    R.plurals.comment_reply_count,
-                    1, 1
-            );
             itemContentReplyButton.setVisibility(View.VISIBLE);
-            itemContentReplyButton.setText(commentCountText);
             itemContentReplyButton.setOnClickListener(
                     view -> itemBuilder.getOnCommentsReplyListener().selected(item)
             );
+            final int replyCount = item.getReplyCount();
+            itemContentReplyButton.setText(
+                    itemView.getContext().getResources().getQuantityString(
+                            R.plurals.replies, replyCount, replyCount
+                    ));
         } else {
             itemContentReplyButton.setVisibility(View.GONE);
         }

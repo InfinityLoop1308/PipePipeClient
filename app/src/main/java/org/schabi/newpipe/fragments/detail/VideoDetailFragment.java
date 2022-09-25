@@ -41,6 +41,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.exoplayer2.PlaybackException;
@@ -72,6 +73,7 @@ import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.fragments.BaseStateFragment;
 import org.schabi.newpipe.fragments.EmptyFragment;
 import org.schabi.newpipe.fragments.list.comments.CommentsFragment;
+import org.schabi.newpipe.fragments.list.comments.CommentsFragmentContainer;
 import org.schabi.newpipe.fragments.list.videos.RelatedItemsFragment;
 import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
@@ -160,8 +162,12 @@ public final class VideoDetailFragment
     private boolean showRelatedItems;
     private boolean showDescription;
     private String selectedTabTag;
-    @AttrRes @NonNull final List<Integer> tabIcons = new ArrayList<>();
-    @StringRes @NonNull final List<Integer> tabContentDescriptions = new ArrayList<>();
+    @AttrRes
+    @NonNull
+    final List<Integer> tabIcons = new ArrayList<>();
+    @StringRes
+    @NonNull
+    final List<Integer> tabContentDescriptions = new ArrayList<>();
     private boolean tabSettingsChanged = false;
     private int lastAppBarVerticalOffset = Integer.MAX_VALUE; // prevents useless updates
 
@@ -708,8 +714,8 @@ public final class VideoDetailFragment
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                 animate(binding.touchAppendDetail, true, 250, AnimationType.ALPHA,
                         0, () ->
-                        animate(binding.touchAppendDetail, false, 1500,
-                                AnimationType.ALPHA, 1000));
+                                animate(binding.touchAppendDetail, false, 1500,
+                                        AnimationType.ALPHA, 1000));
             }
             return false;
         };
@@ -757,6 +763,10 @@ public final class VideoDetailFragment
             Log.d(TAG, "onBackPressed() called");
         }
 
+        if (callCommentFragmentOnBack()) {
+            return true;
+        }
+
         // If we are in fullscreen mode just exit from it via first back press
         if (isPlayerAvailable() && player.isFullscreen()) {
             if (!DeviceUtils.isTablet(activity)) {
@@ -787,6 +797,18 @@ public final class VideoDetailFragment
         setupFromHistoryItem(Objects.requireNonNull(stack.peek()));
 
         return true;
+    }
+
+    private boolean callCommentFragmentOnBack() {
+        final String currentPage = pageAdapter.getItemTitle(binding.viewPager.getCurrentItem());
+        if (COMMENTS_TAB_TAG.equals(currentPage)) {
+            final Fragment fragment = getFM()
+                    .findFragmentById(R.id.fragment_container_view);
+            if (fragment instanceof BackPressable) {
+                return ((BackPressable) fragment).onBackPressed();
+            }
+        }
+        return false;
     }
 
     private void setupFromHistoryItem(final StackItem item) {
@@ -1030,7 +1052,7 @@ public final class VideoDetailFragment
                 tabContentDescriptions.remove(Integer.valueOf(R.string.comments_tab_description));
             }
         } else{
-            pageAdapter.updateItem(COMMENTS_TAB_TAG, CommentsFragment.getInstance(serviceId, url, title, null));
+            pageAdapter.updateItem(COMMENTS_TAB_TAG, CommentsFragmentContainer.getInstance(serviceId, url, title));
         }
 
         if (showDescription) {
