@@ -1030,7 +1030,7 @@ public final class VideoDetailFragment
                 tabContentDescriptions.remove(Integer.valueOf(R.string.comments_tab_description));
             }
         } else{
-            pageAdapter.updateItem(COMMENTS_TAB_TAG, CommentsFragment.getInstance(serviceId, url, title));
+            pageAdapter.updateItem(COMMENTS_TAB_TAG, CommentsFragment.getInstance(serviceId, url, title, null));
         }
 
         if (showDescription) {
