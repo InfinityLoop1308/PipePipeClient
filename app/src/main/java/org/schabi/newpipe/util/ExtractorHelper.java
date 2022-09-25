@@ -155,6 +155,28 @@ public final class ExtractorHelper {
         return maybeFeedInfo.switchIfEmpty(getChannelInfo(serviceId, url, true));
     }
 
+    public static Single<CommentsInfo> getCommentsReplyInfo(final int serviceId, final String url,
+                                                            final boolean forceLoad,
+                                                            final Page replyPage) {
+        checkServiceId(serviceId);
+        return checkCache(forceLoad, serviceId,
+                url + "?reply_placeholder_id=" + replyPage.getId(),
+                InfoItem.InfoType.COMMENT,
+                Single.fromCallable(() -> {
+                            final var info = CommentsInfo.getInfo(
+                                    NewPipe.getService(serviceId), url);
+                            // use CommentsInfo make a info template
+                            final var replies = CommentsInfo.getMoreItems(
+                                    NewPipe.getService(serviceId), info, replyPage);
+                            // push replies to info, replace original comments
+                            info.setRelatedItems(replies.getItems());
+                            // set next page
+                            info.setNextPage(replies.getNextPage());
+                            return info;
+                        }
+                ));
+    }
+
     public static Single<ChannelTabInfo> getChannelTab(final int serviceId,
                                                        final ListLinkHandler listLinkHandler,
                                                        final boolean forceLoad) {

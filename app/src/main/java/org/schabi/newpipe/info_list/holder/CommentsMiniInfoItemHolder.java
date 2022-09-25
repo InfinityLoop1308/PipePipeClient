@@ -7,6 +7,7 @@ import android.text.util.Linkify;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -44,6 +45,7 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
     private final TextView itemContentView;
     private final TextView itemLikesCountView;
     private final TextView itemPublishedTime;
+    private final Button itemContentReplyButton;
 
     private String commentText;
     private String streamUrl;
@@ -57,6 +59,7 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
         itemLikesCountView = itemView.findViewById(R.id.detail_thumbs_up_count_view);
         itemPublishedTime = itemView.findViewById(R.id.itemPublishedTime);
         itemContentView = itemView.findViewById(R.id.itemCommentContentView);
+        itemContentReplyButton = itemView.findViewById(R.id.itemContentReplyButton);
 
         commentHorizontalPadding = (int) infoItemBuilder.getContext()
                 .getResources().getDimension(R.dimen.comments_horizontal_padding);
@@ -118,6 +121,20 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
                     .offsetDateTime()));
         } else {
             itemPublishedTime.setText(item.getTextualUploadDate());
+        }
+
+        if (item.getReplies() != null) {
+            itemContentReplyButton.setVisibility(View.VISIBLE);
+            itemContentReplyButton.setOnClickListener(
+                    view -> itemBuilder.getOnCommentsReplyListener().selected(item)
+            );
+            final int replyCount = item.getReplyCount();
+            itemContentReplyButton.setText(
+                    itemView.getContext().getResources().getQuantityString(
+                            R.plurals.replies, replyCount, replyCount
+                    ));
+        } else {
+            itemContentReplyButton.setVisibility(View.GONE);
         }
 
         itemView.setOnClickListener(view -> {

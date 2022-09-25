@@ -23,12 +23,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.extractor.InfoItem;
+import org.schabi.newpipe.extractor.Page;
 import org.schabi.newpipe.extractor.channel.ChannelInfoItem;
 import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
 import org.schabi.newpipe.extractor.playlist.PlaylistInfoItem;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.fragments.BaseStateFragment;
 import org.schabi.newpipe.fragments.OnScrollBelowItemsListener;
+import org.schabi.newpipe.info_list.InfoListAdapter;
 import org.schabi.newpipe.info_list.dialog.InfoItemDialog;
 import org.schabi.newpipe.info_list.InfoListAdapter;
 import org.schabi.newpipe.util.NavigationHelper;
@@ -36,6 +38,7 @@ import org.schabi.newpipe.util.OnClickGesture;
 import org.schabi.newpipe.util.StateSaver;
 import org.schabi.newpipe.views.SuperScrollLayoutManager;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Queue;
 import java.util.function.Supplier;
@@ -249,6 +252,12 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         }
     }
 
+    protected void onItemCallback(final InfoItem selectedItem) throws Exception {
+        if (DEBUG) {
+            Log.d(TAG, "onItemCallback() called with: selectedItem = [" + selectedItem + "]");
+        }
+    }
+
     @Override
     protected void initListeners() {
         super.initListeners();
@@ -303,6 +312,18 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
             }
         });
 
+        infoListAdapter.setOnCommentsReplyListener(
+                new OnClickGesture<>() {
+                    @Override
+                    public void selected(final CommentsInfoItem selectedItem) {
+                        try {
+                            onItemCallback(selectedItem);
+                        } catch (final Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
         // Ensure that there is always a scroll listener (e.g. when rotating the device)
         useNormalItemListScrollListener();
     }
@@ -340,52 +361,67 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
             Log.d(TAG, "useInitialItemListLoadScrollListener called");
         }
         itemsList.clearOnScrollListeners();
-        itemsList.addOnScrollListener(new DefaultItemListOnScrolledDownListener() {
-            @Override
-            public void onScrolled(@NonNull final RecyclerView recyclerView,
-                                   final int dx, final int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                if (dy != 0) {
-                    log("Vertical scroll occurred");
-
-                    useNormalItemListScrollListener();
-                    return;
+        if(false){
+            itemsList.addOnScrollListener(new InitialItemListOnScrolledDownListener() {
+                @Override
+                public void onScrollStateChanged(@NonNull @Nonnull RecyclerView recyclerView, int newState) {
+                    if(recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE && !recyclerView.canScrollVertically(1)) { // RecyclerView is scrolled to the bottom }
+                        onScrollToBottom();
+                    }
                 }
-                if (isLoading.get()) {
-                    log("Still loading data -> Skipping");
-                    return;
-                }
-                if (!hasMoreItems()) {
-                    log("No more items to load");
-
-                    useNormalItemListScrollListener();
-                    return;
-                }
-                if (itemsList.canScrollVertically(1)
-                        || itemsList.canScrollVertically(-1)) {
-                    log("View is scrollable");
-
-                    useNormalItemListScrollListener();
-                    return;
-                }
-
-                log("Loading more data");
-                loadMoreItems();
-            }
-
-            private void log(final String msg) {
-                if (DEBUG) {
-                    Log.d(TAG, "initItemListLoadScrollListener - " + msg);
-                }
-            }
-        });
+            });
+        } else {
+            itemsList.addOnScrollListener(new InitialItemListOnScrolledDownListener());
+        }
     }
 
     class DefaultItemListOnScrolledDownListener extends OnScrollBelowItemsListener {
         @Override
         public void onScrolledDown(final RecyclerView recyclerView) {
             onScrollToBottom();
+        }
+    }
+
+    class InitialItemListOnScrolledDownListener extends DefaultItemListOnScrolledDownListener {
+        @Override
+        public void onScrolled(@Nonnull final RecyclerView recyclerView, final int dx, final int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+
+            if(dx == 0 && dy == 0){
+                return ;
+            }
+
+            if (dy != 0) {
+                log("Vertical scroll occurred");
+
+                useNormalItemListScrollListener();
+                return;
+            }
+            if (isLoading.get()) {
+                log("Still loading data -> Skipping");
+                return;
+            }
+            if (!hasMoreItems()) {
+                log("No more items to load");
+
+                useNormalItemListScrollListener();
+                return;
+            }
+            if (itemsList.canScrollVertically(1)
+                    || itemsList.canScrollVertically(-1)) {
+                log("View is scrollable");
+
+                useNormalItemListScrollListener();
+                return;
+            }
+
+            log("Loading more data");
+            loadMoreItems();
+        }
+        private void log(final String msg) {
+            if (DEBUG) {
+                Log.d(TAG, "initItemListLoadScrollListener - " + msg);
+            }
         }
     }
 
