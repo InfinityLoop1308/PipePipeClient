@@ -798,11 +798,14 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         lastSearchedString = this.searchString;
         this.searchString = theSearchString;
         infoListAdapter.clearStreamItemList();
-        hideSuggestionsPanel();
-        showMetaInfoInTextView(null, searchBinding.searchMetaInfoTextView,
-                searchBinding.searchMetaInfoSeparator, disposables);
-        hideKeyboardSearch();
-
+        try {
+            hideSuggestionsPanel();
+            showMetaInfoInTextView(null, searchBinding.searchMetaInfoTextView,
+                    searchBinding.searchMetaInfoSeparator, disposables);
+            hideKeyboardSearch();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         disposables.add(historyRecordManager.onSearched(serviceId, theSearchString)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -816,10 +819,14 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
 
     @Override
     public void startLoading(final boolean forceLoad) {
-        super.startLoading(forceLoad);
-        disposables.clear();
-        if (searchDisposable != null) {
-            searchDisposable.dispose();
+        try{
+            super.startLoading(forceLoad);
+            disposables.clear();
+            if (searchDisposable != null) {
+                searchDisposable.dispose();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
         searchDisposable = ExtractorHelper.searchFor(serviceId,
                 searchString,
