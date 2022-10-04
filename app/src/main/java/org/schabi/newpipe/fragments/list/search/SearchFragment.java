@@ -389,13 +389,17 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
 
     @Override
     public void onSaveInstanceState(@NonNull final Bundle bundle) {
-        searchString = searchEditText != null
-                ? searchEditText.getText().toString()
-                : searchString;
+        try{
+            searchString = searchEditText != null
+                    ? searchEditText.getText().toString()
+                    : searchString;
 
-        // get data to save its state via Icepick
-        userSelectedContentFilterList = searchFilterUi.getSelectedContentFilters();
-        userSelectedSortFilterList = searchFilterUi.getSelectedSortFilters();
+            // get data to save its state via Icepick
+            userSelectedContentFilterList = searchFilterUi.getSelectedContentFilters();
+            userSelectedSortFilterList = searchFilterUi.getSelectedSortFilters();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         super.onSaveInstanceState(bundle);
     }
