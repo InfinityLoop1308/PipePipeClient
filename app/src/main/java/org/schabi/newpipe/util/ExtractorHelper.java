@@ -43,12 +43,14 @@ import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.Page;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.channel.ChannelInfo;
+import org.schabi.newpipe.extractor.channel.ChannelTabInfo;
 import org.schabi.newpipe.extractor.comments.CommentsInfo;
 import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
 import org.schabi.newpipe.extractor.feed.FeedExtractor;
 import org.schabi.newpipe.extractor.feed.FeedInfo;
 import org.schabi.newpipe.extractor.bulletComments.BulletCommentsInfo;
 import org.schabi.newpipe.extractor.kiosk.KioskInfo;
+import org.schabi.newpipe.extractor.linkhandler.ChannelTabHandler;
 import org.schabi.newpipe.extractor.playlist.PlaylistInfo;
 import org.schabi.newpipe.extractor.search.SearchInfo;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
@@ -151,6 +153,25 @@ public final class ExtractorHelper {
         });
 
         return maybeFeedInfo.switchIfEmpty(getChannelInfo(serviceId, url, true));
+    }
+
+    public static Single<ChannelTabInfo> getChannelTab(final int serviceId,
+                                                       final ChannelTabHandler tabHandler,
+                                                       final boolean forceLoad) {
+        checkServiceId(serviceId);
+        return checkCache(forceLoad, serviceId,
+                tabHandler.getUrl() + tabHandler.getTab().name(), InfoItem.InfoType.CHANNEL,
+                Single.fromCallable(() ->
+                        ChannelTabInfo.getInfo(NewPipe.getService(serviceId), tabHandler)));
+    }
+
+    public static Single<InfoItemsPage<InfoItem>> getMoreChannelTabItems(final int serviceId,
+                                                                         final ChannelTabHandler
+                                                                                 tabHandler,
+                                                                         final Page nextPage) {
+        checkServiceId(serviceId);
+        return Single.fromCallable(() ->
+                ChannelTabInfo.getMoreItems(NewPipe.getService(serviceId), tabHandler, nextPage));
     }
 
     public static Single<CommentsInfo> getCommentsInfo(final int serviceId, final String url,
