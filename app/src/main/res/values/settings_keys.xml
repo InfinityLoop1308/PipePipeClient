@@ -206,6 +206,7 @@
     <string name="disable_media_tunneling_key">disable_media_tunneling_key</string>
     <string name="show_image_indicators_key">show_image_indicators_key</string>
     <string name="show_crash_the_player_key">show_crash_the_player_key</string>
+    <string name="youtube_visitor_data">youtube_visitor_data</string>
     <string name="check_new_streams_key">check_new_streams</string>
     <string name="crash_the_app_key">crash_the_app_key</string>
     <string name="show_error_snackbar_key">show_error_snackbar_key</string>

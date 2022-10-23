@@ -92,9 +92,6 @@ public class App extends MultiDexApplication {
             Localization.getPreferredLocalization(this),
             Localization.getPreferredContentCountry(this));
 
-        // TODO: REMOVE THIS, only for testing
-        YoutubeParsingHelper.setVisitorData("CgtOa256ckVkcG5YVSi7-c6aBg%3D%3D");
-
         Localization.initPrettyTime(Localization.resolvePrettyTime(getApplicationContext()));
 
         StateSaver.init(this);
@@ -109,6 +106,11 @@ public class App extends MultiDexApplication {
                 prefs.getBoolean(getString(R.string.download_thumbnail_key), true));
         PicassoHelper.setIndicatorsEnabled(MainActivity.DEBUG
                 && prefs.getBoolean(getString(R.string.show_image_indicators_key), false));
+
+        if (MainActivity.DEBUG) {
+            YoutubeParsingHelper.setVisitorData(
+                    prefs.getString(getString(R.string.youtube_visitor_data), null));
+        }
 
         configureRxJavaErrorHandler();
     }
