@@ -388,7 +388,8 @@
 
                 <data android:scheme="http" />
                 <data android:scheme="https" />
-                <data android:host="*bilibili.com" />
+                <data android:host="bilibili.com" />
+                <data android:host="www.bilibili.com" />
                 <data android:pathPrefix="/video/" />
             </intent-filter>
 
@@ -403,6 +404,7 @@
                 <data android:scheme="http" />
                 <data android:scheme="https" />
                 <data android:host="live.bilibili.com" />
+                <data android:pathPrefix="/" />
             </intent-filter>
 
             <!-- NicoNico filter -->
