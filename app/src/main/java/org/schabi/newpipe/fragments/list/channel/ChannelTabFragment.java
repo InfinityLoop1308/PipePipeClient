@@ -29,11 +29,16 @@ public class ChannelTabFragment extends BaseListInfoFragment<InfoItem, ChannelTa
     @State
     protected ListLinkHandler tabHandler;
 
+    @State
+    protected String channelName;
+
     public static ChannelTabFragment getInstance(final int serviceId,
-                                                 final ListLinkHandler tabHandler) {
+                                                 final ListLinkHandler tabHandler,
+                                                 final String channelName) {
         final ChannelTabFragment instance = new ChannelTabFragment();
         instance.serviceId = serviceId;
         instance.tabHandler = tabHandler;
+        instance.channelName = channelName;
         return instance;
     }
 
@@ -49,6 +54,11 @@ public class ChannelTabFragment extends BaseListInfoFragment<InfoItem, ChannelTa
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(false);
+
+        if (!useAsFrontPage && activity != null && activity.getSupportActionBar() != null) {
+            activity.getSupportActionBar().setDisplayShowTitleEnabled(true);
+            activity.getSupportActionBar().setTitle(channelName);
+        }
     }
 
     @Override
