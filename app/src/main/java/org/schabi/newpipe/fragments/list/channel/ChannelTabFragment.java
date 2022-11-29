@@ -54,11 +54,6 @@ public class ChannelTabFragment extends BaseListInfoFragment<InfoItem, ChannelTa
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(false);
-
-        if (!useAsFrontPage && activity != null && activity.getSupportActionBar() != null) {
-            activity.getSupportActionBar().setDisplayShowTitleEnabled(true);
-            activity.getSupportActionBar().setTitle(channelName);
-        }
     }
 
     @Override
@@ -80,5 +75,6 @@ public class ChannelTabFragment extends BaseListInfoFragment<InfoItem, ChannelTa
 
     @Override
     public void setTitle(final String title) {
+        super.setTitle(channelName);
     }
 }
