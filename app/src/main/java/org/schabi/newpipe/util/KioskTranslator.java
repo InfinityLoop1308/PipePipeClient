@@ -72,6 +72,7 @@ public final class KioskTranslator {
             case "Most liked":
                 return R.drawable.ic_thumb_up;
             case "live":
+            case "Recommend Lives":
                 return R.drawable.ic_live_tv;
             case "Featured":
                 return R.drawable.ic_stars;
