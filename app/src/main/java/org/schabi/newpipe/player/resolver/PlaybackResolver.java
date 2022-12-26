@@ -156,7 +156,17 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                             .build()
             );
         }
-
+        if(sourceUrl.contains("dmc.nico")){
+            MediaSource.Factory factory;
+            factory = dataSource.getNicoHlsMediaSourceFactory();
+            return factory.createMediaSource(
+                    new MediaItem.Builder()
+                            .setTag(metadata)
+                            .setUri(Uri.parse(sourceUrl))
+                            .setCustomCacheKey(cacheKey)
+                            .build()
+            );
+        }
         final DeliveryMethod deliveryMethod = stream.getDeliveryMethod();
         switch (deliveryMethod) {
             case PROGRESSIVE_HTTP:
