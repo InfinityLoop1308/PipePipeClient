@@ -72,6 +72,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 public final class PlayerHelper {
     private static final StringBuilder STRING_BUILDER = new StringBuilder();
@@ -272,6 +273,14 @@ public final class PlayerHelper {
         final List<InfoItem> relatedItems = info.getRelatedItems();
         if (Utils.isNullOrEmpty(relatedItems)) {
             return null;
+        }
+        if(info.getServiceId() == 5 &&
+                relatedItems.get(0).getUrl().replace("?p=1","?p=2").equals(relatedItems.get(1).getUrl())){
+            int p = Integer.parseInt(info.getUrl().split(Pattern.quote("?p="))[1].split("&")[0]);
+            if(relatedItems.size() <= p){
+                return null;
+            }
+            return getAutoQueuedSinglePlayQueue((StreamInfoItem) relatedItems.get(p));
         }
 
         if (relatedItems.get(0) instanceof StreamInfoItem
