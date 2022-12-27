@@ -232,6 +232,12 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
                         if (timestampMatch == null) {
                             return url;
                         }
+                        if(streamUrl.contains("https://api.bilibili.com/x/v2/reply")){
+                            return "https://m.bilibili.com/video/av" +
+                                    streamUrl.split("oid=")[1].split("&")[0]
+                                    + url.replace(Objects.requireNonNull(match.group(0)),
+                                    "#timestamp=" + timestampMatch.seconds());
+                        }
                         return streamUrl + url.replace(Objects.requireNonNull(match.group(0)),
                                 "#timestamp=" + timestampMatch.seconds());
                     } catch (final Exception ex) {
