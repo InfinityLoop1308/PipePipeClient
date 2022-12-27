@@ -121,7 +121,7 @@ public final class InternalUrlsHandler {
         }
 
         if (linkType == StreamingService.LinkType.STREAM && seconds != -1) {
-            return playOnPopup(context, matchedUrl, service, seconds, disposables);
+            return playOnMain(context, matchedUrl, service, seconds, disposables);
         } else {
             NavigationHelper.openRouterActivity(context, matchedUrl);
             return true;
@@ -161,6 +161,42 @@ public final class InternalUrlsHandler {
                     final PlayQueue playQueue
                             = new SinglePlayQueue(info, seconds * 1000L);
                     NavigationHelper.playOnPopupPlayer(context, playQueue, false);
+                }, throwable -> {
+                    if (DEBUG) {
+                        Log.e(TAG, "Could not play on popup: " + url, throwable);
+                    }
+                    new AlertDialog.Builder(context)
+                            .setTitle(R.string.player_stream_failure)
+                            .setMessage(
+                                    ErrorPanelHelper.Companion.getExceptionDescription(throwable))
+                            .setPositiveButton(R.string.ok, (v, b) -> { })
+                            .show();
+                }));
+        return true;
+    }
+
+    public static boolean playOnMain(final Context context,
+                                      final String url,
+                                      @NonNull final StreamingService service,
+                                      final int seconds,
+                                      @NonNull final CompositeDisposable disposables) {
+        final LinkHandlerFactory factory = service.getStreamLHFactory();
+        final String cleanUrl;
+
+        try {
+            cleanUrl = factory.getUrl(factory.getId(url));
+        } catch (final ParsingException e) {
+            return false;
+        }
+
+        final Single<StreamInfo> single
+                = ExtractorHelper.getStreamInfo(service.getServiceId(), cleanUrl, false);
+        disposables.add(single.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(info -> {
+                    final PlayQueue playQueue
+                            = new SinglePlayQueue(info, seconds * 1000L);
+                    NavigationHelper.playOnMainPlayer(context, playQueue, false);
                 }, throwable -> {
                     if (DEBUG) {
                         Log.e(TAG, "Could not play on popup: " + url, throwable);
