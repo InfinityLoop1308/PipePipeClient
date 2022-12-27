@@ -156,7 +156,7 @@ public final class ListHelper {
         final Iterator<S> streamListIterator = streamList.iterator();
         while (streamListIterator.hasNext()) {
             final S stream = streamListIterator.next();
-            if (!stream.isUrl() || stream.getDeliveryMethod() == DeliveryMethod.TORRENT) {
+            if (stream.getDeliveryMethod() == DeliveryMethod.TORRENT) {
                 streamListIterator.remove();
             }
         }
