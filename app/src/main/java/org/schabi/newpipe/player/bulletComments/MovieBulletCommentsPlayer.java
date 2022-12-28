@@ -2,8 +2,10 @@ package org.schabi.newpipe.player.bulletComments;
 
 import android.util.Log;
 
+import org.schabi.newpipe.extractor.bulletComments.BulletCommentsExtractor;
 import org.schabi.newpipe.extractor.bulletComments.BulletCommentsInfo;
 import org.schabi.newpipe.extractor.bulletComments.BulletCommentsInfoItem;
+import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.views.BulletCommentsView;
 
@@ -26,6 +28,7 @@ public class MovieBulletCommentsPlayer {
     protected String url;
     protected final BulletCommentsView bulletCommentsView;
     protected List<BulletCommentsInfoItem> commentsInfoItems;
+    private BulletCommentsExtractor extractor;
 
     /**
      * Set data. Call before init().
@@ -51,8 +54,10 @@ public class MovieBulletCommentsPlayer {
         try {
             ExtractorHelper.getBulletCommentsInfo(this.serviceId, this.url, false)
                     .filter(Objects::nonNull)
-                    .map((BulletCommentsInfo commentsInfo) -> commentsInfo
-                            .getRelatedItems()
+                    .map((BulletCommentsInfo commentsInfo) -> {
+                                extractor = commentsInfo.getBulletCommentsExtractor();
+                                return commentsInfo.getRelatedItems();
+                            }
                     )
                     .filter(Objects::nonNull)
                     .map(s -> s.stream().toArray(BulletCommentsInfoItem[]::new))
@@ -85,16 +90,26 @@ public class MovieBulletCommentsPlayer {
         if (isLoading) {
             return;
         }
+        BulletCommentsInfoItem[] nextCommentsInfoItems;
         //Log.d(TAG, "Showing comments between "+ lastDuration + " and " + drawUntilPosition);
-        final BulletCommentsInfoItem[] nextCommentsInfoItems = commentsInfoItems
-                .stream()
-                .filter(item -> {
-                            final Duration d = item.getDuration();
-                            return d.compareTo(lastPosition) >= 0
-                                    && d.compareTo(drawUntilPosition) < 0;
-                        }
-                )
-                .toArray(BulletCommentsInfoItem[]::new);
+        if(extractor.isLive()){
+            try {
+                nextCommentsInfoItems = extractor.getLiveMessages()
+                        .stream().toArray(BulletCommentsInfoItem[]::new);
+            } catch (ParsingException e) {
+                throw new RuntimeException(e);
+            }
+        }else {
+            nextCommentsInfoItems = commentsInfoItems
+                    .stream()
+                    .filter(item -> {
+                                final Duration d = item.getDuration();
+                                return d.compareTo(lastPosition) >= 0
+                                        && d.compareTo(drawUntilPosition) < 0;
+                            }
+                    )
+                    .toArray(BulletCommentsInfoItem[]::new);
+        }
         bulletCommentsView.drawComments(nextCommentsInfoItems);
         this.lastPosition = drawUntilPosition;
     }
@@ -121,6 +136,12 @@ public class MovieBulletCommentsPlayer {
      */
     public void clear() {
         bulletCommentsView.clearComments();
+    }
+
+    public void disconnect(){
+        if(extractor.isLive()){
+            extractor.disconnect();
+        }
     }
 
     /**

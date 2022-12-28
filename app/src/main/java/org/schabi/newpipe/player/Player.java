@@ -947,6 +947,9 @@ public final class Player implements
             playQueueAdapter.unsetSelectedListener();
             playQueueAdapter.dispose();
         }
+        if(bcPlayer != null){
+            bcPlayer.disconnect();
+        }
     }
 
     public void destroy() {
@@ -2174,6 +2177,9 @@ public final class Player implements
                     .getServiceInfo()
                     .getMediaCapabilities()
                     .contains(StreamingService.ServiceInfo.MediaCapability.BULLET_COMMENTS)) {
+                if(bcPlayer!= null){
+                    bcPlayer.disconnect();
+                }
                 clearBCPlayer();
                 bcPlayer = new MovieBulletCommentsPlayer(binding.bulletCommentsView);
                 bcPlayer.setInitialData(currentMetadata.getServiceId(),
