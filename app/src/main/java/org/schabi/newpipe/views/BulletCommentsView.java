@@ -98,6 +98,7 @@ public final class BulletCommentsView extends ConstraintLayout {
      * Number of comment rows.
      */
     private final int commentsRowsCount = 11;
+    long[] rows = new long[commentsRowsCount];
     private final double commentRelativeTextSize = 1 / 13.5;
 
     /**
@@ -166,26 +167,65 @@ public final class BulletCommentsView extends ConstraintLayout {
             textView.setMaxLines(1);
             textView.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD));
             final double commentSpace = 1 / 4.4 * height;
-            if (item.getPosition() == BulletCommentsInfoItem.Position.REGULAR
-            | true) {
+            if (true) {
                 //Setting initial position by addView() won't work properly.
                 //setTop(), ... etc. won't work.
-                final int row = random.nextInt(commentsRowsCount);
+                int row = random.nextInt(commentsRowsCount);
+                if(item.getPosition().equals(BulletCommentsInfoItem.Position.TOP)){
+                    for(int i = 0; i < commentsRowsCount ;i++){
+                        long current = item.getDuration().getSeconds()*1000 + item.getDuration().getNano()/1000000;
+                        if(current - rows[i] >= commentsDuration * 1000){
+                            rows[i] = current;
+                            row = i;
+                            break;
+                        }
+                        if(i == commentsRowsCount - 1){
+                            row = -1;
+                        }
+                    }
+                } else if (item.getPosition().equals(BulletCommentsInfoItem.Position.BOTTOM)) {
+                    for(int i = commentsRowsCount - 1; i >= 0 ;i--){
+                        long current = item.getDuration().getSeconds()*1000 + item.getDuration().getNano()/1000000;
+                        if(current - rows[i] >= commentsDuration * 1000){
+                            rows[i] = current;
+                            row = i;
+                            break;
+                        }
+                        if(i == commentsRowsCount - 1){
+                            row = -1;
+                        }
+                    }
+                }
+                if(row == -1){
+                    continue;
+                }
                 textView.setX(width);
                 //To get width with getWidth(), it should be called inside post().
                 //or it returns 0.
+                int finalRow = row;
                 textView.post(() -> {
                     //Create ObjectAnimator.
                     final int textWidth = textView.getWidth();
                     final int textHeight = textView.getHeight();
-                    final ObjectAnimator animator = ObjectAnimator.ofFloat(
-                            textView,
-                            View.TRANSLATION_X,
-                            width,
-                            -textWidth
-                    );
+                    ObjectAnimator animator;
+                    if(!item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)){
+                        animator = ObjectAnimator.ofFloat(
+                                textView,
+                                View.TRANSLATION_X,
+                                (float) ((width - textWidth)/2.0),
+                                (float) ((width - textWidth)/2.0)
+                        );
+                    } else {
+                        animator = ObjectAnimator.ofFloat(
+                                textView,
+                                View.TRANSLATION_X,
+                                width,
+                                -textWidth
+                        );
+                    }
 
-                    textView.setY((float) (height * (0.5 + row) / commentsRowsCount - textHeight / 2));
+                    textView.setY((float) (height * (0.5 + finalRow) / commentsRowsCount - textHeight / 2));
+
                     final AnimatedTextView animatedTextView = new AnimatedTextView(
                             textView, animator);
                     animatedTextViews.add(animatedTextView);
