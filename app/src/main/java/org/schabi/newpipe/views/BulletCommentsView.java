@@ -16,6 +16,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.google.android.exoplayer2.C;
+
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.BulletCommentsPlayerBinding;
 import org.schabi.newpipe.extractor.bulletComments.BulletCommentsInfoItem;
@@ -100,8 +102,9 @@ public final class BulletCommentsView extends ConstraintLayout {
      * Number of comment rows.
      */
     private final int commentsRowsCount = 11;
-    long[] rows = new long[commentsRowsCount];
-    long[] rowsRegular = new long[commentsRowsCount];
+    private int lastCalculatedCommentsRowsCount = 11;
+    ArrayList<Long> rows = new ArrayList<>();
+    ArrayList<Long> rowsRegular = new ArrayList<>();
     private final double commentRelativeTextSize = 1 / 13.5;
 
     /**
@@ -160,6 +163,18 @@ public final class BulletCommentsView extends ConstraintLayout {
         final Context context = binding.bulletCommentsContainer.getContext();
         final int height = getHeight();
         final int width = getWidth();
+        final int calculatedCommentRowsCount = height / Math.min(height, width) * commentsRowsCount;
+        if(calculatedCommentRowsCount != lastCalculatedCommentsRowsCount){
+            lastCalculatedCommentsRowsCount = calculatedCommentRowsCount;
+            rows.clear();
+            rowsRegular.clear();
+        }
+        while(rowsRegular.size() < calculatedCommentRowsCount){
+            rowsRegular.add(0L);
+        }
+        while(rows.size() < calculatedCommentRowsCount){
+            rows.add(0L);
+        }
         for (final BulletCommentsInfoItem item : items) {
             //Create TextView.
             final TextView textView = new TextView(context);
@@ -178,40 +193,40 @@ public final class BulletCommentsView extends ConstraintLayout {
                 int comparedDuration = (int) (commentsDuration * 1000);
                 long current = item.getDuration().getSeconds()*1000 + item.getDuration().getNano()/1000000;
                 if(item.getPosition().equals(BulletCommentsInfoItem.Position.TOP)){
-                    for(int i = 0; i < commentsRowsCount ;i++){
-                        if(current - rows[i] >= comparedDuration){
-                            rows[i] = current;
+                    for(int i = 0; i < calculatedCommentRowsCount ;i++){
+                        if(current - rows.get(i) >= comparedDuration){
+                            rows.set(i, current);
                             row = i;
                             break;
                         }
                     }
-                    if(current < Arrays.stream(rows).min().getAsLong()){
-                        rows = new long[commentsRowsCount];
+                    if(current < Collections.min(rows)){
+                        rows.clear();
                         row = 0;
                     }
                 } else if (item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)) {
-                    for(int i = 0; i < commentsRowsCount ;i++){
-                        if(current - rowsRegular[i] >= comparedDuration){
-                            rowsRegular[i] = current;
+                    for(int i = 0; i < calculatedCommentRowsCount ;i++){
+                        if(current - rowsRegular.get(i) >= comparedDuration){
+                            rowsRegular.set(i, current);
                             row = i;
                             break;
                         }
                     }
-                    if(current < Arrays.stream(rowsRegular).min().getAsLong()){
-                        rowsRegular = new long[commentsRowsCount];
+                    if(current < Collections.min(rowsRegular)){
+                        rowsRegular.clear();
                         row = 0;
                     }
                 } else {
-                    for(int i = commentsRowsCount - 1; i >= 0 ;i--){
-                        if(current - rows[i] >= comparedDuration){
-                            rows[i] = current;
+                    for(int i = calculatedCommentRowsCount - 1; i >= 0 ;i--){
+                        if(current - rows.get(i) >= comparedDuration){
+                            rows.set(i, current);
                             row = i;
                             break;
                         }
                     }
-                    if(current < Arrays.stream(rows).min().getAsLong()){
-                        rows = new long[commentsRowsCount];
-                        row = commentsRowsCount - 1;
+                    if(current < Collections.min(rows)){
+                        rows.clear();
+                        row = calculatedCommentRowsCount - 1;
                     }
                 }
                 if(row == -1){
@@ -225,7 +240,7 @@ public final class BulletCommentsView extends ConstraintLayout {
                     //Create ObjectAnimator.
                     final int textWidth = textView.getWidth();
                     final int textHeight = textView.getHeight();
-                    ObjectAnimator animator;
+                            ObjectAnimator animator;
                     if(!item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)){
                         animator = ObjectAnimator.ofFloat(
                                 textView,
@@ -242,7 +257,7 @@ public final class BulletCommentsView extends ConstraintLayout {
                         );
                     }
 
-                    textView.setY((float) (height * (0.5 + finalRow) / commentsRowsCount - textHeight / 2));
+                    textView.setY((float) (height * (0.5 + finalRow) / calculatedCommentRowsCount - textHeight / 2));
 
                     final AnimatedTextView animatedTextView = new AnimatedTextView(
                             textView, animator);
