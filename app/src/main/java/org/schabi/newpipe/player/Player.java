@@ -2801,8 +2801,6 @@ public final class Player implements
                 // switching to the buffering state
                 onBuffering();
                 break;
-            case ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE:
-            case ERROR_CODE_IO_BAD_HTTP_STATUS:
             case ERROR_CODE_IO_FILE_NOT_FOUND:
             case ERROR_CODE_IO_NO_PERMISSION:
             case ERROR_CODE_IO_CLEARTEXT_NOT_PERMITTED:
@@ -2816,6 +2814,8 @@ public final class Player implements
                     playQueue.error();
                 }
                 break;
+            case ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE:
+            case ERROR_CODE_IO_BAD_HTTP_STATUS:
             case ERROR_CODE_TIMEOUT:
             case ERROR_CODE_IO_UNSPECIFIED:
             case ERROR_CODE_IO_NETWORK_CONNECTION_FAILED:
@@ -2824,6 +2824,9 @@ public final class Player implements
                 // Reload playback on unexpected errors:
                 setRecovery();
                 reloadPlayQueueManager();
+                isCatchableException = true;
+                simpleExoPlayer.seekToDefaultPosition();
+                simpleExoPlayer.prepare();
                 break;
             default:
                 // API, remote and renderer errors belong here:
