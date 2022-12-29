@@ -618,6 +618,9 @@ public final class Player implements
                             v.getPaddingTop(),
                             v.getPaddingRight(),
                             v.getPaddingBottom());
+                    if(v.getPaddingLeft() > 0){
+                        binding.playButtons.setPadding(-v.getPaddingLeft(), -v.getPaddingTop(),0,0);
+                    }
 
                     // If we added padding to the fast seek overlay, too, it would not go under the
                     // system ui. Instead we apply negative margins equal to the window insets of
