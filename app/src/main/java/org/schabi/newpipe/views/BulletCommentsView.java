@@ -160,6 +160,7 @@ public final class BulletCommentsView extends ConstraintLayout {
         for (final BulletCommentsInfoItem item : items) {
             //Create TextView.
             final TextView textView = new TextView(context);
+            textView.setGravity(View.TEXT_ALIGNMENT_CENTER);
             textView.setTextColor(item.getArgbColor());
             textView.setText(item.getCommentText());
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
@@ -170,29 +171,27 @@ public final class BulletCommentsView extends ConstraintLayout {
             if (true) {
                 //Setting initial position by addView() won't work properly.
                 //setTop(), ... etc. won't work.
-                int row = random.nextInt(commentsRowsCount);
-                if(item.getPosition().equals(BulletCommentsInfoItem.Position.TOP)){
+                int row = -1;
+                int comparedDuration = (int) (commentsDuration * 1000);
+                if(!item.getPosition().equals(BulletCommentsInfoItem.Position.BOTTOM)){
+                    if(item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)){
+                        comparedDuration = comparedDuration/ 8;
+                    }
                     for(int i = 0; i < commentsRowsCount ;i++){
                         long current = item.getDuration().getSeconds()*1000 + item.getDuration().getNano()/1000000;
-                        if(current - rows[i] >= commentsDuration * 1000){
+                        if(current - rows[i] >= comparedDuration){
                             rows[i] = current;
                             row = i;
                             break;
-                        }
-                        if(i == commentsRowsCount - 1){
-                            row = -1;
                         }
                     }
-                } else if (item.getPosition().equals(BulletCommentsInfoItem.Position.BOTTOM)) {
+                } else {
                     for(int i = commentsRowsCount - 1; i >= 0 ;i--){
                         long current = item.getDuration().getSeconds()*1000 + item.getDuration().getNano()/1000000;
-                        if(current - rows[i] >= commentsDuration * 1000){
+                        if(current - rows[i] >= comparedDuration){
                             rows[i] = current;
                             row = i;
                             break;
-                        }
-                        if(i == commentsRowsCount - 1){
-                            row = -1;
                         }
                     }
                 }
