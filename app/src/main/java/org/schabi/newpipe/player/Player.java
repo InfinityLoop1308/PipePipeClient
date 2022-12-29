@@ -3846,6 +3846,7 @@ public final class Player implements
                 .map(TracksInfo.TrackGroupInfo::getTrackGroup)
                 .filter(textTrack -> textTrack.length > 0)
                 .map(textTrack -> textTrack.getFormat(0).language)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         // Find selected text track
