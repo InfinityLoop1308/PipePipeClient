@@ -99,6 +99,7 @@ public final class BulletCommentsView extends ConstraintLayout {
      */
     private final int commentsRowsCount = 11;
     long[] rows = new long[commentsRowsCount];
+    long[] rowsRegular = new long[commentsRowsCount];
     private final double commentRelativeTextSize = 1 / 13.5;
 
     /**
@@ -173,14 +174,20 @@ public final class BulletCommentsView extends ConstraintLayout {
                 //setTop(), ... etc. won't work.
                 int row = -1;
                 int comparedDuration = (int) (commentsDuration * 1000);
-                if(!item.getPosition().equals(BulletCommentsInfoItem.Position.BOTTOM)){
-                    if(item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)){
-                        comparedDuration = comparedDuration/ 8;
-                    }
+                if(item.getPosition().equals(BulletCommentsInfoItem.Position.TOP)){
                     for(int i = 0; i < commentsRowsCount ;i++){
                         long current = item.getDuration().getSeconds()*1000 + item.getDuration().getNano()/1000000;
                         if(current - rows[i] >= comparedDuration){
                             rows[i] = current;
+                            row = i;
+                            break;
+                        }
+                    }
+                } else if (item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)) {
+                    for(int i = 0; i < commentsRowsCount ;i++){
+                        long current = item.getDuration().getSeconds()*1000 + item.getDuration().getNano()/1000000;
+                        if(current - rowsRegular[i] >= comparedDuration){
+                            rowsRegular[i] = current;
                             row = i;
                             break;
                         }
