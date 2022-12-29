@@ -21,6 +21,8 @@ import org.schabi.newpipe.databinding.BulletCommentsPlayerBinding;
 import org.schabi.newpipe.extractor.bulletComments.BulletCommentsInfoItem;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -174,32 +176,42 @@ public final class BulletCommentsView extends ConstraintLayout {
                 //setTop(), ... etc. won't work.
                 int row = -1;
                 int comparedDuration = (int) (commentsDuration * 1000);
+                long current = item.getDuration().getSeconds()*1000 + item.getDuration().getNano()/1000000;
                 if(item.getPosition().equals(BulletCommentsInfoItem.Position.TOP)){
                     for(int i = 0; i < commentsRowsCount ;i++){
-                        long current = item.getDuration().getSeconds()*1000 + item.getDuration().getNano()/1000000;
                         if(current - rows[i] >= comparedDuration){
                             rows[i] = current;
                             row = i;
                             break;
                         }
                     }
+                    if(current < Arrays.stream(rows).min().getAsLong()){
+                        rows = new long[commentsRowsCount];
+                        row = 0;
+                    }
                 } else if (item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)) {
                     for(int i = 0; i < commentsRowsCount ;i++){
-                        long current = item.getDuration().getSeconds()*1000 + item.getDuration().getNano()/1000000;
                         if(current - rowsRegular[i] >= comparedDuration){
                             rowsRegular[i] = current;
                             row = i;
                             break;
                         }
                     }
+                    if(current < Arrays.stream(rowsRegular).min().getAsLong()){
+                        rowsRegular = new long[commentsRowsCount];
+                        row = 0;
+                    }
                 } else {
                     for(int i = commentsRowsCount - 1; i >= 0 ;i--){
-                        long current = item.getDuration().getSeconds()*1000 + item.getDuration().getNano()/1000000;
                         if(current - rows[i] >= comparedDuration){
                             rows[i] = current;
                             row = i;
                             break;
                         }
+                    }
+                    if(current < Arrays.stream(rows).min().getAsLong()){
+                        rows = new long[commentsRowsCount];
+                        row = commentsRowsCount - 1;
                     }
                 }
                 if(row == -1){
