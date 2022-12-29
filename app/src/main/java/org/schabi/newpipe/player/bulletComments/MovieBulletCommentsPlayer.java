@@ -92,7 +92,7 @@ public class MovieBulletCommentsPlayer {
         }
         BulletCommentsInfoItem[] nextCommentsInfoItems;
         //Log.d(TAG, "Showing comments between "+ lastDuration + " and " + drawUntilPosition);
-        if(extractor.isLive()){
+        if(extractor!= null && extractor.isLive()){
             try {
                 nextCommentsInfoItems = extractor.getLiveMessages()
                         .stream().toArray(BulletCommentsInfoItem[]::new);
@@ -139,7 +139,7 @@ public class MovieBulletCommentsPlayer {
     }
 
     public void disconnect(){
-        if(extractor.isLive()){
+        if(extractor!= null && extractor.isLive()){
             extractor.disconnect();
         }
     }
