@@ -2234,6 +2234,7 @@ public final class Player implements
             return;
         }
         bcPlayer.complete(Objects.requireNonNull(getDurationInDuration()));
+        clearBCPlayer();
         Log.d(TAG, "BulletCommentsView completed.");
     }
 
