@@ -82,6 +82,19 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                                             @C.ContentType final int type,
                                             @NonNull final MediaItemTag metadata) {
         final MediaSource.Factory factory;
+        if(sourceUrl.contains("live.nicovideo.jp/watch")){
+            factory = dataSource.getNicoLiveHlsMediaSourceFactory();
+            return factory.createMediaSource(
+                    new MediaItem.Builder()
+                            .setTag(metadata)
+                            .setUri(Uri.parse(sourceUrl))
+                            .setLiveConfiguration(
+                                    new MediaItem.LiveConfiguration.Builder()
+                                            .setTargetOffsetMs(LIVE_STREAM_EDGE_GAP_MILLIS)
+                                            .build())
+                            .build()
+            );
+        }
         switch (type) {
             case C.TYPE_SS:
                 factory = dataSource.getLiveSsMediaSourceFactory();
@@ -152,17 +165,6 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                     new MediaItem.Builder()
                             .setTag(metadata)
                             .setUri(uri)
-                            .setCustomCacheKey(cacheKey)
-                            .build()
-            );
-        }
-        if(sourceUrl.contains("dmc.nico")){
-            MediaSource.Factory factory;
-            factory = dataSource.getNicoHlsMediaSourceFactory();
-            return factory.createMediaSource(
-                    new MediaItem.Builder()
-                            .setTag(metadata)
-                            .setUri(Uri.parse(sourceUrl))
                             .setCustomCacheKey(cacheKey)
                             .build()
             );

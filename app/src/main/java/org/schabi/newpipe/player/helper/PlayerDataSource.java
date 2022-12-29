@@ -29,37 +29,27 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.schabi.newpipe.DownloaderImpl;
 import org.schabi.newpipe.extractor.downloader.Response;
+import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
+import org.schabi.newpipe.extractor.services.niconico.NicoWebSocketClient;
 import org.schabi.newpipe.extractor.services.niconico.NiconicoService;
 import org.schabi.newpipe.extractor.services.niconico.extractors.NiconicoDMCPayloadBuilder;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.source.SingleSampleMediaSource;
-import com.google.android.exoplayer2.source.dash.DashMediaSource;
-import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.source.hls.playlist.DefaultHlsPlaylistTracker;
+import java.util.concurrent.TimeUnit;
+
 import com.google.android.exoplayer2.source.hls.playlist.HlsPlaylistParserFactory;
-import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
-import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSource;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
-import com.google.android.exoplayer2.upstream.TransferListener;
 
 import org.schabi.newpipe.extractor.services.youtube.dashmanifestcreators.YoutubeOtfDashManifestCreator;
 import org.schabi.newpipe.extractor.services.youtube.dashmanifestcreators.YoutubePostLiveStreamDvrDashManifestCreator;
 import org.schabi.newpipe.extractor.services.youtube.dashmanifestcreators.YoutubeProgressiveDashManifestCreator;
 import org.schabi.newpipe.player.datasource.YoutubeHttpDataSource;
-
-import java.util.Map;
 
 public class PlayerDataSource {
 
@@ -138,6 +128,27 @@ public class PlayerDataSource {
         return null;
     }
 
+    public String getNicoLiveUrl(String url) throws ParsingException, IOException, ReCaptchaException, JsonParserException {
+        DownloaderImpl downloader = DownloaderImpl.getInstance();
+        Document liveResponse = Jsoup.parse(downloader.get(url).responseBody());
+        String result = JsonParser.object().from(liveResponse
+                        .select("script#embedded-data").attr("data-props"))
+                .getObject("site").getObject("relive").getString("webSocketUrl");
+        NicoWebSocketClient nicoWebSocketClient = new NicoWebSocketClient(URI.create(result), NiconicoService.getWebSocketHeaders());
+        NicoWebSocketClient.WrappedWebSocketClient webSocketClient = nicoWebSocketClient.getWebSocketClient();
+        webSocketClient.connect();
+        long startTime = System.nanoTime();
+        do {
+            String liveUrl = webSocketClient.getUrl();
+            if (liveUrl != null) {
+                webSocketClient.close();
+                return liveUrl;
+            }
+        } while (TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime) <= 10);
+        webSocketClient.close();
+        throw new RuntimeException("Failed to get live url");
+    }
+
     public MediaSource.Factory getNicoDataSource() {
         DataSource.Factory newFactory = new ResolvingDataSource.Factory(nicoCachelessDataSourceFactory, dataSpec -> {
             return dataSpec.withUri(Uri.parse(getNicoUrl(String.valueOf(dataSpec.uri))));
@@ -156,6 +167,30 @@ public class PlayerDataSource {
             ));
         });
         return new HlsMediaSource.Factory(newFactory);
+    }
+
+    public HlsMediaSource.Factory getNicoLiveHlsMediaSourceFactory() {
+        DataSource.Factory newFactory = new ResolvingDataSource.Factory(nicoCachelessDataSourceFactory, dataSpec -> {
+            try {
+                if(dataSpec.uri.toString().contains("live.nicovideo.jp/watch")){
+                    return dataSpec.withUri(Uri.parse(getNicoLiveUrl(String.valueOf(dataSpec.uri))));
+                }
+                return dataSpec;
+            } catch (ParsingException e) {
+                throw new RuntimeException(e);
+            } catch (ReCaptchaException e) {
+                throw new RuntimeException(e);
+            } catch (JsonParserException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return new HlsMediaSource.Factory(newFactory)
+                .setAllowChunklessPreparation(true)
+                .setPlaylistTrackerFactory((dataSourceFactory, loadErrorHandlingPolicy,
+                                            playlistParserFactory) ->
+                        new DefaultHlsPlaylistTracker(dataSourceFactory, loadErrorHandlingPolicy,
+                                playlistParserFactory,
+                                PLAYLIST_STUCK_TARGET_DURATION_COEFFICIENT)).setLoadErrorHandlingPolicy(new DefaultLoadErrorHandlingPolicy());
     }
     public SsMediaSource.Factory getLiveSsMediaSourceFactory() {
         return getSSMediaSourceFactory().setLivePresentationDelayMs(LIVE_STREAM_EDGE_GAP_MILLIS);
