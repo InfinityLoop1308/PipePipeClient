@@ -2268,6 +2268,9 @@ public final class Player implements
     private void onSwitchBCPlayerVisibilityClicked() {
         isBCPlayerVisible = !isBCPlayerVisible;
         prefs.edit().putBoolean("isBCPlayerVisible", isBCPlayerVisible).apply();
+        binding.switchCommentsVisibility.setImageDrawable(isBCPlayerVisible?AppCompatResources.getDrawable(context,
+                R.drawable.ic_bullet_comment_enabled):AppCompatResources.getDrawable(context,
+                R.drawable.ic_bullet_comment_disabled));
         Log.i(TAG, "BulletCommentPlayer visibility changed to " + isBCPlayerVisible);
         if (isBCPlayerVisible) {
             startBCPlayer();

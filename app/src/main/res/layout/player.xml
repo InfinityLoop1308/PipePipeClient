@@ -294,7 +294,7 @@
                         android:focusable="true"
                         android:padding="@dimen/player_main_buttons_padding"
                         android:scaleType="fitXY"
-                        app:srcCompat="@drawable/ic_comment"
+                        app:srcCompat="@drawable/ic_bullet_comment_enabled"
                         app:tint="@color/white"
                         tools:ignore="RtlHardcoded" />
 
