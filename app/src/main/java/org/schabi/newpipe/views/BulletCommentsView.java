@@ -167,7 +167,7 @@ public final class BulletCommentsView extends ConstraintLayout {
             textView.setTextColor(item.getArgbColor());
             textView.setText(item.getCommentText());
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                    (float) (height * commentRelativeTextSize * item.getRelativeFontSize()));
+                    (float) (Math.min(height, width) * commentRelativeTextSize * item.getRelativeFontSize()));
             textView.setMaxLines(1);
             textView.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD));
             final double commentSpace = 1 / 4.4 * height;
