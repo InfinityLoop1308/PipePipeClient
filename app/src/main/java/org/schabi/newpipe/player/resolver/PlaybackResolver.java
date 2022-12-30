@@ -27,6 +27,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.schabi.newpipe.DownloaderImpl;
 import org.schabi.newpipe.extractor.ServiceList;
+import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.downloader.Response;
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
 import org.schabi.newpipe.extractor.services.niconico.NiconicoService;
@@ -127,48 +128,15 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                                         @NonNull final String cacheKey,
                                         @NonNull final MediaItemTag metadata)
             throws IOException {
-        if (streamInfo.getService() == ServiceList.YouTube) {
+        StreamingService service = streamInfo.getService();
+        if (ServiceList.YouTube.equals(service)) {
             return createYoutubeMediaSource(stream, streamInfo, dataSource, cacheKey, metadata);
+        } else if (ServiceList.NicoNico.equals(service)) {
+            return createNicoNicoMediaSource(stream, streamInfo, dataSource, cacheKey, metadata);
+        } else if (ServiceList.BiliBili.equals(service)) {
+            return createBiliBiliMediaSource(stream, streamInfo, dataSource, cacheKey, metadata);
         }
-        String sourceUrl = stream.getContent();
-        if(sourceUrl.contains("nicovideo")){
-            DownloaderImpl downloader = DownloaderImpl.getInstance();
-            boolean flag = false;
-            Response response;
-            try
-            {
-                response = downloader.get(sourceUrl, null, NiconicoService.LOCALE);
-                final Document page = Jsoup.parse(response.responseBody());
-                if( page.getElementById("js-initial-watch-data") == null){
-                    throw new Exception("Needs login");
-                }
-                JsonObject watch = JsonParser.object().from(
-                        page.getElementById("js-initial-watch-data").attr("data-api-data"));
-                final JsonObject session
-                        = watch.getObject("media").getObject("delivery").getObject("movie");
-                flag = (session.getObject("session").getArray("protocols").getString(0).equals("hls"));
-            } catch (JsonParserException | ReCaptchaException | IOException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                throw new RuntimeException("Needs login");
-            }
-            MediaSource.Factory factory;
-            Uri uri = Uri.parse(sourceUrl);
-            if(flag){
-                factory = dataSource.getNicoHlsMediaSourceFactory();
-                uri = Uri.parse(dataSource.getNicoUrl(String.valueOf(uri)));
-            }
-            else{
-                factory = dataSource.getNicoDataSource();
-            }
-            return factory.createMediaSource(
-                    new MediaItem.Builder()
-                            .setTag(metadata)
-                            .setUri(uri)
-                            .setCustomCacheKey(cacheKey)
-                            .build()
-            );
-        }
+
         final DeliveryMethod deliveryMethod = stream.getDeliveryMethod();
         switch (deliveryMethod) {
             case PROGRESSIVE_HTTP:
@@ -489,6 +457,65 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                 .createMediaSource(new MediaItem.Builder()
                         .setTag(metadata)
                         .setUri(Uri.parse(stream.getContent()))
+                        .setCustomCacheKey(cacheKey)
+                        .build());
+    }
+    private static <T extends Stream> MediaSource createNicoNicoMediaSource(
+            final T stream,
+            final StreamInfo streamInfo,
+            final PlayerDataSource dataSource,
+            final String cacheKey,
+            final MediaItemTag metadata) throws IOException{
+        String sourceUrl = stream.getContent();
+        DownloaderImpl downloader = DownloaderImpl.getInstance();
+        boolean flag = false;
+        Response response;
+        try
+        {
+            response = downloader.get(sourceUrl, null, NiconicoService.LOCALE);
+            final Document page = Jsoup.parse(response.responseBody());
+            if( page.getElementById("js-initial-watch-data") == null){
+                throw new Exception("Needs login");
+            }
+            JsonObject watch = JsonParser.object().from(
+                    page.getElementById("js-initial-watch-data").attr("data-api-data"));
+            final JsonObject session
+                    = watch.getObject("media").getObject("delivery").getObject("movie");
+            flag = (session.getObject("session").getArray("protocols").getString(0).equals("hls"));
+        } catch (JsonParserException | ReCaptchaException | IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            throw new RuntimeException("Needs login");
+        }
+        MediaSource.Factory factory;
+        Uri uri = Uri.parse(sourceUrl);
+        if(flag){
+            factory = dataSource.getNicoHlsMediaSourceFactory();
+            uri = Uri.parse(dataSource.getNicoVideoUrl(String.valueOf(uri)));
+        }
+        else{
+            factory = dataSource.getNicoMediaSourceFactory();
+        }
+        return factory.createMediaSource(
+                new MediaItem.Builder()
+                        .setTag(metadata)
+                        .setUri(uri)
+                        .setCustomCacheKey(cacheKey)
+                        .build()
+        );
+    }
+
+    private static <T extends Stream> MediaSource createBiliBiliMediaSource(
+            final T stream,
+            final StreamInfo streamInfo,
+            final PlayerDataSource dataSource,
+            final String cacheKey,
+            final MediaItemTag metadata) throws IOException{
+        final String url = stream.getContent();
+        return dataSource.getBiliMediaSourceFactory().createMediaSource(
+                new MediaItem.Builder()
+                        .setTag(metadata)
+                        .setUri(Uri.parse(url))
                         .setCustomCacheKey(cacheKey)
                         .build());
     }
