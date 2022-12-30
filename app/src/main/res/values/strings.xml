@@ -243,7 +243,7 @@
     <string name="restore_defaults_confirmation">Do you want to restore defaults?</string>
     <string name="permission_display_over_apps">Give permission to display over other apps</string>
     <!-- error activity -->
-    <string name="error_report_notification_title">NewPipe encountered an error, tap to report</string>
+    <string name="error_report_notification_title">AnimePipe encountered an error, tap to report</string>
     <string name="error_report_notification_toast">An error occurred, see the notification</string>
     <string name="sorry_string">Sorry, that should not have happened.</string>
     <string name="error_report_button_text">Report this error via e-mail</string>
@@ -322,7 +322,7 @@
     <string name="msg_name">Filename</string>
     <string name="msg_threads">Threads</string>
     <string name="msg_error">Error</string>
-    <string name="msg_running">NewPipe Downloading</string>
+    <string name="msg_running">AnimePipe Downloading</string>
     <string name="msg_running_detail">Tap for details</string>
     <string name="msg_calculating_hash">Calculating hash</string>
     <string name="msg_wait">Please wait…</string>
@@ -346,7 +346,7 @@
     <string name="charset_most_special_characters">Most special characters</string>
     <string name="toast_no_player">No app installed to play this file</string>
     <!-- About -->
-    <string name="title_activity_about">About NewPipe</string>
+    <string name="title_activity_about">About AnimePipe</string>
     <string name="title_licenses">Third-party Licenses</string>
     <string name="copyright">© %1$s by %2$s under %3$s</string>
     <string name="tab_about">About</string>
@@ -505,7 +505,7 @@
     <string name="percent">Percent</string>
     <string name="semitone">Semitone</string>
     <!-- GDPR dialog -->
-    <string name="start_accept_privacy_policy">In order to comply with the European General Data Protection Regulation (GDPR), we hereby draw your attention to NewPipe\'s privacy policy. Please read it carefully.
+    <string name="start_accept_privacy_policy">In order to comply with the European General Data Protection Regulation (GDPR), we hereby draw your attention to AnimePipe\'s privacy policy. Please read it carefully.
 \nYou must accept it to send us the bug report.</string>
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
@@ -554,7 +554,7 @@
     <string name="low_quality_smaller">Low quality (smaller)</string>
     <string name="dont_show">Don\'t show</string>
     <!-- App update notification -->
-    <string name="app_update_notification_content_title">NewPipe update is available!</string>
+    <string name="app_update_notification_content_title">AnimePipe update is available!</string>
     <string name="app_update_notification_content_text">Tap to download</string>
     <string name="missions_header_finished">Finished</string>
     <string name="missions_header_pending">Pending</string>
@@ -590,7 +590,7 @@
     <string name="error_http_unsupported_range">The server does not accept multi-threaded downloads, retry with @string/msg_threads = 1</string>
     <string name="error_http_not_found">Not found</string>
     <string name="error_postprocessing_failed">Post-processing failed</string>
-    <string name="error_postprocessing_stopped">NewPipe was closed while working on the file</string>
+    <string name="error_postprocessing_stopped">AnimePipe was closed while working on the file</string>
     <string name="error_insufficient_storage">No space left on device</string>
     <string name="error_progress_lost">Progress lost, because the file was deleted</string>
     <string name="error_timeout">Connection timeout</string>
@@ -688,7 +688,7 @@
 \nSo the choice boils down to what you prefer: speed or precise information.</string>
     <string name="feed_toggle_show_played_items">Show watched items</string>
     <string name="feed_toggle_hide_played_items">Hide watched items</string>
-    <string name="content_not_supported">This content is not yet supported by NewPipe.\n\nIt will hopefully be supported in a future version.</string>
+    <string name="content_not_supported">This content is not yet supported by AnimePipe.\n\nIt will hopefully be supported in a future version.</string>
     <string name="detail_sub_channel_thumbnail_view_description">Channel\'s avatar thumbnail</string>
     <string name="channel_created_by">Created by %s</string>
     <string name="video_detail_by">By %s</string>
@@ -703,12 +703,12 @@
     <string name="no_appropriate_file_manager_message_android_10">No appropriate file manager was found for this action.
 \nPlease install a Storage Access Framework compatible file manager</string>
     <string name="georestricted_content">This content is not available in your country.</string>
-    <string name="soundcloud_go_plus_content">This is a SoundCloud Go+ track, at least in your country, so it cannot be streamed or downloaded by NewPipe.</string>
-    <string name="private_content">This content is private, so it cannot be streamed or downloaded by NewPipe.</string>
-    <string name="youtube_music_premium_content">This video is available only to YouTube Music Premium members, so it cannot be streamed or downloaded by NewPipe.</string>
+    <string name="soundcloud_go_plus_content">This is a SoundCloud Go+ track, at least in your country, so it cannot be streamed or downloaded by AnimePipe.</string>
+    <string name="private_content">This content is private, so it cannot be streamed or downloaded by AnimePipe.</string>
+    <string name="youtube_music_premium_content">This video is available only to YouTube Music Premium members, so it cannot be streamed or downloaded by AnimePipe.</string>
     <string name="account_terminated">Account terminated</string>
     <string name="service_provides_reason">%s provides this reason:</string>
-    <string name="paid_content">This content is only available to users who have paid, so it cannot be streamed or downloaded by NewPipe.</string>
+    <string name="paid_content">This content is only available to users who have paid, so it cannot be streamed or downloaded by AnimePipe.</string>
     <string name="featured">Featured</string>
     <string name="radio">Radio</string>
     <string name="auto_device_theme_title">Automatic (device theme)</string>
