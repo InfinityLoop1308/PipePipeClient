@@ -139,7 +139,7 @@ public class PlayerDataSource {
         webSocketClient.connect();
         long startTime = System.nanoTime();
         do {
-            String liveUrl = webSocketClient.getUrl();
+            String liveUrl = nicoWebSocketClient.getUrl();
             if (liveUrl != null) {
                 webSocketClient.close();
                 return liveUrl;
