@@ -622,11 +622,15 @@ public final class Player implements
                             v.getPaddingTop(),
                             v.getPaddingRight(),
                             v.getPaddingBottom());
-                    if(v.getPaddingLeft() > 0){
+                    if(v.getPaddingLeft() != 0 || v.getPaddingTop() != 0
+                            || v.getPaddingRight() != 0 || v.getPaddingBottom() != 0){
                         binding.playButtons.setPadding(
                                 -v.getPaddingLeft(), -v.getPaddingTop(),-v.getPaddingRight(),-v.getPaddingBottom());
                         binding.loadingPanelWrapper.setPadding(
                                 -v.getPaddingLeft(), -v.getPaddingTop(),-v.getPaddingRight(),-v.getPaddingBottom());
+                    } else {
+                        binding.playButtons.setPadding(0, 0, 0, 0);
+                        binding.loadingPanelWrapper.setPadding(0, 0, 0, 0);
                     }
 
                     // If we added padding to the fast seek overlay, too, it would not go under the
@@ -2186,7 +2190,8 @@ public final class Player implements
             if (currentMetadata != null && NewPipe.getService(currentMetadata.getServiceId())
                     .getServiceInfo()
                     .getMediaCapabilities()
-                    .contains(StreamingService.ServiceInfo.MediaCapability.BULLET_COMMENTS)) {
+                    .contains(StreamingService.ServiceInfo.MediaCapability.BULLET_COMMENTS)
+                    && !audioPlayerSelected()) {
                 if(bcPlayer!= null){
                     if(bcPlayer.getUrl().equals(currentMetadata.getStreamUrl())){
                         return ;
