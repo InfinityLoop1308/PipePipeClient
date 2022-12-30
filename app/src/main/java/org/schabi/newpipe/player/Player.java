@@ -619,7 +619,10 @@ public final class Player implements
                             v.getPaddingRight(),
                             v.getPaddingBottom());
                     if(v.getPaddingLeft() > 0){
-                        binding.playButtons.setPadding(-v.getPaddingLeft(), -v.getPaddingTop(),0,0);
+                        binding.playButtons.setPadding(
+                                -v.getPaddingLeft(), -v.getPaddingTop(),-v.getPaddingRight(),-v.getPaddingBottom());
+                        binding.loadingPanelWrapper.setPadding(
+                                -v.getPaddingLeft(), -v.getPaddingTop(),-v.getPaddingRight(),-v.getPaddingBottom());
                     }
 
                     // If we added padding to the fast seek overlay, too, it would not go under the
