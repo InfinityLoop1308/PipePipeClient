@@ -2181,6 +2181,9 @@ public final class Player implements
                     .getMediaCapabilities()
                     .contains(StreamingService.ServiceInfo.MediaCapability.BULLET_COMMENTS)) {
                 if(bcPlayer!= null){
+                    if(bcPlayer.getUrl().equals(currentMetadata.getStreamUrl())){
+                        return ;
+                    }
                     bcPlayer.disconnect();
                 }
                 clearBCPlayer();

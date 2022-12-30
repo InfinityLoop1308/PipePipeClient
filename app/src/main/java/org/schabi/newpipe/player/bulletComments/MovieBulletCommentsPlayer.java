@@ -157,4 +157,8 @@ public class MovieBulletCommentsPlayer {
         //Show all comments.
         drawComments(Duration.ofSeconds(Long.MAX_VALUE));
     }
+
+    public String getUrl() {
+        return url;
+    }
 }
