@@ -21,6 +21,7 @@ import org.schabi.newpipe.extractor.exceptions.AgeRestrictedContentException
 import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException
 import org.schabi.newpipe.extractor.exceptions.GeographicRestrictionException
+import org.schabi.newpipe.extractor.exceptions.LiveNotStartException
 import org.schabi.newpipe.extractor.exceptions.PaidContentException
 import org.schabi.newpipe.extractor.exceptions.PrivateContentException
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException
@@ -180,6 +181,7 @@ class ErrorPanelHelper(
         @StringRes
         fun getExceptionDescription(throwable: Throwable?): Int {
             return when (throwable) {
+                is LiveNotStartException -> R.string.live_not_started
                 is AgeRestrictedContentException -> R.string.restricted_video_no_stream
                 is GeographicRestrictionException -> R.string.georestricted_content
                 is PaidContentException -> R.string.paid_content

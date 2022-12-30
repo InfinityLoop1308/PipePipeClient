@@ -51,6 +51,7 @@ import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException;
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.exceptions.GeographicRestrictionException;
+import org.schabi.newpipe.extractor.exceptions.LiveNotStartException;
 import org.schabi.newpipe.extractor.exceptions.PaidContentException;
 import org.schabi.newpipe.extractor.exceptions.PrivateContentException;
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
@@ -201,37 +202,40 @@ public class RouterActivity extends AppCompatActivity {
      * @param errorInfo the error information
      */
     private static void handleError(final Context context, final ErrorInfo errorInfo) {
-        if (errorInfo.getThrowable() != null) {
-            errorInfo.getThrowable().printStackTrace();
+        Throwable throwable = errorInfo.getThrowable();
+        if (throwable != null) {
+            throwable.printStackTrace();
         }
 
-        if (errorInfo.getThrowable() instanceof ReCaptchaException) {
+        if (throwable instanceof ReCaptchaException) {
             Toast.makeText(context, R.string.recaptcha_request_toast, Toast.LENGTH_LONG).show();
             // Starting ReCaptcha Challenge Activity
             final Intent intent = new Intent(context, ReCaptchaActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
-        } else if (errorInfo.getThrowable() != null
-                && ExceptionUtils.isNetworkRelated(errorInfo.getThrowable())) {
+        } else if (throwable != null
+                && ExceptionUtils.isNetworkRelated(throwable)) {
             Toast.makeText(context, R.string.network_error, Toast.LENGTH_LONG).show();
-        } else if (errorInfo.getThrowable() instanceof AgeRestrictedContentException) {
+        } else if (throwable instanceof AgeRestrictedContentException) {
             Toast.makeText(context, R.string.restricted_video_no_stream,
                     Toast.LENGTH_LONG).show();
-        } else if (errorInfo.getThrowable() instanceof GeographicRestrictionException) {
+        } else if (throwable instanceof GeographicRestrictionException) {
             Toast.makeText(context, R.string.georestricted_content, Toast.LENGTH_LONG).show();
-        } else if (errorInfo.getThrowable() instanceof PaidContentException) {
+        } else if (throwable instanceof LiveNotStartException) {
+            Toast.makeText(context, R.string.live_not_started, Toast.LENGTH_LONG).show();
+        } else if (throwable instanceof PaidContentException) {
             Toast.makeText(context, R.string.paid_content, Toast.LENGTH_LONG).show();
-        } else if (errorInfo.getThrowable() instanceof PrivateContentException) {
+        } else if (throwable instanceof PrivateContentException) {
             Toast.makeText(context, R.string.private_content, Toast.LENGTH_LONG).show();
-        } else if (errorInfo.getThrowable() instanceof SoundCloudGoPlusContentException) {
+        } else if (throwable instanceof SoundCloudGoPlusContentException) {
             Toast.makeText(context, R.string.soundcloud_go_plus_content,
                     Toast.LENGTH_LONG).show();
-        } else if (errorInfo.getThrowable() instanceof YoutubeMusicPremiumContentException) {
+        } else if (throwable instanceof YoutubeMusicPremiumContentException) {
             Toast.makeText(context, R.string.youtube_music_premium_content,
                     Toast.LENGTH_LONG).show();
-        } else if (errorInfo.getThrowable() instanceof ContentNotAvailableException) {
+        } else if (throwable instanceof ContentNotAvailableException) {
             Toast.makeText(context, R.string.content_not_available, Toast.LENGTH_LONG).show();
-        } else if (errorInfo.getThrowable() instanceof ContentNotSupportedException) {
+        } else if (throwable instanceof ContentNotSupportedException) {
             Toast.makeText(context, R.string.content_not_supported, Toast.LENGTH_LONG).show();
         } else {
             ErrorUtil.createNotification(context, errorInfo);
