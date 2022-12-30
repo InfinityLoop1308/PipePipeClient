@@ -2221,9 +2221,13 @@ public final class Player implements
                         TimeUnit.MILLISECONDS
                 )
                 .observeOn(AndroidSchedulers.mainThread())
-                .map(s -> getCurrentPositionDuration())
-                .filter(Objects::nonNull)
-                .filter(s -> currentMetadata != null)
+                .map(s -> {
+                    Duration ret = getCurrentPositionDuration();
+                    if(ret == null){
+                        return Duration.ofMillis(-1);
+                    }
+                    return ret;
+                })
                 .subscribe(s ->  {
                             bcPlayer.drawComments(s.plus(bcPlayer.INTERVAL));
                         },
