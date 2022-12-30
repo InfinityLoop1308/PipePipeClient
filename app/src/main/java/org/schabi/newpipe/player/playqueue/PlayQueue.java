@@ -324,10 +324,7 @@ public abstract class PlayQueue implements Serializable {
      */
     public synchronized void error() {
         final int oldIndex = getIndex();
-        queueIndex.incrementAndGet();
-        if (streams.size() > queueIndex.get()) {
-            history.add(streams.get(queueIndex.get()));
-        }
+        remove(oldIndex);
         broadcast(new ErrorEvent(oldIndex, getIndex()));
     }
 

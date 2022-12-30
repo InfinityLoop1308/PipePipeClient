@@ -284,6 +284,7 @@ public final class Player implements
     private static final float[] PLAYBACK_SPEEDS = {0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 1.75f, 2.0f};
 
     private static final int RENDERER_UNAVAILABLE = -1;
+    private static final int MAX_RETRY_COUNT = 2;
 
     /*//////////////////////////////////////////////////////////////////////////
     // Playback
@@ -419,6 +420,9 @@ public final class Player implements
 
     @NonNull private final SeekbarPreviewThumbnailHolder seekbarPreviewThumbnailHolder =
             new SeekbarPreviewThumbnailHolder();
+
+    private int retryCount = 0;
+    private String retryUrl;
 
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -2834,7 +2838,6 @@ public final class Player implements
                 // Reload playback on unexpected errors:
                 setRecovery();
                 reloadPlayQueueManager();
-                isCatchableException = true;
                 simpleExoPlayer.seekToDefaultPosition();
                 simpleExoPlayer.prepare();
                 break;
