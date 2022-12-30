@@ -2836,6 +2836,16 @@ public final class Player implements
             case ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT:
             case ERROR_CODE_UNSPECIFIED:
                 // Reload playback on unexpected errors:
+                if(playQueue == null ||
+                        (retryCount >= MAX_RETRY_COUNT && playQueue.getItem(0).getUrl().equals(retryUrl))){
+                    if (!exoPlayerIsNull() && playQueue != null) {
+                        playQueue.error();
+                    }
+                    break;
+                }
+                retryUrl = playQueue.getItem(0).getUrl();
+                retryCount++;
+                isCatchableException = true;
                 setRecovery();
                 reloadPlayQueueManager();
                 simpleExoPlayer.seekToDefaultPosition();
