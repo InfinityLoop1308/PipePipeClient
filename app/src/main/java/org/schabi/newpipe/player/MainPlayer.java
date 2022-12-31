@@ -84,6 +84,9 @@ public final class MainPlayer extends Service {
     public static final String ACTION_RECREATE_NOTIFICATION
             = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_RECREATE_NOTIFICATION";
 
+    public static final String ACTION_SEEK_TO =
+            App.PACKAGE_NAME + ".player.MainPlayer.ACTION_SEEK_TO";
+
     /*//////////////////////////////////////////////////////////////////////////
     // Service's LifeCycle
     //////////////////////////////////////////////////////////////////////////*/

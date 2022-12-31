@@ -1,6 +1,9 @@
 package org.schabi.newpipe.util.external_communication;
 
+import static org.schabi.newpipe.player.MainPlayer.ACTION_SEEK_TO;
+
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -121,11 +124,13 @@ public final class InternalUrlsHandler {
         }
 
         if (linkType == StreamingService.LinkType.STREAM && seconds != -1) {
-            return playOnMain(context, matchedUrl, service, seconds, disposables);
+            Intent intent = new Intent(ACTION_SEEK_TO);
+            intent.putExtra("Timestamp", seconds);
+            context.sendBroadcast(intent);
         } else {
             NavigationHelper.openRouterActivity(context, matchedUrl);
-            return true;
         }
+        return true;
     }
 
     /**
