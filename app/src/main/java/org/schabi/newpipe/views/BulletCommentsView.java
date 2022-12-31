@@ -25,6 +25,7 @@ import org.schabi.newpipe.extractor.bulletComments.BulletCommentsInfoItem;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -103,8 +104,8 @@ public final class BulletCommentsView extends ConstraintLayout {
      */
     private final int commentsRowsCount = 11;
     private int lastCalculatedCommentsRowsCount = 11;
-    ArrayList<Long> rows = new ArrayList<>();
-    ArrayList<Long> rowsRegular = new ArrayList<>();
+    List<Long> rows = Collections.synchronizedList(new ArrayList<Long>());
+    List<Long> rowsRegular = Collections.synchronizedList(new ArrayList<Long>());
     private final double commentRelativeTextSize = 1 / 13.5;
 
     /**
@@ -191,11 +192,11 @@ public final class BulletCommentsView extends ConstraintLayout {
                 //setTop(), ... etc. won't work.
                 int row = -1;
                 int comparedDuration = (int) (commentsDuration * 1000);
-                long current = item.getDuration().getSeconds()*1000 + item.getDuration().getNano()/1000000;
+                long current = new Date().getTime();
                 if(item.getPosition().equals(BulletCommentsInfoItem.Position.TOP)){
                     for(int i = 0; i < calculatedCommentRowsCount ;i++){
                         long last = rows.get(i);
-                        if(current - last >= comparedDuration || current < last){
+                        if(current - last >= comparedDuration){
                             rows.set(i, current);
                             row = i;
                             break;
@@ -204,7 +205,7 @@ public final class BulletCommentsView extends ConstraintLayout {
                 } else if (item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)) {
                     for(int i = 0; i < calculatedCommentRowsCount ;i++){
                         long last = rowsRegular.get(i);
-                        if(current - last >= comparedDuration / 8 || current < last){
+                        if(current - last >= comparedDuration / 10){
                             rowsRegular.set(i, current);
                             row = i;
                             break;
@@ -213,7 +214,7 @@ public final class BulletCommentsView extends ConstraintLayout {
                 } else {
                     for(int i = calculatedCommentRowsCount - 1; i >= 0 ;i--){
                         long last = rows.get(i);
-                        if(current - last >= comparedDuration || current < last){
+                        if(current - last >= comparedDuration){
                             rows.set(i, current);
                             row = i;
                             break;
