@@ -206,7 +206,7 @@ public final class BulletCommentsView extends ConstraintLayout {
                     }
                 } else if (item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)) {
                     for(int i = 0; i < calculatedCommentRowsCount ;i++){
-                        if(current - rowsRegular.get(i) >= comparedDuration){
+                        if(current - rowsRegular.get(i) >= comparedDuration / 8){
                             rowsRegular.set(i, current);
                             row = i;
                             break;
