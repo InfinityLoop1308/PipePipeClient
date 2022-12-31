@@ -144,6 +144,7 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.CaptionStyleCompat;
 import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoSize;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -2848,8 +2849,16 @@ public final class Player implements
                     }
                     break;
                 }
-                retryUrl = playQueue.getItem(0).getUrl();
-                retryCount++;
+                if(availableStreams != null && availableStreams.size() > 1){
+                    HttpDataSource.HttpDataSourceException exception = (HttpDataSource.HttpDataSourceException) error.getCause();
+                    currentMetadata.getMaybeStreamInfo().get().removeUrl(exception.dataSpec.uri.toString());
+                    availableStreams = currentMetadata.getMaybeQuality().get().getSortedVideoStreams();
+                    selectedStreamIndex =
+                            currentMetadata.getMaybeQuality().get().getSelectedVideoStreamIndex();
+                } else {
+                    retryUrl = playQueue.getItem(0).getUrl();
+                    retryCount++;
+                }
                 isCatchableException = true;
                 setRecovery();
                 reloadPlayQueueManager();
