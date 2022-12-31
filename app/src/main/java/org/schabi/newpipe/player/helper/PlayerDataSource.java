@@ -282,6 +282,7 @@ public class PlayerDataSource {
     public MediaSource.Factory getBiliMediaSourceFactory(){
         cacheDataSourceFactoryBuilder.setUpstreamDataSourceFactory(biliCachelessDataSourceFactory);
         return new ProgressiveMediaSource.Factory(cacheDataSourceFactoryBuilder.build())
-                .setContinueLoadingCheckIntervalBytes(continueLoadingCheckIntervalBytes);
+                .setContinueLoadingCheckIntervalBytes(Math.min(continueLoadingCheckIntervalBytes, 16000));
+        // Some times can not fetch 65536 bytes, causing infinite loading
     }
 }
