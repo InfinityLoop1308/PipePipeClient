@@ -194,39 +194,30 @@ public final class BulletCommentsView extends ConstraintLayout {
                 long current = item.getDuration().getSeconds()*1000 + item.getDuration().getNano()/1000000;
                 if(item.getPosition().equals(BulletCommentsInfoItem.Position.TOP)){
                     for(int i = 0; i < calculatedCommentRowsCount ;i++){
-                        if(current - rows.get(i) >= comparedDuration){
+                        long last = rows.get(i);
+                        if(current - last >= comparedDuration || current < last){
                             rows.set(i, current);
                             row = i;
                             break;
                         }
                     }
-                    if(current < Collections.min(rows)){
-                        rows.clear();
-                        row = 0;
-                    }
                 } else if (item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)) {
                     for(int i = 0; i < calculatedCommentRowsCount ;i++){
-                        if(current - rowsRegular.get(i) >= comparedDuration / 8){
+                        long last = rowsRegular.get(i);
+                        if(current - last >= comparedDuration / 8 || current < last){
                             rowsRegular.set(i, current);
                             row = i;
                             break;
                         }
                     }
-                    if(current < Collections.min(rowsRegular)){
-                        rowsRegular.clear();
-                        row = 0;
-                    }
                 } else {
                     for(int i = calculatedCommentRowsCount - 1; i >= 0 ;i--){
-                        if(current - rows.get(i) >= comparedDuration){
+                        long last = rows.get(i);
+                        if(current - last >= comparedDuration || current < last){
                             rows.set(i, current);
                             row = i;
                             break;
                         }
-                    }
-                    if(current < Collections.min(rows)){
-                        rows.clear();
-                        row = calculatedCommentRowsCount - 1;
                     }
                 }
                 if(row == -1){
