@@ -16,6 +16,8 @@ public class TabAdapter extends FragmentPagerAdapter {
     private final List<String> mFragmentTitleList = new ArrayList<>();
     private final FragmentManager fragmentManager;
 
+    private boolean doNotifyDataSetChangedOnce = false;
+
     public TabAdapter(final FragmentManager fm) {
         // if changed to BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT => crash if enqueueing stream in
         // the background and then clicking on it to open VideoDetailFragment:
@@ -32,29 +34,38 @@ public class TabAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
+        if (doNotifyDataSetChangedOnce) {
+            doNotifyDataSetChangedOnce = false;
+            notifyDataSetChanged();
+        }
         return mFragmentList.size();
     }
 
     public void addFragment(final Fragment fragment, final String title) {
+        doNotifyDataSetChangedOnce = true;
         mFragmentList.add(fragment);
         mFragmentTitleList.add(title);
     }
 
     public void clearAllItems() {
+        doNotifyDataSetChangedOnce = true;
         mFragmentList.clear();
         mFragmentTitleList.clear();
     }
 
     public void removeItem(final int position) {
+        doNotifyDataSetChangedOnce = true;
         mFragmentList.remove(position == 0 ? 0 : position - 1);
         mFragmentTitleList.remove(position == 0 ? 0 : position - 1);
     }
 
     public void updateItem(final int position, final Fragment fragment) {
+        doNotifyDataSetChangedOnce = true;
         mFragmentList.set(position, fragment);
     }
 
     public void updateItem(final String title, final Fragment fragment) {
+        doNotifyDataSetChangedOnce = true;
         final int index = mFragmentTitleList.indexOf(title);
         if (index != -1) {
             updateItem(index, fragment);

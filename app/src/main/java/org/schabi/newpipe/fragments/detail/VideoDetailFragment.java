@@ -949,7 +949,7 @@ public final class VideoDetailFragment
 
         if (shouldShowComments()) {
             pageAdapter.addFragment(
-                    CommentsFragment.getInstance(serviceId, url, title), COMMENTS_TAB_TAG);
+                    EmptyFragment.newInstance(false), COMMENTS_TAB_TAG);
             tabIcons.add(R.drawable.ic_comment);
             tabContentDescriptions.add(R.string.comments_tab_description);
         }
@@ -1001,7 +1001,7 @@ public final class VideoDetailFragment
     }
 
     private void updateTabs(@NonNull final StreamInfo info) {
-        if (showRelatedItems) {
+        if (showRelatedItems && info.isSupportRelatedItems()) {
             if (binding.relatedItemsLayout == null) { // phone
                 pageAdapter.updateItem(RELATED_TAB_TAG, RelatedItemsFragment.getInstance(info));
             } else { // tablet + TV
@@ -1011,6 +1011,24 @@ public final class VideoDetailFragment
                 binding.relatedItemsLayout.setVisibility(
                         isPlayerAvailable() && player.isFullscreen() ? View.GONE : View.VISIBLE);
             }
+        } else if (!info.isSupportRelatedItems()){
+            int index = pageAdapter.getItemPositionByTitle(RELATED_TAB_TAG);
+            if(index != -1){
+                pageAdapter.removeItem(index);
+                tabIcons.remove(Integer.valueOf(R.drawable.ic_art_track));
+                tabContentDescriptions.remove(Integer.valueOf(R.string.related_items_tab_description));
+            }
+        }
+
+        if(!info.isSupportComments() || !shouldShowComments()){
+            int index = pageAdapter.getItemPositionByTitle(COMMENTS_TAB_TAG);
+            if(index != -1){
+                pageAdapter.removeItem(index);
+                tabIcons.remove(Integer.valueOf(R.drawable.ic_comment));
+                tabContentDescriptions.remove(Integer.valueOf(R.string.comments_tab_description));
+            }
+        } else{
+            pageAdapter.updateItem(COMMENTS_TAB_TAG, CommentsFragment.getInstance(serviceId, url, title));
         }
 
         if (showDescription) {
