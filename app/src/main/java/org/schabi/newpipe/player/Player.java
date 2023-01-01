@@ -2112,13 +2112,11 @@ public final class Player implements
 
     @Override // exoplayer listener
     public void onIsLoadingChanged(final boolean isLoading) {
+        Log.d(TAG, "ExoPlayer - onIsLoadingChanged(%s) called, isLoading = "+ isLoading);
         if (!isLoading) {
             if(currentState == STATE_PAUSED && isProgressLoopRunning()){
                 stopProgressLoop();
             }
-            try{
-                timer.cancel();
-            } catch (Exception ignore){}
         } else {
             if(!isProgressLoopRunning()){
                 startProgressLoop();
@@ -2383,6 +2381,10 @@ public final class Player implements
             startProgressLoop();
         }
 
+        retryCount = 0;
+        try {
+            timer.cancel();
+        } catch (Exception ignore){}
         updateStreamRelatedViews();
 
         binding.playbackSeekBar.setEnabled(true);
@@ -2884,10 +2886,10 @@ public final class Player implements
                 }
                 if(availableStreams != null && availableStreams.size() > 1){
                     // If the error is because of loading next item, will not enter this branch
+                    // error during playing
                     HttpDataSource.HttpDataSourceException exception = (HttpDataSource.HttpDataSourceException) error.getCause();
                     if (exception == null){
                         currentMetadata.getMaybeStreamInfo().get().removeStreamUrl(availableStreams.get(0).getContent());
-                        break;
                     } else {
                         currentMetadata.getMaybeStreamInfo().get().removeStreamUrl(exception.dataSpec.uri.toString());
                     }
@@ -2895,6 +2897,7 @@ public final class Player implements
                     selectedStreamIndex =
                             currentMetadata.getMaybeQuality().get().getSelectedVideoStreamIndex();
                 } else {
+                    // error fetching the resource
                     retryUrl = playQueue.getItem(0).getUrl();
                     retryCount++;
                 }
