@@ -221,6 +221,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -425,6 +427,7 @@ public final class Player implements
 
     private int retryCount = 0;
     private String retryUrl;
+    private Timer timer;
 
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -1253,6 +1256,8 @@ public final class Player implements
         intentFilter.addAction(Intent.ACTION_SCREEN_ON);
         intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
         intentFilter.addAction(Intent.ACTION_HEADSET_PLUG);
+
+        intentFilter.addAction(VideoDetailFragment.ACTION_VIDEO_ERROR);
     }
 
     private void onBroadcastReceived(final Intent intent) {
@@ -1313,6 +1318,12 @@ public final class Player implements
             case VideoDetailFragment.ACTION_VIDEO_FRAGMENT_STOPPED:
                 fragmentIsVisible = false;
                 onFragmentStopped();
+                break;
+            case VideoDetailFragment.ACTION_VIDEO_ERROR:
+                if (DEBUG) {
+                    Log.d(TAG, "Unknown error received");
+                }
+                onPlayerError(new PlaybackException(null, null, ERROR_CODE_UNSPECIFIED));
                 break;
             case Intent.ACTION_CONFIGURATION_CHANGED:
                 assureCorrectAppLanguage(service);
@@ -2101,10 +2112,24 @@ public final class Player implements
 
     @Override // exoplayer listener
     public void onIsLoadingChanged(final boolean isLoading) {
-        if (!isLoading && currentState == STATE_PAUSED && isProgressLoopRunning()) {
-            stopProgressLoop();
-        } else if (isLoading && !isProgressLoopRunning()) {
-            startProgressLoop();
+        if (!isLoading) {
+            if(currentState == STATE_PAUSED && isProgressLoopRunning()){
+                stopProgressLoop();
+            }
+            try{
+                timer.cancel();
+            } catch (Exception ignore){}
+        } else {
+            if(!isProgressLoopRunning()){
+                startProgressLoop();
+            }
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_VIDEO_ERROR));
+                }
+            }, 10000L);
         }
     }
 
@@ -2860,7 +2885,12 @@ public final class Player implements
                 if(availableStreams != null && availableStreams.size() > 1){
                     // If the error is because of loading next item, will not enter this branch
                     HttpDataSource.HttpDataSourceException exception = (HttpDataSource.HttpDataSourceException) error.getCause();
-                    currentMetadata.getMaybeStreamInfo().get().removeUrl(exception.dataSpec.uri.toString());
+                    if (exception == null){
+                        currentMetadata.getMaybeStreamInfo().get().removeStreamUrl(availableStreams.get(0).getContent());
+                        break;
+                    } else {
+                        currentMetadata.getMaybeStreamInfo().get().removeStreamUrl(exception.dataSpec.uri.toString());
+                    }
                     availableStreams = currentMetadata.getMaybeQuality().get().getSortedVideoStreams();
                     selectedStreamIndex =
                             currentMetadata.getMaybeQuality().get().getSelectedVideoStreamIndex();
