@@ -2887,7 +2887,7 @@ public final class Player implements
                     }
                     break;
                 }
-                if(availableStreams != null && availableStreams.size() > 1){
+                if(playQueue.size() > 0){
                     // If the error is because of loading next item, will not enter this branch
                     // error during playing
                     HttpDataSource.HttpDataSourceException exception;
@@ -2901,18 +2901,17 @@ public final class Player implements
                         break;
                     }
 
-                    if (exception == null){
+                    if (exception == null && availableStreams != null && availableStreams.size() > 1){
                         currentMetadata.getMaybeStreamInfo().get().removeStreamUrl(availableStreams.get(0).getContent());
-                    } else {
+                    } else if(currentMetadata.getMaybeStreamInfo().get().getStreamsLength() > 1) {
                         currentMetadata.getMaybeStreamInfo().get().removeStreamUrl(exception.dataSpec.uri.toString());
+                    } else {
+                        retryUrl = playQueue.getItem(0).getUrl();
+                        retryCount++;
                     }
                     availableStreams = currentMetadata.getMaybeQuality().get().getSortedVideoStreams();
                     selectedStreamIndex =
                             currentMetadata.getMaybeQuality().get().getSelectedVideoStreamIndex();
-                } else {
-                    // error fetching the resource
-                    retryUrl = playQueue.getItem(0).getUrl();
-                    retryCount++;
                 }
                 isCatchableException = true;
                 setRecovery();
@@ -3375,9 +3374,9 @@ public final class Player implements
     //region Play queue, segments and streams
 
     private void maybeAutoQueueNextStream(@NonNull final StreamInfo info) {
-        if (playQueue == null || playQueue.getIndex() != playQueue.size() - 1
+        if (!info.isRoundPlayStream() && (playQueue == null || playQueue.getIndex() != playQueue.size() - 1
                 || getRepeatMode() != REPEAT_MODE_OFF
-                || !PlayerHelper.isAutoQueueEnabled(context)) {
+                || !PlayerHelper.isAutoQueueEnabled(context))) {
             return;
         }
         // auto queue when starting playback on the last item when not repeating
