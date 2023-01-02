@@ -221,8 +221,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -427,7 +428,8 @@ public final class Player implements
 
     private int retryCount = 0;
     private String retryUrl;
-    private Timer timer;
+    private Future<?> timer;
+    private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);;
 
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -2121,13 +2123,6 @@ public final class Player implements
             if(!isProgressLoopRunning()){
                 startProgressLoop();
             }
-            timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_VIDEO_ERROR));
-                }
-            }, 10000L);
         }
     }
 
@@ -2382,9 +2377,7 @@ public final class Player implements
         }
 
         retryCount = 0;
-        try {
-            timer.cancel();
-        } catch (Exception ignore){}
+        timer.cancel(true);
         updateStreamRelatedViews();
 
         binding.playbackSeekBar.setEnabled(true);
@@ -2419,6 +2412,14 @@ public final class Player implements
         binding.loadingPanel.setVisibility(View.VISIBLE);
 
         binding.getRoot().setKeepScreenOn(true);
+
+        if(timer == null || timer.isCancelled() || timer.isDone()){
+            timer = executor.schedule(new Runnable(){
+                public void run(){
+                    context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_VIDEO_ERROR));
+                }
+            }, 10000, TimeUnit.MILLISECONDS);
+        }
 
         if (NotificationUtil.getInstance().shouldUpdateBufferingSlot()) {
             NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, false);
