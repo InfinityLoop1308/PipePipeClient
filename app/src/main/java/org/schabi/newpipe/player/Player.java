@@ -2867,6 +2867,7 @@ public final class Player implements
             case ERROR_CODE_PARSING_MANIFEST_UNSUPPORTED:
                 // Source errors, signal on playQueue and move on:
                 if (!exoPlayerIsNull() && playQueue != null) {
+                    timer.cancel(true);
                     playQueue.error();
                 }
                 break;
@@ -2881,6 +2882,7 @@ public final class Player implements
                 if(playQueue == null ||
                         (retryCount >= MAX_RETRY_COUNT && playQueue.getItem(0).getUrl().equals(retryUrl))){
                     if (!exoPlayerIsNull() && playQueue != null) {
+                        timer.cancel(true);
                         playQueue.error();
                     }
                     break;
@@ -2893,6 +2895,7 @@ public final class Player implements
                         exception = (HttpDataSource.HttpDataSourceException) error.getCause();
                     } catch (Exception e){
                         if (!exoPlayerIsNull() && playQueue != null) {
+                            timer.cancel(true);
                             playQueue.error();
                         }
                         break;
