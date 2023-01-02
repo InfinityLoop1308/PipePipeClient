@@ -2903,7 +2903,7 @@ public final class Player implements
 
                     if (exception == null && availableStreams != null && availableStreams.size() > 1){
                         currentMetadata.getMaybeStreamInfo().get().removeStreamUrl(availableStreams.get(0).getContent());
-                    } else if(currentMetadata.getMaybeStreamInfo().get().getStreamsLength() > 1) {
+                    } else if(exception != null && currentMetadata.getMaybeStreamInfo().get().getStreamsLength() > 1) {
                         currentMetadata.getMaybeStreamInfo().get().removeStreamUrl(exception.dataSpec.uri.toString());
                     } else {
                         retryUrl = playQueue.getItem(0).getUrl();
