@@ -293,9 +293,15 @@ public class PlayerDataSource {
     }
 
     // BiliBiliMediaSourceFactories
-    public MediaSource.Factory getBiliMediaSourceFactory(){
-        cacheDataSourceFactoryBuilder.setUpstreamDataSourceFactory(biliCachelessDataSourceFactory);
-        return new ProgressiveMediaSource.Factory(cacheDataSourceFactoryBuilder.build())
+    public MediaSource.Factory getBiliMediaSourceFactory(String url){
+        DataSource.Factory factory;
+        if(url.contains("live.bilibili.com")){
+            factory = biliCachelessDataSourceFactory;
+        } else {
+            cacheDataSourceFactoryBuilder.setUpstreamDataSourceFactory(biliCachelessDataSourceFactory);
+            factory = cacheDataSourceFactoryBuilder.build();
+        }
+        return new ProgressiveMediaSource.Factory(factory)
                 .setContinueLoadingCheckIntervalBytes(continueLoadingCheckIntervalBytes);
     }
 }
