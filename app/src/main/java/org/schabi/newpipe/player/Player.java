@@ -2888,7 +2888,16 @@ public final class Player implements
                 if(availableStreams != null && availableStreams.size() > 1){
                     // If the error is because of loading next item, will not enter this branch
                     // error during playing
-                    HttpDataSource.HttpDataSourceException exception = (HttpDataSource.HttpDataSourceException) error.getCause();
+                    HttpDataSource.HttpDataSourceException exception;
+                    try{
+                        exception = (HttpDataSource.HttpDataSourceException) error.getCause();
+                    } catch (Exception e){
+                        if (!exoPlayerIsNull() && playQueue != null) {
+                            playQueue.error();
+                        }
+                        break;
+                    }
+
                     if (exception == null){
                         currentMetadata.getMaybeStreamInfo().get().removeStreamUrl(availableStreams.get(0).getContent());
                     } else {
