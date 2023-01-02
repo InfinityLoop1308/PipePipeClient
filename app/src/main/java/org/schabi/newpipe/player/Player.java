@@ -2916,7 +2916,6 @@ public final class Player implements
                 isCatchableException = true;
                 setRecovery();
                 reloadPlayQueueManager();
-                simpleExoPlayer.seekToDefaultPosition();
                 simpleExoPlayer.prepare();
                 break;
             default:
