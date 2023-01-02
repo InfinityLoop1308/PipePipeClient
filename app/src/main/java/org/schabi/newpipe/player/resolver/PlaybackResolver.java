@@ -84,7 +84,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                                             @NonNull final MediaItemTag metadata) {
         final MediaSource.Factory factory;
         if(sourceUrl.contains("live.nicovideo.jp/watch")){
-            factory = dataSource.getNicoLiveHlsMediaSourceFactory();
+            factory = dataSource.getNicoLiveHlsMediaSourceFactory(sourceUrl);
             return factory.createMediaSource(
                     new MediaItem.Builder()
                             .setTag(metadata)

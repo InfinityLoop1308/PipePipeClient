@@ -76,6 +76,8 @@ public class PlayerDataSource {
     private final DataSource.Factory cachelessDataSourceFactory;
     private final DataSource.Factory nicoCachelessDataSourceFactory;
     private final DataSource.Factory biliCachelessDataSourceFactory;
+    private TransferListener transferListener;
+    private Context context;
 
     public PlayerDataSource(@NonNull final Context context,
                             @NonNull final String userAgent,
@@ -87,23 +89,27 @@ public class PlayerDataSource {
                 new DefaultHttpDataSource.Factory().setUserAgent(userAgent).setDefaultRequestProperties(Map.of("Referer", "https://www.bilibili.com")))
                 .setTransferListener(transferListener);
 
+        this.context = context;
+        this.transferListener = transferListener;
+
         YoutubeProgressiveDashManifestCreator.getCache().setMaximumSize(
                 MAXIMUM_SIZE_CACHED_GENERATED_MANIFESTS_PER_CACHE);
         YoutubeOtfDashManifestCreator.getCache().setMaximumSize(
                 MAXIMUM_SIZE_CACHED_GENERATED_MANIFESTS_PER_CACHE);
         YoutubePostLiveStreamDvrDashManifestCreator.getCache().setMaximumSize(
                 MAXIMUM_SIZE_CACHED_GENERATED_MANIFESTS_PER_CACHE);
-        nicoCachelessDataSourceFactory = new DefaultDataSource
-                .Factory(context, new DefaultHttpDataSource.Factory().setUserAgent(userAgent)
+        nicoCachelessDataSourceFactory = new PurifiedDataSource
+                .Factory(context, new PurifiedHttpDataSource.Factory()
                 .setDefaultRequestProperties(Map.of("Referer", "https://www.nicovideo.jp/",
                         "Origin", "https://www.nicovideo.jp",
                         "X-Frontend-ID", "6",
                         "X-Frontend-Version", "0",
                         "X-Niconico-Language", "en-us"
-                )))
-                .setTransferListener(transferListener);
-        biliCachelessDataSourceFactory = new DefaultDataSource.Factory(context,
-                new DefaultHttpDataSource.Factory().setUserAgent(userAgent)
+                ))
+                .setTransferListener(transferListener));
+
+        biliCachelessDataSourceFactory = new PurifiedDataSource.Factory(context,
+                new PurifiedHttpDataSource.Factory().setUserAgent(userAgent)
                         .setDefaultRequestProperties(Map.of("Referer", "https://www.bilibili.com")))
                 .setTransferListener(transferListener);
     }
@@ -223,7 +229,7 @@ public class PlayerDataSource {
         return null;
     }
 
-    public String getNicoLiveUrl(String url) throws ParsingException, IOException, ReCaptchaException, JsonParserException {
+    public static String getNicoLiveUrl(String url) throws ParsingException, IOException, ReCaptchaException, JsonParserException {
         DownloaderImpl downloader = DownloaderImpl.getInstance();
         Document liveResponse = Jsoup.parse(downloader.get(url).responseBody());
         String result = JsonParser.object().from(liveResponse
@@ -258,8 +264,16 @@ public class PlayerDataSource {
         return new HlsMediaSource.Factory(cacheDataSourceFactoryBuilder.build());
     }
 
-    public HlsMediaSource.Factory getNicoLiveHlsMediaSourceFactory() {
-        DataSource.Factory newFactory = new ResolvingDataSource.Factory(nicoCachelessDataSourceFactory, dataSpec -> {
+    public HlsMediaSource.Factory getNicoLiveHlsMediaSourceFactory(String liveUrl) {
+        DataSource.Factory newFactory = new ResolvingDataSource.Factory(new NiconicoLiveDataSource
+                .Factory(context, new NiconicoLiveHttpDataSource.Factory(liveUrl)
+                .setDefaultRequestProperties(Map.of("Referer", "https://www.nicovideo.jp/",
+                        "Origin", "https://www.nicovideo.jp",
+                        "X-Frontend-ID", "6",
+                        "X-Frontend-Version", "0",
+                        "X-Niconico-Language", "en-us"
+                ))
+                .setTransferListener(transferListener)), dataSpec -> {
             try {
                 if(dataSpec.uri.toString().contains("live.nicovideo.jp/watch")){
                     return dataSpec.withUri(Uri.parse(getNicoLiveUrl(String.valueOf(dataSpec.uri))));
