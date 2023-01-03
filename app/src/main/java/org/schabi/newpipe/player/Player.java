@@ -2184,10 +2184,16 @@ public final class Player implements
                 onBuffering();
                 break;
             case STATE_PAUSED:
+                if(enqueueTimer != null){
+                    enqueueTimer.cancel(true);
+                }
                 onPaused();
                 pauseBCPlayer();
                 break;
             case STATE_PAUSED_SEEK:
+                if(enqueueTimer != null){
+                    enqueueTimer.cancel(true);
+                }
                 onPausedSeek();
                 pauseBCPlayer();
                 break;
