@@ -2911,6 +2911,13 @@ public final class Player implements
                     } else {
                         retryUrl = playQueue.getItem(0).getUrl();
                         retryCount++;
+                        if(currentMetadata.getMaybeStreamInfo().get().getStreamsLength() == 0){
+                            if (!exoPlayerIsNull() && playQueue != null) {
+                                timer.cancel(true);
+                                playQueue.error();
+                            }
+                            break;
+                        }
                     }
                     availableStreams = currentMetadata.getMaybeQuality().get().getSortedVideoStreams();
                     selectedStreamIndex =
