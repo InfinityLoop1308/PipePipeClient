@@ -79,6 +79,10 @@ public class StreamStateEntity {
                 || progressMillis > durationInSeconds * 1000 / 4;
     }
 
+    public boolean isValid(final long durationInSeconds, boolean isRoundPlayStream){
+        return !isRoundPlayStream && isValid(durationInSeconds);
+    }
+
     /**
      * The video will be considered as finished, if the time left is less than {@link
      * #PLAYBACK_FINISHED_END_MILLISECONDS} and the progress is at least 3/4 of the video length.

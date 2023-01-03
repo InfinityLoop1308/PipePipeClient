@@ -1001,7 +1001,7 @@ public final class VideoDetailFragment
     }
 
     private void updateTabs(@NonNull final StreamInfo info) {
-        if (showRelatedItems && info.isSupportRelatedItems()) {
+        if (info.isRoundPlayStream() || (showRelatedItems && info.isSupportRelatedItems())) {
             if (binding.relatedItemsLayout == null) { // phone
                 pageAdapter.updateItem(RELATED_TAB_TAG, RelatedItemsFragment.getInstance(info));
             } else { // tablet + TV
@@ -1011,7 +1011,8 @@ public final class VideoDetailFragment
                 binding.relatedItemsLayout.setVisibility(
                         isPlayerAvailable() && player.isFullscreen() ? View.GONE : View.VISIBLE);
             }
-        } else if (!info.isSupportRelatedItems()){
+        }
+        if (!info.isSupportRelatedItems()){
             int index = pageAdapter.getItemPositionByTitle(RELATED_TAB_TAG);
             if(index != -1){
                 pageAdapter.removeItem(index);

@@ -273,7 +273,7 @@ public class HistoryRecordManager {
                 .flatMapPublisher(streamStateTable::getState)
                 .firstElement()
                 .flatMap(list -> list.isEmpty() ? Maybe.empty() : Maybe.just(list.get(0)))
-                .filter(state -> state.isValid(queueItem.getDuration()))
+                .filter(state -> state.isValid(queueItem.getDuration(), queueItem.isRoundPlayStream()))
                 .subscribeOn(Schedulers.io());
     }
 
@@ -282,7 +282,7 @@ public class HistoryRecordManager {
                 .flatMapPublisher(streamStateTable::getState)
                 .firstElement()
                 .flatMap(list -> list.isEmpty() ? Maybe.empty() : Maybe.just(list.get(0)))
-                .filter(state -> state.isValid(info.getDuration()))
+                .filter(state -> state.isValid(info.getDuration(), info.isRoundPlayStream()))
                 .subscribeOn(Schedulers.io());
     }
 
@@ -290,7 +290,7 @@ public class HistoryRecordManager {
         return Completable.fromAction(() -> database.runInTransaction(() -> {
             final long streamId = streamTable.upsert(new StreamEntity(info));
             final StreamStateEntity state = new StreamStateEntity(streamId, progressMillis);
-            if (state.isValid(info.getDuration())) {
+            if (!info.isRoundPlayStream() && state.isValid(info.getDuration(), info.isRoundPlayStream())) {
                 streamStateTable.upsert(state);
             }
         })).subscribeOn(Schedulers.io());

@@ -430,6 +430,7 @@ public final class Player implements
     private int retryCount = 0;
     private String retryUrl;
     private Future<?> timer;
+    private Future<?> enqueueTimer;
     private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);;
 
 
@@ -971,6 +972,9 @@ public final class Player implements
         }
         if(bcPlayer != null){
             bcPlayer.disconnect();
+        }
+        if(enqueueTimer != null){
+            enqueueTimer.cancel(true);
         }
     }
 
@@ -2383,6 +2387,14 @@ public final class Player implements
         timer.cancel(true);
         updateStreamRelatedViews();
 
+        StreamInfo streamInfo = getCurrentStreamInfo().get();
+        if(streamInfo.isRoundPlayStream() && (
+                enqueueTimer == null || enqueueTimer.isDone() || enqueueTimer.isCancelled())){
+            enqueueTimer = executor.schedule(() -> maybeAutoQueueNextStream(streamInfo, true),
+                    Math.max(simpleExoPlayer.getDuration()
+                            - simpleExoPlayer.getCurrentPosition() - 1000, 0), MILLISECONDS);
+        }
+
         binding.playbackSeekBar.setEnabled(true);
         binding.playbackSeekBar.getThumb()
                 .setColorFilter(new PorterDuffColorFilter(Color.RED, PorterDuff.Mode.SRC_IN));
@@ -2733,6 +2745,9 @@ public final class Player implements
         if (DEBUG) {
             Log.d(TAG, "ExoPlayer - onTracksChanged(), "
                     + "track group size = " + tracksInfo.getTrackGroupInfos().size());
+        }
+        if(enqueueTimer != null){
+            enqueueTimer.cancel(true);
         }
         onTextTracksChanged(tracksInfo);
     }
@@ -3327,7 +3342,7 @@ public final class Player implements
             return;
         }
 
-        maybeAutoQueueNextStream(streamInfo);
+        maybeAutoQueueNextStream(streamInfo, false);
         onMetadataChanged(streamInfo);
         NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, true);
     }
@@ -3382,8 +3397,8 @@ public final class Player implements
     //////////////////////////////////////////////////////////////////////////*/
     //region Play queue, segments and streams
 
-    private void maybeAutoQueueNextStream(@NonNull final StreamInfo info) {
-        if (!info.isRoundPlayStream() && (playQueue == null || playQueue.getIndex() != playQueue.size() - 1
+    private void maybeAutoQueueNextStream(@NonNull final StreamInfo info, boolean forceEnqueue) {
+        if (!forceEnqueue && (playQueue == null || playQueue.getIndex() != playQueue.size() - 1
                 || getRepeatMode() != REPEAT_MODE_OFF
                 || !PlayerHelper.isAutoQueueEnabled(context))) {
             return;
