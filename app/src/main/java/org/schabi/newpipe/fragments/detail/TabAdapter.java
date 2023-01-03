@@ -55,8 +55,8 @@ public class TabAdapter extends FragmentPagerAdapter {
 
     public void removeItem(final int position) {
         doNotifyDataSetChangedOnce = true;
-        mFragmentList.remove(position == 0 ? 0 : position - 1);
-        mFragmentTitleList.remove(position == 0 ? 0 : position - 1);
+        mFragmentList.remove(position);
+        mFragmentTitleList.remove(position);
     }
 
     public void updateItem(final int position, final Fragment fragment) {
