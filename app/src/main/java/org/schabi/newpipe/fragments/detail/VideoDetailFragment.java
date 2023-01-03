@@ -906,7 +906,8 @@ public final class VideoDetailFragment
 
     private void runWorker(final boolean forceLoad, final boolean addToBackStack) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        currentWorker = ExtractorHelper.getStreamInfo(serviceId, url, forceLoad)
+        currentWorker = ExtractorHelper.getStreamInfo(serviceId, url, forceLoad
+                        || url.contains("live.bilibili.com"))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> {

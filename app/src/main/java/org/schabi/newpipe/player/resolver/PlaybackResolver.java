@@ -512,7 +512,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             final String cacheKey,
             final MediaItemTag metadata) throws IOException{
         final String url = stream.getContent();
-        return dataSource.getBiliMediaSourceFactory(url).createMediaSource(
+        return dataSource.getBiliMediaSourceFactory(streamInfo.getUrl()).createMediaSource(
                 new MediaItem.Builder()
                         .setTag(metadata)
                         .setUri(Uri.parse(url))

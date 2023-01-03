@@ -274,13 +274,16 @@ public final class PlayerHelper {
         if (Utils.isNullOrEmpty(relatedItems)) {
             return null;
         }
-        if(info.getServiceId() == 5 &&
-                relatedItems.get(0).getUrl().replace("?p=1","?p=2").equals(relatedItems.get(1).getUrl())){
-            int p = Integer.parseInt(info.getUrl().split(Pattern.quote("?p="))[1].split("&")[0]);
-            if(relatedItems.size() <= p){
-                return null;
+        if(info.getServiceId() == 5){
+            if (info.isRoundPlayStream()) {
+                return getAutoQueuedSinglePlayQueue((StreamInfoItem) relatedItems.get(0));
+            } else if(relatedItems.get(0).getUrl().replace("?p=1","?p=2").equals(relatedItems.get(1).getUrl())){
+                int p = Integer.parseInt(info.getUrl().split(Pattern.quote("?p="))[1].split("&")[0]);
+                if(relatedItems.size() <= p){
+                    return null;
+                }
+                return getAutoQueuedSinglePlayQueue((StreamInfoItem) relatedItems.get(p));
             }
-            return getAutoQueuedSinglePlayQueue((StreamInfoItem) relatedItems.get(p));
         }
 
         if (relatedItems.get(0) instanceof StreamInfoItem
