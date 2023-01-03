@@ -213,6 +213,7 @@ import org.schabi.newpipe.util.SerializedCache;
 import org.schabi.newpipe.util.StreamTypeUtil;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
+import org.schabi.newpipe.util.utils;
 import org.schabi.newpipe.views.ExpandableSurfaceView;
 import org.schabi.newpipe.views.player.PlayerFastSeekOverlay;
 
@@ -2220,7 +2221,7 @@ public final class Player implements
                     .contains(StreamingService.ServiceInfo.MediaCapability.BULLET_COMMENTS)
                     && !audioPlayerSelected()) {
                 if(bcPlayer!= null){
-                    if(bcPlayer.getUrl().equals(currentMetadata.getStreamUrl())){
+                    if(utils.DetimestampedEqual(bcPlayer.getUrl(), currentMetadata.getStreamUrl())){
                         return ;
                     }
                     bcPlayer.disconnect();
