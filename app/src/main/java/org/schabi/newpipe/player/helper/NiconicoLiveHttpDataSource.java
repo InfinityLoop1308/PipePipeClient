@@ -15,8 +15,10 @@ import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class NiconicoLiveHttpDataSource extends PurifiedHttpDataSource {
@@ -177,7 +179,16 @@ public class NiconicoLiveHttpDataSource extends PurifiedHttpDataSource {
     public long open(DataSpec dataSpec) throws HttpDataSourceException
     {
         String fetchUrl = dataSpec.uri.toString();
-        String fetchKey = fetchUrl.split("anonymous-user-")[1].split("&")[0];
+        int type = 0;
+        List<String> anonStrings = Arrays.asList("anonymous-user-", "anonymous_user_");
+        String fetchKey;
+        try{
+            fetchKey = fetchUrl.split(anonStrings.get(0))[1].split("&")[0];
+        } catch (IndexOutOfBoundsException e){
+            fetchKey = fetchUrl.split(anonStrings.get(1))[1].split("&")[0];
+            type = 1;
+        }
+
         if(currentKey == null){
             currentKey = fetchKey;
         }
@@ -186,10 +197,7 @@ public class NiconicoLiveHttpDataSource extends PurifiedHttpDataSource {
             fetchHistory.put(currentKey, currentTime);
         } else if (currentTime - fetchHistory.get(currentKey) > FETCH_INTERVAL) {
             try {
-                System.out.println("NicoUrl - currentKey = , "+ currentKey + " , MapSize = "+ fetchHistory.size());
-                System.out.println("NicoUrl - currentTime = "+currentTime + " , historyTime = " + fetchHistory.get(currentKey));
-                currentKey = PlayerDataSource.getNicoLiveUrl(liveUrl).split("anonymous-user-")[1].split("&")[0];
-                System.out.println("NicoUrl - putKey = "+currentKey + " , Time = " + currentTime);
+                currentKey = PlayerDataSource.getNicoLiveUrl(liveUrl).split(anonStrings.get(type))[1].split("&")[0];
                 fetchHistory.put(String.valueOf(currentKey), currentTime);
             } catch (ParsingException e) {
                 throw new RuntimeException(e);
@@ -202,7 +210,6 @@ public class NiconicoLiveHttpDataSource extends PurifiedHttpDataSource {
             }
         }
         String newUrl = fetchUrl.replace(fetchKey, currentKey);
-        System.out.println("NicoUrl - fetchUrl = "+ fetchUrl + " , newUrl = " + newUrl);
         return super.open(new DataSpec(Uri.parse(newUrl),
                 dataSpec.httpMethod,
                 dataSpec.httpBody,
