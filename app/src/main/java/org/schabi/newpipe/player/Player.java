@@ -166,6 +166,7 @@ import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamSegment;
 import org.schabi.newpipe.extractor.stream.StreamType;
@@ -2908,6 +2909,9 @@ public final class Player implements
                     if (!exoPlayerIsNull() && playQueue != null) {
                         timer.cancel(true);
                         playQueue.error();
+                    }
+                    if(error.errorCode == ERROR_CODE_UNSPECIFIED){
+                        createErrorNotification(new PlaybackException("All fallback urls failed to load", null, -1));
                     }
                     break;
                 }
