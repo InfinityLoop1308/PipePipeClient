@@ -391,6 +391,7 @@
                 <data android:host="*bilibili.com" />
                 <data android:pathPrefix="/video/" />
                 <data android:pathPrefix="/bangumi/play/" />
+                <data android:pathPrefix="/space/" />
             </intent-filter>
 
             <intent-filter>
