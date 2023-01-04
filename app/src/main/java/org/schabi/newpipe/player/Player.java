@@ -2940,9 +2940,13 @@ public final class Player implements
                             break;
                         }
                     }
-                    availableStreams = currentMetadata.getMaybeQuality().get().getSortedVideoStreams();
-                    selectedStreamIndex =
-                            currentMetadata.getMaybeQuality().get().getSelectedVideoStreamIndex();
+                    try{
+                        availableStreams = currentMetadata.getMaybeQuality().get().getSortedVideoStreams();
+                        selectedStreamIndex =
+                                currentMetadata.getMaybeQuality().get().getSelectedVideoStreamIndex();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
                 isCatchableException = true;
                 setRecovery();
