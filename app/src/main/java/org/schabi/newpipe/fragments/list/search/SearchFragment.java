@@ -497,6 +497,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
             searchBinding.correctSuggestion.setVisibility(View.GONE);
 
             searchEditText.setText("");
+            searchString = "";
             suggestionListAdapter.setItems(new ArrayList<>());
             showKeyboardSearch();
         });
