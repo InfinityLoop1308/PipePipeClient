@@ -390,6 +390,7 @@
                 <data android:scheme="https" />
                 <data android:host="*bilibili.com" />
                 <data android:pathPrefix="/video/" />
+                <data android:pathPrefix="/bangumi/play/" />
             </intent-filter>
 
             <intent-filter>
