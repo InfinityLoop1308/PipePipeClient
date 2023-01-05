@@ -14,7 +14,7 @@ android {
     defaultConfig {
         applicationId "InfinityLoop1309.NewPipeEnhanced"
         resValue "string", "app_name", "AnimePipe"
-        minSdk 24
+        minSdk 28
         //noinspection ExpiredTargetSdkVersion
         targetSdk 29
         versionCode 1006
