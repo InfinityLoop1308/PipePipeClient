@@ -147,9 +147,6 @@ public class DownloadMissionRecover extends Thread {
                 for (VideoStream video : videoStreams) {
                     if (video.resolution.equals(mRecovery.getDesired()) && video.getFormat() == mRecovery.getFormat()) {
                         url = video.getUrl();
-                        if (NewPipe.getServiceByUrl(mMission.source).serviceId == 6)
-                            url = video.getNicoDownloadUrl();
-                        break;
                     }
                 }
                 break;
