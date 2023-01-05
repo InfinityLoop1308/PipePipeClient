@@ -35,13 +35,16 @@ public class PlayQueueItem implements Serializable {
 
     private boolean isAutoQueued;
 
+    private long startAt;
+
     private long recoveryPosition;
     private Throwable error;
 
     PlayQueueItem(@NonNull final StreamInfo info) {
         this(info.getName(), info.getUrl(), info.getServiceId(), info.getDuration(),
                 info.getThumbnailUrl(), info.getUploaderName(),
-                info.getUploaderUrl(), info.getStreamType(), info.isRoundPlayStream());
+                info.getUploaderUrl(), info.getStreamType(), info.isRoundPlayStream(),
+                info.getStartAt());
 
         if (info.getStartPosition() > 0) {
             setRecoveryPosition(info.getStartPosition() * 1000);
@@ -51,7 +54,7 @@ public class PlayQueueItem implements Serializable {
     PlayQueueItem(@NonNull final StreamInfoItem item) {
         this(item.getName(), item.getUrl(), item.getServiceId(), item.getDuration(),
                 item.getThumbnailUrl(), item.getUploaderName(),
-                item.getUploaderUrl(), item.getStreamType(), item.isRoundPlayStream());
+                item.getUploaderUrl(), item.getStreamType(), item.isRoundPlayStream(), item.getStartAt());
     }
 
     @SuppressWarnings("ParameterNumber")
@@ -59,7 +62,7 @@ public class PlayQueueItem implements Serializable {
                           final int serviceId, final long duration,
                           @Nullable final String thumbnailUrl, @Nullable final String uploader,
                           final String uploaderUrl, @NonNull final StreamType streamType,
-                          final boolean isRoundPlayStream) {
+                          final boolean isRoundPlayStream, final long startAt) {
         this.title = name != null ? name : EMPTY_STRING;
         this.url = url != null ? url : EMPTY_STRING;
         this.serviceId = serviceId;
@@ -69,6 +72,7 @@ public class PlayQueueItem implements Serializable {
         this.uploaderUrl = uploaderUrl;
         this.streamType = streamType;
         this.isRoundPlayStream = isRoundPlayStream;
+        this.startAt = startAt;
 
         this.recoveryPosition = RECOVERY_UNSET;
     }
@@ -144,5 +148,9 @@ public class PlayQueueItem implements Serializable {
 
     public boolean isRoundPlayStream() {
         return isRoundPlayStream;
+    }
+
+    public long getStartAt() {
+        return startAt;
     }
 }
