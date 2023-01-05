@@ -63,6 +63,7 @@ public final class KioskTranslator {
             case "Top 50":
             case "New & hot":
             case "conferences":
+            case "Recommended Lives":
             case "Top 100":
                 return R.drawable.ic_whatshot;
             case "Local":
@@ -73,7 +74,7 @@ public final class KioskTranslator {
             case "Most liked":
                 return R.drawable.ic_thumb_up;
             case "live":
-            case "Recommended Lives":
+            case "Top Lives":
                 return R.drawable.ic_live_tv;
             case "Featured":
             case "Recommended Videos":
