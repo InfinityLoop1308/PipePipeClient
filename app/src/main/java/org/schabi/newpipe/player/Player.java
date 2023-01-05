@@ -974,6 +974,7 @@ public final class Player implements
         }
         if(bcPlayer != null){
             bcPlayer.disconnect();
+            clearBCPlayer();
         }
         if(enqueueTimer != null){
             enqueueTimer.cancel(true);
