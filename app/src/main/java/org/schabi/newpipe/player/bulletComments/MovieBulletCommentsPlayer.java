@@ -56,6 +56,7 @@ public class MovieBulletCommentsPlayer {
                     .filter(Objects::nonNull)
                     .map((BulletCommentsInfo commentsInfo) -> {
                                 extractor = commentsInfo.getBulletCommentsExtractor();
+                                extractor.reconnect();
                                 return commentsInfo.getRelatedItems();
                             }
                     )
