@@ -220,6 +220,7 @@ import org.schabi.newpipe.views.player.PlayerFastSeekOverlay;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -3004,7 +3005,11 @@ public final class Player implements
         if (currentState != STATE_PAUSED_SEEK) {
             binding.playbackSeekBar.setProgress(currentProgress);
         }
-        binding.playbackCurrentTime.setText(getTimeString(currentProgress));
+        if(currentItem.getStartAt() != -1 && currentItem.getStreamType() == StreamType.LIVE_STREAM){
+            binding.playbackCurrentTime.setText(getTimeString((int) (new Date().getTime() - currentItem.getStartAt())));
+        } else {
+            binding.playbackCurrentTime.setText(getTimeString(currentProgress));
+        }
     }
 
     @Override // own playback listener (this is a getter)
