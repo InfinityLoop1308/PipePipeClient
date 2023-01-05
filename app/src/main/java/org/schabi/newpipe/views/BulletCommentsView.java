@@ -185,7 +185,7 @@ public final class BulletCommentsView extends ConstraintLayout {
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     (float) (Math.min(height, width) * commentRelativeTextSize * item.getRelativeFontSize()));
             textView.setMaxLines(1);
-            textView.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD));
+            textView.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD, item.getPosition().equals(BulletCommentsInfoItem.Position.SUPERCHAT)));
             final double commentSpace = 1 / 4.4 * height;
             if (true) {
                 //Setting initial position by addView() won't work properly.
@@ -193,7 +193,8 @@ public final class BulletCommentsView extends ConstraintLayout {
                 int row = -1;
                 int comparedDuration = (int) (commentsDuration * 1000);
                 long current = new Date().getTime();
-                if(item.getPosition().equals(BulletCommentsInfoItem.Position.TOP)){
+                if(item.getPosition().equals(BulletCommentsInfoItem.Position.TOP)
+                        || item.getPosition().equals(BulletCommentsInfoItem.Position.SUPERCHAT)){
                     for(int i = 0; i < calculatedCommentRowsCount ;i++){
                         long last = rows.get(i);
                         if(current - last >= comparedDuration){
@@ -255,7 +256,7 @@ public final class BulletCommentsView extends ConstraintLayout {
                             textView, animator);
                     animatedTextViews.add(animatedTextView);
                     animator.setInterpolator(new LinearInterpolator());
-                    animator.setDuration((long) (commentsDuration * 1000));
+                    animator.setDuration(item.getLastingTime() != -1? item.getLastingTime():(long) (commentsDuration * 1000));
                     animator.addListener(new AnimatorListenerAdapter() {
                         public void onAnimationEnd(final Animator animation) {
                             binding.bulletCommentsContainer.removeView(textView);
