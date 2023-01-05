@@ -467,33 +467,11 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             final String cacheKey,
             final MediaItemTag metadata) throws IOException{
         String sourceUrl = stream.getContent();
-        DownloaderImpl downloader = DownloaderImpl.getInstance();
-        boolean flag = false;
-        Response response;
-        try
-        {
-            response = downloader.get(sourceUrl, null, NiconicoService.LOCALE);
-            final Document page = Jsoup.parse(response.responseBody());
-            if( page.getElementById("js-initial-watch-data") == null){
-                throw new Exception("Needs login");
-            }
-            JsonObject watch = JsonParser.object().from(
-                    page.getElementById("js-initial-watch-data").attr("data-api-data"));
-            final JsonObject session
-                    = watch.getObject("media").getObject("delivery").getObject("movie");
-            flag = (session.getObject("session").getArray("protocols").getString(0).equals("hls"));
-        } catch (JsonParserException | ReCaptchaException | IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            throw new RuntimeException("Needs login");
-        }
         MediaSource.Factory factory;
         Uri uri = Uri.parse(sourceUrl);
-        if(flag){
+        if(streamInfo.getHlsUrl() != null){
             factory = dataSource.getNicoHlsMediaSourceFactory();
-            uri = Uri.parse(dataSource.getNicoVideoUrl(String.valueOf(uri)));
-        }
-        else{
+        } else {
             factory = dataSource.getNicoMediaSourceFactory();
         }
         return factory.createMediaSource(

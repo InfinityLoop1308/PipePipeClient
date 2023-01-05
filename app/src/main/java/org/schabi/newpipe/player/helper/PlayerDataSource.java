@@ -261,7 +261,13 @@ public class PlayerDataSource {
 
     public HlsMediaSource.Factory getNicoHlsMediaSourceFactory() {
         cacheDataSourceFactoryBuilder.setUpstreamDataSourceFactory(nicoCachelessDataSourceFactory);
-        return new HlsMediaSource.Factory(cacheDataSourceFactoryBuilder.build());
+        DataSource.Factory newFactory = new ResolvingDataSource.Factory(cacheDataSourceFactoryBuilder.build(), dataSpec -> {
+            if(String.valueOf(dataSpec.uri).contains("nicovideo.jp/watch/")){
+                return dataSpec.withUri(Uri.parse(getNicoVideoUrl(String.valueOf(dataSpec.uri))));
+            }
+            return dataSpec;
+        });
+        return new HlsMediaSource.Factory(newFactory);
     }
 
     public HlsMediaSource.Factory getNicoLiveHlsMediaSourceFactory(String liveUrl) {
