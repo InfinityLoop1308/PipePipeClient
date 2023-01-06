@@ -109,6 +109,9 @@ public class MovieBulletCommentsPlayer {
             if(drawUntilPosition.toString().equals("PT0.049S")){
                 return;
             }
+            if(lastPosition.compareTo(drawUntilPosition) > 0){
+                extractor.clearMappingState();
+            }
             nextCommentsInfoItems = commentsInfoItems
                     .stream()
                     .filter(item -> {
