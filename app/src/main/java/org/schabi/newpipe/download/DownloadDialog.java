@@ -36,6 +36,7 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.PreferenceManager;
 
+import com.grack.nanojson.JsonParserException;
 import com.nononsenseapps.filepicker.Utils;
 
 import org.schabi.newpipe.MainActivity;
@@ -46,12 +47,15 @@ import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.exceptions.ParsingException;
+import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
 import org.schabi.newpipe.extractor.localization.Localization;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.Stream;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.SubtitlesStream;
 import org.schabi.newpipe.extractor.stream.VideoStream;
+import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.settings.NewPipeSettings;
 import org.schabi.newpipe.streams.io.NoFileManagerSafeGuard;
 import org.schabi.newpipe.streams.io.StoredDirectoryHelper;
@@ -1021,18 +1025,23 @@ public class DownloadDialog extends DialogFragment
 
         if (secondaryStream == null) {
             urls = new String[]{
-                    selectedStream.getUrl().contains("nicovideo.jp/watch")? null:selectedStream.getUrl()
+                    selectedStream.getContent()
             };
             recoveryInfo = new MissionRecoveryInfo[]{
                     new MissionRecoveryInfo(selectedStream)
             };
         } else {
             urls = new String[]{
-                    selectedStream.getUrl().contains("nicovideo.jp/watch")? null:selectedStream.getUrl(),
-                    secondaryStream.getUrl().contains("nicovideo.jp/watch")? null:secondaryStream.getUrl()
+                    selectedStream.getContent(),
+                    secondaryStream.getContent()
             };
             recoveryInfo = new MissionRecoveryInfo[]{new MissionRecoveryInfo(selectedStream),
                     new MissionRecoveryInfo(secondaryStream)};
+        }
+        for(int i = 0; i < urls.length; i++){
+            if(urls[i].contains("nicovideo.jp/watch")){
+                urls[i] = PlayerDataSource.getNicoVideoUrl(urls[i]);
+            }
         }
 
         DownloadManagerService.startMission(context, urls, storage, kind, threads,

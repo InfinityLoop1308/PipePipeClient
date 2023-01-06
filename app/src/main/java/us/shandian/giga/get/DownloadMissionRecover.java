@@ -9,6 +9,7 @@ import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.StreamExtractor;
 import org.schabi.newpipe.extractor.stream.SubtitlesStream;
 import org.schabi.newpipe.extractor.stream.VideoStream;
+import org.schabi.newpipe.player.helper.PlayerDataSource;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -19,6 +20,8 @@ import java.util.List;
 import us.shandian.giga.get.DownloadMission.HttpError;
 
 import static us.shandian.giga.get.DownloadMission.ERROR_RESOURCE_GONE;
+
+import com.grack.nanojson.JsonParserException;
 
 public class DownloadMissionRecover extends Thread {
     private static final String TAG = "DownloadMissionRecover";
@@ -147,6 +150,9 @@ public class DownloadMissionRecover extends Thread {
                 for (VideoStream video : videoStreams) {
                     if (video.resolution.equals(mRecovery.getDesired()) && video.getFormat() == mRecovery.getFormat()) {
                         url = video.getUrl();
+                        if (NewPipe.getServiceByUrl(mMission.source).serviceId == 6) {
+                            url = PlayerDataSource.getNicoVideoUrl(url);;
+                        }
                     }
                 }
                 break;
@@ -182,7 +188,9 @@ public class DownloadMissionRecover extends Thread {
         try {
             mConn = mMission.openConnection(url, true, mMission.length - 10, mMission.length);
             mConn.setRequestProperty("If-Range", mRecovery.getValidateCondition());
-            mConn.setRequestProperty("Referer", "https://www.bilibili.com");
+            if(url.contains("bilibili.com")){
+                mConn.setRequestProperty("Referer", "https://www.bilibili.com");
+            }
             mMission.establishConnection(mID, mConn);
 
             int code = mConn.getResponseCode();
