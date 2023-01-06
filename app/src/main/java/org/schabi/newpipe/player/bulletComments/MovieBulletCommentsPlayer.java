@@ -96,7 +96,6 @@ public class MovieBulletCommentsPlayer {
         if(extractor.isDisabled()){
             return ;
         }
-
         if(extractor!= null && extractor.isLive()){
             try {
                 nextCommentsInfoItems = extractor.getLiveMessages()
@@ -108,9 +107,6 @@ public class MovieBulletCommentsPlayer {
         }else {
             if(drawUntilPosition.toString().equals("PT0.049S")){
                 return;
-            }
-            if(lastPosition.compareTo(drawUntilPosition) > 0){
-                extractor.clearMappingState();
             }
             nextCommentsInfoItems = commentsInfoItems
                     .stream()
