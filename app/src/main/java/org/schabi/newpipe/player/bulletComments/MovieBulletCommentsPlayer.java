@@ -106,7 +106,7 @@ public class MovieBulletCommentsPlayer {
                 throw new RuntimeException(e);
             }
         }else {
-            if(drawUntilPosition.toString().equals("PT-0.001S")){
+            if(drawUntilPosition.toString().equals("PT0.049S")){
                 return;
             }
             nextCommentsInfoItems = commentsInfoItems
