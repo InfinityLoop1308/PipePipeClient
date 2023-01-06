@@ -3,6 +3,7 @@ package org.schabi.newpipe.views;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -221,7 +222,7 @@ public final class BulletCommentsView extends ConstraintLayout {
                 } else if (item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)) {
                     for(int i = 0; i < calculatedCommentRowsCount ;i++){
                         long last = rowsRegular.get(i);
-                        if(current - last >= comparedDuration / 6){
+                        if(current - last >= comparedDuration * 1.5 / 6){
                             rowsRegular.set(i, current);
                             row = i;
                             break;
@@ -264,14 +265,17 @@ public final class BulletCommentsView extends ConstraintLayout {
                                 -textWidth
                         );
                     }
-
                     textView.setY((float) (height * (0.5 + finalRow) / calculatedCommentRowsCount - textHeight / 2));
 
                     final AnimatedTextView animatedTextView = new AnimatedTextView(
                             textView, animator);
                     animatedTextViews.add(animatedTextView);
                     animator.setInterpolator(new LinearInterpolator());
-                    animator.setDuration(item.getLastingTime() != -1? item.getLastingTime():(long) (commentsDuration * 1000));
+                    animator.setDuration(item.getLastingTime() != -1?
+                            item.getLastingTime():
+                            (long) (commentsDuration * 1000 *
+                                    (item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)
+                                            ? 1.5:1)));
                     animator.addListener(new AnimatorListenerAdapter() {
                         public void onAnimationEnd(final Animator animation) {
                             binding.bulletCommentsContainer.removeView(textView);
