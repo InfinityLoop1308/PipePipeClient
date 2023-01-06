@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -196,7 +197,11 @@ public final class BulletCommentsView extends ConstraintLayout {
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     (float) (Math.min(height, width) * commentRelativeTextSize * item.getRelativeFontSize()));
             textView.setMaxLines(1);
-            textView.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD, item.getPosition().equals(BulletCommentsInfoItem.Position.SUPERCHAT)));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                textView.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD, item.getPosition().equals(BulletCommentsInfoItem.Position.SUPERCHAT)));
+            } else {
+                textView.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD));
+            }
             final double commentSpace = 1 / 4.4 * height;
             if (true) {
                 //Setting initial position by addView() won't work properly.
