@@ -93,6 +93,11 @@ public class MovieBulletCommentsPlayer {
         }
         BulletCommentsInfoItem[] nextCommentsInfoItems;
         //Log.d(TAG, "Showing comments between "+ lastDuration + " and " + drawUntilPosition);
+        if(extractor.isDisabled()){
+            return ;
+        }
+
+        boolean isLiveLoading = false;
         if(extractor!= null && extractor.isLive()){
             try {
                 nextCommentsInfoItems = extractor.getLiveMessages()
