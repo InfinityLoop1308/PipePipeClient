@@ -97,11 +97,11 @@ public class MovieBulletCommentsPlayer {
             return ;
         }
 
-        boolean isLiveLoading = false;
         if(extractor!= null && extractor.isLive()){
             try {
                 nextCommentsInfoItems = extractor.getLiveMessages()
                         .stream().toArray(BulletCommentsInfoItem[]::new);
+                extractor.setCurrentPlayPosition(drawUntilPosition.toMillis());
             } catch (ParsingException e) {
                 throw new RuntimeException(e);
             }
@@ -119,7 +119,7 @@ public class MovieBulletCommentsPlayer {
                     )
                     .toArray(BulletCommentsInfoItem[]::new);
         }
-        bulletCommentsView.drawComments(nextCommentsInfoItems);
+        bulletCommentsView.drawComments(nextCommentsInfoItems, drawUntilPosition);
         this.lastPosition = drawUntilPosition;
     }
 

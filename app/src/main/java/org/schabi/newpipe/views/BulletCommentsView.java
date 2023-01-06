@@ -16,12 +16,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.google.android.exoplayer2.C;
-
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.BulletCommentsPlayerBinding;
 import org.schabi.newpipe.extractor.bulletComments.BulletCommentsInfoItem;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -107,6 +106,7 @@ public final class BulletCommentsView extends ConstraintLayout {
     List<Long> rows = Collections.synchronizedList(new ArrayList<Long>());
     List<Long> rowsRegular = Collections.synchronizedList(new ArrayList<Long>());
     private final double commentRelativeTextSize = 1 / 13.5;
+    ArrayList<BulletCommentsInfoItem> bulletCommentsInfoItemPool = new ArrayList<>();
 
     /**
      * Duration of comments.
@@ -153,13 +153,15 @@ public final class BulletCommentsView extends ConstraintLayout {
     /**
      * Draw comments by creating textViews.
      *
-     * @param items comments.
+     * @param items             comments.
+     * @param drawUntilPosition
      */
-    public void drawComments(@NonNull final BulletCommentsInfoItem[] items) {
+    public void drawComments(@NonNull final BulletCommentsInfoItem[] items, Duration drawUntilPosition) {
         if (!layoutSet) {
             setLayout();
             layoutSet = true;
         }
+        bulletCommentsInfoItemPool.addAll(Arrays.asList(items));
         //Log.v(TAG, "New comments count: " + items.length);
         final Context context = binding.bulletCommentsContainer.getContext();
         final int height = getHeight();
@@ -176,12 +178,21 @@ public final class BulletCommentsView extends ConstraintLayout {
         while(rows.size() < calculatedCommentRowsCount){
             rows.add(0L);
         }
-        for (final BulletCommentsInfoItem item : items) {
+        while(bulletCommentsInfoItemPool.size() > 0) {
+            BulletCommentsInfoItem item = bulletCommentsInfoItemPool.remove(0);
+            long current = new Date().getTime();
+            long itemDuration = item.getDuration().toMillis();
+            if(!(itemDuration == 0) && drawUntilPosition.toMillis() - itemDuration > 2000){
+                continue;
+            }
             //Create TextView.
             final TextView textView = new TextView(context);
             textView.setGravity(View.TEXT_ALIGNMENT_CENTER);
             textView.setTextColor(item.getArgbColor());
             textView.setText(item.getCommentText());
+            if(item.getCommentText().length() == 0){
+                continue;
+            }
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     (float) (Math.min(height, width) * commentRelativeTextSize * item.getRelativeFontSize()));
             textView.setMaxLines(1);
@@ -192,7 +203,6 @@ public final class BulletCommentsView extends ConstraintLayout {
                 //setTop(), ... etc. won't work.
                 int row = -1;
                 int comparedDuration = (int) (commentsDuration * 1000);
-                long current = new Date().getTime();
                 if(item.getPosition().equals(BulletCommentsInfoItem.Position.TOP)
                         || item.getPosition().equals(BulletCommentsInfoItem.Position.SUPERCHAT)){
                     for(int i = 0; i < calculatedCommentRowsCount ;i++){

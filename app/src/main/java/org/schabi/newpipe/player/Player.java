@@ -2278,6 +2278,9 @@ public final class Player implements
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(s -> {
                     Duration ret = getCurrentPositionDuration();
+                    if(currentItem!= null && currentItem.getStartAt() != -1 && currentItem.getStreamType() == StreamType.LIVE_STREAM){
+                        ret = Duration.ofMillis(new Date().getTime() - currentItem.getStartAt());
+                    }
                     if(ret == null){
                         return Duration.ofMillis(-1);
                     }
