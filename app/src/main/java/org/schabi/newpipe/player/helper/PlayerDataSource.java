@@ -203,7 +203,7 @@ public class PlayerDataSource {
     }
 
     // NicoNicoMediaSourceFactories
-    public String getNicoVideoUrl(String url){
+    public static String getNicoVideoUrl(String url){
         final Map<String, List<String>> headers = new HashMap<>();
         headers.put("Content-Type", Collections.singletonList("application/json"));
         DownloaderImpl downloader = DownloaderImpl.getInstance();
