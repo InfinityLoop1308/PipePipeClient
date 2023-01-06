@@ -3009,7 +3009,7 @@ public final class Player implements
         if (currentState != STATE_PAUSED_SEEK) {
             binding.playbackSeekBar.setProgress(currentProgress);
         }
-        if(currentItem.getStartAt() != -1 && currentItem.getStreamType() == StreamType.LIVE_STREAM){
+        if(currentItem!= null && currentItem.getStartAt() != -1 && currentItem.getStreamType() == StreamType.LIVE_STREAM){
             binding.playbackCurrentTime.setText(getTimeString((int) (new Date().getTime() - currentItem.getStartAt())));
         } else {
             binding.playbackCurrentTime.setText(getTimeString(currentProgress));
