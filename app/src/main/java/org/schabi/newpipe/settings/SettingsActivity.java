@@ -266,12 +266,12 @@ public class SettingsActivity extends AppCompatActivity implements
      */
     private void ensureSearchRepresentsApplicationState() {
         // Check if the update settings are available
-        if (!ReleaseVersionUtil.isReleaseApk()) {
-            SettingsResourceRegistry.getInstance()
-                    .getEntryByPreferencesResId(R.xml.update_settings)
-                    .setSearchable(false);
-        }
-
+//        if (!ReleaseVersionUtil.isReleaseApk()) {
+//            SettingsResourceRegistry.getInstance()
+//                    .getEntryByPreferencesResId(R.xml.update_settings)
+//                    .setSearchable(false);
+//        }
+//
         // Hide debug preferences in RELEASE build variant
         if (DEBUG) {
             SettingsResourceRegistry.getInstance()

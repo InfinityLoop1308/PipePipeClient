@@ -20,7 +20,6 @@ import org.schabi.newpipe.extractor.downloader.Response
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException
 import org.schabi.newpipe.util.ReleaseVersionUtil.coerceUpdateCheckExpiry
 import org.schabi.newpipe.util.ReleaseVersionUtil.isLastUpdateCheckExpired
-import org.schabi.newpipe.util.ReleaseVersionUtil.isReleaseApk
 import java.io.IOException
 
 class NewVersionWorker(
@@ -28,6 +27,11 @@ class NewVersionWorker(
     workerParams: WorkerParameters
 ) : Worker(context, workerParams) {
 
+    private fun compareVersionName(buildVersionCodes: List<String>, versionCodes: List<String>): Boolean {
+        return versionCodes[0].toInt() > buildVersionCodes[0].toInt() ||
+            versionCodes[0].toInt() == buildVersionCodes[0].toInt() && versionCodes[1].toInt() > buildVersionCodes[1].toInt() ||
+            versionCodes[0].toInt() == buildVersionCodes[0].toInt() && versionCodes[1].toInt() == buildVersionCodes[1].toInt() && versionCodes[2].toInt() > buildVersionCodes[2].toInt()
+    }
     /**
      * Method to compare the current and latest available app version.
      * If a newer version is available, we show the update notification.
@@ -39,9 +43,10 @@ class NewVersionWorker(
     private fun compareAppVersionAndShowNotification(
         versionName: String,
         apkLocationUrl: String?,
-        versionCode: Int
     ) {
-        if (BuildConfig.VERSION_CODE >= versionCode) {
+        val versionCodes = versionName.split(".")
+        val buildVersionCodes = BuildConfig.VERSION_NAME.split(".")
+        if (!compareVersionName(buildVersionCodes, versionCodes)) {
             return
         }
         val app = App.getApp()
@@ -68,9 +73,9 @@ class NewVersionWorker(
     @Throws(IOException::class, ReCaptchaException::class)
     private fun checkNewVersion() {
         // Check if the current apk is a github one or not.
-        if (!isReleaseApk()) {
-            return
-        }
+//        if (!isReleaseApk()) {
+//            return
+//        }
 
         val prefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         // Check if the last request has happened a certain time ago
@@ -102,14 +107,16 @@ class NewVersionWorker(
 
         // Parse the json from the response.
         try {
-            val githubStableObject = JsonParser.`object`()
-                .from(response.responseBody()).getObject("flavors")
-                .getObject("github").getObject("stable")
+            val githubStableObject = JsonParser.`array`()
+                .from(response.responseBody()).getObject(0)
 
-            val versionName = githubStableObject.getString("version")
-            val versionCode = githubStableObject.getInt("version_code")
-            val apkLocationUrl = githubStableObject.getString("apk")
-            compareAppVersionAndShowNotification(versionName, apkLocationUrl, versionCode)
+            var versionName = githubStableObject.getString("name")
+            if (versionName.startsWith("v")) {
+                versionName = versionName.substring(1)
+            }
+            val apkLocationUrl = githubStableObject.getArray("assets").getObject(0)
+                .getString("browser_download_url")
+            compareAppVersionAndShowNotification(versionName, apkLocationUrl)
         } catch (e: JsonParserException) {
             // Most likely something is wrong in data received from NEWPIPE_API_URL.
             // Do not alarm user and fail silently.
@@ -135,7 +142,7 @@ class NewVersionWorker(
     companion object {
         private val DEBUG = MainActivity.DEBUG
         private val TAG = NewVersionWorker::class.java.simpleName
-        private const val NEWPIPE_API_URL = "https://newpipe.net/api/data.json"
+        private const val NEWPIPE_API_URL = "https://api.github.com/repos/InfinityLoop1309/AnimePipe/releases"
 
         /**
          * Start a new worker which
