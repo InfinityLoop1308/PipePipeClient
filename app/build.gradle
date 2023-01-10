@@ -17,8 +17,8 @@ android {
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk 29
-        versionCode 1008
-        versionName "2.0.1"
+        versionCode 1009
+        versionName "2.0.2"
 
         multiDexEnabled true
 
