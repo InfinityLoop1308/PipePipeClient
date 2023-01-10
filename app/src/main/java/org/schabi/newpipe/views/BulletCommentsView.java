@@ -184,7 +184,9 @@ public final class BulletCommentsView extends ConstraintLayout {
             BulletCommentsInfoItem item = bulletCommentsInfoItemPool.remove(0);
             long current = new Date().getTime();
             long itemDuration = item.getDuration().toMillis();
-            if(!(itemDuration == 0) && drawUntilPosition.toMillis() - itemDuration > 2000){
+            if(!(itemDuration == 0)
+                    && !(drawUntilPosition.compareTo(Duration.ofSeconds(Long.MAX_VALUE)) == 0)
+                    && drawUntilPosition.toMillis() - itemDuration > 2000){
                 continue;
             }
             //Create TextView.
