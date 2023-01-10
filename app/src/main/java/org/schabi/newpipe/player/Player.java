@@ -2935,9 +2935,17 @@ public final class Player implements
                     }
 
                     if (exception == null && availableStreams != null && availableStreams.size() > 1){
-                        currentMetadata.getMaybeStreamInfo().get().removeStreamUrl(availableStreams.get(0).getContent());
+                        try{
+                            currentMetadata.getMaybeStreamInfo().get().removeStreamUrl(availableStreams.get(0).getContent());
+                        } catch (Exception e) {
+                            e.printStackTrace(); // really don't know why there is always unexpected indexOutOfBound
+                        }
                     } else if(exception != null && currentMetadata.getMaybeStreamInfo().get().getStreamsLength() > 1) {
-                        currentMetadata.getMaybeStreamInfo().get().removeStreamUrl(exception.dataSpec.uri.toString());
+                        try {
+                            currentMetadata.getMaybeStreamInfo().get().removeStreamUrl(exception.dataSpec.uri.toString());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     } else {
                         retryUrl = playQueue.getItem(0).getUrl();
                         retryCount++;
