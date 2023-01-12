@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -18,6 +19,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.BulletCommentsPlayerBinding;
 import org.schabi.newpipe.extractor.bulletComments.BulletCommentsInfoItem;
@@ -32,6 +35,7 @@ import java.util.Random;
 
 public final class BulletCommentsView extends ConstraintLayout {
     private final String TAG = "BulletCommentsView";
+    private SharedPreferences prefs;
 
     /**
      * Tuple of TextView and ObjectAnimator.
@@ -68,6 +72,9 @@ public final class BulletCommentsView extends ConstraintLayout {
     private void init(final Context context) {
         final View layout = LayoutInflater.from(context)
                 .inflate(R.layout.bullet_comments_player, this);
+        prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        commentsDuration = prefs.getInt("top_bottom_bullet_comments_key", 8);
+        durationFactor = (float) prefs.getInt("regular_bullet_comments_duration_key", 8) / (float) commentsDuration;
         //Not this: BulletCommentsPlayerBinding.inflate(LayoutInflater.from(context));
         binding = BulletCommentsPlayerBinding.bind(this);
         //This does not work. post(this::setLayout);
@@ -111,11 +118,11 @@ public final class BulletCommentsView extends ConstraintLayout {
     ArrayList<BulletCommentsInfoItem> bulletCommentsInfoItemPool = new ArrayList<>();
 
     /**
-     * Duration of comments.
+     * Duration of comments. get from preferences. key: "bullet_comments_key"
      */
-    private final float commentsDuration = 4;
+    private int commentsDuration;
+    private float durationFactor;
     private final List<AnimatedTextView> animatedTextViews = new ArrayList<>();
-    private final Random random = new Random();
 
     /**
      * Clear all child views.
@@ -224,7 +231,7 @@ public final class BulletCommentsView extends ConstraintLayout {
                 } else if (item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)) {
                     for(int i = 0; i < calculatedCommentRowsCount ;i++){
                         long last = rowsRegular.get(i);
-                        if(current - last >= comparedDuration * 1.5 / 6){
+                        if(current - last >= comparedDuration * durationFactor / 6){
                             rowsRegular.set(i, current);
                             row = i;
                             break;
@@ -277,7 +284,7 @@ public final class BulletCommentsView extends ConstraintLayout {
                             item.getLastingTime():
                             (long) (commentsDuration * 1000 *
                                     (item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)
-                                            ? 1.5:1)));
+                                            ? durationFactor:1)));
                     animator.addListener(new AnimatorListenerAdapter() {
                         public void onAnimationEnd(final Animator animation) {
                             binding.bulletCommentsContainer.removeView(textView);

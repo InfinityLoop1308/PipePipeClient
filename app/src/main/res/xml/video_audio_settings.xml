@@ -224,5 +224,26 @@
             app:singleLineTitle="false"
             app:iconSpaceReserved="false" />
 
+<!--preference compat where user can use a seekbar to select regular bullet comments duration between 5s to 15s-->
+<!--        default value should be 8s-->
+        <SeekBarPreference
+            android:defaultValue="8"
+            android:key="@string/regular_bullet_comments_duration_key"
+            android:max="15"
+            android:summary="@string/regular_bullet_comments_duration_summary"
+            android:title="@string/regular_bullet_comments_duration_title"
+            app:singleLineTitle="false"
+            app:iconSpaceReserved="false" />
+        <!--preference compat where user can use a seekbar to select top/bottom bullet comments duration between 5s to 15s-->
+        <!--        default value should be 8s-->
+        <SeekBarPreference
+            android:defaultValue="8"
+            android:key="@string/top_bottom_bullet_comments_duration_key"
+            android:max="15"
+            android:summary="@string/top_bottom_bullet_comments_duration_summary"
+            android:title="@string/top_bottom_bullet_comments_duration_title"
+            app:singleLineTitle="false"
+            app:iconSpaceReserved="false" />
+
     </PreferenceCategory>
 </PreferenceScreen>

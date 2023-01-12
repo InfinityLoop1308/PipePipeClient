@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.preference.ListPreference;
 
+import androidx.preference.SeekBarPreference;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.schabi.newpipe.R;
@@ -49,7 +50,26 @@ public class VideoAudioSettingsFragment extends BasePreferenceFragment {
             } else if (s.equals(getString(R.string.use_inexact_seek_key))) {
                 updateSeekOptions();
             }
+            // add listeners to show the current float duration of regular bullet comments and top_bottom bullet comments
+            else if (s.equals(getString(R.string.top_bottom_bullet_comments_duration_key))){
+                final int newSetting = sharedPreferences.getInt(s, 8);
+                final SeekBarPreference topBottomBulletCommentsDuration = findPreference(s);
+                assert topBottomBulletCommentsDuration != null;
+                topBottomBulletCommentsDuration.setSummary(newSetting + " seconds");
+            }
+            else if (s.equals(getString(R.string.regular_bullet_comments_duration_key))){
+                final int newSetting = sharedPreferences.getInt(s, 8);
+                final SeekBarPreference regularBulletCommentsDuration = findPreference(s);
+                assert regularBulletCommentsDuration != null;
+                regularBulletCommentsDuration.setSummary(newSetting + " seconds");
+            }
         };
+        final SeekBarPreference regularBulletCommentsDuration = findPreference(getString(R.string.regular_bullet_comments_duration_key));
+        assert regularBulletCommentsDuration != null;
+        regularBulletCommentsDuration.setMin(5);
+        final SeekBarPreference topBottomBulletCommentsDuration = findPreference(getString(R.string.top_bottom_bullet_comments_duration_key));
+        assert topBottomBulletCommentsDuration != null;
+        topBottomBulletCommentsDuration.setMin(5);
     }
 
     /**

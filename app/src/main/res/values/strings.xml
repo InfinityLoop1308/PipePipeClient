@@ -769,4 +769,12 @@
     <string name="channel_tab_info">Info</string>
     <string name="show_channel_tabs">Channel tabs</string>
     <string name="show_channel_tabs_summary">What tabs are shown on the channel pages</string>
+    <string name="regular_bullet_comments_duration_key">regular_bullet_comments_duration_key</string>
+    <string name="regular_bullet_comments_duration_summary">Change the duration of regular/rolling bullet comments. A shorter duration may cause
+        stutter/choppy/lag.
+    </string>
+    <string name="regular_bullet_comments_duration_title">Regular bullet comments duration</string>
+    <string name="top_bottom_bullet_comments_duration_key">top_bottom_bullet_comments_duration_key</string>
+    <string name="top_bottom_bullet_comments_duration_summary">Change the duration of top/bottom bullet comments. </string>
+    <string name="top_bottom_bullet_comments_duration_title">Top/bottom bullet comments duration</string>
 </resources>
