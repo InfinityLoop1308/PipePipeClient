@@ -24,8 +24,6 @@ import java.util.function.Consumer;
 
 import okhttp3.OkHttpClient;
 
-import javax.annotation.Nullable;
-
 public final class PicassoHelper {
     public static final String PLAYER_THUMBNAIL_TAG = "PICASSO_PLAYER_THUMBNAIL_TAG";
     private static final String PLAYER_THUMBNAIL_TRANSFORMATION_KEY
