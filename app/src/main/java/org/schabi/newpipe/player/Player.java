@@ -2399,12 +2399,14 @@ public final class Player implements
         timer.cancel(true);
         updateStreamRelatedViews();
 
-        StreamInfo streamInfo = getCurrentStreamInfo().get();
-        if(streamInfo.isRoundPlayStream() && (
-                enqueueTimer == null || enqueueTimer.isDone() || enqueueTimer.isCancelled())){
-            enqueueTimer = executor.schedule(() -> maybeAutoQueueNextStream(streamInfo, true),
-                    Math.max(simpleExoPlayer.getDuration()
-                            - simpleExoPlayer.getCurrentPosition() - 1000, 0), MILLISECONDS);
+        if(getCurrentStreamInfo().isPresent()){
+            StreamInfo streamInfo = getCurrentStreamInfo().get();
+            if(streamInfo.isRoundPlayStream() && (
+                    enqueueTimer == null || enqueueTimer.isDone() || enqueueTimer.isCancelled())){
+                enqueueTimer = executor.schedule(() -> maybeAutoQueueNextStream(streamInfo, true),
+                        Math.max(simpleExoPlayer.getDuration()
+                                - simpleExoPlayer.getCurrentPosition() - 1000, 0), MILLISECONDS);
+            }
         }
 
         binding.playbackSeekBar.setEnabled(true);
