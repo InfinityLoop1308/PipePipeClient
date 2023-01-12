@@ -142,7 +142,7 @@ class NewVersionWorker(
     companion object {
         private val DEBUG = MainActivity.DEBUG
         private val TAG = NewVersionWorker::class.java.simpleName
-        private const val NEWPIPE_API_URL = "https://api.github.com/repos/InfinityLoop1309/AnimePipe/releases"
+        private const val NEWPIPE_API_URL = "https://codeberg.org/api/v1/repos/NullPointerException/AnimePipe/releases"
 
         /**
          * Start a new worker which
