@@ -23,7 +23,7 @@ class StreamSegmentItem(
 
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         item.previewUrl?.let {
-            PicassoHelper.loadThumbnail(it)
+            PicassoHelper.loadScaledDownThumbnail(viewHolder.root.context, it)
                 .into(viewHolder.root.findViewById<ImageView>(R.id.previewImage))
         }
         viewHolder.root.findViewById<TextView>(R.id.textViewTitle).text = item.title

@@ -114,7 +114,7 @@ public class LocalStatisticStreamItemHolder extends LocalItemHolder {
         }
 
         // Default thumbnail is shown on error, while loading and if the url is empty
-        PicassoHelper.loadThumbnail(item.getStreamEntity().getThumbnailUrl())
+        PicassoHelper.loadScaledDownThumbnail(itemThumbnailView.getContext(), item.getStreamEntity().getThumbnailUrl())
                 .into(itemThumbnailView);
 
         itemView.setOnClickListener(view -> {

@@ -98,7 +98,8 @@ data class StreamItem(
             viewBinding.itemProgressView.visibility = View.GONE
         }
 
-        PicassoHelper.loadThumbnail(stream.thumbnailUrl).into(viewBinding.itemThumbnailView)
+        PicassoHelper.loadScaledDownThumbnail(viewBinding.root.context, stream.thumbnailUrl)
+            .into(viewBinding.itemThumbnailView)
 
         if (itemVersion != ItemVersion.MINI) {
             viewBinding.itemAdditionalDetails.text =

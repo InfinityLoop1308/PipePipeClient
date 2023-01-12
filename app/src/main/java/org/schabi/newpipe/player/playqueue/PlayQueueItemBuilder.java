@@ -33,7 +33,7 @@ public class PlayQueueItemBuilder {
             holder.itemDurationView.setVisibility(View.GONE);
         }
 
-        PicassoHelper.loadThumbnail(item.getThumbnailUrl()).into(holder.itemThumbnailView);
+        PicassoHelper.loadScaledDownThumbnail(holder.itemThumbnailView.getContext(), item.getThumbnailUrl()).into(holder.itemThumbnailView);
 
         holder.itemRoot.setOnClickListener(view -> {
             if (onItemClickListener != null) {

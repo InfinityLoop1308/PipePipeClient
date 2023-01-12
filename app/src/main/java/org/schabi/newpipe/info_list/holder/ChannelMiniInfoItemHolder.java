@@ -42,7 +42,8 @@ public class ChannelMiniInfoItemHolder extends InfoItemHolder {
         itemTitleView.setText(item.getName());
         itemAdditionalDetailView.setText(getDetailLine(item));
 
-        PicassoHelper.loadThumbnail(item.getThumbnailUrl()).into(itemThumbnailView);
+        PicassoHelper.loadScaledDownThumbnail(itemThumbnailView.getContext(), infoItem.getThumbnailUrl())
+                .into(itemThumbnailView);
 
         itemView.setOnClickListener(view -> {
             if (itemBuilder.getOnChannelSelectedListener() != null) {

@@ -1412,7 +1412,7 @@ public final class Player implements
         }
 
         // scale down the notification thumbnail for performance
-        PicassoHelper.loadScaledDownThumbnail(context, url).into(new Target() {
+        PicassoHelper.loadScaledDownThumbnail(context, url, true).into(new Target() {
             @Override
             public void onBitmapLoaded(final Bitmap bitmap, final Picasso.LoadedFrom from) {
                 if (DEBUG) {

@@ -24,6 +24,8 @@ import java.util.function.Consumer;
 
 import okhttp3.OkHttpClient;
 
+import javax.annotation.Nullable;
+
 public final class PicassoHelper {
     public static final String PLAYER_THUMBNAIL_TAG = "PICASSO_PLAYER_THUMBNAIL_TAG";
     private static final String PLAYER_THUMBNAIL_TRANSFORMATION_KEY
@@ -114,11 +116,13 @@ public final class PicassoHelper {
         return picassoInstance.load(url);
     }
 
+    public static RequestCreator loadScaledDownThumbnail(final Context context, final String url){
+        return loadScaledDownThumbnail(context, url, false);
+    }
 
-    public static RequestCreator loadScaledDownThumbnail(final Context context, final String url) {
+    public static RequestCreator loadScaledDownThumbnail(final Context context, final String url, final boolean shouldSetTag) {
         // scale down the notification thumbnail for performance
         return PicassoHelper.loadThumbnail(url)
-                .tag(PLAYER_THUMBNAIL_TAG)
                 .transform(new Transformation() {
                     @Override
                     public Bitmap transform(final Bitmap source) {
