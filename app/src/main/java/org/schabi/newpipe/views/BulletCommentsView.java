@@ -279,6 +279,7 @@ public final class BulletCommentsView extends ConstraintLayout {
                     final AnimatedTextView animatedTextView = new AnimatedTextView(
                             textView, animator);
                     animatedTextViews.add(animatedTextView);
+                    animator.setFrameDelay(1);
                     animator.setInterpolator(new LinearInterpolator());
                     animator.setDuration(item.getLastingTime() != -1?
                             item.getLastingTime():
