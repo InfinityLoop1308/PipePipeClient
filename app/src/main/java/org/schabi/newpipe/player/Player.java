@@ -3177,7 +3177,8 @@ public final class Player implements
 
         audioReactor.requestAudioFocus();
 
-        if (currentState == STATE_COMPLETED) {
+        if (currentState == STATE_COMPLETED && playQueue != null && playQueue.getItem() != null &&
+                playQueue.getItem().getRecoveryPosition() / 1000 >= playQueue.getItem().getDuration() - 5) {
             if (playQueue.getIndex() == 0) {
                 seekToDefault();
             } else {
