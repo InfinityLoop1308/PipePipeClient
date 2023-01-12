@@ -1,5 +1,6 @@
 package org.schabi.newpipe.player.bulletComments;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import org.schabi.newpipe.extractor.bulletComments.BulletCommentsExtractor;
@@ -47,6 +48,7 @@ public class MovieBulletCommentsPlayer {
     /**
      * Fetch comments and init. Call after setInitialData().
      */
+    @SuppressLint("CheckResult")
     public void init() {
         this.bulletCommentsView.clearComments();
         isLoading = true;
