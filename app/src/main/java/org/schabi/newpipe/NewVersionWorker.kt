@@ -61,7 +61,7 @@ class NewVersionWorker(
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
-            .setContentTitle(app.getString(R.string.app_update_notification_content_title))
+            .setContentTitle(app.getString(R.string.app_update_notification_content_title_new))
             .setContentText(
                 app.getString(R.string.app_update_notification_content_text) +
                     " " + versionName

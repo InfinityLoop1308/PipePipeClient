@@ -139,7 +139,7 @@
                 android:id="@+id/errorReportGitHubButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/error_report_open_issue_button_text" />
+                android:text="@string/error_report_open_issue_button_text_new" />
 
         </LinearLayout>
     </ScrollView>

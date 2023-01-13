@@ -184,12 +184,12 @@ class ErrorPanelHelper(
                 is LiveNotStartException -> R.string.live_not_started
                 is AgeRestrictedContentException -> R.string.restricted_video_no_stream
                 is GeographicRestrictionException -> R.string.georestricted_content
-                is PaidContentException -> R.string.paid_content
-                is PrivateContentException -> R.string.private_content
+                is PaidContentException -> R.string.paid_content_new
+                is PrivateContentException -> R.string.private_content_new
                 is SoundCloudGoPlusContentException -> R.string.soundcloud_go_plus_content
                 is YoutubeMusicPremiumContentException -> R.string.youtube_music_premium_content
                 is ContentNotAvailableException -> R.string.content_not_available
-                is ContentNotSupportedException -> R.string.content_not_supported
+                is ContentNotSupportedException -> R.string.content_not_supported_new
                 else -> {
                     // show retry button only for content which is not unavailable or unsupported
                     if (throwable != null && throwable.isNetworkRelated) {

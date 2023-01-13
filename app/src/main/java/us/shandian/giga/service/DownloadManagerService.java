@@ -156,7 +156,7 @@ public class DownloadManagerService extends Service {
                 .setContentIntent(mOpenDownloadList)
                 .setSmallIcon(android.R.drawable.stat_sys_download)
                 .setLargeIcon(icLauncher)
-                .setContentTitle(getString(R.string.msg_running))
+                .setContentTitle(getString(R.string.msg_running_new))
                 .setContentText(getString(R.string.msg_running_detail));
 
         mNotification = builder.build();

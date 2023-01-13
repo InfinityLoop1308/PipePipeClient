@@ -63,7 +63,7 @@
 
         <activity
             android:name=".about.AboutActivity"
-            android:label="@string/title_activity_about" />
+            android:label="@string/title_activity_about_new" />
 
         <service android:name=".local.subscription.services.SubscriptionsImportService" />
         <service android:name=".local.subscription.services.SubscriptionsExportService" />

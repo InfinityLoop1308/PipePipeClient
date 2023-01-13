@@ -155,8 +155,8 @@ public class ErrorActivity extends AppCompatActivity {
     private void openPrivacyPolicyDialog(final Context context, final String action) {
         new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle(R.string.privacy_policy_title)
-                .setMessage(R.string.start_accept_privacy_policy)
+                .setTitle(R.string.privacy_policy_title_new)
+                .setMessage(R.string.start_accept_privacy_policy_new)
                 .setCancelable(false)
                 .setNeutralButton(R.string.read_privacy_policy, (dialog, which) ->
                         ShareUtils.openUrlInBrowser(context,

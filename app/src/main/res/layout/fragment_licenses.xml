@@ -18,7 +18,7 @@
             android:layout_marginRight="@dimen/activity_vertical_margin"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:text="@string/app_license_title"
+            android:text="@string/app_license_title_new"
             android:textAppearance="@android:style/TextAppearance.Large" />
 
         <org.schabi.newpipe.views.NewPipeTextView

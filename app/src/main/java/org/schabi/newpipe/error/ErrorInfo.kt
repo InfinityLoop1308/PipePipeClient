@@ -106,7 +106,7 @@ class ErrorInfo(
                 throwable is AccountTerminatedException -> R.string.account_terminated
                 throwable is ContentNotAvailableException -> R.string.content_not_available
                 throwable != null && throwable.isNetworkRelated -> R.string.network_error
-                throwable is ContentNotSupportedException -> R.string.content_not_supported
+                throwable is ContentNotSupportedException -> R.string.content_not_supported_new
                 throwable is DeobfuscateException -> R.string.youtube_signature_deobfuscation_error
                 throwable is ExtractionException -> R.string.parsing_error
                 throwable is ExoPlaybackException -> {

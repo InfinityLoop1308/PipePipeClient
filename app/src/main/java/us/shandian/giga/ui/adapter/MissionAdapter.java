@@ -502,7 +502,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
                 msg = R.string.error_connect_host;
                 break;
             case ERROR_POSTPROCESSING_STOPPED:
-                msg = R.string.error_postprocessing_stopped;
+                msg = R.string.error_postprocessing_stopped_new;
                 break;
             case ERROR_POSTPROCESSING:
             case ERROR_POSTPROCESSING_HOLD:

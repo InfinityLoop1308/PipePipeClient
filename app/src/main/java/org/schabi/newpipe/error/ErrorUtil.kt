@@ -121,7 +121,7 @@ class ErrorUtil {
                         else
                             android.R.drawable.stat_notify_error
                     )
-                    .setContentTitle(context.getString(R.string.error_report_notification_title))
+                    .setContentTitle(context.getString(R.string.error_report_notification_title_new))
                     .setContentText(context.getString(errorInfo.messageStringId))
                     .setAutoCancel(true)
                     .setContentIntent(

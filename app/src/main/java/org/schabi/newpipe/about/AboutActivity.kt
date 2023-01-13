@@ -25,7 +25,7 @@ class AboutActivity : AppCompatActivity() {
         Localization.assureCorrectAppLanguage(this)
         super.onCreate(savedInstanceState)
         ThemeHelper.setTheme(this)
-        title = getString(R.string.title_activity_about)
+        title = getString(R.string.title_activity_about_new)
 
         val aboutBinding = ActivityAboutBinding.inflate(layoutInflater)
         setContentView(aboutBinding.root)

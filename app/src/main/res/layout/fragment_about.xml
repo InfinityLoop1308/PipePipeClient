@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="5dp"
-            android:text="@string/app_description" />
+            android:text="@string/app_description_new" />
 
         <org.schabi.newpipe.views.NewPipeTextView
             android:layout_width="match_parent"
@@ -63,13 +63,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:text="@string/view_on_github" />
+            android:text="@string/view_on_codeberg" />
 
         <org.schabi.newpipe.views.NewPipeTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
-            android:text="@string/donation_title"
+            android:text="@string/donation_title_new"
             android:textAppearance="@android:style/TextAppearance.Medium" />
 
         <org.schabi.newpipe.views.NewPipeTextView
@@ -89,7 +89,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
-            android:text="@string/website_title"
+            android:text="@string/website_title_new"
             android:textAppearance="@android:style/TextAppearance.Medium" />
 
         <org.schabi.newpipe.views.NewPipeTextView
@@ -109,7 +109,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
-            android:text="@string/privacy_policy_title"
+            android:text="@string/privacy_policy_title_new"
             android:textAppearance="@android:style/TextAppearance.Medium" />
 
         <org.schabi.newpipe.views.NewPipeTextView

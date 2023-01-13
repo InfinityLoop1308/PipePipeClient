@@ -224,9 +224,9 @@ public class RouterActivity extends AppCompatActivity {
         } else if (throwable instanceof LiveNotStartException) {
             Toast.makeText(context, R.string.live_not_started, Toast.LENGTH_LONG).show();
         } else if (throwable instanceof PaidContentException) {
-            Toast.makeText(context, R.string.paid_content, Toast.LENGTH_LONG).show();
+            Toast.makeText(context, R.string.paid_content_new, Toast.LENGTH_LONG).show();
         } else if (throwable instanceof PrivateContentException) {
-            Toast.makeText(context, R.string.private_content, Toast.LENGTH_LONG).show();
+            Toast.makeText(context, R.string.private_content_new, Toast.LENGTH_LONG).show();
         } else if (throwable instanceof SoundCloudGoPlusContentException) {
             Toast.makeText(context, R.string.soundcloud_go_plus_content,
                     Toast.LENGTH_LONG).show();
@@ -236,7 +236,7 @@ public class RouterActivity extends AppCompatActivity {
         } else if (throwable instanceof ContentNotAvailableException) {
             Toast.makeText(context, R.string.content_not_available, Toast.LENGTH_LONG).show();
         } else if (throwable instanceof ContentNotSupportedException) {
-            Toast.makeText(context, R.string.content_not_supported, Toast.LENGTH_LONG).show();
+            Toast.makeText(context, R.string.content_not_supported_new, Toast.LENGTH_LONG).show();
         } else {
             ErrorUtil.createNotification(context, errorInfo);
         }
