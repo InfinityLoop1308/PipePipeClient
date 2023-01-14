@@ -1690,7 +1690,7 @@ public final class VideoDetailFragment
             }
         }
 
-        binding.detailControlsDownload.setVisibility(info.getStreamType() == StreamType.LIVE_STREAM
+        binding.detailControlsDownload.setVisibility(info.getServiceId() == 5|| info.getStreamType() == StreamType.LIVE_STREAM
                 || info.getStreamType() == StreamType.AUDIO_LIVE_STREAM ? View.GONE : View.VISIBLE);
 
         final boolean noVideoStreams =
