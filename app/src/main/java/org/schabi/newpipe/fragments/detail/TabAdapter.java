@@ -36,7 +36,12 @@ public class TabAdapter extends FragmentPagerAdapter {
     public int getCount() {
         if (doNotifyDataSetChangedOnce) {
             doNotifyDataSetChangedOnce = false;
-            notifyDataSetChanged();
+            try {
+                notifyDataSetChanged();
+            } catch (final IllegalStateException e) {
+                // ignore
+            }
+
         }
         return mFragmentList.size();
     }
