@@ -1,5 +1,6 @@
 package org.schabi.newpipe.fragments.list.playlist;
 
+import static org.schabi.newpipe.extractor.ListExtractor.ITEM_COUNT_INFINITE;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.ktx.ViewUtils.animateHideRecyclerViewAllowingScrolling;
 
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
 
@@ -85,6 +87,7 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
     private PlaylistControlBinding playlistControlBinding;
 
     private MenuItem playlistBookmarkButton;
+    private boolean isInfinitePlayList;
 
     public static PlaylistFragment getInstance(final int serviceId, final String url,
                                                final String name) {
@@ -219,7 +222,7 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
 
     @Override
     protected Single<PlaylistInfo> loadResult(final boolean forceLoad) {
-        return ExtractorHelper.getPlaylistInfo(serviceId, url, forceLoad);
+        return ExtractorHelper.getPlaylistInfoWithFullItems(serviceId, url, forceLoad);
     }
 
     @Override
@@ -241,6 +244,15 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
                 onBookmarkClicked();
                 break;
             case R.id.menu_item_append_playlist:
+                if(isInfinitePlayList) {
+                    // Popup a dialog to tell user explicitly that infinite playlist cannot be appended
+                    new AlertDialog.Builder(requireContext())
+                            .setTitle(R.string.add_failed)
+                            .setMessage(R.string.append_playlist_not_supported)
+                            .setPositiveButton(R.string.ok, null)
+                            .show();
+                    return true;
+                }
                 disposables.add(PlaylistDialog.createCorrespondingDialog(
                         getContext(),
                         getPlayQueue()
@@ -322,6 +334,8 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
 
         headerBinding.playlistStreamCount.setText(Localization
                 .localizeStreamCount(getContext(), result.getStreamCount()));
+
+        isInfinitePlayList = result.getStreamCount() == ITEM_COUNT_INFINITE;
 
         if (!result.getErrors().isEmpty()) {
             showSnackBarError(new ErrorInfo(result.getErrors(), UserAction.REQUESTED_PLAYLIST,

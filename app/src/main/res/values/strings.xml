@@ -783,4 +783,8 @@
     <string name="top_bottom_bullet_comments_duration_key">top_bottom_bullet_comments_duration_key</string>
     <string name="top_bottom_bullet_comments_duration_summary">Change the duration of top/bottom bullet comments. </string>
     <string name="top_bottom_bullet_comments_duration_title">Top/bottom bullet comments duration</string>
+    <string name="append_playlist_not_supported">This is an infinite playlist, so you can not append it to other
+        playlists.
+    </string>
+    <string name="add_failed">Add failed</string>
 </resources>

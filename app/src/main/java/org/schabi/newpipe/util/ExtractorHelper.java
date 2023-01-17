@@ -232,6 +232,15 @@ public final class ExtractorHelper {
                         PlaylistInfo.getInfo(NewPipe.getService(serviceId), url)));
     }
 
+    public static Single<PlaylistInfo> getPlaylistInfoWithFullItems(final int serviceId,
+                                                       final String url,
+                                                       final boolean forceLoad) {
+        checkServiceId(serviceId);
+        return checkCache(forceLoad, serviceId, url, InfoItem.InfoType.PLAYLIST,
+                Single.fromCallable(() ->
+                        PlaylistInfo.getInfoWithFullItems(NewPipe.getService(serviceId), url)));
+    }
+
     public static Single<InfoItemsPage<StreamInfoItem>> getMorePlaylistItems(final int serviceId,
                                                                              final String url,
                                                                              final Page nextPage) {
