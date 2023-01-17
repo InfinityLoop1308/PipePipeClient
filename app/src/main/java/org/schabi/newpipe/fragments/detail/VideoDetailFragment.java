@@ -971,24 +971,41 @@ public final class VideoDetailFragment
         tabContentDescriptions.clear();
 
         if (shouldShowComments()) {
-            pageAdapter.addFragment(
-                    EmptyFragment.newInstance(false), COMMENTS_TAB_TAG);
-            tabIcons.add(R.drawable.ic_comment);
-            tabContentDescriptions.add(R.string.comments_tab_description);
+            try {
+                pageAdapter.addFragment(
+                        EmptyFragment.newInstance(false), COMMENTS_TAB_TAG);
+                tabIcons.add(R.drawable.ic_comment);
+                tabContentDescriptions.add(R.string.comments_tab_description);
+            } catch (final Exception e) {
+                if (DEBUG) {
+                    Log.e(TAG, "initTabs() error adding comments tab", e);
+                }
+            }
         }
 
         if (showRelatedItems && binding.relatedItemsLayout == null) {
             // temp empty fragment. will be updated in handleResult
-            pageAdapter.addFragment(EmptyFragment.newInstance(false), RELATED_TAB_TAG);
-            tabIcons.add(R.drawable.ic_art_track);
-            tabContentDescriptions.add(R.string.related_items_tab_description);
+            try {
+                pageAdapter.addFragment(EmptyFragment.newInstance(false), RELATED_TAB_TAG);
+                tabIcons.add(R.drawable.ic_art_track);
+                tabContentDescriptions.add(R.string.related_items_tab_description);
+            } catch (IllegalStateException e) {
+                // Fragment already added
+                Log.e(TAG, "initTabs() error adding related tab", e);
+            }
         }
 
         if (showDescription) {
             // temp empty fragment. will be updated in handleResult
-            pageAdapter.addFragment(EmptyFragment.newInstance(false), DESCRIPTION_TAB_TAG);
-            tabIcons.add(R.drawable.ic_description);
-            tabContentDescriptions.add(R.string.description_tab_description);
+            try {
+                pageAdapter.addFragment(EmptyFragment.newInstance(false), DESCRIPTION_TAB_TAG);
+                tabIcons.add(R.drawable.ic_description);
+                tabContentDescriptions.add(R.string.description_tab_description);
+            } catch (IllegalStateException e) {
+                // Fragment already added
+                Log.e(TAG, "initTabs() error adding description tab", e);
+            }
+
         }
 
         if (pageAdapter.getCount() == 0) {
@@ -1025,14 +1042,19 @@ public final class VideoDetailFragment
 
     private void updateTabs(@NonNull final StreamInfo info) {
         if (info.isRoundPlayStream() || (showRelatedItems && info.isSupportRelatedItems())) {
-            if (binding.relatedItemsLayout == null) { // phone
-                pageAdapter.updateItem(RELATED_TAB_TAG, RelatedItemsFragment.getInstance(info));
-            } else { // tablet + TV
-                getChildFragmentManager().beginTransaction()
-                        .replace(R.id.relatedItemsLayout, RelatedItemsFragment.getInstance(info))
-                        .commitAllowingStateLoss();
-                binding.relatedItemsLayout.setVisibility(
-                        isPlayerAvailable() && player.isFullscreen() ? View.GONE : View.VISIBLE);
+            try {
+                if (binding.relatedItemsLayout == null) { // phone
+                    pageAdapter.updateItem(RELATED_TAB_TAG, RelatedItemsFragment.getInstance(info));
+                } else { // tablet + TV
+                    getChildFragmentManager().beginTransaction()
+                            .replace(R.id.relatedItemsLayout, RelatedItemsFragment.getInstance(info))
+                            .commitAllowingStateLoss();
+                    binding.relatedItemsLayout.setVisibility(
+                            isPlayerAvailable() && player.isFullscreen() ? View.GONE : View.VISIBLE);
+                }
+            } catch (IllegalStateException e) {
+                // Fragment already added
+                Log.e(TAG, "updateTabs() error updating related tab", e);
             }
         }
         if (!info.isSupportRelatedItems()){

@@ -1,5 +1,6 @@
 package org.schabi.newpipe.fragments.detail;
 
+import android.util.Log;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -15,8 +16,6 @@ public class TabAdapter extends FragmentPagerAdapter {
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitleList = new ArrayList<>();
     private final FragmentManager fragmentManager;
-
-    private boolean doNotifyDataSetChangedOnce = false;
 
     public TabAdapter(final FragmentManager fm) {
         // if changed to BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT => crash if enqueueing stream in
@@ -34,43 +33,49 @@ public class TabAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        if (doNotifyDataSetChangedOnce) {
-            doNotifyDataSetChangedOnce = false;
-            try {
-                notifyDataSetChanged();
-            } catch (final IllegalStateException e) {
-                // ignore
-            }
-
-        }
         return mFragmentList.size();
     }
 
     public void addFragment(final Fragment fragment, final String title) {
-        doNotifyDataSetChangedOnce = true;
+        if(fragmentManager.isStateSaved()){
+            Log.d("TabAdapter", "This should not happen: addFragment() called after onSaveInstanceState()");
+            return ;
+        }
         mFragmentList.add(fragment);
         mFragmentTitleList.add(title);
+        notifyDataSetChanged();
     }
 
     public void clearAllItems() {
-        doNotifyDataSetChangedOnce = true;
+        if(fragmentManager.isStateSaved()){
+            Log.d("TabAdapter", "This should not happen: clearAllItems() called after onSaveInstanceState()");
+            return ;
+        }
         mFragmentList.clear();
         mFragmentTitleList.clear();
+        notifyDataSetChanged();
     }
 
     public void removeItem(final int position) {
-        doNotifyDataSetChangedOnce = true;
+        if(fragmentManager.isStateSaved()){
+            Log.d("TabAdapter", "This should not happen: removeItem() called after onSaveInstanceState()");
+            return ;
+        }
         mFragmentList.remove(position);
         mFragmentTitleList.remove(position);
+        notifyDataSetChanged();
     }
 
     public void updateItem(final int position, final Fragment fragment) {
-        doNotifyDataSetChangedOnce = true;
+        if(fragmentManager.isStateSaved()){
+            Log.d("TabAdapter", "This should not happen: updateItem() called after onSaveInstanceState()");
+            return ;
+        }
         mFragmentList.set(position, fragment);
+        notifyDataSetChanged();
     }
 
     public void updateItem(final String title, final Fragment fragment) {
-        doNotifyDataSetChangedOnce = true;
         final int index = mFragmentTitleList.indexOf(title);
         if (index != -1) {
             updateItem(index, fragment);
@@ -106,7 +111,22 @@ public class TabAdapter extends FragmentPagerAdapter {
     public void destroyItem(@NonNull final ViewGroup container,
                             final int position,
                             @NonNull final Object object) {
+        if (fragmentManager.isStateSaved()) {
+            Log.d("TabAdapter", "This should not happen: destroyItem() called after onSaveInstanceState()");
+            return;
+        }
         fragmentManager.beginTransaction().remove((Fragment) object).commitNowAllowingStateLoss();
+        notifyDataSetChanged();
     }
 
+    @Override
+    public void notifyDataSetChanged() {
+        if (!fragmentManager.isStateSaved()) {
+            try {
+                super.notifyDataSetChanged();
+            } catch (final IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
