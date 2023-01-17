@@ -4,26 +4,15 @@ import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import org.schabi.newpipe.database.LocalItem;
+import org.schabi.newpipe.database.playlist.PlaylistStreamEntry;
 import org.schabi.newpipe.database.stream.model.StreamStateEntity;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
-import org.schabi.newpipe.local.holder.LocalBookmarkPlaylistItemHolder;
-import org.schabi.newpipe.local.holder.LocalItemHolder;
-import org.schabi.newpipe.local.holder.LocalPlaylistGridItemHolder;
-import org.schabi.newpipe.local.holder.LocalPlaylistItemHolder;
-import org.schabi.newpipe.local.holder.LocalPlaylistStreamGridItemHolder;
-import org.schabi.newpipe.local.holder.LocalPlaylistStreamItemHolder;
-import org.schabi.newpipe.local.holder.LocalStatisticStreamGridItemHolder;
-import org.schabi.newpipe.local.holder.LocalStatisticStreamItemHolder;
-import org.schabi.newpipe.local.holder.RemoteBookmarkPlaylistItemHolder;
-import org.schabi.newpipe.local.holder.RemotePlaylistGridItemHolder;
-import org.schabi.newpipe.local.holder.RemotePlaylistItemHolder;
+import org.schabi.newpipe.local.holder.*;
 import org.schabi.newpipe.util.FallbackViewHolder;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.OnClickGesture;
@@ -81,6 +70,8 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
     private boolean useItemHandle = false;
     private View header = null;
     private View footer = null;
+    private ArrayList<LocalItem> filteredItems = new ArrayList<>();
+    public boolean isFilterEnabled = false;
 
     public LocalItemListAdapter(final Context context) {
         recordManager = new HistoryRecordManager(context);
@@ -220,7 +211,7 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemCount() {
-        int count = localItems.size();
+        int count = (isFilterEnabled?filteredItems:localItems).size();
         if (header != null) {
             count++;
         }
@@ -335,7 +326,7 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
             }
 
             ((LocalItemHolder) holder)
-                    .updateFromItem(localItems.get(position), recordManager, dateTimeFormatter);
+                    .updateFromItem((isFilterEnabled?filteredItems:localItems).get(position), recordManager, dateTimeFormatter);
         } else if (holder instanceof HeaderFooterHolder && position == 0 && header != null) {
             ((HeaderFooterHolder) holder).view = header;
         } else if (holder instanceof HeaderFooterHolder && position == sizeConsideringHeader()
@@ -370,5 +361,27 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 return type == HEADER_TYPE || type == FOOTER_TYPE ? spanCount : 1;
             }
         };
+    }
+
+    public void filter(String text) {
+        isFilterEnabled = !text.isEmpty();
+        filteredItems.clear();
+        if (text.isEmpty()) {
+            filteredItems.addAll(localItems);
+        } else {
+            for (LocalItem item : localItems) {
+                if (((PlaylistStreamEntry)item).getStreamEntity().getTitle().toLowerCase().contains(text.toLowerCase())) {
+                    filteredItems.add(item);
+                }
+            }
+        }
+        notifyDataSetChanged();
+    }
+
+    public void clearFilter() {
+        isFilterEnabled = false;
+        filteredItems.clear();
+        filteredItems.addAll(localItems);
+        notifyDataSetChanged();
     }
 }

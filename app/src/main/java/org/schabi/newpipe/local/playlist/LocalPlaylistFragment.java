@@ -1,30 +1,32 @@
 package org.schabi.newpipe.local.playlist;
 
-import static org.schabi.newpipe.ktx.ViewUtils.animate;
-import static org.schabi.newpipe.util.ThemeHelper.shouldUseGridLayout;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
-
+import icepick.State;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.reactivex.rxjava3.subjects.PublishSubject;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.schabi.newpipe.NewPipeDatabase;
@@ -40,7 +42,9 @@ import org.schabi.newpipe.databinding.PlaylistControlBinding;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
+import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.info_list.dialog.InfoItemDialog;
+import org.schabi.newpipe.info_list.dialog.StreamDialogDefaultEntry;
 import org.schabi.newpipe.local.BaseLocalListFragment;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.MainPlayer.PlayerType;
@@ -50,26 +54,15 @@ import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.OnClickGesture;
-import org.schabi.newpipe.info_list.dialog.StreamDialogDefaultEntry;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import icepick.State;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Flowable;
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
-import io.reactivex.rxjava3.subjects.PublishSubject;
+import static org.schabi.newpipe.ktx.ViewUtils.animate;
+import static org.schabi.newpipe.util.ThemeHelper.shouldUseGridLayout;
 
-public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistStreamEntry>, Void> {
+public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistStreamEntry>, Void> implements BackPressable {
     // Save the list 10 seconds after the last change occurred
     private static final long SAVE_DEBOUNCE_MILLIS = 10000;
     private static final int MINIMUM_INITIAL_DRAG_VELOCITY = 12;
@@ -99,6 +92,22 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
     private boolean isRemovingWatched = false;
     /* Is the playlist currently being processed to remove duplicate streams */
     private boolean isRemovingDuplicateStreams = false;
+    private EditText editText;
+    private View searchClear;
+    private TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            itemListAdapter.filter(String.valueOf(editText.getText()));
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+        }
+    };
 
     public static LocalPlaylistFragment getInstance(final long playlistId, final String name) {
         final LocalPlaylistFragment instance = new LocalPlaylistFragment();
@@ -391,6 +400,32 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             } else {
                 return super.onOptionsItemSelected(item);
             }
+        } else if (item.getItemId() == R.id.action_search_local) {
+            ActionBar actionBar = activity.getSupportActionBar();
+            View customView = getLayoutInflater().inflate(R.layout.local_playlist_search_toolbar, null, false);
+            assert actionBar != null;
+            actionBar.setCustomView(customView);
+            actionBar.setDisplayShowCustomEnabled(true);
+            editText = activity.findViewById(R.id.toolbar_search_edit_text_local);
+            editText.requestFocus();
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+            activity.findViewById(R.id.action_search_local).setVisibility(View.GONE);
+            searchClear = customView.findViewById(R.id.toolbar_search_clear_local);
+            searchClear.setOnClickListener(v -> {
+                if (TextUtils.isEmpty(editText.getText())) {
+                    destroyCustomViewInActionBar();
+                    return;
+                }
+                editText.setText("");
+            });
+
+            try {
+                editText.removeTextChangedListener(textWatcher);
+            } catch (Exception e) {
+                // ignore
+            }
+            editText.addTextChangedListener(textWatcher);
         }
         return true;
     }
@@ -890,5 +925,22 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             }
         }
         return new SinglePlayQueue(streamInfoItems, index);
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if(Objects.requireNonNull(activity.getSupportActionBar()).getCustomView() != null){
+            destroyCustomViewInActionBar();
+            return true;
+        }
+        return false;
+    }
+    public void destroyCustomViewInActionBar(){
+        ActionBar actionBar = activity.getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setCustomView(null);
+        actionBar.setDisplayShowCustomEnabled(false);
+        activity.findViewById(R.id.action_search_local).setVisibility(View.VISIBLE);
+        itemListAdapter.clearFilter();
     }
 }
