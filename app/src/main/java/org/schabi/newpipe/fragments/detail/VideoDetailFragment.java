@@ -64,11 +64,7 @@ import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
-import org.schabi.newpipe.extractor.stream.AudioStream;
-import org.schabi.newpipe.extractor.stream.Stream;
-import org.schabi.newpipe.extractor.stream.StreamInfo;
-import org.schabi.newpipe.extractor.stream.StreamType;
-import org.schabi.newpipe.extractor.stream.VideoStream;
+import org.schabi.newpipe.extractor.stream.*;
 import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.fragments.BaseStateFragment;
 import org.schabi.newpipe.fragments.EmptyFragment;
@@ -107,6 +103,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -581,6 +578,20 @@ public final class VideoDetailFragment
                 ShareUtils.copyToClipboard(requireContext(),
                         binding.detailVideoTitleView.getText().toString());
                 break;
+            case R.id.detail_controls_playlist_append:
+                if (getFM() != null && currentInfo != null) {
+                    disposables.add(
+                            PlaylistDialog.createCorrespondingDialog(
+                                    getContext(),
+                                    currentInfo.getRelatedItems().stream()
+                                            .filter(x -> x instanceof StreamInfoItem)
+                                            .map(x -> new StreamEntity((StreamInfoItem)x))
+                                            .collect(Collectors.toList()),
+                                    dialog -> dialog.show(getFM(), TAG)
+                            )
+                    );
+                }
+                break;
         }
 
         return true;
@@ -662,6 +673,7 @@ public final class VideoDetailFragment
         binding.detailControlsPopup.setOnClickListener(this);
         binding.detailControlsPopup.setOnLongClickListener(this);
         binding.detailControlsPlaylistAppend.setOnClickListener(this);
+        binding.detailControlsPlaylistAppend.setOnLongClickListener(this);
         binding.detailControlsDownload.setOnClickListener(this);
         binding.detailControlsDownload.setOnLongClickListener(this);
         binding.detailControlsShare.setOnClickListener(this);
