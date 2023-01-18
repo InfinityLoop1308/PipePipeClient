@@ -2521,9 +2521,6 @@ public final class Player implements
         changePopupWindowFlags(IDLE_WINDOW_FLAGS);
 
         NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, false);
-        if (isFullscreen) {
-            toggleFullscreen();
-        }
 
         if (playQueue.getIndex() < playQueue.size() - 1) {
             playQueue.offsetIndex(+1);
