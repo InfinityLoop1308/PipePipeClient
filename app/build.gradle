@@ -17,8 +17,9 @@ android {
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk 29
-        versionCode 1012
-        versionName "2.1.1"
+        versionCode 1013
+        versionName "2.2.0"
+        archivesBaseName = 'AnimePipe_' + versionName
 
         multiDexEnabled true
 
@@ -62,7 +63,6 @@ android {
             minifyEnabled true
             shrinkResources false // disabled to fix F-Droid's reproducible build
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            archivesBaseName = 'app'
         }
     }
 
