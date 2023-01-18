@@ -111,12 +111,7 @@ public class TabAdapter extends FragmentPagerAdapter {
     public void destroyItem(@NonNull final ViewGroup container,
                             final int position,
                             @NonNull final Object object) {
-        if (fragmentManager.isStateSaved()) {
-            Log.d("TabAdapter", "This should not happen: destroyItem() called after onSaveInstanceState()");
-            return;
-        }
         fragmentManager.beginTransaction().remove((Fragment) object).commitNowAllowingStateLoss();
-        notifyDataSetChanged();
     }
 
     @Override
