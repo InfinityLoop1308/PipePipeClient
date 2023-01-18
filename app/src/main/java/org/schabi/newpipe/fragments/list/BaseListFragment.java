@@ -386,11 +386,6 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         @Override
         public void onScrolled(@Nonnull final RecyclerView recyclerView, final int dx, final int dy) {
             super.onScrolled(recyclerView, dx, dy);
-
-            if(dx == 0 && dy == 0){
-                return ;
-            }
-
             if (dy != 0) {
                 log("Vertical scroll occurred");
 
