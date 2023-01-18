@@ -124,7 +124,13 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
         final int index = localItems.indexOf(data);
         if (index != -1) {
             localItems.remove(index);
-            notifyItemRemoved(index + (header != null ? 1 : 0));
+            if(isFilterEnabled){
+                int localIndex = filteredItems.indexOf(data);
+                filteredItems.remove(localIndex);
+                notifyItemRemoved(localIndex + (header == null ? 0 : 1));
+            } else {
+                notifyItemRemoved(index + (header != null ? 1 : 0));
+            }
         } else {
             // this happens when
             // 1) removeItem is called on infoItemDuplicate as in showStreamItemDialog of
