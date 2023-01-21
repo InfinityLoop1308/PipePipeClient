@@ -77,6 +77,7 @@ public final class BulletCommentsView extends ConstraintLayout {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
         commentsDuration = prefs.getInt("top_bottom_bullet_comments_key", 8);
         durationFactor = (float) prefs.getInt("regular_bullet_comments_duration_key", 8) / (float) commentsDuration;
+        outlineRadius = prefs.getInt("bullet_comments_outline_radius_key", 2);
         //Not this: BulletCommentsPlayerBinding.inflate(LayoutInflater.from(context));
         binding = BulletCommentsPlayerBinding.bind(this);
         //This does not work. post(this::setLayout);
@@ -124,6 +125,7 @@ public final class BulletCommentsView extends ConstraintLayout {
      */
     private int commentsDuration;
     private float durationFactor;
+    private int outlineRadius;
     private final List<AnimatedTextView> animatedTextViews = new ArrayList<>();
 
     /**
@@ -215,7 +217,7 @@ public final class BulletCommentsView extends ConstraintLayout {
                 textView.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD));
             }
             Paint paint = textView.getPaint();
-            paint.setShadowLayer(1, 0, 0, Color.BLACK);
+            paint.setShadowLayer(outlineRadius, 0, 0, Color.BLACK);
             textView.setLayerType(View.LAYER_TYPE_SOFTWARE, paint);
 
             final double commentSpace = 1 / 4.4 * height;
