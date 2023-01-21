@@ -33,9 +33,11 @@
     <string name="tab_subscriptions">订阅</string>
     <string name="tab_bookmarks">收藏</string>
     <string name="tab_choose">选择选项卡</string>
+    <string name="back">返回</string>
+    <string name="replies">回复</string>
     <string name="controls_background_title">后台</string>
     <string name="controls_popup_title">悬浮窗</string>
-    <string name="controls_add_to_playlist_title">添加到</string>
+    <string name="controls_add_to_playlist_title">添加</string>
     <string name="download_path_title">视频下载路径</string>
     <string name="download_path_summary">下载的视频存储在此处</string>
     <string name="download_path_dialog_title">选择视频文件的下载路径</string>
@@ -97,9 +99,9 @@
     <string name="metadata_cache_wipe_title">清除缓存元数据</string>
     <string name="metadata_cache_wipe_summary">清除缓存网页数据</string>
     <string name="metadata_cache_wipe_complete_notice">元数据缓存已清除</string>
-    <string name="auto_queue_title">自动将下一个串流添加到队列</string>
+    <string name="auto_queue_title">自动将下一个串流加入队列</string>
     <string name="auto_queue_summary">通过添加相关串流继续播放（非重复）队列</string>
-    <string name="auto_queue_toggle">自动添加到队列</string>
+    <string name="auto_queue_toggle">自动加入队列</string>
     <string name="volume_gesture_control_title">音量手势控制</string>
     <string name="volume_gesture_control_summary">使用手势控制播放器音量</string>
     <string name="brightness_gesture_control_title">亮度手势控制</string>
@@ -123,12 +125,16 @@
     <string name="start_main_player_fullscreen_title">全屏启动主播放器</string>
     <string name="start_main_player_fullscreen_summary">若自动旋转被锁定，不在迷你播放器中开始播放视频，而是直接转到全屏模式。您仍可以通过退出全屏来访问迷你播放器</string>
     <string name="autoplay_title">自动播放</string>
-    <string name="show_hold_to_append_title">显示“长按添加到队列”提示</string>
+    <string name="show_hold_to_append_title">显示“长按加入队列”提示</string>
     <string name="show_hold_to_append_summary">在视频详细信息中点击后台或悬浮窗按钮时显示提示</string>
     <string name="unsupported_url">不支持的链接</string>
     <string name="unsupported_url_dialog_message">无法识别链接。在其他应用中打开？</string>
     <string name="default_content_country_title">默认内容国家</string>
     <string name="content_language_title">默认内容语言</string>
+    <plurals name="replies">
+        <item quantity="one">%s 条回复</item>
+        <item quantity="other">%s 条回复</item>
+    </plurals>
     <string name="peertube_instance_url_title">PeerTube 实例</string>
     <string name="peertube_instance_url_summary">选择您最喜欢的 PeerTube 实例</string>
     <string name="peertube_instance_url_help">在 %s 上找到您喜欢的实例</string>
@@ -387,7 +393,7 @@
     <string name="select_a_kiosk">选择时下流行</string>
     <string name="export_complete_toast">已导出</string>
     <string name="import_complete_toast">已导入</string>
-    <string name="no_valid_zip_file">无有效 ZIP 文件</string>
+    <string name="no_valid_zip_file">未找到有效 ZIP 文件</string>
     <string name="could_not_import_all_files">警告：无法导入所有文件。</string>
     <string name="override_current_data">这将覆盖您当前的设置。</string>
     <string name="import_settings">您还想导入设置吗？</string>
@@ -406,12 +412,12 @@
     <string name="play_queue_remove">删除</string>
     <string name="play_queue_stream_detail">详情</string>
     <string name="play_queue_audio_settings">音频设置</string>
-    <string name="hold_to_append">长按添加到队列</string>
+    <string name="hold_to_append">长按加入队列</string>
     <string name="show_channel_details">显示频道详情</string>
-    <string name="enqueue_stream">添加到队列</string>
-    <string name="enqueued">已添加到队列</string>
-    <string name="enqueue_next_stream">添加下一个到队列</string>
-    <string name="enqueued_next">已添加下一个到队列</string>
+    <string name="enqueue_stream">加入队列</string>
+    <string name="enqueued">已加入队列</string>
+    <string name="enqueue_next_stream">加入队列下个</string>
+    <string name="enqueued_next">已加入队列下个</string>
     <string name="start_here_on_background">开始在后台播放</string>
     <string name="start_here_on_popup">开始在悬浮窗播放</string>
     <string name="loading_stream_details">正在加载串流详情…</string>
@@ -557,10 +563,10 @@
     <string name="missions_header_finished">完成</string>
     <string name="missions_header_pending">待办</string>
     <string name="paused">暂停</string>
-    <string name="queued">已添加到队列</string>
+    <string name="queued">排队</string>
     <string name="post_processing">后期处理</string>
     <string name="recovering">正在恢复</string>
-    <string name="enqueue">添加到队列</string>
+    <string name="enqueue">加入队列</string>
     <string name="permission_denied">操作被系统拒绝</string>
     <string name="checking_updates_toast">正在检查更新…</string>
     <!-- download notifications -->
@@ -714,7 +720,7 @@
     <string name="night_theme_summary">选择您最喜欢的夜间主题 — %s</string>
     <string name="select_night_theme_toast">您可以在下方选择您最喜欢的夜间主题</string>
     <string name="download_has_started">下载已开始</string>
-    <string name="description_select_note">您现在可以选择说明中的文本。请注意，在选择模式下，页面可能会闪烁并且链接可能无法点击。</string>
+    <string name="description_select_note">您现在可以选择简介中的文本。请注意，在选择模式下，页面可能会闪烁并且链接可能无法点击。</string>
     <string name="description_select_enable">启用在简介中选择文本</string>
     <string name="description_select_disable">禁用在简介中选择文本</string>
     <string name="metadata_category">类别</string>
@@ -768,10 +774,17 @@
     <string name="show_channel_tabs">频道选项卡</string>
     <string name="show_channel_tabs_summary">频道页面显示选项卡</string>
     <string name="regular_bullet_comments_duration_key">regular_bullet_comments_duration_key</string>
-    <string name="regular_bullet_comments_duration_summary">更改常规/滚动弹幕持续时间。较短持续时间可能导致卡顿。
-    </string>
+    <string name="regular_bullet_comments_duration_summary">更改常规/滚动弹幕持续时间。较短持续时间可能导致卡顿。</string>
     <string name="regular_bullet_comments_duration_title">常规弹幕持续时间</string>
     <string name="top_bottom_bullet_comments_duration_key">top_bottom_bullet_comments_duration_key</string>
     <string name="top_bottom_bullet_comments_duration_summary">更改顶部/底部弹幕持续时间。</string>
     <string name="top_bottom_bullet_comments_duration_title">顶部/底部弹幕持续时间</string>
+    <string name="append_playlist_not_supported">这是无限播放列表，因此您不能将其附加到其他播放列表。</string>
+    <string name="add_failed">添加失败</string>
+    <string name="bullet_comments_outline_radius_key">bullet_comments_outline_radius_key</string>
+    <string name="bullet_comments_outline_radius_title">"弹幕轮廓半径"</string>
+    <string name="top_100">前 100</string>
+    <string name="recommended_videos">推荐视频</string>
+    <string name="top_lives">热门直播</string>
+    <string name="recommended_lives">推荐直播</string>
 </resources>
