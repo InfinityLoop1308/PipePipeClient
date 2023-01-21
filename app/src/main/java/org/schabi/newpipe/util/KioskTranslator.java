@@ -52,6 +52,14 @@ public final class KioskTranslator {
                 return c.getString(R.string.featured);
             case "Radio":
                 return c.getString(R.string.radio);
+            case "Top 100":
+                return c.getString(R.string.top_100);
+            case "Recommended Videos":
+                return c.getString(R.string.recommended_videos);
+            case "Top Lives":
+                return c.getString(R.string.top_lives);
+            case "Recommended Lives":
+                return c.getString(R.string.recommended_lives);
             default:
                 return kioskId;
         }
