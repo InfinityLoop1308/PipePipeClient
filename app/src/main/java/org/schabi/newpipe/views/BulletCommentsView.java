@@ -6,6 +6,8 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -212,6 +214,10 @@ public final class BulletCommentsView extends ConstraintLayout {
             } else {
                 textView.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD));
             }
+            Paint paint = textView.getPaint();
+            paint.setShadowLayer(1, 0, 0, Color.BLACK);
+            textView.setLayerType(View.LAYER_TYPE_SOFTWARE, paint);
+
             final double commentSpace = 1 / 4.4 * height;
             if (true) {
                 //Setting initial position by addView() won't work properly.
