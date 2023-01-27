@@ -10,6 +10,7 @@ import android.view.View;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.search.filter.FilterGroup;
 import org.schabi.newpipe.extractor.search.filter.FilterItem;
+import org.schabi.newpipe.fragments.list.search.SearchFragment;
 import org.schabi.newpipe.util.ServiceHelper;
 
 import androidx.annotation.NonNull;
@@ -24,9 +25,12 @@ public class SearchFilterUI extends SearchFilterLogic {
     private final int searchIconRes;
     MenuItem groupNameItem = null;
     private Menu menu = null;
+    private SearchFragment searchFragment;
 
-    public SearchFilterUI(final Callback callback, final Context context) {
+    public SearchFilterUI(final SearchFragment callback, final Context context) {
+        // it really shouldn't be called callback. A fragment is passed.
         super(callback);
+        this.searchFragment = callback;
         this.searchIconRes = R.drawable.baseline_search_24;
         this.context = context;
     }
@@ -133,9 +137,8 @@ public class SearchFilterUI extends SearchFilterLogic {
 
     public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
         if (item.getGroupId() == MENU_GROUP_SEARCH_BUTTON) { // catch the search button
-
             prepareForSearch();
-
+            searchFragment.search();
         } else { // all other menu groups -> content filters and sort filters
 
             // main part for holding onto the menu -> not closing it
