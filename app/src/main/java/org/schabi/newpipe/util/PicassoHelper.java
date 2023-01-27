@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
+import android.util.Log;
 import com.squareup.picasso.Cache;
 import com.squareup.picasso.LruCache;
 import com.squareup.picasso.OkHttp3Downloader;
@@ -139,14 +140,20 @@ public final class PicassoHelper {
                         if (result == source) {
                             // create a new mutable bitmap to prevent strange crashes on some
                             // devices (see #4638)
-                            final Bitmap copied = Bitmap.createScaledBitmap(
-                                    source,
-                                    (int) notificationThumbnailWidth - 1,
-                                    (int) (source.getHeight() / (source.getWidth()
-                                            / (notificationThumbnailWidth - 1))),
-                                    true);
-                            source.recycle();
-                            return copied;
+                            try {
+                                final Bitmap copied = Bitmap.createScaledBitmap(
+                                        source,
+                                        (int) notificationThumbnailWidth - 1,
+                                        (int) (source.getHeight() / (source.getWidth()
+                                                / (notificationThumbnailWidth - 1))),
+                                        true);
+                                source.recycle();
+                                return copied;
+                            } catch (final IllegalArgumentException e) {
+                                Log.e("PicassoHelper", "Failed to create scaled down copied bitmap", e);
+                                return result;
+                            }
+
                         } else {
                             source.recycle();
                             return result;
