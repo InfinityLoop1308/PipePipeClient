@@ -283,6 +283,9 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
     public void onDestroyView() {
         super.onDestroyView();
 
+        if(Objects.requireNonNull(activity.getSupportActionBar()).getCustomView() != null){
+            destroyCustomViewInActionBar();
+        }
         if (itemListAdapter != null) {
             itemListAdapter.unsetSelectedListener();
         }
@@ -937,10 +940,20 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
     }
     public void destroyCustomViewInActionBar(){
         ActionBar actionBar = activity.getSupportActionBar();
-        assert actionBar != null;
+        if (actionBar == null) {
+            return;
+        }
         actionBar.setCustomView(null);
         actionBar.setDisplayShowCustomEnabled(false);
-        activity.findViewById(R.id.action_search_local).setVisibility(View.VISIBLE);
-        itemListAdapter.clearFilter();
+        View searchLocal = activity.findViewById(R.id.action_search_local);
+        // they will both be null if back button is pressed
+        if(searchLocal != null){
+            searchLocal.setVisibility(View.VISIBLE);
+        }
+        if(itemListAdapter != null){
+            itemListAdapter.clearFilter();
+        }
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
     }
 }
