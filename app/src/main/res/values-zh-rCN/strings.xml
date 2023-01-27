@@ -344,7 +344,7 @@
     <string name="recaptcha_solve">通过</string>
     <string name="recaptcha_done_button">完成</string>
     <!-- Downloads -->
-    <string name="settings_category_downloads_title">现在</string>
+    <string name="settings_category_downloads_title">下载</string>
     <string name="settings_file_charset_title">文件名中允许的字符</string>
     <string name="settings_file_replacement_character_summary">无效字符替换为该字符</string>
     <string name="settings_file_replacement_character_title">替换字符</string>
