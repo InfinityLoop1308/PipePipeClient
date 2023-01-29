@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk 33
     buildToolsVersion '31.0.0'
 
     defaultConfig {
@@ -16,7 +16,7 @@ android {
         resValue "string", "app_name", "AnimePipe"
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
-        targetSdk 29
+        targetSdk 33
         versionCode 1019
         versionName "2.2.6"
         archivesBaseName = 'AnimePipe_' + versionName
