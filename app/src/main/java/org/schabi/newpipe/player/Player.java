@@ -325,7 +325,7 @@ public final class Player implements
     @NonNull private final VideoPlaybackResolver videoResolver;
     @NonNull private final AudioPlaybackResolver audioResolver;
 
-    private final MainPlayer service; //TODO try to remove and replace everything with context
+    public final MainPlayer service; //TODO try to remove and replace everything with context
 
     /*//////////////////////////////////////////////////////////////////////////
     // Player states

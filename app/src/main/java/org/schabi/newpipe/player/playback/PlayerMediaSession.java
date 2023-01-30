@@ -10,7 +10,7 @@ import org.schabi.newpipe.player.mediasession.MediaSessionCallback;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 
 public class PlayerMediaSession implements MediaSessionCallback {
-    private final Player player;
+    public final Player player;
 
     public PlayerMediaSession(final Player player) {
         this.player = player;
@@ -95,5 +95,11 @@ public class PlayerMediaSession implements MediaSessionCallback {
     @Override
     public void pause() {
         player.pause();
+    }
+    public void shuffle() {
+        player.onShuffleClicked();
+    }
+    public void close(){
+        player.service.stopService();
     }
 }

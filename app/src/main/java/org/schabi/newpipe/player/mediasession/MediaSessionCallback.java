@@ -18,4 +18,6 @@ public interface MediaSessionCallback {
     void play();
 
     void pause();
+    void shuffle();
+    void close();
 }

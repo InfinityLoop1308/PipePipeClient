@@ -3,6 +3,7 @@ package org.schabi.newpipe.player.helper;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -18,10 +19,15 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 
 import org.schabi.newpipe.MainActivity;
+import org.schabi.newpipe.R;
 import org.schabi.newpipe.player.mediasession.MediaSessionCallback;
 import org.schabi.newpipe.player.mediasession.PlayQueueNavigator;
+import org.schabi.newpipe.player.playback.PlayerMediaSession;
 
 import java.util.Optional;
+
+import static org.schabi.newpipe.player.MainPlayer.ACTION_CLOSE;
+import static org.schabi.newpipe.player.MainPlayer.ACTION_SHUFFLE;
 
 public class MediaSessionManager {
     private static final String TAG = MediaSessionManager.class.getSimpleName();
@@ -67,6 +73,45 @@ public class MediaSessionManager {
                 callback.pause();
             }
         });
+        MediaSessionConnector.CustomActionProvider[] providers = new MediaSessionConnector.CustomActionProvider[2];
+        providers[0] = new MediaSessionConnector.CustomActionProvider() {
+            @Override
+            public void onCustomAction(@NonNull Player player, @NonNull String action, @Nullable Bundle extras) {
+                if (action.equals(ACTION_SHUFFLE)) {
+                    callback.shuffle();
+                }
+            }
+
+            @Nullable
+            @Override
+            public PlaybackStateCompat.CustomAction getCustomAction(Player player) {
+                if (((PlayerMediaSession)callback).player.getPlayQueue() != null
+                        && ((PlayerMediaSession)callback).player.getPlayQueue().isShuffled()) {
+                    return new android.support.v4.media.session.PlaybackStateCompat.CustomAction.Builder(
+                            ACTION_SHUFFLE, "Shuffle", R.drawable.exo_controls_shuffle_on).build();
+                } else {
+                    return new android.support.v4.media.session.PlaybackStateCompat.CustomAction.Builder(
+                            ACTION_SHUFFLE, "ShuffleOff", R.drawable.exo_controls_shuffle_off).build();
+                }
+            }
+        };
+        providers[1] = new MediaSessionConnector.CustomActionProvider() {
+            @Override
+            public void onCustomAction(@NonNull Player player, @NonNull String action, @Nullable Bundle extras) {
+                if (action.equals(ACTION_CLOSE)) {
+                    callback.close();
+                }
+            }
+
+            @Nullable
+            @Override
+            public PlaybackStateCompat.CustomAction getCustomAction(Player player) {
+                // Close
+                return new android.support.v4.media.session.PlaybackStateCompat.CustomAction.Builder(
+                        ACTION_CLOSE, "Close", R.drawable.ic_close).build();
+            }
+        };
+        sessionConnector.setCustomActionProviders(providers);
     }
 
     @Nullable

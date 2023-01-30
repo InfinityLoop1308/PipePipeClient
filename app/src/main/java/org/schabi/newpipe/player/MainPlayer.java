@@ -65,7 +65,7 @@ public final class MainPlayer extends Service {
     // Notification
     //////////////////////////////////////////////////////////////////////////*/
 
-    static final String ACTION_CLOSE
+    public static final String ACTION_CLOSE
             = App.PACKAGE_NAME + ".player.MainPlayer.CLOSE";
     static final String ACTION_PLAY_PAUSE
             = App.PACKAGE_NAME + ".player.MainPlayer.PLAY_PAUSE";
@@ -79,7 +79,7 @@ public final class MainPlayer extends Service {
             = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_FAST_REWIND";
     static final String ACTION_FAST_FORWARD
             = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_FAST_FORWARD";
-    static final String ACTION_SHUFFLE
+    public static final String ACTION_SHUFFLE
             = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_SHUFFLE";
     public static final String ACTION_RECREATE_NOTIFICATION
             = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_RECREATE_NOTIFICATION";
