@@ -183,9 +183,8 @@ public final class NavigationHelper {
                                                       final boolean resumePlayback) {
         Toast.makeText(context, R.string.background_player_playing_toast, Toast.LENGTH_SHORT)
                 .show();
-
-        queue.shuffle();
         queue.setIndex(new Random().nextInt(queue.getStreams().size()));
+        queue.shuffle();
 
         final Intent intent = getPlayerIntent(context, MainPlayer.class, queue, resumePlayback);
         intent.putExtra(Player.PLAYER_TYPE, MainPlayer.PlayerType.AUDIO.ordinal());
