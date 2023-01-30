@@ -96,6 +96,7 @@ android {
     buildFeatures {
         viewBinding true
     }
+    namespace 'org.schabi.newpipe'
 }
 
 ext {
@@ -111,7 +112,7 @@ ext {
     groupieVersion = '2.10.0'
     markwonVersion = '4.6.2'
 
-    leakCanaryVersion = '2.5'
+    leakCanaryVersion = '2.10'
     stethoVersion = '1.6.0'
     mockitoVersion = '4.0.0'
     assertJVersion = '3.22.0'

@@ -267,7 +267,7 @@ abstract class BasePlayerGestureListener(
         return true
     }
 
-    override fun onLongPress(e: MotionEvent?) {
+    override fun onLongPress(e: MotionEvent) {
         if (player.popupPlayerSelected()) {
             player.updateScreenSize()
             player.checkPopupPositionBounds()
@@ -289,8 +289,8 @@ abstract class BasePlayerGestureListener(
     }
 
     override fun onFling(
-        e1: MotionEvent?,
-        e2: MotionEvent?,
+        e1: MotionEvent,
+        e2: MotionEvent,
         velocityX: Float,
         velocityY: Float
     ): Boolean {

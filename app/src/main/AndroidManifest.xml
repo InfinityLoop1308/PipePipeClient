@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="org.schabi.newpipe"
-    android:installLocation="auto">
+          android:installLocation="auto">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -14,6 +13,7 @@
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
+    <uses-feature android:name="android.software.leanback" android:required="false"/>
 
     <application
         android:name=".App"
@@ -26,9 +26,9 @@
         android:resizeableActivity="true"
         tools:ignore="AllowBackup">
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:launchMode="singleTask">
+                android:name=".MainActivity"
+                android:label="@string/app_name"
+                android:launchMode="singleTask" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,7 +37,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="androidx.media.session.MediaButtonReceiver">
+        <receiver android:name="androidx.media.session.MediaButtonReceiver" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
@@ -70,10 +70,10 @@
         <service android:name=".local.feed.service.FeedLoadService" />
 
         <activity
-            android:name=".PanicResponderActivity"
-            android:launchMode="singleInstance"
-            android:noHistory="true"
-            android:theme="@android:style/Theme.NoDisplay">
+                android:name=".PanicResponderActivity"
+                android:launchMode="singleInstance"
+                android:noHistory="true"
+                android:theme="@android:style/Theme.NoDisplay" android:exported="true">
             <intent-filter>
                 <action android:name="info.guardianproject.panic.action.TRIGGER" />
 
@@ -96,9 +96,9 @@
         <service android:name="us.shandian.giga.service.DownloadManagerService" />
 
         <activity
-            android:name=".util.FilePickerActivityHelper"
-            android:label="@string/app_name"
-            android:theme="@style/FilePickerThemeDark">
+                android:name=".util.FilePickerActivityHelper"
+                android:label="@string/app_name"
+                android:theme="@style/FilePickerThemeDark" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -120,11 +120,11 @@
         </provider>
 
         <activity
-            android:name=".RouterActivity"
-            android:excludeFromRecents="true"
-            android:label="@string/preferred_open_action_share_menu_title"
-            android:taskAffinity=""
-            android:theme="@style/RouterActivityThemeDark">
+                android:name=".RouterActivity"
+                android:excludeFromRecents="true"
+                android:label="@string/preferred_open_action_share_menu_title"
+                android:taskAffinity=""
+                android:theme="@style/RouterActivityThemeDark" android:exported="true">
 
             <!-- Youtube filter -->
             <intent-filter>
