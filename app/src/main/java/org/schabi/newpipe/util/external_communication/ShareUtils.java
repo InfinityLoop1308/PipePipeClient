@@ -218,8 +218,12 @@ public final class ShareUtils {
      */
     private static String getDefaultAppPackageName(@NonNull final Context context,
                                                    @NonNull final Intent intent) {
-        final ResolveInfo resolveInfo = context.getPackageManager().resolveActivity(intent,
-                PackageManager.MATCH_DEFAULT_ONLY);
+        ResolveInfo resolveInfo;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            resolveInfo = context.getPackageManager().resolveActivity(intent, PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_DEFAULT_ONLY));
+        } else {
+            resolveInfo = context.getPackageManager().resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        }
 
         if (resolveInfo == null) {
             return "";
