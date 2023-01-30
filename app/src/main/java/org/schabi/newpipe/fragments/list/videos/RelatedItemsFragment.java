@@ -144,7 +144,9 @@ public class RelatedItemsFragment extends BaseListInfoFragment<InfoItem, Related
     @Override
     public void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(INFO_KEY, relatedItemInfo);
+        if(relatedItemInfo.getRelatedItems().size() <= 100){
+            outState.putSerializable(INFO_KEY, relatedItemInfo);
+        }
     }
 
     @Override
