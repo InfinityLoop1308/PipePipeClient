@@ -1,7 +1,5 @@
 package org.schabi.newpipe.util.external_communication;
 
-import static org.schabi.newpipe.player.MainPlayer.ACTION_SEEK_TO;
-
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -30,6 +28,8 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+
+import static org.schabi.newpipe.fragments.detail.VideoDetailFragment.ACTION_SEEK_TO;
 
 public final class InternalUrlsHandler {
     private static final String TAG = InternalUrlsHandler.class.getSimpleName();

@@ -41,7 +41,6 @@ import static org.schabi.newpipe.player.MainPlayer.ACTION_PLAY_PAUSE;
 import static org.schabi.newpipe.player.MainPlayer.ACTION_PLAY_PREVIOUS;
 import static org.schabi.newpipe.player.MainPlayer.ACTION_RECREATE_NOTIFICATION;
 import static org.schabi.newpipe.player.MainPlayer.ACTION_REPEAT;
-import static org.schabi.newpipe.player.MainPlayer.ACTION_SEEK_TO;
 import static org.schabi.newpipe.player.MainPlayer.ACTION_SHUFFLE;
 import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_BACKGROUND;
 import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_NONE;
@@ -1259,8 +1258,8 @@ public final class Player implements
         intentFilter.addAction(ACTION_REPEAT);
         intentFilter.addAction(ACTION_SHUFFLE);
         intentFilter.addAction(ACTION_RECREATE_NOTIFICATION);
-        intentFilter.addAction(ACTION_SEEK_TO);
 
+        intentFilter.addAction(VideoDetailFragment.ACTION_SEEK_TO);
         intentFilter.addAction(VideoDetailFragment.ACTION_VIDEO_FRAGMENT_RESUMED);
         intentFilter.addAction(VideoDetailFragment.ACTION_VIDEO_FRAGMENT_STOPPED);
 
@@ -1317,7 +1316,7 @@ public final class Player implements
             case ACTION_RECREATE_NOTIFICATION:
                 NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, true);
                 break;
-            case ACTION_SEEK_TO:
+            case VideoDetailFragment.ACTION_SEEK_TO:
                 seekTo(intent.getIntExtra("Timestamp", 0) * 1000L);
                 if(wasPlaying){
                     simpleExoPlayer.play();

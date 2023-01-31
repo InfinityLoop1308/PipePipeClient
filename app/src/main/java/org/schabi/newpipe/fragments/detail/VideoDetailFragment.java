@@ -146,6 +146,8 @@ public final class VideoDetailFragment
             App.PACKAGE_NAME + ".VideoDetailFragment.ACTION_VIDEO_FRAGMENT_STOPPED";
     public static final String ACTION_VIDEO_ERROR =
             App.PACKAGE_NAME + ".VideoDetailFragment.ACTION_VIDEO_ERROR";
+    public static final String ACTION_SEEK_TO =
+            App.PACKAGE_NAME + ".VideoDetailFragment.ACTION_SEEK_TO";
 
     private static final String COMMENTS_TAB_TAG = "COMMENTS";
     private static final String RELATED_TAB_TAG = "NEXT VIDEO";
