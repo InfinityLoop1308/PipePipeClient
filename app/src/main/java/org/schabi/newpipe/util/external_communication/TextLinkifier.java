@@ -246,10 +246,7 @@ public final class TextLinkifier {
                 final String url = span.getURL();
                 final ClickableSpan clickableSpan = new ClickableSpan() {
                     public void onClick(@NonNull final View view) {
-                        if (!InternalUrlsHandler.handleUrlDescriptionTimestamp(
-                                new CompositeDisposable(), context, url)) {
-                            ShareUtils.openUrlInBrowser(context, url, false);
-                        }
+                        ShareUtils.openUrlInBrowser(context, url, false);
                     }
                 };
 
