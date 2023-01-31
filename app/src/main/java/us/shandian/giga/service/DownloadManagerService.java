@@ -54,6 +54,7 @@ import org.schabi.newpipe.util.Localization;
 import us.shandian.giga.postprocessing.Postprocessing;
 import us.shandian.giga.service.DownloadManager.NetworkState;
 
+import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static org.schabi.newpipe.BuildConfig.APPLICATION_ID;
 import static org.schabi.newpipe.BuildConfig.DEBUG;
 
@@ -148,7 +149,8 @@ public class DownloadManagerService extends Service {
 
         mOpenDownloadList = PendingIntent.getActivity(this, 0,
                 openDownloadListIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M?
+                        PendingIntent.FLAG_IMMUTABLE | FLAG_UPDATE_CURRENT : FLAG_UPDATE_CURRENT);
 
         icLauncher = BitmapFactory.decodeResource(this.getResources(), R.mipmap.ic_launcher);
 

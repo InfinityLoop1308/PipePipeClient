@@ -3,6 +3,7 @@ package org.schabi.newpipe
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -54,7 +55,12 @@ class NewVersionWorker(
         // A pending intent to open the apk location url in the browser.
         val intent = Intent(Intent.ACTION_VIEW, apkLocationUrl?.toUri())
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        val pendingIntent = PendingIntent.getActivity(app, 0, intent, 0)
+        val pendingIntent = PendingIntent.getActivity(
+            app, 0, intent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            else PendingIntent.FLAG_UPDATE_CURRENT
+        )
         val channelId = app.getString(R.string.app_update_notification_channel_id)
         val notificationBuilder = NotificationCompat.Builder(app, channelId)
             .setSmallIcon(R.drawable.ic_newpipe_update)
