@@ -3,16 +3,22 @@ package org.schabi.newpipe.local.history;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.viewbinding.ViewBinding;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -28,6 +34,7 @@ import org.schabi.newpipe.databinding.StatisticPlaylistControlBinding;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
+import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.info_list.dialog.InfoItemDialog;
 import org.schabi.newpipe.local.BaseLocalListFragment;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
@@ -49,7 +56,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 
 public class StatisticsPlaylistFragment
-        extends BaseLocalListFragment<List<StreamStatisticsEntry>, Void> {
+        extends BaseLocalListFragment<List<StreamStatisticsEntry>, Void> implements BackPressable {
     private final CompositeDisposable disposables = new CompositeDisposable();
     @State
     Parcelable itemsListState;
@@ -61,6 +68,22 @@ public class StatisticsPlaylistFragment
     /* Used for independent events */
     private Subscription databaseSubscription;
     private HistoryRecordManager recordManager;
+    private EditText editText;
+    private View searchClear;
+    private TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            itemListAdapter.filter(String.valueOf(editText.getText()));
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+        }
+    };
 
     private List<StreamStatisticsEntry> processResult(final List<StreamStatisticsEntry> results) {
         final Comparator<StreamStatisticsEntry> comparator;
@@ -160,7 +183,33 @@ public class StatisticsPlaylistFragment
         if (item.getItemId() == R.id.action_history_clear) {
             HistorySettingsFragment
                     .openDeleteWatchHistoryDialog(requireContext(), recordManager, disposables);
-        } else {
+        } else if (item.getItemId() == R.id.action_search_local) {
+            ActionBar actionBar = activity.getSupportActionBar();
+            View customView = getLayoutInflater().inflate(R.layout.local_playlist_search_toolbar, null, false);
+            assert actionBar != null;
+            actionBar.setCustomView(customView);
+            actionBar.setDisplayShowCustomEnabled(true);
+            editText = activity.findViewById(R.id.toolbar_search_edit_text_local);
+            editText.requestFocus();
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+            activity.findViewById(R.id.action_search_local).setVisibility(View.GONE);
+            searchClear = customView.findViewById(R.id.toolbar_search_clear_local);
+            searchClear.setOnClickListener(v -> {
+                if (TextUtils.isEmpty(editText.getText())) {
+                    destroyCustomViewInActionBar();
+                    return;
+                }
+                editText.setText("");
+            });
+
+            try {
+                editText.removeTextChangedListener(textWatcher);
+            } catch (Exception e) {
+                // ignore
+            }
+            editText.addTextChangedListener(textWatcher);
+        }else {
             return super.onOptionsItemSelected(item);
         }
         return true;
@@ -391,6 +440,24 @@ public class StatisticsPlaylistFragment
             }
         }
         return new SinglePlayQueue(streamInfoItems, index);
+    }
+
+
+    @Override
+    public boolean onBackPressed() {
+        if(Objects.requireNonNull(activity.getSupportActionBar()).getCustomView() != null){
+            destroyCustomViewInActionBar();
+            return true;
+        }
+        return false;
+    }
+    public void destroyCustomViewInActionBar(){
+        ActionBar actionBar = activity.getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setCustomView(null);
+        actionBar.setDisplayShowCustomEnabled(false);
+        activity.findViewById(R.id.action_search_local).setVisibility(View.VISIBLE);
+        itemListAdapter.clearFilter();
     }
 
     private enum StatisticSortMode {

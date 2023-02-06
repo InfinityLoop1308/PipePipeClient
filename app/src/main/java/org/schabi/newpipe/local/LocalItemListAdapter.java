@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import org.schabi.newpipe.database.LocalItem;
 import org.schabi.newpipe.database.playlist.PlaylistStreamEntry;
+import org.schabi.newpipe.database.stream.StreamStatisticsEntry;
 import org.schabi.newpipe.database.stream.model.StreamStateEntity;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.local.holder.*;
@@ -376,8 +377,15 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
             filteredItems.addAll(localItems);
         } else {
             for (LocalItem item : localItems) {
-                if (((PlaylistStreamEntry)item).getStreamEntity().getTitle().toLowerCase().contains(text.toLowerCase())) {
-                    filteredItems.add(item);
+                // cast item to PlaylistStreamEntry or StreamStatisticsEntry
+                if(item instanceof PlaylistStreamEntry) {
+                    if (((PlaylistStreamEntry)item).getStreamEntity().getTitle().toLowerCase().contains(text.toLowerCase())) {
+                        filteredItems.add(item);
+                    }
+                } else if(item instanceof StreamStatisticsEntry) {
+                    if (((StreamStatisticsEntry) item).getStreamEntity().getTitle().toLowerCase().contains(text.toLowerCase())) {
+                        filteredItems.add(item);
+                    }
                 }
             }
         }
