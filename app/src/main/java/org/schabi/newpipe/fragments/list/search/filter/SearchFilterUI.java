@@ -99,7 +99,7 @@ public class SearchFilterUI extends SearchFilterLogic {
                 filter.getIdentifier(),
                 0,
                 filter.getName()
-                /* ServiceHelper.getTranslatedFilterString(filter, c)*/);
+                /* ServiceHelper.getTranslatedFilterString(filter, c)*/);//TODO: translate
         addToAllSortFilterItToItemMapWrapper(filter.getIdentifier(), item);
     }
 
