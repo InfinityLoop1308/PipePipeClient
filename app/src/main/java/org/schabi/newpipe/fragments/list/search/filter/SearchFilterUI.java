@@ -2,11 +2,16 @@ package org.schabi.newpipe.fragments.list.search.filter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.core.content.ContextCompat;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.search.filter.FilterGroup;
 import org.schabi.newpipe.extractor.search.filter.FilterItem;
@@ -22,7 +27,6 @@ import static android.content.ContentValues.TAG;
 public class SearchFilterUI extends SearchFilterLogic {
 
     private final Context context;
-    private final int searchIconRes;
     MenuItem groupNameItem = null;
     private Menu menu = null;
     private SearchFragment searchFragment;
@@ -31,20 +35,24 @@ public class SearchFilterUI extends SearchFilterLogic {
         // it really shouldn't be called callback. A fragment is passed.
         super(callback);
         this.searchFragment = callback;
-        this.searchIconRes = R.drawable.baseline_search_24;
         this.context = context;
     }
 
 
     @Override
     protected void createContentFilterPre() {
+        int currentNightMode = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        Drawable icon = ContextCompat.getDrawable(context, R.drawable.baseline_search_24);
+        icon.mutate();
+        icon.setColorFilter(currentNightMode == Configuration.UI_MODE_NIGHT_YES
+                ? Color.WHITE : Color.BLACK, PorterDuff.Mode.SRC_ATOP);
         menu.add(MENU_GROUP_SEARCH_BUTTON,
                         ITEM_IDENTIFIER_UNKNOWN,
                         0,
                         "search")
                 .setEnabled(true)
                 .setCheckable(false)
-                .setIcon(searchIconRes);
+                .setIcon(icon);
     }
 
     protected void createContentFilterGroup(final FilterGroup contentGroup) {
