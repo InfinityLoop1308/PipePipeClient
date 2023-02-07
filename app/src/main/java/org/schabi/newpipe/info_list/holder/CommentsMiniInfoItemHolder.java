@@ -243,20 +243,13 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
         LinkifyCompat.addLinks(itemContentView, Linkify.WEB_URLS);
         LinkifyCompat.addLinks(itemContentView, TimestampExtractor.TIMESTAMPS_PATTERN, null, null,
                 (match, url) -> {
-                    try {
+                    try { //here url is like 15:38 or 01:00:00
                         final var timestampMatch = TimestampExtractor
                                 .getTimestampFromMatcher(match, commentText);
                         if (timestampMatch == null) {
                             return url;
                         }
-                        if(streamUrl.contains("https://api.bilibili.com/x/v2/reply")){
-                            return "https://m.bilibili.com/video/av" +
-                                    streamUrl.split("oid=")[1].split("&")[0]
-                                    + url.replace(Objects.requireNonNull(match.group(0)),
-                                    "#timestamp=" + timestampMatch.seconds());
-                        }
-                        return streamUrl + url.replace(Objects.requireNonNull(match.group(0)),
-                                "#timestamp=" + timestampMatch.seconds());
+                        return "internal://timestamp/" + timestampMatch.seconds();
                     } catch (final Exception ex) {
                         Log.e(TAG, "Unable to process url='" + url + "' as timestampLink", ex);
                         return url;

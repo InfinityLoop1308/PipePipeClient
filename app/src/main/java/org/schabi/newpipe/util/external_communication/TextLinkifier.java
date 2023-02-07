@@ -1,6 +1,7 @@
 package org.schabi.newpipe.util.external_communication;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
@@ -28,7 +29,7 @@ import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-import static org.schabi.newpipe.util.external_communication.InternalUrlsHandler.playOnPopup;
+import static org.schabi.newpipe.fragments.detail.VideoDetailFragment.ACTION_SEEK_TO;
 
 public final class TextLinkifier {
     public static final String TAG = TextLinkifier.class.getSimpleName();
@@ -192,12 +193,9 @@ public final class TextLinkifier {
                     new ClickableSpan() {
                         @Override
                         public void onClick(@NonNull final View view) {
-                            playOnPopup(
-                                    context,
-                                    relatedInfo.getUrl(),
-                                    relatedInfo.getService(),
-                                    timestampMatchDTO.seconds(),
-                                    disposables);
+                            Intent intent = new Intent(ACTION_SEEK_TO);
+                            intent.putExtra("Timestamp", timestampMatchDTO.seconds());
+                            context.sendBroadcast(intent);
                         }
                     },
                     timestampMatchDTO.timestampStart(),
@@ -246,7 +244,11 @@ public final class TextLinkifier {
                 final String url = span.getURL();
                 final ClickableSpan clickableSpan = new ClickableSpan() {
                     public void onClick(@NonNull final View view) {
-                        ShareUtils.openUrlInBrowser(context, url, false);
+                        if (!InternalUrlsHandler.handleUrlDescriptionTimestamp(
+                                new CompositeDisposable(), context, url)
+                                && !InternalUrlsHandler.handleUrl(context, url, new CompositeDisposable())) {
+                            ShareUtils.openUrlInBrowser(context, url, false);
+                        }
                     }
                 };
 

@@ -59,7 +59,7 @@ public final class InternalUrlsHandler {
                                                              disposables,
                                                      final Context context,
                                                      @NonNull final String url) {
-        return handleUrl(context, url, HASHTAG_TIMESTAMP_PATTERN, disposables);
+        return handleTimestampUrl(context, url, HASHTAG_TIMESTAMP_PATTERN, disposables);
     }
 
     /**
@@ -79,7 +79,7 @@ public final class InternalUrlsHandler {
                                                                 disposables,
                                                         final Context context,
                                                         @NonNull final String url) {
-        return handleUrl(context, url, AMPERSAND_TIMESTAMP_PATTERN, disposables);
+        return handleTimestampUrl(context, url, AMPERSAND_TIMESTAMP_PATTERN, disposables);
     }
 
     /**
@@ -95,10 +95,16 @@ public final class InternalUrlsHandler {
      * @param disposables a field of the Activity/Fragment class that calls this method
      * @return true if the URL can be handled by NewPipe, false if it cannot
      */
-    private static boolean handleUrl(final Context context,
-                                     @NonNull final String url,
-                                     @NonNull final Pattern pattern,
-                                     @NonNull final CompositeDisposable disposables) {
+    private static boolean handleTimestampUrl(final Context context,
+                                              @NonNull final String url,
+                                              @NonNull final Pattern pattern,
+                                              @NonNull final CompositeDisposable disposables) {
+        if(url.contains("internal://timestamp/")) {
+            Intent intent = new Intent(ACTION_SEEK_TO);
+            intent.putExtra("Timestamp", url.split("internal://timestamp/")[1]);
+            context.sendBroadcast(intent);
+            return true;
+        }
         final Matcher matcher = pattern.matcher(url);
         if (!matcher.matches()) {
             return false;
@@ -124,12 +130,27 @@ public final class InternalUrlsHandler {
         }
 
         if (linkType == StreamingService.LinkType.STREAM && seconds != -1) {
-            Intent intent = new Intent(ACTION_SEEK_TO);
-            intent.putExtra("Timestamp", seconds);
-            context.sendBroadcast(intent);
+            return playOnMain(context, matchedUrl, service, seconds, disposables);
         } else {
             NavigationHelper.openRouterActivity(context, matchedUrl);
         }
+        return true;
+    }
+    public static boolean handleUrl(final Context context,
+                                    @NonNull final String url,
+                                    @NonNull final CompositeDisposable disposables) {
+        final StreamingService service;
+        final StreamingService.LinkType linkType;
+        try {
+            service = NewPipe.getServiceByUrl(url);
+            linkType = service.getLinkTypeByUrl(url);
+            if (linkType == StreamingService.LinkType.NONE) {
+                return false;
+            }
+        } catch (final ExtractionException e) {
+            return false;
+        }
+        NavigationHelper.openRouterActivity(context, url);
         return true;
     }
 
