@@ -26,6 +26,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.extractor.linkhandler.SearchQueryHandler;
 import org.schabi.newpipe.extractor.search.filter.FilterItem;
 
 import androidx.annotation.Nullable;
@@ -83,11 +85,17 @@ public final class ExtractorHelper {
                                                final List<FilterItem> contentFilter,
                                                final List<FilterItem> sortFilter) {
         checkServiceId(serviceId);
-        return Single.fromCallable(() ->
-                SearchInfo.getInfo(NewPipe.getService(serviceId),
-                        NewPipe.getService(serviceId)
-                                .getSearchQHFactory()
-                                .fromQuery(searchString, contentFilter, sortFilter)));
+        try {
+            StreamingService service = NewPipe.getService(serviceId);
+            SearchQueryHandler handler = NewPipe.getService(serviceId)
+                    .getSearchQHFactory()
+                    .fromQuery(searchString, contentFilter, sortFilter);
+            return Single.fromCallable(() ->
+                    SearchInfo.getInfo(service,
+                            handler));
+        } catch (ExtractionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static Single<InfoItemsPage<InfoItem>> getMoreSearchItems(
