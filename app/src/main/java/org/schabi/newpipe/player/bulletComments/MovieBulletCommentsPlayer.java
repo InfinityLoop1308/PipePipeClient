@@ -30,6 +30,7 @@ public class MovieBulletCommentsPlayer {
     protected final BulletCommentsView bulletCommentsView;
     protected List<BulletCommentsInfoItem> commentsInfoItems;
     private BulletCommentsExtractor extractor;
+    public boolean isRoundPlayStream = false;
 
     /**
      * Set data. Call before init().
@@ -102,7 +103,9 @@ public class MovieBulletCommentsPlayer {
             try {
                 nextCommentsInfoItems = extractor.getLiveMessages()
                         .stream().toArray(BulletCommentsInfoItem[]::new);
-                extractor.setCurrentPlayPosition(drawUntilPosition.toMillis());
+                if(drawUntilPosition.compareTo(Duration.ofSeconds(Long.MAX_VALUE)) != 0){
+                    extractor.setCurrentPlayPosition(drawUntilPosition.toMillis());
+                }
             } catch (ParsingException e) {
                 throw new RuntimeException(e);
             }
