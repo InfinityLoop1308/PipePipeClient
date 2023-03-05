@@ -2123,7 +2123,6 @@ public final class Player implements
 
     @Override // exoplayer listener
     public void onIsLoadingChanged(final boolean isLoading) {
-        Log.d(TAG, "ExoPlayer - onIsLoadingChanged(%s) called, isLoading = "+ isLoading);
         if (!isLoading) {
             if(currentState == STATE_PAUSED && isProgressLoopRunning()){
                 stopProgressLoop();
@@ -3345,6 +3344,7 @@ public final class Player implements
         registerStreamViewed();
         updateStreamRelatedViews();
         showHideKodiButton();
+        initBCPlayer(); // TODO: bullet comments may be reset unexpectedly for round play streams
 
         binding.titleTextView.setText(info.getName());
         binding.channelTextView.setText(info.getUploaderName());
