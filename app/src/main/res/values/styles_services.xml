@@ -89,4 +89,42 @@
         <item name="colorAccent">@color/dark_bandcamp_accent_color</item>
     </style>
 
+    <!-- BiliBili -->
+    <style name="LightTheme.BiliBili" parent="LightTheme" tools:keep="@style/LightTheme_Bandcamp">
+        <item name="colorPrimary">@color/light_bilibili_primary_color</item>
+        <item name="colorPrimaryDark">@color/light_bilibili_statusbar_color</item>
+        <item name="colorAccent">@color/light_bilibili_accent_color</item>
+    </style>
+
+    <style name="DarkTheme.BiliBili" parent="DarkTheme" tools:keep="@style/DarkTheme_Bandcamp">
+        <item name="colorPrimary">@color/dark_bilibili_primary_color</item>
+        <item name="colorPrimaryDark">@color/dark_bilibili_statusbar_color</item>
+        <item name="colorAccent">@color/dark_bilibili_accent_color</item>
+    </style>
+
+    <style name="BlackTheme.BiliBili" parent="BlackTheme" tools:keep="@style/BlackTheme_Bandcamp">
+        <item name="colorPrimary">@color/dark_bilibili_primary_color</item>
+        <item name="colorPrimaryDark">@color/dark_bilibili_statusbar_color</item>
+        <item name="colorAccent">@color/dark_bilibili_accent_color</item>
+    </style>
+
+    <!-- media.ccc.de -->
+    <style name="LightTheme.NicoNico" parent="LightTheme" tools:keep="@style/LightTheme_media_ccc_de">
+        <item name="colorPrimary">@color/light_media_ccc_primary_color</item>
+        <item name="colorPrimaryDark">@color/light_media_ccc_statusbar_color</item>
+        <item name="colorAccent">@color/light_media_ccc_accent_color</item>
+    </style>
+
+    <style name="DarkTheme.NicoNico" parent="DarkTheme" tools:keep="@style/DarkTheme_media_ccc_de">
+        <item name="colorPrimary">@color/dark_media_ccc_primary_color</item>
+        <item name="colorPrimaryDark">@color/dark_media_ccc_statusbar_color</item>
+        <item name="colorAccent">@color/dark_media_ccc_accent_color</item>
+    </style>
+
+    <style name="BlackTheme.NicoNico" parent="BlackTheme" tools:keep="@style/BlackTheme_media_ccc_de">
+        <item name="colorPrimary">@color/dark_media_ccc_primary_color</item>
+        <item name="colorPrimaryDark">@color/dark_media_ccc_statusbar_color</item>
+        <item name="colorAccent">@color/dark_media_ccc_accent_color</item>
+    </style>
+
 </resources>
