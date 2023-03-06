@@ -241,6 +241,10 @@ public class StatisticsPlaylistFragment
     public void onDestroyView() {
         super.onDestroyView();
 
+        if(Objects.requireNonNull(activity.getSupportActionBar()).getCustomView() != null){
+            destroyCustomViewInActionBar();
+        }
+
         if (itemListAdapter != null) {
             itemListAdapter.unsetSelectedListener();
         }
