@@ -28,12 +28,7 @@ import org.schabi.newpipe.databinding.BulletCommentsPlayerBinding;
 import org.schabi.newpipe.extractor.bulletComments.BulletCommentsInfoItem;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public final class BulletCommentsView extends ConstraintLayout {
     private final String TAG = "BulletCommentsView";
@@ -118,7 +113,7 @@ public final class BulletCommentsView extends ConstraintLayout {
     List<Long> rows = Collections.synchronizedList(new ArrayList<Long>());
     List<Long> rowsRegular = Collections.synchronizedList(new ArrayList<Long>());
     private final double commentRelativeTextSize = 1 / 13.5;
-    ArrayList<BulletCommentsInfoItem> bulletCommentsInfoItemPool = new ArrayList<>();
+    PriorityQueue<BulletCommentsInfoItem> bulletCommentsInfoItemPool = new PriorityQueue<>();
 
     /**
      * Duration of comments. get from preferences. key: "bullet_comments_key"
@@ -174,6 +169,11 @@ public final class BulletCommentsView extends ConstraintLayout {
             setLayout();
             layoutSet = true;
         }
+        if(bulletCommentsInfoItemPool.size() > 0
+                && bulletCommentsInfoItemPool.peek().getDuration().toMillis() - drawUntilPosition.toMillis() > 30000){
+            // should only apply when the stream is a YouTube live replay
+            bulletCommentsInfoItemPool.clear();
+        }
         bulletCommentsInfoItemPool.addAll(Arrays.asList(items));
         //Log.v(TAG, "New comments count: " + items.length);
         final Context context = binding.bulletCommentsContainer.getContext();
@@ -191,8 +191,9 @@ public final class BulletCommentsView extends ConstraintLayout {
         while(rows.size() < calculatedCommentRowsCount){
             rows.add(0L);
         }
-        while(bulletCommentsInfoItemPool.size() > 0) {
-            BulletCommentsInfoItem item = bulletCommentsInfoItemPool.remove(0);
+        while(bulletCommentsInfoItemPool.size() > 0
+                && bulletCommentsInfoItemPool.peek().getDuration().toMillis() < drawUntilPosition.toMillis()) {
+            BulletCommentsInfoItem item = bulletCommentsInfoItemPool.poll();
             long current = new Date().getTime();
             long itemDuration = item.getDuration().toMillis();
             if(!(itemDuration == 0)
