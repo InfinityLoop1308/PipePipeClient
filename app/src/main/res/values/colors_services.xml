@@ -60,4 +60,14 @@
     <color name="dark_bilibili_accent_color">#FFFFFF</color>
     <color name="dark_bilibili_statusbar_color">#D94E74</color>
 
+    <!-- Collector -->
+    <color name="light_collector_primary_color">#e2c9a3</color>
+    <color name="light_collector_accent_color">#000000</color>
+    <color name="light_collector_statusbar_color">#e2c9a3</color>
+
+    <color name="dark_collector_primary_color">#121212</color>
+    <color name="dark_collector_accent_color">#FFFFFF</color>
+    <color name="dark_collector_statusbar_color">#121212</color>
+
+
 </resources>

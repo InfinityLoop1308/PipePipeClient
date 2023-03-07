@@ -1351,4 +1351,5 @@
     </string-array>
     <string name="streams_notifications_channels_key">streams_notifications_channels</string>
     <string name="player_notification_screen_key">player_notification_screen</string>
+    <string name="enable_eye_protection_key">enable_eye_protection_key</string>
 </resources>

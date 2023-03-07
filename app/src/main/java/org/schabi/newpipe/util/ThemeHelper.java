@@ -168,7 +168,9 @@ public final class ThemeHelper {
             themeName = "BlackTheme";
         }
 
-        themeName += "." + service.getServiceInfo().getName();
+        themeName += "." + (PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.enable_eye_protection_key), false)?
+                "Collector": service.getServiceInfo().getName());
         final int resourceId = context.getResources()
                 .getIdentifier(themeName, "style", context.getPackageName());
 

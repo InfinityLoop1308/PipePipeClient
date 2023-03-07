@@ -796,4 +796,8 @@
     <string name="recommended_videos">Recommended Videos</string>
     <string name="top_lives">Top Lives</string>
     <string name="recommended_lives">Recommended Lives</string>
+    <string name="enable_eye_protection_summary">Disable dynamic theme changing and use a eye protection theme for all
+        services
+    </string>
+    <string name="enable_eye_protection_title">Enable eye protection</string>
 </resources>

@@ -127,4 +127,23 @@
         <item name="colorAccent">@color/dark_media_ccc_accent_color</item>
     </style>
 
+    <!-- collector -->
+    <style name="LightTheme.Collector" parent="LightTheme">
+        <item name="colorPrimary">@color/light_collector_primary_color</item>
+        <item name="colorPrimaryDark">@color/light_collector_statusbar_color</item>
+        <item name="colorAccent">@color/light_collector_accent_color</item>
+    </style>
+
+    <style name="DarkTheme.Collector" parent="DarkTheme" >
+        <item name="colorPrimary">@color/dark_collector_primary_color</item>
+        <item name="colorPrimaryDark">@color/dark_collector_statusbar_color</item>
+        <item name="colorAccent">@color/dark_collector_accent_color</item>
+    </style>
+
+    <style name="BlackTheme.Collector" parent="BlackTheme">
+        <item name="colorPrimary">@color/dark_collector_primary_color</item>
+        <item name="colorPrimaryDark">@color/dark_collector_statusbar_color</item>
+        <item name="colorAccent">@color/dark_collector_accent_color</item>
+    </style>
+
 </resources>
