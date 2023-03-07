@@ -169,7 +169,9 @@ public abstract class SearchFilterLogic implements CallbackOptions {
                 }
 
                 if (isFirstItem) { // select first item if possible
-                    userSelectedSortFilterList.add(filter.getIdentifier());
+                    if(userSelectedSortFilterList.size() == 0){
+                        userSelectedSortFilterList.add(filter.getIdentifier());
+                    }
                     if (!isInit) {
                         sortMenuItem.setChecked(true);
                         ifExclusiveGroupAddSelectedItem(sortMenuItem);
