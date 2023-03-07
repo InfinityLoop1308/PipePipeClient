@@ -170,6 +170,7 @@ public final class BulletCommentsView extends ConstraintLayout {
             layoutSet = true;
         }
         if(bulletCommentsInfoItemPool.size() > 0
+                && !(drawUntilPosition.compareTo(Duration.ofSeconds(Long.MAX_VALUE)) == 0)
                 && bulletCommentsInfoItemPool.peek().getDuration().toMillis() - drawUntilPosition.toMillis() > 30000){
             // should only apply when the stream is a YouTube live replay
             bulletCommentsInfoItemPool.clear();
@@ -192,7 +193,8 @@ public final class BulletCommentsView extends ConstraintLayout {
             rows.add(0L);
         }
         while(bulletCommentsInfoItemPool.size() > 0
-                && bulletCommentsInfoItemPool.peek().getDuration().toMillis() < drawUntilPosition.toMillis()) {
+                && (drawUntilPosition.compareTo(Duration.ofSeconds(Long.MAX_VALUE)) == 0
+                || bulletCommentsInfoItemPool.peek().getDuration().toMillis() < drawUntilPosition.toMillis())) {
             BulletCommentsInfoItem item = bulletCommentsInfoItemPool.poll();
             long current = new Date().getTime();
             long itemDuration = item.getDuration().toMillis();
