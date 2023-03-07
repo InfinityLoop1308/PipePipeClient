@@ -16,7 +16,7 @@ android {
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk 33
-        versionCode 1024
+        versionCode 1025
         versionName "2.4.2"
         archivesBaseName = 'AnimePipe_' + versionName
 
