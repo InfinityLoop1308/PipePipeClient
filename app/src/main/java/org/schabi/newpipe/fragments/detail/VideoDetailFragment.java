@@ -425,6 +425,9 @@ public final class VideoDetailFragment
     @Override
     public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences,
                                           final String key) {
+        if(key == null){
+            return ;
+        }
         if (key.equals(getString(R.string.show_comments_key))) {
             showComments = sharedPreferences.getBoolean(key, true);
             tabSettingsChanged = true;
