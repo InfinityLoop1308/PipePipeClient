@@ -1352,4 +1352,7 @@
     <string name="streams_notifications_channels_key">streams_notifications_channels</string>
     <string name="player_notification_screen_key">player_notification_screen</string>
     <string name="enable_eye_protection_key">enable_eye_protection_key</string>
+    <string name="logout_key">logout_key</string>
+    <string name="login_key">login_key</string>
+    <string name="niconico_cookies_key">niconico_cookies_key</string>
 </resources>

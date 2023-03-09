@@ -800,4 +800,9 @@
         services
     </string>
     <string name="enable_eye_protection_title">Enable eye protection</string>
+    <string name="account">Account</string>
+    <string name="settings_category_niconico_account_title">NicoNico Account</string>
+    <string name="login_warning">Please note that logging in may weaken your anonymity</string>
+    <string name="login_title">Login</string>
+    <string name="logout_title">Log out</string>
 </resources>

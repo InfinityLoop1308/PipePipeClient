@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:app="http://schemas.android.com/apk/res-auto"
+                  android:key="general_preferences"
+                  android:title="@string/settings">
+
+    <PreferenceScreen
+            android:fragment="org.schabi.newpipe.settings.NicoNicoAccountSettingsFragment"
+            android:title="NicoNico"
+            app:iconSpaceReserved="false" />
+
+</PreferenceScreen>

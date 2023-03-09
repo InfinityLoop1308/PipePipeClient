@@ -35,6 +35,12 @@
         app:iconSpaceReserved="false" />
 
     <PreferenceScreen
+            android:fragment="org.schabi.newpipe.settings.AccountSettingsFragment"
+            android:icon="@drawable/ic_account"
+            android:title="@string/account"
+            app:iconSpaceReserved="false" />
+
+    <PreferenceScreen
         android:fragment="org.schabi.newpipe.settings.NotificationsSettingsFragment"
         android:icon="@drawable/ic_notifications"
         android:title="@string/notifications"
