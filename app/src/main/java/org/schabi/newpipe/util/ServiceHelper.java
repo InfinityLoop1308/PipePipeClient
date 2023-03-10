@@ -199,6 +199,12 @@ public final class ServiceHelper {
             final String url = jsonObject.getString("url");
             final PeertubeInstance instance = new PeertubeInstance(url, name);
             ServiceList.PeerTube.setInstance(instance);
+        } else if (serviceId == ServiceList.NicoNico.getServiceId()) {
+            final SharedPreferences sharedPreferences = PreferenceManager
+                    .getDefaultSharedPreferences(context);
+            final String tokens = sharedPreferences.getString(context.getString(
+                    R.string.niconico_cookies_key), null);
+            ServiceList.NicoNico.setTokens(tokens);
         }
     }
 

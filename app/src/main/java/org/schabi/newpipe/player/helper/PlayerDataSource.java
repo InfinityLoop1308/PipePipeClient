@@ -209,7 +209,11 @@ public class PlayerDataSource {
         DownloaderImpl downloader = DownloaderImpl.getInstance();
         Response response;
         try {
-            response = downloader.get(String.valueOf(url), null, NiconicoService.LOCALE); // NiconicoService.LOCALE = Localization.fromLocalizationCode("ja-JP")
+            HashMap<String, List<String>> tokens = new HashMap<>();
+            if(NiconicoService.getTokens() != null){
+                tokens.put("Cookie", Collections.singletonList(NiconicoService.getTokens()));
+            }
+            response = downloader.get(String.valueOf(url), tokens, NiconicoService.LOCALE); // NiconicoService.LOCALE = Localization.fromLocalizationCode("ja-JP")
             final Document page = Jsoup.parse(response.responseBody());
             JsonObject watch = JsonParser.object().from(
                     page.getElementById("js-initial-watch-data").attr("data-api-data"));
