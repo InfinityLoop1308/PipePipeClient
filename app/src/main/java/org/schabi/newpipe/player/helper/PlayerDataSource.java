@@ -208,6 +208,8 @@ public class PlayerDataSource {
         headers.put("Content-Type", Collections.singletonList("application/json"));
         DownloaderImpl downloader = DownloaderImpl.getInstance();
         Response response;
+        String quality = url.split("#quality=")[1];
+        url = url.split("#quality=")[0];
         try {
             HashMap<String, List<String>> tokens = new HashMap<>();
             if(NiconicoService.getTokens() != null){
@@ -221,7 +223,7 @@ public class PlayerDataSource {
                     = watch.getObject("media").getObject("delivery").getObject("movie");
 
             final JsonObject encryption = watch.getObject("media").getObject("delivery").getObject("encryption");
-            final String s = NiconicoDMCPayloadBuilder.buildJSON(session.getObject("session"), encryption);
+            final String s = NiconicoDMCPayloadBuilder.buildJSON(session.getObject("session"), encryption, quality);
             response = downloader.post("https://api.dmc.nico/api/sessions?_format=json", headers, s.getBytes(StandardCharsets.UTF_8), NiconicoService.LOCALE);
             final JsonObject content = JsonParser.object().from(response.responseBody());
             final String contentURL = content.getObject("data").getObject("session")
