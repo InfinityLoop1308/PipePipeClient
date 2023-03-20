@@ -5,8 +5,8 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
+import android.widget.Toast;
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -28,7 +28,10 @@ import java.net.HttpURLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
+import java.util.Random;
 
+import okio.ByteString;
+import us.shandian.giga.get.DownloadMission;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
 
 public class Utility {
@@ -262,6 +265,28 @@ public class Utility {
 
         try {
             return Long.parseLong(connection.getHeaderField("Content-Length"));
+        } catch (Exception err) {
+            // nothing to do
+        }
+
+        return -1;
+    }
+
+    /**
+     * Get the content length of the entire file even if the HTTP response is partial
+     * (response code 206).
+     * @param connection http connection
+     * @return content length
+     */
+    public static long getTotalContentLength(final HttpURLConnection connection) {
+        try {
+            if (connection.getResponseCode() == 206) {
+                final String rangeStr = connection.getHeaderField("Content-Range");
+                final String bytesStr = rangeStr.split("/", 2)[1];
+                return Long.parseLong(bytesStr);
+            } else {
+                return getContentLength(connection);
+            }
         } catch (Exception err) {
             // nothing to do
         }
