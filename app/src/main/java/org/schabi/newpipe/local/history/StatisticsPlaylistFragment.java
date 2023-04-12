@@ -461,7 +461,9 @@ public class StatisticsPlaylistFragment
         actionBar.setCustomView(null);
         actionBar.setDisplayShowCustomEnabled(false);
         activity.findViewById(R.id.action_search_local).setVisibility(View.VISIBLE);
-        itemListAdapter.clearFilter();
+        if(itemListAdapter != null) {
+            itemListAdapter.clearFilter();
+        }
     }
 
     private enum StatisticSortMode {
