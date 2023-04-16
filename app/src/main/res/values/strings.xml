@@ -719,6 +719,10 @@
 \nSo the choice boils down to what you prefer: speed or precise information.</string>
 <string name="feed_toggle_show_played_items">Show watched items</string>
 <string name="feed_toggle_hide_played_items">Hide watched items</string>
+    <string name="feed_hide_streams_title">Show the following streams</string>
+    <string name="feed_show_hide_streams">Show/Hide streams</string>
+    <string name="feed_fetch_channel_tabs">Fetch channel tabs</string>
+    <string name="feed_fetch_channel_tabs_summary">Tabs to fetch when updating the feed. This option has no effect if a channel is updated using fast mode.</string>
 <!-- SponsorBlock -->
 <string name="sponsor_block">SponsorBlock</string>
 <string name="sponsor_block_home_page_title">View Website</string>
