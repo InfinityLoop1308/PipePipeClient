@@ -288,7 +288,7 @@ public final class Player implements
     // Other constants
     //////////////////////////////////////////////////////////////////////////*/
 
-    private static final float[] PLAYBACK_SPEEDS = {0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 1.75f, 2.0f};
+    private static final float[] PLAYBACK_SPEEDS = {0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 1.75f, 2.0f, 2.25f, 2.5f, 2.75f, 3.0f};
 
     private static final int RENDERER_UNAVAILABLE = -1;
     private static final int MAX_RETRY_COUNT = 2;
