@@ -5,6 +5,10 @@
                   android:title="@string/settings">
 
     <PreferenceScreen
+            android:fragment="org.schabi.newpipe.settings.BiliBiliAccountSettingsFragment"
+            android:title="BiliBili"
+            app:iconSpaceReserved="false" />
+    <PreferenceScreen
             android:fragment="org.schabi.newpipe.settings.NicoNicoAccountSettingsFragment"
             android:title="NicoNico"
             app:iconSpaceReserved="false" />

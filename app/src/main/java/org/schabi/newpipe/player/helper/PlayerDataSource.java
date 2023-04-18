@@ -29,6 +29,7 @@ import androidx.annotation.Nullable;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.schabi.newpipe.DownloaderImpl;
+import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.downloader.Response;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
@@ -212,8 +213,8 @@ public class PlayerDataSource {
         url = url.split("#quality=")[0];
         try {
             HashMap<String, List<String>> tokens = new HashMap<>();
-            if(NiconicoService.getTokens() != null){
-                tokens.put("Cookie", Collections.singletonList(NiconicoService.getTokens()));
+            if(ServiceList.NicoNico.getTokens() != null){
+                tokens.put("Cookie", Collections.singletonList(ServiceList.NicoNico.getTokens()));
             }
             response = downloader.get(String.valueOf(url), tokens, NiconicoService.LOCALE); // NiconicoService.LOCALE = Localization.fromLocalizationCode("ja-JP")
             final Document page = Jsoup.parse(response.responseBody());

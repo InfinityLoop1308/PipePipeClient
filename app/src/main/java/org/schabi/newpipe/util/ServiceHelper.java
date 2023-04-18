@@ -205,6 +205,12 @@ public final class ServiceHelper {
             final String tokens = sharedPreferences.getString(context.getString(
                     R.string.niconico_cookies_key), null);
             ServiceList.NicoNico.setTokens(tokens);
+        } else if (serviceId == ServiceList.BiliBili.getServiceId()) {
+            final SharedPreferences sharedPreferences = PreferenceManager
+                    .getDefaultSharedPreferences(context);
+            final String tokens = sharedPreferences.getString(context.getString(
+                    R.string.bilibili_cookies_key), null);
+            ServiceList.BiliBili.setTokens(tokens);
         }
     }
 

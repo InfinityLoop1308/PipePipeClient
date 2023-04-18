@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:app="http://schemas.android.com/apk/res-auto"
+                  android:title="@string/settings_category_bilibili_account_title">
+    <Preference
+            android:key="@string/login_key"
+            android:summary="@string/login_warning"
+            android:title="@string/login_title"
+            app:singleLineTitle="false"
+            app:iconSpaceReserved="false" />
+    <Preference
+            android:key="@string/logout_key"
+            android:title="@string/logout_title"
+            app:singleLineTitle="false"
+            app:iconSpaceReserved="false" />
+</PreferenceScreen>

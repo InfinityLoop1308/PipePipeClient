@@ -1355,4 +1355,5 @@
     <string name="logout_key">logout_key</string>
     <string name="login_key">login_key</string>
     <string name="niconico_cookies_key">niconico_cookies_key</string>
+    <string name="bilibili_cookies_key">bilibili_cookies_key</string>
 </resources>
