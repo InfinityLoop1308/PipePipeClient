@@ -2591,7 +2591,7 @@ public final class Player implements
         return exoPlayerIsNull() ? REPEAT_MODE_OFF : simpleExoPlayer.getRepeatMode();
     }
 
-    private void setRepeatMode(@RepeatMode final int repeatMode) {
+    public void setRepeatMode(@RepeatMode final int repeatMode) {
         if (!exoPlayerIsNull()) {
             simpleExoPlayer.setRepeatMode(repeatMode);
         }

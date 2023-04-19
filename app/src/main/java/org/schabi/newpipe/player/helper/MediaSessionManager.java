@@ -26,8 +26,7 @@ import org.schabi.newpipe.player.playback.PlayerMediaSession;
 
 import java.util.Optional;
 
-import static org.schabi.newpipe.player.MainPlayer.ACTION_CLOSE;
-import static org.schabi.newpipe.player.MainPlayer.ACTION_SHUFFLE;
+import static org.schabi.newpipe.player.MainPlayer.*;
 
 public class MediaSessionManager {
     private static final String TAG = MediaSessionManager.class.getSimpleName();
@@ -77,21 +76,28 @@ public class MediaSessionManager {
         providers[0] = new MediaSessionConnector.CustomActionProvider() {
             @Override
             public void onCustomAction(@NonNull Player player, @NonNull String action, @Nullable Bundle extras) {
-                if (action.equals(ACTION_SHUFFLE)) {
-                    callback.shuffle();
+                if (action.equals(ACTION_CHANGE_PLAY_MODE)) {
+                    callback.changePlayMode();
                 }
             }
 
             @Nullable
             @Override
             public PlaybackStateCompat.CustomAction getCustomAction(Player player) {
-                if (((PlayerMediaSession)callback).player.getPlayQueue() != null
-                        && ((PlayerMediaSession)callback).player.getPlayQueue().isShuffled()) {
-                    return new android.support.v4.media.session.PlaybackStateCompat.CustomAction.Builder(
-                            ACTION_SHUFFLE, "Shuffle", R.drawable.exo_controls_shuffle_on).build();
-                } else {
-                    return new android.support.v4.media.session.PlaybackStateCompat.CustomAction.Builder(
-                            ACTION_SHUFFLE, "ShuffleOff", R.drawable.exo_controls_shuffle_off).build();
+                switch (((PlayerMediaSession)callback).mode){
+                    case 0:
+                    default:
+                        return new android.support.v4.media.session.PlaybackStateCompat.CustomAction.Builder(
+                                ACTION_CHANGE_PLAY_MODE, "Shuffle", R.drawable.shuffle_disabled).build();
+                    case 1:
+                        return new android.support.v4.media.session.PlaybackStateCompat.CustomAction.Builder(
+                                ACTION_CHANGE_PLAY_MODE, "Repeat all", R.drawable.exo_controls_shuffle_on).build();
+                    case 2:
+                        return new android.support.v4.media.session.PlaybackStateCompat.CustomAction.Builder(
+                                ACTION_CHANGE_PLAY_MODE, "Repeat none", R.drawable.exo_controls_repeat_one).build();
+                    case 3:
+                        return new android.support.v4.media.session.PlaybackStateCompat.CustomAction.Builder(
+                                ACTION_CHANGE_PLAY_MODE, "Repeat one", R.drawable.exo_controls_repeat_all).build();
                 }
             }
         };

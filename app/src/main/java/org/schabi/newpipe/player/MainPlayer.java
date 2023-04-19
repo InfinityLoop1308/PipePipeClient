@@ -81,6 +81,8 @@ public final class MainPlayer extends Service {
             = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_FAST_FORWARD";
     public static final String ACTION_SHUFFLE
             = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_SHUFFLE";
+    public static final String ACTION_CHANGE_PLAY_MODE
+            = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_CHANGE_PLAY_MODE";
     public static final String ACTION_RECREATE_NOTIFICATION
             = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_RECREATE_NOTIFICATION";
 
