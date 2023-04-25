@@ -16,8 +16,8 @@ android {
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk 33
-        versionCode 1028
-        versionName "2.6.0"
+        versionCode 1029
+        versionName "2.6.1"
         archivesBaseName = 'AnimePipe_' + versionName
 
         multiDexEnabled true
