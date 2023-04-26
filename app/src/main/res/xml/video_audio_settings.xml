@@ -265,7 +265,7 @@
                 android:key="@string/bullet_comments_font_key"
                 android:entries="@array/font_list"
                 android:entryValues="@array/font_list"
-                android:defaultValue="serif"
+                android:defaultValue="LXGW WenKai Screen"
                 android:title="@string/bullet_comments_font_title"
                 android:summary="%s"
                 app:singleLineTitle="false"

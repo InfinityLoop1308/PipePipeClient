@@ -74,7 +74,7 @@ public final class BulletCommentsView extends ConstraintLayout {
         commentsDuration = prefs.getInt("top_bottom_bullet_comments_key", 8);
         durationFactor = (float) prefs.getInt("regular_bullet_comments_duration_key", 8) / (float) commentsDuration;
         outlineRadius = prefs.getInt("bullet_comments_outline_radius_key", 2);
-        font = prefs.getString("bullet_comments_font_key", "Default");
+        font = prefs.getString("bullet_comments_font_key", "LXGW WenKai Screen");
         //Not this: BulletCommentsPlayerBinding.inflate(LayoutInflater.from(context));
         binding = BulletCommentsPlayerBinding.bind(this);
         //This does not work. post(this::setLayout);
