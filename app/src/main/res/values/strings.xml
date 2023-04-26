@@ -806,4 +806,5 @@
     <string name="login_warning">Please note that logging in may weaken your anonymity</string>
     <string name="login_title">Login</string>
     <string name="logout_title">Log out</string>
+    <string name="bullet_comments_font_title">Font of bullet comments</string>
 </resources>

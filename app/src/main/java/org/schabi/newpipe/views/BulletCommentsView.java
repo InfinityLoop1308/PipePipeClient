@@ -21,6 +21,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import androidx.core.content.res.ResourcesCompat;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 import org.schabi.newpipe.R;
@@ -73,6 +74,7 @@ public final class BulletCommentsView extends ConstraintLayout {
         commentsDuration = prefs.getInt("top_bottom_bullet_comments_key", 8);
         durationFactor = (float) prefs.getInt("regular_bullet_comments_duration_key", 8) / (float) commentsDuration;
         outlineRadius = prefs.getInt("bullet_comments_outline_radius_key", 2);
+        font = prefs.getString("bullet_comments_font_key", "Default");
         //Not this: BulletCommentsPlayerBinding.inflate(LayoutInflater.from(context));
         binding = BulletCommentsPlayerBinding.bind(this);
         //This does not work. post(this::setLayout);
@@ -121,6 +123,7 @@ public final class BulletCommentsView extends ConstraintLayout {
     private int commentsDuration;
     private float durationFactor;
     private int outlineRadius;
+    private String font;
     private final List<AnimatedTextView> animatedTextViews = new ArrayList<>();
 
     /**
@@ -205,6 +208,24 @@ public final class BulletCommentsView extends ConstraintLayout {
             }
             //Create TextView.
             final TextView textView = new TextView(context);
+            final Typeface fontToBeUsed;
+            switch (font) {
+                case "serif":
+                    fontToBeUsed = Typeface.SERIF;
+                    break;
+                case "monospace":
+                    fontToBeUsed = Typeface.MONOSPACE;
+                    break;
+                case "sans-serif":
+                    fontToBeUsed = Typeface.SANS_SERIF;
+                    break;
+                case "LXGW WenKai Screen":
+                    fontToBeUsed = ResourcesCompat.getFont(context, R.font.lxgw_wenkai);
+                    break;
+                default:
+                    fontToBeUsed = Typeface.DEFAULT;
+                    break;
+            }
             textView.setGravity(View.TEXT_ALIGNMENT_CENTER);
             textView.setTextColor(item.getArgbColor());
             textView.setText(item.getCommentText());
@@ -215,9 +236,9 @@ public final class BulletCommentsView extends ConstraintLayout {
                     (float) (Math.min(height, width) * commentRelativeTextSize * item.getRelativeFontSize()));
             textView.setMaxLines(1);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                textView.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD, item.getPosition().equals(BulletCommentsInfoItem.Position.SUPERCHAT)));
+                textView.setTypeface(Typeface.create(fontToBeUsed, Typeface.BOLD, item.getPosition().equals(BulletCommentsInfoItem.Position.SUPERCHAT)));
             } else {
-                textView.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD));
+                textView.setTypeface(Typeface.create(fontToBeUsed, Typeface.BOLD));
             }
             Paint paint = textView.getPaint();
             paint.setShadowLayer(outlineRadius, 0, 0, Color.BLACK);
