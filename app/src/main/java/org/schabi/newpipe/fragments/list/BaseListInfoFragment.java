@@ -7,6 +7,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import androidx.preference.PreferenceManager;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.InfoItem;
@@ -15,12 +16,15 @@ import org.schabi.newpipe.extractor.ListInfo;
 import org.schabi.newpipe.extractor.Page;
 import org.schabi.newpipe.extractor.channel.ChannelInfo;
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException;
+import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.util.Constants;
 import org.schabi.newpipe.views.NewPipeRecyclerView;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
+import java.util.stream.Collectors;
 
 import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -41,6 +45,7 @@ public abstract class BaseListInfoFragment<I extends InfoItem, L extends ListInf
     protected L currentInfo;
     protected Page currentNextPage;
     protected Disposable currentWorker;
+    protected boolean showFutureItems;
 
     protected BaseListInfoFragment(final UserAction errorUserAction) {
         this.errorUserAction = errorUserAction;
@@ -51,6 +56,12 @@ public abstract class BaseListInfoFragment<I extends InfoItem, L extends ListInf
         super.initViews(rootView, savedInstanceState);
         setTitle(name);
         showListFooter(hasMoreItems());
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        showFutureItems = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean("toggle_show_future_items_key", false);
     }
 
     @Override
@@ -227,7 +238,10 @@ public abstract class BaseListInfoFragment<I extends InfoItem, L extends ListInf
 
         if (infoListAdapter.getItemsList().isEmpty()) {
             if (!result.getRelatedItems().isEmpty()) {
-                infoListAdapter.addInfoItemList(result.getRelatedItems());
+                infoListAdapter.addInfoItemList(result.getRelatedItems().stream()
+                        .filter(item -> showFutureItems || !(item instanceof StreamInfoItem) ||((StreamInfoItem)item).getUploadDate() == null
+                                || ((StreamInfoItem)item).getUploadDate().offsetDateTime().isBefore(OffsetDateTime.now()))
+                                .collect(Collectors.toList()));
                 showListFooter(hasMoreItems());
             } else {
                 infoListAdapter.clearStreamItemList();

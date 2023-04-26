@@ -1357,6 +1357,7 @@
     <string name="niconico_cookies_key">niconico_cookies_key</string>
     <string name="bilibili_cookies_key">bilibili_cookies_key</string>
     <string name="bullet_comments_font_key">bullet_comments_font_key</string>
+    <string name="toggle_show_future_items_key">toggle_show_future_items_key</string>
     <string-array name="font_list">
         <item>Default</item>
         <item>sans-serif</item>
