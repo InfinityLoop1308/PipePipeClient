@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
@@ -92,6 +93,7 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
     private boolean isRemovingWatched = false;
     /* Is the playlist currently being processed to remove duplicate streams */
     private boolean isRemovingDuplicateStreams = false;
+    private boolean autoBackgroundPlaying = false;
     private EditText editText;
     private View searchClear;
     private TextWatcher textWatcher = new TextWatcher() {
@@ -129,6 +131,8 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
 
         isLoadingComplete = new AtomicBoolean();
         isModified = new AtomicBoolean();
+        autoBackgroundPlaying = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getBoolean(getString(R.string.auto_background_play_key), false);
     }
 
     @Override
@@ -185,6 +189,9 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                             ((PlaylistStreamEntry) selectedItem).getStreamEntity();
                     NavigationHelper.openVideoDetailFragment(requireContext(), getFM(),
                             item.getServiceId(), item.getUrl(), item.getTitle(), null, false);
+                    if(!autoBackgroundPlaying){
+                        return;
+                    }
                     final List<PlayQueueItem> streams = getPlayQueue().getStreams();
                     int targetIndex = 0;
                     for (int i = 0; i < streams.size(); i++) {

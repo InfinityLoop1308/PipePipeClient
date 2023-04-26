@@ -807,4 +807,6 @@
     <string name="login_title">Login</string>
     <string name="logout_title">Log out</string>
     <string name="bullet_comments_font_title">Font of bullet comments</string>
+    <string name="auto_background_play_title">Music Player Mode</string>
+    <string name="auto_background_play_summary">Play in background automatically when clicking an item in a local playlist</string>
 </resources>
