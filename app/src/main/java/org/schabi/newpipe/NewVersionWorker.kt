@@ -72,6 +72,7 @@ class NewVersionWorker(
         val notificationBuilder = NotificationCompat.Builder(applicationContext, channelId)
             .setSmallIcon(R.drawable.ic_newpipe_update)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .setContentTitle(applicationContext.getString(R.string.app_update_notification_content_title_new))
             .setContentText(
