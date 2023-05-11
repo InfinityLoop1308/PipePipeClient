@@ -460,7 +460,13 @@ public class StatisticsPlaylistFragment
         assert actionBar != null;
         actionBar.setCustomView(null);
         actionBar.setDisplayShowCustomEnabled(false);
-        activity.findViewById(R.id.action_search_local).setVisibility(View.VISIBLE);
+
+        try {
+            activity.findViewById(R.id.action_search_local).setVisibility(View.VISIBLE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
         if(itemListAdapter != null) {
             itemListAdapter.clearFilter();
         }
