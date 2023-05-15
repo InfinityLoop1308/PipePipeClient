@@ -3345,6 +3345,7 @@ public final class Player implements
         updateStreamRelatedViews();
         showHideKodiButton();
         initBCPlayer(); // TODO: bullet comments may be reset unexpectedly for round play streams
+        startBCPlayer();
 
         binding.titleTextView.setText(info.getName());
         binding.channelTextView.setText(info.getUploaderName());
