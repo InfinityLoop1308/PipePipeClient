@@ -10,10 +10,7 @@ import androidx.recyclerview.widget.DiffUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import us.shandian.giga.get.DownloadMission;
 import us.shandian.giga.get.FinishedMission;
@@ -420,6 +417,9 @@ public class DownloadManager {
     void setFinished(DownloadMission mission) {
         synchronized (this) {
             mMissionsPending.remove(mission);
+            if(mission.storage.srcName.endsWith(".tmp")){
+                return;
+            }
             mMissionsFinished.add(0, new FinishedMission(mission));
             mFinishedMissionStore.addFinishedMission(mission);
         }

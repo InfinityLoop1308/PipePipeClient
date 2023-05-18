@@ -44,6 +44,7 @@ import org.schabi.newpipe.player.helper.LockManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import us.shandian.giga.get.DownloadMission;
 import us.shandian.giga.get.MissionRecoveryInfo;
@@ -440,7 +441,7 @@ public class DownloadManagerService extends Service {
         for (int i = 0; i < parcelRecovery.length; i++)
             recovery[i] = (MissionRecoveryInfo) parcelRecovery[i];
 
-        final DownloadMission mission = new DownloadMission(urls, storage, kind, ps);
+        final DownloadMission mission = new DownloadMission(urls, storage, kind, ps, getApplicationContext());
         mission.threadCount = threads;
         mission.source = source;
         mission.nearLength = nearLength;
@@ -455,6 +456,7 @@ public class DownloadManagerService extends Service {
     }
 
     public void notifyFinishedDownload(String name) {
+        if(name.endsWith(".tmp")) return;
         if (!mDownloadNotificationEnable || mNotificationManager == null) {
             return;
         }

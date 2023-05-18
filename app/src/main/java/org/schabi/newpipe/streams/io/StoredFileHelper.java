@@ -40,12 +40,12 @@ public class StoredFileHelper implements Serializable {
     private transient File ioFile;
     private transient Context context;
 
-    protected String source;
-    private String sourceTree;
+    public String source;
+    public String sourceTree;
 
     protected String tag;
 
-    private String srcName;
+    public String srcName;
     private String srcType;
 
     public StoredFileHelper(final Context context, final Uri uri, final String mime) {
@@ -426,6 +426,9 @@ public class StoredFileHelper implements Serializable {
     private DocumentFile createSAF(@Nullable final Context ctx, final String mime,
                                    final String filename) throws IOException {
         DocumentFile res = StoredDirectoryHelper.findFileSAFHelper(ctx, docTree, filename);
+        if(res != null && !res.getName().equals(filename)){
+            res = null;
+        }
 
         if (res != null && res.exists() && res.isDirectory()) {
             if (!res.delete()) {

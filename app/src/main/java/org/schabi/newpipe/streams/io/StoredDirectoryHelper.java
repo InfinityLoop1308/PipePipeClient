@@ -334,4 +334,59 @@ public class StoredDirectoryHelper {
                             FilePickerActivityHelper.MODE_DIR);
         }
     }
+
+    public void remove(String fileName){
+        if (ioTree != null) {
+            File file = new File(ioTree, fileName);
+            file.delete();
+        }
+        else {
+            // use docTree
+            DocumentFile file = findFileSAFHelper(context, docTree, fileName);
+            if (file != null) {
+                file.delete();
+            }
+        }
+    }
+    public void clear(){
+        // clear *.tmp in the folder if [filename].mp4.tmp 's size > 0
+        ArrayList<String> filesToDelete = new ArrayList<>();
+        if (ioTree != null) {
+            File[] files = ioTree.listFiles();
+            try{
+                for (File file : files) {
+                    if (file.getName().endsWith(".tmp.mp4") && file.length() > 0) {
+                        filesToDelete.add(file.getName());
+                        filesToDelete.add(file.getName().replace(".tmp.mp4", ".tmp"));
+                    }
+                }
+                for (String filename : filesToDelete) {
+                    File file = new File(ioTree, filename);
+                    file.delete();
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        else {
+            // use docTree
+            DocumentFile[] docFiles = docTree.listFiles();
+            try{
+                for (DocumentFile docFile : docFiles) {
+                    if (docFile.getName().endsWith(".tmp.mp4") && docFile.length() > 0) {
+                        filesToDelete.add(docFile.getName());
+                        filesToDelete.add(docFile.getName().replace(".tmp.mp4", ".tmp"));
+                    }
+                }
+                for (String filename : filesToDelete) {
+                    DocumentFile docFile = findFileSAFHelper(context, docTree, filename);
+                    if (docFile != null) {
+                        docFile.delete();
+                    }
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
 }

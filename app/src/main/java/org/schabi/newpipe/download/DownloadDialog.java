@@ -47,6 +47,7 @@ import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
 import org.schabi.newpipe.extractor.localization.Localization;
@@ -896,6 +897,8 @@ public class DownloadDialog extends DialogFragment
                     }
 
                     continueSelectedDownload(storage);
+                    mainStorage.clear();
+                    mainStorage.createFile(filename.replace(".mp4", ".tmp.mp4"), "video/mp4");
                     return;
                 }
                 msgBtn = R.string.overwrite;
@@ -930,7 +933,6 @@ public class DownloadDialog extends DialogFragment
             askDialog.create().show();
             return;
         }
-
         askDialog.setPositiveButton(msgBtn, (dialog, which) -> {
             dialog.dismiss();
 
@@ -955,6 +957,9 @@ public class DownloadDialog extends DialogFragment
                     }
 
                     if (storageNew != null && storageNew.canWrite()) {
+//                        mainStorage.remove(filename);
+                        mainStorage.clear();
+                        mainStorage.createFile(filename.replace(".mp4", ".tmp.mp4"), "video/mp4");
                         continueSelectedDownload(storageNew);
                     } else {
                         showFailedDialog(R.string.error_file_creation);
@@ -970,7 +975,6 @@ public class DownloadDialog extends DialogFragment
                     break;
             }
         });
-
         askDialog.create().show();
     }
 
@@ -1007,7 +1011,7 @@ public class DownloadDialog extends DialogFragment
                 kind = 'a';
                 selectedStream = audioStreamsAdapter.getItem(selectedAudioIndex);
 
-                if (selectedStream.getFormat() == MediaFormat.M4A) {
+                if (selectedStream.getFormat() == MediaFormat.M4A && currentInfo.getService() != ServiceList.BiliBili) {
                     psName = Postprocessing.ALGORITHM_M4A_NO_DASH;
                 } else if (selectedStream.getFormat() == MediaFormat.WEBMA_OPUS) {
                     psName = Postprocessing.ALGORITHM_OGG_FROM_WEBM_DEMUXER;
@@ -1021,7 +1025,7 @@ public class DownloadDialog extends DialogFragment
                         .getAllSecondary()
                         .get(wrappedVideoStreams.getStreamsList().indexOf(selectedStream));
 
-                if (secondary != null) {
+                if (secondary != null && currentInfo.getService() != ServiceList.BiliBili) {
                     secondaryStream = secondary.getStream();
 
                     if (selectedStream.getFormat() == MediaFormat.MPEG_4) {
@@ -1077,6 +1081,18 @@ public class DownloadDialog extends DialogFragment
             if(urls[i].contains("nicovideo.jp/watch")){
                 urls[i] = PlayerDataSource.getNicoVideoUrl(urls[i]);
             }
+        }
+
+        if(kind == 'v' && currentInfo.getService() == ServiceList.BiliBili){
+            AudioStream tmpSecondaryStream = videoStreamsAdapter
+                    .getAllSecondary()
+                    .get(wrappedVideoStreams.getStreamsList().indexOf(selectedStream)).getStream();
+            StoredFileHelper tmpStorage = mainStorageAudio.createFile(storage.srcName.replace(".mp4", ".tmp"), String.valueOf(MediaFormat.M4A));
+            DownloadManagerService.startMission(context, new String[]{tmpSecondaryStream.getContent()}, tmpStorage, 'a', threads,
+                    currentInfo.getUrl(), null, null, 0, new MissionRecoveryInfo[]{
+                            new MissionRecoveryInfo(tmpSecondaryStream)
+                    });
+            psName = null;
         }
 
         DownloadManagerService.startMission(context, urls, storage, kind, threads,

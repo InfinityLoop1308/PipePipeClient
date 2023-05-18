@@ -1,5 +1,6 @@
 package us.shandian.giga.get;
 
+import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.system.ErrnoException;
@@ -27,6 +28,7 @@ import java.util.Objects;
 import javax.net.ssl.SSLException;
 
 import org.schabi.newpipe.streams.io.StoredFileHelper;
+import us.shandian.giga.postprocessing.BiliBiliMp4Muxer;
 import us.shandian.giga.postprocessing.Postprocessing;
 import us.shandian.giga.service.DownloadManagerService;
 import us.shandian.giga.util.Utility;
@@ -154,7 +156,9 @@ public class DownloadMission extends Mission {
     public transient Thread[] threads = new Thread[0];
     public transient Thread init = null;
 
-    public DownloadMission(String[] urls, StoredFileHelper storage, char kind, Postprocessing psInstance) {
+    protected Context context;
+
+    public DownloadMission(String[] urls, StoredFileHelper storage, char kind, Postprocessing psInstance, Context context) {
         if (Objects.requireNonNull(urls).length < 1)
             throw new IllegalArgumentException("urls array is empty");
         this.urls = urls;
@@ -164,6 +168,7 @@ public class DownloadMission extends Mission {
         this.maxRetry = 3;
         this.storage = storage;
         this.psAlgorithm = psInstance;
+        this.context = context;
 
         if (DEBUG && psInstance == null && urls.length > 1) {
             Log.w(TAG, "mission created with multiple urls ¿missing post-processing algorithm?");
@@ -379,6 +384,12 @@ public class DownloadMission extends Mission {
                 initializer();
                 return;
             }
+        }
+
+        if(this.source.contains("bilibili.com") && !this.storage.srcName.endsWith(".tmp") && !this.storage.srcName.endsWith(".tmp.mp4")){
+            notifyPostProcessing(1);
+            new BiliBiliMp4Muxer(this.storage.sourceTree, this.storage.source, context).mux();
+            notifyPostProcessing(2);
         }
 
         if (psAlgorithm != null && psState == 0) {

@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId "InfinityLoop1309.NewPipeEnhanced"
         resValue "string", "app_name", "AnimePipe"
-        minSdk 21
+        minSdk 24
         //noinspection ExpiredTargetSdkVersion
         targetSdk 33
         versionCode 1030
@@ -302,6 +302,8 @@ dependencies {
     androidTestImplementation "androidx.test:runner:1.4.0"
     androidTestImplementation "androidx.room:room-testing:${androidxRoomVersion}"
     androidTestImplementation "org.assertj:assertj-core:${assertJVersion}"
+
+    implementation 'com.arthenica:ffmpeg-kit-full:5.1'
 }
 
 static String getGitWorkingBranch() {
