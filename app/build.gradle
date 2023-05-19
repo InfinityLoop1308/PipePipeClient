@@ -12,13 +12,13 @@ android {
 
     defaultConfig {
         applicationId "InfinityLoop1309.NewPipeEnhanced"
-        resValue "string", "app_name", "AnimePipe"
+        resValue "string", "app_name", "PipePipe"
         minSdk 24
         //noinspection ExpiredTargetSdkVersion
         targetSdk 33
-        versionCode 1030
+        versionCode 1031
         versionName "2.6.2"
-        archivesBaseName = 'AnimePipe_' + versionName
+        archivesBaseName = 'PipePipe_' + versionName
 
         multiDexEnabled true
 
@@ -42,11 +42,11 @@ android {
             if (true) {
                 // default values when branch name could not be determined or is master or dev
                 applicationIdSuffix ".debug"
-                resValue "string", "app_name", "AnimePipe Debug"
+                resValue "string", "app_name", "PipePipe Debug"
             } else {
                 applicationIdSuffix ".debug." + normalizedWorkingBranch
-                resValue "string", "app_name", "AnimePipe " + workingBranch
-                archivesBaseName = 'AnimePipe_' + normalizedWorkingBranch
+                resValue "string", "app_name", "PipePipe " + workingBranch
+                archivesBaseName = 'PipePipe_' + normalizedWorkingBranch
             }
         }
 
@@ -56,8 +56,8 @@ android {
         release {
             if (System.properties.containsKey('packageSuffix')) {
                 applicationIdSuffix System.getProperty('packageSuffix')
-                resValue "string", "app_name", "AnimePipe " + System.getProperty('packageSuffix')
-                archivesBaseName = 'AnimePipe_' + System.getProperty('packageSuffix')
+                resValue "string", "app_name", "PipePipe " + System.getProperty('packageSuffix')
+                archivesBaseName = 'PipePipe_' + System.getProperty('packageSuffix')
             }
             minifyEnabled true
             shrinkResources false // disabled to fix F-Droid's reproducible build

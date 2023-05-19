@@ -4,11 +4,11 @@
     <string name="rss_button_title">RSS</string>
     <string name="kore_package">org.xbmc.kore</string>
     <string name="peertube_instance_list_url">https://joinpeertube.org/instances#instances-list</string>
-    <string name="notification_channel_id">AnimePipe</string>
-    <string name="app_update_notification_channel_id">AnimePipeAppUpdate</string>
-    <string name="hash_channel_id">AnimePipeHash</string>
-    <string name="error_report_channel_id">AnimePipeErrorReport</string>
-    <string name="streams_notification_channel_id" translatable="false">AnimePipeNewStreams</string>
+    <string name="notification_channel_id">PipePipe</string>
+    <string name="app_update_notification_channel_id">PipePipeAppUpdate</string>
+    <string name="hash_channel_id">PipePipeHash</string>
+    <string name="error_report_channel_id">PipePipeErrorReport</string>
+    <string name="streams_notification_channel_id" translatable="false">PipePipeNewStreams</string>
     <string name="guru_meditation">Guru Meditation.</string>
     <string name="empty_view_no_videos">@string/no_videos</string>
     <string name="empty_view_no_comments">@string/no_comments</string>
@@ -17,7 +17,7 @@
     <string name="md5">MD5</string>
     <string name="sha1">SHA-1</string>
     <string name="recaptcha">reCAPTCHA</string>
-    <string name="github_url">https://codeberg.org/NullPointerException/AnimePipe/issues</string>
+    <string name="github_url">https://codeberg.org/NullPointerException/PipePipe/issues</string>
     <string name="donation_url">https://newpipe.net/donate/</string>
     <string name="website_url">https://newpipe.net/</string>
     <string name="privacy_policy_url">https://newpipe.net/legal/privacy/</string>

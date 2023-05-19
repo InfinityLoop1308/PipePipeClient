@@ -157,7 +157,7 @@ class NewVersionWorker(
     companion object {
         private val DEBUG = MainActivity.DEBUG
         private val TAG = NewVersionWorker::class.java.simpleName
-        private const val NEWPIPE_API_URL = "https://codeberg.org/api/v1/repos/NullPointerException/AnimePipe/releases"
+        private const val NEWPIPE_API_URL = "https://codeberg.org/api/v1/repos/NullPointerException/PipePipe/releases"
         private const val IS_MANUAL = "isManual"
         /**
          * Start a new worker which checks if all conditions for performing a version check are met,
