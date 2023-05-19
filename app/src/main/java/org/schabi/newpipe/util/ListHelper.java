@@ -578,14 +578,32 @@ public final class ListHelper {
                 - formatRanking.indexOf(streamB.getFormat());
     }
 
+    public static int calculateResolution(String x){
+        int res = 0;
+        if(x.contains("8K")) {
+            res = 4320;
+        } else if(x.contains("4K")) {
+            res = 2160;
+        } else if(x.contains("高帧率")) {
+            res = 1084;
+        } else if(x.contains("高码率")) {
+            res = 1081;
+        } else if (x.contains("HDR")) {
+            res = 1082;
+        } else if (x.contains("杜比")){
+            res = 1083;
+        } else{
+            res = Integer.parseInt(x.replaceAll("0p\\d+$", "1")
+                    .replaceAll("[^\\d.]", ""));
+        }
+        return res;
+    }
+
     private static int compareVideoStreamResolution(@NonNull final String r1,
                                                     @NonNull final String r2) {
+
         try {
-            final int res1 = Integer.parseInt(r1.replaceAll("0p\\d+$", "1")
-                    .replaceAll("[^\\d.]", ""));
-            final int res2 = Integer.parseInt(r2.replaceAll("0p\\d+$", "1")
-                    .replaceAll("[^\\d.]", ""));
-            return res1 - res2;
+            return calculateResolution(r1) - calculateResolution(r2);
         } catch (final NumberFormatException e) {
             // Consider the first one greater because we don't know if the two streams are
             // different or not (a NumberFormatException was thrown so we don't know the resolution
