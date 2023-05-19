@@ -21,9 +21,9 @@ public class BiliBiliMp4Muxer {
         String temp = FFmpegKitConfig.getSafParameter(context, Uri.parse(fileName.replace(".mp4", ".tmp.mp4")), "rw");
         String video  = FFmpegKitConfig.getSafParameter(context, Uri.parse(fileName), "rw");
         String audio = FFmpegKitConfig.getSafParameterForRead(context, Uri.parse(fileName.replace(".mp4", ".tmp")));
-        FFmpegKit.execute(String.format("-i %s -i %s -c copy -y %s", video, audio, temp));
+        FFmpegKit.execute(String.format("-i %s -i %s -strict -2 -c copy -y %s", video, audio, temp));
         temp = FFmpegKitConfig.getSafParameter(context, Uri.parse(fileName.replace(".mp4", ".tmp.mp4")), "rw");
-        video  = FFmpegKitConfig.getSafParameter(context, Uri.parse(fileName), "rw");
-        FFmpegKit.execute(String.format("-i %s -c copy -y %s", temp, video));
+        video  = FFmpegKitConfig.getSafParameter(context, Uri.parse(fileName), "w");
+        FFmpegKit.execute(String.format("-i %s -strict -2 -c copy -y %s", temp, video));
     }
 }
