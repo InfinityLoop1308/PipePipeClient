@@ -1087,7 +1087,8 @@ public class DownloadDialog extends DialogFragment
             AudioStream tmpSecondaryStream = videoStreamsAdapter
                     .getAllSecondary()
                     .get(wrappedVideoStreams.getStreamsList().indexOf(selectedStream)).getStream();
-            StoredFileHelper tmpStorage = mainStorageAudio.createFile(storage.srcName.replace(".mp4", ".tmp"), String.valueOf(MediaFormat.M4A));
+
+            StoredFileHelper tmpStorage = mainStorageVideo.createFile(storage.srcName.replace(".mp4", ".tmp"), String.valueOf(MediaFormat.M4A));
             DownloadManagerService.startMission(context, new String[]{tmpSecondaryStream.getContent()}, tmpStorage, 'a', threads,
                     currentInfo.getUrl(), null, null, 0, new MissionRecoveryInfo[]{
                             new MissionRecoveryInfo(tmpSecondaryStream)

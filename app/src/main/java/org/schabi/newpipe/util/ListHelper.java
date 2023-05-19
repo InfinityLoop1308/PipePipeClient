@@ -585,13 +585,13 @@ public final class ListHelper {
         } else if(x.contains("4K")) {
             res = 2160;
         } else if(x.contains("高帧率")) {
-            res = 1084;
-        } else if(x.contains("高码率")) {
-            res = 1081;
-        } else if (x.contains("HDR")) {
-            res = 1082;
-        } else if (x.contains("杜比")){
             res = 1083;
+        } else if(x.contains("高码率")) {
+            res = 1082;
+        } else if (x.contains("HDR")) {
+            res = 2162;
+        } else if (x.contains("杜比")){
+            res = 2163;
         } else{
             res = Integer.parseInt(x.replaceAll("0p\\d+$", "1")
                     .replaceAll("[^\\d.]", ""));
