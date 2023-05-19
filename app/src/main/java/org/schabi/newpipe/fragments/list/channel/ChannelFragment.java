@@ -58,6 +58,8 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
     @State
     protected String url;
 
+    protected org.schabi.newpipe.util.SavedState savedState;
+
     private ChannelInfo currentInfo;
     private Disposable currentWorker;
     private Disposable subscriptionMonitor;
@@ -135,8 +137,15 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
     public void onSaveInstanceState(final @NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("LastTab", binding == null ? lastTab: binding.tabLayout.getSelectedTabPosition());
+        savedState = StateSaver
+                .tryToSave(activity.isChangingConfigurations(), savedState, outState, this);
     }
 
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle bundle) {
+        super.onRestoreInstanceState(bundle);
+        savedState = StateSaver.tryToRestore(bundle, this);
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();
