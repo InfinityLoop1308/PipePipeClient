@@ -125,11 +125,13 @@ class NewVersionWorker(
             val githubStableObject = JsonParser.`array`()
                 .from(response.responseBody()).getObject(0)
 
+            val supportedAbis = Build.SUPPORTED_ABIS
+
             var versionName = githubStableObject.getString("name")
             if (versionName.startsWith("v")) {
                 versionName = versionName.substring(1)
             }
-            val apkLocationUrl = githubStableObject.getArray("assets").getObject(0)
+            val apkLocationUrl = githubStableObject.getArray("assets").getObject(if ("arm64-v8a" in supportedAbis)0 else 1)
                 .getString("browser_download_url")
             compareAppVersionAndShowNotification(versionName, apkLocationUrl)
         } catch (e: JsonParserException) {
