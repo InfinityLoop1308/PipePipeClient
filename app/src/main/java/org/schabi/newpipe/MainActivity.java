@@ -22,11 +22,8 @@ package org.schabi.newpipe;
 
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
+import android.app.AlertDialog;
+import android.content.*;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,10 +37,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
-import android.widget.Spinner;
+import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -194,6 +188,43 @@ public class MainActivity extends AppCompatActivity {
             // Start the worker which is checking all conditions
             // and eventually searching for a new version.
             NewVersionWorker.enqueueNewVersionCheckingWork(app, false);
+        }
+
+        int currentVersionCode = BuildConfig.VERSION_CODE;
+        int storedVersionCode = prefs.getInt("version_code", 0);
+
+// Check if the stored version code is different from the current version code
+        if (currentVersionCode > storedVersionCode) {
+            // Show the "What's New" dialog
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("What's New");
+            String message = "feat: support download (BiliBili)\n" +
+                    "feat: h265 codec is selected by default(BiliBili)\n" +
+                    "feat: support Hi-res(BiliBili)\n" +
+                    "feat: support and prefer dolby(BiliBili)\n" +
+                    "\n" +
+                    "feat: copy all URLs in a playlist to clipboard(which can then be used to download)\n" +
+                    "feat: show what's new on new version\n" +
+                    "feat: add support to piped.video \n" +
+                    "\n" +
+                    "fix: channel tabs status are not saved \n" +
+                    "fix: bullet comments are not updated sometimes\n" +
+                    "fix: crash when filtering and then clicking a channel\n" +
+                    "fix: update notification is not clickable\n" +
+                    "fix: best resolution not works on BiliBili";
+            builder.setMessage(message);
+            builder.setPositiveButton("OK", null);
+            // another button to copy to clipboard
+            builder.setNeutralButton("Copy to clipboard", (dialog, which) -> {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("What's new", message);
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(this, "Copied to clipboard", Toast.LENGTH_SHORT).show();
+            });
+            builder.show();
+
+            // Update the stored version code
+            prefs.edit().putInt("version_code", currentVersionCode).apply();
         }
     }
 
