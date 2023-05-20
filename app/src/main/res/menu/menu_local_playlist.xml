@@ -20,5 +20,9 @@
         android:id="@+id/menu_item_remove_duplicates"
         android:title="@string/remove_duplicates"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_item_download_all"
+        android:title="@string/download_all"
+        app:showAsAction="never" />
 
 </menu>

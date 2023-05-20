@@ -1,5 +1,7 @@
 package org.schabi.newpipe.local.playlist;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -40,6 +42,7 @@ import org.schabi.newpipe.database.stream.model.StreamStateEntity;
 import org.schabi.newpipe.databinding.DialogEditTextBinding;
 import org.schabi.newpipe.databinding.LocalPlaylistHeaderBinding;
 import org.schabi.newpipe.databinding.PlaylistControlBinding;
+import org.schabi.newpipe.download.DownloadDialog;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
@@ -61,6 +64,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
+import static org.schabi.newpipe.util.SparseItemUtil.fetchStreamInfoAndSaveToDatabase;
 import static org.schabi.newpipe.util.ThemeHelper.shouldUseGridLayout;
 
 public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistStreamEntry>, Void> implements BackPressable {
@@ -436,6 +440,29 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                 // ignore
             }
             editText.addTextChangedListener(textWatcher);
+        } else if (item.getItemId() == R.id.menu_item_download_all) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            builder.setMessage(R.string.download_all_message)
+                    .setTitle(R.string.download_all);
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    StringBuilder sb = new StringBuilder();
+                    for(LocalItem entry : itemListAdapter.getItemsList()) {
+                        StreamEntity streamEntity = ((PlaylistStreamEntry) entry).getStreamEntity();
+                        sb.append(streamEntity.getUrl()).append("\n");
+                    }
+                    ClipboardManager clipboard = (ClipboardManager) requireContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText(name, sb.toString());
+                    clipboard.setPrimaryClip(clip);
+                }
+            });
+            builder.setNegativeButton(R.string.dismiss, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User cancelled the dialog
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }
         return true;
     }
