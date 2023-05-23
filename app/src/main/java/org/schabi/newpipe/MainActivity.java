@@ -198,20 +198,18 @@ public class MainActivity extends AppCompatActivity {
             // Show the "What's New" dialog
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.fragment_feed_title);
-            String message = "feat: support download (BiliBili)\n" +
-                    "feat: h265 codec is selected by default(BiliBili)\n" +
-                    "feat: support Hi-res(BiliBili)\n" +
-                    "feat: support and prefer dolby(BiliBili)\n" +
+            String message = "Please, if you encounter any bug or want to suggest new features, open an issue on GitHub or CodeBerg for better tracking. Google translate/DeepL OK.\n" +
                     "\n" +
-                    "feat: copy all URLs in a playlist to clipboard(which can then be used to download)\n" +
-                    "feat: show what's new on new version\n" +
-                    "feat: add support to piped.video \n" +
+                    "Bug fixes\n" +
+                    "- Can not extract any channels(BiliBili) [CodeBerg #36]\n" +
+                    "- Audio qualities are wrongly shown as tiny(YouTube)\n" +
+                    "- *bilibili.com not showing up on \"Open by default\" Settings page\n" +
+                    "- Some series can not be extracted (NicoNico)\n" +
+                    "- Search results can not be directly added to playlist (NicoNico) \n" +
+                    "- Updater can not selete corresponding apk correctly\n" +
                     "\n" +
-                    "fix: channel tabs status are not saved \n" +
-                    "fix: bullet comments are not updated sometimes\n" +
-                    "fix: crash when filtering and then clicking a channel\n" +
-                    "fix: update notification is not clickable\n" +
-                    "fix: best resolution not works on BiliBili";
+                    "Changes\n" +
+                    "- Only generate .tmp when downloading BiliBili videos";
             builder.setMessage(message);
             builder.setPositiveButton(R.string.ok, null);
             // another button to copy to clipboard
