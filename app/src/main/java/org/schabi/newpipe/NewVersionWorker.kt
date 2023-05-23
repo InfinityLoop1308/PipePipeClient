@@ -131,8 +131,19 @@ class NewVersionWorker(
             if (versionName.startsWith("v")) {
                 versionName = versionName.substring(1)
             }
-            val apkLocationUrl = githubStableObject.getArray("assets").getObject(if ("arm64-v8a" in supportedAbis)0 else 1)
-                .getString("browser_download_url")
+            // for assets if abi is supported return the URL
+            var apkLocationUrl: String? = null
+            for (i in 0 until githubStableObject.getArray("assets").size) {
+                val asset = githubStableObject.getArray("assets").getObject(i)
+                // if universal use it to init apkLocationUrl
+                if (asset.getString("name").endsWith(".apk") && asset.getString("name").contains("universal")) {
+                    apkLocationUrl = asset.getString("browser_download_url")
+                }
+                if (asset.getString("name").endsWith(".apk") && asset.getString("name").contains(supportedAbis[0])) {
+                    apkLocationUrl = asset.getString("browser_download_url")
+                    break
+                }
+            }
             compareAppVersionAndShowNotification(versionName, apkLocationUrl)
         } catch (e: JsonParserException) {
             // Most likely something is wrong in data received from NEWPIPE_API_URL.
