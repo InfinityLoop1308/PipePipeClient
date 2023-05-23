@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
         if (currentVersionCode > storedVersionCode) {
             // Show the "What's New" dialog
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("What's New");
+            builder.setTitle(R.string.fragment_feed_title);
             String message = "feat: support download (BiliBili)\n" +
                     "feat: h265 codec is selected by default(BiliBili)\n" +
                     "feat: support Hi-res(BiliBili)\n" +
@@ -213,13 +213,13 @@ public class MainActivity extends AppCompatActivity {
                     "fix: update notification is not clickable\n" +
                     "fix: best resolution not works on BiliBili";
             builder.setMessage(message);
-            builder.setPositiveButton("OK", null);
+            builder.setPositiveButton(R.string.ok, null);
             // another button to copy to clipboard
-            builder.setNeutralButton("Copy to clipboard", (dialog, which) -> {
+            builder.setNeutralButton(R.string.copy, (dialog, which) -> {
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("What's new", message);
                 clipboard.setPrimaryClip(clip);
-                Toast.makeText(this, "Copied to clipboard", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.msg_copied, Toast.LENGTH_SHORT).show();
             });
             builder.show();
 
