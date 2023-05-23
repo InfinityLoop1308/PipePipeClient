@@ -135,7 +135,7 @@ public class StreamItemAdapter<T extends Stream, U extends Stream> extends BaseA
             }
         } else if (stream instanceof AudioStream) {
             final AudioStream audioStream = ((AudioStream) stream);
-            qualityString = audioStream.getQuality() != null? audioStream.getQuality(): (audioStream.getAverageBitrate() > 0
+            qualityString = (audioStream.getQuality() != null && !audioStream.getQuality().equals("tiny"))? audioStream.getQuality(): (audioStream.getAverageBitrate() > 0
                     ? audioStream.getAverageBitrate() + "kbps"
                     : (audioStream.getFormat() == null? "Unknown": audioStream.getFormat().getName()));
         } else if (stream instanceof SubtitlesStream) {
