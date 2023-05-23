@@ -898,7 +898,9 @@ public class DownloadDialog extends DialogFragment
 
                     continueSelectedDownload(storage);
                     mainStorage.clear();
-                    mainStorage.createFile(filename.replace(".mp4", ".tmp.mp4"), "video/mp4");
+                    if(currentInfo.getService() == ServiceList.BiliBili && dialogBinding.videoAudioGroup.getCheckedRadioButtonId() == R.id.video_button){
+                        mainStorage.createFile(filename.replace(".mp4", ".tmp.mp4"), "video/mp4");
+                    }
                     return;
                 }
                 msgBtn = R.string.overwrite;
@@ -959,7 +961,9 @@ public class DownloadDialog extends DialogFragment
                     if (storageNew != null && storageNew.canWrite()) {
 //                        mainStorage.remove(filename);
                         mainStorage.clear();
-                        mainStorage.createFile(filename.replace(".mp4", ".tmp.mp4"), "video/mp4");
+                        if(currentInfo.getService() == ServiceList.BiliBili && dialogBinding.videoAudioGroup.getCheckedRadioButtonId() == R.id.video_button){
+                            mainStorage.createFile(filename.replace(".mp4", ".tmp.mp4"), "video/mp4");
+                        }
                         continueSelectedDownload(storageNew);
                     } else {
                         showFailedDialog(R.string.error_file_creation);
