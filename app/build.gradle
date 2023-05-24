@@ -41,6 +41,16 @@ android {
 //            include "arm64-v8a"
         }
     }
+    android.applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def baseAbiVersionCode = project.ext.abiCodes.get(output.getFilter(com.android.build.OutputFile.ABI))
+            if (baseAbiVersionCode != null) {
+                output.versionCodeOverride = (100 * project.android.defaultConfig.versionCode) + baseAbiVersionCode
+            } else {
+                output.versionCodeOverride = 100 * project.android.defaultConfig.versionCode
+            }
+        }
+    }
 
     buildTypes {
         debug {
@@ -125,6 +135,7 @@ ext {
     stethoVersion = '1.6.0'
     mockitoVersion = '4.0.0'
     assertJVersion = '3.22.0'
+    abiCodes = ['armeabi-v7a': 1, 'x86': 2, 'x86_64': 3, 'arm64-v8a': 4]
 }
 
 configurations {
