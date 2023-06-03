@@ -435,6 +435,7 @@
     <string name="preferred_player_fetcher_notification_message">"正在加载请求的内容"</string>
     <!-- Local Playlist -->
     <string name="create_playlist">创建播放列表</string>
+    <string name="duplicate_in_playlist">灰色的播放列表中已包含此项。</string>
     <string name="rename_playlist">重命名</string>
     <string name="name">名称</string>
     <string name="add_to_playlist">添加到播放列表</string>
@@ -447,6 +448,7 @@
     <string name="delete_playlist_prompt">删除此播放列表？</string>
     <string name="playlist_creation_success">播放列表已创建</string>
     <string name="playlist_add_stream_success">已添加到播放列表</string>
+    <string name="playlist_add_stream_success_duplicate">已重复添加 %d 次</string>
     <string name="playlist_thumbnail_change_success">播放列表缩略图已更改。</string>
     <string name="playlist_no_uploader">自动生成（未找到上传者）</string>
     <!-- Players -->
@@ -558,6 +560,7 @@
     <string name="low_quality_smaller">低质量（更小）</string>
     <string name="dont_show">不显示</string>
     <!-- App update notification -->
+    <string name="app_update_unavailable_toast">您在使用的PipePipe是最新版</string>
     <string name="app_update_notification_content_title_new">PipePipe 有新更新！</string>
     <string name="app_update_notification_content_text">点击下载</string>
     <string name="missions_header_finished">完成</string>
@@ -790,4 +793,15 @@
     <string name="enable_eye_protection_summary">禁用动态主题更改并为所有服务使用护眼主题</string>
     <string name="enable_eye_protection_title">启用护眼模式</string>
     <string name="bullet_comments_opacity_title">弹幕不透明度</string>
+    <string name="account">账户</string>
+    <string name="settings_category_niconico_account_title">NicoNico 账户</string>
+    <string name="settings_category_bilibili_account_title">BiliBili 账户</string>
+    <string name="login_warning">请注意，登录后会降低匿名度</string>
+    <string name="login_title">登录</string>
+    <string name="logout_title">退出登录</string>
+    <string name="bullet_comments_font_title">弹幕字体</string>
+    <string name="auto_background_play_title">音乐播放器模式</string>
+    <string name="auto_background_play_summary">当点击本地播放列表中的项目时，自动在后台播放</string>
+    <string name="download_all">下载全部</string>
+    <string name="download_all_message">目前 PipePipe 无法在应用内下载播放列表中的所有视频。但是，您可以将所有 URL 复制到剪贴板中，并使用 yt-dlp 或其他工具进行下载。</string>
 </resources>
