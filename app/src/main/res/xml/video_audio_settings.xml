@@ -271,5 +271,13 @@
                 app:singleLineTitle="false"
                 app:iconSpaceReserved="false"/>
 
+        <SeekBarPreference
+                android:defaultValue="255"
+                android:key="@string/bullet_comments_opacity_key"
+                android:max="255"
+                android:title="@string/bullet_comments_opacity_title"
+                app:singleLineTitle="false"
+                app:iconSpaceReserved="false" />
+
     </PreferenceCategory>
 </PreferenceScreen>

@@ -811,4 +811,5 @@
     <string name="auto_background_play_summary">Play in background automatically when clicking an item in a local playlist</string>
     <string name="download_all">Download all</string>
     <string name="download_all_message">Currently PipePipe is not able to download all videos in a playlist in-app. However, you can copy all URLs to clipboard and download them using yt-dlp or other tools.</string>
+    <string name="bullet_comments_opacity_title">Opacity of bullet comments</string>
 </resources>
