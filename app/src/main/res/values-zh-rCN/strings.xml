@@ -789,4 +789,5 @@
     <string name="recommended_lives">推荐直播</string>
     <string name="enable_eye_protection_summary">禁用动态主题更改并为所有服务使用护眼主题</string>
     <string name="enable_eye_protection_title">启用护眼模式</string>
+    <string name="bullet_comments_opacity_title">弹幕不透明度</string>
 </resources>

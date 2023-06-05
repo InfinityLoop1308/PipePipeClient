@@ -75,6 +75,7 @@ public final class BulletCommentsView extends ConstraintLayout {
         durationFactor = (float) prefs.getInt("regular_bullet_comments_duration_key", 8) / (float) commentsDuration;
         outlineRadius = prefs.getInt("bullet_comments_outline_radius_key", 2);
         font = prefs.getString("bullet_comments_font_key", "LXGW WenKai Screen");
+        opacity = prefs.getInt("bullet_comments_opacity_key", 0xFF);
         //Not this: BulletCommentsPlayerBinding.inflate(LayoutInflater.from(context));
         binding = BulletCommentsPlayerBinding.bind(this);
         //This does not work. post(this::setLayout);
@@ -124,6 +125,7 @@ public final class BulletCommentsView extends ConstraintLayout {
     private float durationFactor;
     private int outlineRadius;
     private String font;
+    private int opacity; // 0~255, 0: hide
     private final List<AnimatedTextView> animatedTextViews = new ArrayList<>();
 
     /**
@@ -227,7 +229,12 @@ public final class BulletCommentsView extends ConstraintLayout {
                     break;
             }
             textView.setGravity(View.TEXT_ALIGNMENT_CENTER);
-            textView.setTextColor(item.getArgbColor());
+            int color = item.getArgbColor();
+            if(opacity != 0xFF) {
+                color &= 0x00FFFFFF;
+                color |= ((opacity & 0xFF) << 24);
+            }
+            textView.setTextColor(color);
             textView.setText(item.getCommentText());
             if(item.getCommentText().length() == 0){
                 continue;
@@ -241,7 +248,9 @@ public final class BulletCommentsView extends ConstraintLayout {
                 textView.setTypeface(Typeface.create(fontToBeUsed, Typeface.BOLD));
             }
             Paint paint = textView.getPaint();
-            paint.setShadowLayer(outlineRadius, 0, 0, Color.BLACK);
+            int shadowColor = Color.BLACK & 0x00FFFFFF;
+            shadowColor |= ((opacity & 0xFF) << 24);
+            paint.setShadowLayer(outlineRadius, 0, 0, shadowColor);
             textView.setLayerType(View.LAYER_TYPE_SOFTWARE, paint);
 
             final double commentSpace = 1 / 4.4 * height;
