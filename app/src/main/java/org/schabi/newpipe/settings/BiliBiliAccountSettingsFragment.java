@@ -33,6 +33,9 @@ public class BiliBiliAccountSettingsFragment extends BasePreferenceFragment {
         } else {
             login.setEnabled(false);
         }
+
+        Preference override_cookies_bilibili_value = findPreference(getString(R.string.override_cookies_bilibili_value_key));
+        override_cookies_bilibili_value.setEnabled(defaultPreferences.getBoolean(getString(R.string.override_cookies_bilibili_key), false));
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

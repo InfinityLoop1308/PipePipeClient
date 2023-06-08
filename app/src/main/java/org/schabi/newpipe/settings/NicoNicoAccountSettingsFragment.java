@@ -35,6 +35,9 @@ public class NicoNicoAccountSettingsFragment extends BasePreferenceFragment {
         } else {
             login.setEnabled(false);
         }
+
+        Preference override_cookies_niconico_value = findPreference(getString(R.string.override_cookies_niconico_value_key));
+        override_cookies_niconico_value.setEnabled(defaultPreferences.getBoolean(getString(R.string.override_cookies_niconico_key), false));
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

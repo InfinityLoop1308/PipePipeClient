@@ -1360,6 +1360,10 @@
     <string name="bullet_comments_opacity_key">bullet_comments_opacity_key</string>
     <string name="toggle_show_future_items_key">toggle_show_future_items_key</string>
     <string name="auto_background_play_key">auto_background_play_key</string>
+    <string name="override_cookies_bilibili_key">override_cookies_bilibili_key</string>
+    <string name="override_cookies_niconico_key">override_cookies_niconico_key</string>
+    <string name="override_cookies_bilibili_value_key">override_cookies_bilibili_value_key</string>
+    <string name="override_cookies_niconico_value_key">override_cookies_niconico_value_key</string>
     <string-array name="font_list">
         <item>Default</item>
         <item>sans-serif</item>

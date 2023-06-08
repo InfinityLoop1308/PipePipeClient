@@ -205,12 +205,18 @@ public final class ServiceHelper {
             final String tokens = sharedPreferences.getString(context.getString(
                     R.string.niconico_cookies_key), null);
             ServiceList.NicoNico.setTokens(tokens);
+            if(sharedPreferences.getBoolean(context.getString(R.string.override_cookies_niconico_key), false)) {
+                ServiceList.NicoNico.setTokens(sharedPreferences.getString(context.getString(R.string.override_cookies_niconico_value_key), null));
+            }
         } else if (serviceId == ServiceList.BiliBili.getServiceId()) {
             final SharedPreferences sharedPreferences = PreferenceManager
                     .getDefaultSharedPreferences(context);
             final String tokens = sharedPreferences.getString(context.getString(
                     R.string.bilibili_cookies_key), null);
             ServiceList.BiliBili.setTokens(tokens);
+            if(sharedPreferences.getBoolean(context.getString(R.string.override_cookies_bilibili_key), false)) {
+                ServiceList.BiliBili.setTokens(sharedPreferences.getString(context.getString(R.string.override_cookies_bilibili_value_key), null));
+            }
         }
     }
 

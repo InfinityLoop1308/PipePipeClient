@@ -812,4 +812,7 @@
     <string name="download_all">Download all</string>
     <string name="download_all_message">Currently PipePipe is not able to download all videos in a playlist in-app. However, you can copy all URLs to clipboard and download them using yt-dlp or other tools.</string>
     <string name="bullet_comments_opacity_title">Opacity of bullet comments</string>
+    <string name="override_cookies_summary">Use manually input cookies instead of saved credentials</string>
+    <string name="override_cookies_title">Override cookies</string>
+    <string name="override_cookies_value_title">Edit cookies</string>
 </resources>
