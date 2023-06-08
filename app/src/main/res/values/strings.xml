@@ -815,4 +815,25 @@
     <string name="override_cookies_summary">Use manually input cookies instead of saved credentials</string>
     <string name="override_cookies_title">Override cookies</string>
     <string name="override_cookies_value_title">Edit cookies</string>
+    <string name="lives">Lives</string>
+    <string name="animes">Animes</string>
+    <string name="movies_and_tv">Movies and TV</string>
+    <string name="tags_only">Tags Only</string>
+    <string name="sortby">Sort by</string>
+    <string name="sortorder">Sort order</string>
+    <string name="features">Features</string>
+    <string name="sort_popular">Popular</string>
+    <string name="sort_view">Views</string>
+    <string name="sort_bookmark">Bookmarks</string>
+    <string name="sort_likes">Likes</string>
+    <string name="sort_comments">Comments</string>
+    <string name="sort_bullet_comments">Bullet Comments</string>
+    <string name="sort_length">Length</string>
+    <string name="sort_publish_time">Publish Time</string>
+    <string name="sort_last_comment_time">Last Comment Time</string>
+    <string name="sort_video_count">Video Count</string>
+    <string name="sort_overall">Overall</string>
+    <string name="sort_relevance">Relevance</string>
+    <string name="sort_rating">Rating</string>
+    <string name="sort_ascending">Ascending</string>
 </resources>

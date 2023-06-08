@@ -51,6 +51,8 @@ public final class ServiceHelper {
 
     public static String getTranslatedFilterString(final String filter, final Context c) {
         switch (filter) {
+            case "search":
+                return c.getString(R.string.search);
             case "all":
                 return c.getString(R.string.all);
             case "videos":
@@ -76,6 +78,48 @@ public final class ServiceHelper {
                 return c.getString(R.string.albums);
             case "music_artists":
                 return c.getString(R.string.artists);
+            case "lives":
+                return c.getString(R.string.lives);
+            case "animes":
+                return c.getString(R.string.animes);
+            case "movies_and_tv":
+                return c.getString(R.string.movies_and_tv);
+            case "tags_only":
+                return c.getString(R.string.tags_only);
+            case "sortby":
+                return c.getString(R.string.sortby);
+            case "sortorder":
+                return c.getString(R.string.sortorder);
+            case "features":
+                return c.getString(R.string.features);
+            case "sort_popular":
+                return c.getString(R.string.sort_popular);
+            case "sort_view":
+                return c.getString(R.string.sort_view);
+            case "sort_bookmark":
+                return c.getString(R.string.sort_bookmark);
+            case "sort_likes":
+                return c.getString(R.string.sort_likes);
+            case "sort_comments":
+                return c.getString(R.string.sort_comments);
+            case "sort_bullet_comments":
+                return c.getString(R.string.sort_bullet_comments);
+            case "sort_length":
+                return c.getString(R.string.sort_length);
+            case "sort_publish_time":
+                return c.getString(R.string.sort_publish_time);
+            case "sort_last_comment_time":
+                return c.getString(R.string.sort_last_comment_time);
+            case "sort_video_count":
+                return c.getString(R.string.sort_video_count);
+            case "sort_overall":
+                return c.getString(R.string.sort_overall);
+            case "sort_relevance":
+                return c.getString(R.string.sort_relevance);
+            case "sort_rating":
+                return c.getString(R.string.sort_rating);
+            case "sort_ascending":
+                return c.getString(R.string.sort_ascending);
             default:
                 return filter;
         }

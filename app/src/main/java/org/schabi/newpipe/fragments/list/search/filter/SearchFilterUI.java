@@ -49,7 +49,7 @@ public class SearchFilterUI extends SearchFilterLogic {
         menu.add(MENU_GROUP_SEARCH_BUTTON,
                         ITEM_IDENTIFIER_UNKNOWN,
                         0,
-                        "search")
+                        ServiceHelper.getTranslatedFilterString("search", context))
                 .setEnabled(true)
                 .setCheckable(false)
                 .setIcon(icon);
@@ -62,7 +62,7 @@ public class SearchFilterUI extends SearchFilterLogic {
                 MENU_GROUP_LAST_CONTENT_FILTER,
                 ITEM_IDENTIFIER_UNKNOWN,
                 0,
-                contentGroup.groupName);
+                ServiceHelper.getTranslatedFilterString(contentGroup.groupName, context));
         groupNameItem.setEnabled(false);
         groupNameItem.setCheckable(false);
 
@@ -90,7 +90,7 @@ public class SearchFilterUI extends SearchFilterLogic {
                 lastUsedGroupId,
                 sortGroup.identifier,
                 0,
-                sortGroup.groupName);
+                ServiceHelper.getTranslatedFilterString(sortGroup.groupName, context));
         groupNameItem.setEnabled(false);
         addToAllSortFilterItToItemMapWrapper(sortGroup.identifier, groupNameItem);
     }
@@ -106,8 +106,7 @@ public class SearchFilterUI extends SearchFilterLogic {
         final MenuItem item = menu.add(lastUsedGroupId,
                 filter.getIdentifier(),
                 0,
-                filter.getName()
-                /* ServiceHelper.getTranslatedFilterString(filter, c)*/);//TODO: translate
+                ServiceHelper.getTranslatedFilterString(filter.getName(), context));
         addToAllSortFilterItToItemMapWrapper(filter.getIdentifier(), item);
     }
 
