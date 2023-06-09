@@ -1364,6 +1364,7 @@
     <string name="override_cookies_niconico_key">override_cookies_niconico_key</string>
     <string name="override_cookies_bilibili_value_key">override_cookies_bilibili_value_key</string>
     <string name="override_cookies_niconico_value_key">override_cookies_niconico_value_key</string>
+    <string name="auto_queue_partition_key">auto_queue_partition_key</string>
     <string-array name="font_list">
         <item>Default</item>
         <item>sans-serif</item>

@@ -836,4 +836,6 @@
     <string name="sort_relevance">Relevance</string>
     <string name="sort_rating">Rating</string>
     <string name="sort_ascending">Ascending</string>
+    <string name="auto_queue_partition_summary">Always try to enqueue next partition</string>
+    <string name="auto_queue_partition_title">Auto-enqueue next partition</string>
 </resources>

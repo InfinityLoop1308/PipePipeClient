@@ -502,7 +502,7 @@ public final class PlayerHelper {
                 .getBoolean(context.getString(R.string.use_inexact_seek_key), false);
     }
 
-    private static SinglePlayQueue getAutoQueuedSinglePlayQueue(
+    public static SinglePlayQueue getAutoQueuedSinglePlayQueue(
             final StreamInfoItem streamInfoItem) {
         final SinglePlayQueue singlePlayQueue = new SinglePlayQueue(streamInfoItem);
         Objects.requireNonNull(singlePlayQueue.getItem()).setAutoQueued(true);
