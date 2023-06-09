@@ -198,18 +198,18 @@ public class MainActivity extends AppCompatActivity {
             // Show the "What's New" dialog
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.fragment_feed_title);
-            String message = "Please, if you encounter any bug or want to suggest new features, open an issue on GitHub or CodeBerg for better tracking. Google translate/DeepL OK.\n" +
-                    "\n" +
-                    "Bug fixes\n" +
-                    "- Can not extract any channels(BiliBili) [CodeBerg #36]\n" +
-                    "- Audio qualities are wrongly shown as tiny(YouTube)\n" +
-                    "- *bilibili.com not showing up on \"Open by default\" Settings page\n" +
-                    "- Some series can not be extracted (NicoNico)\n" +
-                    "- Search results can not be directly added to playlist (NicoNico) \n" +
-                    "- Updater can not selete corresponding apk correctly\n" +
-                    "\n" +
-                    "Changes\n" +
-                    "- Only generate .tmp when downloading BiliBili videos";
+            String message =
+                            "New features\n" +
+                            "\n" +
+                            "- Support setting opacity for bullet comments \n" +
+                            "- Support editing cookie manually \n" +
+                            "- Support 1080p for anonymous watching (BiliBili)\n" +
+                            "\n" +
+                            "Bug fixes\n" +
+                            "\n" +
+                            "- Support auto enqueue next partition and avoid use partitions as related items\n" +
+                            "- Only 1 page of search results are shown(BiliBili)\n" +
+                            "- HTML strings in search results are not decoded (BiliBili)";
             builder.setMessage(message);
             builder.setPositiveButton(R.string.ok, null);
             // another button to copy to clipboard
