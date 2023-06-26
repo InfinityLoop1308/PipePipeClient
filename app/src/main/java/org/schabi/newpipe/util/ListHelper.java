@@ -592,6 +592,8 @@ public final class ListHelper {
             res = 2162;
         } else if (x.contains("杜比")){
             res = 2163;
+        } else if (x.contains("低画質")) {
+            res = 240;
         } else{
             res = Integer.parseInt(x.replaceAll("0p\\d+$", "1")
                     .replaceAll("[^\\d.]", ""));
