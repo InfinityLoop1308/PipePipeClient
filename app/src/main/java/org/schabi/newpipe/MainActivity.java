@@ -201,15 +201,19 @@ public class MainActivity extends AppCompatActivity {
             String message =
                             "New features\n" +
                             "\n" +
-                            "- Support setting opacity for bullet comments \n" +
-                            "- Support editing cookie manually \n" +
-                            "- Support 1080p for anonymous watching (BiliBili)\n" +
+                            "- Support viewing pinned comments and comments hearted by uploader(BiliBili)\n" +
+                            "- Show image URLs in comments(BiliBili)\n" +
                             "\n" +
                             "Bug fixes\n" +
                             "\n" +
-                            "- Support auto enqueue next partition and avoid use partitions as related items\n" +
-                            "- Only 1 page of search results are shown(BiliBili)\n" +
-                            "- HTML strings in search results are not decoded (BiliBili)";
+                            "- Can not load full replies(BiliBili)\n" +
+                            "- No cover is shown for saved remote playlists(BiliBili)\n" +
+                            "- HTML strings in comments are not decoded (BiliBili)\n" +
+                            "- Resolutions is not correctly sorted(NicoNico) \n" +
+                            "\n" +
+                            "Others\n" +
+                            "\n" +
+                            "- Improve Simplified Chinese translation";
             builder.setMessage(message);
             builder.setPositiveButton(R.string.ok, null);
             // another button to copy to clipboard
