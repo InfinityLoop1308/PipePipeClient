@@ -199,21 +199,26 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.fragment_feed_title);
             String message =
-                            "New features\n" +
-                            "\n" +
-                            "- Support viewing pinned comments and comments hearted by uploader(BiliBili)\n" +
-                            "- Show image URLs in comments(BiliBili)\n" +
-                            "\n" +
-                            "Bug fixes\n" +
-                            "\n" +
-                            "- Can not load full replies(BiliBili)\n" +
-                            "- No cover is shown for saved remote playlists(BiliBili)\n" +
-                            "- HTML strings in comments are not decoded (BiliBili)\n" +
-                            "- Resolutions is not correctly sorted(NicoNico) \n" +
-                            "\n" +
-                            "Others\n" +
-                            "\n" +
-                            "- Improve Simplified Chinese translation";
+                            "3.1.3\n" +
+                                    "\n" +
+                                    "- Fix: Some YouTube videos can't be fully loaded\n" +
+                                    "\n" +
+                                    "3.1.2\n" +
+                                    "### New features\n" +
+                                    "\n" +
+                                    "- Support viewing pinned comments and comments hearted by uploader(BiliBili)\n" +
+                                    "- Show image URLs in comments(BiliBili)\n" +
+                                    "\n" +
+                                    "### Bug fixes\n" +
+                                    "\n" +
+                                    "- Can not load full replies(BiliBili)\n" +
+                                    "- No cover is shown for saved remote playlists(BiliBili)\n" +
+                                    "- HTML strings in comments are not decoded (BiliBili)\n" +
+                                    "- Resolutions is not correctly sorted(NicoNico) \n" +
+                                    "\n" +
+                                    "### Others\n" +
+                                    "\n" +
+                                    "- Improve Simplified Chinese translation";
             builder.setMessage(message);
             builder.setPositiveButton(R.string.ok, null);
             // another button to copy to clipboard
