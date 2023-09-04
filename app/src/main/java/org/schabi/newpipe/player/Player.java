@@ -2244,6 +2244,9 @@ public final class Player implements
             binding.switchCommentsVisibility.setVisibility(View.GONE);
         } else {
             binding.switchCommentsVisibility.setVisibility(View.VISIBLE);
+            binding.switchCommentsVisibility.setImageDrawable(isBCPlayerVisible?AppCompatResources.getDrawable(context,
+                    R.drawable.ic_bullet_comment_enabled):AppCompatResources.getDrawable(context,
+                    R.drawable.ic_bullet_comment_disabled));
         }
     }
 
