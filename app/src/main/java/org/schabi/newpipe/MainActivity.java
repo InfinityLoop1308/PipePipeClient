@@ -199,26 +199,15 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.fragment_feed_title);
             String message =
-                            "3.1.3\n" +
+                            "New Features:\n" +
                                     "\n" +
-                                    "- Fix: Some YouTube videos can't be fully loaded\n" +
+                                    "- Allow migration from NewPipe 0.25.0+ \n" +
                                     "\n" +
-                                    "3.1.2\n" +
-                                    "### New features\n" +
+                                    "Bug Fixes:\n" +
                                     "\n" +
-                                    "- Support viewing pinned comments and comments hearted by uploader(BiliBili)\n" +
-                                    "- Show image URLs in comments(BiliBili)\n" +
-                                    "\n" +
-                                    "### Bug fixes\n" +
-                                    "\n" +
-                                    "- Can not load full replies(BiliBili)\n" +
-                                    "- No cover is shown for saved remote playlists(BiliBili)\n" +
-                                    "- HTML strings in comments are not decoded (BiliBili)\n" +
-                                    "- Resolutions is not correctly sorted(NicoNico) \n" +
-                                    "\n" +
-                                    "### Others\n" +
-                                    "\n" +
-                                    "- Improve Simplified Chinese translation";
+                                    "- 'Account' Icon Incorrect Colour with Dark Theme Enabled [GitHub #142]\n" +
+                                    "- Icon of bullet comment status is not showed correctly\n" +
+                                    "- Unable to view multi-p video (BiliBili) [GitHub #148]\n";
             builder.setMessage(message);
             builder.setPositiveButton(R.string.ok, null);
             // another button to copy to clipboard
