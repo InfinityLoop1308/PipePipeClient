@@ -73,7 +73,7 @@
     <string name="msg_name">檔案名稱</string>
     <string name="msg_threads">執行緒數量</string>
     <string name="msg_error">錯誤</string>
-    <string name="msg_running">NewPipe 下載緊</string>
+    <string name="msg_running_new">PipePipe 下載緊</string>
     <string name="msg_running_detail">撳一下睇詳情</string>
     <string name="msg_wait">請等等…</string>
     <string name="msg_copied">複製咗去剪貼簿</string>
@@ -105,14 +105,14 @@
     <string name="clear">清除</string>
     <string name="best_resolution">最佳解像度</string>
     <string name="short_billion">十億</string>
-    <string name="title_activity_about">關於 NewPipe</string>
+    <string name="title_activity_about_new">關於 PipePipe</string>
     <string name="title_licenses">第三方版權特許</string>
     <string name="copyright" formatted="true">© %1$s %2$s，根據 %3$s 特許版權所有</string>
     <string name="tab_about">關於</string>
     <string name="tab_licenses">特許</string>
-    <string name="app_description">喺 Android 上盡享自由輕便串流。</string>
-    <string name="view_on_github">檢視我們的 GitHub</string>
-    <string name="app_license_title">NewPipe 嘅授權協議</string>
+    <string name="app_description_new">BiliBili、NicoNico、YouTube等嘅替代 Android 流媒體前端。</string>
+    <string name="view_on_codeberg">去 Codeberg 睇下</string>
+    <string name="app_license_title_new">NewPipe 嘅版權協議 (上游)</string>
     <string name="contribution_encouragement">無論您對翻譯、設計改動、打掃程式碼，抑或開山劈石編寫程式碼有咩偈仔，都無任歡迎您幫手。聚沙成塔，眾志成城！</string>
     <string name="read_full_license">檢閱特許</string>
     <string name="contribution_title">貢獻</string>
@@ -301,8 +301,8 @@
     <string name="app_language_title">個 App 用咩文</string>
     <string name="remove_watched">睇咗嗰啲剷咗佢</string>
     <string name="remove_watched_popup_title">係咪要剷走睇咗嘅影片？</string>
-    <string name="website_title">網站</string>
-    <string name="privacy_policy_title">NewPipe 嘅私隱政策</string>
+    <string name="website_title_new">網站 (上游)</string>
+    <string name="privacy_policy_title_new">NewPipe 嘅私隱政策 (上游)</string>
     <string name="rename_playlist">改過個名</string>
     <string name="playback_pitch">音高</string>
     <string name="missions_header_finished">完成咗</string>
@@ -362,14 +362,14 @@
     <string name="import_ongoing">匯入緊…</string>
     <string name="skip_silence_checkbox">無聲嘅時候快轉</string>
     <string name="playback_reset">重設</string>
-    <string name="start_accept_privacy_policy">為符合歐盟嘅《通用數據保障條例》(GDPR) 規範，我哋謹請您注意 NewPipe 嘅私隱政策。請仔細閱讀。
+    <string name="start_accept_privacy_policy_new">為符合歐盟嘅《通用數據保障條例》(GDPR) 規範，我哋謹請您注意 PipePipe 嘅私隱政策。請仔細閱讀。
 \n您必須接受先可以傳送錯誤報告畀我哋。</string>
     <string name="decline">拒絕</string>
     <string name="limit_mobile_data_usage_title">用流動數據嘅時候限制解像度</string>
     <string name="updates_setting_title">更新</string>
     <string name="updates_setting_description">出咗新版本嘅時候，顯示通知提示升級個 app</string>
     <string name="manual_update_description">手動檢查下有冇新版本</string>
-    <string name="app_update_notification_content_title">NewPipe 出咗更新！</string>
+    <string name="app_update_notification_content_title_new">PipePipe 出咗更新！</string>
     <string name="missions_header_pending">仲等緊</string>
     <string name="recovering">恢復緊</string>
     <string name="permission_denied">動作被系統拒絕咗</string>
@@ -392,7 +392,7 @@
     <string name="charset_letters_and_digits">字母同數目字</string>
     <string name="charset_most_special_characters">大部份特殊字元</string>
     <string name="settings_category_downloads_title">下載</string>
-    <string name="donation_title">課金</string>
+    <string name="donation_title_new">課金 (上游)</string>
     <string name="subscriptions_export_unsuccessful">匯出唔到訂閱</string>
     <string name="caption_setting_description">修改播放器字幕啲字嘅大細同背景款式。要重新開過個 app 先會生效</string>
     <string name="subtitle_activity_recaptcha">執好就撳一下「搞掂」</string>
@@ -418,7 +418,7 @@
     <string name="error_report_channel_description">報告問題嘅通知</string>
     <string name="clear_views_history_summary">剷走播放過嘅串流同播放到邊個位嘅紀錄</string>
     <string name="watch_history_deleted">剷走咗睇過嘅紀錄</string>
-    <string name="error_report_notification_title">NewPipe 遇到問題，撳一下去報告</string>
+    <string name="error_report_notification_title_new">PipePipe 遇到問題，撳一下去報告</string>
     <string name="error_report_notification_toast">發生問題，詳見通知</string>
     <string name="detail_drag_description">拖拉執排位</string>
     <string name="drawer_header_description">轉換服務，而家揀選咗嘅係：</string>
@@ -428,6 +428,9 @@
     <string name="start_downloads">開始晒所有下載</string>
     <string name="enable_queue_limit_desc">下載排隊逐個嚟，唔要一次過</string>
     <string name="recent">近期</string>
+    <string name="account">賬戶</string>
+    <string name="settings_category_niconico_account_title">NicoNico 賬戶</string>
+    <string name="settings_category_bilibili_account_title">BiliBili 賬戶</string>
     <string name="account_terminated">帳戶已被終止</string>
     <string name="metadata_language">語言</string>
     <string name="metadata_support">支援</string>
@@ -447,7 +450,7 @@
     <string name="no_app_to_open_intent">您部機冇 app 開到佢</string>
     <string name="youtube_music_premium_content">呢部影片係 YouTube Music Premium 會員限定，因此 NewPipe 未能串流或下載。</string>
     <string name="night_theme_summary">揀選啱您心水嘅夜色主題 — %s</string>
-    <string name="paid_content">呢部內容係付費使用者限定，因此 NewPipe 未能串流或下載。</string>
+    <string name="paid_content_new">呢部內容係付費使用者限定，因此 PipePipe 未能串流或下載。</string>
     <string name="select_night_theme_toast">您可以喺下面揀選啱您心水嘅夜色主題</string>
     <string name="description_select_disable">停用揀選描述入面嘅文字</string>
     <string name="grid">一格格</string>
@@ -483,7 +486,7 @@
     <string name="error_unknown_host">搵唔到伺服器</string>
     <string name="error_http_no_content">伺服器冇傳回資料</string>
     <string name="error_postprocessing_failed">後期處理失敗</string>
-    <string name="error_postprocessing_stopped">NewPipe 未搞掂個檔案就關閉咗</string>
+    <string name="error_postprocessing_stopped_new">PipePipe 未搞掂個檔案就關閉咗</string>
     <string name="error_download_resource_gone">呢個下載恢復唔到</string>
     <string name="overwrite_finished_warning">同個下載咗嘅檔案撞名</string>
     <string name="overwrite_unrelated_warning">同個現有嘅檔案撞名</string>
@@ -497,7 +500,7 @@
     <string name="channel_created_by">由 %s 建立</string>
     <string name="video_detail_by">出自 %s</string>
     <string name="chapters">章節</string>
-    <string name="content_not_supported">呢部內容 NewPipe 仲未支援。
+    <string name="content_not_supported_new">呢部內容 PipePipe 仲未支援。
 \n
 \n希望未來會喺日後嘅版本支援啦。</string>
     <string name="feed_toggle_show_played_items">顯示睇過嘅項目</string>
@@ -508,7 +511,7 @@
 \n請安裝一個與儲存空間存取框架兼容嘅檔案管理程式。</string>
     <string name="georestricted_content">呢部內容限區，喺您所在國家未有提供。</string>
     <string name="soundcloud_go_plus_content">呢首 (至少喺您所在國家而言) 係 SoundCloud Go+ 單曲，因此 NewPipe 未能串流或下載。</string>
-    <string name="private_content">呢部內容屬於私人，因此 NewPipe 未能串流或下載。</string>
+    <string name="private_content_new">呢部內容屬於私人，因此 PipePipe 未能串流或下載。</string>
     <string name="auto_device_theme_title">自動 (跟返部機嘅主題色系)</string>
     <string name="featured">精選</string>
     <string name="radio">廣播</string>
@@ -607,4 +610,31 @@
     <string name="delete_downloaded_files_confirm">係咪要喺磁碟機上面消除晒全部下載咗嘅檔案？</string>
     <string name="notifications_disabled">通知已停用</string>
     <string name="tracks">單曲</string>
+    <string name="recommended_lives">建議使用直播</string>
+    <string name="remove_duplicates">剷走重複嘅直播</string>
+    <string name="remove_duplicates_popup_title">你係咪需要剷走重複嘅直播？</string>
+    <string name="remove_duplicates_popup_warning">重複嘅播放清單係會被剷走。\n\n你係咪肯定？ 咁樣就唔可以再返轉頭㗎喇！</string>
+    <string name="streams_not_yet_supported_removed">如果你睇唔到直播即係安裝系統唔可以支援呢樣嘢</string>
+    <string name="selected_stream_external_player_not_supported">你揀嘅直播係唔可以支援外置播放器</string>
+    <string name="select_quality_external_players">揀選外面嘅播放器用咩畫質</string>
+    <string name="unknown_format">未知格式</string>
+    <string name="unknown_quality">未知畫質</string>
+    <string name="feed_toggle_show_future_items">顯示未來項目</string>
+    <string name="feed_toggle_hide_future_items">隱藏未來項目</string>
+    <string name="channel_tab_videos">影片</string>
+    <string name="channel_tab_livestreams">直播</string>
+    <string name="channel_tab_playlists">播放清單</string>
+    <string name="channel_tab_channels">頻道</string>
+    <string name="channel_tab_albums">專輯</string>
+    <string name="channel_tab_info">資訊</string>
+    <string name="show_channel_tabs">頻道分頁</string>
+    <string name="show_channel_tabs_summary">頻道要擺放邊啲分頁</string>
+    <string name="feed_groups_header_title">頻道成谷</string>
+    <string name="feed_oldest_subscription_update">摘要上次更新到：%s</string>
+    <string name="feed_subscription_not_loaded_count">未有載入：%d</string>
+    <string name="feed_notification_loading">載入緊摘要…</string>
+    <string name="feed_processing_message">處理緊摘要…</string>
+    <string name="feed_new_items">新嘅摘要項目</string>
+    <string name="enable_eye_protection_summary">唔好用動態嘅主題，所有嘅服務就用保護眼晴嘅主題</string>
+    <string name="enable_eye_protection_title">用眼晴保護</string>
 </resources>
