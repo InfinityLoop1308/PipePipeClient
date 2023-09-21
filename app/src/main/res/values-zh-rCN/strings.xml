@@ -357,7 +357,7 @@
     <string name="copyright">© %1$s 作者 %2$s 使用 %3$s</string>
     <string name="tab_about">关于</string>
     <string name="tab_licenses">许可证</string>
-    <string name="app_description_new">NewPipe 的非官方分支，旨在提供更多服务和更多客户端功能。</string>
+    <string name="app_description_new">BiliBili、NicoNico、YouTube等的替代安卓流媒体前端。</string>
     <string name="contribution_title">贡献</string>
     <string name="contribution_encouragement">您是否有想法；翻译、更改设计、代码清理或繁重的代码更改——我们随时欢迎您提供帮助。做得越多越好！</string>
     <string name="view_on_codeberg">在 CodeBerg 上查看</string>
