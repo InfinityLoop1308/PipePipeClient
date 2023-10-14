@@ -21,6 +21,7 @@ import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
 import java.util.Collections;
+import java.util.Objects;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
@@ -41,10 +42,14 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
  * </p>
  */
 public enum StreamDialogDefaultEntry {
-    SHOW_CHANNEL_DETAILS(R.string.show_channel_details, (fragment, item) ->
+    SHOW_CHANNEL_DETAILS(R.string.show_channel_details, (fragment, item) -> {
+        if (item.getUploaderUrl() != null && !Objects.equals(item.getUploaderUrl(), "")) {
+            openChannelFragment(fragment, item, item.getUploaderUrl());
+        } else {
             fetchUploaderUrlIfSparse(fragment.requireContext(), item.getServiceId(), item.getUrl(),
-                    item.getUploaderUrl(), url -> openChannelFragment(fragment, item, url))
-    ),
+                    item.getUploaderUrl(), url -> openChannelFragment(fragment, item, url));
+        }
+    }),
 
     /**
      * Enqueues the stream automatically to the current PlayerType.
