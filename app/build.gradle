@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId "InfinityLoop1309.NewPipeEnhanced"
         resValue "string", "app_name", "PipePipe"
-        minSdk 24
+        minSdk 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk 33
         versionCode 1037
@@ -324,7 +324,7 @@ dependencies {
     androidTestImplementation "androidx.room:room-testing:${androidxRoomVersion}"
     androidTestImplementation "org.assertj:assertj-core:${assertJVersion}"
 
-    implementation 'com.arthenica:ffmpeg-kit-min:5.1'
+    implementation 'com.arthenica:ffmpeg-kit-min:5.1.LTS'
 }
 
 static String getGitWorkingBranch() {
