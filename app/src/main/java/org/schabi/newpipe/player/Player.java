@@ -120,7 +120,6 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player.PositionInfo;
-import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.TracksInfo;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -167,6 +166,7 @@ import org.schabi.newpipe.player.event.PlayerEventListener;
 import org.schabi.newpipe.player.event.PlayerGestureListener;
 import org.schabi.newpipe.player.event.PlayerServiceEventListener;
 import org.schabi.newpipe.player.helper.AudioReactor;
+import org.schabi.newpipe.player.helper.CustomRenderersFactory;
 import org.schabi.newpipe.player.helper.LoadController;
 import org.schabi.newpipe.player.helper.MediaSessionManager;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
@@ -304,7 +304,7 @@ public final class Player implements
 
     @NonNull private final DefaultTrackSelector trackSelector;
     @NonNull private final LoadController loadController;
-    @NonNull private final RenderersFactory renderFactory;
+    @NonNull private final DefaultRenderersFactory renderFactory;
 
     @NonNull private final VideoPlaybackResolver videoResolver;
     @NonNull private final AudioPlaybackResolver audioResolver;
@@ -437,7 +437,16 @@ public final class Player implements
         final PlayerDataSource dataSource = new PlayerDataSource(context, DownloaderImpl.USER_AGENT,
                 new DefaultBandwidthMeter.Builder(context).build());
         loadController = new LoadController();
-        renderFactory = new DefaultRenderersFactory(context);
+
+        renderFactory = prefs.getBoolean(
+                context.getString(
+                        R.string.always_use_exoplayer_set_output_surface_workaround_key), false)
+                ? new CustomRenderersFactory(context) : new DefaultRenderersFactory(context);
+
+        renderFactory.setEnableDecoderFallback(
+                prefs.getBoolean(
+                        context.getString(
+                                R.string.use_exoplayer_decoder_fallback_key), false));
 
         videoResolver = new VideoPlaybackResolver(context, dataSource, getQualityResolver());
         audioResolver = new AudioPlaybackResolver(context, dataSource);
@@ -536,14 +545,14 @@ public final class Player implements
         setupVideoSurface();
 
         // enable media tunneling
-        if (DEBUG && PreferenceManager.getDefaultSharedPreferences(context)
+        if (PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(R.string.disable_media_tunneling_key), false)) {
             Log.d(TAG, "[" + Util.DEVICE_DEBUG_INFO + "] "
-                    + "media tunneling disabled in debug preferences");
+                    + "media tunneling disabled by user preference");
         } else if (DeviceUtils.shouldSupportMediaTunneling()) {
             trackSelector.setParameters(trackSelector.buildUponParameters()
                     .setTunnelingEnabled(true));
-        } else if (DEBUG) {
+        } else {
             Log.d(TAG, "[" + Util.DEVICE_DEBUG_INFO + "] does not support media tunneling");
         }
     }

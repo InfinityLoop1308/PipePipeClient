@@ -203,7 +203,6 @@
     <string name="show_memory_leaks_key">show_memory_leaks_key</string>
     <string name="allow_disposed_exceptions_key">allow_disposed_exceptions_key</string>
     <string name="show_original_time_ago_key">show_original_time_ago_key</string>
-    <string name="disable_media_tunneling_key">disable_media_tunneling_key</string>
     <string name="show_image_indicators_key">show_image_indicators_key</string>
     <string name="show_crash_the_player_key">show_crash_the_player_key</string>
     <string name="youtube_visitor_data">youtube_visitor_data</string>
@@ -1372,4 +1371,10 @@
         <item>monospace</item>
         <item>LXGW WenKai Screen</item>
     </string-array>
+
+    <!-- ExoPlayer settings -->
+    <string name="exoplayer_settings_key">exoplayer_settings_key</string>
+    <string name="disable_media_tunneling_key">disable_media_tunneling_key</string>
+    <string name="use_exoplayer_decoder_fallback_key">use_exoplayer_decoder_fallback_key</string>
+    <string name="always_use_exoplayer_set_output_surface_workaround_key">always_use_exoplayer_set_output_surface_workaround_key</string>
 </resources>
