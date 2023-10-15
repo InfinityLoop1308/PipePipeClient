@@ -199,15 +199,21 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.fragment_feed_title);
             String message =
-                            "New Features:\n" +
+                            "### New Features:\n" +
                                     "\n" +
-                                    "- Allow migration from NewPipe 0.25.0+ \n" +
+                                    "- Allow adjusting ExoPlayer's preferences to avoid crash on some devices [GitHub #162]\n" +
+                                    "- Change the min system requirement to Android 5.0 (SDK 21) [GitHub #160]\n" +
+                                    "- Add translations for Cantonese and Brazilian Portuguese\n" +
                                     "\n" +
-                                    "Bug Fixes:\n" +
+                                    "### Bug Fixes:\n" +
                                     "\n" +
-                                    "- 'Account' Icon Incorrect Colour with Dark Theme Enabled [GitHub #142]\n" +
-                                    "- Icon of bullet comment status is not showed correctly\n" +
-                                    "- Unable to view multi-p video (BiliBili) [GitHub #148]\n";
+                                    "- User/Channel page randomly broken due to anti-crawler mechanism (BiliBili) [CodeBerg #70, GitHub #137, #68, #60]\n" +
+                                    "- Search suggestions are not working and causing crash (BiliBili) [GitHub #163]\n" +
+                                    "\n" +
+                                    "### Performances\n" +
+                                    "\n" +
+                                    "- Making \"show channel details\" slightly faster\n" +
+                                    "- Improve the speed for searching (BiliBili)";
             builder.setMessage(message);
             builder.setPositiveButton(R.string.ok, null);
             // another button to copy to clipboard
