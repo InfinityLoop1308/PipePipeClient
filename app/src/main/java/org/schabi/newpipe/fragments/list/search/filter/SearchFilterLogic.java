@@ -171,6 +171,9 @@ public abstract class SearchFilterLogic implements CallbackOptions {
                 if (isFirstItem) { // select first item if possible
                     if(userSelectedSortFilterList.size() == 0){
                         userSelectedSortFilterList.add(filter.getIdentifier());
+                    } else if(!chosenVariantSortFilterIdToItemMap.containsKey(userSelectedSortFilterList.get(0))){
+                        userSelectedSortFilterList.clear();
+                        userSelectedSortFilterList.add(filter.getIdentifier());
                     }
                     if (!isInit) {
                         sortMenuItem.setChecked(true);
@@ -354,8 +357,8 @@ public abstract class SearchFilterLogic implements CallbackOptions {
             final int itemId = ifExclusiveGroupRemoveSelectedItem(item);
             if (userSelectedFilterList.contains(itemId)) {
                 userSelectedFilterList.remove((Integer) itemId);
-                userSelectedFilterList.add(item.getItemId());
             }
+            userSelectedFilterList.add(item.getItemId());
             ifExclusiveGroupAddSelectedItem(item);
         } else {
 
