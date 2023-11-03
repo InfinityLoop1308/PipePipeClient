@@ -86,13 +86,11 @@ class AboutActivity : AppCompatActivity() {
      */
     private class AboutStateAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
         private val posAbout = 0
-        private val posLicense = 1
-        private val totalCount = 2
+        private val totalCount = 1
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 posAbout -> AboutFragment()
-                posLicense -> LicenseFragment.newInstance(SOFTWARE_COMPONENTS)
                 else -> throw IllegalArgumentException("Unknown position for ViewPager2")
             }
         }
@@ -105,7 +103,6 @@ class AboutActivity : AppCompatActivity() {
         fun getPageTitle(position: Int): Int {
             return when (position) {
                 posAbout -> R.string.tab_about
-                posLicense -> R.string.tab_licenses
                 else -> throw IllegalArgumentException("Unknown position for ViewPager2")
             }
         }
