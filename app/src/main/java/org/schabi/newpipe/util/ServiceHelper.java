@@ -32,7 +32,7 @@ public final class ServiceHelper {
     public static int getIcon(final int serviceId) {
         switch (serviceId) {
             case 0:
-                return R.drawable.place_holder_youtube;
+                return R.drawable.ic_youtube;
             case 1:
                 return R.drawable.place_holder_cloud;
             case 2:
@@ -42,6 +42,7 @@ public final class ServiceHelper {
             case 4:
                 return R.drawable.place_holder_bandcamp;
             case 5:
+                return R.drawable.ic_bilibili;
             case 6:
                 return R.drawable.place_holder_niconico;
             default:
