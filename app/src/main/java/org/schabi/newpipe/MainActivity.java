@@ -199,21 +199,16 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.fragment_feed_title);
             String message =
-                            "### New Features:\n" +
+                            "### Bug Fixes:\n" +
                                     "\n" +
-                                    "- Allow adjusting ExoPlayer's preferences to avoid crash on some devices [GitHub #162]\n" +
-                                    "- Change the min system requirement to Android 5.0 (SDK 21) [GitHub #160]\n" +
-                                    "- Add translations for Cantonese and Brazilian Portuguese\n" +
+                                    "- Related videos not working(NicoNico) [GitHub #141]\n" +
+                                    "- Could not recognize video URLs with /? (BiliBili)\n" +
+                                    "- Many search filters are broken (YouTube - Duration Filter, Upload Date Filter; BiliBili - Duration Filter; NicoNico - Tags, Lives, Playlists) [GitHub #141, CodeBerg #71]\n" +
+                                    "- Unexpected error when internet disconnected but the video is not playing\n" +
                                     "\n" +
-                                    "### Bug Fixes:\n" +
+                                    "### UI changes:\n" +
                                     "\n" +
-                                    "- User/Channel page randomly broken due to anti-crawler mechanism (BiliBili) [CodeBerg #70, GitHub #137, #68, #60]\n" +
-                                    "- Search suggestions are not working and causing crash (BiliBili) [GitHub #163]\n" +
-                                    "\n" +
-                                    "### Performances\n" +
-                                    "\n" +
-                                    "- Making \"show channel details\" slightly faster\n" +
-                                    "- Improve the speed for searching (BiliBili)";
+                                    "- update service icons [GitHub #159]";
             builder.setMessage(message);
             builder.setPositiveButton(R.string.ok, null);
             // another button to copy to clipboard
