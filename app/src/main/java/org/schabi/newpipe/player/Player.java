@@ -2454,7 +2454,8 @@ public final class Player implements
         if (DEBUG) {
             Log.d(TAG, "onPaused() called");
         }
-
+        retryCount = 0;
+        timer.cancel(true);
         if (isProgressLoopRunning()) {
             stopProgressLoop();
         }
