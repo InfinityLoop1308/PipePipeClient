@@ -18,6 +18,7 @@ import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.services.peertube.PeertubeInstance;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static org.schabi.newpipe.extractor.ServiceList.NicoNico;
@@ -253,6 +254,9 @@ public final class ServiceHelper {
             if(sharedPreferences.getBoolean(context.getString(R.string.override_cookies_niconico_key), false)) {
                 ServiceList.NicoNico.setTokens(sharedPreferences.getString(context.getString(R.string.override_cookies_niconico_value_key), null));
             }
+            final Set<String> cookieFunctions = sharedPreferences.getStringSet(context.getString(
+                    R.string.cookie_functions_niconico_key), null);
+            ServiceList.NicoNico.setCookieFunctions(cookieFunctions);
         } else if (serviceId == ServiceList.BiliBili.getServiceId()) {
             final SharedPreferences sharedPreferences = PreferenceManager
                     .getDefaultSharedPreferences(context);
@@ -262,6 +266,9 @@ public final class ServiceHelper {
             if(sharedPreferences.getBoolean(context.getString(R.string.override_cookies_bilibili_key), false)) {
                 ServiceList.BiliBili.setTokens(sharedPreferences.getString(context.getString(R.string.override_cookies_bilibili_value_key), null));
             }
+            final Set<String> cookieFunctions = sharedPreferences.getStringSet(context.getString(
+                    R.string.cookie_functions_bilibili_key), null);
+            ServiceList.BiliBili.setCookieFunctions(cookieFunctions);
         }
     }
 

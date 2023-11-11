@@ -1377,4 +1377,14 @@
     <string name="disable_media_tunneling_key">disable_media_tunneling_key</string>
     <string name="use_exoplayer_decoder_fallback_key">use_exoplayer_decoder_fallback_key</string>
     <string name="always_use_exoplayer_set_output_surface_workaround_key">always_use_exoplayer_set_output_surface_workaround_key</string>
+    <string name="cookie_functions_bilibili_key">cookie_functions_bilibili_key</string>
+    <string name="cookie_functions_niconico_key">cookie_functions_niconico_key</string>
+    <string-array name="cookie_functions_bilibili_entries">
+        <item>@string/high_res</item>
+        <item>@string/ai_subtitle</item>
+    </string-array>
+    <string-array name="cookie_functions_bilibili_values">
+        <item>high_res</item>
+        <item>ai_subtitle</item>
+    </string-array>
 </resources>
