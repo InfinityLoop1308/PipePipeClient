@@ -196,15 +196,8 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                     if(!autoBackgroundPlaying){
                         return;
                     }
-                    final List<PlayQueueItem> streams = getPlayQueue().getStreams();
-                    int targetIndex = 0;
-                    for (int i = 0; i < streams.size(); i++) {
-                        if (streams.get(i).getUrl().equals(item.getUrl())) {
-                            targetIndex = i;
-                        }
-                    }
                     final PlayQueue temp = getPlayQueue();
-                    temp.setIndex(targetIndex);
+                    temp.setIndex(((PlaylistStreamEntry) selectedItem).getJoinIndex());
                     NavigationHelper.playOnBackgroundPlayer(activity, temp, false);
                 }
             }
