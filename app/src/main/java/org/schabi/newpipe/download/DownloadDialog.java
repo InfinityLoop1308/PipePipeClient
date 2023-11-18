@@ -73,6 +73,7 @@ import org.schabi.newpipe.util.ThemeHelper;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -1053,7 +1054,20 @@ public class DownloadDialog extends DialogFragment
                 threads = 1; // use unique thread for subtitles due small file size
                 kind = 's';
                 selectedStream = subtitleStreamsAdapter.getItem(selectedSubtitleIndex);
+                if(currentInfo.getService() == ServiceList.BiliBili){
+                    try {
+                        OutputStream outputStream = storage.context.getContentResolver().openOutputStream(storage.getUri());
+                        outputStream.write(selectedStream.getContent().getBytes());
+                        outputStream.close();
+                        Toast.makeText(context, getString(R.string.recaptcha_done_button),
+                                Toast.LENGTH_SHORT).show();
 
+                        dismiss();
+                        return;
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 if (selectedStream.getFormat() == MediaFormat.TTML) {
                     psName = Postprocessing.ALGORITHM_TTML_CONVERTER;
                     psArgs = new String[]{
