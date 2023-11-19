@@ -199,16 +199,18 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.fragment_feed_title);
             String message =
-                            "### Bug Fixes:\n" +
+                            "### New Features:\n" +
                                     "\n" +
-                                    "- Related videos not working(NicoNico) [GitHub #141]\n" +
-                                    "- Could not recognize video URLs with /? (BiliBili)\n" +
-                                    "- Many search filters are broken (YouTube - Duration Filter, Upload Date Filter; BiliBili - Duration Filter; NicoNico - Tags, Lives, Playlists) [GitHub #141, CodeBerg #71]\n" +
-                                    "- Unexpected error when internet disconnected but the video is not playing\n" +
+                                    "- Support controlling the usage of the cookies(BiliBili)\n" +
+                                    "- Re-support captions for logged users(BiliBili) [GitHub #153]\n" +
                                     "\n" +
-                                    "### UI changes:\n" +
+                                    "### Bug Fixes:\n" +
                                     "\n" +
-                                    "- update service icons [GitHub #159]";
+                                    "- Background playing will start at wrong index if duplicate items exists in the playlist.\n" +
+                                    "- Error is always shown when opening videos(NicoNico)\n" +
+                                    "- Sometimes channel videos are empty(BiliBili) [GitHub #169] [CodeBerg #86, #87, #88]\n" +
+                                    "- Captions can not be downloaded (BiliBili) [GitHub #133]\n" +
+                                    "- Old devices can not use all the search filters (YouTube) [CodeBerg #14]";
             builder.setMessage(message);
             builder.setPositiveButton(R.string.ok, null);
             // another button to copy to clipboard
