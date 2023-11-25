@@ -199,18 +199,10 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.fragment_feed_title);
             String message =
-                            "### New Features:\n" +
+                            "### Bug Fixes:\n" +
                                     "\n" +
-                                    "- Support controlling the usage of the cookies(BiliBili)\n" +
-                                    "- Re-support captions for logged users(BiliBili) [GitHub #153]\n" +
-                                    "\n" +
-                                    "### Bug Fixes:\n" +
-                                    "\n" +
-                                    "- Background playing will start at wrong index if duplicate items exists in the playlist.\n" +
-                                    "- Error is always shown when opening videos(NicoNico)\n" +
-                                    "- Sometimes channel videos are empty(BiliBili) [GitHub #169] [CodeBerg #86, #87, #88]\n" +
-                                    "- Captions can not be downloaded (BiliBili) [GitHub #133]\n" +
-                                    "- Old devices can not use all the search filters (YouTube) [CodeBerg #14]";
+                                    "- Failed to load Channel videos due to anti-crawler mechanism (BiliBili) [GitHub #169, CodeBerg #93] \n" +
+                                    "- Some devices still can not use all the search filters (YouTube) [CodeBerg #14, #92]";
             builder.setMessage(message);
             builder.setPositiveButton(R.string.ok, null);
             // another button to copy to clipboard
