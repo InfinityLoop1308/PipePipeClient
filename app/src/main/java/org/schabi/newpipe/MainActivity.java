@@ -201,10 +201,8 @@ public class MainActivity extends AppCompatActivity {
             String message =
                             "### Bug Fixes:\n" +
                                     "\n" +
-                                    "- Bullet comments not working (NicoNico) [GitHub #179]\n" +
-                                    "- Errors popping up when opening top lives page (NicoNico)\n" +
-                                    "- Update request method to avoid risk control (BiliBili)\n" +
-                                    "- Can not fetch like count (YouTube)";
+                                    "- Origin audio track is not selected for videos with multi audio tracks (YouTube) [GitHub #143, CodeBerg #79, #102]\n" +
+                                    "- Update request method to avoid risk control (BiliBili) [CodeBerg #97]";
             builder.setMessage(message);
             builder.setPositiveButton(R.string.ok, null);
             // another button to copy to clipboard
