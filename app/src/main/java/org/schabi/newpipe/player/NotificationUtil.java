@@ -126,12 +126,14 @@ public final class NotificationUtil {
                 .setColorized(player.getPrefs().getBoolean(
                         player.getContext().getString(R.string.notification_colorize_key), true));
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            builder.setDeleteIntent(PendingIntent.getBroadcast(player.getContext(), NOTIFICATION_ID,
-                    new Intent(ACTION_CLOSE), PendingIntent.FLAG_IMMUTABLE | FLAG_UPDATE_CURRENT));
-        } else {
-            builder.setDeleteIntent(PendingIntent.getBroadcast(player.getContext(), NOTIFICATION_ID,
-                    new Intent(ACTION_CLOSE), FLAG_UPDATE_CURRENT));
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                builder.setDeleteIntent(PendingIntent.getBroadcast(player.getContext(), NOTIFICATION_ID,
+                        new Intent(ACTION_CLOSE), PendingIntent.FLAG_IMMUTABLE | FLAG_UPDATE_CURRENT));
+            } else {
+                builder.setDeleteIntent(PendingIntent.getBroadcast(player.getContext(), NOTIFICATION_ID,
+                        new Intent(ACTION_CLOSE), FLAG_UPDATE_CURRENT));
+            }
         }
         return builder;
     }
