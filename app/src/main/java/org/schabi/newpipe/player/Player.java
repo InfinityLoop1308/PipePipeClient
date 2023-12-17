@@ -50,6 +50,7 @@ import static org.schabi.newpipe.util.ListHelper.getPopupResolutionIndex;
 import static org.schabi.newpipe.util.ListHelper.getResolutionIndex;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.schabi.newpipe.util.SponsorBlockUtils.markSegments;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -86,14 +87,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AnticipateInterpolator;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.SeekBar;
-import android.widget.TextView;
+import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -113,15 +107,8 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.PlaybackException;
-import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.*;
 import com.google.android.exoplayer2.Player.PositionInfo;
-import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.TracksInfo;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -146,10 +133,7 @@ import org.schabi.newpipe.databinding.PlayerPopupCloseOverlayBinding;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
-import org.schabi.newpipe.extractor.Info;
-import org.schabi.newpipe.extractor.MediaFormat;
-import org.schabi.newpipe.extractor.NewPipe;
-import org.schabi.newpipe.extractor.StreamingService;
+import org.schabi.newpipe.extractor.*;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.stream.*;
@@ -189,24 +173,14 @@ import org.schabi.newpipe.player.resolver.VideoPlaybackResolver;
 import org.schabi.newpipe.player.resolver.VideoPlaybackResolver.SourceType;
 import org.schabi.newpipe.player.seekbarpreview.SeekbarPreviewThumbnailHelper;
 import org.schabi.newpipe.player.seekbarpreview.SeekbarPreviewThumbnailHolder;
-import org.schabi.newpipe.util.DeviceUtils;
-import org.schabi.newpipe.util.ListHelper;
-import org.schabi.newpipe.util.NavigationHelper;
-import org.schabi.newpipe.util.PicassoHelper;
-import org.schabi.newpipe.util.SerializedCache;
-import org.schabi.newpipe.util.StreamTypeUtil;
+import org.schabi.newpipe.util.*;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
-import org.schabi.newpipe.util.utils;
 import org.schabi.newpipe.views.ExpandableSurfaceView;
 import org.schabi.newpipe.views.player.PlayerFastSeekOverlay;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -257,6 +231,7 @@ public final class Player implements
     public static final String PLAY_WHEN_READY = "play_when_ready";
     public static final String PLAYER_TYPE = "player_type";
     public static final String IS_MUTED = "is_muted";
+    public static final String VIDEO_SEGMENTS = "video_segments";
 
     /*//////////////////////////////////////////////////////////////////////////
     // Time constants
@@ -424,6 +399,14 @@ public final class Player implements
     // Constructor
     //////////////////////////////////////////////////////////////////////////*/
     //region Constructor
+
+    /*//////////////////////////////////////////////////////////////////////////
+    // SponsorBlock
+    //////////////////////////////////////////////////////////////////////////*/
+    private SponsorBlockMode sponsorBlockMode = SponsorBlockMode.DISABLED;
+    private int lastSkipTarget = -1;
+
+
 
     public Player(@NonNull final MainPlayer service) {
         this.service = service;
@@ -597,6 +580,8 @@ public final class Player implements
         binding.openInBrowser.setOnClickListener(this);
         binding.playerCloseButton.setOnClickListener(this);
         binding.switchMute.setOnClickListener(this);
+        binding.switchSponsorBlocking.setOnClickListener(this);
+        binding.switchSponsorBlocking.setOnLongClickListener(this);
 
         settingsContentObserver = new ContentObserver(new Handler()) {
             @Override
@@ -1024,7 +1009,7 @@ public final class Player implements
         }
 
         if (playQueue != null) {
-            playQueueManager = new MediaSourceManager(this, playQueue);
+            playQueueManager = new MediaSourceManager(context, this, playQueue);
         }
     }
 
@@ -1142,6 +1127,7 @@ public final class Player implements
             binding.topControls.setClickable(false);
             binding.topControls.setFocusable(false);
             binding.bottomControls.bringToFront();
+            binding.switchSponsorBlocking.setVisibility(View.GONE);
             closeItemsList();
         } else if (videoPlayerSelected()) {
             binding.fullScreenButton.setVisibility(View.GONE);
@@ -1164,6 +1150,10 @@ public final class Player implements
             // down in fullscreen mode (just larger area to make easy to locate by finger)
             binding.topControls.setClickable(true);
             binding.topControls.setFocusable(true);
+            final boolean isSponsorBlockEnabled = getPrefs().getBoolean(
+                    context.getString(R.string.sponsor_block_enable_key), false);
+            binding.switchSponsorBlocking.setVisibility(
+                    isSponsorBlockEnabled ? View.VISIBLE : View.GONE);
         }
         showHideKodiButton();
 
@@ -1791,7 +1781,10 @@ public final class Player implements
         return progressUpdateDisposable.get() != null;
     }
 
-    private void triggerProgressUpdate() {
+    public void triggerProgressUpdate() {
+        triggerProgressUpdate(false);
+    }
+    private void triggerProgressUpdate(final boolean isRewind) {
         if (exoPlayerIsNull()) {
             return;
         }
@@ -1808,18 +1801,96 @@ public final class Player implements
         } else {
             duration = (int) simpleExoPlayer.getDuration();
         }
+        final int currentProgress = Math.max((int) simpleExoPlayer.getCurrentPosition(), 0);
+
         onUpdateProgress(
-                Math.max((int) simpleExoPlayer.getCurrentPosition(), 0),
-                duration,
-                simpleExoPlayer.getBufferedPercentage()
-        );
+                currentProgress,
+                (int) simpleExoPlayer.getDuration(),
+                simpleExoPlayer.getBufferedPercentage());
+
+        if (sponsorBlockMode == SponsorBlockMode.ENABLED && isPrepared) {
+            final VideoSegment segment = getSkippableSegment(currentProgress);
+            if (segment == null) {
+                lastSkipTarget = -1;
+                return;
+            }
+
+            int skipTarget = isRewind
+                    ? (int) Math.ceil((segment.startTime)) - 1
+                    : (int) Math.ceil((segment.endTime));
+
+            if (skipTarget < 0) {
+                skipTarget = 0;
+            }
+
+            if (lastSkipTarget == skipTarget) {
+                return;
+            }
+
+            lastSkipTarget = skipTarget;
+
+            // temporarily force EXACT seek parameters to prevent infinite skip looping
+            final SeekParameters seekParams = simpleExoPlayer.getSeekParameters();
+            simpleExoPlayer.setSeekParameters(SeekParameters.EXACT);
+
+            seekTo(skipTarget);
+
+            simpleExoPlayer.setSeekParameters(seekParams);
+
+            if (prefs.getBoolean(
+                    context.getString(R.string.sponsor_block_notifications_key), false)) {
+                String toastText = "";
+
+                switch (segment.category) {
+                    case "sponsor":
+                        toastText = context
+                                .getString(R.string.sponsor_block_skip_sponsor_toast);
+                        break;
+                    case "intro":
+                        toastText = context
+                                .getString(R.string.sponsor_block_skip_intro_toast);
+                        break;
+                    case "outro":
+                        toastText = context
+                                .getString(R.string.sponsor_block_skip_outro_toast);
+                        break;
+                    case "interaction":
+                        toastText = context
+                                .getString(R.string.sponsor_block_skip_interaction_toast);
+                        break;
+                    case "selfpromo":
+                        toastText = context
+                                .getString(R.string.sponsor_block_skip_self_promo_toast);
+                        break;
+                    case "music_offtopic":
+                        toastText = context
+                                .getString(R.string.sponsor_block_skip_non_music_toast);
+                        break;
+                    case "preview":
+                        toastText = context
+                                .getString(R.string.sponsor_block_skip_preview_toast);
+                        break;
+                    case "filler":
+                        toastText = context
+                                .getString(R.string.sponsor_block_skip_filler_toast);
+                        break;
+                }
+
+                Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show();
+            }
+
+            if (DEBUG) {
+                Log.d("SPONSOR_BLOCK", "Skipped segment: currentProgress = ["
+                        + currentProgress + "], skipped to = [" + skipTarget + "]");
+            }
+        }
     }
 
     private Disposable getProgressUpdateDisposable() {
         return Observable.interval(PROGRESS_LOOP_INTERVAL_MILLIS, MILLISECONDS,
                         AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(ignored -> triggerProgressUpdate(),
+                .subscribe(ignored -> triggerProgressUpdate(false),
                         error -> Log.e(TAG, "Progress update failure: ", error));
     }
 
@@ -2350,7 +2421,7 @@ public final class Player implements
         setVideoDurationToControls((int) simpleExoPlayer.getDuration());
 
         binding.playbackSpeed.setText(formatSpeed(getPlaybackSpeed()));
-
+        markSegments(currentItem, binding.playbackSeekBar, context, getPrefs());
         if (playWhenReady) {
             audioReactor.requestAudioFocus();
         }
@@ -2700,6 +2771,7 @@ public final class Player implements
                 ? R.drawable.ic_volume_off : R.drawable.ic_volume_up));
     }
     //endregion
+
 
 
 
@@ -3259,7 +3331,7 @@ public final class Player implements
             Log.d(TAG, "fastRewind() called");
         }
         seekBy(retrieveSeekDurationFromPreferences(this));
-        triggerProgressUpdate();
+        triggerProgressUpdate(true);
     }
 
     public void fastRewind() {
@@ -3267,7 +3339,7 @@ public final class Player implements
             Log.d(TAG, "fastRewind() called");
         }
         seekBy(-retrieveSeekDurationFromPreferences(this));
-        triggerProgressUpdate();
+        triggerProgressUpdate(true);
     }
     //endregion
 
@@ -3347,6 +3419,22 @@ public final class Player implements
 
         binding.titleTextView.setText(info.getName());
         binding.channelTextView.setText(info.getUploaderName());
+        if(currentMetadata.getServiceId() != ServiceList.YouTube.getServiceId()){
+            binding.switchSponsorBlocking.setVisibility(View.GONE);
+        }
+        String sponsorBlockModePrefString = prefs.getString(context.getString(R.string.pref_sponsorblock_mode_key), "ENABLED");
+        switch (sponsorBlockModePrefString){
+            case "ENABLED":
+                sponsorBlockMode = SponsorBlockMode.ENABLED;
+                break;
+            case "DISABLED":
+                sponsorBlockMode = SponsorBlockMode.DISABLED;
+                break;
+            case "IGNORE":
+                sponsorBlockMode = SponsorBlockMode.IGNORE;
+                break;
+        }
+        setBlockSponsorsButton(binding.switchSponsorBlocking);
 
         this.seekbarPreviewThumbnailHolder.resetFrom(this.getContext(), info.getPreviewFrames());
 
@@ -4106,6 +4194,8 @@ public final class Player implements
             onMuteUnmuteButtonClicked();
         } else if (v.getId() == binding.playerCloseButton.getId()) {
             context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_HIDE_MAIN_PLAYER));
+        } else if (v.getId() == binding.switchSponsorBlocking.getId()) {
+            onSponsorBlockButtonClicked();
         }
 
         manageControlsAfterOnClick(v);
@@ -4145,6 +4235,8 @@ public final class Player implements
             hideSystemUIIfNeeded();
         } else if (v.getId() == binding.share.getId()) {
             ShareUtils.copyToClipboard(context, getVideoUrlAtCurrentTime());
+        } else if (v.getId() == binding.switchSponsorBlocking.getId()) {
+            onBlockingSponsorsButtonLongClicked();
         }
         return true;
     }
@@ -4897,6 +4989,133 @@ public final class Player implements
             surfaceHolderCallback = null;
         }
     }
+    //endregion
+
+    /*//////////////////////////////////////////////////////////////////////////
+    // SponsorBlock
+    //////////////////////////////////////////////////////////////////////////*/
+    //region
+
+    public SponsorBlockMode getSponsorBlockMode() {
+        return sponsorBlockMode;
+    }
+
+    public void setSponsorBlockMode(final SponsorBlockMode mode) {
+        sponsorBlockMode = mode;
+        // Also set pref
+        prefs.edit().putString(context.getString(R.string.pref_sponsorblock_mode_key), mode.name()).apply();
+    }
+
+    public VideoSegment getSkippableSegment(final int progress) {
+        // currentItem may get set to something later (asynchronously)
+        if (currentItem == null) {
+            return null;
+        }
+
+        final VideoSegment[] videoSegments = currentItem.getVideoSegments();
+        if (videoSegments == null) {
+            return null;
+        }
+
+        for (final VideoSegment segment : videoSegments) {
+            if (progress < segment.startTime) {
+                continue;
+            }
+
+            if (progress > segment.endTime) {
+                continue;
+            }
+
+            return segment;
+        }
+
+        return null;
+    }
+
+    public void onSponsorBlockButtonClicked() {
+        if (DEBUG) {
+            Log.d(TAG, "onBlockingSponsorsButtonClicked() called");
+        }
+
+        switch (getSponsorBlockMode()) {
+            case DISABLED:
+                setSponsorBlockMode(SponsorBlockMode.ENABLED);
+                break;
+            case ENABLED:
+                setSponsorBlockMode(SponsorBlockMode.DISABLED);
+                break;
+            case IGNORE:
+                // ignored
+        }
+
+        setBlockSponsorsButton(binding.switchSponsorBlocking);
+    }
+    public void onBlockingSponsorsButtonLongClicked() {
+        if (DEBUG) {
+            Log.d(TAG, "onBlockingSponsorsButtonLongClicked() called");
+        }
+
+        final MediaItemTag metaData = currentMetadata;
+
+        if (metaData == null) {
+            return;
+        }
+
+        final Set<String> uploaderWhitelist = new HashSet<>(getPrefs().getStringSet(
+                context.getString(R.string.sponsor_block_whitelist_key),
+                new HashSet<>()));
+
+        final String toastText;
+
+        final String uploaderName = metaData.getUploaderName();
+
+        if (getSponsorBlockMode() == SponsorBlockMode.IGNORE) {
+            uploaderWhitelist.remove(uploaderName);
+            setSponsorBlockMode(SponsorBlockMode.ENABLED);
+            toastText = context
+                    .getString(R.string.sponsor_block_uploader_removed_from_whitelist_toast);
+        } else {
+            uploaderWhitelist.add(uploaderName);
+            setSponsorBlockMode(SponsorBlockMode.IGNORE);
+            toastText = context
+                    .getString(R.string.sponsor_block_uploader_added_to_whitelist_toast);
+        }
+
+        getPrefs()
+                .edit()
+                .putStringSet(
+                        context.getString(R.string.sponsor_block_whitelist_key),
+                        new HashSet<>(uploaderWhitelist))
+                .apply();
+
+        setBlockSponsorsButton(binding.switchSponsorBlocking);
+        Toast.makeText(context, toastText, Toast.LENGTH_LONG).show();
+    }
+
+    protected void setBlockSponsorsButton(final ImageButton button) {
+        if (button == null) {
+            return;
+        }
+
+        final int resId;
+
+        switch (getSponsorBlockMode()) {
+            case DISABLED:
+                resId = R.drawable.ic_sponsor_block_disable;
+                break;
+            case ENABLED:
+                resId = R.drawable.ic_sponsor_block_enable;
+                break;
+            case IGNORE:
+                resId = R.drawable.ic_sponsor_block_exclude;
+                break;
+            default:
+                return;
+        }
+
+        button.setImageDrawable(AppCompatResources.getDrawable(context, resId));
+    }
+
     //endregion
 
     /**

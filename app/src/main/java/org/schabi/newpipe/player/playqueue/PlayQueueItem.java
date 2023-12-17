@@ -12,6 +12,7 @@ import java.io.Serializable;
 
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import org.schabi.newpipe.util.VideoSegment;
 
 public class PlayQueueItem implements Serializable {
     public static final long RECOVERY_UNSET = Long.MIN_VALUE;
@@ -39,6 +40,7 @@ public class PlayQueueItem implements Serializable {
 
     private long recoveryPosition;
     private Throwable error;
+    private VideoSegment[] videoSegments;
 
     PlayQueueItem(@NonNull final StreamInfo info) {
         this(info.getName(), info.getUrl(), info.getServiceId(), info.getDuration(),
@@ -152,5 +154,13 @@ public class PlayQueueItem implements Serializable {
 
     public long getStartAt() {
         return startAt;
+    }
+
+    public VideoSegment[] getVideoSegments() {
+        return videoSegments;
+    }
+
+    public void setVideoSegments(final VideoSegment[] videoSegments) {
+        this.videoSegments = videoSegments;
     }
 }

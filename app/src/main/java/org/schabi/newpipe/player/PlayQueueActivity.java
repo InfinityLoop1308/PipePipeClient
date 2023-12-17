@@ -3,10 +3,9 @@ package org.schabi.newpipe.player;
 import static org.schabi.newpipe.QueueItemMenuUtil.openPopupMenu;
 import static org.schabi.newpipe.player.helper.PlayerHelper.formatSpeed;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
+import static org.schabi.newpipe.util.SponsorBlockUtils.markSegments;
 
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.ServiceConnection;
+import android.content.*;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
@@ -19,6 +18,7 @@ import android.widget.SeekBar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -221,6 +221,13 @@ public final class PlayQueueActivity extends AppCompatActivity
                 } else {
                     buildComponents();
                     if (player != null) {
+                        final PlayQueueItem item = player.getPlayQueue().getItem();
+                        final Context context = getApplicationContext();
+                        final SharedPreferences prefs =
+                                PreferenceManager.getDefaultSharedPreferences(context);
+                        markSegments(item, queueControlBinding.seekBar, context, prefs);
+
+
                         player.setActivityListener(PlayQueueActivity.this);
                     }
                 }
