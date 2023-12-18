@@ -136,7 +136,12 @@ public enum StreamDialogDefaultEntry {
                 .onErrorComplete()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe()
-    );
+    ),
+
+    NAVIGATE_TO(R.string.navigate_to, (fragment, item) -> {
+        throw new UnsupportedOperationException("This needs to be implemented manually "
+                + "by using InfoItemDialog.Builder.setAction()");
+    });
 
 
     @StringRes

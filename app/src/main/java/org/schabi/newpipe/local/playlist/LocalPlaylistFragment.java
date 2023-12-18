@@ -905,6 +905,10 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                     StreamDialogDefaultEntry.DELETE
             );
 
+            if(itemListAdapter.isFilterEnabled) {
+                dialogBuilder.addEntry(StreamDialogDefaultEntry.NAVIGATE_TO);
+            }
+
             // set custom actions
             // all entries modified below have already been added within the builder
             dialogBuilder
@@ -919,6 +923,12 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                     .setAction(
                             StreamDialogDefaultEntry.DELETE,
                             (f, i) -> deleteItem(item))
+                    .setAction(
+                            StreamDialogDefaultEntry.NAVIGATE_TO,
+                            (f, i) -> {
+                                destroyCustomViewInActionBar();
+                                itemsList.smoothScrollToPosition(item.getJoinIndex() + 1);
+                            })
                     .create()
                     .show();
         } catch (final IllegalArgumentException e) {

@@ -913,4 +913,5 @@
     <string name="high_res">Play &amp; download(for premium contents / higher video resolutions &amp; audio qualities)</string>
     <string name="ai_subtitle">Get stream\'s detail(for AI subtitles)</string>
     <string name="cookie_functions_title">Access control</string>
+    <string name="navigate_to">Navigate</string>
 </resources>
