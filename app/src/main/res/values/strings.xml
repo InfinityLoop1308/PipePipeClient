@@ -914,4 +914,9 @@
     <string name="ai_subtitle">Get stream\'s detail(for AI subtitles)</string>
     <string name="cookie_functions_title">Access control</string>
     <string name="navigate_to">Navigate</string>
+    <string name="sort_name">Sort by name</string>
+    <string name="sort_name_reverse">Sort by name (reverse)</string>
+    <string name="sort_origin">Origin</string>
+    <string name="sort_origin_reverse">Origin (reverse)</string>
+
 </resources>

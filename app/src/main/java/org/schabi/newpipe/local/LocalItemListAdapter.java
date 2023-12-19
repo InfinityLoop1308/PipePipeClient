@@ -6,21 +6,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.LocalItem;
 import org.schabi.newpipe.database.playlist.PlaylistStreamEntry;
 import org.schabi.newpipe.database.stream.StreamStatisticsEntry;
 import org.schabi.newpipe.database.stream.model.StreamStateEntity;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.local.holder.*;
-import org.schabi.newpipe.util.FallbackViewHolder;
-import org.schabi.newpipe.util.Localization;
-import org.schabi.newpipe.util.OnClickGesture;
+import org.schabi.newpipe.util.*;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /*
@@ -73,6 +75,7 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
     private View footer = null;
     private ArrayList<LocalItem> filteredItems = new ArrayList<>();
     public boolean isFilterEnabled = false;
+    public SortMode sortMode;
 
     public LocalItemListAdapter(final Context context) {
         recordManager = new HistoryRecordManager(context);
@@ -80,6 +83,8 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
         localItems = new ArrayList<>();
         dateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
                 .withLocale(Localization.getPreferredLocale(context));
+        sortMode = utils.parseSortMode(PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(context.getString(R.string.playlist_sort_mode_key), SortMode.ORIGIN.name()));
     }
 
     public void setSelectedListener(final OnClickGesture<LocalItem> listener) {
@@ -101,6 +106,7 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         final int offsetStart = sizeConsideringHeader();
         localItems.addAll(data);
+        sort(sortMode);
 
         if (DEBUG) {
             Log.d(TAG, "addItems() after > offsetStart = " + offsetStart + ", "
@@ -396,6 +402,48 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
         isFilterEnabled = false;
         filteredItems.clear();
         filteredItems.addAll(localItems);
+        notifyDataSetChanged();
+    }
+
+    public void sort(SortMode sortMode) {
+        switch (sortMode) {
+            case SORT_NAME:
+                Collections.sort(localItems, (o1, o2) -> {
+                    if (o1 instanceof PlaylistStreamEntry && o2 instanceof PlaylistStreamEntry) {
+                        return ((PlaylistStreamEntry) o1).getStreamEntity().getTitle().compareTo(((PlaylistStreamEntry) o2).getStreamEntity().getTitle());
+                    } else {
+                        return 0;
+                    }
+                });
+                break;
+            case SORT_NAME_REVERSE:
+                Collections.sort(localItems, (o1, o2) -> {
+                    if (o1 instanceof PlaylistStreamEntry && o2 instanceof PlaylistStreamEntry) {
+                        return ((PlaylistStreamEntry) o2).getStreamEntity().getTitle().compareTo(((PlaylistStreamEntry) o1).getStreamEntity().getTitle());
+                    } else {
+                        return 0;
+                    }
+                });
+                break;
+            case ORIGIN:
+                Collections.sort(localItems, (o1, o2) -> {
+                    if (o1 instanceof PlaylistStreamEntry && o2 instanceof PlaylistStreamEntry) {
+                        return ((PlaylistStreamEntry) o1).getJoinIndex() - ((PlaylistStreamEntry) o2).getJoinIndex();
+                    } else {
+                        return 0;
+                    }
+                });
+                break;
+            case ORIGIN_REVERSE:
+                Collections.sort(localItems, (o1, o2) -> {
+                    if (o1 instanceof PlaylistStreamEntry && o2 instanceof PlaylistStreamEntry) {
+                        return ((PlaylistStreamEntry) o2).getJoinIndex() - ((PlaylistStreamEntry) o1).getJoinIndex();
+                    } else {
+                        return 0;
+                    }
+                });
+                break;
+        }
         notifyDataSetChanged();
     }
 }

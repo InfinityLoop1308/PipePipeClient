@@ -1416,4 +1416,5 @@
         <item>ai_subtitle</item>
     </string-array>
     <string name="pref_sponsorblock_mode_key">pref_sponsorblock_mode_key</string>
+    <string name="playlist_sort_mode_key">playlist_sort_mode_key</string>
 </resources>

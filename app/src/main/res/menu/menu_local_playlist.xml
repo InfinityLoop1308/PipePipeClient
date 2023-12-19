@@ -9,6 +9,31 @@
             app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/menu_item_sort"
+        android:title="@string/sort"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_sort" >
+            <menu>
+                <item
+                    android:title="@string/sort_name"
+                    android:id="@+id/menu_item_sort_name"
+                    app:showAsAction="never" />
+                <item
+                    android:title="@string/sort_name_reverse"
+                    android:id="@+id/menu_item_sort_name_reverse"
+                    app:showAsAction="never" />
+                <item
+                    android:title="@string/sort_origin"
+                    android:id="@+id/menu_item_sort_origin"
+                    app:showAsAction="never" />
+                <item
+                    android:title="@string/sort_origin_reverse"
+                    android:id="@+id/menu_item_sort_origin_reverse"
+                    app:showAsAction="never" />
+            </menu>
+    </item>
+
+    <item
         android:id="@+id/menu_item_rename_playlist"
         android:title="@string/rename_playlist"
         app:showAsAction="never" />

@@ -55,9 +55,7 @@ import org.schabi.newpipe.player.MainPlayer.PlayerType;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
-import org.schabi.newpipe.util.Localization;
-import org.schabi.newpipe.util.NavigationHelper;
-import org.schabi.newpipe.util.OnClickGesture;
+import org.schabi.newpipe.util.*;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -197,7 +195,7 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                         return;
                     }
                     final PlayQueue temp = getPlayQueue();
-                    temp.setIndex(((PlaylistStreamEntry) selectedItem).getJoinIndex());
+                    temp.setIndex(utils.getIndexInQueue((PlaylistStreamEntry) selectedItem, temp, itemListAdapter.sortMode));
                     NavigationHelper.playOnBackgroundPlayer(activity, temp, false);
                 }
             }
@@ -456,6 +454,22 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             });
             AlertDialog dialog = builder.create();
             dialog.show();
+        } else if (item.getItemId() == R.id.menu_item_sort_origin) {
+            itemListAdapter.sortMode = SortMode.ORIGIN;
+            itemListAdapter.sort(SortMode.ORIGIN);
+            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_sort_mode_key), SortMode.ORIGIN.name()).apply();
+        } else if (item.getItemId() == R.id.menu_item_sort_origin_reverse) {
+            itemListAdapter.sortMode = SortMode.ORIGIN_REVERSE;
+            itemListAdapter.sort(SortMode.ORIGIN_REVERSE);
+            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_sort_mode_key), SortMode.ORIGIN_REVERSE.name()).apply();
+        } else if (item.getItemId() == R.id.menu_item_sort_name) {
+            itemListAdapter.sortMode = SortMode.SORT_NAME;
+            itemListAdapter.sort(SortMode.SORT_NAME);
+            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_sort_mode_key), SortMode.SORT_NAME.name()).apply();
+        } else if (item.getItemId() == R.id.menu_item_sort_name_reverse) {
+            itemListAdapter.sortMode = SortMode.SORT_NAME_REVERSE;
+            itemListAdapter.sort(SortMode.SORT_NAME_REVERSE);
+            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_sort_mode_key), SortMode.SORT_NAME_REVERSE.name()).apply();
         }
         return true;
     }
@@ -808,6 +822,10 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             }
         }
 
+        if(itemListAdapter.sortMode == SortMode.ORIGIN_REVERSE) {
+            Collections.reverse(streamIds);
+        }
+
         if (DEBUG) {
             Log.d(TAG, "Updating playlist id=[" + playlistId + "] "
                     + "with [" + streamIds.size() + "] items");
@@ -927,7 +945,7 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                             StreamDialogDefaultEntry.NAVIGATE_TO,
                             (f, i) -> {
                                 destroyCustomViewInActionBar();
-                                itemsList.smoothScrollToPosition(item.getJoinIndex() + 1);
+                                itemsList.smoothScrollToPosition(utils.getIndexInQueue(item, getPlayQueue(), itemListAdapter.sortMode) + 1);
                             })
                     .create()
                     .show();
