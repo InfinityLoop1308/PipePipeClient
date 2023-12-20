@@ -10,6 +10,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.grack.nanojson.JsonParserException;
 import org.schabi.newpipe.DownloaderImpl;
 
 import java.io.File;
@@ -23,10 +24,15 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.channels.ClosedByInterruptException;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.net.ssl.SSLException;
 
+import org.schabi.newpipe.extractor.exceptions.ParsingException;
+import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
+import org.schabi.newpipe.extractor.services.bilibili.BilibiliService;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
 import us.shandian.giga.postprocessing.BiliBiliMp4Muxer;
 import us.shandian.giga.postprocessing.Postprocessing;
@@ -34,6 +40,7 @@ import us.shandian.giga.service.DownloadManagerService;
 import us.shandian.giga.util.Utility;
 
 import static org.schabi.newpipe.BuildConfig.DEBUG;
+import static us.shandian.giga.util.Utility.setRequestPropertyIfDownloadingBilibili;
 
 public class DownloadMission extends Mission {
     private static final long serialVersionUID = 6L;// last bump: 07 october 2019
@@ -228,7 +235,8 @@ public class DownloadMission extends Mission {
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         conn.setInstanceFollowRedirects(true);
         conn.setRequestProperty("User-Agent", DownloaderImpl.USER_AGENT);
-        conn.setRequestProperty("Referer", "https://www.bilibili.com");
+        setRequestPropertyIfDownloadingBilibili(url, conn);
+
         conn.setRequestProperty("Accept", "*/*");
         conn.setRequestProperty("Accept-Encoding", "*");
 

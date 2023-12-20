@@ -7,13 +7,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
+import com.grack.nanojson.JsonParserException;
 import org.schabi.newpipe.error.ReCaptchaActivity;
 import org.schabi.newpipe.extractor.downloader.Downloader;
 import org.schabi.newpipe.extractor.downloader.Request;
 import org.schabi.newpipe.extractor.downloader.Response;
+import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
+import org.schabi.newpipe.extractor.services.bilibili.BilibiliService;
 import org.schabi.newpipe.util.CookieUtils;
 import org.schabi.newpipe.util.InfoCache;
+import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.TLSSocketFactoryCompat;
 
 import java.io.IOException;
@@ -194,12 +198,16 @@ public final class DownloaderImpl extends Downloader {
      */
     public long getContentLength(final String url) throws IOException {
         try {
-            final Response response = head(url);
+            final Response response = head(url, BilibiliService.isBiliBiliDownloadUrl(url)?BilibiliService.getUpToDateHeaders():null);
             return Long.parseLong(response.getHeader("Content-Length"));
         } catch (final NumberFormatException e) {
             throw new IOException("Invalid content length", e);
         } catch (final ReCaptchaException e) {
             throw new IOException(e);
+        } catch (ParsingException e) {
+            throw new RuntimeException(e);
+        } catch (JsonParserException e) {
+            throw new RuntimeException(e);
         }
     }
 

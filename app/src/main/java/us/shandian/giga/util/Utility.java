@@ -13,7 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import com.grack.nanojson.JsonParserException;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.extractor.exceptions.ParsingException;
+import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
+import org.schabi.newpipe.extractor.services.bilibili.BilibiliService;
 import org.schabi.newpipe.streams.io.SharpStream;
 
 import java.io.BufferedOutputStream;
@@ -27,7 +31,9 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 
 import okio.ByteString;
@@ -313,5 +319,20 @@ public class Utility {
         }
 
         return str + pad(s);
+    }
+    public static void setRequestPropertyIfDownloadingBilibili(String url, HttpURLConnection conn) throws IOException {
+        if(BilibiliService.isBiliBiliDownloadUrl(url)){
+            // from header map set RequestProperty
+            Map<String, List<String>> headerMap = BilibiliService.getDownloadHeaders();
+            for (Map.Entry<String, List<String>> entry : headerMap.entrySet()) {
+                String key = entry.getKey();
+                List<String> value = entry.getValue();
+                if (value.size() == 1) {
+                    conn.setRequestProperty(key, value.get(0));
+                } else {
+                    conn.setRequestProperty(key, value.toString());
+                }
+            }
+        }
     }
 }
