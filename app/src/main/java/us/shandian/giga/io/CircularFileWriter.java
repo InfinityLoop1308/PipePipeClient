@@ -137,6 +137,10 @@ public class CircularFileWriter extends SharpStream {
      * @throws IOException if an I/O error occurs
      */
     public long finalizeFile() throws IOException {
+        if(out == null) {
+            return maxLengthKnown; // already closed
+        }
+
         flushAuxiliar(aux.length);
 
         out.flush();

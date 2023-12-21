@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import androidx.documentfile.provider.DocumentFile;
 import com.grack.nanojson.JsonParserException;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
@@ -37,8 +38,11 @@ import java.util.Map;
 import java.util.Random;
 
 import okio.ByteString;
+import org.schabi.newpipe.streams.io.StoredDirectoryHelper;
 import us.shandian.giga.get.DownloadMission;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
+
+import static org.schabi.newpipe.streams.io.StoredDirectoryHelper.findFileSAFHelper;
 
 public class Utility {
 
@@ -333,6 +337,21 @@ public class Utility {
                     conn.setRequestProperty(key, value.toString());
                 }
             }
+        }
+    }
+
+    public static void removeTempFileOfDownloadedVideo(StoredFileHelper storedFileHelper) {
+        DocumentFile docTree = storedFileHelper.docTree;
+        DocumentFile[] docFiles = docTree.listFiles();
+        try{
+            for (DocumentFile docFile : docFiles) {
+                if (docFile.getName().equals(storedFileHelper.getName().replace(".mp4", ".tmp.mp4"))
+                        || docFile.getName().equals(storedFileHelper.getName().replace(".mp4", ".tmp"))) {
+                    docFile.delete();
+                }
+            }
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

@@ -36,7 +36,7 @@ public class StoredFileHelper implements Serializable {
     public static final String DEFAULT_MIME = "application/octet-stream";
 
     private transient DocumentFile docFile;
-    private transient DocumentFile docTree;
+    public transient DocumentFile docTree;
     private transient File ioFile;
     public transient Context context;
 
@@ -568,4 +568,5 @@ public class StoredFileHelper implements Serializable {
                     .putExtra(FilePickerActivityHelper.EXTRA_START_PATH, file.getAbsolutePath());
         }
     }
+
 }

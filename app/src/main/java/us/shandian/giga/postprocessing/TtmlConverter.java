@@ -1,5 +1,6 @@
 package us.shandian.giga.postprocessing;
 
+import android.content.Context;
 import android.util.Log;
 
 import org.schabi.newpipe.streams.SrtFromTtmlWriter;
@@ -19,6 +20,10 @@ class TtmlConverter extends Postprocessing {
     }
 
     @Override
+    int process(String source, Context context, SharpStream out, SharpStream... sources) throws IOException {
+        return process(out, sources);
+    }
+
     int process(SharpStream out, SharpStream... sources) throws IOException {
         // check if the subtitle is already in srt and copy, this should never happen
         String format = getArgumentAt(0, null);

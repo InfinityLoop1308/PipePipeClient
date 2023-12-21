@@ -898,9 +898,9 @@ public class DownloadDialog extends DialogFragment
                     }
 
                     continueSelectedDownload(storage);
-                    mainStorage.clear();
                     if(currentInfo.getService() == ServiceList.BiliBili && dialogBinding.videoAudioGroup.getCheckedRadioButtonId() == R.id.video_button){
                         mainStorage.createFile(filename.replace(".mp4", ".tmp.mp4"), "video/mp4");
+                        mainStorage.createFile(filename.replace(".mp4", ".tmp"), String.valueOf(MediaFormat.M4A));
                     }
                     return;
                 }
@@ -961,9 +961,9 @@ public class DownloadDialog extends DialogFragment
 
                     if (storageNew != null && storageNew.canWrite()) {
 //                        mainStorage.remove(filename);
-                        mainStorage.clear();
                         if(currentInfo.getService() == ServiceList.BiliBili && dialogBinding.videoAudioGroup.getCheckedRadioButtonId() == R.id.video_button){
                             mainStorage.createFile(filename.replace(".mp4", ".tmp.mp4"), "video/mp4");
+                            mainStorage.createFile(filename.replace(".mp4", ".tmp"), String.valueOf(MediaFormat.M4A));
                         }
                         continueSelectedDownload(storageNew);
                     } else {
@@ -1030,13 +1030,17 @@ public class DownloadDialog extends DialogFragment
                         .getAllSecondary()
                         .get(wrappedVideoStreams.getStreamsList().indexOf(selectedStream));
 
-                if (secondary != null && currentInfo.getService() != ServiceList.BiliBili) {
+                if (secondary != null) {
                     secondaryStream = secondary.getStream();
 
-                    if (selectedStream.getFormat() == MediaFormat.MPEG_4) {
-                        psName = Postprocessing.ALGORITHM_MP4_FROM_DASH_MUXER;
+                    if(currentInfo.getService() == ServiceList.BiliBili) {
+                        psName = Postprocessing.BILIBILI_MUXER;
                     } else {
-                        psName = Postprocessing.ALGORITHM_WEBM_MUXER;
+                        if (selectedStream.getFormat() == MediaFormat.MPEG_4) {
+                            psName = Postprocessing.ALGORITHM_MP4_FROM_DASH_MUXER;
+                        } else {
+                            psName = Postprocessing.ALGORITHM_WEBM_MUXER;
+                        }
                     }
 
                     psArgs = null;
@@ -1101,18 +1105,6 @@ public class DownloadDialog extends DialogFragment
             }
         }
 
-        if(kind == 'v' && currentInfo.getService() == ServiceList.BiliBili){
-            AudioStream tmpSecondaryStream = videoStreamsAdapter
-                    .getAllSecondary()
-                    .get(wrappedVideoStreams.getStreamsList().indexOf(selectedStream)).getStream();
-
-            StoredFileHelper tmpStorage = mainStorageVideo.createFile(storage.srcName.replace(".mp4", ".tmp"), String.valueOf(MediaFormat.M4A));
-            DownloadManagerService.startMission(context, new String[]{tmpSecondaryStream.getContent()}, tmpStorage, 'a', threads,
-                    currentInfo.getUrl(), null, null, 0, new MissionRecoveryInfo[]{
-                            new MissionRecoveryInfo(tmpSecondaryStream)
-                    });
-            psName = null;
-        }
 
         DownloadManagerService.startMission(context, urls, storage, kind, threads,
                 currentInfo.getUrl(), psName, psArgs, nearLength, recoveryInfo);

@@ -1,5 +1,6 @@
 package us.shandian.giga.postprocessing;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import us.shandian.giga.io.ProgressReport;
 import static us.shandian.giga.get.DownloadMission.ERROR_NOTHING;
 import static us.shandian.giga.get.DownloadMission.ERROR_POSTPROCESSING;
 import static us.shandian.giga.get.DownloadMission.ERROR_POSTPROCESSING_HOLD;
+import static us.shandian.giga.util.Utility.removeTempFileOfDownloadedVideo;
 
 public abstract class Postprocessing implements Serializable {
 
@@ -29,6 +31,7 @@ public abstract class Postprocessing implements Serializable {
     public transient static final String ALGORITHM_MP4_FROM_DASH_MUXER = "mp4D-mp4";
     public transient static final String ALGORITHM_M4A_NO_DASH = "mp4D-m4a";
     public transient static final String ALGORITHM_OGG_FROM_WEBM_DEMUXER = "webm-ogg-d";
+    public transient static final String BILIBILI_MUXER = "bilibili";
 
     public static Postprocessing getAlgorithm(@NonNull String algorithmName, String[] args) {
         Postprocessing instance;
@@ -48,6 +51,9 @@ public abstract class Postprocessing implements Serializable {
                 break;
             case ALGORITHM_OGG_FROM_WEBM_DEMUXER:
                 instance = new OggFromWebmDemuxer();
+                break;
+            case BILIBILI_MUXER:
+                instance = new BiliBiliMp4Muxer();
                 break;
             /*case "example-algorithm":
                 instance = new ExampleAlgorithm();*/
@@ -171,7 +177,7 @@ public abstract class Postprocessing implements Serializable {
                             return mission.errCode == ERROR_NOTHING;
                         };
 
-                        result = process(out, sources);
+                        result = process(target.storage.source, target.context, out, sources);
 
                         if (result == OK_RESULT)
                             finalLength = out.finalizeFile();
@@ -190,9 +196,10 @@ public abstract class Postprocessing implements Serializable {
                     tempFile.delete();
                     tempFile = null;
                 }
+                removeTempFileOfDownloadedVideo(target.storage);
             }
         } else {
-            result = test() ? process(null) : OK_RESULT;
+            result = test() ? process(target.storage.source, target.context, null) : OK_RESULT;
         }
 
         if (result == OK_RESULT) {
@@ -228,7 +235,7 @@ public abstract class Postprocessing implements Serializable {
      * @return an error code, {@code OK_RESULT} means the operation was successful
      * @throws IOException if an I/O error occurs.
      */
-    abstract int process(SharpStream out, SharpStream... sources) throws IOException;
+    abstract int process(String source, Context context, SharpStream out, SharpStream... sources) throws IOException;
 
     String getArgumentAt(int index, String defaultValue) {
         if (args == null || index >= args.length) {

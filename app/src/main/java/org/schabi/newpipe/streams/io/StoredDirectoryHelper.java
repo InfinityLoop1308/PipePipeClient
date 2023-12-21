@@ -275,7 +275,7 @@ public class StoredDirectoryHelper {
      * @param filename Target filename
      * @return A {@link DocumentFile} contain the reference, otherwise, null
      */
-    static DocumentFile findFileSAFHelper(@Nullable final Context context, final DocumentFile tree,
+    public static DocumentFile findFileSAFHelper(@Nullable final Context context, final DocumentFile tree,
                                           final String filename) {
         if (context == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             return tree.findFile(filename); // warning: this is very slow

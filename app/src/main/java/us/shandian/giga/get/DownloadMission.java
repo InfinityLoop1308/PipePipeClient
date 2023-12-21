@@ -163,7 +163,7 @@ public class DownloadMission extends Mission {
     public transient Thread[] threads = new Thread[0];
     public transient Thread init = null;
 
-    protected Context context;
+    public Context context;
 
     public DownloadMission(String[] urls, StoredFileHelper storage, char kind, Postprocessing psInstance, Context context) {
         if (Objects.requireNonNull(urls).length < 1)
@@ -392,12 +392,6 @@ public class DownloadMission extends Mission {
                 initializer();
                 return;
             }
-        }
-
-        if(this.source.contains("bilibili.com") && !this.storage.srcName.endsWith(".tmp") && !this.storage.srcName.endsWith(".tmp.mp4")){
-            notifyPostProcessing(1);
-            new BiliBiliMp4Muxer(this.storage.sourceTree, this.storage.source, context).mux();
-            notifyPostProcessing(2);
         }
 
         if (psAlgorithm != null && psState == 0) {
