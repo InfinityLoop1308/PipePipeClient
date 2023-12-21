@@ -330,16 +330,14 @@ public class DownloadMission extends Mission {
 
     public synchronized void notifyError(int code, Exception err) {
         Log.e(TAG, "notifyError() code = " + code, err);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (err != null && err.getCause() instanceof ErrnoException) {
-                int errno = ((ErrnoException) err.getCause()).errno;
-                if (errno == OsConstants.ENOSPC) {
-                    code = ERROR_INSUFFICIENT_STORAGE;
-                    err = null;
-                } else if (errno == OsConstants.EACCES) {
-                    code = ERROR_PERMISSION_DENIED;
-                    err = null;
-                }
+        if (err != null && err.getCause() instanceof ErrnoException) {
+            int errno = ((ErrnoException) err.getCause()).errno;
+            if (errno == OsConstants.ENOSPC) {
+                code = ERROR_INSUFFICIENT_STORAGE;
+                err = null;
+            } else if (errno == OsConstants.EACCES) {
+                code = ERROR_PERMISSION_DENIED;
+                err = null;
             }
         }
 

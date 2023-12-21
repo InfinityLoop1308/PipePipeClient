@@ -63,9 +63,6 @@ public final class DownloaderImpl extends Downloader {
     private Integer customTimeout;
 
     private DownloaderImpl(final OkHttpClient.Builder builder) {
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-            enableModernTLS(builder);
-        }
         this.client = builder
                 .readTimeout(30, TimeUnit.SECONDS)
 //                .cache(new Cache(new File(context.getExternalCacheDir(), "okhttp"),

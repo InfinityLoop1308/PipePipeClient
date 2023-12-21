@@ -169,28 +169,18 @@ public class DownloadManagerService extends Service {
         mConnectivityManager = ContextCompat.getSystemService(this,
                 ConnectivityManager.class);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mNetworkStateListenerL = new ConnectivityManager.NetworkCallback() {
-                @Override
-                public void onAvailable(Network network) {
-                    handleConnectivityState(false);
-                }
+        mNetworkStateListenerL = new ConnectivityManager.NetworkCallback() {
+            @Override
+            public void onAvailable(Network network) {
+                handleConnectivityState(false);
+            }
 
-                @Override
-                public void onLost(Network network) {
-                    handleConnectivityState(false);
-                }
-            };
-            mConnectivityManager.registerNetworkCallback(new NetworkRequest.Builder().build(), mNetworkStateListenerL);
-        } else {
-            mNetworkStateListener = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    handleConnectivityState(false);
-                }
-            };
-            registerReceiver(mNetworkStateListener, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-        }
+            @Override
+            public void onLost(Network network) {
+                handleConnectivityState(false);
+            }
+        };
+        mConnectivityManager.registerNetworkCallback(new NetworkRequest.Builder().build(), mNetworkStateListenerL);
 
         mPrefs.registerOnSharedPreferenceChangeListener(mPrefChangeListener);
 
@@ -249,10 +239,7 @@ public class DownloadManagerService extends Service {
 
         manageLock(false);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            mConnectivityManager.unregisterNetworkCallback(mNetworkStateListenerL);
-        else
-            unregisterReceiver(mNetworkStateListener);
+        mConnectivityManager.unregisterNetworkCallback(mNetworkStateListenerL);
 
         mPrefs.unregisterOnSharedPreferenceChangeListener(mPrefChangeListener);
 
@@ -477,11 +464,7 @@ public class DownloadManagerService extends Service {
         if (downloadDoneCount == 1) {
             downloadDoneList.append(name);
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                downloadDoneNotification.setContentTitle(getString(R.string.app_name));
-            } else {
-                downloadDoneNotification.setContentTitle(null);
-            }
+            downloadDoneNotification.setContentTitle(null);
 
             downloadDoneNotification.setContentText(Localization.downloadCount(this, downloadDoneCount));
             downloadDoneNotification.setStyle(new NotificationCompat.BigTextStyle()
@@ -515,16 +498,10 @@ public class DownloadManagerService extends Service {
                     .setContentIntent(mOpenDownloadList);
         }
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            downloadFailedNotification.setContentTitle(getString(R.string.app_name));
-            downloadFailedNotification.setStyle(new NotificationCompat.BigTextStyle()
-                    .bigText(getString(R.string.download_failed).concat(": ").concat(mission.storage.getName())));
-        } else {
-            downloadFailedNotification.setContentTitle(getString(R.string.download_failed));
-            downloadFailedNotification.setContentText(mission.storage.getName());
-            downloadFailedNotification.setStyle(new NotificationCompat.BigTextStyle()
-                    .bigText(mission.storage.getName()));
-        }
+        downloadFailedNotification.setContentTitle(getString(R.string.download_failed));
+        downloadFailedNotification.setContentText(mission.storage.getName());
+        downloadFailedNotification.setStyle(new NotificationCompat.BigTextStyle()
+                .bigText(mission.storage.getName()));
 
         mNotificationManager.notify(id, downloadFailedNotification.build());
     }
@@ -562,10 +539,7 @@ public class DownloadManagerService extends Service {
         if (path.charAt(0) == File.separatorChar) {
             Log.i(TAG, "Old save path style present: " + path);
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-                path = Uri.fromFile(new File(path)).toString();
-            else
-                path = "";
+            path = "";
 
             mPrefs.edit().putString(getString(prefKey), "").apply();
         }

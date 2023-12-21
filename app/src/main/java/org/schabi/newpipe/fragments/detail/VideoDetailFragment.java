@@ -2029,13 +2029,7 @@ public final class VideoDetailFragment
         }
         scrollToTop();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            addVideoPlayerView();
-        } else {
-            // KitKat needs a delay before addVideoPlayerView call or it reports wrong height in
-            // activity.getWindow().getDecorView().getHeight()
-            new Handler().post(this::addVideoPlayerView);
-        }
+        addVideoPlayerView();
     }
 
     @Override
@@ -2098,10 +2092,8 @@ public final class VideoDetailFragment
         }
         activity.getWindow().getDecorView().setSystemUiVisibility(0);
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            activity.getWindow().setStatusBarColor(ThemeHelper.resolveColorFromAttr(
-                    requireContext(), android.R.attr.colorPrimary));
-        }
+        activity.getWindow().setStatusBarColor(ThemeHelper.resolveColorFromAttr(
+                requireContext(), android.R.attr.colorPrimary));
     }
 
     private void hideSystemUi() {
@@ -2132,8 +2124,7 @@ public final class VideoDetailFragment
         }
         activity.getWindow().getDecorView().setSystemUiVisibility(visibility);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-                && (isInMultiWindow || (isPlayerAvailable() && player.isFullscreen()))) {
+        if (isInMultiWindow || isPlayerAvailable() && player.isFullscreen()) {
             activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
             activity.getWindow().setNavigationBarColor(Color.TRANSPARENT);
         }

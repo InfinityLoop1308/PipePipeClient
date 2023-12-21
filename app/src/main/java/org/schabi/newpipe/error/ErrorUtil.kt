@@ -116,10 +116,7 @@ class ErrorUtil {
                 )
                     .setSmallIcon(
                         // the vector drawable icon causes crashes on KitKat devices
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                            R.drawable.ic_bug_report
-                        else
-                            android.R.drawable.stat_notify_error
+                        R.drawable.ic_bug_report
                     )
                     .setContentTitle(context.getString(R.string.error_report_notification_title_new))
                     .setContentText(context.getString(errorInfo.messageStringId))

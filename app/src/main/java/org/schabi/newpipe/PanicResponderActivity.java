@@ -40,10 +40,6 @@ public class PanicResponderActivity extends Activity {
             ExitActivity.exitAndRemoveFromRecentApps(this);
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            finishAndRemoveTask();
-        } else {
-            finish();
-        }
+        finishAndRemoveTask();
     }
 }

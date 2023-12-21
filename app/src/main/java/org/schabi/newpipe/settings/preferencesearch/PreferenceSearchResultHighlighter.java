@@ -65,8 +65,7 @@ public final class PreferenceSearchResultHighlighter {
                             recyclerView.findViewHolderForAdapterPosition(position);
                     if (holder != null) {
                         final Drawable background = holder.itemView.getBackground();
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-                                && background instanceof RippleDrawable) {
+                        if (background instanceof RippleDrawable) {
                             showRippleAnimation((RippleDrawable) background);
                             return;
                         }

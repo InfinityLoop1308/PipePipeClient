@@ -108,11 +108,8 @@ public class ReCaptchaActivity extends AppCompatActivity {
         recaptchaBinding.reCaptchaWebView.clearCache(true);
         recaptchaBinding.reCaptchaWebView.clearHistory();
         final CookieManager cookieManager = CookieManager.getInstance();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            cookieManager.removeAllCookies(value -> { });
-        } else {
-            cookieManager.removeAllCookie();
-        }
+        cookieManager.removeAllCookies(value -> {
+        });
 
         recaptchaBinding.reCaptchaWebView.loadUrl(url);
     }

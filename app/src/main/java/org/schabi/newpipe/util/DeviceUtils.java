@@ -145,9 +145,7 @@ public final class DeviceUtils {
                     && pm.hasSystemFeature(PackageManager.FEATURE_ETHERNET));
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            isTv = isTv || pm.hasSystemFeature(PackageManager.FEATURE_LEANBACK);
-        }
+        isTv = isTv || pm.hasSystemFeature(PackageManager.FEATURE_LEANBACK);
 
         DeviceUtils.isTV = isTv;
         return DeviceUtils.isTV;
