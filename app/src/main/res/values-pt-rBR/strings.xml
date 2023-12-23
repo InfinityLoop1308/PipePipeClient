@@ -781,6 +781,5 @@
     <string name="auto_background_play_title">Modo Reprodutor de Música</string>
     <string name="auto_background_play_summary">Reproduzir automaticamente em segundo plano ao selecionar um item de uma playlist local</string>
     <string name="download_all">Transferir tudo</string>
-    <string name="download_all_message">Atualmente PipePipe não é capaz de transfêrir todos os vídeos à uma lista de reprodução no app. No entanto, é possível copiar todas as URLs para a área de transferência e transferi-las utilizando o yt-dip ou outras ferramentas.</string>
     <string name="bullet_comments_opacity_title">Opacidade de comentários com bullet</string>
 </resources>

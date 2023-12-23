@@ -30,12 +30,14 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subscribers.DisposableSubscriber;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.schabi.newpipe.NewPipeDatabase;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.LocalItem;
 import org.schabi.newpipe.database.history.model.StreamHistoryEntry;
+import org.schabi.newpipe.database.playlist.PlaylistLocalItem;
 import org.schabi.newpipe.database.playlist.PlaylistStreamEntry;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.database.stream.model.StreamStateEntity;
@@ -56,6 +58,7 @@ import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
 import org.schabi.newpipe.util.*;
+import us.shandian.giga.get.DirectDownloader;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -63,6 +66,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.util.SparseItemUtil.fetchStreamInfoAndSaveToDatabase;
+import static org.schabi.newpipe.util.SparseItemUtil.fetchStreamInfoAndSaveToDatabaseWithoutToast;
 import static org.schabi.newpipe.util.ThemeHelper.shouldUseGridLayout;
 
 public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistStreamEntry>, Void> implements BackPressable {
@@ -96,6 +100,9 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
     /* Is the playlist currently being processed to remove duplicate streams */
     private boolean isRemovingDuplicateStreams = false;
     private boolean autoBackgroundPlaying = false;
+
+    private Disposable videoDownloadDisposable;
+    private Disposable audioDownloadDisposable;
     private EditText editText;
     private View searchClear;
     private TextWatcher textWatcher = new TextWatcher() {
@@ -435,21 +442,45 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
             builder.setMessage(R.string.download_all_message)
                     .setTitle(R.string.download_all);
-            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    StringBuilder sb = new StringBuilder();
-                    for(LocalItem entry : itemListAdapter.getItemsList()) {
-                        StreamEntity streamEntity = ((PlaylistStreamEntry) entry).getStreamEntity();
-                        sb.append(streamEntity.getUrl()).append("\n");
+            // create aa lambda
+
+            builder.setPositiveButton(R.string.video, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            videoDownloadDisposable = playlistManager.getPlaylistStreams(playlistId)
+                                    .observeOn(Schedulers.io())
+                                    .subscribe(streams -> {
+                                        videoDownloadDisposable.dispose();
+                                        for (PlaylistStreamEntry playlistStreamEntry : streams) {
+                                            StreamInfoItem infoItem = playlistStreamEntry.toStreamInfoItem();
+                                            fetchStreamInfoAndSaveToDatabaseWithoutToast(requireContext(), infoItem.getServiceId(),
+                                                    infoItem.getUrl(), info -> {
+                                                        if (info != null) {
+                                                            new DirectDownloader(requireContext(), info, DirectDownloader.DownloadType.VIDEO);
+                                                        }
+                                                    });
+                                        }
+                                    }, throwable -> {
+                                    });
+                        }
                     }
-                    ClipboardManager clipboard = (ClipboardManager) requireContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText(name, sb.toString());
-                    clipboard.setPrimaryClip(clip);
-                }
-            });
-            builder.setNegativeButton(R.string.dismiss, new DialogInterface.OnClickListener() {
+            );
+            builder.setNegativeButton(R.string.audio, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    // User cancelled the dialog
+                    audioDownloadDisposable = playlistManager.getPlaylistStreams(playlistId)
+                            .observeOn(Schedulers.io())
+                            .subscribe(streams -> {
+                                audioDownloadDisposable.dispose();
+                                for (PlaylistStreamEntry playlistStreamEntry : streams) {
+                                    StreamInfoItem infoItem = playlistStreamEntry.toStreamInfoItem();
+                                    fetchStreamInfoAndSaveToDatabaseWithoutToast(requireContext(), infoItem.getServiceId(),
+                                            infoItem.getUrl(), info -> {
+                                                if (info != null) {
+                                                    new DirectDownloader(requireContext(), info, DirectDownloader.DownloadType.AUDIO);
+                                                }
+                                            });
+                                }
+                            }, throwable -> {
+                            });
                 }
             });
             AlertDialog dialog = builder.create();

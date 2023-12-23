@@ -196,7 +196,10 @@ public abstract class Postprocessing implements Serializable {
                     tempFile.delete();
                     tempFile = null;
                 }
-                removeTempFileOfDownloadedVideo(target.storage);
+                if(target.psAlgorithm.name == BILIBILI_MUXER){
+                    removeTempFileOfDownloadedVideo(target.storage);
+                }
+
             }
         } else {
             result = test() ? process(target.storage.source, target.context, null) : OK_RESULT;

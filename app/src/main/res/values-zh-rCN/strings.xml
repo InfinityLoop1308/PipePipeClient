@@ -802,7 +802,6 @@
     <string name="auto_background_play_title">音乐播放器模式</string>
     <string name="auto_background_play_summary">当点击本地播放列表中的项目时，自动在后台播放</string>
     <string name="download_all">下载全部</string>
-    <string name="download_all_message">目前 PipePipe 无法在应用内下载播放列表中的所有视频。但是，您可以将所有 URL 复制到剪贴板中，并使用 yt-dlp 或其他工具进行下载。</string>
     <string name="bullet_comments_opacity_title">弹幕不透明度</string>
     <string name="override_cookies_summary">用手动输入的 cookies 替代保存的凭据</string>
     <string name="override_cookies_title">覆盖 cookies</string>

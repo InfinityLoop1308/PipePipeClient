@@ -5,6 +5,7 @@ import static org.schabi.newpipe.extractor.stream.StreamType.LIVE_STREAM;
 import static org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -103,7 +104,9 @@ public final class SparseItemUtil {
                                                         final int serviceId,
                                                         @NonNull final String url,
                                                         final Consumer<StreamInfo> callback) {
+
         Toast.makeText(context, R.string.loading_stream_details, Toast.LENGTH_SHORT).show();
+
         ExtractorHelper.getStreamInfo(serviceId, url, false)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -111,6 +114,37 @@ public final class SparseItemUtil {
                     // save to database in the background (not on main thread)
                     Completable.fromAction(() -> NewPipeDatabase.getInstance(context)
                             .streamDAO().upsert(new StreamEntity(result)))
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(Schedulers.io())
+                            .doOnError(throwable ->
+                                    ErrorUtil.createNotification(context,
+                                            new ErrorInfo(throwable, UserAction.REQUESTED_STREAM,
+                                                    "Saving stream info to database", result)))
+                            .subscribe();
+
+                    // call callback on main thread with the obtained result
+                    callback.accept(result);
+                }, throwable -> ErrorUtil.createNotification(context,
+                        new ErrorInfo(throwable, UserAction.REQUESTED_STREAM,
+                                "Loading stream info: " + url, serviceId)
+                ));
+    }
+
+    public static void fetchStreamInfoAndSaveToDatabaseWithoutToast(@NonNull final Context context,
+                                                        final int serviceId,
+                                                        @NonNull final String url,
+                                                        final Consumer<StreamInfo> callback) {
+
+        ExtractorHelper.getStreamInfoWithoutException(serviceId, url, false)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(result -> {
+                    if(result.getServiceId() == -1) {
+                        return;
+                    }
+                    // save to database in the background (not on main thread)
+                    Completable.fromAction(() -> NewPipeDatabase.getInstance(context)
+                                    .streamDAO().upsert(new StreamEntity(result)))
                             .subscribeOn(Schedulers.io())
                             .observeOn(Schedulers.io())
                             .doOnError(throwable ->

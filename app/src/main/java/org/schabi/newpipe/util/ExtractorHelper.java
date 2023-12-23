@@ -131,6 +131,20 @@ public final class ExtractorHelper {
                 Single.fromCallable(() -> StreamInfo.getInfo(NewPipe.getService(serviceId), url)));
     }
 
+    public static Single<StreamInfo> getStreamInfoWithoutException(final int serviceId, final String url,
+                                                   final boolean forceLoad) {
+        checkServiceId(serviceId);
+        return checkCache(forceLoad, serviceId, url, InfoItem.InfoType.STREAM,
+                Single.fromCallable(() -> {
+                    try{
+                        return StreamInfo.getInfo(NewPipe.getService(serviceId), url);
+                    } catch (Exception e){
+                        // return something to avoid crash
+                        return new StreamInfo();
+                    }
+                }));
+    }
+
     public static Single<ChannelInfo> getChannelInfo(final int serviceId, final String url,
                                                      final boolean forceLoad) {
         checkServiceId(serviceId);
