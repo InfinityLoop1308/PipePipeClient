@@ -493,15 +493,16 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             itemListAdapter.sortMode = SortMode.ORIGIN_REVERSE;
             itemListAdapter.sort(SortMode.ORIGIN_REVERSE);
             PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_sort_mode_key), SortMode.ORIGIN_REVERSE.name()).apply();
-        } else if (item.getItemId() == R.id.menu_item_sort_name) {
-            itemListAdapter.sortMode = SortMode.SORT_NAME;
-            itemListAdapter.sort(SortMode.SORT_NAME);
-            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_sort_mode_key), SortMode.SORT_NAME.name()).apply();
-        } else if (item.getItemId() == R.id.menu_item_sort_name_reverse) {
-            itemListAdapter.sortMode = SortMode.SORT_NAME_REVERSE;
-            itemListAdapter.sort(SortMode.SORT_NAME_REVERSE);
-            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_sort_mode_key), SortMode.SORT_NAME_REVERSE.name()).apply();
         }
+//        else if (item.getItemId() == R.id.menu_item_sort_name) {
+//            itemListAdapter.sortMode = SortMode.SORT_NAME;
+//            itemListAdapter.sort(SortMode.SORT_NAME);
+//            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_sort_mode_key), SortMode.SORT_NAME.name()).apply();
+//        } else if (item.getItemId() == R.id.menu_item_sort_name_reverse) {
+//            itemListAdapter.sortMode = SortMode.SORT_NAME_REVERSE;
+//            itemListAdapter.sort(SortMode.SORT_NAME_REVERSE);
+//            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_sort_mode_key), SortMode.SORT_NAME_REVERSE.name()).apply();
+//        }
         return true;
     }
 
