@@ -3,6 +3,10 @@ package org.schabi.newpipe.util;
 import org.schabi.newpipe.database.playlist.PlaylistStreamEntry;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 
+import java.text.Collator;
+import java.text.RuleBasedCollator;
+import java.util.Locale;
+
 public class utils {
     public static boolean DetimestampedEqual(String a, String b){
         return Detimestamp(a).equals(Detimestamp(b));
@@ -51,5 +55,15 @@ public class utils {
                 return result;
         }
         throw new RuntimeException("Failed to get index in queue");
+    }
+    public static int compareJapaneseStrings(String str1, String str2) {
+        Collator collator = Collator.getInstance(Locale.JAPANESE);
+        collator.setDecomposition(Collator.CANONICAL_DECOMPOSITION);
+        collator.setStrength(Collator.IDENTICAL);
+        return collator.compare(str1, str2);
+    }
+    public static int compareChineseStrings(String str1, String str2) {
+        Collator collator = Collator.getInstance(Locale.CHINESE);
+        return collator.compare(str1, str2);
     }
 }

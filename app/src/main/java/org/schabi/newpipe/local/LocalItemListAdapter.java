@@ -410,7 +410,7 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
             case SORT_NAME:
                 Collections.sort(localItems, (o1, o2) -> {
                     if (o1 instanceof PlaylistStreamEntry && o2 instanceof PlaylistStreamEntry) {
-                        return ((PlaylistStreamEntry) o1).getStreamEntity().getTitle().compareTo(((PlaylistStreamEntry) o2).getStreamEntity().getTitle());
+                        return utils.compareChineseStrings(((PlaylistStreamEntry) o1).getStreamEntity().getTitle(), ((PlaylistStreamEntry) o2).getStreamEntity().getTitle());
                     } else {
                         return 0;
                     }
@@ -419,7 +419,7 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
             case SORT_NAME_REVERSE:
                 Collections.sort(localItems, (o1, o2) -> {
                     if (o1 instanceof PlaylistStreamEntry && o2 instanceof PlaylistStreamEntry) {
-                        return ((PlaylistStreamEntry) o2).getStreamEntity().getTitle().compareTo(((PlaylistStreamEntry) o1).getStreamEntity().getTitle());
+                        return utils.compareChineseStrings(((PlaylistStreamEntry) o2).getStreamEntity().getTitle(), ((PlaylistStreamEntry) o1).getStreamEntity().getTitle());
                     } else {
                         return 0;
                     }
