@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
         final App app = App.getApp();
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
 
-        if (prefs.getBoolean(app.getString(R.string.update_app_key), true)) {
+        if (prefs.getBoolean(app.getString(R.string.update_app_key), false)) {
             // Start the worker which is checking all conditions
             // and eventually searching for a new version.
             NewVersionWorker.enqueueNewVersionCheckingWork(app, false);
@@ -213,6 +213,23 @@ public class MainActivity extends AppCompatActivity {
 
             // Update the stored version code
             prefs.edit().putInt("version_code", currentVersionCode).apply();
+        }
+
+        int isFirstRun = prefs.getInt("isFirstRun", 0);
+        // if is First run and update checker is not enabled, show a dialog to ask if user want to enable update checker
+        if (isFirstRun == 0 && !prefs.getBoolean(app.getString(R.string.update_app_key), false)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.dialog_title_enable_update_checker);
+            builder.setMessage(R.string.dialog_message_enable_update_checker);
+            builder.setPositiveButton(R.string.ok, (dialog, which) -> {
+                prefs.edit().putBoolean(app.getString(R.string.update_app_key), true).apply();
+                // Start the worker which is checking all conditions
+                // and eventually searching for a new version.
+                NewVersionWorker.enqueueNewVersionCheckingWork(app, false);
+            });
+            builder.setNegativeButton(R.string.cancel, null);
+            builder.show();
+            prefs.edit().putInt("isFirstRun", 1).apply();
         }
     }
 

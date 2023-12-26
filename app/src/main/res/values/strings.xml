@@ -918,5 +918,6 @@
     <string name="sort_name_reverse">Sort by name (reverse)</string>
     <string name="sort_origin">Origin</string>
     <string name="sort_origin_reverse">Origin (reverse)</string>
-
+    <string name="dialog_title_enable_update_checker">Enable update checker</string>
+    <string name="dialog_message_enable_update_checker">Do you want to enable update checker? You can disable it in settings.</string>
 </resources>
