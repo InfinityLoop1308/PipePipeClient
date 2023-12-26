@@ -1,9 +1,14 @@
 package org.schabi.newpipe.fragments.detail;
 
+import static android.text.TextUtils.isEmpty;
+import static org.schabi.newpipe.extractor.stream.StreamExtractor.NO_AGE_LIMIT;
+import static org.schabi.newpipe.extractor.utils.Utils.isBlank;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -11,6 +16,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.widget.TooltipCompat;
 import androidx.core.text.HtmlCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
 
@@ -19,23 +26,25 @@ import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.FragmentDescriptionBinding;
 import org.schabi.newpipe.databinding.ItemMetadataBinding;
 import org.schabi.newpipe.databinding.ItemMetadataTagsBinding;
+import org.schabi.newpipe.extractor.channel.ChannelInfoItem;
+import org.schabi.newpipe.extractor.channel.StaffInfoItem;
 import org.schabi.newpipe.extractor.stream.Description;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
+import org.schabi.newpipe.info_list.InfoListAdapter;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
+import org.schabi.newpipe.util.OnClickGesture;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.util.external_communication.TextLinkifier;
+import org.schabi.newpipe.views.NewPipeRecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import icepick.State;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
-
-import static android.text.TextUtils.isEmpty;
-import static org.schabi.newpipe.extractor.stream.StreamExtractor.NO_AGE_LIMIT;
-import static org.schabi.newpipe.extractor.utils.Utils.isBlank;
 
 public class DescriptionFragment extends BaseFragment {
 
@@ -59,6 +68,7 @@ public class DescriptionFragment extends BaseFragment {
         if (streamInfo != null) {
             setupUploadDate();
             setupDescription();
+            setupStaffs();
             setupMetadata(inflater, binding.detailMetadataLayout);
         }
         return binding.getRoot();
@@ -138,13 +148,58 @@ public class DescriptionFragment extends BaseFragment {
                 TextLinkifier.createLinksFromMarkdownText(binding.detailDescriptionView,
                         description.getContent(), streamInfo, descriptionDisposables);
                 break;
-            case Description.PLAIN_TEXT: default:
+            case Description.PLAIN_TEXT:
+            default:
                 TextLinkifier.createLinksFromPlainText(binding.detailDescriptionView,
                         description.getContent(), streamInfo, descriptionDisposables);
                 break;
         }
     }
 
+
+    private RecyclerView.LayoutManager layoutManager;
+    private InfoListAdapter staffListAdapter;
+
+    private void setupStaffs() {
+        layoutManager = new GridLayoutManager(requireContext(), 2);
+        staffListAdapter = new InfoListAdapter(activity);
+        staffListAdapter.setOnChannelSelectedListener(new OnClickGesture<>() {
+            @Override
+            public void selected(ChannelInfoItem selectedItem) {
+                NavigationHelper.openChannelFragment(getFM(),
+                        selectedItem.getServiceId(),
+                        selectedItem.getUrl(),
+                        selectedItem.getName());
+            }
+        });
+
+        binding.detailStaffListRecyclerView.setLayoutManager(layoutManager);
+        binding.detailStaffListRecyclerView.setAdapter(staffListAdapter);
+
+
+        Collection<StaffInfoItem> staffs = streamInfo.getStaffs();
+        if (staffs.size() > 0) {
+            binding.detailStaffListRecyclerView.setVisibility(View.VISIBLE);
+            binding.detailStaffsBarHeaderView.setVisibility(View.VISIBLE);
+            binding.detailStaffsToggleButton.setVisibility(View.VISIBLE);
+            staffListAdapter.setInfoItemList(new ArrayList<>(staffs));
+        } else {
+            binding.detailStaffListRecyclerView.setVisibility(View.GONE);
+            binding.detailStaffsBarHeaderView.setVisibility(View.GONE);
+            binding.detailStaffsToggleButton.setVisibility(View.GONE);
+        }
+
+        binding.detailStaffsToggleButton.setOnClickListener(v -> {
+            NewPipeRecyclerView recyclerView = binding.detailStaffListRecyclerView;
+            recyclerView.setVisibility(recyclerView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+
+            ImageView toggleButton = binding.detailStaffsToggleButton;
+            toggleButton.setImageResource(
+                    recyclerView.getVisibility() == View.VISIBLE ? R.drawable.ic_arrow_drop_up : R.drawable.ic_arrow_drop_down
+            );
+        });
+
+    }
 
     private void setupMetadata(final LayoutInflater inflater,
                                final LinearLayout layout) {
@@ -252,7 +307,8 @@ public class DescriptionFragment extends BaseFragment {
                 case INTERNAL:
                     contentRes = R.string.metadata_privacy_internal;
                     break;
-                case OTHER: default:
+                case OTHER:
+                default:
                     contentRes = 0;
                     break;
             }

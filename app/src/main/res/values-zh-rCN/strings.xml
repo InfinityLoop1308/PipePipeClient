@@ -830,4 +830,5 @@
     <string name="sort_ascending">升序</string>
     <string name="auto_queue_partition_summary">总是尝试将下一段加入队列</string>
     <string name="auto_queue_partition_title">自动将下一个段加入队列</string>
+    <string name="title_staff_list">合作者列表</string>
 </resources>
