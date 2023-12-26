@@ -735,6 +735,11 @@
     <string name="metadata_support">支持</string>
     <string name="metadata_host">主持</string>
     <string name="metadata_thumbnail_url">缩略图 URL</string>
+    <string name="metadata_thumbnails">缩略图</string>
+    <string name="metadata_subchannel_avatars">子频道头像</string>
+    <string name="metadata_uploader_avatars">上传者头像</string>
+    <string name="metadata_avatars">头像</string>
+    <string name="metadata_banners">横幅</string>
     <string name="metadata_privacy_public">公开</string>
     <string name="metadata_privacy_unlisted">非公开</string>
     <string name="metadata_privacy_private">私人</string>
@@ -776,6 +781,12 @@
     <string name="channel_tab_info">信息</string>
     <string name="show_channel_tabs">频道选项卡</string>
     <string name="show_channel_tabs_summary">频道页面显示选项卡</string>
+    <string name="image_quality_title">图片质量</string>
+    <string name="image_quality_summary">选择图片质量以及是否根本不加载图片来降低数据和内存使用。更改选项会清除内存中和磁盘上的图片缓存 - %s</string>
+    <string name="image_quality_none">不加载图片</string>
+    <string name="image_quality_low">低质量</string>
+    <string name="image_quality_medium">中等质量</string>
+    <string name="image_quality_high">高质量</string>
     <string name="regular_bullet_comments_duration_key">regular_bullet_comments_duration_key</string>
     <string name="regular_bullet_comments_duration_summary">更改常规/滚动弹幕持续时间。较短持续时间可能导致卡顿。</string>
     <string name="regular_bullet_comments_duration_title">常规弹幕持续时间</string>

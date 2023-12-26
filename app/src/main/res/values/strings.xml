@@ -799,6 +799,11 @@
     <string name="metadata_support">Support</string>
     <string name="metadata_host">Host</string>
     <string name="metadata_thumbnail_url">Thumbnail URL</string>
+    <string name="metadata_thumbnails">Thumbnails</string>
+    <string name="metadata_uploader_avatars">Uploader avatars</string>
+    <string name="metadata_subchannel_avatars">Sub-channel avatars</string>
+    <string name="metadata_avatars">Avatars</string>
+    <string name="metadata_banners">Banners</string>
     <string name="metadata_privacy_public">Public</string>
     <string name="metadata_privacy_unlisted">Unlisted</string>
     <string name="metadata_privacy_private">Private</string>
@@ -840,6 +845,13 @@
     <string name="channel_tab_info">Info</string>
     <string name="show_channel_tabs">Channel tabs</string>
     <string name="show_channel_tabs_summary">What tabs are shown on the channel pages</string>
+    <string name="image_quality_title">Image quality</string>
+    <string name="image_quality_summary">Choose the quality of images and whether to load images at all, to reduce data and memory usage. Changes clear both in-memory and on-disk image cache — %s</string>
+    <string name="image_quality_none">Do not load images</string>
+    <string name="image_quality_low">Low quality</string>
+    <string name="image_quality_medium">Medium quality</string>
+    <string name="image_quality_high">High quality</string>
+    <string name="question_mark">\?</string>
     <string name="regular_bullet_comments_duration_key">regular_bullet_comments_duration_key</string>
     <string name="regular_bullet_comments_duration_summary">Change the duration of regular/rolling bullet comments. A shorter duration may cause
         stutter/choppy/lag.

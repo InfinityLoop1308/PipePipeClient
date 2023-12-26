@@ -597,6 +597,11 @@
     <string name="show_channel_details">顯示頻道詳細資訊</string>
     <string name="disable_media_tunneling_summary">如果您遇到黑畫面或影片播放停頓的現象，請停用媒體隧道</string>
     <string name="disable_media_tunneling_title">停用媒體隧道</string>
+    <string name="metadata_thumbnails">影片縮圖</string>
+    <string name="metadata_uploader_avatars">上傳者大頭照</string>
+    <string name="metadata_subchannel_avatars">子頻道大頭照</string>
+    <string name="metadata_avatars">大頭照</string>
+    <string name="metadata_banners">橫幅</string>
     <string name="metadata_privacy_internal">內部</string>
     <string name="metadata_privacy_private">私人</string>
     <string name="metadata_privacy_unlisted">未列出</string>
@@ -680,6 +685,12 @@
     <string name="you_successfully_subscribed">您已訂閱此頻道</string>
     <string name="enumeration_comma">,</string>
     <string name="toggle_all">切換全部</string>
+    <string name="image_quality_title">畫質</string>
+    <string name="image_quality_summary">選擇影像品質以及是否載入影像，以減少資料與記憶體使用。變更會清除記憶體中與磁碟上的影像快取 — %s</string>
+    <string name="image_quality_none">不要載入圖片</string>
+    <string name="image_quality_low">低品質</string>
+    <string name="image_quality_medium">中等品質</string>
+    <string name="image_quality_high">高品質</string>
     <string name="enable_streams_notifications_title">新串流通知</string>
     <string name="settings_category_player_notification_summary">設定目前播放串流通知</string>
     <string name="streams_notifications_network_title">需要網路連線</string>
