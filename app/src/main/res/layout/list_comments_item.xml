@@ -93,8 +93,8 @@
         android:layout_toRightOf="@+id/detail_thumbs_up_count_view"
         android:contentDescription="@string/detail_heart_img_view_description"
         android:visibility="gone"
-        tools:visibility="visible"
-        app:srcCompat="@drawable/ic_heart" />
+        app:srcCompat="@drawable/ic_heart"
+        tools:visibility="visible" />
 
 
     <!--we can uncomment below code if we need dislike button and count in future-->
@@ -137,11 +137,32 @@
         tools:text="1 year ago" />
 
     <Button
-        android:id="@+id/itemContentReplyButton"
+        android:id="@+id/itemContentPictureButton"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/detail_thumbs_up_img_view"
+        android:layout_marginTop="4dp"
+        android:layout_toEndOf="@+id/itemThumbnailView"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="start|center_vertical"
+        android:layout="@id/detail_heart_image_view"
+        android:minHeight="0dp"
+        android:paddingHorizontal="4dp"
+        android:paddingVertical="6dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/show_replies_button_text_color"
+        android:textSize="@dimen/file_picker_items_text_size"
+        android:visibility="gone"
+        tools:text="View pictures (2)"
+        tools:visibility="visible" />
+
+    <Button
+        android:id="@+id/itemContentReplyButton"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/itemContentPictureButton"
         android:layout_marginTop="4dp"
         android:layout_toEndOf="@+id/itemThumbnailView"
         android:background="?attr/selectableItemBackground"

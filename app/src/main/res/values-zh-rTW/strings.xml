@@ -707,4 +707,7 @@
     </plurals>
     <string name="any_network">任意網路</string>
     <string name="title_staff_list">合作者列表</string>
+    <string name="button_view_pictures">檢視圖片 (%d)</string>
+    <string name="next">下一個</string>
+    <string name="previous">上一個</string>
 </resources>

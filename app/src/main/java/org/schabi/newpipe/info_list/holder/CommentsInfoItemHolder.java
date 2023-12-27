@@ -2,14 +2,21 @@ package org.schabi.newpipe.info_list.holder;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentActivity;
+
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.extractor.Image;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
 import org.schabi.newpipe.info_list.InfoItemBuilder;
+import org.schabi.newpipe.info_list.dialog.PictureDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
+
+import java.util.Collection;
 
 /*
  * Created by Christian Schabesberger on 12.02.17.
@@ -35,6 +42,7 @@ public class CommentsInfoItemHolder extends CommentsMiniInfoItemHolder {
     public final TextView itemTitleView;
     private final ImageView itemHeartView;
     private final ImageView itemPinnedView;
+    private final Button itemViewImageView;
 
     public CommentsInfoItemHolder(final InfoItemBuilder infoItemBuilder, final ViewGroup parent) {
         super(infoItemBuilder, R.layout.list_comments_item, parent);
@@ -42,6 +50,7 @@ public class CommentsInfoItemHolder extends CommentsMiniInfoItemHolder {
         itemTitleView = itemView.findViewById(R.id.itemTitleView);
         itemHeartView = itemView.findViewById(R.id.detail_heart_image_view);
         itemPinnedView = itemView.findViewById(R.id.detail_pinned_view);
+        itemViewImageView = itemView.findViewById(R.id.itemContentPictureButton);
     }
 
     @Override
@@ -59,5 +68,26 @@ public class CommentsInfoItemHolder extends CommentsMiniInfoItemHolder {
         itemHeartView.setVisibility(item.isHeartedByUploader() ? View.VISIBLE : View.GONE);
 
         itemPinnedView.setVisibility(item.isPinned() ? View.VISIBLE : View.GONE);
+
+        Collection<Image> pictures = item.getPictures();
+        if (!pictures.isEmpty()) {
+            itemViewImageView.setVisibility(View.VISIBLE);
+            itemViewImageView.setText(
+                    itemViewImageView.getContext().getString(R.string.button_view_pictures, pictures.size())
+            );
+            itemViewImageView.setOnClickListener(v -> {
+                PictureDialog pictureDialog = PictureDialog.from(pictures);
+
+                if (itemBuilder != null && itemBuilder.getContext() instanceof FragmentActivity) {
+                    pictureDialog.show(
+                            ((FragmentActivity) itemBuilder.getContext()).getSupportFragmentManager(),
+                            "PICTURE_DIALOG"
+                    );
+                }
+
+            });
+        } else {
+            itemViewImageView.setVisibility(View.GONE);
+        }
     }
 }
