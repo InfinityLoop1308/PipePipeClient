@@ -36,12 +36,10 @@ import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.OnClickGesture;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.util.external_communication.TextLinkifier;
+import org.schabi.newpipe.util.service_display.LocalizationService;
 import org.schabi.newpipe.views.NewPipeRecyclerView;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import icepick.State;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -203,11 +201,23 @@ public class DescriptionFragment extends BaseFragment {
 
     private void setupMetadata(final LayoutInflater inflater,
                                final LinearLayout layout) {
-        addMetadataItem(inflater, layout, false,
-                R.string.metadata_category, streamInfo.getCategory());
+        Map<String, String> stats = streamInfo.getStats();
+        if (!stats.isEmpty()) {
+            LocalizationService localizationService = LocalizationService.of(streamInfo.getServiceId());
+            if (localizationService != null) {
+                Map<Integer, String> localized = localizationService.processStats(stats);
+                for (Map.Entry<Integer, String> entry : localized.entrySet()) {
+                    Integer key = entry.getKey();
+                    String value = entry.getValue();
+                    addMetadataItem(inflater, layout, true, key, value);
+                }
+            }
+        }
+        addMetadataItem(inflater, layout, false, R.string.metadata_category,
+                streamInfo.getCategory());
 
-        addMetadataItem(inflater, layout, false,
-                R.string.metadata_licence, streamInfo.getLicence());
+        addMetadataItem(inflater, layout, false, R.string.metadata_licence,
+                streamInfo.getLicence());
 
         addPrivacyMetadataItem(inflater, layout);
 
@@ -319,4 +329,5 @@ public class DescriptionFragment extends BaseFragment {
             }
         }
     }
+
 }

@@ -707,6 +707,18 @@
     </plurals>
     <string name="any_network">任意網路</string>
     <string name="title_staff_list">合作者列表</string>
+    <string name="av_num">稿件av號</string>
+    <string name="stat_view">播放數</string>
+    <string name="stat_danmaku">彈幕數</string>
+    <string name="stat_reply">評論數</string>
+    <string name="stat_favorite">收藏數</string>
+    <string name="stat_coin">投幣數</string>
+    <string name="stat_share">分享數</string>
+    <string name="stat_now_rank">當前排名</string>
+    <string name="stat_his_rank">歷史最高排行</string>
+    <string name="stat_like">獲贊數</string>
+    <string name="stat_dislike">點踩數</string>
+    <string name="stat_evaluation">影片評分</string>
     <string name="button_view_pictures">檢視圖片 (%d)</string>
     <string name="next">下一個</string>
     <string name="previous">上一個</string>
