@@ -945,7 +945,7 @@
     <string name="stat_like">Like</string>
     <string name="stat_dislike">Dislike</string>
     <string name="stat_evaluation">Evaluation</string>
-    <string name="button_view_pictures">View Pictures (%d)</string>
+    <string name="button_view_pictures">View Images (%d)</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 </resources>
