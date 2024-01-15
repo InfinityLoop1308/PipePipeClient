@@ -99,7 +99,7 @@ public class MovieBulletCommentsPlayer {
         if(extractor.isDisabled()){
             return ;
         }
-        if(extractor!= null && extractor.isLive()){
+        if(extractor!= null && extractor.isLive()){ // have to put all messages we get to the pool as they only appear once
             try {
                 nextCommentsInfoItems = extractor.getLiveMessages()
                         .stream().toArray(BulletCommentsInfoItem[]::new);
@@ -109,7 +109,7 @@ public class MovieBulletCommentsPlayer {
             } catch (ParsingException e) {
                 throw new RuntimeException(e);
             }
-        }else {
+        }else {  // we can filter the messages because we have the full list
             if(drawUntilPosition.toString().equals("PT0.049S")){
                 return;
             }

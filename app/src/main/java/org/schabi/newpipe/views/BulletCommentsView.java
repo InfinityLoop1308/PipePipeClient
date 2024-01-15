@@ -174,12 +174,12 @@ public final class BulletCommentsView extends ConstraintLayout {
             setLayout();
             layoutSet = true;
         }
-        if(bulletCommentsInfoItemPool.size() > 0
-                && !(drawUntilPosition.compareTo(Duration.ofSeconds(Long.MAX_VALUE)) == 0)
-                && bulletCommentsInfoItemPool.peek().getDuration().toMillis() - drawUntilPosition.toMillis() > 30000){
-            // should only apply when the stream is a YouTube live replay
-            bulletCommentsInfoItemPool.clear();
-        }
+//        if(bulletCommentsInfoItemPool.size() > 0
+//                && !(drawUntilPosition.compareTo(Duration.ofSeconds(Long.MAX_VALUE)) == 0)
+//                && bulletCommentsInfoItemPool.peek().getDuration().toMillis() - drawUntilPosition.toMillis() > 30000){
+//            // should only apply when the stream is a YouTube live replay
+//            bulletCommentsInfoItemPool.clear();
+//        }
         bulletCommentsInfoItemPool.addAll(Arrays.asList(items));
         //Log.v(TAG, "New comments count: " + items.length);
         final Context context = binding.bulletCommentsContainer.getContext();
