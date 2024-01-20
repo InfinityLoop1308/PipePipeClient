@@ -892,4 +892,6 @@
     <string name="buy_me_coffee">コーヒーをおごってください</string>
     <string name="app_description_new">YouTube、NicoNico、BiliBili を自由に閲覧できる FLOSS Android アプリ</string>
     <string name="error_priority_notice">優先度：GitHub/CodeBerg の問題 > 件名が明確で丁寧な内容とバグレポートのあるメール > バグレポートのみのメール。\nバグレポートのみのメールには返信がありません。</string>
+
+    <string name="update_log">### 新機能：\n\n        - プレイリスト全体のダウンロードをサポート（ベータ版、50個未満のプレイリストのみ対応）\n        - コメント内の画像表示をサポート\n        - ローカルプレイリストのフィルタリング時にフィルタリングされたアイテムへのナビゲーションをサポート\n        - ローカルプレイリストのソートをサポート\n        - SponsorBlock（YouTube）のサポート [GitHub #38, CodeBerg #39]\n        - ダウンロード前にストリームサイズを取得する機能をサポート（BiliBili）\n        - 動画の同時ダウンロードをサポート（BiliBili）\n        - 協力動画のスタッフリストの表示をサポート（BiliBili）\n        - より多くのストリーム統計情報の表示をサポート（BiliBili）\n\n        ### バグ修正：\n\n        - 特定の状況下でフィードを取得できない問題 [CodeBerg #113]\n        - YouTube以外のサービスで解像度設定が機能しない問題 [GitHub #88, #125, #158, #189, CodeBerg #19, #50]\n        - Samsung OneUI Android 14でアプリが動作しない問題 [CodeBerg #110, #118, GitHub #176, #178]\n        - 弾幕コメントが期待通りに機能しない問題（YouTube） [GitHub #118, #111]\n        - プレイリストが再生中でもパーティションがキューに入れられる問題（BiliBili）\n\n        ### その他：\n\n        - 一部の説明を更新\n        - 簡体字中国語、繁体字中国語、日本語の翻訳を提供</string>
 </resources>

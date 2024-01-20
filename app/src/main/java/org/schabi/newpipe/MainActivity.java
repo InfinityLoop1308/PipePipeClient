@@ -83,6 +83,7 @@ import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.StateSaver;
 import org.schabi.newpipe.util.TLSSocketFactoryCompat;
 import org.schabi.newpipe.util.ThemeHelper;
+import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.views.FocusOverlayView;
 
 import java.security.SecureRandom;
@@ -195,19 +196,11 @@ public class MainActivity extends AppCompatActivity {
             // Show the "What's New" dialog
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.fragment_feed_title);
-            String message =
-                            "### Bug Fixes:\n" +
-                                    "\n" +
-                                    "- Origin audio track is not selected for videos with multi audio tracks (YouTube) [GitHub #143, CodeBerg #79, #102]\n" +
-                                    "- Update request method to avoid risk control (BiliBili) [CodeBerg #97]";
-            builder.setMessage(message);
+            builder.setMessage(getString(R.string.update_log));
             builder.setPositiveButton(R.string.ok, null);
             // another button to copy to clipboard
-            builder.setNeutralButton(R.string.copy, (dialog, which) -> {
-                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("What's new", message);
-                clipboard.setPrimaryClip(clip);
-                Toast.makeText(this, R.string.msg_copied, Toast.LENGTH_SHORT).show();
+            builder.setNeutralButton(R.string.donation_title, (dialog, which) -> {
+                ShareUtils.openUrlInBrowser(this, getString(R.string.donation_url));
             });
             builder.show();
 

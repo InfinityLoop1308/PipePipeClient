@@ -904,4 +904,6 @@
     <string name="buy_me_coffee">请我喝一杯咖啡</string>
     <string name="donation_encouragement_new">我已尽最大努力为您提供最佳的用户体验，但您有机会通过捐赠使 PipePipe 变得更好。有了足够的捐款，我可以投入更多时间来开发这个项目。</string>
     <string name="error_priority_notice">优先级：GitHub/CodeBerg 上的问题 > 标题清晰、内容礼貌且包含错误报告的邮件 > 仅包含错误报告的邮件。\n仅包含错误报告的邮件将不会收到回复。</string>
+
+    <string name="update_log">### 新功能：\n\n        - 支持下载整个播放列表（测试版，仅适用于少于 50 个视频的播放列表）\n        - 支持在评论中显示图片\n        - 支持在本地播放列表筛选时导航到筛选项\n        - 支持对本地播放列表进行排序\n        - 支持 SponsorBlock（YouTube）[GitHub #38, CodeBerg #39]\n        - 支持在下载前获取流的大小（BiliBili）\n        - 支持同时下载多个视频（BiliBili）\n        - 支持显示合作视频的工作人员名单（BiliBili）\n        - 支持显示更多的流统计信息（BiliBili）\n\n        ### 问题修复：\n\n        - 在特定情况下无法获取订阅内容 [CodeBerg #113]\n        - 非 YouTube 服务上的分辨率设置无效 [GitHub #88, #125, #158, #189, CodeBerg #19, #50]\n        - 在三星 OneUI Android 14 上无法运行应用 [CodeBerg #110, #118, GitHub #176, #178]\n        - 弹幕评论在 YouTube 上无法正常工作 [GitHub #118, #111]\n        - 即使播放列表正在播放，分区仍然被加入队列（BiliBili）\n\n        ### 其他：\n\n        - 更新了一些描述\n        - 为中文简体、中文繁体和日文提供了翻译。</string>
 </resources>

@@ -949,4 +949,8 @@
     <string name="download_temp_warning">Playlist downloading is still in beta. NEVER use it to download playlists with 50+ items.</string>
     <string name="buy_me_coffee">Buy me a coffee</string>
     <string name="error_priority_notice">Priority: Issues on GitHub/CodeBerg > Emails with clear title, polite content and bug report > Bug report only emails. \nBug report only emails will not receive replies.</string>
+
+
+<!--    keep this the last item-->
+    <string name="update_log">### New Features:\n- Support downloading the whole playlist (beta, only for playlists with less than 50 items)\n- Support show images in comments\n- Support navigate to the filtered item when filtering local playlists\n- Support sorting local playlists\n- Support SponsorBlock (YouTube) [GitHub #38, CodeBerg #39]\n- Support fetching the stream size before download (BiliBili)\n- Support download video concurrently (BiliBili)\n- Support display Staff List for cooperation videos (BiliBili)\n- Support showing more stream statistics (BiliBili)\n\n### Bug Fixes:\n- Feeds can not be fetched under specific circumstances [CodeBerg #113]\n- Resolution settings not working on non-YouTube services [GitHub #88, #125, #158, #189, CodeBerg #19, #50]\n- App not working on Samsung OneUI Android 14 [CodeBerg #110, #118, GitHub #176, #178]\n- Bullet comments not work as expected (YouTube) [GitHub #118, #111]\n- Partitions are enqueued even if a playlist is playing (BiliBili)\n\n### Others:\n- Update some descriptions\n- Provide translations for zh-cn, zh-tw, and jp</string>
 </resources>
