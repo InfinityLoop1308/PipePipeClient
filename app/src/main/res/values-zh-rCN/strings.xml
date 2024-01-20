@@ -283,33 +283,13 @@
     <string name="drawer_header_description">切换服务，当前选中：</string>
     <!--Zero don't get selected (in some languages) as it is not a "special case" for android-->
     <string name="no_subscribers">无订阅者</string>
-    <plurals name="订阅者">
-        <item quantity="one">%s 位订阅者</item>
-        <item quantity="other">%s 位订阅者</item>
-    </plurals>
     <string name="subscribers_count_not_available">订阅者数量不可用</string>
     <string name="no_views">无观看</string>
-    <plurals name="观看">
-        <item quantity="one">%s 次观看</item>
-        <item quantity="other">%s 次观看</item>
-    </plurals>
     <string name="no_one_watching">无人正在观看</string>
-    <plurals name="正在观看">
-        <item quantity="one">%s 人正在观看</item>
-        <item quantity="other">%s 人正在观看</item>
-    </plurals>
     <string name="no_one_listening">无人正在收听</string>
-    <plurals name="正在收听">
-        <item quantity="one">%s 人正在收听</item>
-        <item quantity="other">%s 人正在收听</item>
-    </plurals>
     <string name="no_videos">无视频</string>
     <string name="more_than_100_videos">100+ 个视频</string>
     <string name="infinite_videos">∞ 个视频</string>
-    <plurals name="视频">
-        <item quantity="one">%s 个视频</item>
-        <item quantity="other">%s 个视频</item>
-    </plurals>
     <string name="no_comments">无评论</string>
     <string name="comments_are_disabled">评论已关闭</string>
     <plurals name="new_streams">
@@ -357,11 +337,10 @@
     <string name="copyright">© %1$s 作者 %2$s 使用 %3$s</string>
     <string name="tab_about">关于</string>
     <string name="tab_licenses">许可证</string>
-    <string name="app_description_new">BiliBili、NicoNico、YouTube等的替代安卓流媒体前端。</string>
+    <string name="app_description_new">一个自由浏览 YouTube、NicoNico 和 BiliBili 的 FLOSS Android 应用程序</string>
     <string name="contribution_title">贡献</string>
     <string name="contribution_encouragement">您是否有想法；翻译、更改设计、代码清理或繁重的代码更改——我们随时欢迎您提供帮助。做得越多越好！</string>
     <string name="view_on_codeberg">在 CodeBerg 上查看</string>
-    <string name="donation_title_new">捐赠（上游）</string>
     <string name="donation_encouragement">NewPipe 由志愿者利用空闲时间开发，为您带来最佳的用户体验。回馈帮助开发人员在享用一杯咖啡的同时让 NewPipe 变得更好。</string>
     <string name="give_back">回赠</string>
     <string name="website_title_new">网站（上游）</string>
@@ -635,23 +614,6 @@
         \n您确定\?这不能被撤消！</string>
     <string name="remove_watched_popup_yes_and_partially_watched_videos">是，部分观看的视频</string>
     <string name="new_seek_duration_toast">由于 ExoPlayer 限制，搜索持续时间设置为 %d 秒</string>
-    <!-- Time duration plurals -->
-    <plurals name="秒">
-        <item quantity="one">%d 秒</item>
-        <item quantity="other">%d 秒</item>
-    </plurals>
-    <plurals name="分">
-        <item quantity="one">%d 分</item>
-        <item quantity="other">%d 分</item>
-    </plurals>
-    <plurals name="时">
-        <item quantity="one">%d 时</item>
-        <item quantity="other">%d 时</item>
-    </plurals>
-    <plurals name="天">
-        <item quantity="one">%d 天</item>
-        <item quantity="other">%d 天</item>
-    </plurals>
     <!-- Feed -->
     <string name="fragment_feed_title">最近更新</string>
     <string name="feed_groups_header_title">频道组</string>
@@ -856,4 +818,89 @@
     <string name="button_view_pictures">查看图片 (%d)</string>
     <string name="next">下一个</string>
     <string name="previous">上一个</string>
+    <string name="no">不</string>
+    <string name="later">稍后</string>
+    <string name="settings_category_sponsor_block_title">SponsorBlock（测试版，第三方服务）</string>
+    <string name="settings_category_sponsor_block_categories_title">SponsorBlock类别</string>
+    <string name="settings_category_sponsor_block_categories_summary">自定义要跳过的视频片段以及它们在进度条上的颜色标记。</string>
+    <string name="settings_category_sponsor_block_categories_reset_colors_title">重置颜色</string>
+    <string name="settings_category_sponsor_block_category_enable_title">启用</string>
+    <string name="settings_category_sponsor_block_category_color">进度条颜色</string>
+    <string name="settings_category_sponsor_block_category_sponsor_title">赞助者</string>
+    <string name="settings_category_sponsor_block_category_sponsor_summary">付费推广、付费推荐和直接广告。不包括自我推广或免费宣传支持的事业/创作者/网站/产品。</string>
+    <string name="settings_category_sponsor_block_category_intro_title">中场休息/开场动画</string>
+    <string name="settings_category_sponsor_block_category_intro_summary">没有实际内容的间隔。可能是暂停、静态画面、重复动画。不应用于包含信息的过渡或音乐视频。</string>
+    <string name="settings_category_sponsor_block_category_outro_title">片尾/字幕</string>
+    <string name="settings_category_sponsor_block_category_outro_summary">字幕或YouTube片尾字幕出现时。不包括口头结论。不应包括有用的内容。不应用于音乐视频。</string>
+    <string name="settings_category_sponsor_block_category_interaction_title">互动提醒（订阅）</string>
+    <string name="settings_category_sponsor_block_category_interaction_summary">当内容中有短暂提醒点赞、订阅或关注他们时。如果提醒很长或涉及特定内容，应该属于自我推广类别。</string>
+    <string name="settings_category_sponsor_block_category_self_promo_title">非付费/自我推广</string>
+    <string name="settings_category_sponsor_block_category_self_promo_summary">类似于“赞助者”，但不包括付费或自我推广。这包括关于商品、捐赠或与谁合作的信息。</string>
+    <string name="settings_category_sponsor_block_category_non_music_title">音乐：非音乐部分</string>
+    <string name="settings_category_sponsor_block_category_non_music_summary">仅适用于音乐视频。包括音乐视频中的开场或片尾。</string>
+    <string name="settings_category_sponsor_block_category_preview_title">预览/回顾</string>
+    <string name="settings_category_sponsor_block_category_preview_summary">快速回顾以前的剧集，或者当前视频中即将发生的预告。适用于编辑的剪辑，不适用于口头总结。</string>
+    <string name="settings_category_sponsor_block_category_filler_title">填充/笑话</string>
+    <string name="settings_category_sponsor_block_category_filler_summary">这是为了填充或幽默而添加的与主要内容理解无关的旁支场景。</string>
+    <string name="invalid_color_toast">无效颜色</string>
+    <string name="donation_title">捐赠</string>
+    <string name="import_soundcloud_instructions">通过输入URL或您的ID导入SoundCloud个人资料：\n\n1. 在网页浏览器中启用“桌面模式”（该站点不支持移动设备）\n2. 转到此URL：%1$s\n3. 被要求时登录\n4. 复制您被重定向到的个人资料URL。</string>
+    <string name="sponsor_block">SponsorBlock</string>
+    <string name="sponsor_block_home_page_title">查看网站</string>
+    <string name="sponsor_block_home_page_summary">查看官方SponsorBlock网站。</string>
+    <string name="sponsor_block_enable_title">跳过赞助</string>
+    <string name="sponsor_block_enable_summary">使用SponsorBlock API自动跳过视频中的赞助。目前仅适用于YouTube视频。</string>
+    <string name="sponsor_block_api_url_title">API网址</string>
+    <string name="sponsor_block_api_url_summary">查询SponsorBlock API时使用的网址。必须设置此项才能使SponsorBlock生效。</string>
+    <string name="sponsor_block_notifications_title">跳过赞助时通知</string>
+    <string name="sponsor_block_notifications_summary">当自动跳过赞助时显示一个提示通知。</string>
+    <string name="sponsor_block_privacy_title">查看隐私政策</string>
+    <string name="sponsor_block_privacy_summary">查看SponsorBlock的隐私政策。</string>
+    <string name="sponsor_block_api_url_help_text">这是应用程序在需要知道视频哪些部分需要跳过时将查询的网址。\n\n您可以通过点击下面的“使用官方”选项来设置官方网址，但强烈建议在这样做之前查看SponsorBlock的隐私政策。</string>
+    <string name="sponsor_block_privacy_policy_text">SponsorBlock隐私政策</string>
+    <string name="sponsor_block_skip_sponsor_toast">已跳过赞助</string>
+    <string name="sponsor_block_skip_intro_toast">已跳过中场休息/开场动画</string>
+    <string name="sponsor_block_skip_outro_toast">已跳过片尾/字幕</string>
+    <string name="sponsor_block_skip_interaction_toast">已跳过互动提醒</string>
+    <string name="sponsor_block_skip_self_promo_toast">已跳过非付费/自我推广</string>
+    <string name="sponsor_block_skip_non_music_toast">已跳过非音乐</string>
+    <string name="sponsor_block_skip_preview_toast">已跳过预览/回顾</string>
+    <string name="sponsor_block_skip_filler_toast">已跳过填充/笑话</string>
+    <string name="sponsor_block_toggle_skipping">切换跳过赞助</string>
+    <string name="sponsor_block_clear_whitelist_title">清除白名单</string>
+    <string name="sponsor_block_clear_whitelist_summary">清除SponsorBlock将忽略的上传者列表。</string>
+    <string name="sponsor_block_enabled_toast">SponsorBlock已启用</string>
+    <string name="sponsor_block_disabled_toast">SponsorBlock已禁用</string>
+    <string name="sponsor_block_whitelist_cleared_toast">白名单已清除</string>
+    <string name="sponsor_block_uploader_added_to_whitelist_toast">上传者已添加到白名单</string>
+    <string name="sponsor_block_uploader_removed_from_whitelist_toast">上传者已从白名单中移除</string>
+    <string name="sponsor_block_confirm_clear_whitelist">您确定要清除白名单吗？</string>
+    <string name="sponsor_block_confirm_reset_colors">您确定要重置类别颜色吗？</string>
+    <string name="sponsor_block_reset_colors_toast">颜色已重置。</string>
+    <string name="question_mark">？</string>
+    <string name="download_all_message">请确保您已选择下载文件夹并授予访问权限，否则下载将失败。已存在的文件将不会被覆盖。如果音频无法单独下载，将会下载相应的视频。</string>
+    <string name="feed_show_watched">已完全观看</string>
+    <string name="feed_show_partially_watched">部分观看</string>
+    <string name="feed_show_upcoming">即将播出</string>
+    <string name="sort">排序</string>
+    <string name="settings_category_exoplayer_title">ExoPlayer设置</string>
+    <string name="settings_category_exoplayer_summary">管理一些ExoPlayer设置。这些更改需要重新启动播放器才能生效。</string>
+    <string name="use_exoplayer_decoder_fallback_title">使用ExoPlayer的解码器回退功能</string>
+    <string name="use_exoplayer_decoder_fallback_summary">如果您遇到解码器初始化问题，启用此选项将会回退到优先级较低的解码器，如果主要解码器初始化失败。这可能导致播放性能不如使用主要解码器时好。</string>
+    <string name="always_use_exoplayer_set_output_surface_workaround_title">始终使用ExoPlayer的视频输出表面设置解决方法</string>
+    <string name="always_use_exoplayer_set_output_surface_workaround_summary">此解决方法在表面发生变化时释放并重新实例化视频编解码器，而不是直接将表面设置给编解码器。已在一些存在此问题的设备上由ExoPlayer使用，此设置仅在Android 6及更高版本上生效\n\n启用此选项可能会防止切换当前视频播放器或切换到全屏时出现播放错误。</string>
+    <string name="high_res">播放和下载（适用于高级内容/更高视频分辨率和音频质量）</string>
+    <string name="ai_subtitle">获取流的详细信息（用于AI字幕）</string>
+    <string name="cookie_functions_title">访问控制</string>
+    <string name="navigate_to">导航至</string>
+    <string name="sort_name">按名称排序</string>
+    <string name="sort_name_reverse">按名称排序（反向）</string>
+    <string name="sort_origin">来源</string>
+    <string name="sort_origin_reverse">来源（反向）</string>
+    <string name="dialog_title_enable_update_checker">启用更新检查器</string>
+    <string name="dialog_message_enable_update_checker">您要启用更新检查器吗？您可以在设置中禁用它。</string>
+    <string name="warning">警告</string>
+    <string name="download_temp_warning">播放列表下载仍处于测试阶段。绝对不要用它来下载包含50个以上项目的播放列表。</string>
+    <string name="buy_me_coffee">请我喝一杯咖啡</string>
+    <string name="donation_encouragement_new">我已尽最大努力为您提供最佳的用户体验，但您有机会通过捐赠使 PipePipe 变得更好。有了足够的捐款，我可以投入更多时间来开发这个项目。</string>
 </resources>
