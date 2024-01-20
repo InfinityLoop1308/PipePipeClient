@@ -101,11 +101,16 @@ class FeedDatabaseManager(context: Context) {
         feedTable.unlinkOldLivestreams(subscriptionId)
 
         if (itemsToInsert.isNotEmpty()) {
-            val streamEntities = itemsToInsert.map { StreamEntity(it) }
-            val streamIds = streamTable.upsertAll(streamEntities)
-            val feedEntities = streamIds.map { FeedEntity(it, subscriptionId) }
-
-            feedTable.insertAll(feedEntities)
+                // if item.uploaderName is null, write it as "Unknown"
+                for (item in itemsToInsert) {
+                    if (item.uploaderName == null) {
+                        item.uploaderName = "Unknown"
+                    }
+                }
+                val streamEntities = itemsToInsert.map { StreamEntity(it) }
+                val streamIds = streamTable.upsertAll(streamEntities)
+                val feedEntities = streamIds.map { FeedEntity(it, subscriptionId) }
+                feedTable.insertAll(feedEntities)
         }
 
         feedTable.setLastUpdatedForSubscription(
