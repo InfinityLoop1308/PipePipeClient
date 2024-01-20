@@ -903,4 +903,5 @@
     <string name="download_temp_warning">播放列表下载仍处于测试阶段。绝对不要用它来下载包含50个以上项目的播放列表。</string>
     <string name="buy_me_coffee">请我喝一杯咖啡</string>
     <string name="donation_encouragement_new">我已尽最大努力为您提供最佳的用户体验，但您有机会通过捐赠使 PipePipe 变得更好。有了足够的捐款，我可以投入更多时间来开发这个项目。</string>
+    <string name="error_priority_notice">优先级：GitHub/CodeBerg 上的问题 > 标题清晰、内容礼貌且包含错误报告的邮件 > 仅包含错误报告的邮件。\n仅包含错误报告的邮件将不会收到回复。</string>
 </resources>

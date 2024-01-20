@@ -948,4 +948,5 @@
     <string name="warning">Warning</string>
     <string name="download_temp_warning">Playlist downloading is still in beta. NEVER use it to download playlists with 50+ items.</string>
     <string name="buy_me_coffee">Buy me a coffee</string>
+    <string name="error_priority_notice">Priority: Issues on GitHub/CodeBerg > Emails with clear title, polite content and bug report > Bug report only emails. \nBug report only emails will not receive replies.</string>
 </resources>

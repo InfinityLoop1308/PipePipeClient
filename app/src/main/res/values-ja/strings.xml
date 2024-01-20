@@ -891,4 +891,5 @@
     <string name="download_temp_warning">プレイリストのダウンロードはまだベータ版です。50以上のアイテムを含むプレイリストをダウンロードしないでください。</string>
     <string name="buy_me_coffee">コーヒーをおごってください</string>
     <string name="app_description_new">YouTube、NicoNico、BiliBili を自由に閲覧できる FLOSS Android アプリ</string>
+    <string name="error_priority_notice">優先度：GitHub/CodeBerg の問題 > 件名が明確で丁寧な内容とバグレポートのあるメール > バグレポートのみのメール。\nバグレポートのみのメールには返信がありません。</string>
 </resources>
