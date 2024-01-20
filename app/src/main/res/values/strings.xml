@@ -948,4 +948,6 @@
     <string name="button_view_pictures">View Images (%d)</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="warning">Warning</string>
+    <string name="download_temp_warning">Playlist downloading is still in beta. NEVER use it to download playlists with 50+ items.</string>
 </resources>

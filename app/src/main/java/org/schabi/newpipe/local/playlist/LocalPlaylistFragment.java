@@ -439,7 +439,20 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             }
             editText.addTextChangedListener(textWatcher);
         } else if (item.getItemId() == R.id.menu_item_download_all) {
+            // add a alert of warning that this func is still beta
             AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            if (itemListAdapter.getItemsList().size() > 50) {
+                builder.setTitle(getString(R.string.warning))
+                        .setMessage(getString(R.string.download_temp_warning))
+                        .setPositiveButton(getString(R.string.ok), null);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                return true;
+            }
+
+
+
+            builder = new AlertDialog.Builder(requireContext());
             builder.setMessage(R.string.download_all_message)
                     .setTitle(R.string.download_all);
             // create aa lambda
