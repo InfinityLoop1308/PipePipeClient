@@ -27,4 +27,7 @@
     <string name="preferred_open_action_share_menu_title">@string/app_name</string>
     <string name="leakcanary">LeakCanary</string>
     <string name="caption_file_name">%1$s-%2$s</string>
+    <string name="sponsor_block_homepage_url">https://sponsor.ajay.app/</string>
+    <string name="sponsor_block_default_api_url">https://sponsor.ajay.app/api/</string>
+    <string name="sponsor_block_privacy_policy_url">https://gist.github.com/ajayyy/aa9f8ded2b573d4f73a3ffa0ef74f796</string>
 </resources>

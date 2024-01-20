@@ -736,9 +736,6 @@
     <string name="sponsor_block_privacy_summary">View SponsorBlock\'s privacy policy.</string>
     <string name="sponsor_block_api_url_help_text">This is the URL that will be queried when the application needs to know which parts of a video to skip.\n\nYou can set the official URL by clicking the \'Use Official\' option below, though it is highly recommended you view SponsorBlock\'s privacy policy before you do.</string>
     <string name="sponsor_block_privacy_policy_text">SponsorBlock Privacy Policy</string>
-    <string name="sponsor_block_homepage_url">https://sponsor.ajay.app/</string>
-    <string name="sponsor_block_default_api_url">https://sponsor.ajay.app/api/</string>
-    <string name="sponsor_block_privacy_policy_url">https://gist.github.com/ajayyy/aa9f8ded2b573d4f73a3ffa0ef74f796</string>
     <string name="sponsor_block_skip_sponsor_toast">Skipped sponsor</string>
     <string name="sponsor_block_skip_intro_toast">Skipped intermission/intro</string>
     <string name="sponsor_block_skip_outro_toast">Skipped endcards/credits</string>
