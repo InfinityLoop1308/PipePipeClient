@@ -463,20 +463,20 @@ public final class ListHelper {
             final String resolution = videoStreams.get(idx).getResolution();
             final String resolutionNoRefresh = resolution.replaceAll("p\\d+$", "p");
 
-            if (format == targetFormat && resolution.equals(targetResolution)) {
+            if (format == targetFormat && calculateResolution(resolution) == calculateResolution(targetResolution)) {
                 fullMatchIndex = idx;
             }
 
-            if (format == targetFormat && resolutionNoRefresh.equals(targetResolutionNoRefresh)) {
+            if (format == targetFormat && calculateResolution(resolutionNoRefresh) == calculateResolution(targetResolutionNoRefresh)) {
                 fullMatchNoRefreshIndex = idx;
             }
 
-            if (resMatchOnlyIndex == -1 && resolution.equals(targetResolution)) {
+            if (resMatchOnlyIndex == -1 && calculateResolution(resolution) == calculateResolution(targetResolution)) {
                 resMatchOnlyIndex = idx;
             }
 
             if (resMatchOnlyNoRefreshIndex == -1
-                    && resolutionNoRefresh.equals(targetResolutionNoRefresh)) {
+                    && calculateResolution(resolutionNoRefresh) == calculateResolution(targetResolutionNoRefresh)) {
                 resMatchOnlyNoRefreshIndex = idx;
             }
 
@@ -498,7 +498,10 @@ public final class ListHelper {
         if (resMatchOnlyNoRefreshIndex != -1) {
             return resMatchOnlyNoRefreshIndex;
         }
-        return lowerResMatchNoRefreshIndex;
+        if (lowerResMatchNoRefreshIndex != -1) {
+            return lowerResMatchNoRefreshIndex;
+        }
+        return videoStreams.size() - 1;
     }
 
     /**
