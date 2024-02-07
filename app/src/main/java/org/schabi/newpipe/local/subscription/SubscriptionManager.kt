@@ -63,6 +63,7 @@ class SubscriptionManager(context: Context) {
     fun updateChannelInfo(info: ChannelInfo): Completable = subscriptionTable.getSubscription(info.serviceId, info.url)
         .flatMapCompletable {
             Completable.fromRunnable {
+                if (info.name == null) return@fromRunnable
                 it.setData(info.name, info.avatarUrl, info.description, info.subscriberCount)
                 subscriptionTable.update(it)
                 feedDatabaseManager.upsertAll(it.uid, info.relatedItems)
@@ -86,6 +87,8 @@ class SubscriptionManager(context: Context) {
 
     fun updateFromInfo(subscriptionId: Long, info: ListInfo<StreamInfoItem>) {
         val subscriptionEntity = subscriptionTable.getSubscription(subscriptionId)
+
+        if(info.name == null) return
 
         if (info is FeedInfo) {
             subscriptionEntity.name = info.name

@@ -117,7 +117,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         groupName = arguments?.getString(KEY_GROUP_NAME) ?: ""
 
         onSettingsChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key.equals(getString(R.string.list_view_mode_key))) {
+            if (key != null && key.equals(getString(R.string.list_view_mode_key))) {
                 updateListViewModeOnResume = true
             }
         }
