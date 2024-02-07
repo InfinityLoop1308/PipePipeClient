@@ -42,6 +42,49 @@ public final class PicassoHelper {
 
     private static boolean shouldLoadImages;
 
+    private static final Transformation transformation = new Transformation() {
+        @Override
+        public Bitmap transform(final Bitmap source) {
+            final float notificationThumbnailWidth = Math.min(
+                    600,
+                    source.getWidth());
+
+            final Bitmap result = Bitmap.createScaledBitmap(
+                    source,
+                    (int) notificationThumbnailWidth,
+                    (int) (source.getHeight()
+                            / (source.getWidth() / notificationThumbnailWidth)),
+                    true);
+
+            if (result == source) {
+                // create a new mutable bitmap to prevent strange crashes on some
+                // devices (see #4638)
+                try {
+                    final Bitmap copied = Bitmap.createScaledBitmap(
+                            source,
+                            (int) notificationThumbnailWidth - 1,
+                            (int) (source.getHeight() / (source.getWidth()
+                                    / (notificationThumbnailWidth - 1))),
+                            true);
+                    source.recycle();
+                    return copied;
+                } catch (final IllegalArgumentException e) {
+                    Log.e("PicassoHelper", "Failed to create scaled down copied bitmap", e);
+                    return result;
+                }
+
+            } else {
+                source.recycle();
+                return result;
+            }
+        }
+
+        @Override
+        public String key() {
+            return PLAYER_THUMBNAIL_TRANSFORMATION_KEY;
+        }
+    };
+
     public static void init(final Context context) {
         picassoCache = new LruCache(512 * 1024 * 1024);
         picassoDownloaderClient = new OkHttpClient.Builder()
@@ -96,75 +139,37 @@ public final class PicassoHelper {
 
 
     public static RequestCreator loadAvatar(final String url) {
-        return loadImageDefault(url, R.drawable.buddy);
+        return loadImageDefault(url, R.drawable.buddy).transform(transformation);
     }
 
     public static RequestCreator loadThumbnail(final String url) {
-        return loadImageDefault(url, R.drawable.dummy_thumbnail);
+        return loadImageDefault(url, R.drawable.dummy_thumbnail).transform(transformation);
     }
 
     public static RequestCreator loadBanner(final String url) {
-        return loadImageDefault(url, R.drawable.channel_banner);
+        return loadImageDefault(url, R.drawable.channel_banner).transform(transformation);
     }
 
     public static RequestCreator loadPlaylistThumbnail(final String url) {
-        return loadImageDefault(url, R.drawable.dummy_thumbnail_playlist);
+        return loadImageDefault(url, R.drawable.dummy_thumbnail_playlist).transform(transformation);
     }
 
     public static RequestCreator loadSeekbarThumbnailPreview(final String url) {
-        return picassoInstance.load(url);
+        return picassoInstance.load(url).transform(transformation);
     }
 
-    public static RequestCreator loadScaledDownThumbnail(final Context context, final String url){
+    public static RequestCreator loadScaledDownThumbnail(final Context context, final String url){ // reserve for compatibility
         return loadScaledDownThumbnail(context, url, false);
     }
 
     public static RequestCreator loadScaledDownThumbnail(final Context context, final String url, final boolean shouldSetTag) {
         // scale down the notification thumbnail for performance
         return PicassoHelper.loadThumbnail(url)
-                .transform(new Transformation() {
-                    @Override
-                    public Bitmap transform(final Bitmap source) {
-                        final float notificationThumbnailWidth = Math.min(
-                                context.getResources()
-                                        .getDimension(R.dimen.player_notification_thumbnail_width),
-                                source.getWidth());
+                .transform(transformation);
+    }
 
-                        final Bitmap result = Bitmap.createScaledBitmap(
-                                source,
-                                (int) notificationThumbnailWidth,
-                                (int) (source.getHeight()
-                                        / (source.getWidth() / notificationThumbnailWidth)),
-                                true);
-
-                        if (result == source) {
-                            // create a new mutable bitmap to prevent strange crashes on some
-                            // devices (see #4638)
-                            try {
-                                final Bitmap copied = Bitmap.createScaledBitmap(
-                                        source,
-                                        (int) notificationThumbnailWidth - 1,
-                                        (int) (source.getHeight() / (source.getWidth()
-                                                / (notificationThumbnailWidth - 1))),
-                                        true);
-                                source.recycle();
-                                return copied;
-                            } catch (final IllegalArgumentException e) {
-                                Log.e("PicassoHelper", "Failed to create scaled down copied bitmap", e);
-                                return result;
-                            }
-
-                        } else {
-                            source.recycle();
-                            return result;
-                        }
-                    }
-
-                    @Override
-                    public String key() {
-                        return PLAYER_THUMBNAIL_TRANSFORMATION_KEY;
-                    }
-                });
+    public static RequestCreator loadOrigin(final String url) {
+        return loadImageDefault(url, R.drawable.dummy_thumbnail_playlist);
     }
 
 

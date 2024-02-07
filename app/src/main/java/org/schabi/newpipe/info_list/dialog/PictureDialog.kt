@@ -64,7 +64,7 @@ class PictureDialog : DialogFragment() {
             binding.text.text = "${current + 1}/${pictureUrls.size}"
 
             val url = pictureUrls[current].replace("http://", "https://")
-            PicassoHelper.loadThumbnail(url).into(binding.imageView)
+            PicassoHelper.loadOrigin(url).into(binding.imageView)
 
             binding.shareButton.setOnClickListener {
                 ShareUtils.shareText(it.context, url, url)
