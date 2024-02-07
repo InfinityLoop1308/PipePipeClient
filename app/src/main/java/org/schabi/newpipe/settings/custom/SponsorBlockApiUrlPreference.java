@@ -42,7 +42,8 @@ public class SponsorBlockApiUrlPreference extends Preference {
                 .inflate(R.layout.dialog_sponsor_block_api_url, null);
 
         final EditText editText = alertDialogView.findViewById(R.id.api_url_edit);
-        editText.setText(getSharedPreferences().getString(getKey(), null));
+        editText.setText(getSharedPreferences().getString(getKey(), getContext()
+                .getString(R.string.sponsor_block_default_api_url)));
         editText.setOnFocusChangeListener((v, hasFocus) -> editText.post(() -> {
             final InputMethodManager inputMethodManager = (InputMethodManager) getContext()
                     .getSystemService(Context.INPUT_METHOD_SERVICE);
