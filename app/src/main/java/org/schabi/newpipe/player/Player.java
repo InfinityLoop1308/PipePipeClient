@@ -3526,7 +3526,16 @@ public final class Player implements
             return;
         }
         List<StreamInfoItem> partitions = info.getPartitions();
-        if(partitions.size() > 1 && prefs.getBoolean(context.getString(R.string.auto_queue_partition_key), true) && playQueue.size() == 1){
+        if(partitions.size() > 1 && prefs.getBoolean(context.getString(R.string.auto_queue_partition_key), true)
+                && playQueue.getStreams().stream()
+                .map(result -> result.getUrl().split("p="))
+                .filter(parts -> parts.length == 2)
+                .map(parts -> new String[]{parts[0], parts[1]})
+                .reduce((a, b) -> Integer.parseInt(a[1]) + 1 == Integer.parseInt(b[1]) && a[0].equals(b[0]) ? b : new String[]{"", "-1"})
+                .filter(result -> !Arrays.equals(result, new String[]{"", "-1"}))
+                .isPresent()
+                && playQueue.getIndex() == playQueue.size() - 1
+        ){
             int p = Integer.parseInt(info.getUrl().split(Pattern.quote("?p="))[1].split("&")[0]);
             if(partitions.size() > p){
                 playQueue.append(getAutoQueuedSinglePlayQueue(partitions.get(p)).getStreams());
