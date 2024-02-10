@@ -46,7 +46,7 @@ public final class PicassoHelper {
         @Override
         public Bitmap transform(final Bitmap source) {
             final float notificationThumbnailWidth = Math.min(
-                    600,
+                    4000,
                     source.getWidth());
 
             final Bitmap result = Bitmap.createScaledBitmap(
@@ -155,7 +155,7 @@ public final class PicassoHelper {
     }
 
     public static RequestCreator loadSeekbarThumbnailPreview(final String url) {
-        return picassoInstance.load(url).transform(transformation);
+        return picassoInstance.load(url); ///should not transform, see https://github.com/InfinityLoop1308/PipePipe/issues/215
     }
 
     public static RequestCreator loadScaledDownThumbnail(final Context context, final String url){ // reserve for compatibility
