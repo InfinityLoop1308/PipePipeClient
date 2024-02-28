@@ -75,10 +75,9 @@ public class PlayerDataSource {
     private final int continueLoadingCheckIntervalBytes;
     private final CacheFactory.Builder cacheDataSourceFactoryBuilder;
     private final DataSource.Factory cachelessDataSourceFactory;
-    private final DataSource.Factory nicoCachelessDataSourceFactory;
     private final DataSource.Factory biliCachelessDataSourceFactory;
-    private TransferListener transferListener;
-    private Context context;
+    private final TransferListener transferListener;
+    private final Context context;
 
     public PlayerDataSource(@NonNull final Context context,
                             @NonNull final String userAgent,
@@ -99,15 +98,6 @@ public class PlayerDataSource {
                 MAXIMUM_SIZE_CACHED_GENERATED_MANIFESTS_PER_CACHE);
         YoutubePostLiveStreamDvrDashManifestCreator.getCache().setMaximumSize(
                 MAXIMUM_SIZE_CACHED_GENERATED_MANIFESTS_PER_CACHE);
-        nicoCachelessDataSourceFactory = new PurifiedDataSource
-                .Factory(context, new PurifiedHttpDataSource.Factory()
-                .setDefaultRequestProperties(Map.of("Referer", "https://www.nicovideo.jp/",
-                        "Origin", "https://www.nicovideo.jp",
-                        "X-Frontend-ID", "6",
-                        "X-Frontend-Version", "0",
-                        "X-Niconico-Language", "en-us"
-                ))
-                .setTransferListener(transferListener));
 
         biliCachelessDataSourceFactory = new PurifiedDataSource.Factory(context,
                 new PurifiedHttpDataSource.Factory().setUserAgent(userAgent)
@@ -204,38 +194,6 @@ public class PlayerDataSource {
     }
 
     // NicoNicoMediaSourceFactories
-    public static String getNicoVideoUrl(String url){
-        final Map<String, List<String>> headers = new HashMap<>();
-        headers.put("Content-Type", Collections.singletonList("application/json"));
-        DownloaderImpl downloader = DownloaderImpl.getInstance();
-        Response response;
-        String quality = url.split("#quality=")[1];
-        url = url.split("#quality=")[0];
-        try {
-            HashMap<String, List<String>> tokens = new HashMap<>();
-            if(ServiceList.NicoNico.getTokens() != null){
-                tokens.put("Cookie", Collections.singletonList(ServiceList.NicoNico.getTokens()));
-            }
-            response = downloader.get(String.valueOf(url), tokens, NiconicoService.LOCALE); // NiconicoService.LOCALE = Localization.fromLocalizationCode("ja-JP")
-            final Document page = Jsoup.parse(response.responseBody());
-            JsonObject watch = JsonParser.object().from(
-                    page.getElementById("js-initial-watch-data").attr("data-api-data"));
-            final JsonObject session
-                    = watch.getObject("media").getObject("delivery").getObject("movie");
-
-            final JsonObject encryption = watch.getObject("media").getObject("delivery").getObject("encryption");
-            final String s = NiconicoDMCPayloadBuilder.buildJSON(session.getObject("session"), encryption, quality);
-            response = downloader.post("https://api.dmc.nico/api/sessions?_format=json", headers, s.getBytes(StandardCharsets.UTF_8), NiconicoService.LOCALE);
-            final JsonObject content = JsonParser.object().from(response.responseBody());
-            final String contentURL = content.getObject("data").getObject("session")
-                    .getString("content_uri");
-            return String.valueOf(Uri.parse(contentURL));
-        } catch (ReCaptchaException | JsonParserException | IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public static String getNicoLiveUrl(String url) throws ParsingException, IOException, ReCaptchaException, JsonParserException {
         DownloaderImpl downloader = DownloaderImpl.getInstance();
         Document liveResponse = Jsoup.parse(downloader.get(url).responseBody());
@@ -257,24 +215,13 @@ public class PlayerDataSource {
         throw new RuntimeException("Failed to get live url"); // TODO: throw other kind of Exception
     }
 
-    public MediaSource.Factory getNicoMediaSourceFactory() {
-        cacheDataSourceFactoryBuilder.setUpstreamDataSourceFactory(nicoCachelessDataSourceFactory);
-        DataSource.Factory newFactory = new ResolvingDataSource.Factory(cacheDataSourceFactoryBuilder.build(), dataSpec -> {
-            return dataSpec.withUri(Uri.parse(getNicoVideoUrl(String.valueOf(dataSpec.uri))));
-        });
-        return new ProgressiveMediaSource.Factory(newFactory)
-                .setContinueLoadingCheckIntervalBytes(continueLoadingCheckIntervalBytes);
-    }
+    public MediaSource.Factory getNicoMediaSourceFactory(String cookie) {
+        cacheDataSourceFactoryBuilder.setUpstreamDataSourceFactory(new PurifiedDataSource.Factory(context,
+                new PurifiedHttpDataSource.Factory()
+                        .setDefaultRequestProperties(Map.of("Cookie", cookie)))
+                .setTransferListener(transferListener));
 
-    public HlsMediaSource.Factory getNicoHlsMediaSourceFactory() {
-        cacheDataSourceFactoryBuilder.setUpstreamDataSourceFactory(nicoCachelessDataSourceFactory);
-        DataSource.Factory newFactory = new ResolvingDataSource.Factory(cacheDataSourceFactoryBuilder.build(), dataSpec -> {
-            if(String.valueOf(dataSpec.uri).contains("nicovideo.jp/watch/")){
-                return dataSpec.withUri(Uri.parse(getNicoVideoUrl(String.valueOf(dataSpec.uri))));
-            }
-            return dataSpec;
-        });
-        return new HlsMediaSource.Factory(newFactory);
+        return new HlsMediaSource.Factory(cacheDataSourceFactoryBuilder.build());
     }
 
     public HlsMediaSource.Factory getNicoLiveHlsMediaSourceFactory(String liveUrl) {

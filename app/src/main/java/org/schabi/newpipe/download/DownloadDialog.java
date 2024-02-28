@@ -1099,12 +1099,6 @@ public class DownloadDialog extends DialogFragment
             recoveryInfo = new MissionRecoveryInfo[]{new MissionRecoveryInfo(selectedStream),
                     new MissionRecoveryInfo(secondaryStream)};
         }
-        for(int i = 0; i < urls.length; i++){
-            if(urls[i].contains("nicovideo.jp/watch")){
-                urls[i] = PlayerDataSource.getNicoVideoUrl(urls[i]);
-            }
-        }
-
 
         DownloadManagerService.startMission(context, urls, storage, kind, threads,
                 currentInfo.getUrl(), psName, psArgs, nearLength, recoveryInfo);

@@ -53,6 +53,7 @@ import androidx.annotation.Nullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
@@ -468,12 +469,10 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             final MediaItemTag metadata) throws IOException{
         String sourceUrl = stream.getContent();
         MediaSource.Factory factory;
+        String cookie = URLDecoder.decode(sourceUrl.split("cookie=")[1]);
+        sourceUrl = sourceUrl.split("#cookie=")[0];
         Uri uri = Uri.parse(sourceUrl);
-        if(streamInfo.getHlsUrl() != null){
-            factory = dataSource.getNicoHlsMediaSourceFactory();
-        } else {
-            factory = dataSource.getNicoMediaSourceFactory();
-        }
+        factory = dataSource.getNicoMediaSourceFactory(cookie);
         return factory.createMediaSource(
                 new MediaItem.Builder()
                         .setTag(metadata)
