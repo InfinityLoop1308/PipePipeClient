@@ -1015,8 +1015,9 @@ public class DownloadDialog extends DialogFragment
             case R.id.audio_button:
                 kind = 'a';
                 selectedStream = audioStreamsAdapter.getItem(selectedAudioIndex);
-
-                if (selectedStream.getFormat() == MediaFormat.M4A && currentInfo.getService() != ServiceList.BiliBili) {
+                if (currentInfo.getService() == ServiceList.NicoNico) {
+                    psName = Postprocessing.NICONICO_MUXER;
+                } else if (selectedStream.getFormat() == MediaFormat.M4A && currentInfo.getService() != ServiceList.BiliBili) {
                     psName = Postprocessing.ALGORITHM_M4A_NO_DASH;
                 } else if (selectedStream.getFormat() == MediaFormat.WEBMA_OPUS) {
                     psName = Postprocessing.ALGORITHM_OGG_FROM_WEBM_DEMUXER;
@@ -1035,6 +1036,8 @@ public class DownloadDialog extends DialogFragment
 
                     if(currentInfo.getService() == ServiceList.BiliBili) {
                         psName = Postprocessing.BILIBILI_MUXER;
+                    } else if (currentInfo.getService() == ServiceList.NicoNico) {
+                        psName = Postprocessing.NICONICO_MUXER;
                     } else {
                         if (selectedStream.getFormat() == MediaFormat.MPEG_4) {
                             psName = Postprocessing.ALGORITHM_MP4_FROM_DASH_MUXER;

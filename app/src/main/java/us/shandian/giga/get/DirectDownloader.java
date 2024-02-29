@@ -269,6 +269,8 @@ public class DirectDownloader {
 
                     if(currentInfo.getServiceId() == ServiceList.BiliBili.getServiceId()) {
                         psName = Postprocessing.BILIBILI_MUXER;
+                    } else if (currentInfo.getService() == ServiceList.NicoNico) {
+                        psName = Postprocessing.NICONICO_MUXER;
                     } else {
                         if (selectedStream.getFormat() == MediaFormat.MPEG_4) {
                             psName = Postprocessing.ALGORITHM_MP4_FROM_DASH_MUXER;

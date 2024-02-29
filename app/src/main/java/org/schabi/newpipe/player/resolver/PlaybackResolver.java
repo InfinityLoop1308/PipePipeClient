@@ -469,7 +469,9 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             final MediaItemTag metadata) throws IOException{
         String sourceUrl = stream.getContent();
         MediaSource.Factory factory;
-        String cookie = URLDecoder.decode(sourceUrl.split("cookie=")[1]);
+        String additionalParam = URLDecoder.decode(sourceUrl.split("cookie=")[1]);
+        String cookie = additionalParam.split("&length=")[0];
+        String length = additionalParam.split("&length=")[1];
         sourceUrl = sourceUrl.split("#cookie=")[0];
         Uri uri = Uri.parse(sourceUrl);
         factory = dataSource.getNicoMediaSourceFactory(cookie);

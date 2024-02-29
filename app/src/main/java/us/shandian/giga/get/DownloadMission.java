@@ -1,45 +1,26 @@
 package us.shandian.giga.get;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Handler;
 import android.system.ErrnoException;
 import android.system.OsConstants;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.grack.nanojson.JsonParserException;
 import org.schabi.newpipe.DownloaderImpl;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.io.Serializable;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.nio.channels.ClosedByInterruptException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.net.ssl.SSLException;
-
-import org.schabi.newpipe.extractor.exceptions.ParsingException;
-import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
-import org.schabi.newpipe.extractor.services.bilibili.BilibiliService;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
-import us.shandian.giga.postprocessing.BiliBiliMp4Muxer;
 import us.shandian.giga.postprocessing.Postprocessing;
 import us.shandian.giga.service.DownloadManagerService;
 import us.shandian.giga.util.Utility;
 
+import javax.net.ssl.SSLException;
+import java.io.*;
+import java.net.*;
+import java.nio.channels.ClosedByInterruptException;
+import java.util.Objects;
+
 import static org.schabi.newpipe.BuildConfig.DEBUG;
+import static us.shandian.giga.postprocessing.Postprocessing.NICONICO_MUXER;
 import static us.shandian.giga.util.Utility.setRequestPropertyIfDownloadingBilibili;
 
 public class DownloadMission extends Mission {
@@ -232,10 +213,16 @@ public class DownloadMission extends Mission {
     }
 
     HttpURLConnection openConnection(String url, boolean headRequest, long rangeStart, long rangeEnd) throws IOException {
+        String cookie = null;
+        if(url.contains("#cookie=")) {
+            cookie = URLDecoder.decode(url.split("#cookie=")[1].split("&")[0]);
+            url = url.split("#cookie=")[0];
+        }
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         conn.setInstanceFollowRedirects(true);
         conn.setRequestProperty("User-Agent", DownloaderImpl.USER_AGENT);
         setRequestPropertyIfDownloadingBilibili(url, conn);
+        if (cookie != null) conn.setRequestProperty("Cookie", cookie);
 
         conn.setRequestProperty("Accept", "*/*");
         conn.setRequestProperty("Accept-Encoding", "*");
@@ -640,6 +627,10 @@ public class DownloadMission extends Mission {
     public long getLength() {
         long calculated;
         if (psState == 1 || psState == 3) {
+            if(psAlgorithm.name == NICONICO_MUXER) {
+                long result = (long) Math.ceil(Long.parseLong(URLDecoder.decode(urls[0].split("&length=")[1]))/6.0);
+                return result * (kind == 'v'? 2 :1);
+            }
             return length;
         }
 

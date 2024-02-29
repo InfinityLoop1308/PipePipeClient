@@ -10,6 +10,7 @@ import org.schabi.newpipe.streams.io.SharpStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Objects;
 
 import us.shandian.giga.get.DownloadMission;
 import us.shandian.giga.io.ChunkFileInputStream;
@@ -32,6 +33,7 @@ public abstract class Postprocessing implements Serializable {
     public transient static final String ALGORITHM_M4A_NO_DASH = "mp4D-m4a";
     public transient static final String ALGORITHM_OGG_FROM_WEBM_DEMUXER = "webm-ogg-d";
     public transient static final String BILIBILI_MUXER = "bilibili";
+    public transient static final String NICONICO_MUXER = "niconico";
 
     public static Postprocessing getAlgorithm(@NonNull String algorithmName, String[] args) {
         Postprocessing instance;
@@ -54,6 +56,9 @@ public abstract class Postprocessing implements Serializable {
                 break;
             case BILIBILI_MUXER:
                 instance = new BiliBiliMp4Muxer();
+                break;
+            case NICONICO_MUXER:
+                instance = new NicoNicoMuxer();
                 break;
             /*case "example-algorithm":
                 instance = new ExampleAlgorithm();*/
@@ -79,7 +84,7 @@ public abstract class Postprocessing implements Serializable {
     /**
      * Gets the given algorithm short name
      */
-    private final String name;
+    public final String name;
 
 
     private String[] args;
@@ -178,6 +183,9 @@ public abstract class Postprocessing implements Serializable {
                         };
 
                         result = process(target.storage.source, target.context, out, sources);
+                        if (Objects.equals(target.psAlgorithm.name, NICONICO_MUXER)) {
+                            ((NicoNicoMuxer)this).download(target.storage.source, target.context, target.urls, mission);
+                        }
 
                         if (result == OK_RESULT)
                             finalLength = out.finalizeFile();

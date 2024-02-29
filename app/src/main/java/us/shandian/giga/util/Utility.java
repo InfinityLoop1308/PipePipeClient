@@ -55,8 +55,8 @@ public class Utility {
 
     public static String formatBytes(long bytes) {
         Locale locale = Locale.getDefault();
-        if (bytes < 1024) {
-            return String.format(locale, "%d B", bytes);
+        if (bytes < 50 * 1024) {
+            return "Unknown";
         } else if (bytes < 1024 * 1024) {
             return String.format(locale, "%.2f kB", bytes / 1024d);
         } else if (bytes < 1024 * 1024 * 1024) {
