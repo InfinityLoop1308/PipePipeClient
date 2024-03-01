@@ -2459,8 +2459,12 @@ public final class Player implements
             startProgressLoop();
         }
 
-        retryCount = 0;
-        timer.cancel(true);
+        try {
+            retryCount = 0;
+            timer.cancel(true);
+        } catch (Exception ignored) {
+        }
+
         updateStreamRelatedViews();
 
         if(getCurrentStreamInfo().isPresent()){
