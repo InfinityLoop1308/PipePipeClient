@@ -892,6 +892,4 @@
     <string name="buy_me_coffee">コーヒーをおごってください</string>
     <string name="app_description_new">YouTube、NicoNico、BiliBili を自由に閲覧できる FLOSS Android アプリ</string>
     <string name="error_priority_notice">優先度：GitHub/CodeBerg の問題 > 件名が明確で丁寧な内容とバグレポートのあるメール > バグレポートのみのメール。\nバグレポートのみのメールには返信がありません。</string>
-
-    <string name="update_log">### Bug Fixes:\n- 更新チェッカーが時々機能しない\n- ユーザーを表示する際に予期しないエラーが発生する（NicoNico）\n- 一部の動画を解析できない（BiliBili）\n- 反リスク制御の更新により、チャンネルの動画を取得できない（BiliBili）\n- 特定の状況下で予期しないクラッシュが発生する（BiliBili）\n- HTTPの問題により、コメントからの一部の画像が読み込めない（BiliBili）\n- 自動キューイングが期待通りに機能しない（BiliBili）\n\n### Others:\n- デフォルトでSponsorBlockを有効にする</string>
 </resources>
