@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
 
         int isFirstRun = prefs.getInt("isFirstRun", 0);
         // if is First run and update checker is not enabled, show a dialog to ask if user want to enable update checker
-        if (isFirstRun == 0 && !prefs.getBoolean(app.getString(R.string.update_app_key), false)) {
+        if (isFirstRun == 0) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.dialog_title_enable_update_checker);
             builder.setMessage(R.string.dialog_message_enable_update_checker);
@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
                 // and eventually searching for a new version.
                 NewVersionWorker.enqueueNewVersionCheckingWork(app, false);
             });
-            builder.setNegativeButton(R.string.cancel, null);
+            builder.setNegativeButton(R.string.no, (dialog, which) -> prefs.edit().putBoolean(app.getString(R.string.update_app_key), false).apply());
             builder.show();
             prefs.edit().putInt("isFirstRun", 1).apply();
         }
