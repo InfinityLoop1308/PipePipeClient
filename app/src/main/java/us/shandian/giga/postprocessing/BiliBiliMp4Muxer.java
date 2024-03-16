@@ -19,10 +19,14 @@ public class BiliBiliMp4Muxer extends Postprocessing{
 
     @Override
     int process(String source, Context context, SharpStream out, SharpStream... sources) throws IOException {
+        return OK_RESULT;
+    }
+    public int mux(StoredFileHelper storage, Context context, SharpStream out, SharpStream... sources) throws IOException {
         byte[] buffer = new byte[8 * 1024];
         int read;
+        String source = storage.source;
         // write audio to bytes
-        SharpStream audioOut =  new StoredFileHelper(context, Uri.parse(source.substring(0, source.lastIndexOf("%2F"))), Uri.parse(source.replace(".mp4", ".tmp")), "audio").getStream();
+        SharpStream audioOut =  new StoredFileHelper(context, Uri.parse(storage.sourceTree), Uri.parse(source.replace(".mp4", ".tmp")), "audio").getStream();
         while ((read = sources[1].read(buffer)) > 0) {
             audioOut.write(buffer, 0, read);
         }

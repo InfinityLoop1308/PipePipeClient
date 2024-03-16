@@ -182,9 +182,14 @@ public abstract class Postprocessing implements Serializable {
                             return mission.errCode == ERROR_NOTHING;
                         };
 
-                        result = process(target.storage.source, target.context, out, sources);
+
                         if (Objects.equals(target.psAlgorithm.name, NICONICO_MUXER)) {
+                            result = process(target.storage.source, target.context, out, sources);
                             ((NicoNicoMuxer)this).download(target.storage.source, target.context, target.urls, mission);
+                        } else if (Objects.equals(target.psAlgorithm.name, BILIBILI_MUXER)) {
+                            result = ((BiliBiliMp4Muxer)this).mux(target.storage, target.context, out, sources);
+                        } else {
+                            result = process(target.storage.source, target.context, out, sources);
                         }
 
                         if (result == OK_RESULT)
