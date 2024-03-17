@@ -196,7 +196,12 @@ public class MainActivity extends AppCompatActivity {
             // Show the "What's New" dialog
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.fragment_feed_title);
-            builder.setMessage(getString(R.string.update_log));
+            String message = "### Bug Fixes:\n" +
+                    "\n" +
+                    "- Live replays are not available immediately after ended (YouTube)\n" +
+                    "- Can not download on some devices(BiliBili)\n" +
+                    "- Can not watch videos when logged in (NicoNico)";
+            builder.setMessage(message);
             builder.setPositiveButton(R.string.ok, null);
             // another button to copy to clipboard
             builder.setNeutralButton(R.string.donation_title, (dialog, which) -> {
