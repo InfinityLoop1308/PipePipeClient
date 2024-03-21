@@ -173,6 +173,7 @@ import org.schabi.newpipe.player.resolver.VideoPlaybackResolver;
 import org.schabi.newpipe.player.resolver.VideoPlaybackResolver.SourceType;
 import org.schabi.newpipe.player.seekbarpreview.SeekbarPreviewThumbnailHelper;
 import org.schabi.newpipe.player.seekbarpreview.SeekbarPreviewThumbnailHolder;
+import org.schabi.newpipe.sleep.SleepTimerService;
 import org.schabi.newpipe.util.*;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
@@ -582,6 +583,8 @@ public final class Player implements
         binding.switchMute.setOnClickListener(this);
         binding.switchSponsorBlocking.setOnClickListener(this);
         binding.switchSponsorBlocking.setOnLongClickListener(this);
+        binding.sleepTimer.setOnClickListener(this);
+        binding.sleepTimer.setOnLongClickListener(this);
 
         settingsContentObserver = new ContentObserver(new Handler()) {
             @Override
@@ -1121,6 +1124,7 @@ public final class Player implements
             binding.switchCommentsVisibility.setVisibility(View.GONE);
             binding.playWithKodi.setVisibility(View.GONE);
             binding.openInBrowser.setVisibility(View.GONE);
+            binding.sleepTimer.setVisibility(View.GONE);
             binding.switchMute.setVisibility(View.GONE);
             binding.playerCloseButton.setVisibility(View.GONE);
             binding.topControls.bringToFront();
@@ -1144,6 +1148,7 @@ public final class Player implements
             binding.share.setVisibility(View.VISIBLE);
             binding.switchCommentsVisibility.setVisibility(View.VISIBLE);
             binding.openInBrowser.setVisibility(View.VISIBLE);
+            binding.sleepTimer.setVisibility(View.VISIBLE);
             binding.switchMute.setVisibility(View.VISIBLE);
             binding.playerCloseButton.setVisibility(isFullscreen ? View.GONE : View.VISIBLE);
             // Top controls have a large minHeight which is allows to drag the player
@@ -1160,9 +1165,11 @@ public final class Player implements
         if (isFullscreen) {
             binding.titleTextView.setVisibility(View.VISIBLE);
             binding.channelTextView.setVisibility(View.VISIBLE);
+            binding.sleepTimer.setVisibility(View.VISIBLE);
         } else {
             binding.titleTextView.setVisibility(View.GONE);
             binding.channelTextView.setVisibility(View.GONE);
+            binding.sleepTimer.setVisibility(View.GONE);
         }
         setMuteButton(binding.switchMute, isMuted());
 
@@ -4188,6 +4195,8 @@ public final class Player implements
             onPlayWithKodiClicked();
         } else if (v.getId() == binding.openInBrowser.getId()) {
             onOpenInBrowserClicked();
+        } else if (v.getId() == binding.sleepTimer.getId()) {
+            onSleepTimerClicked();
         } else if (v.getId() == binding.fullScreenButton.getId()) {
             setRecovery();
             NavigationHelper.playOnMainPlayer(context, playQueue, true);
@@ -4248,6 +4257,8 @@ public final class Player implements
             ShareUtils.copyToClipboard(context, getVideoUrlAtCurrentTime());
         } else if (v.getId() == binding.switchSponsorBlocking.getId()) {
             onBlockingSponsorsButtonLongClicked();
+        } else if (v.getId() == binding.sleepTimer.getId()) {
+            onSleepTimerLongClicked();
         }
         return true;
     }
@@ -4342,6 +4353,29 @@ public final class Player implements
                 .ifPresent(originalUrl -> ShareUtils.openUrlInBrowser(
                         Objects.requireNonNull(getParentActivity()), originalUrl));
     }
+
+    private void onSleepTimerClicked() {
+        AppCompatActivity activity = getParentActivity();
+        assert activity != null;
+        Intent serviceIntent = new Intent(activity, SleepTimerService.class);
+        serviceIntent.setAction(SleepTimerService.ACTION_START_TIMER);
+        // get time from shared preferences
+        int time = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(activity).getString(
+                activity.getString(R.string.sleep_timer_length_key), String.valueOf(15)
+        ));
+        serviceIntent.putExtra("timeInMillis", time * 60000); // 60 seconds
+        activity.startService(serviceIntent);
+        binding.sleepTimer.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.ic_timer));
+    }
+
+    private void onSleepTimerLongClicked() {
+        AppCompatActivity activity = getParentActivity();
+        assert activity != null;
+        Intent serviceIntent = new Intent(activity, SleepTimerService.class);
+        serviceIntent.setAction(SleepTimerService.ACTION_STOP_TIMER);
+        activity.startService(serviceIntent);
+        binding.sleepTimer.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.ic_timer_off));
+    }
     //endregion
 
 
@@ -4423,11 +4457,13 @@ public final class Player implements
             binding.titleTextView.setVisibility(View.VISIBLE);
             binding.channelTextView.setVisibility(View.VISIBLE);
             binding.playerCloseButton.setVisibility(View.GONE);
+            binding.sleepTimer.setVisibility(View.VISIBLE);
         } else {
             binding.titleTextView.setVisibility(View.GONE);
             binding.channelTextView.setVisibility(View.GONE);
             binding.playerCloseButton.setVisibility(
                     videoPlayerSelected() ? View.VISIBLE : View.GONE);
+            binding.sleepTimer.setVisibility(View.GONE);
         }
         setupScreenRotationButton();
     }

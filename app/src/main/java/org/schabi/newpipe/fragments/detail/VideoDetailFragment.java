@@ -84,6 +84,7 @@ import org.schabi.newpipe.player.helper.PlayerHolder;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
+import org.schabi.newpipe.sleep.SleepTimerService;
 import org.schabi.newpipe.util.Constants;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ExtractorHelper;
@@ -481,6 +482,18 @@ public final class VideoDetailFragment
                     ShareUtils.openUrlInBrowser(requireContext(), currentInfo.getUrl());
                 }
                 break;
+            case R.id.detail_controls_start_sleep_timer:
+                if (currentInfo != null) {
+                    Intent serviceIntent = new Intent(requireContext(), SleepTimerService.class);
+                    serviceIntent.setAction(SleepTimerService.ACTION_START_TIMER);
+                    // get time from shared preferences
+                    int time = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(activity).getString(
+                            getString(R.string.sleep_timer_length_key), String.valueOf(15)
+                    ));
+                    serviceIntent.putExtra("timeInMillis", time * 60000); // 60 seconds
+                    activity.startService(serviceIntent);
+                }
+                break;
             case R.id.detail_controls_play_with_kodi:
                 if (currentInfo != null) {
                     try {
@@ -683,6 +696,7 @@ public final class VideoDetailFragment
         binding.detailControlsDownload.setOnLongClickListener(this);
         binding.detailControlsShare.setOnClickListener(this);
         binding.detailControlsOpenInBrowser.setOnClickListener(this);
+        binding.detailControlsStartSleepTimer.setOnClickListener(this);
         binding.detailControlsPlayWithKodi.setOnClickListener(this);
         if (DEBUG) {
             binding.detailControlsCrashThePlayer.setOnClickListener(

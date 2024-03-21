@@ -110,6 +110,18 @@
             app:singleLineTitle="false"
             app:iconSpaceReserved="false" />
 
+        <ListPreference
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:defaultValue="15"
+                android:entries="@array/sleep_timer_length_key"
+                android:entryValues="@array/sleep_timer_length_value"
+                android:key="@string/sleep_timer_length_key"
+                android:summary="%s"
+                android:title="@string/sleep_timer_length_title"
+                app:singleLineTitle="false"
+                app:iconSpaceReserved="false" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

@@ -67,7 +67,7 @@ public final class MainPlayer extends Service {
 
     public static final String ACTION_CLOSE
             = App.PACKAGE_NAME + ".player.MainPlayer.CLOSE";
-    static final String ACTION_PLAY_PAUSE
+    public static final String ACTION_PLAY_PAUSE
             = App.PACKAGE_NAME + ".player.MainPlayer.PLAY_PAUSE";
     static final String ACTION_REPEAT
             = App.PACKAGE_NAME + ".player.MainPlayer.REPEAT";

@@ -949,8 +949,5 @@
     <string name="download_temp_warning">Playlist downloading is still in beta. NEVER use it to download playlists with 50+ items.</string>
     <string name="buy_me_coffee">Buy me a coffee</string>
     <string name="error_priority_notice">Priority: Issues on GitHub/CodeBerg > Emails with clear title, polite content and bug report > Bug report only emails. \nBug report only emails will not receive replies.</string>
-
-
-<!--    keep this the last item-->
-    <string name="update_log">### New Features\n\n- Support up to 10x playback speed\n- Support downloading videos and audios separately (NicoNico)\n\n### Bug Fixes:\n\n- Can not watch videos uploaded after 2.20 (NicoNico)\n- Seekbar thumbnails got scale down on big screens [https://github.com/InfinityLoop1308/PipePipe/issues/215]</string>
+    <string name="sleep_timer_length_title">Sleep Timer</string>
 </resources>

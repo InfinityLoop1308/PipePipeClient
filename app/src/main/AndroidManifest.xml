@@ -57,6 +57,9 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".sleep.TimerStopReceiver"/>
+        <service android:name=".sleep.SleepTimerService"/>
+
         <service
             android:name=".player.MainPlayer"
             android:exported="false"
