@@ -46,7 +46,7 @@ public final class PicassoHelper {
         @Override
         public Bitmap transform(final Bitmap source) {
             final float notificationThumbnailWidth = Math.min(
-                    4000,
+                    600,
                     source.getWidth());
 
             final Bitmap result = Bitmap.createScaledBitmap(
