@@ -1400,9 +1400,7 @@ public final class Player implements
         if (isNullOrEmpty(url)) {
             return;
         }
-
-        // scale down the notification thumbnail for performance
-        PicassoHelper.loadScaledDownThumbnail(context, url, true).into(new Target() {
+        PicassoHelper.loadOrigin(url).into(new Target() {
             @Override
             public void onBitmapLoaded(final Bitmap bitmap, final Picasso.LoadedFrom from) {
                 if (DEBUG) {
