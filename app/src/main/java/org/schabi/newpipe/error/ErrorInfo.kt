@@ -16,6 +16,7 @@ import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExt
 import org.schabi.newpipe.ktx.isNetworkRelated
 import java.io.PrintWriter
 import java.io.StringWriter
+import kotlin.math.min
 
 @Parcelize
 class ErrorInfo(
@@ -92,7 +93,7 @@ class ErrorInfo(
         fun throwableToStringList(throwable: Throwable) = arrayOf(getStackTrace(throwable))
 
         fun throwableListToStringList(throwable: List<Throwable>) =
-            Array(throwable.size) { i -> getStackTrace(throwable[i]) }
+            Array(min(throwable.size, 20)) { i -> getStackTrace(throwable[i]) }
 
         private fun getInfoServiceName(info: Info?) =
             if (info == null) SERVICE_NONE else NewPipe.getNameOfService(info.serviceId)
