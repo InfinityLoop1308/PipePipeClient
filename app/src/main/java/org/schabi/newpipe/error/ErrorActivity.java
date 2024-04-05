@@ -1,8 +1,9 @@
 package org.schabi.newpipe.error;
 
-import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
-
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,18 +13,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
+import androidx.core.app.NotificationCompat;
 import com.grack.nanojson.JsonWriter;
-
 import org.schabi.newpipe.BuildConfig;
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.ActivityErrorBinding;
+import org.schabi.newpipe.extractor.downloader.Downloader;
+import org.schabi.newpipe.util.ErrorMatcher;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
@@ -31,6 +32,10 @@ import org.schabi.newpipe.util.external_communication.ShareUtils;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+
+import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
+import static org.schabi.newpipe.extractor.NewPipe.getDownloader;
+import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
 /*
  * Created by Christian Schabesberger on 24.10.15.
@@ -128,6 +133,51 @@ public class ErrorActivity extends AppCompatActivity {
         for (final String e : errorInfo.getStackTraces()) {
             Log.e(TAG, e);
         }
+
+        Context context = this;
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Downloader downloader = getDownloader();
+                try {
+                    String resp = downloader.get(ErrorMatcher.BASE_URL).responseBody();
+                    String[] stackTraces = errorInfo.getStackTraces();
+                    String matchKind = stackTraces[0].split(":")[0];
+                    String targetUrl = new ErrorMatcher(resp).getMatch(matchKind, String.join("", stackTraces));
+                    if (targetUrl != null) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse(targetUrl));
+                        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, Build.VERSION.SDK_INT >= Build.VERSION_CODES.M?
+                                PendingIntent.FLAG_IMMUTABLE | FLAG_UPDATE_CURRENT : FLAG_UPDATE_CURRENT);
+
+                        String channelId = getString(R.string.notification_channel_id);
+
+                        // Create a notification builder
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
+                                .setSmallIcon(R.drawable.ic_newpipe_triangle_white)
+                                .setContentTitle(getString(R.string.error_match_notification_title))
+                                .setContentText(getString(R.string.error_match_notification_text))
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                .setContentIntent(pendingIntent)
+                                .setAutoCancel(true); // Auto-cancel the notification when clicked
+
+                        // Show the notification
+                        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);;
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                            // Define the notification channel
+                            NotificationChannel channel = new NotificationChannel(channelId, getString(R.string.error_match_notification_title), NotificationManager.IMPORTANCE_DEFAULT);
+                            notificationManager.createNotificationChannel(channel);
+                        }
+
+                        notificationManager.notify(0, builder.build());
+
+                    }
+                } catch (Exception ignored) {
+
+                }
+            }
+        }).start();
     }
 
     @Override

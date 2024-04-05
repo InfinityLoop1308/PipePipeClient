@@ -950,4 +950,6 @@
     <string name="buy_me_coffee">Buy me a coffee</string>
     <string name="error_priority_notice">Priority: Issues on GitHub/CodeBerg > Emails with clear title, polite content and bug report > Bug report only emails. \nBug report only emails will not receive replies.</string>
     <string name="sleep_timer_length_title">Sleep Timer</string>
+    <string name="error_match_notification_title">Found a match for the error you encountered</string>
+    <string name="error_match_notification_text">Click to check the solution</string>
 </resources>
