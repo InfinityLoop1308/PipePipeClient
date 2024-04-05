@@ -7,7 +7,10 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
@@ -146,7 +149,7 @@ class ErrorUtil {
         }
 
         private fun showSnackbar(context: Context, rootView: View?, errorInfo: ErrorInfo) {
-            if (rootView == null) {
+            if (rootView == null || findSuitableParent(rootView) == null) {
                 // fallback to showing a notification if no root view is available
                 createNotification(context, errorInfo)
             } else {
@@ -156,6 +159,34 @@ class ErrorUtil {
                         openActivity(context, errorInfo)
                     }.show()
             }
+        }
+
+        private fun findSuitableParent(passedView: View): ViewGroup? {
+            var view: View? = passedView
+            var fallback: ViewGroup? = null
+            do {
+                if (view is CoordinatorLayout) {
+                    // We've found a CoordinatorLayout, use it
+                    return view
+                } else if (view is FrameLayout) {
+                    fallback = if (view.getId() == android.R.id.content) {
+                        // If we've hit the decor content view, then we didn't find a CoL in the
+                        // hierarchy, so use it.
+                        return view
+                    } else {
+                        // It's not the content view but we'll use it as our fallback
+                        view
+                    }
+                }
+                if (view != null) {
+                    // Else, we will loop and crawl up the view hierarchy and try to find a parent
+                    val parent = view.parent
+                    view = if (parent is View) parent else null
+                }
+            } while (view != null)
+
+            // If we reach here then we didn't find a CoL or a suitable content view so we'll fallback
+            return fallback
         }
     }
 }
