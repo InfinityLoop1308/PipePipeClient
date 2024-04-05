@@ -163,10 +163,14 @@ public class MovieBulletCommentsPlayer {
      * @param movieDuration The duration of the movie, used to avoid drawing too many comments.
      */
     public void complete(final Duration movieDuration) {
+        if (lastPosition == null) {
+            return; //is actually finished
+        }
         final Duration minimumLastPosition = movieDuration.minus(INTERVAL);
         if (minimumLastPosition.compareTo(lastPosition) >= 0) {
             lastPosition = minimumLastPosition;
         }
+
         //Show all comments.
         drawComments(Duration.ofSeconds(Long.MAX_VALUE));
     }
