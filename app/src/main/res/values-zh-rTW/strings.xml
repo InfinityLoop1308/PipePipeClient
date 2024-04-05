@@ -892,4 +892,13 @@
     <string name="buy_me_coffee">請我喝咖啡</string>
     <string name="app_description_new">一款自由瀏覽 YouTube、NicoNico 和 BiliBili 的 FLOSS Android 應用程式</string>
     <string name="error_priority_notice">優先順序：GitHub/CodeBerg 上的問題 > 標題清晰、內容禮貌且包含錯誤報告的郵件 > 僅包含錯誤報告的郵件。\n僅包含錯誤報告的郵件將不會收到回覆。</string>
+    <string name="sleep_timer_length_title">睡眠計時器</string>
+    <string name="error_match_notification_title">找到了您遇到的錯誤匹配</string>
+    <string name="error_match_notification_text">點擊查看解決方案</string>
+    <string name="oldest_first">最舊優先</string>
+    <string name="newest_first">最新優先</string>
+    <string name="same_as_item_mode">與項目相同</string>
+    <string name="playlist_sorting_mode_title">播放清單排序模式</string>
+    <string name="dont_auto_queue_long_title">不自動加入長視頻到隊列</string>
+    <string name="dont_auto_queue_long_description">只自動加入不超過6分鐘的視頻</string>
 </resources>

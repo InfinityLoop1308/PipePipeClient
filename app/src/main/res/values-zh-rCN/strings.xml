@@ -904,4 +904,13 @@
     <string name="buy_me_coffee">请我喝一杯咖啡</string>
     <string name="donation_encouragement_new">我已尽最大努力为您提供最佳的用户体验，但您有机会通过捐赠使 PipePipe 变得更好。有了足够的捐款，我可以投入更多时间来开发这个项目。</string>
     <string name="error_priority_notice">优先级：GitHub/CodeBerg 上的问题 > 标题清晰、内容礼貌且包含错误报告的邮件 > 仅包含错误报告的邮件。\n仅包含错误报告的邮件将不会收到回复。</string>
+    <string name="sleep_timer_length_title">睡眠定时器</string>
+    <string name="error_match_notification_title">找到了您遇到的错误的匹配项</string>
+    <string name="error_match_notification_text">点击查看解决方案</string>
+    <string name="oldest_first">最早优先</string>
+    <string name="newest_first">最新优先</string>
+    <string name="same_as_item_mode">与条目相同</string>
+    <string name="playlist_sorting_mode_title">播放列表排序模式</string>
+    <string name="dont_auto_queue_long_title">不要自动入队长视频</string>
+    <string name="dont_auto_queue_long_description">只自动入队不超过6分钟的视频</string>
 </resources>

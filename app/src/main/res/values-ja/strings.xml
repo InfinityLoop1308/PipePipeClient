@@ -892,4 +892,13 @@
     <string name="buy_me_coffee">コーヒーをおごってください</string>
     <string name="app_description_new">YouTube、NicoNico、BiliBili を自由に閲覧できる FLOSS Android アプリ</string>
     <string name="error_priority_notice">優先度：GitHub/CodeBerg の問題 > 件名が明確で丁寧な内容とバグレポートのあるメール > バグレポートのみのメール。\nバグレポートのみのメールには返信がありません。</string>
+    <string name="sleep_timer_length_title">スリープタイマー</string>
+    <string name="error_match_notification_title">遭遇したエラーに対する一致が見つかりました</string>
+    <string name="error_match_notification_text">解決策を確認するにはクリックしてください</string>
+    <string name="oldest_first">古い順</string>
+    <string name="newest_first">新しい順</string>
+    <string name="same_as_item_mode">項目と同じ</string>
+    <string name="playlist_sorting_mode_title">プレイリストのソートモード</string>
+    <string name="dont_auto_queue_long_title">長い動画は自動でキューに追加しない</string>
+    <string name="dont_auto_queue_long_description">6分以下の動画のみ自動でキューに追加する</string>
 </resources>
