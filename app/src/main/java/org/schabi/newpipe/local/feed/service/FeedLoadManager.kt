@@ -130,6 +130,8 @@ class FeedLoadManager(private val context: Context) {
                             .blockingGet()
                     } as ListInfo<StreamInfoItem>
 
+                    listInfo.relatedItems = listInfo.relatedItems.filterNot { it.isRoundPlayStream }
+
                     return@map Notification.createOnNext(
                         FeedUpdateInfo(
                             subscriptionEntity,
