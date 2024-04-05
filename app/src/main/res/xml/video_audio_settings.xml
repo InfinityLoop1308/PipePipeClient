@@ -177,6 +177,14 @@
             app:iconSpaceReserved="false" />
 
         <SwitchPreferenceCompat
+                android:defaultValue="true"
+                android:key="@string/dont_auto_queue_long_key"
+                android:summary="@string/dont_auto_queue_long_description"
+                android:title="@string/dont_auto_queue_long_title"
+                app:singleLineTitle="false"
+                app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="@string/auto_queue_partition_key"
             android:summary="@string/auto_queue_partition_summary"

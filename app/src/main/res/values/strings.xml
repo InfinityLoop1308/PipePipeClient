@@ -956,4 +956,6 @@
     <string name="newest_first">Newest first</string>
     <string name="same_as_item_mode">Same as items</string>
     <string name="playlist_sorting_mode_title">Playlist sorting mode</string>
+    <string name="dont_auto_queue_long_title">Don\'t auto queue long videos</string>
+    <string name="dont_auto_queue_long_description">Only auto queue videos shorter than 6 min</string>
 </resources>

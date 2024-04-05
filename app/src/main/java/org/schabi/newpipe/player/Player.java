@@ -3556,9 +3556,13 @@ public final class Player implements
             return;
         }
 
+        boolean dontAutoQueueLongVideos = prefs.getBoolean(
+            context.getString(R.string.dont_auto_queue_long_key), true
+        );
+
         // auto queue when starting playback on the last item when not repeating
         final PlayQueue autoQueue = PlayerHelper.autoQueueOf(info,
-                playQueue.getStreams());
+                playQueue.getStreams(), dontAutoQueueLongVideos);
         if (autoQueue != null) {
             playQueue.append(autoQueue.getStreams());
         }

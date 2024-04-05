@@ -264,7 +264,8 @@ public final class PlayerHelper {
      */
     @Nullable
     public static PlayQueue autoQueueOf(@NonNull final StreamInfo info,
-                                        @NonNull final List<PlayQueueItem> existingItems) {
+                                        @NonNull final List<PlayQueueItem> existingItems,
+                                        boolean dontAutoQueueLong) {
         final Set<String> urls = new HashSet<>(existingItems.size());
         for (final PlayQueueItem item : existingItems) {
             urls.add(item.getUrl());
@@ -282,13 +283,17 @@ public final class PlayerHelper {
 
         if (relatedItems.get(0) instanceof StreamInfoItem
                 && !urls.contains(relatedItems.get(0).getUrl())) {
-            return getAutoQueuedSinglePlayQueue((StreamInfoItem) relatedItems.get(0));
+            if(!dontAutoQueueLong || ((StreamInfoItem) relatedItems.get(0)).getDuration() < 360){
+                return getAutoQueuedSinglePlayQueue((StreamInfoItem) relatedItems.get(0));
+            }
         }
 
         final List<StreamInfoItem> autoQueueItems = new ArrayList<>();
         for (final InfoItem item : relatedItems) {
             if (item instanceof StreamInfoItem && !urls.contains(item.getUrl())) {
-                autoQueueItems.add((StreamInfoItem) item);
+                if (!dontAutoQueueLong || ((StreamInfoItem) item).getDuration() < 360) {
+                    autoQueueItems.add((StreamInfoItem) item);
+                }
             }
         }
 
