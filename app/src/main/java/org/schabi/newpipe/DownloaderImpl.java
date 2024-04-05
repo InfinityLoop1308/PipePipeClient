@@ -60,7 +60,6 @@ public final class DownloaderImpl extends Downloader {
     private static DownloaderImpl instance;
     private final Map<String, String> mCookies;
     private final OkHttpClient client;
-    private Integer customTimeout;
 
     private DownloaderImpl(final OkHttpClient.Builder builder) {
         this.client = builder
@@ -87,10 +86,6 @@ public final class DownloaderImpl extends Downloader {
         return instance;
     }
 
-    public DownloaderImpl setCustomTimeout(final Integer value) {
-        this.customTimeout = value;
-        return this;
-    }
 
     /**
      * Enable TLS 1.2 and 1.1 on Android Kitkat. This function is mostly taken
@@ -248,12 +243,6 @@ public final class DownloaderImpl extends Downloader {
         OkHttpClient tmpClient = client;
         final okhttp3.Response response;
 
-        if (customTimeout != null) {
-            tmpClient = new OkHttpClient.Builder()
-                    .readTimeout(customTimeout, TimeUnit.SECONDS)
-                    .build();
-        }
-
         response = tmpClient.newCall(requestBuilder.build()).execute();
 
         if (response.code() == 429) {
@@ -264,16 +253,22 @@ public final class DownloaderImpl extends Downloader {
 
         final ResponseBody body = response.body();
         String responseBodyToReturn = null;
+        byte[] rawBodyBytes = null;
 
-        if (body != null) {
-            BufferedSource source = body.source();
-            source.request(Long.MAX_VALUE);
-            Buffer buffer = source.buffer();
-            responseBodyToReturn = buffer.clone().readString(StandardCharsets.UTF_8);
+        try {
+            if (body != null) {
+                rawBodyBytes = body.bytes(); // Read the raw bytes from the response body
+                responseBodyToReturn = new String(rawBodyBytes, StandardCharsets.UTF_8); // Convert bytes to string
+                // The body is closed after body.bytes() is called.
+            }
+        } finally {
+            if (body != null) {
+                body.close(); // Ensure the body is closed even if bytes() throws an IOException
+            }
         }
 
         final String latestUrl = response.request().url().toString();
         return new Response(response.code(), response.message(), response.headers().toMultimap(),
-                responseBodyToReturn, body, latestUrl);
+                responseBodyToReturn, rawBodyBytes, latestUrl);
     }
 }
