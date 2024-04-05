@@ -196,11 +196,29 @@ public class MainActivity extends AppCompatActivity {
             // Show the "What's New" dialog
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.fragment_feed_title);
-            String message = "### Bug Fixes:\n" +
+            String message = "### New Features\n" +
                     "\n" +
-                    "- Live replays are not available immediately after ended (YouTube)\n" +
-                    "- Can not download on some devices(BiliBili)\n" +
-                    "- Can not watch videos when logged in (NicoNico)";
+                    "- Support sleep timer\n" +
+                    "- Support automatically error help from wiki\n" +
+                    "- Support sort items in local playlists by name\n" +
+                    "- Support sort bookmarked playlists reversely\n" +
+                    "- Support preventing long videos being added to play queue when auto queueing\n" +
+                    "\n" +
+                    "### Bug Fixes\n" +
+                    "\n" +
+                    "- Too large error parcel crashes the crash report\n" +
+                    "- Many different kinds of unexpected crash under certain circumstances\n" +
+                    "- Images resolution become low (YouTube)\n" +
+                    "- Comments not loads (YouTube)\n" +
+                    "- Some videos not load (YouTube)\n" +
+                    "- Images resolution become low (NicoNico)\n" +
+                    "- Can not watch streams if the uploader account was removed (NicoNico)\n" +
+                    "- Round play lives are always shown in feed (BiliBili)\n" +
+                    "\n" +
+                    "### Others\n" +
+                    "\n" +
+                    "- Fix a bug which makes UI laggy and drains the battery\n" +
+                    "- Improve the speed of network requests";
             builder.setMessage(message);
             builder.setPositiveButton(R.string.ok, null);
             // another button to copy to clipboard
