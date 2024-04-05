@@ -1,11 +1,7 @@
 package org.schabi.newpipe.sleep;
 
 import android.annotation.SuppressLint;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.Service;
+import android.app.*;
 import android.content.Intent;
 import android.os.Build;
 import android.os.CountDownTimer;
@@ -14,16 +10,11 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import org.schabi.newpipe.R;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 import static org.schabi.newpipe.player.MainPlayer.ACTION_CLOSE;
-import static org.schabi.newpipe.player.MainPlayer.ACTION_PLAY_PAUSE;
 
 public class SleepTimerService extends Service {
 
-    public static final String CHANNEL_ID = "SleepTimerServiceChannel";
+    public String CHANNEL_ID;
     private CountDownTimer countDownTimer;
 
     public static final String ACTION_START_TIMER = "org.schabi.newpipe.sleep.action.START_TIMER";
@@ -33,6 +24,7 @@ public class SleepTimerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        CHANNEL_ID = getString(R.string.notification_channel_id);
         createNotificationChannel();
     }
 
