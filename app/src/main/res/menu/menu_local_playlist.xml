@@ -14,14 +14,14 @@
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_sort" >
             <menu>
-<!--                <item-->
-<!--                    android:title="@string/sort_name"-->
-<!--                    android:id="@+id/menu_item_sort_name"-->
-<!--                    app:showAsAction="never" />-->
-<!--                <item-->
-<!--                    android:title="@string/sort_name_reverse"-->
-<!--                    android:id="@+id/menu_item_sort_name_reverse"-->
-<!--                    app:showAsAction="never" />-->
+                <item
+                    android:title="@string/sort_name"
+                    android:id="@+id/menu_item_sort_name"
+                    app:showAsAction="never" />
+                <item
+                    android:title="@string/sort_name_reverse"
+                    android:id="@+id/menu_item_sort_name_reverse"
+                    app:showAsAction="never" />
                 <item
                     android:title="@string/sort_origin"
                     android:id="@+id/menu_item_sort_origin"
