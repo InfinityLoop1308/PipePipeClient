@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.LocalItem;
+import org.schabi.newpipe.database.playlist.PlaylistMetadataEntry;
 import org.schabi.newpipe.database.playlist.PlaylistStreamEntry;
 import org.schabi.newpipe.database.stream.StreamStatisticsEntry;
 import org.schabi.newpipe.database.stream.model.StreamStateEntity;
@@ -22,7 +23,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 /*
@@ -67,6 +67,7 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
     private final ArrayList<LocalItem> localItems;
     private final HistoryRecordManager recordManager;
     private final DateTimeFormatter dateTimeFormatter;
+    private final int playlistSortMode;
 
     private boolean showFooter = false;
     private boolean useGridVariant = false;
@@ -84,7 +85,8 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
         dateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
                 .withLocale(Localization.getPreferredLocale(context));
         sortMode = utils.parseSortMode(PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(context.getString(R.string.playlist_sort_mode_key), SortMode.ORIGIN.name()));
+                .getString(context.getString(R.string.playlist_item_sort_mode_key), SortMode.ORIGIN.name()));
+        playlistSortMode = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString(context.getString(R.string.playlist_sorting_key), "0"));
     }
 
     public void setSelectedListener(final OnClickGesture<LocalItem> listener) {
@@ -406,11 +408,22 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void sort(SortMode sortMode) {
+        if (playlistSortMode < 2){ // 0: reverse(Old first) 1: origin(New first) 2: same as sortMode
+            Collections.sort(localItems, (o1, o2) -> {
+                if (o1 instanceof PlaylistMetadataEntry && o2 instanceof PlaylistMetadataEntry) {
+                    return (Math.toIntExact(((PlaylistMetadataEntry) o2).getDisplayIndex() - ((PlaylistMetadataEntry) o1).getDisplayIndex())) * (playlistSortMode == 0 ? 1 : -1);
+                } else {
+                    return 0;
+                }
+            });
+        }
         switch (sortMode) {
             case SORT_NAME:
                 Collections.sort(localItems, (o1, o2) -> {
                     if (o1 instanceof PlaylistStreamEntry && o2 instanceof PlaylistStreamEntry) {
                         return utils.compareChineseStrings(((PlaylistStreamEntry) o1).getStreamEntity().getTitle(), ((PlaylistStreamEntry) o2).getStreamEntity().getTitle());
+                    } else if(playlistSortMode == 2 && o1 instanceof PlaylistMetadataEntry && o2 instanceof PlaylistMetadataEntry) {
+                        return utils.compareChineseStrings(((PlaylistMetadataEntry) o1).getOrderingName(), ((PlaylistMetadataEntry) o2).getOrderingName());
                     } else {
                         return 0;
                     }
@@ -420,6 +433,8 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 Collections.sort(localItems, (o1, o2) -> {
                     if (o1 instanceof PlaylistStreamEntry && o2 instanceof PlaylistStreamEntry) {
                         return utils.compareChineseStrings(((PlaylistStreamEntry) o2).getStreamEntity().getTitle(), ((PlaylistStreamEntry) o1).getStreamEntity().getTitle());
+                    } else if(playlistSortMode == 2 && o1 instanceof PlaylistMetadataEntry && o2 instanceof PlaylistMetadataEntry) {
+                        return utils.compareChineseStrings(((PlaylistMetadataEntry) o2).getOrderingName(), ((PlaylistMetadataEntry) o1).getOrderingName());
                     } else {
                         return 0;
                     }
@@ -429,6 +444,8 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 Collections.sort(localItems, (o1, o2) -> {
                     if (o1 instanceof PlaylistStreamEntry && o2 instanceof PlaylistStreamEntry) {
                         return ((PlaylistStreamEntry) o1).getJoinIndex() - ((PlaylistStreamEntry) o2).getJoinIndex();
+                    } else if (playlistSortMode == 2 && o1 instanceof PlaylistMetadataEntry && o2 instanceof PlaylistMetadataEntry) {
+                        return Math.toIntExact(((PlaylistMetadataEntry) o1).getDisplayIndex() - ((PlaylistMetadataEntry) o2).getDisplayIndex());
                     } else {
                         return 0;
                     }
@@ -438,6 +455,8 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 Collections.sort(localItems, (o1, o2) -> {
                     if (o1 instanceof PlaylistStreamEntry && o2 instanceof PlaylistStreamEntry) {
                         return ((PlaylistStreamEntry) o2).getJoinIndex() - ((PlaylistStreamEntry) o1).getJoinIndex();
+                    } else if (playlistSortMode == 2 && o1 instanceof PlaylistMetadataEntry && o2 instanceof PlaylistMetadataEntry) {
+                        return Math.toIntExact(((PlaylistMetadataEntry) o2).getDisplayIndex() - ((PlaylistMetadataEntry) o1).getDisplayIndex());
                     } else {
                         return 0;
                     }

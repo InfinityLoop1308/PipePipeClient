@@ -1,7 +1,5 @@
 package org.schabi.newpipe.local.playlist;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -30,21 +28,18 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.PublishSubject;
-import io.reactivex.rxjava3.subscribers.DisposableSubscriber;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.schabi.newpipe.NewPipeDatabase;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.LocalItem;
 import org.schabi.newpipe.database.history.model.StreamHistoryEntry;
-import org.schabi.newpipe.database.playlist.PlaylistLocalItem;
 import org.schabi.newpipe.database.playlist.PlaylistStreamEntry;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.database.stream.model.StreamStateEntity;
 import org.schabi.newpipe.databinding.DialogEditTextBinding;
 import org.schabi.newpipe.databinding.LocalPlaylistHeaderBinding;
 import org.schabi.newpipe.databinding.PlaylistControlBinding;
-import org.schabi.newpipe.download.DownloadDialog;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
@@ -55,7 +50,6 @@ import org.schabi.newpipe.local.BaseLocalListFragment;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.MainPlayer.PlayerType;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
-import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
 import org.schabi.newpipe.util.*;
 import us.shandian.giga.get.DirectDownloader;
@@ -65,7 +59,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
-import static org.schabi.newpipe.util.SparseItemUtil.fetchStreamInfoAndSaveToDatabase;
 import static org.schabi.newpipe.util.SparseItemUtil.fetchStreamInfoAndSaveToDatabaseWithoutToast;
 import static org.schabi.newpipe.util.ThemeHelper.shouldUseGridLayout;
 
@@ -501,19 +494,19 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
         } else if (item.getItemId() == R.id.menu_item_sort_origin) {
             itemListAdapter.sortMode = SortMode.ORIGIN;
             itemListAdapter.sort(SortMode.ORIGIN);
-            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_sort_mode_key), SortMode.ORIGIN.name()).apply();
+            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_item_sort_mode_key), SortMode.ORIGIN.name()).apply();
         } else if (item.getItemId() == R.id.menu_item_sort_origin_reverse) {
             itemListAdapter.sortMode = SortMode.ORIGIN_REVERSE;
             itemListAdapter.sort(SortMode.ORIGIN_REVERSE);
-            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_sort_mode_key), SortMode.ORIGIN_REVERSE.name()).apply();
+            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_item_sort_mode_key), SortMode.ORIGIN_REVERSE.name()).apply();
         } else if (item.getItemId() == R.id.menu_item_sort_name) {
             itemListAdapter.sortMode = SortMode.SORT_NAME;
             itemListAdapter.sort(SortMode.SORT_NAME);
-            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_sort_mode_key), SortMode.SORT_NAME.name()).apply();
+            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_item_sort_mode_key), SortMode.SORT_NAME.name()).apply();
         } else if (item.getItemId() == R.id.menu_item_sort_name_reverse) {
             itemListAdapter.sortMode = SortMode.SORT_NAME_REVERSE;
             itemListAdapter.sort(SortMode.SORT_NAME_REVERSE);
-            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_sort_mode_key), SortMode.SORT_NAME_REVERSE.name()).apply();
+            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_item_sort_mode_key), SortMode.SORT_NAME_REVERSE.name()).apply();
         }
         return true;
     }
