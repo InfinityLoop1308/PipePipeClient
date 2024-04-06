@@ -67,16 +67,6 @@
         app:singleLineTitle="false"
         app:iconSpaceReserved="false" />
 
-    <ListPreference
-            android:entries="@array/playlist_sorting_mode"
-            android:entryValues="@array/playlist_sorting_mode_value"
-            android:key="@string/playlist_sorting_key"
-            android:summary="%s"
-            android:title="@string/playlist_sorting_mode_title"
-            app:singleLineTitle="false"
-            app:iconSpaceReserved="false" />
-
-
     <Preference
         android:key="@string/caption_settings_key"
         android:summary="@string/caption_setting_description"

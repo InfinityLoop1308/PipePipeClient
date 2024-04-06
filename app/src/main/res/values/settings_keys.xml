@@ -1440,7 +1440,7 @@
         <item>ai_subtitle</item>
     </string-array>
     <string name="pref_sponsorblock_mode_key">pref_sponsorblock_mode_key</string>
-    <string name="playlist_item_sort_mode_key">playlist_item_sort_mode_key</string>
+    <string name="playlist_sort_mode_key">playlist_sort_mode_key</string>
     <string name="sleep_timer_length_key">sleep_timer_length_key</string>
     <string-array name="sleep_timer_length_key">
         <item>5 min</item>

@@ -15,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentManager;
-import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,7 +40,10 @@ import org.schabi.newpipe.util.DebounceSaver;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.OnClickGesture;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import icepick.State;
@@ -407,11 +409,6 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
         final List<Long> localItemsDeleteUid = new ArrayList<>();
         final List<PlaylistRemoteEntity> remoteItemsUpdate = new ArrayList<>();
         final List<Long> remoteItemsDeleteUid = new ArrayList<>();
-
-        int playlistSortMode = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(requireContext()).getString(requireContext().getString(R.string.playlist_sorting_key), "0"));
-        if(playlistSortMode == 0){
-            Collections.reverse(items);
-        }
 
         // Calculate display index
         for (int i = 0; i < items.size(); i++) {
