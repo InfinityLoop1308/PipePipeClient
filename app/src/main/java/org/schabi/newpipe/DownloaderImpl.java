@@ -60,6 +60,7 @@ public final class DownloaderImpl extends Downloader {
     private static DownloaderImpl instance;
     private final Map<String, String> mCookies;
     private final OkHttpClient client;
+    private Integer customTimeout;
 
     private DownloaderImpl(final OkHttpClient.Builder builder) {
         this.client = builder
@@ -86,6 +87,10 @@ public final class DownloaderImpl extends Downloader {
         return instance;
     }
 
+    public DownloaderImpl setCustomTimeout(final Integer value) {
+        this.customTimeout = value;
+        return this;
+    }
 
     /**
      * Enable TLS 1.2 and 1.1 on Android Kitkat. This function is mostly taken
@@ -242,6 +247,12 @@ public final class DownloaderImpl extends Downloader {
 
         OkHttpClient tmpClient = client;
         final okhttp3.Response response;
+
+        if (customTimeout != null) {
+            tmpClient = new OkHttpClient.Builder()
+                    .readTimeout(customTimeout, TimeUnit.SECONDS)
+                    .build();
+        }
 
         response = tmpClient.newCall(requestBuilder.build()).execute();
 
