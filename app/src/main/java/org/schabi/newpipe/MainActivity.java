@@ -196,29 +196,21 @@ public class MainActivity extends AppCompatActivity {
             // Show the "What's New" dialog
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.fragment_feed_title);
-            String message = "### New Features\n" +
+            String message = "### Performance improvement\n" +
                     "\n" +
-                    "- Support sleep timer\n" +
-                    "- Support automatically error help from wiki\n" +
-                    "- Support sort items in local playlists by name\n" +
-                    "- Support sort bookmarked playlists reversely\n" +
-                    "- Support preventing long videos being added to play queue when auto queueing\n" +
+                    "- Significantly improve the performance of loading and playing (YouTube)\n" +
+                    "- Set a timeout for sponsorblock to avoid waiting(YouTube)\n" +
+                    "- Improve the loading speed of thumbnails(YouTube)\n" +
+                    "- Unexpected large amount network requests are sent if the video has no live comments replay or paused by users(YouTube)\n" +
                     "\n" +
                     "### Bug Fixes\n" +
                     "\n" +
-                    "- Too large error parcel crashes the crash report\n" +
-                    "- Many different kinds of unexpected crash under certain circumstances\n" +
-                    "- Images resolution become low (YouTube)\n" +
-                    "- Comments not loads (YouTube)\n" +
-                    "- Some videos not load (YouTube)\n" +
-                    "- Images resolution become low (NicoNico)\n" +
-                    "- Can not watch streams if the uploader account was removed (NicoNico)\n" +
-                    "- Round play lives are always shown in feed (BiliBili)\n" +
+                    "- Search not working (NicoNico)\n" +
+                    "- No cover for live search results(NicoNico)\n" +
+                    "- Unexpected expection when searching for lives(NicoNico)\n" +
+                    "- No bullet comments for lives(BiliBili)\n" +
                     "\n" +
-                    "### Others\n" +
-                    "\n" +
-                    "- Fix a bug which makes UI laggy and drains the battery\n" +
-                    "- Improve the speed of network requests";
+                    "...And all the new features, fixes from 3.4.0 if you haven't upgraded yet :)";
             builder.setMessage(message);
             builder.setPositiveButton(R.string.ok, null);
             // another button to copy to clipboard
