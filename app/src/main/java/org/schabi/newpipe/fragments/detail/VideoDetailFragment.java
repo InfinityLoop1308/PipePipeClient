@@ -610,6 +610,12 @@ public final class VideoDetailFragment
                     );
                 }
                 break;
+            case R.id.overlay_play_pause_button:
+                if (isPlayerAvailable() && player.audioPlayerSelected()) {
+                    Intent queueActivityIntent = NavigationHelper.getPlayQueueActivityIntent(activity);
+                    activity.startActivity(queueActivityIntent);
+                }
+                break;
         }
 
         return true;
@@ -714,6 +720,7 @@ public final class VideoDetailFragment
         binding.overlayButtonsLayout.setOnClickListener(this);
         binding.overlayCloseButton.setOnClickListener(this);
         binding.overlayPlayPauseButton.setOnClickListener(this);
+        binding.overlayPlayPauseButton.setOnLongClickListener(this);
 
         binding.detailControlsBackground.setOnTouchListener(getOnControlsTouchListener());
         binding.detailControlsPopup.setOnTouchListener(getOnControlsTouchListener());
@@ -2488,6 +2495,7 @@ public final class VideoDetailFragment
         binding.overlayMetadataLayout.setLongClickable(enable);
         binding.overlayButtonsLayout.setClickable(enable);
         binding.overlayPlayPauseButton.setClickable(enable);
+        binding.overlayPlayPauseButton.setLongClickable(enable);
         binding.overlayCloseButton.setClickable(enable);
     }
 
