@@ -77,8 +77,8 @@ public final class NotificationUtil {
      * @param forceRecreate whether to force the recreation of the notification even if it already
      *                      exists
      */
-    synchronized void createNotificationIfNeededAndUpdate(final Player player,
-                                                          final boolean forceRecreate) {
+    public synchronized void createNotificationIfNeededAndUpdate(final Player player,
+                                                                 final boolean forceRecreate) {
         if (forceRecreate || notificationBuilder == null) {
             notificationBuilder = createNotification(player, null);
         }
@@ -116,8 +116,8 @@ public final class NotificationUtil {
         }
 
         builder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
-                    .setMediaSession(player.getMediaSessionManager().getSessionToken())
-                    .setShowActionsInCompactView(compactSlots))
+                .setMediaSession(player.getMediaSessionManager().getSessionToken())
+                .setShowActionsInCompactView(compactSlots))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setCategory(NotificationCompat.CATEGORY_TRANSPORT)
@@ -156,11 +156,10 @@ public final class NotificationUtil {
         notificationBuilder.setContentTitle(player.getVideoTitle());
         notificationBuilder.setContentText(player.getUploaderName());
         notificationBuilder.setTicker(player.getVideoTitle());
-        updateActions(notificationBuilder, player);
-        final boolean showThumbnail = player.getPrefs().getBoolean(
-                player.getContext().getString(R.string.show_thumbnail_key), true);
-        if (showThumbnail) {
-            setLargeIcon(notificationBuilder, player);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            // notification actions are ignored on Android 13+, and are replaced by code in
+            // MediaSessionPlayerUi
+            updateActions(notificationBuilder, player);
         }
     }
 
@@ -366,6 +365,9 @@ public final class NotificationUtil {
     /////////////////////////////////////////////////////
 
     private void setLargeIcon(final NotificationCompat.Builder builder, final Player player) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return;
+        }
         final boolean scaleImageToSquareAspectRatio = player.getPrefs().getBoolean(
                 player.getContext().getString(R.string.scale_to_square_image_in_notifications_key),
                 false);

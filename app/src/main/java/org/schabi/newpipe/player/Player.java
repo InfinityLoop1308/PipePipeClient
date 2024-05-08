@@ -3449,14 +3449,7 @@ public final class Player implements
 
         NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, false);
 
-        final boolean showThumbnail = prefs.getBoolean(
-                context.getString(R.string.show_thumbnail_key), true);
-        mediaSessionManager.setMetadata(
-                getVideoTitle(),
-                getUploaderName(),
-                showThumbnail ? Optional.ofNullable(getThumbnail()) : Optional.empty(),
-                StreamTypeUtil.isLiveStream(info.getStreamType()) ? -1 : info.getDuration()
-        );
+        mediaSessionManager.setPlayer(this);
 
         notifyMetadataUpdateToListeners();
 
@@ -4809,7 +4802,7 @@ public final class Player implements
     //////////////////////////////////////////////////////////////////////////*/
     //region Getters
 
-    private Optional<StreamInfo> getCurrentStreamInfo() {
+    public Optional<StreamInfo> getCurrentStreamInfo() {
         return Optional.ofNullable(currentMetadata).flatMap(MediaItemTag::getMaybeStreamInfo);
     }
 
