@@ -286,7 +286,7 @@ dependencies {
     implementation 'com.jakewharton:process-phoenix:2.1.2'
 
     // WebSocket
-    implementation "org.java-websocket:Java-WebSocket:1.5.3"
+    implementation "org.java-websocket:Java-WebSocket:1.4.1" // keep 1.4.1 or it will crash on sdk 21-23
 
     // Annotation
     implementation 'javax.annotation:javax.annotation-api:1.3.2'
