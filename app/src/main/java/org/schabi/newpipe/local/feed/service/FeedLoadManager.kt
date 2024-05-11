@@ -59,6 +59,11 @@ class FeedLoadManager(private val context: Context) {
             false
         )
 
+        val showFutureItems = defaultSharedPreferences.getBoolean(
+            context.getString(R.string.toggle_show_future_items_key),
+            false
+        )
+
         val outdatedThreshold = if (ignoreOutdatedThreshold) {
             OffsetDateTime.now(ZoneOffset.UTC)
         } else {
@@ -130,7 +135,7 @@ class FeedLoadManager(private val context: Context) {
                             .blockingGet()
                     } as ListInfo<StreamInfoItem>
 
-                    listInfo.relatedItems = listInfo.relatedItems.filterNot { it.isRoundPlayStream }
+                    listInfo.relatedItems = listInfo.relatedItems.filterNot { it.isRoundPlayStream || (!showFutureItems && it.uploadDate != null && it.uploadDate!!.offsetDateTime().isAfter(OffsetDateTime.now())) }
 
                     return@map Notification.createOnNext(
                         FeedUpdateInfo(
