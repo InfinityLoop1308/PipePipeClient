@@ -14,6 +14,7 @@ import org.schabi.newpipe.database.LocalItem;
 import org.schabi.newpipe.database.playlist.PlaylistStreamEntry;
 import org.schabi.newpipe.database.stream.StreamStatisticsEntry;
 import org.schabi.newpipe.database.stream.model.StreamStateEntity;
+import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.local.holder.*;
 import org.schabi.newpipe.util.*;
@@ -128,7 +129,15 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void removeItem(final LocalItem data) {
-        final int index = localItems.indexOf(data);
+//        final int index = localItems.stream().filter(item -> ((PlaylistStreamEntry)(item)).getStreamEntity().getUrl().equals(((PlaylistStreamEntry)(data)).getStreamEntity().getUrl())).findFirst().orElse(null) != null ? localItems.indexOf(data) : -1;
+        int index = -1;
+        for (int i = 0; i < localItems.size(); i++) {
+            PlaylistStreamEntry  item = (PlaylistStreamEntry) localItems.get(i);
+            if (item.getStreamEntity().getUrl().equals((((PlaylistStreamEntry) (data)).getStreamEntity()).getUrl())) {
+                index = i;
+                break;
+            }
+        }
         if (index != -1) {
             localItems.remove(index);
             if(isFilterEnabled){
