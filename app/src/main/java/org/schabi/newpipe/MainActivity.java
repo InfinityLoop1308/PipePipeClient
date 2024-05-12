@@ -196,21 +196,23 @@ public class MainActivity extends AppCompatActivity {
             // Show the "What's New" dialog
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.fragment_feed_title);
-            String message = "### Performance improvement\n" +
+            String message = "### Bug Fixes\n" +
                     "\n" +
-                    "- Significantly improve the performance of loading and playing (YouTube)\n" +
-                    "- Set a timeout for sponsorblock to avoid waiting(YouTube)\n" +
-                    "- Improve the loading speed of thumbnails(YouTube)\n" +
-                    "- Unexpected large amount network requests are sent if the video has no live comments replay or paused by users(YouTube)\n" +
+                    "- Notification thumbnail is blurry on Android 13+\n" +
+                    "- Wrong icon on TVs\n" +
+                    "- Delete from local playlist not working sometimes\n" +
+                    "- Unexpected crash on Android 5 & 6 devices\n" +
+                    "- Unexpected error when parsing comments in some video (YouTube)\n" +
+                    "- Name, avatar and banner of channels can't be loaded sometimes(YouTube)\n" +
+                    "- Search filters doesn't work(NicoNico)\n" +
                     "\n" +
-                    "### Bug Fixes\n" +
+                    "### New Features\n" +
                     "\n" +
-                    "- Search not working (NicoNico)\n" +
-                    "- No cover for live search results(NicoNico)\n" +
-                    "- Unexpected expection when searching for lives(NicoNico)\n" +
-                    "- No bullet comments for lives(BiliBili)\n" +
+                    "- Make show future preference also work for feeds\n" +
+                    "- Support open background queue by long pressing the play/pause button in the bottom play bar\n" +
+                    "- Support duration filters(NicoNico) \n" +
                     "\n" +
-                    "...And all the new features, fixes from 3.4.0 if you haven't upgraded yet :)";
+                    "If you're enjoying PipePipe, please help share it with your friends. Every bit of support means a lot to us!";
             builder.setMessage(message);
             builder.setPositiveButton(R.string.ok, null);
             // another button to copy to clipboard
