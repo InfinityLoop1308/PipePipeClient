@@ -889,7 +889,6 @@
 <string name="dialog_message_enable_update_checker">您要啟用更新檢查器嗎？您可以在設置中禁用它。</string>
 <string name="warning">警告</string>
 <string name="download_temp_warning">播放清單下載仍處於測試階段。絕對不要用它下載包含 50+ 項目的播放清單。</string>
-<string name="buy_me_coffee">請我喝咖啡</string>
 <string name="app_description_new">一款自由瀏覽 YouTube、NicoNico 和 BiliBili 的 FLOSS Android 應用程式</string>
 <string name="error_priority_notice">優先順序：GitHub/CodeBerg 上的問題 &gt; 標題清晰、內容禮貌且包含錯誤報告的郵件 &gt; 僅包含錯誤報告的郵件。\n僅包含錯誤報告的郵件將不會收到回覆。</string>
 <string name="sleep_timer_length_title">睡眠計時器</string>
@@ -903,4 +902,5 @@
 <string name="dont_auto_queue_long_description">只自動加入不超過6分鐘的視頻</string>
 <string name="enable_notification_text">請為此應用程式啟用通知以確保其正常運作。我們只會在必要時通知您。</string>
 <string name="enable_notification_title">啟用通知</string>
+<string name="sponsor_promote">成為赞助者</string>
 </resources>

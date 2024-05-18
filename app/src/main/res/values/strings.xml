@@ -947,7 +947,6 @@
 <string name="previous">Previous</string>
 <string name="warning">Warning</string>
 <string name="download_temp_warning">Playlist downloading is still in beta. NEVER use it to download playlists with 50+ items.</string>
-<string name="buy_me_coffee">Buy me a coffee</string>
 <string name="error_priority_notice">Priority: Issues on GitHub/CodeBerg &gt; Emails with clear title, polite content and bug report &gt; Bug report only emails. \nBug report only emails will not receive replies.</string>
 <string name="sleep_timer_length_title">Sleep Timer</string>
 <string name="error_match_notification_title">Found a match for the error you encountered</string>
@@ -960,4 +959,5 @@
 <string name="dont_auto_queue_long_description">Only auto queue videos shorter than 6 min</string>
 <string name="enable_notification_text">Please enable notifications for this app to ensure it functions normally. We will only alert you when necessary.</string>
 <string name="enable_notification_title">Enable notification</string>
+<string name="sponsor_promote">Become a sponsor</string>
 </resources>

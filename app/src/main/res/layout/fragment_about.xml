@@ -82,6 +82,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:text="@string/buy_me_coffee" />
+                android:text="@string/sponsor_promote" />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

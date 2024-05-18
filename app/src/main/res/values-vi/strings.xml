@@ -946,7 +946,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="previous">Trước đó</string>
 <string name="warning">Cảnh báo</string>
 <string name="download_temp_warning">Tải xuống danh sách phát vẫn đang trong giai đoạn thử nghiệm. KHÔNG BAO GIỜ sử dụng nó để tải xuống danh sách phát có hơn 50 mục.</string>
-<string name="buy_me_coffee">Mua cho tôi một ly cà phê</string>
 <string name="error_priority_notice">Ưu tiên: Các vấn đề trên GitHub/CodeBerg &gt; Email có tiêu đề rõ ràng, nội dung lịch sự và báo cáo lỗi &gt; Email chỉ báo cáo lỗi. \nCác email chỉ báo cáo lỗi sẽ không nhận được phản hồi.</string>
 <string name="sleep_timer_length_title">Hẹn giờ ngủ</string>
 <string name="error_match_notification_title">Đã tìm thấy kết quả phù hợp với lỗi bạn gặp phải</string>
@@ -959,4 +958,5 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="dont_auto_queue_long_description">Chỉ tự động xếp hàng các băng hình ngắn hơn 6 phút</string>
 <string name="enable_notification_text">Vui lòng bật thông báo cho ứng dụng này để đảm bảo nó hoạt động bình thường. Chúng tôi chỉ cảnh báo khi cần thiết.</string>
 <string name="enable_notification_title">Bật thông báo</string>
+<string name="sponsor_promote">Trở thành nhà tài trợ</string>
 </resources>
