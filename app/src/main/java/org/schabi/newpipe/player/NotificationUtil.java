@@ -136,6 +136,9 @@ public final class NotificationUtil {
                 builder.setDeleteIntent(PendingIntent.getBroadcast(contextProvider, NOTIFICATION_ID,
                         new Intent(ACTION_CLOSE), FLAG_UPDATE_CURRENT));
             }
+        } else {
+            builder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
+                    .setMediaSession(player.getMediaSessionManager().getSessionToken()));
         }
         return builder;
     }
