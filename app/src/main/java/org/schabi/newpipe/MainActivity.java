@@ -71,18 +71,7 @@ import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.event.OnKeyDownListener;
 import org.schabi.newpipe.player.helper.PlayerHolder;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
-import org.schabi.newpipe.util.Constants;
-import org.schabi.newpipe.util.DeviceUtils;
-import org.schabi.newpipe.util.KioskTranslator;
-import org.schabi.newpipe.util.Localization;
-import org.schabi.newpipe.util.NavigationHelper;
-import org.schabi.newpipe.util.PeertubeHelper;
-import org.schabi.newpipe.util.PermissionHelper;
-import org.schabi.newpipe.util.SerializedCache;
-import org.schabi.newpipe.util.ServiceHelper;
-import org.schabi.newpipe.util.StateSaver;
-import org.schabi.newpipe.util.TLSSocketFactoryCompat;
-import org.schabi.newpipe.util.ThemeHelper;
+import org.schabi.newpipe.util.*;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.views.FocusOverlayView;
 
@@ -241,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
             builder.show();
             prefs.edit().putInt("isFirstRun", 1).apply();
         }
+        PermissionChecker.checkNotificationPermission(this);
     }
 
     private void setupDrawer() throws ExtractionException {
