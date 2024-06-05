@@ -961,5 +961,5 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sponsor_promote">Trở thành nhà tài trợ</string>
 <string name="random_play_order_title">Trình tự ngẫu nhiên</string>
 <string name="random_play_order_summary">Khi sử dụng Chế độ Phát Nhạc, xáo trộn danh sách phát</string>
-
+<string name="update_log">### Bug Sửa chữa\n- Crash bất ngờ trên Android 13+\n- Danh sách phát địa phương không thể xóa\n- Bộ lọc tìm kiếm mặc định không hoạt động (NicoNico)\n- Không thể mở một số video (BiliBili)\n### Tính năng mới\n- Hỗ trợ phát ngẫu nhiên khi sử dụng Chế độ Trình phát Nhạc</string>
 </resources>
