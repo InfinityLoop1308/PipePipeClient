@@ -960,4 +960,7 @@
 <string name="enable_notification_text">Please enable notifications for this app to ensure it functions normally. We will only alert you when necessary.</string>
 <string name="enable_notification_title">Enable notification</string>
 <string name="sponsor_promote">Become a sponsor</string>
+<string name="random_play_order_title">Random Order</string>
+<string name="random_play_order_summary">When using Music Player Mode, shuffle the playlist</string>
+
 </resources>

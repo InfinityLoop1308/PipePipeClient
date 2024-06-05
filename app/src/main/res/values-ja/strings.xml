@@ -903,4 +903,7 @@
 <string name="enable_notification_text">このアプリの通知を有効にして、正常に機能するようにしてください。必要な場合のみ通知します。</string>
 <string name="enable_notification_title">通知を有効にする</string>
 <string name="sponsor_promote">スポンサーになる</string>
+<string name="random_play_order_title">ランダムな順序</string>
+<string name="random_play_order_summary">プレイリストをシャッフルする</string>
+
 </resources>

@@ -903,4 +903,7 @@
 <string name="enable_notification_text">請為此應用程式啟用通知以確保其正常運作。我們只會在必要時通知您。</string>
 <string name="enable_notification_title">啟用通知</string>
 <string name="sponsor_promote">成為赞助者</string>
+<string name="random_play_order_title">隨機順序</string>
+<string name="random_play_order_summary">在使用音樂播放器模式時,隨機播放播放清單</string>
+
 </resources>

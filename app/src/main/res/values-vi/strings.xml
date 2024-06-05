@@ -959,4 +959,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="enable_notification_text">Vui lòng bật thông báo cho ứng dụng này để đảm bảo nó hoạt động bình thường. Chúng tôi chỉ cảnh báo khi cần thiết.</string>
 <string name="enable_notification_title">Bật thông báo</string>
 <string name="sponsor_promote">Trở thành nhà tài trợ</string>
+<string name="random_play_order_title">Trình tự ngẫu nhiên</string>
+<string name="random_play_order_summary">Khi sử dụng Chế độ Phát Nhạc, xáo trộn danh sách phát</string>
+
 </resources>

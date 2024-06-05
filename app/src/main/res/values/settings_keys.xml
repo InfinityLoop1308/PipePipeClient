@@ -1471,4 +1471,5 @@
     </string-array>
     <string name="playlist_sorting_key">playlist_sorting_key</string>
     <string name="dont_auto_queue_long_key">dont_auto_queue_long_key</string>
+    <string name="random_music_play_mode_key">random_music_play_mode_key</string>
 </resources>

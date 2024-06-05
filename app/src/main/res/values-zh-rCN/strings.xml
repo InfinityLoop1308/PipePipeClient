@@ -915,4 +915,7 @@
 <string name="enable_notification_text">请启用此应用程序的通知,以确保其正常运行。我们只会在必要时提醒你。</string>
 <string name="enable_notification_title">打开通知</string>
 <string name="sponsor_promote">成为赞助者</string>
+<string name="random_play_order_title">随机顺序</string>
+<string name="random_play_order_summary">使用音乐播放器模式时,随机播放列表</string>
+
 </resources>

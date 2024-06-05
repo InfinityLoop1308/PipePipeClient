@@ -100,6 +100,7 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
     /* Is the playlist currently being processed to remove duplicate streams */
     private boolean isRemovingDuplicateStreams = false;
     private boolean autoBackgroundPlaying = false;
+    private boolean randomBackgroundPlaying = false;
 
     private Disposable videoDownloadDisposable;
     private Disposable audioDownloadDisposable;
@@ -142,6 +143,8 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
         isModified = new AtomicBoolean();
         autoBackgroundPlaying = PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .getBoolean(getString(R.string.auto_background_play_key), false);
+        randomBackgroundPlaying = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getBoolean(getString(R.string.random_music_play_mode_key), false);
     }
 
     @Override
@@ -198,11 +201,14 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                             ((PlaylistStreamEntry) selectedItem).getStreamEntity();
                     NavigationHelper.openVideoDetailFragment(requireContext(), getFM(),
                             item.getServiceId(), item.getUrl(), item.getTitle(), null, false);
-                    if(!autoBackgroundPlaying){
+                    if (!autoBackgroundPlaying){
                         return;
                     }
                     final PlayQueue temp = getPlayQueue();
                     temp.setIndex(utils.getIndexInQueue((PlaylistStreamEntry) selectedItem, temp, itemListAdapter.sortMode));
+                    if (randomBackgroundPlaying){
+                        temp.shuffle();
+                    }
                     NavigationHelper.playOnBackgroundPlayer(activity, temp, false);
                 }
             }

@@ -519,9 +519,10 @@ public final class Player implements
         simpleExoPlayer.setWakeMode(C.WAKE_MODE_NETWORK);
         simpleExoPlayer.setHandleAudioBecomingNoisy(true);
 
+
         audioReactor = new AudioReactor(context, simpleExoPlayer);
         mediaSessionManager = new MediaSessionManager(context, simpleExoPlayer,
-                new PlayerMediaSession(this));
+                new PlayerMediaSession(this, simpleExoPlayer));
 
         registerBroadcastReceiver();
 
@@ -894,10 +895,6 @@ public final class Player implements
                               final boolean isMuted) {
         destroyPlayer();
         initPlayer(playOnReady);
-        setRepeatMode(repeatMode);
-        // #6825 - Ensure that the shuffle-button is in the correct state on the UI
-        setShuffleButton(binding.shuffleButton, simpleExoPlayer.getShuffleModeEnabled());
-        setPlaybackParameters(playbackSpeed, playbackPitch, playbackSkipSilence);
 
         playQueue = queue;
         playQueue.init();
@@ -910,6 +907,17 @@ public final class Player implements
         segmentAdapter = new StreamSegmentAdapter(getStreamSegmentListener());
 
         simpleExoPlayer.setVolume(isMuted ? 0 : 1);
+        if (playQueue != null) {
+            simpleExoPlayer.setShuffleModeEnabled(playQueue.isShuffled());
+            mediaSessionManager = new MediaSessionManager(context, simpleExoPlayer,
+                    new PlayerMediaSession(this, simpleExoPlayer));
+        }
+
+        setRepeatMode(repeatMode);
+        // #6825 - Ensure that the shuffle-button is in the correct state on the UI
+        setShuffleButton(binding.shuffleButton, simpleExoPlayer.getShuffleModeEnabled());
+        setPlaybackParameters(playbackSpeed, playbackPitch, playbackSkipSilence);
+
         notifyQueueUpdateToListeners();
     }
     //endregion
