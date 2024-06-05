@@ -131,13 +131,18 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void removeItem(final LocalItem data) {
 //        final int index = localItems.stream().filter(item -> ((PlaylistStreamEntry)(item)).getStreamEntity().getUrl().equals(((PlaylistStreamEntry)(data)).getStreamEntity().getUrl())).findFirst().orElse(null) != null ? localItems.indexOf(data) : -1;
         int index = -1;
-        for (int i = 0; i < localItems.size(); i++) {
-            PlaylistStreamEntry  item = (PlaylistStreamEntry) localItems.get(i);
-            if (item.getStreamEntity().getUrl().equals((((PlaylistStreamEntry) (data)).getStreamEntity()).getUrl())) {
-                index = i;
-                break;
+        if (data instanceof PlaylistStreamEntry) {
+            for (int i = 0; i < localItems.size(); i++) {
+                PlaylistStreamEntry  item = (PlaylistStreamEntry) localItems.get(i);
+                if (item.getStreamEntity().getUrl().equals((((PlaylistStreamEntry) (data)).getStreamEntity()).getUrl())) {
+                    index = i;
+                    break;
+                }
             }
+        } else {
+            index = localItems.indexOf(data);
         }
+
         if (index != -1) {
             localItems.remove(index);
             if(isFilterEnabled){
