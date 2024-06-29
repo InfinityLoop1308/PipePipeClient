@@ -37,7 +37,7 @@ public class StoredFileHelper implements Serializable {
 
     private transient DocumentFile docFile;
     public transient DocumentFile docTree;
-    private transient File ioFile;
+    public transient File ioFile;
     public transient Context context;
 
     public String source;
