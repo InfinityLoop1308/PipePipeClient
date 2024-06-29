@@ -76,6 +76,9 @@ public abstract class BaseImportExportService extends Service {
         @Override
         public void onItemCompleted(final String itemName) {
             currentProgress.incrementAndGet();
+            if(itemName == null) {
+                return;
+            }
             notificationUpdater.onNext(itemName);
         }
     };
