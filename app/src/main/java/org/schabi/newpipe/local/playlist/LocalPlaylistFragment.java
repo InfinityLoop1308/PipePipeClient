@@ -864,16 +864,16 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             return;
         }
 
+        if(itemListAdapter.sortMode != SortMode.ORIGIN) {
+            itemListAdapter.sort(SortMode.ORIGIN);
+        }
+
         final List<LocalItem> items = itemListAdapter.getItemsList();
         final List<Long> streamIds = new ArrayList<>(items.size());
         for (final LocalItem item : items) {
             if (item instanceof PlaylistStreamEntry) {
                 streamIds.add(((PlaylistStreamEntry) item).getStreamId());
             }
-        }
-
-        if(itemListAdapter.sortMode == SortMode.ORIGIN_REVERSE) {
-            Collections.reverse(streamIds);
         }
 
         if (DEBUG) {
