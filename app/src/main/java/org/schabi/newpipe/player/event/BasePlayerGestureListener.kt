@@ -90,6 +90,9 @@ abstract class BasePlayerGestureListener(
         if (event.action == MotionEvent.ACTION_UP && isMovingInMain) {
             isMovingInMain = false
             onScrollEnd(MainPlayer.PlayerType.VIDEO, event)
+        } else if (event.action == MotionEvent.ACTION_UP && player.longPressSpeedingEnabled) {
+            player.playbackSpeed /= player.longPressSpeedingFactor
+            player.longPressSpeedingEnabled = false
         }
         return when (event.action) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
@@ -272,6 +275,9 @@ abstract class BasePlayerGestureListener(
             player.updateScreenSize()
             player.checkPopupPositionBounds()
             player.changePopupSize(player.screenWidth.toInt())
+        } else {
+            player.longPressSpeedingEnabled = true
+            player.playbackSpeed *= player.longPressSpeedingFactor
         }
     }
 

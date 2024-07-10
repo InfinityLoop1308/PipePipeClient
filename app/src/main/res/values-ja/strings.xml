@@ -906,4 +906,5 @@
 <string name="random_play_order_title">ランダムな順序</string>
 <string name="random_play_order_summary">プレイリストをシャッフルする</string>
 <string name="update_log">### バグフィックス\n- Android 13+での予期せぬクラッシュ\n- ローカルプレイリストを削除できません\n- 既定の検索フィルターが機能していません (NicoNico)\n- 一部のビデオを開くのに失敗しました (BiliBili)\n### 新機能\n- ミュージックプレーヤーモードを使用する際のランダム再生をサポートします</string>
+<string name="speeding_playback_title">長時間押は再生速度を速めることができます</string>
 </resources>

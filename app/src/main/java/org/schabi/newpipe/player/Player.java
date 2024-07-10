@@ -249,7 +249,7 @@ public final class Player implements
     // Other constants
     //////////////////////////////////////////////////////////////////////////*/
 
-    private static final float[] PLAYBACK_SPEEDS = {0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 1.75f, 2.0f, 2.25f, 2.5f, 2.75f, 3.0f, 5.0f, 10.0f};
+    private static final float[] PLAYBACK_SPEEDS = {0.1f, 0.3f, 0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 1.75f, 2.0f, 2.25f, 2.5f, 2.75f, 3.0f, 5.0f, 10.0f};
 
     private static final int RENDERER_UNAVAILABLE = -1;
     private static final int MAX_RETRY_COUNT = 2;
@@ -407,6 +407,12 @@ public final class Player implements
     private SponsorBlockMode sponsorBlockMode = SponsorBlockMode.DISABLED;
     private int lastSkipTarget = -1;
 
+    /*//////////////////////////////////////////////////////////////////////////
+    // Gesture
+    //////////////////////////////////////////////////////////////////////////*/
+    private boolean longPressSpeedingEnabled = false;
+    public float longPressSpeedingFactor = 1.0f;
+
 
 
     public Player(@NonNull final MainPlayer service) {
@@ -436,6 +442,7 @@ public final class Player implements
         audioResolver = new AudioPlaybackResolver(context, dataSource);
 
         windowManager = ContextCompat.getSystemService(context, WindowManager.class);
+        longPressSpeedingFactor = Float.parseFloat(prefs.getString(context.getString(R.string.speeding_playback_key), "3"));
     }
 
     private VideoPlaybackResolver.QualityResolver getQualityResolver() {
@@ -1702,7 +1709,7 @@ public final class Player implements
         return getPlaybackParameters().speed;
     }
 
-    private void setPlaybackSpeed(final float speed) {
+    public void setPlaybackSpeed(final float speed) {
         setPlaybackParameters(speed, getPlaybackPitch(), getPlaybackSkipSilence());
     }
 
@@ -5196,5 +5203,12 @@ public final class Player implements
                 .findFirst()
                 // No video renderer index with at least one track found: return unavailable index
                 .orElse(RENDERER_UNAVAILABLE);
+    }
+    public void setLongPressSpeedingEnabled(boolean enabled) {
+        longPressSpeedingEnabled = enabled;
+    }
+
+    public boolean getLongPressSpeedingEnabled() {
+        return longPressSpeedingEnabled;
     }
 }

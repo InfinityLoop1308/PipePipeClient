@@ -963,4 +963,5 @@
 <string name="random_play_order_title">Random Order</string>
 <string name="random_play_order_summary">When using Music Player Mode, shuffle the playlist</string>
 <string name="update_log">### Bug Fixes\n- Unexpected crash on Android 13+\n- Local playlists can not be deleted\n- Default search filter not working (NicoNico)\n- Failed to open some videos (BiliBili)\n### New Features\n- Support random playing when using Music Player Mode</string>
+<string name="speeding_playback_title">Long-press to speeding the playback</string>
 </resources>

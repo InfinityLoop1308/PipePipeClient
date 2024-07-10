@@ -1472,4 +1472,36 @@
     <string name="playlist_sorting_key">playlist_sorting_key</string>
     <string name="dont_auto_queue_long_key">dont_auto_queue_long_key</string>
     <string name="random_music_play_mode_key">random_music_play_mode_key</string>
+    <string name="speeding_playback_key">speeding_playback_key</string>
+    <string-array name="speeding_playback_description">
+        <item>0.1x</item>
+        <item>0.3x</item>
+        <item>0.5x</item>
+        <item>0.75x</item>
+        <item>Disable</item>
+        <item>1.25x</item>
+        <item>1.5x</item>
+        <item>1.75x</item>
+        <item>2x</item>
+        <item>2.25x</item>
+        <item>2.5x</item>
+        <item>3x</item>
+        <item>5x</item>
+    </string-array>
+    <string-array name="speeding_playback_value">
+        <item>0.1</item>
+        <item>0.3</item>
+        <item>0.5</item>
+        <item>0.75</item>
+        <item>1</item>
+        <item>1.25</item>
+        <item>1.5</item>
+        <item>1.75</item>
+        <item>2</item>
+        <item>2.25</item>
+        <item>2.5</item>
+        <item>3</item>
+        <item>5</item>
+    </string-array>
+    <string name="speeding_playback_default_value">3</string>
 </resources>
