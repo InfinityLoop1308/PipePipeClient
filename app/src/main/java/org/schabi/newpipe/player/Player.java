@@ -3008,6 +3008,14 @@ public final class Player implements
             case ERROR_CODE_IO_NETWORK_CONNECTION_FAILED:
             case ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT:
             case ERROR_CODE_UNSPECIFIED:
+                final boolean shouldTryFallbackUrl = false;
+                if(!shouldTryFallbackUrl) {
+                    if (!exoPlayerIsNull() && playQueue != null) {
+                        timer.cancel(true);
+                        playQueue.error();
+                    }
+                    break;
+                }
                 // Reload playback on unexpected errors:
                 if(playQueue == null ||
                         (retryCount >= MAX_RETRY_COUNT && playQueue.getItem(0).getUrl().equals(retryUrl))){
