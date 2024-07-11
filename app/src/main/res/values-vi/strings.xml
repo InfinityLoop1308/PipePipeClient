@@ -961,6 +961,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sponsor_promote">Trở thành nhà tài trợ</string>
 <string name="random_play_order_title">Trình tự ngẫu nhiên</string>
 <string name="random_play_order_summary">Khi sử dụng Chế độ Phát Nhạc, xáo trộn danh sách phát</string>
-<string name="update_log">### Bug Sửa chữa\n- Crash bất ngờ trên Android 13+\n- Danh sách phát địa phương không thể xóa\n- Bộ lọc tìm kiếm mặc định không hoạt động (NicoNico)\n- Không thể mở một số video (BiliBili)\n### Tính năng mới\n- Hỗ trợ phát ngẫu nhiên khi sử dụng Chế độ Trình phát Nhạc</string>
+<string name="update_log">### Tính năng mới\n\n- Hỗ trợ nhấn giữ để tăng tốc phát lại\n\n### Khắc phục lỗi\n\n- Không thể phát video (YouTube)\n- Gặp lỗi khi tìm kiếm các từ cụ thể (YouTube)\n- Không thể xuất danh sách đăng ký đôi khi (YouTube)\n- Xử lý sau tải về thất bại đôi khi (BiliBili)\n- Sắp xếp danh sách phát không chính xác trong một số trường hợp\n\n### Hiệu suất\n\n- Vô hiệu hóa tự động chuyển đổi để tránh thời gian đệm dài</string>
 <string name="speeding_playback_title">Nhấn và giữ để tăng tốc độ phát lại</string>
 </resources>

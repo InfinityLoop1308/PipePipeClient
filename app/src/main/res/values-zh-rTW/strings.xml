@@ -905,6 +905,6 @@
 <string name="sponsor_promote">成為赞助者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在使用音樂播放器模式時,隨機播放播放清單</string>
-<string name="update_log">### 錯誤修正\n- Android 13+ 上發生意外當機\n- 無法刪除本地播放清單\n- 預設搜尋篩選器無法運作 (NicoNico)\n- 無法開啟某些影片 (BiliBili)\n### 新功能\n- 支援使用音樂播放模式時隨機播放</string>
+<string name="update_log">### 新功能\n\n- 支持長按以加快播放速度\n\n### Bug修復\n\n- 無法播放影片 (YouTube)\n- 搜索特定關鍵字時會崩潰 (YouTube)\n- 有時無法匯出訂閱 (YouTube)\n- 下載後處理有時會失敗 (BiliBili)\n- 在某些情況下播放清單順序不正確\n\n### 效能\n\n- 禁用自動回退以避免緩衝時間過長</string>
 <string name="speeding_playback_title">按住以加快播放</string>
 </resources>
