@@ -27,6 +27,7 @@ import androidx.annotation.Nullable;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.PlaybackException;
+import com.google.android.exoplayer2.metadata.icy.IcyHeaders;
 import com.google.android.exoplayer2.upstream.BaseDataSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSourceException;
@@ -43,6 +44,13 @@ import com.google.common.collect.ForwardingMap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.google.common.net.HttpHeaders;
+import org.schabi.newpipe.extractor.ServiceList;
+import org.schabi.newpipe.extractor.StreamingService;
+import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor;
+import org.schabi.newpipe.extractor.stream.AudioStream;
+import org.schabi.newpipe.extractor.stream.VideoStream;
+import org.schabi.newpipe.util.SerializedCache;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -315,6 +323,8 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
 
     private long requestNumber;
 
+    public HashMap<String, String> backupUrlMap = new HashMap<>();
+
     @SuppressWarnings("checkstyle:ParameterNumber")
     private YoutubeHttpDataSource(@Nullable final String userAgent,
                                   final int connectTimeoutMillis,
@@ -392,7 +402,58 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
      */
     @Override
     public long open(@NonNull final DataSpec dataSpecParameter) throws HttpDataSourceException {
-        this.dataSpec = dataSpecParameter;
+        String newUrl = null;
+        // Get purified headers
+        final Map<String, String> m1 = dataSpecParameter.httpRequestHeaders;
+        final Map<String, String> m2 = new HashMap<>();
+        for (Map.Entry<String, String> entry : m1.entrySet())
+            if(!entry.getKey().equals(IcyHeaders.REQUEST_HEADER_ENABLE_METADATA_NAME))
+                m2.put(entry.getKey(), entry.getValue());
+
+        if(responseCode == 403) {
+            StreamingService youtube = ServiceList.all().get(0);
+            try {
+                String streamId = dataSpecParameter.uri.toString().split("&sid=")[1].split("&")[0];
+                String itag = dataSpecParameter.uri.toString().split("&itag=")[1].split("&")[0];
+                String mime = dataSpecParameter.uri.toString().split("&mime=")[1].split("&")[0];
+                YoutubeStreamExtractor youtubeStreamExtractor =
+                        (YoutubeStreamExtractor) youtube.getStreamExtractor(youtube.getStreamLHFactory().fromId(streamId));
+                youtubeStreamExtractor.fetchPage();
+                if (mime.startsWith("video")) {
+                    List<VideoStream> videoStreams = youtubeStreamExtractor.getVideoOnlyStreams();
+                    videoStreams.addAll(youtubeStreamExtractor.getVideoStreams());
+                    for (int i = 0; i < videoStreams.size(); i++) {
+                        if (videoStreams.get(i).getItag() == Integer.parseInt(itag)) {
+                            newUrl = videoStreams.get(i).getContent();
+                            break;
+                        }
+                        if(i == videoStreams.size() - 1){
+                            throw new RuntimeException("Video not found");
+                        }
+                    }
+                } else if (mime.startsWith("audio")) {
+                    List<AudioStream> audioStreams = youtubeStreamExtractor.getAudioStreams();
+                    for (int i = 0; i < audioStreams.size(); i++) {
+                        if (audioStreams.get(i).getItag() == Integer.parseInt(itag)) {
+                            newUrl = audioStreams.get(i).getContent();
+                            break;
+                        }
+                        if(i == audioStreams.size() - 1){
+                            throw new RuntimeException("Audio not found");
+                        }
+                    }
+                }
+                backupUrlMap.put(streamId, newUrl);
+            } catch (ExtractionException | IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        // existed handler code
+        this.dataSpec = dataSpecParameter.withRequestHeaders(m2);
+        if (dataSpecParameter.uri.toString().contains("&sid=") &&
+                backupUrlMap.containsKey(dataSpecParameter.uri.toString().split("&sid=")[1].split("&")[0])) {
+            this.dataSpec = this.dataSpec.withUri(Uri.parse(backupUrlMap.get(dataSpecParameter.uri.toString().split("&sid=")[1].split("&")[0])));
+        }
         bytesRead = 0;
         bytesToRead = 0;
         transferInitializing(dataSpecParameter);
