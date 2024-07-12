@@ -163,6 +163,11 @@ public final class NotificationUtil {
             // notification actions are ignored on Android 13+, and are replaced by code in
             // MediaSessionPlayerUi
             updateActions(notificationBuilder, player);
+            final boolean showThumbnail = player.getPrefs().getBoolean(
+                    player.getContext().getString(R.string.show_thumbnail_key), true);
+            if (showThumbnail) {
+                setLargeIcon(notificationBuilder, player);
+            }
         }
     }
 
