@@ -961,6 +961,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sponsor_promote">Trở thành nhà tài trợ</string>
 <string name="random_play_order_title">Trình tự ngẫu nhiên</string>
 <string name="random_play_order_summary">Khi sử dụng Chế độ Phát Nhạc, xáo trộn danh sách phát</string>
-<string name="update_log">### Tính năng mới\n\n- Hỗ trợ nhấn giữ để tăng tốc phát lại\n\n### Khắc phục lỗi\n\n- Không thể phát video (YouTube)\n- Gặp lỗi khi tìm kiếm các từ cụ thể (YouTube)\n- Không thể xuất danh sách đăng ký đôi khi (YouTube)\n- Xử lý sau tải về thất bại đôi khi (BiliBili)\n- Sắp xếp danh sách phát không chính xác trong một số trường hợp\n\n### Hiệu suất\n\n- Vô hiệu hóa tự động chuyển đổi để tránh thời gian đệm dài</string>
+<string name="update_log">### Tính Năng Mới\n\n- Tăng cường độ ổn định khi xem chi tiết kênh (BiliBili)\n\n### Sửa Lỗi\n\n- Lỗi 403 ngẫu nhiên sau 1 phút (YouTube)\n- Lỗi xuất hiện nếu kênh không có banner (YouTube)\n- Trạng thái trực tiếp luôn hiển thị là "投稿视频轮播" (BiliBili)\n- Không có hình thu nhỏ trên một số thiết bị Android cũ\n- Nút toàn màn hình không xoay màn hình sang chế độ ngang trên máy tính bảng\n- Một số lỗi không mong muốn xảy ra trong một số trường hợp nhất định\n\n### Giao Diện Người Dùng\n\n- Thêm nút hàng đợi phát để dễ dàng truy cập vào hàng đợi nền\n- Hiển thị thời gian cập nhật cuối cùng của giải pháp lỗi\n- Cập nhật banner TV</string>
 <string name="speeding_playback_title">Nhấn và giữ để tăng tốc độ phát lại</string>
 </resources>

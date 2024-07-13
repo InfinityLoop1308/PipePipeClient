@@ -962,6 +962,6 @@
 <string name="sponsor_promote">Become a sponsor</string>
 <string name="random_play_order_title">Random Order</string>
 <string name="random_play_order_summary">When using Music Player Mode, shuffle the playlist</string>
-<string name="update_log">### New Features\n\n- Support long-press to speeding the playback\n\n### Bug Fixes\n\n- Videos can not be played (YouTube)\n- Crash when searching specific words (YouTube)\n- Unable to export subscriptions sometimes (YouTube)\n- Download post-processing failed sometimes(BiliBili)\n- Incorrect playlist order under certain conditions\n\n### Performance\n\n- Disable auto-fallback to avoid long buffer time</string>
+<string name="update_log">### New Features\n\n- Enhance the stability when viewing channel details (BiliBili)\n\n### Bug Fixes\n\n- Random 403 error at 1 min (YouTube)\n- Errors are thrown if the channel doesn\'t have a banner (YouTube)\n- Live status is always shown as "投稿视频轮播" (BiliBili)\n- No thumbnail on some old android devices\n- Full screen button don\'t rotate the screen to landscape on tablets\n- Some unexpected error under certain circumstances\n\n### UI\n\n- Add a play queue button for easier access to background queue\n- Show the last update time of the error solution\n- Update tv banner</string>
 <string name="speeding_playback_title">Long-press to speeding the playback</string>
 </resources>

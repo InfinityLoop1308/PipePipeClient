@@ -905,6 +905,6 @@
 <string name="sponsor_promote">スポンサーになる</string>
 <string name="random_play_order_title">ランダムな順序</string>
 <string name="random_play_order_summary">プレイリストをシャッフルする</string>
-<string name="update_log">### 新機能\n\n- 長押しによるプレイバックの高速化をサポート\n\n### バグ修正\n\n- ビデオの再生ができない(YouTube)\n- 特定の単語を検索するとクラッシュする(YouTube)\n- 時々購読の書き出しができない(YouTube)\n- ダウンロードのポスト処理が時々失敗する(BiliBili)\n- 特定の条件下でプレイリストの順序が誤っている\n\n### パフォーマンス\n\n- 長いバッファリング時間を避けるためにオート フォールバックを無効化</string>
+<string name="update_log">### 新機能\n\n- チャンネル詳細表示の安定性を向上 (BiliBili)\n\n### バグ修正\n\n- 1分後にランダム403エラー (YouTube)\n- チャンネルにバナーがない場合にエラーが発生 (YouTube)\n- ライブステータスが常に「投稿视频轮播」と表示される (BiliBili)\n- 一部の古いAndroidデバイスでサムネイルが表示されない\n- フルスクリーンボタンがタブレットで画面を横向きに回転しない\n- 特定の状況下で予期しないエラーが発生\n\n### UI\n\n- バックグラウンドキューに簡単にアクセスできるように再生キューボタンを追加\n- エラー解決の最終更新時間を表示\n- TVバナーを更新</string>
 <string name="speeding_playback_title">長時間押は再生速度を速めることができます</string>
 </resources>
