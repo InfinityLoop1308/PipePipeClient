@@ -66,4 +66,28 @@ public class utils {
         Collator collator = Collator.getInstance(Locale.CHINESE);
         return collator.compare(str1, str2);
     }
+
+    public static String convertDateToYYYYMMDD(String yymmdd) {
+        try {
+            if (yymmdd == null || yymmdd.length() != 6) {
+                throw new IllegalArgumentException("Input must be in the format yymmdd");
+            }
+
+            String yearPart = yymmdd.substring(0, 2);
+            String monthPart = yymmdd.substring(2, 4);
+            String dayPart = yymmdd.substring(4, 6);
+
+            // Assuming dates from 00 to 99 are in the range 2000 to 2099
+            // Adjust this logic if you need to handle other centuries
+            int year = Integer.parseInt(yearPart);
+            if (year >= 0 && year <= 99) {
+                year += 2000;
+            }
+
+            String formattedDate = String.format("%04d-%02d-%02d", year, Integer.parseInt(monthPart), Integer.parseInt(dayPart));
+            return formattedDate;
+        } catch (Exception e) {
+            return "Unknown";
+        }
+    }
 }

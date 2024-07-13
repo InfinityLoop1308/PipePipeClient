@@ -893,7 +893,7 @@
 <string name="error_priority_notice">優先順序：GitHub/CodeBerg 上的問題 &gt; 標題清晰、內容禮貌且包含錯誤報告的郵件 &gt; 僅包含錯誤報告的郵件。\n僅包含錯誤報告的郵件將不會收到回覆。</string>
 <string name="sleep_timer_length_title">睡眠計時器</string>
 <string name="error_match_notification_title">找到了您遇到的錯誤匹配</string>
-<string name="error_match_notification_text">點擊查看解決方案</string>
+<string name="error_match_notification_text">點擊檢查</string>
 <string name="oldest_first">最舊優先</string>
 <string name="newest_first">最新優先</string>
 <string name="same_as_item_mode">與項目相同</string>

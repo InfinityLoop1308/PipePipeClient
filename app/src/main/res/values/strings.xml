@@ -950,7 +950,7 @@
 <string name="error_priority_notice">Priority: Issues on GitHub/CodeBerg &gt; Emails with clear title, polite content and bug report &gt; Bug report only emails. \nBug report only emails will not receive replies.</string>
 <string name="sleep_timer_length_title">Sleep Timer</string>
 <string name="error_match_notification_title">Found a match for the error you encountered</string>
-<string name="error_match_notification_text">Click to check the solution</string>
+<string name="error_match_notification_text">Click to check</string>
 <string name="oldest_first">Oldest first</string>
 <string name="newest_first">Newest first</string>
 <string name="same_as_item_mode">Same as items</string>

@@ -949,7 +949,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="error_priority_notice">Ưu tiên: Các vấn đề trên GitHub/CodeBerg &gt; Email có tiêu đề rõ ràng, nội dung lịch sự và báo cáo lỗi &gt; Email chỉ báo cáo lỗi. \nCác email chỉ báo cáo lỗi sẽ không nhận được phản hồi.</string>
 <string name="sleep_timer_length_title">Hẹn giờ ngủ</string>
 <string name="error_match_notification_title">Đã tìm thấy kết quả phù hợp với lỗi bạn gặp phải</string>
-<string name="error_match_notification_text">Bấm để kiểm tra giải pháp</string>
+<string name="error_match_notification_text">Nhấp để kiểm tra</string>
 <string name="oldest_first">Cũ nhất trước</string>
 <string name="newest_first">Mới nhất trước</string>
 <string name="same_as_item_mode">Tương tự như các mục</string>

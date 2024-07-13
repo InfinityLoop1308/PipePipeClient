@@ -893,7 +893,7 @@
 <string name="error_priority_notice">優先度：GitHub/CodeBerg の問題 &gt; 件名が明確で丁寧な内容とバグレポートのあるメール &gt; バグレポートのみのメール。\nバグレポートのみのメールには返信がありません。</string>
 <string name="sleep_timer_length_title">スリープタイマー</string>
 <string name="error_match_notification_title">遭遇したエラーに対する一致が見つかりました</string>
-<string name="error_match_notification_text">解決策を確認するにはクリックしてください</string>
+<string name="error_match_notification_text">クリックして確認する</string>
 <string name="oldest_first">古い順</string>
 <string name="newest_first">新しい順</string>
 <string name="same_as_item_mode">項目と同じ</string>

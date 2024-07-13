@@ -28,6 +28,7 @@ import org.schabi.newpipe.util.ErrorMatcher;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
+import org.schabi.newpipe.util.utils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -157,7 +158,9 @@ public class ErrorActivity extends AppCompatActivity {
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
                                 .setSmallIcon(R.drawable.ic_newpipe_triangle_white)
                                 .setContentTitle(getString(R.string.error_match_notification_title))
-                                .setContentText(getString(R.string.error_match_notification_text))
+                                .setContentText("Last update: "
+                                        + utils.convertDateToYYYYMMDD(targetUrl.split("-")[targetUrl.split("-").length - 1])
+                                        + " - " +getString(R.string.error_match_notification_text))
                                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                                 .setContentIntent(pendingIntent)
                                 .setAutoCancel(true); // Auto-cancel the notification when clicked

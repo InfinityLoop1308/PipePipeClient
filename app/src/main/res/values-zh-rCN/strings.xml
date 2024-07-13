@@ -905,7 +905,7 @@
 <string name="error_priority_notice">优先级：GitHub/CodeBerg 上的问题 &gt; 标题清晰、内容礼貌且包含错误报告的邮件 &gt; 仅包含错误报告的邮件。\n仅包含错误报告的邮件将不会收到回复。</string>
 <string name="sleep_timer_length_title">睡眠定时器</string>
 <string name="error_match_notification_title">找到了您遇到的错误的匹配项</string>
-<string name="error_match_notification_text">点击查看解决方案</string>
+<string name="error_match_notification_text">点击以检查</string>
 <string name="oldest_first">最早优先</string>
 <string name="newest_first">最新优先</string>
 <string name="same_as_item_mode">与条目相同</string>
