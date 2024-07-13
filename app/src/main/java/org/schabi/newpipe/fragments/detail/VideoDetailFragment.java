@@ -552,6 +552,12 @@ public final class VideoDetailFragment
             case R.id.overlay_close_button:
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                 break;
+            case R.id.overlay_play_queue_button:
+                if (isPlayerAvailable() && player.audioPlayerSelected()) {
+                    Intent queueActivityIntent = NavigationHelper.getPlayQueueActivityIntent(activity);
+                    activity.startActivity(queueActivityIntent);
+                }
+                break;
         }
     }
 
@@ -608,12 +614,6 @@ public final class VideoDetailFragment
                                     dialog -> dialog.show(getFM(), TAG)
                             )
                     );
-                }
-                break;
-            case R.id.overlay_play_pause_button:
-                if (isPlayerAvailable() && player.audioPlayerSelected()) {
-                    Intent queueActivityIntent = NavigationHelper.getPlayQueueActivityIntent(activity);
-                    activity.startActivity(queueActivityIntent);
                 }
                 break;
         }
@@ -720,7 +720,7 @@ public final class VideoDetailFragment
         binding.overlayButtonsLayout.setOnClickListener(this);
         binding.overlayCloseButton.setOnClickListener(this);
         binding.overlayPlayPauseButton.setOnClickListener(this);
-        binding.overlayPlayPauseButton.setOnLongClickListener(this);
+        binding.overlayPlayQueueButton.setOnClickListener(this);
 
         binding.detailControlsBackground.setOnTouchListener(getOnControlsTouchListener());
         binding.detailControlsPopup.setOnTouchListener(getOnControlsTouchListener());
@@ -2499,8 +2499,8 @@ public final class VideoDetailFragment
         binding.overlayMetadataLayout.setLongClickable(enable);
         binding.overlayButtonsLayout.setClickable(enable);
         binding.overlayPlayPauseButton.setClickable(enable);
-        binding.overlayPlayPauseButton.setLongClickable(enable);
         binding.overlayCloseButton.setClickable(enable);
+        binding.overlayPlayQueueButton.setClickable(enable);
     }
 
     // helpers to check the state of player and playerService
