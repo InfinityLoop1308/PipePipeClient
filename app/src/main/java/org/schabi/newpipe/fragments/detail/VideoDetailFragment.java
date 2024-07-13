@@ -2059,18 +2059,22 @@ public final class VideoDetailFragment
         // from landscape to portrait every time.
         // Just turn on fullscreen mode in landscape orientation
         // or portrait & unlocked global orientation
+
+        // Fuck you, who wants to click full screen button but still in portrait mode?
+
         final boolean isLandscape = DeviceUtils.isLandscape(requireContext());
-        if (DeviceUtils.isTablet(activity)
-                && (!globalScreenOrientationLocked(activity) || isLandscape)) {
+        if (!DeviceUtils.isTablet(activity)) {
+            final int newOrientation = isLandscape
+                    ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                    : ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
+
+            activity.setRequestedOrientation(newOrientation);
+        } else {
+            if (!isLandscape && !player.isFullscreen()) {
+                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+            }
             player.toggleFullscreen();
-            return;
         }
-
-        final int newOrientation = isLandscape
-                ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                : ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
-
-        activity.setRequestedOrientation(newOrientation);
     }
 
     /*
