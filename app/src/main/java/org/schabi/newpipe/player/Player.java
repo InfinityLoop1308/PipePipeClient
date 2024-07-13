@@ -2483,7 +2483,9 @@ public final class Player implements
 
         try {
             retryCount = 0;
-            timer.cancel(true);
+            if (timer != null) {
+                timer.cancel(true);
+            }
         } catch (Exception ignored) {
         }
 
@@ -2550,7 +2552,9 @@ public final class Player implements
             Log.d(TAG, "onPaused() called");
         }
         retryCount = 0;
-        timer.cancel(true);
+        if (timer != null) {
+                timer.cancel(true);
+        }
         if (isProgressLoopRunning()) {
             stopProgressLoop();
         }
@@ -2997,7 +3001,9 @@ public final class Player implements
             case ERROR_CODE_PARSING_MANIFEST_UNSUPPORTED:
                 // Source errors, signal on playQueue and move on:
                 if (!exoPlayerIsNull() && playQueue != null) {
-                    timer.cancel(true);
+                    if (timer != null) {
+                        timer.cancel(true);
+                    }
                     playQueue.error();
                 }
                 break;
@@ -3011,7 +3017,9 @@ public final class Player implements
                 final boolean shouldTryFallbackUrl = false;
                 if(!shouldTryFallbackUrl) {
                     if (!exoPlayerIsNull() && playQueue != null) {
-                        timer.cancel(true);
+                        if (timer != null) {
+                            timer.cancel(true);
+                        }
                         playQueue.error();
                     }
                     break;
@@ -3020,7 +3028,9 @@ public final class Player implements
                 if(playQueue == null ||
                         (retryCount >= MAX_RETRY_COUNT && playQueue.getItem(0).getUrl().equals(retryUrl))){
                     if (!exoPlayerIsNull() && playQueue != null) {
-                        timer.cancel(true);
+                        if (timer != null) {
+                            timer.cancel(true);
+                        }
                         playQueue.error();
                     }
                     if(error.errorCode == ERROR_CODE_UNSPECIFIED){
@@ -3036,7 +3046,9 @@ public final class Player implements
                         exception = (HttpDataSource.HttpDataSourceException) error.getCause();
                     } catch (Exception e){
                         if (!exoPlayerIsNull() && playQueue != null) {
-                            timer.cancel(true);
+                            if (timer != null) {
+                                timer.cancel(true);
+                            }
                             playQueue.error();
                         }
                         break;
@@ -3059,7 +3071,9 @@ public final class Player implements
                         retryCount++;
                         if(currentMetadata == null || currentMetadata.getMaybeStreamInfo().isEmpty() || currentMetadata.getMaybeStreamInfo().get().getStreamsLength() == 0){
                             if (!exoPlayerIsNull() && playQueue != null) {
-                                timer.cancel(true);
+                                if (timer != null) {
+                                    timer.cancel(true);
+                                }
                                 playQueue.error();
                             }
                             break;
