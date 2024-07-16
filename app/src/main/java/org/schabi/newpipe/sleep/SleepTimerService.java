@@ -73,8 +73,8 @@ public class SleepTimerService extends Service {
         return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Sleep Timer")
                 .setContentText(text)
-                .setSmallIcon(R.drawable.ic_newpipe_triangle_white)
-                .addAction(R.drawable.ic_newpipe_triangle_white, "Stop", stopPendingIntent) // Use your stop icon
+                .setSmallIcon(R.drawable.ic_pipepipe)
+                .addAction(R.drawable.ic_pipepipe, "Stop", stopPendingIntent) // Use your stop icon
                 .setOnlyAlertOnce(true)
                 .setOngoing(true)
                 .build();

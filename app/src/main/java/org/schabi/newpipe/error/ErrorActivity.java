@@ -156,7 +156,7 @@ public class ErrorActivity extends AppCompatActivity {
 
                         // Create a notification builder
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
-                                .setSmallIcon(R.drawable.ic_newpipe_triangle_white)
+                                .setSmallIcon(R.drawable.ic_pipepipe)
                                 .setContentTitle(getString(R.string.error_match_notification_title))
                                 .setContentText("Last update: "
                                         + utils.convertDateToYYYYMMDD(targetUrl.split("-")[targetUrl.split("-").length - 1])

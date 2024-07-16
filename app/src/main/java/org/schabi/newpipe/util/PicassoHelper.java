@@ -175,7 +175,7 @@ public final class PicassoHelper {
 
     public static void loadNotificationIcon(final String url,
                                             final Consumer<Bitmap> bitmapConsumer) {
-        loadImageDefault(url, R.drawable.ic_newpipe_triangle_white)
+        loadImageDefault(url, R.drawable.ic_pipepipe)
                 .into(new Target() {
                     @Override
                     public void onBitmapLoaded(final Bitmap bitmap, final Picasso.LoadedFrom from) {
