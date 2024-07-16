@@ -123,12 +123,6 @@ public final class PermissionHelper {
     }
 
     public static void showPopupEnablementToast(final Context context) {
-        final Toast toast
-                = Toast.makeText(context, R.string.msg_popup_permission, Toast.LENGTH_LONG);
-        final TextView messageView = toast.getView().findViewById(android.R.id.message);
-        if (messageView != null) {
-            messageView.setGravity(Gravity.CENTER);
-        }
-        toast.show();
+        Toast.makeText(context, R.string.msg_popup_permission, Toast.LENGTH_LONG).show();
     }
 }
