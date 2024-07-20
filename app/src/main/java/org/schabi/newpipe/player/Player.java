@@ -169,6 +169,7 @@ import org.schabi.newpipe.player.playqueue.PlayQueueItemBuilder;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemHolder;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemTouchCallback;
 import org.schabi.newpipe.player.resolver.AudioPlaybackResolver;
+import org.schabi.newpipe.player.resolver.QualityResolver;
 import org.schabi.newpipe.player.resolver.VideoPlaybackResolver;
 import org.schabi.newpipe.player.resolver.VideoPlaybackResolver.SourceType;
 import org.schabi.newpipe.player.seekbarpreview.SeekbarPreviewThumbnailHelper;
@@ -445,8 +446,8 @@ public final class Player implements
         longPressSpeedingFactor = Float.parseFloat(prefs.getString(context.getString(R.string.speeding_playback_key), "3"));
     }
 
-    private VideoPlaybackResolver.QualityResolver getQualityResolver() {
-        return new VideoPlaybackResolver.QualityResolver() {
+    private QualityResolver getQualityResolver() {
+        return new QualityResolver() {
             @Override
             public int getDefaultResolutionIndex(final List<VideoStream> sortedVideos) {
                 return videoPlayerSelected()
@@ -460,6 +461,11 @@ public final class Player implements
                 return videoPlayerSelected()
                         ? getResolutionIndex(context, sortedVideos, playbackQuality)
                         : getPopupResolutionIndex(context, sortedVideos, playbackQuality);
+            }
+
+            @Override
+            public int getCurrentAudioQualityIndex(List<AudioStream> audioStreams) {
+                return ListHelper.getDefaultAudioFormat(context, audioStreams);
             }
         };
     }
@@ -3014,27 +3020,17 @@ public final class Player implements
             case ERROR_CODE_IO_NETWORK_CONNECTION_FAILED:
             case ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT:
             case ERROR_CODE_UNSPECIFIED:
-                // Reload playback on unexpected errors:
-                if(playQueue == null ||
-                        (retryCount >= MAX_RETRY_COUNT && playQueue.getItem(0).getUrl().equals(retryUrl))){
-                    if (!exoPlayerIsNull() && playQueue != null) {
-                        if (timer != null) {
-                            timer.cancel(true);
-                        }
-                        playQueue.error();
-                    }
-                    if(error.errorCode == ERROR_CODE_UNSPECIFIED){
-                        createErrorNotification(new PlaybackException("All fallback urls failed to load", null, -1));
-                    }
+                // Will reach here if any Expection is thrown when loading current item,
+                // but it seems exceptions like 403 will only thrown when our timer triggered Exception
+                // so either no or 2
+                if(playQueue == null){ // required? idk
                     break;
                 }
                 if(playQueue.size() > 0){
-                    // If the error is because of loading next item, will not enter this branch
-                    // error during playing
                     HttpDataSource.HttpDataSourceException exception;
                     try{
                         exception = (HttpDataSource.HttpDataSourceException) error.getCause();
-                    } catch (Exception e){
+                    } catch (Exception e){ // not HttpDataSourceException, can't be fixed
                         if (!exoPlayerIsNull() && playQueue != null) {
                             if (timer != null) {
                                 timer.cancel(true);
@@ -3043,38 +3039,30 @@ public final class Player implements
                         }
                         break;
                     }
-
-                    if (exception == null && availableStreams != null && availableStreams.size() > 1){
-                        try{
-                            currentMetadata.getMaybeStreamInfo().get().removeStreamUrl(availableStreams.get(0).getContent());
-                        } catch (Exception e) {
-                            e.printStackTrace(); // really don't know why there is always unexpected indexOutOfBound
-                        }
-                    } else if(exception != null && currentMetadata.getMaybeStreamInfo().get().getStreamsLength() > 1) {
-                        try {
-                            currentMetadata.getMaybeStreamInfo().get().removeStreamUrl(exception.dataSpec.uri.toString());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        retryUrl = playQueue.getItem(0).getUrl();
-                        retryCount++;
-                        if(currentMetadata == null || currentMetadata.getMaybeStreamInfo().isEmpty() || currentMetadata.getMaybeStreamInfo().get().getStreamsLength() == 0){
-                            if (!exoPlayerIsNull() && playQueue != null) {
-                                if (timer != null) {
-                                    timer.cancel(true);
-                                }
-                                playQueue.error();
-                            }
-                            break;
-                        }
-                    }
                     try{
-                        availableStreams = currentMetadata.getMaybeQuality().get().getSortedVideoStreams();
-                        selectedStreamIndex =
-                                currentMetadata.getMaybeQuality().get().getSelectedVideoStreamIndex();
+                        StreamInfo currentInfo = currentMetadata.getMaybeStreamInfo().get();
+
+                        List<VideoStream> sortedVideoList = ListHelper.getSortedStreamVideosList(context,
+                                        currentInfo.getVideoStreams(), currentInfo.getVideoOnlyStreams(), false, true)
+                                .stream().filter(s -> !videoResolver.getBlacklistUrls().contains(s.getContent())).collect(Collectors.toList());;
+
+                        List<AudioStream> audioStreams = currentInfo.getAudioStreams().stream()
+                                .filter(s -> !audioResolver.getBlacklistUrls().contains(s.getContent())).collect(Collectors.toList());
+
+                        videoResolver.addBlacklistUrl(sortedVideoList.get(getQualityResolver().getOverrideResolutionIndex(sortedVideoList, videoResolver.getPlaybackQuality())).getContent());
+                        audioResolver.addBlacklistUrl(audioStreams.get(getQualityResolver().getCurrentAudioQualityIndex(currentInfo.getAudioStreams())).getContent());
                     } catch (Exception e) {
                         e.printStackTrace();
+                    }
+
+                    if(currentMetadata == null || currentMetadata.getMaybeStreamInfo().isEmpty() || currentMetadata.getMaybeStreamInfo().get().getStreamsLength() == 0){
+                        if (!exoPlayerIsNull() && playQueue != null) {
+                            if (timer != null) {
+                                timer.cancel(true);
+                            }
+                            playQueue.error();
+                        }
+                        break;
                     }
                 }
                 isCatchableException = true;

@@ -21,6 +21,7 @@ import org.schabi.newpipe.util.ListHelper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AudioPlaybackResolver implements PlaybackResolver {
     private static final String TAG = AudioPlaybackResolver.class.getSimpleName();
@@ -29,6 +30,7 @@ public class AudioPlaybackResolver implements PlaybackResolver {
     private final Context context;
     @NonNull
     private final PlayerDataSource dataSource;
+    private List<String> blacklistUrls = new ArrayList<>();
 
     public AudioPlaybackResolver(@NonNull final Context context,
                                  @NonNull final PlayerDataSource dataSource) {
@@ -44,7 +46,8 @@ public class AudioPlaybackResolver implements PlaybackResolver {
             return liveSource;
         }
 
-        final List<AudioStream> audioStreams = new ArrayList<>(info.getAudioStreams());
+        final List<AudioStream> audioStreams = info.getAudioStreams()
+                .stream().filter(s -> !blacklistUrls.contains(s.getContent())).collect(Collectors.toList());
         removeTorrentStreams(audioStreams);
 
         final int index = ListHelper.getDefaultAudioFormat(context, audioStreams);
@@ -62,5 +65,12 @@ public class AudioPlaybackResolver implements PlaybackResolver {
             Log.e(TAG, "Unable to create audio source:", e);
             return null;
         }
+    }
+    public void addBlacklistUrl(@NonNull final String url) {
+        blacklistUrls.add(url);
+    }
+
+    public List<String> getBlacklistUrls() {
+        return blacklistUrls;
     }
 }

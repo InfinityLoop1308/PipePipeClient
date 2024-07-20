@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.google.android.exoplayer2.C.TIME_UNSET;
 import static org.schabi.newpipe.util.ListHelper.removeNonUrlAndTorrentStreams;
@@ -46,6 +47,7 @@ public class VideoPlaybackResolver implements PlaybackResolver {
 
     @Nullable
     private String playbackQuality;
+    private List<String> blacklistUrls = new ArrayList<>();
 
     public enum SourceType {
         LIVE_STREAM,
@@ -79,7 +81,8 @@ public class VideoPlaybackResolver implements PlaybackResolver {
 
         // Create video stream source
         final List<VideoStream> videos = ListHelper.getSortedStreamVideosList(context,
-                videoStreams, videoOnlyStreams, false, true);
+                videoStreams, videoOnlyStreams, false, true)
+                .stream().filter(s -> !blacklistUrls.contains(s.getContent())).collect(Collectors.toList());
         final int index;
         if (videos.isEmpty()) {
             index = -1;
@@ -105,7 +108,8 @@ public class VideoPlaybackResolver implements PlaybackResolver {
         }
 
         // Create optional audio stream source
-        final List<AudioStream> audioStreams = info.getAudioStreams();
+        final List<AudioStream> audioStreams = info.getAudioStreams()
+                .stream().filter(s -> !blacklistUrls.contains(s.getContent())).collect(Collectors.toList());
         removeTorrentStreams(audioStreams);
         final AudioStream audio = audioStreams.isEmpty() ? null : audioStreams.get(
                 ListHelper.getDefaultAudioFormat(context, audioStreams));
@@ -198,9 +202,11 @@ public class VideoPlaybackResolver implements PlaybackResolver {
         this.playbackQuality = playbackQuality;
     }
 
-    public interface QualityResolver {
-        int getDefaultResolutionIndex(List<VideoStream> sortedVideos);
+    public void addBlacklistUrl(@NonNull final String url) {
+        blacklistUrls.add(url);
+    }
 
-        int getOverrideResolutionIndex(List<VideoStream> sortedVideos, String playbackQuality);
+    public List<String> getBlacklistUrls() {
+        return blacklistUrls;
     }
 }
