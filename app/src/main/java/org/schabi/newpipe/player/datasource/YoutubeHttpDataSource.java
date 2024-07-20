@@ -50,6 +50,7 @@ import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.VideoStream;
+import org.schabi.newpipe.extractor.utils.Utils;
 import org.schabi.newpipe.util.SerializedCache;
 
 import java.io.IOException;
@@ -57,15 +58,8 @@ import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.NoRouteToHostException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.net.*;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -323,7 +317,9 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
 
     private long requestNumber;
 
-    public HashMap<String, String> backupUrlMap = new HashMap<>();
+    public static HashMap<Map.Entry<String, String>, String> backupUrlMap = new HashMap<>();
+
+    private boolean shouldRefetch = false;
 
     @SuppressWarnings("checkstyle:ParameterNumber")
     private YoutubeHttpDataSource(@Nullable final String userAgent,
@@ -410,12 +406,21 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
             if(!entry.getKey().equals(IcyHeaders.REQUEST_HEADER_ENABLE_METADATA_NAME))
                 m2.put(entry.getKey(), entry.getValue());
 
-        if(responseCode == 403) {
+        String streamId = null, itag = null, mime = null;
+        try {
+            streamId = Utils.getQueryValue(new URL(dataSpecParameter.uri.toString()), "sid");
+            itag = Utils.getQueryValue(new URL(dataSpecParameter.uri.toString()), "itag");
+            mime = Utils.getQueryValue(new URL(dataSpecParameter.uri.toString()), "mime");
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+
+        if(shouldRefetch) {
+            if (streamId == null || itag == null || mime == null) {
+                throw new RuntimeException("streamId, itag or mime is null");
+            }
             StreamingService youtube = ServiceList.all().get(0);
             try {
-                String streamId = dataSpecParameter.uri.toString().split("&sid=")[1].split("&")[0];
-                String itag = dataSpecParameter.uri.toString().split("&itag=")[1].split("&")[0];
-                String mime = dataSpecParameter.uri.toString().split("&mime=")[1].split("&")[0];
                 YoutubeStreamExtractor youtubeStreamExtractor =
                         (YoutubeStreamExtractor) youtube.getStreamExtractor(youtube.getStreamLHFactory().fromId(streamId));
                 youtubeStreamExtractor.fetchPage();
@@ -443,16 +448,17 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
                         }
                     }
                 }
-                backupUrlMap.put(streamId, newUrl);
+                backupUrlMap.put(new AbstractMap.SimpleEntry<>(streamId, itag), newUrl);
+                shouldRefetch = false;
             } catch (ExtractionException | IOException e) {
                 throw new RuntimeException(e);
             }
         }
         // existed handler code
         this.dataSpec = dataSpecParameter.withRequestHeaders(m2);
-        if (dataSpecParameter.uri.toString().contains("&sid=") &&
-                backupUrlMap.containsKey(dataSpecParameter.uri.toString().split("&sid=")[1].split("&")[0])) {
-            this.dataSpec = this.dataSpec.withUri(Uri.parse(backupUrlMap.get(dataSpecParameter.uri.toString().split("&sid=")[1].split("&")[0])));
+        if (streamId != null &&
+                backupUrlMap.containsKey(new AbstractMap.SimpleEntry<>(streamId, itag))) {
+            this.dataSpec = this.dataSpec.withUri(Uri.parse(backupUrlMap.get(new AbstractMap.SimpleEntry<>(streamId, itag))));
         }
         bytesRead = 0;
         bytesToRead = 0;
@@ -467,6 +473,9 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
             responseMessage = httpURLConnection.getResponseMessage();
         } catch (final IOException e) {
             closeConnectionQuietly();
+            if (e instanceof UnknownHostException) {
+                shouldRefetch = true;
+            }
             throw HttpDataSourceException.createForIOException(e, dataSpec,
                     HttpDataSourceException.TYPE_OPEN);
         }
@@ -484,6 +493,10 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
                             ? dataSpecParameter.length
                             : 0;
                 }
+            }
+
+            if (responseCode == 403) {
+                shouldRefetch = true;
             }
 
             final InputStream errorStream = httpURLConnection.getErrorStream();
