@@ -72,7 +72,7 @@ public class ErrorActivity extends AppCompatActivity {
     public static final String ERROR_EMAIL_SUBJECT = "Exception in ";
 
     public static final String ERROR_GITHUB_ISSUE_URL
-            = "https://codeberg.org/NullPointerException/PipePipe/issues";
+            = "https://github.com/InfinityLoop1308/PipePipe/issues";
 
     public static final DateTimeFormatter CURRENT_TIMESTAMP_FORMATTER
             = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");

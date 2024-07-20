@@ -254,7 +254,7 @@
 <string name="sorry_string">抱歉，这不应该发生。</string>
 <string name="error_report_button_text">通过电子邮件报告此错误</string>
 <string name="copy_for_github">复制格式化报告</string>
-<string name="error_report_open_issue_button_text_new">在 CodeBerg 上报告</string>
+<string name="error_report_open_issue_button_text_new">在GitHub上报告</string>
 <string name="error_report_open_github_notice">请检查讨论您的崩溃的问题是否已经存在。创建重复的工单时，您会占用我们的时间，我们可以花时间修复实际的错误。</string>
 <string name="error_snackbar_message">抱歉，出了一些问题。</string>
 <string name="error_snackbar_action">报告</string>
@@ -919,4 +919,5 @@
 <string name="random_play_order_summary">使用音乐播放器模式时,随机播放列表</string>
 <string name="update_log">### 新功能\n\n- 增强了查看频道详情的稳定性 (BiliBili)\n\n### 错误修复\n\n- 1分钟内出现随机403错误 (YouTube)\n- 如果频道没有横幅,就会抛出错误 (YouTube)\n- 直播状态总是显示为 "投稿视频轮播" (BiliBili)\n- 某些旧安卓设备上没有缩略图\n- 全屏按钮在平板上不会旋转屏幕到横屏\n- 在某些情况下出现一些意外错误\n\n### 用户界面\n\n- 添加播放队列按钮,更方便访问后台队列\n- 显示错误解决的最后更新时间\n- 更新 TV 横幅</string>
 <string name="speeding_playback_title">长按以加快播放</string>
+<string name="view_on_github">在GitHub上查看</string>
 </resources>

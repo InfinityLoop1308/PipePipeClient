@@ -733,7 +733,7 @@
 <string name="settings_category_sponsor_block_category_filler_summary">僅用於填充或幽默的次要場景，不影響主要內容的理解。</string>
 <string name="invalid_color_toast">無效的顏色</string>
 <string name="error_report_notification_title_new">PipePipe 遇到錯誤，點擊報告</string>
-<string name="error_report_open_issue_button_text_new">在 CodeBerg 上報告</string>
+<string name="error_report_open_issue_button_text_new">在 GitHub 上報告</string>
 <string name="msg_running_new">PipePipe 下載中</string>
 <string name="title_activity_about_new">關於 PipePipe</string>
 <string name="view_on_codeberg">在 CodeBerg 上查看</string>
@@ -907,4 +907,5 @@
 <string name="random_play_order_summary">在使用音樂播放器模式時,隨機播放播放清單</string>
 <string name="update_log">### 新功能\n\n- 增強查看頻道詳情的穩定性 (BiliBili)\n\n### 錯誤修正\n\n- 1分鐘後隨機403錯誤 (YouTube)\n- 頻道沒有橫幅時會拋出錯誤 (YouTube)\n- 直播狀態總是顯示為 "投稿視頻輪播" (BiliBili)\n- 一些舊的安卓設備上沒有縮略圖\n- 全螢幕按鈕在平板電腦上不會將螢幕旋轉為橫向\n- 某些情況下會出現意外錯誤\n\n### UI\n\n- 添加播放隊列按鈕，以便更容易訪問背景隊列\n- 顯示錯誤解決方案的最後更新時間\n- 更新電視橫幅</string>
 <string name="speeding_playback_title">按住以加快播放</string>
+<string name="view_on_github">在 GitHub 上查看</string>
 </resources>
