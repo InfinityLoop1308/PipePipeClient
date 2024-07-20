@@ -905,7 +905,7 @@
 <string name="sponsor_promote">スポンサーになる</string>
 <string name="random_play_order_title">ランダムな順序</string>
 <string name="random_play_order_summary">プレイリストをシャッフルする</string>
-<string name="update_log">### 新機能\n\n- チャンネル詳細表示の安定性を向上 (BiliBili)\n\n### バグ修正\n\n- 1分後にランダム403エラー (YouTube)\n- チャンネルにバナーがない場合にエラーが発生 (YouTube)\n- ライブステータスが常に「投稿视频轮播」と表示される (BiliBili)\n- 一部の古いAndroidデバイスでサムネイルが表示されない\n- フルスクリーンボタンがタブレットで画面を横向きに回転しない\n- 特定の状況下で予期しないエラーが発生\n\n### UI\n\n- バックグラウンドキューに簡単にアクセスできるように再生キューボタンを追加\n- エラー解決の最終更新時間を表示\n- TVバナーを更新</string>
+<string name="update_log">### 新機能\n\n- ReturnYouTubeDislike（YouTube）に対応\n- 通知アイコンを更新\n\n### バグ修正\n\n- ランダムに再生エラーが発生する（YouTube）\n- コメントの一部がスペースに置き換えられる（YouTube）\n- 公式クライアントから共有された URL にタイムスタンプがある場合に解析できない（BiliBili）\n- 一部の動画のコメントを取得できない（BiliBili）</string>
 <string name="speeding_playback_title">長時間押は再生速度を速めることができます</string>
 <string name="view_on_github">GitHubで表示</string>
 </resources>

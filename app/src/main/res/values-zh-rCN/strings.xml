@@ -917,7 +917,7 @@
 <string name="sponsor_promote">成为赞助者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">使用音乐播放器模式时,随机播放列表</string>
-<string name="update_log">### 新功能\n\n- 增强了查看频道详情的稳定性 (BiliBili)\n\n### 错误修复\n\n- 1分钟内出现随机403错误 (YouTube)\n- 如果频道没有横幅,就会抛出错误 (YouTube)\n- 直播状态总是显示为 "投稿视频轮播" (BiliBili)\n- 某些旧安卓设备上没有缩略图\n- 全屏按钮在平板上不会旋转屏幕到横屏\n- 在某些情况下出现一些意外错误\n\n### 用户界面\n\n- 添加播放队列按钮,更方便访问后台队列\n- 显示错误解决的最后更新时间\n- 更新 TV 横幅</string>
+<string name="update_log">### 新功能\n\n- 支持 ReturnYouTubeDislike (YouTube)\n- 更新通知图标\n\n### 错误修复\n\n- 播放出现随机错误 (YouTube)\n- 评论中的某些空格被替换为nbsp(YouTube)\n- 无法解析从官方客户端共享的带时间戳的 URL (BiliBili)\n- 无法获取某些视频的评论 (BiliBili)</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 </resources>

@@ -962,7 +962,7 @@
 <string name="sponsor_promote">Become a sponsor</string>
 <string name="random_play_order_title">Random Order</string>
 <string name="random_play_order_summary">When using Music Player Mode, shuffle the playlist</string>
-<string name="update_log">### New Features\n\n- Enhance the stability when viewing channel details (BiliBili)\n\n### Bug Fixes\n\n- Random 403 error at 1 min (YouTube)\n- Errors are thrown if the channel doesn\'t have a banner (YouTube)\n- Live status is always shown as "投稿视频轮播" (BiliBili)\n- No thumbnail on some old android devices\n- Full screen button don\'t rotate the screen to landscape on tablets\n- Some unexpected error under certain circumstances\n\n### UI\n\n- Add a play queue button for easier access to background queue\n- Show the last update time of the error solution\n- Update tv banner</string>
+<string name="update_log">### New Features\n\n- Support ReturnYouTubeDislike (YouTube)\n- Update notification icon\n\n### Bug Fixes\n\n- Playback error occurs randomly (YouTube)\n- Some spaces are replaced to nbsp; in comments (YouTube)\n- Unable to parse URLs shared from official client with timestamp (BiliBili)\n- Unable to fetch comments of some videos(BiliBili)</string>
 <string name="speeding_playback_title">Long-press to speeding the playback</string>
 <string name="view_on_github">View on GitHub</string>
 </resources>
