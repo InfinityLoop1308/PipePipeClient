@@ -495,10 +495,6 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
                 }
             }
 
-            if (responseCode == 403) {
-                shouldRefetch = true;
-            }
-
             final InputStream errorStream = httpURLConnection.getErrorStream();
             byte[] errorResponseBody;
             try {
