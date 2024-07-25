@@ -3049,6 +3049,16 @@ public final class Player implements
                         List<AudioStream> audioStreams = currentInfo.getAudioStreams().stream()
                                 .filter(s -> !audioResolver.getBlacklistUrls().contains(s.getContent())).collect(Collectors.toList());
 
+                        if(sortedVideoList.size() == 0 || audioStreams.size() == 0){
+                            if (!exoPlayerIsNull() && playQueue != null) {
+                                if (timer != null) {
+                                    timer.cancel(true);
+                                }
+                                playQueue.error();
+                            }
+                            break;
+                        }
+
                         videoResolver.addBlacklistUrl(sortedVideoList.get(getQualityResolver().getOverrideResolutionIndex(sortedVideoList, videoResolver.getPlaybackQuality())).getContent());
                         audioResolver.addBlacklistUrl(audioStreams.get(getQualityResolver().getCurrentAudioQualityIndex(currentInfo.getAudioStreams())).getContent());
                     } catch (Exception e) {
