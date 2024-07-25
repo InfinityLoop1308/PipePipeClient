@@ -962,7 +962,7 @@
 <string name="sponsor_promote">Become a sponsor</string>
 <string name="random_play_order_title">Random Order</string>
 <string name="random_play_order_summary">When using Music Player Mode, shuffle the playlist</string>
-<string name="update_log">### New Features\n\n- Support ReturnYouTubeDislike (YouTube)\n- Update notification icon\n\n### Bug Fixes\n\n- Playback error occurs randomly (YouTube)\n- Some spaces are replaced to nbsp; in comments (YouTube)\n- Unable to parse URLs shared from official client with timestamp (BiliBili)\n- Unable to fetch comments of some videos(BiliBili)</string>
+<string name="update_log">### Bug Fixes\n\n- New 403 errors (YouTube)</string>
 <string name="speeding_playback_title">Long-press to speeding the playback</string>
 <string name="view_on_github">View on GitHub</string>
 </resources>

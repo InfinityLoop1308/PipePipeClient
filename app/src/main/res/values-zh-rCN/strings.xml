@@ -917,7 +917,7 @@
 <string name="sponsor_promote">成为赞助者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">使用音乐播放器模式时,随机播放列表</string>
-<string name="update_log">### 新功能\n\n- 支持 ReturnYouTubeDislike (YouTube)\n- 更新通知图标\n\n### 错误修复\n\n- 播放出现随机错误 (YouTube)\n- 评论中的某些空格被替换为nbsp(YouTube)\n- 无法解析从官方客户端共享的带时间戳的 URL (BiliBili)\n- 无法获取某些视频的评论 (BiliBili)</string>
+<string name="update_log">### 修复错误\n\n- 新的 403 错误 (YouTube)</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 </resources>
