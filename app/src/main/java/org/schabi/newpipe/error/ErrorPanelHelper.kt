@@ -182,12 +182,12 @@ class ErrorPanelHelper(
         fun getExceptionDescription(throwable: Throwable?): Int {
             return when (throwable) {
                 is LiveNotStartException -> R.string.live_not_started
-                is AgeRestrictedContentException -> R.string.restricted_video_no_stream
+                is AgeRestrictedContentException -> R.string.restricted_video_no_stream_new
                 is GeographicRestrictionException -> R.string.georestricted_content
                 is PaidContentException -> R.string.paid_content_new
                 is PrivateContentException -> R.string.private_content_new
-                is SoundCloudGoPlusContentException -> R.string.soundcloud_go_plus_content
-                is YoutubeMusicPremiumContentException -> R.string.youtube_music_premium_content
+                is SoundCloudGoPlusContentException -> R.string.soundcloud_go_plus_content_new
+                is YoutubeMusicPremiumContentException -> R.string.youtube_music_premium_content_new
                 is ContentNotAvailableException -> R.string.content_not_available
                 is ContentNotSupportedException -> R.string.content_not_supported_new
                 else -> {

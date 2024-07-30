@@ -184,8 +184,8 @@
 <string name="youtube_restricted_mode_enabled_title">Turn on YouTube\'s \"Restricted Mode\"</string>
 <string name="youtube_restricted_mode_enabled_summary">YouTube provides a \"Restricted Mode\" which hides potentially mature content</string>
 <string name="restricted_video">This video is age restricted.\n\nTurn on \"%1$s\" in the settings if you want to see it.</string>
-<string name="restricted_video_no_stream">This video is age-restricted.
-\nDue to new YouTube policies with age-restricted videos, NewPipe cannot access any of its video streams and thus is unable to play it.</string>
+<string name="restricted_video_no_stream_new">This video is age-restricted.
+\nDue to new YouTube policies with age-restricted videos, PipePipe cannot access any of its video streams and thus is unable to play it.</string>
 <string name="duration_live">Live</string>
 <string name="downloads">Downloads</string>
 <string name="downloads_title">Downloads</string>
@@ -210,10 +210,10 @@
 <string name="just_once">Just Once</string>
 <string name="file">File</string>
 <string name="notifications">Notifications</string>
-<string name="notification_channel_name">NewPipe notification</string>
-<string name="notification_channel_description">Notifications for NewPipe\'s player</string>
+<string name="notification_channel_name">PipePipe notification</string>
+<string name="notification_channel_description">Notifications for PipePipe\'s player</string>
 <string name="app_update_notification_channel_name">App update notification</string>
-<string name="app_update_notification_channel_description">Notifications for new NewPipe versions</string>
+<string name="app_update_notification_channel_description_new">Notifications for new PipePipe versions</string>
 <string name="hash_channel_name">Video hash notification</string>
 <string name="hash_channel_description">Notifications for video hashing progress</string>
 <string name="streams_notification_channel_name">New streams</string>
@@ -230,7 +230,7 @@
 <string name="recaptcha_cookies_cleared">reCAPTCHA cookies have been cleared</string>
 <string name="import_data_summary">Overrides your current history, subscriptions, playlists and (optionally) settings</string>
 <string name="export_data_summary">Export history, subscriptions, playlists and settings</string>
-<string name="clear_cookie_summary">Clear cookies that NewPipe stores when you solve a reCAPTCHA</string>
+<string name="clear_cookie_summary_new">Clear cookies that PipePipe stores when you solve a reCAPTCHA</string>
 <string name="clear_views_history_title">Clear watch history</string>
 <string name="clear_views_history_summary">Deletes the history of played streams and the playback positions</string>
 <string name="delete_view_history_alert">Delete entire watch history?</string>
@@ -390,9 +390,7 @@
 <string name="donation_encouragement_new">I have put in my best effort to provide you with the best user experience, but you have the opportunity to make PipePipe even better by donating. With sufficient donations, I can dedicate more time to developing the project. </string>
 <string name="give_back">Give back</string>
 <string name="website_title_new">Website (Upstream)</string>
-<string name="website_encouragement">Visit the NewPipe Website for more info and news.</string>
-<string name="privacy_policy_title_new">NewPipe\'s Privacy Policy (Upstream)</string>
-<string name="privacy_policy_encouragement">The NewPipe project takes your privacy very seriously. Therefore, the app does not collect any data without your consent.\nNewPipe\'s privacy policy explains in detail what data is sent and stored when you send a crash report.</string>
+
 <string name="read_privacy_policy">Read privacy policy</string>
 <string name="app_license_title_new">NewPipe\'s License (Upstream)</string>
 <string name="app_license">NewPipe is copyleft libre software: You can use, study, share, and improve it at will. Specifically you can redistribute and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>
@@ -703,15 +701,15 @@
 <string name="feed_update_threshold_option_always_update">Always update</string>
 <string name="feed_load_error">Error loading feed</string>
 <string name="feed_load_error_account_info">Could not load feed for \'%s\'.</string>
-<string name="feed_load_error_terminated">The author\'s account has been terminated.\nNewPipe will not be able to load this feed in the future.\nDo you want to unsubscribe from this channel?</string>
+<string name="feed_load_error_terminated_new">The author\'s account has been terminated.\nPipePipe will not be able to load this feed in the future.\nDo you want to unsubscribe from this channel?</string>
 <string name="feed_load_error_fast_unknown">The fast feed mode does not provide more info on this.</string>
 <string name="feed_use_dedicated_fetch_method_title">Fetch from dedicated feed when available</string>
 <string name="feed_use_dedicated_fetch_method_summary">Available in some services, it is usually much faster but may return a limited amount of items and often incomplete information (e.g. no duration, item type, no live status)</string>
 <string name="feed_use_dedicated_fetch_method_enable_button">Enable fast mode</string>
 <string name="feed_use_dedicated_fetch_method_disable_button">Disable fast mode</string>
-<string name="feed_use_dedicated_fetch_method_help_text">Do you think feed loading is too slow\? If so, try enabling fast loading (you can change it in settings or by pressing the button below).
+<string name="feed_use_dedicated_fetch_method_help_text_new">Do you think feed loading is too slow\? If so, try enabling fast loading (you can change it in settings or by pressing the button below).
 \n
-\nNewPipe offers two feed loading strategies:
+\nPipePipe offers two feed loading strategies:
 \n• Fetching the whole subscription channel, which is slow but complete.
 \n• Using a dedicated service endpoint, which is fast but usually not complete.
 \n
@@ -771,9 +769,9 @@
 <string name="no_appropriate_file_manager_message_android_10">No appropriate file manager was found for this action.
 \nPlease install a Storage Access Framework compatible file manager</string>
 <string name="georestricted_content">This content is not available in your country.</string>
-<string name="soundcloud_go_plus_content">This is a SoundCloud Go+ track, at least in your country, so it cannot be streamed or downloaded by PipePipe.</string>
+<string name="soundcloud_go_plus_content_new">This is a SoundCloud Go+ track, at least in your country, so it cannot be streamed or downloaded by PipePipe.</string>
 <string name="private_content_new">This content is private, so it cannot be streamed or downloaded by PipePipe.</string>
-<string name="youtube_music_premium_content">This video is available only to YouTube Music Premium members, so it cannot be streamed or downloaded by PipePipe.</string>
+<string name="youtube_music_premium_content_new">This video is available only to YouTube Music Premium members, so it cannot be streamed or downloaded by PipePipe.</string>
 <string name="live_not_started">The live is not started yet.</string>
 <string name="account_terminated">Account terminated</string>
 <string name="service_provides_reason">%s provides this reason:</string>

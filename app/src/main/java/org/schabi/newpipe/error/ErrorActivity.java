@@ -206,32 +206,18 @@ public class ErrorActivity extends AppCompatActivity {
     }
 
     private void openPrivacyPolicyDialog(final Context context, final String action) {
-        new AlertDialog.Builder(context)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle(R.string.privacy_policy_title_new)
-                .setMessage(R.string.start_accept_privacy_policy_new)
-                .setCancelable(false)
-                .setNeutralButton(R.string.read_privacy_policy, (dialog, which) ->
-                        ShareUtils.openUrlInBrowser(context,
-                                context.getString(R.string.privacy_policy_url)))
-                .setPositiveButton(R.string.accept, (dialog, which) -> {
-                    if (action.equals("EMAIL")) { // send on email
-                        final Intent i = new Intent(Intent.ACTION_SENDTO)
-                                .setData(Uri.parse("mailto:")) // only email apps should handle this
-                                .putExtra(Intent.EXTRA_EMAIL, new String[]{ERROR_EMAIL_ADDRESS})
-                                .putExtra(Intent.EXTRA_SUBJECT, ERROR_EMAIL_SUBJECT
-                                        + getString(R.string.app_name) + " "
-                                        + BuildConfig.VERSION_NAME)
-                                .putExtra(Intent.EXTRA_TEXT, buildJson());
-                        ShareUtils.openIntentInApp(context, i, true);
-                    } else if (action.equals("GITHUB")) { // open the NewPipe issue page on GitHub
-                        ShareUtils.openUrlInBrowser(this, ERROR_GITHUB_ISSUE_URL, false);
-                    }
-                })
-                .setNegativeButton(R.string.decline, (dialog, which) -> {
-                    // do nothing
-                })
-                .show();
+        if (action.equals("EMAIL")) { // send on email
+            final Intent i = new Intent(Intent.ACTION_SENDTO)
+                    .setData(Uri.parse("mailto:")) // only email apps should handle this
+                    .putExtra(Intent.EXTRA_EMAIL, new String[]{ERROR_EMAIL_ADDRESS})
+                    .putExtra(Intent.EXTRA_SUBJECT, ERROR_EMAIL_SUBJECT
+                            + getString(R.string.app_name) + " "
+                            + BuildConfig.VERSION_NAME)
+                    .putExtra(Intent.EXTRA_TEXT, buildJson());
+            ShareUtils.openIntentInApp(context, i, true);
+        } else if (action.equals("GITHUB")) { // open the NewPipe issue page on GitHub
+            ShareUtils.openUrlInBrowser(this, ERROR_GITHUB_ISSUE_URL, false);
+        }
     }
 
     private String formErrorText(final String[] el) {

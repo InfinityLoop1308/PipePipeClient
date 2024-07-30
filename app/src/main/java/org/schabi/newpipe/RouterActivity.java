@@ -217,7 +217,7 @@ public class RouterActivity extends AppCompatActivity {
                 && ExceptionUtils.isNetworkRelated(throwable)) {
             Toast.makeText(context, R.string.network_error, Toast.LENGTH_LONG).show();
         } else if (throwable instanceof AgeRestrictedContentException) {
-            Toast.makeText(context, R.string.restricted_video_no_stream,
+            Toast.makeText(context, R.string.restricted_video_no_stream_new,
                     Toast.LENGTH_LONG).show();
         } else if (throwable instanceof GeographicRestrictionException) {
             Toast.makeText(context, R.string.georestricted_content, Toast.LENGTH_LONG).show();
@@ -228,10 +228,10 @@ public class RouterActivity extends AppCompatActivity {
         } else if (throwable instanceof PrivateContentException) {
             Toast.makeText(context, R.string.private_content_new, Toast.LENGTH_LONG).show();
         } else if (throwable instanceof SoundCloudGoPlusContentException) {
-            Toast.makeText(context, R.string.soundcloud_go_plus_content,
+            Toast.makeText(context, R.string.soundcloud_go_plus_content_new,
                     Toast.LENGTH_LONG).show();
         } else if (throwable instanceof YoutubeMusicPremiumContentException) {
-            Toast.makeText(context, R.string.youtube_music_premium_content,
+            Toast.makeText(context, R.string.youtube_music_premium_content_new,
                     Toast.LENGTH_LONG).show();
         } else if (throwable instanceof ContentNotAvailableException) {
             Toast.makeText(context, R.string.content_not_available, Toast.LENGTH_LONG).show();

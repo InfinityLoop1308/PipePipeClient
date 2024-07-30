@@ -121,8 +121,8 @@
 <string name="settings_category_player_behavior_title">行為</string>
 <string name="settings_category_history_title">歷史記錄與快取</string>
 <string name="undo">復原</string>
-<string name="notification_channel_name">NewPipe 通知</string>
-<string name="notification_channel_description">NewPipe 播放器的通知</string>
+<string name="notification_channel_name">PipePipe 通知</string>
+<string name="notification_channel_description">PipePipe 播放器的通知</string>
 <string name="search_no_results">沒有結果</string>
 <string name="empty_subscription_feed_subtitle">這裡空空如也</string>
 <string name="no_subscribers">無訂閱者</string>
@@ -173,7 +173,6 @@
 <string name="import_data_summary">覆蓋您目前的歷史記錄、訂閱與（可選的）設定</string>
 <string name="export_data_summary">匯出歷史記錄、訂閱內容、播放清單、設定</string>
 <string name="give_back">回饋</string>
-<string name="website_encouragement">如欲了解更多有關 NewPipe 的資訊和新聞，請造訪我們的網站。</string>
 <string name="main_page_content">首頁內容</string>
 <string name="blank_page_summary">空白頁面</string>
 <string name="kiosk_page_summary">互動導覽頁面</string>
@@ -299,8 +298,6 @@
 <string name="one_item_deleted">已刪除 1 個項目。</string>
 <string name="app_license">NewPipe 是一個 Copyleft 的自由軟體：您可以隨意使用、研究、分享並改進它。在遵守由自由軟體基金會所發佈的 GNU 通用公共授權條款的狀況下，您可以自由地再散佈及／或修改它；授權條款預設使用第三版，但您也可以選擇更新的版本。</string>
 <string name="import_settings">您是否要同時匯入設定？</string>
-<string name="privacy_policy_encouragement">NewPipe 專案非常重視您的隱私。因此，未經您同意此程式不會收集任何資料。
-\nNewPipe 的隱私權政策詳細說明了當您發送錯誤回報時，什麼資料會被傳送及儲存。</string>
 <string name="read_privacy_policy">閱讀隱私政策</string>
 <string name="accept">接受</string>
 <string name="decline">拒絕</string>
@@ -327,7 +324,7 @@
 <string name="settings_category_updates_title">更新</string>
 <string name="file_deleted">已刪除檔案</string>
 <string name="app_update_notification_channel_name">應用程式更新通知</string>
-<string name="app_update_notification_channel_description">新 NewPipe 版本通知</string>
+<string name="app_update_notification_channel_description_new">新 PipePipe 版本通知</string>
 <string name="download_to_sdcard_error_title">無法使用外部儲存空間</string>
 <string name="download_to_sdcard_error_message">無法下載到外部 SD 卡。重設下載資料夾位置？</string>
 <string name="saved_tabs_invalid_json">無法讀取已儲存的分頁，因此使用預設分頁</string>
@@ -480,7 +477,7 @@
 <string name="feed_use_dedicated_fetch_method_disable_button">停用快速模式</string>
 <string name="feed_use_dedicated_fetch_method_help_text">您覺得 feed 載入太慢了嗎？如果是的話，試著啟用快速載入（您可以在設定中變更或按下下方的按鈕）。
 \n
-\nNewPipe 提供兩個 feed 載入策略：
+\nPipePipe 提供兩個 feed 載入策略：
 \n• 擷取整個訂閱頻道，慢但是完整。
 \n• 使用專用的伺服器端點，較快速但是通常不完整。
 \n
@@ -540,7 +537,7 @@
 <string name="show_memory_leaks">顯示記憶體洩漏</string>
 <string name="enqueued">已加入佇列</string>
 <string name="enqueue_stream">加入佇列</string>
-<string name="clear_cookie_summary">清除 NewPipe 在您解決 reCAPTCHA 時儲存的 cookie</string>
+<string name="clear_cookie_summary_new">清除 PipePipe 在您解決 reCAPTCHA 時儲存的 cookie</string>
 <string name="recaptcha_cookies_cleared">reCAPTCHA cookies 已被清除</string>
 <string name="clear_cookie_title">清除 reCAPTCHA cookies</string>
 <string name="youtube_restricted_mode_enabled_summary">YouTube 有提供「嚴格篩選模式」，可以隱藏潛在的成人內容</string>
@@ -564,11 +561,11 @@
 <string name="open_with">以……開啟</string>
 <string name="no_app_to_open_intent">您裝置上沒有應用程式可以打開這個</string>
 <string name="crash_the_app">應用程式當機</string>
-<string name="youtube_music_premium_content">此影片僅供 YouTube Music Premium 會員使用，因此無法由 NewPipe 串流或下載。</string>
-<string name="soundcloud_go_plus_content">這是 SoundCloud Go+ 的曲目，因此至少在您的國家無法由 NewPipe 串流或下載。</string>
+<string name="youtube_music_premium_content_new">此影片僅供 YouTube Music Premium 會員使用，因此無法由 PipePipe 串流或下載。</string>
+<string name="soundcloud_go_plus_content_new">這是 SoundCloud Go+ 的曲目，因此至少在您的國家無法由 PipePipe 串流或下載。</string>
 <string name="georestricted_content">此內容在您所在的國家不可用。</string>
-<string name="restricted_video_no_stream">此影片有年齡限制。
-\n因為 YouTube 新的年齡影片限制政策，NewPipe 無法存取任何這類的視訊串流，因此無法播放。</string>
+<string name="restricted_video_no_stream_new">此影片有年齡限制。
+\n因為 YouTube 新的年齡影片限制政策，PipePipe 無法存取任何這類的視訊串流，因此無法播放。</string>
 <string name="radio">廣播</string>
 <string name="featured">精選</string>
 <string name="recaptcha_solve">解決</string>
@@ -605,8 +602,8 @@
 <string name="service_provides_reason">%s 提供了這個理由：</string>
 <string name="account_terminated">帳號已終止</string>
 <string name="feed_load_error_fast_unknown">快速 feed 模式不會提供更多資訊。</string>
-<string name="feed_load_error_terminated">作者的帳號已被終止。
-\nNewPipe 未來將無法載入此 feed。
+<string name="feed_load_error_terminated_new">作者的帳號已被終止。
+\nPipePipe 未來將無法載入此 feed。
 \n您想要取消訂閱此頻道嗎？</string>
 <string name="feed_load_error_account_info">無法載入「%s」。</string>
 <string name="feed_load_error">載入 feed 時發生錯誤</string>
@@ -739,7 +736,7 @@
 <string name="view_on_codeberg">在 CodeBerg 上查看</string>
 <string name="donation_encouragement_new">我已盡力提供最佳的使用體驗，但您可以通過捐款使 PipePipe 變得更好。有了足夠的捐款，我可以投入更多時間開發該項目。</string>
 <string name="website_title_new">網站（上游）</string>
-<string name="privacy_policy_title_new">NewPipe 的隱私政策（上游）</string>
+
 <string name="app_license_title_new">NewPipe 的許可證（上游）</string>
 <string name="duplicate_in_playlist">已灰掉的播放清單已包含此項目。</string>
 <string name="playlist_add_stream_success_duplicate">重複添加 %d 次</string>

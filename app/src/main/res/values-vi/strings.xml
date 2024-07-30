@@ -184,8 +184,8 @@
 <string name="youtube_restricted_mode_enabled_title">Bật \"Chế độ hạn chế\"</string> của YouTube
     <string name="youtube_restricted_mode_enabled_summary">YouTube cung cấp \"Chế độ hạn chế\" để ẩn nội dung có khả năng dành cho người trưởng thành</string>
 <string name="restricted_video">Băng hình này bị giới hạn độ tuổi.\n\nHãy bật \"%1$s\" trong thiết đặt nếu bạn muốn xem.</string>
-<string name="restricted_video_no_stream">Băng hình này bị giới hạn độ tuổi.
-\nDo chính sách mới của YouTube về giới hạn độ tuổi người xem băng hình, NewPipe không thể truy cập bất kỳ luồng băng hình nào và do đó không thể phát băng hình đó.</string>
+<string name="restricted_video_no_stream_new">Băng hình này bị giới hạn độ tuổi.
+\nDo chính sách mới của YouTube về giới hạn độ tuổi người xem băng hình, PipePipe không thể truy cập bất kỳ luồng băng hình nào và do đó không thể phát băng hình đó.</string>
 <string name="duration_live">Trực tiếp</string>
 <string name="downloads">Tải xuống</string>
 <string name="downloads_title">Tải xuống</string>
@@ -210,10 +210,10 @@
 <string name="just_once">Chỉ một lần</string>
 <string name="file">Tệp</string>
 <string name="notifications">Thông báo</string>
-<string name="notification_channel_name">Thông báo NewPipe</string>
-<string name="notification_channel_description">Thông báo cho trình phát của NewPipe</string>
+<string name="notification_channel_name">Thông báo PipePipe</string>
+<string name="notification_channel_description">Thông báo cho trình phát của PipePipe</string>
 <string name="app_update_notification_channel_name">Thông báo cập nhật ứng dụng</string>
-<string name="app_update_notification_channel_description">Thông báo về phiên bản NewPipe mới</string>
+<string name="app_update_notification_channel_description_new">Thông báo về phiên bản PipePipe mới</string>
 <string name="hash_channel_name">Thông báo băm băng hình</string>
 <string name="hash_channel_description">Thông báo về tiến trình băm băng hình</string>
 <string name="streams_notification_channel_name">Luồng mới</string>
@@ -230,7 +230,7 @@
 <string name="recaptcha_cookies_cleared">Đã xóa cookie reCAPTCHA</string>
 <string name="import_data_summary">Ghi đè lịch sử, đăng ký, danh sách phát và thiết đặt (tùy chọn) hiện tại của bạn</string>
 <string name="export_data_summary">Xuất lịch sử, đăng ký, danh sách phát và thiết đặt</string>
-<string name="clear_cookie_summary">Xóa cookie mà NewPipe lưu trữ khi bạn giải reCAPTCHA</string>
+<string name="clear_cookie_summary_new">Xóa cookie mà PipePipe lưu trữ khi bạn giải reCAPTCHA</string>
 <string name="clear_views_history_title">Xóa lịch sử xem</string>
 <string name="clear_views_history_summary">Xóa lịch sử các luồng đã phát và vị trí phát lại</string>
 <string name="delete_view_history_alert">Xóa toàn bộ lịch sử xem?</string>
@@ -390,9 +390,7 @@
 <string name="donation_encouragement_new">Tôi đã nỗ lực hết sức để cung cấp cho bạn trải nghiệm người dùng tốt nhất, nhưng bạn có cơ hội làm cho PipePipe trở nên tốt hơn nữa bằng cách quyên góp. Với số tiền quyên góp đủ, tôi có thể dành nhiều thời gian hơn để phát triển dự án. </string>
 <string name="give_back">Đền đáp</string>
 <string name="website_title_new">Trang web (Ngược dòng)</string>
-<string name="website_encouragement">Hãy truy cập Trang web NewPipe để biết thêm thông tin và tin tức.</string>
-<string name="privacy_policy_title_new">Chính sách quyền riêng tư của NewPipe (Ngược dòng)</string>
-<string name="privacy_policy_encouragement">Dự án NewPipe rất coi trọng quyền riêng tư của bạn. Do đó, ứng dụng không thu thập bất kỳ dữ liệu nào mà không có sự đồng ý của bạn.\nChính sách quyền riêng tư của NewPipe giải thích chi tiết dữ liệu nào được gửi và lưu trữ khi bạn gửi báo cáo sự cố.</string>
+
 <string name="read_privacy_policy">Đọc chính sách bảo mật</string>
 <string name="app_license_title_new">Giấy phép của NewPipe (Ngược dòng)</string>
 <string name="app_license">NewPipe là phần mềm miễn phí copyleft: Bạn có thể sử dụng, nghiên cứu, chia sẻ và cải tiến nó theo ý muốn. Cụ thể là bạn có thể phân phối lại và/hoặc sửa đổi nó theo các điều khoản của Giấy phép Công cộng GNU do Tổ chức Phần mềm Tự do xuất bản, phiên bản 3 của Giấy phép hoặc (tùy theo lựa chọn của bạn) bất kỳ phiên bản nào mới hơn.</string>
@@ -703,15 +701,15 @@
 <string name="feed_update_threshold_option_always_update">Luôn cập nhật</string>
 <string name="feed_load_error">Lỗi tải nguồn cấp</string>
 <string name="feed_load_error_account_info">Không thể tải nguồn cấp cho \'%s\'.</string>
-<string name="feed_load_error_terminated">Tài khoản của tác giả đã bị chấm dứt.\nNewPipe sẽ không thể tải nguồn cấp này trong tương lai.\nBạn có muốn hủy đăng ký kênh này không?</string>
+<string name="feed_load_error_terminated_new">Tài khoản của tác giả đã bị chấm dứt.\nPipePipe sẽ không thể tải nguồn cấp này trong tương lai.\nBạn có muốn hủy đăng ký kênh này không?</string>
 <string name="feed_load_error_fast_unknown">Chế độ nạp nhanh không cung cấp thêm thông tin về điều này.</string>
 <string name="feed_use_dedicated_fetch_method_title">Tìm nạp từ nguồn cấp chuyên dụng khi có sẵn</string>
 <string name="feed_use_dedicated_fetch_method_summary">Có sẵn trong một số dịch vụ, nó thường nhanh hơn nhiều nhưng có thể trả về một số lượng mục hạn chế và thông tin thường không đầy đủ (ví dụ: không có thời lượng, loại mục, không có trạng thái hoạt động)</string>
 <string name="feed_use_dedicated_fetch_method_enable_button">Bật chế độ nhanh</string>
 <string name="feed_use_dedicated_fetch_method_disable_button">Tắt chế độ nhanh</string>
-<string name="feed_use_dedicated_fetch_method_help_text">Bạn có nghĩ rằng tải nguồn cấp quá chậm\? Nếu vậy, hãy thử bật tải nhanh (bạn có thể thay đổi nó trong thiết đặt hoặc bằng cách nhấn nút bên dưới).
+<string name="feed_use_dedicated_fetch_method_help_text_new">Bạn có nghĩ rằng tải nguồn cấp quá chậm\? Nếu vậy, hãy thử bật tải nhanh (bạn có thể thay đổi nó trong thiết đặt hoặc bằng cách nhấn nút bên dưới).
 \n
-\nNewPipe cung cấp hai chiến lược tải nguồn cấp:
+\nPipePipe cung cấp hai chiến lược tải nguồn cấp:
 \n→ Đang tìm nạp toàn bộ kênh đăng ký, tuy chậm nhưng đầy đủ.
 \n→ Sử dụng điểm cuối dịch vụ chuyên dụng, tốc độ này nhanh nhưng thường không hoàn thiện.
 \n
@@ -771,9 +769,9 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="no_appropriate_file_manager_message_android_10">Không tìm thấy trình quản lý tệp thích hợp cho tác vụ này.
 \nHãy cài đặt trình quản lý tệp tương thích với Khung truy cập lưu trữ</string>
 <string name="georestricted_content">Nội dung này không có ở quốc gia của bạn.</string>
-<string name="soundcloud_go_plus_content">Đây là bản nhạc SoundCloud Go+, ít nhất là ở quốc gia của bạn, vì vậy PipePipe không thể phát trực tuyến hoặc tải xuống bản nhạc này.</string>
+<string name="soundcloud_go_plus_content_new">Đây là bản nhạc SoundCloud Go+, ít nhất là ở quốc gia của bạn, vì vậy PipePipe không thể phát trực tuyến hoặc tải xuống bản nhạc này.</string>
 <string name="private_content_new">Nội dung này là riêng tư nên PipePipe không thể phát trực tuyến hoặc tải xuống.</string>
-<string name="youtube_music_premium_content">Băng hình này chỉ dành cho thành viên YouTube Music Premium nên PipePipe không thể phát trực tuyến hoặc tải xuống.</string>
+<string name="youtube_music_premium_content_new">Băng hình này chỉ dành cho thành viên YouTube Music Premium nên PipePipe không thể phát trực tuyến hoặc tải xuống.</string>
 <string name="live_not_started">Buổi phát trực tiếp vẫn chưa bắt đầu.</string>
 <string name="account_terminated">Tài khoản bị chấm dứt</string>
 <string name="service_provides_reason">%s cung cấp lý do này:</string>

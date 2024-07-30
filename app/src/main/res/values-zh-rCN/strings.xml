@@ -160,8 +160,8 @@
 <string name="youtube_restricted_mode_enabled_title">打开 YouTube 的“受限模式”</string>
 <string name="youtube_restricted_mode_enabled_summary">YouTube 提供了一种隐藏潜在成人内容的“受限模式”</string>
 <string name="restricted_video">该视频有年龄限制。\n\n如果您想观看，请在设置中打开“%1$s”。</string>
-<string name="restricted_video_no_stream">该视频有年龄限制。
-        \n由于新的 YouTube 年龄限制视频政策，NewPipe 无法访问其任何视频串流，因此无法播放。</string>
+<string name="restricted_video_no_stream_new">该视频有年龄限制。
+        \n由于新的 YouTube 年龄限制视频政策，PipePipe 无法访问其任何视频串流，因此无法播放。</string>
 <string name="duration_live">直播</string>
 <string name="downloads">下载</string>
 <string name="downloads_title">下载</string>
@@ -186,10 +186,10 @@
 <string name="just_once">仅一次</string>
 <string name="file">文件</string>
 <string name="notifications">通知</string>
-<string name="notification_channel_name">NewPipe 通知</string>
-<string name="notification_channel_description">NewPipe 播放器通知</string>
+<string name="notification_channel_name">PipePipe 通知</string>
+<string name="notification_channel_description">PipePipe 播放器通知</string>
 <string name="app_update_notification_channel_name">应用更新通知</string>
-<string name="app_update_notification_channel_description"> NewPipe 新版本通知</string>
+<string name="app_update_notification_channel_description_new"> PipePipe 新版本通知</string>
 <string name="hash_channel_name">视频哈希通知</string>
 <string name="hash_channel_description">视频哈希进度通知</string>
 <string name="streams_notification_channel_name">新串流</string>
@@ -206,7 +206,7 @@
 <string name="recaptcha_cookies_cleared">reCAPTCHA cookies 已清除</string>
 <string name="import_data_summary">覆盖您当前的历史记录、订阅、播放列表和（可选）设置</string>
 <string name="export_data_summary">导出历史记录、订阅、播放列表和设置</string>
-<string name="clear_cookie_summary">通过 reCAPTCHA 时清除 NewPipe 存储的 cookies</string>
+<string name="clear_cookie_summary_new">通过 reCAPTCHA 时清除 PipePipe 存储的 cookies</string>
 <string name="clear_views_history_title">清除观看历史</string>
 <string name="clear_views_history_summary">删除播放串流历史和播放位置</string>
 <string name="delete_view_history_alert">删除所有观看记录？</string>
@@ -344,9 +344,7 @@
 <string name="donation_encouragement">NewPipe 由志愿者利用空闲时间开发，为您带来最佳的用户体验。回馈帮助开发人员在享用一杯咖啡的同时让 NewPipe 变得更好。</string>
 <string name="give_back">回赠</string>
 <string name="website_title_new">网站（上游）</string>
-<string name="website_encouragement">访问 NewPipe 网站了解更多信息和新闻。</string>
-<string name="privacy_policy_title_new">NewPipe 的隐私政策（上游）</string>
-<string name="privacy_policy_encouragement">NewPipe 项目非常重视您的隐私。因此，该应用不会在未经您同意的情况下收集任何数据。\nNewPipe 的隐私政策详细说明了在您发送崩溃报告时发送和存储的数据。</string>
+
 <string name="read_privacy_policy">阅读隐私政策</string>
 <string name="app_license_title_new">NewPipe 的许可证（上游）</string>
 <string name="app_license">NewPipe 是版权自由软件：您可以随时使用、研究共享和改进。您可以根据自由软件基金会发布的 GNU 通用公共许可证 GPLv3 或（由您选择）任何更高版本的许可证重新分发或修改该软件。</string>
@@ -638,15 +636,15 @@
 <string name="feed_update_threshold_option_always_update">总是更新</string>
 <string name="feed_load_error">加载推送出错</string>
 <string name="feed_load_error_account_info">无法加载“%s”的推送</string>
-<string name="feed_load_error_terminated">作者的帐户已被终止。\nNewPipe 以后将无法加载此推送。\n您要取消订阅此频道吗？</string>
+<string name="feed_load_error_terminated_new">作者的帐户已被终止。\nPipePipe 以后将无法加载此推送。\n您要取消订阅此频道吗？</string>
 <string name="feed_load_error_fast_unknown">快速推送模式不提供更多信息。</string>
 <string name="feed_use_dedicated_fetch_method_title">可用时从专用推送中获取</string>
 <string name="feed_use_dedicated_fetch_method_summary">在某些服务中可用，通常要快得多，但可能会返回有限数量的项目和通常不完整的信息（例如，没有持续时间、项目类型、没有直播状态）</string>
 <string name="feed_use_dedicated_fetch_method_enable_button">开启快速模式</string>
 <string name="feed_use_dedicated_fetch_method_disable_button">关闭快速模式</string>
-<string name="feed_use_dedicated_fetch_method_help_text">您是否认为推送加载太慢\？如果是这样，请尝试启用快速加载（您可以在设置中更改或点击下方按钮）。
+<string name="feed_use_dedicated_fetch_method_help_text_new">您是否认为推送加载太慢\？如果是这样，请尝试启用快速加载（您可以在设置中更改或点击下方按钮）。
         \n
-        \nNewPipe 提供两种推送加载策略：
+        \nPipePipe 提供两种推送加载策略：
         \n• 获取整个订阅频道，速度缓慢但完整。
         \n• 使用专用服务端点，速度很快但通常不完整。
         \n
@@ -672,9 +670,9 @@
 <string name="no_appropriate_file_manager_message_android_10">未找到适合此操作的文件管理器。
         \n请安装兼容存储访问框架的文件管理器</string>
 <string name="georestricted_content">此内容在您所在的国家不可用。</string>
-<string name="soundcloud_go_plus_content">这是 SoundCloud Go+ 曲目，至少在您所在的国家是这样，因此无法通过 PipePipe 进行流式传输或下载。</string>
+<string name="soundcloud_go_plus_content_new">这是 SoundCloud Go+ 曲目，至少在您所在的国家是这样，因此无法通过 PipePipe 进行流式传输或下载。</string>
 <string name="private_content_new">此内容是私有的，因此无法通过 PipePipe 流式传输或下载。</string>
-<string name="youtube_music_premium_content">该视频仅供 YouTube Music Premium 会员观看，因此无法通过 PipePipe 进行流式传输或下载。</string>
+<string name="youtube_music_premium_content_new">该视频仅供 YouTube Music Premium 会员观看，因此无法通过 PipePipe 进行流式传输或下载。</string>
 <string name="live_not_started">直播尚未开始。</string>
 <string name="account_terminated">账户已失效</string>
 <string name="service_provides_reason">%s 提供此原因：</string>

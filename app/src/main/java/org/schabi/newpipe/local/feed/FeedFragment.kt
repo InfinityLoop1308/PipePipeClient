@@ -226,7 +226,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
             }
 
             AlertDialog.Builder(requireContext())
-                .setMessage(R.string.feed_use_dedicated_fetch_method_help_text)
+                .setMessage(R.string.feed_use_dedicated_fetch_method_help_text_new)
                 .setNeutralButton(enableDisableButtonText) { _, _ ->
                     sharedPreferences.edit {
                         putBoolean(getString(R.string.feed_use_dedicated_fetch_method_key), !usingDedicatedMethod)
@@ -485,7 +485,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
 
         var message = getString(R.string.feed_load_error_account_info, subscriptionEntity.name)
         if (cause is AccountTerminatedException) {
-            message += "\n" + getString(R.string.feed_load_error_terminated)
+            message += "\n" + getString(R.string.feed_load_error_terminated_new)
         } else if (cause is ContentNotAvailableException) {
             if (isFastFeedModeEnabled) {
                 message += "\n" + getString(R.string.feed_load_error_fast_unknown)
