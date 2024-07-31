@@ -4224,7 +4224,14 @@ public final class Player implements
             NavigationHelper.playOnMainPlayer(context, playQueue, true);
             return;
         } else if (v.getId() == binding.screenRotationButton.getId()) {
-            onToggleFullscreenClicked();
+            // Only if it's not a vertical video or vertical video but in landscape with locked
+            // orientation a screen orientation can be changed automatically
+            if (!isVerticalVideo
+                    || (service.isLandscape() && globalScreenOrientationLocked(context))) {
+                fragmentListener.onScreenRotationButtonClicked();
+            } else {
+                toggleFullscreen();
+            }
         } else if (v.getId() == binding.switchMute.getId()) {
             onMuteUnmuteButtonClicked();
         } else if (v.getId() == binding.playerCloseButton.getId()) {
@@ -4445,17 +4452,6 @@ public final class Player implements
         }
 
         setupScreenRotationButton();
-    }
-
-    public void onToggleFullscreenClicked() {
-        // Only if it's not a vertical video or vertical video but in landscape with locked
-        // orientation a screen orientation can be changed automatically
-        if (!isVerticalVideo
-                || (service.isLandscape() && globalScreenOrientationLocked(context))) {
-            fragmentListener.onScreenRotationButtonClicked();
-        } else {
-            toggleFullscreen();
-        }
     }
 
     public void toggleFullscreen() {
