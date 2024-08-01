@@ -288,6 +288,9 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
     public void handleResult(@NonNull final PlaylistInfo result) {
         super.handleResult(result);
 
+        if (headerBinding == null) {
+            return;
+        }
         animate(headerBinding.getRoot(), true, 100);
         animate(headerBinding.uploaderLayout, true, 300);
         headerBinding.uploaderLayout.setOnClickListener(null);
