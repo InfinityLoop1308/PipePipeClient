@@ -344,7 +344,6 @@
 <string name="donation_encouragement">NewPipe 由志愿者利用空闲时间开发，为您带来最佳的用户体验。回馈帮助开发人员在享用一杯咖啡的同时让 NewPipe 变得更好。</string>
 <string name="give_back">回赠</string>
 <string name="website_title_new">网站（上游）</string>
-
 <string name="read_privacy_policy">阅读隐私政策</string>
 <string name="app_license_title_new">NewPipe 的许可证（上游）</string>
 <string name="app_license">NewPipe 是版权自由软件：您可以随时使用、研究共享和改进。您可以根据自由软件基金会发布的 GNU 通用公共许可证 GPLv3 或（由您选择）任何更高版本的许可证重新分发或修改该软件。</string>
@@ -918,4 +917,5 @@
 <string name="update_log">### 修复错误\n\n- 新的 403 错误 (YouTube)</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
+<string name="play_in_external">外部播放器</string>
 </resources>

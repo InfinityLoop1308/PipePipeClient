@@ -390,7 +390,6 @@
 <string name="donation_encouragement_new">Tôi đã nỗ lực hết sức để cung cấp cho bạn trải nghiệm người dùng tốt nhất, nhưng bạn có cơ hội làm cho PipePipe trở nên tốt hơn nữa bằng cách quyên góp. Với số tiền quyên góp đủ, tôi có thể dành nhiều thời gian hơn để phát triển dự án. </string>
 <string name="give_back">Đền đáp</string>
 <string name="website_title_new">Trang web (Ngược dòng)</string>
-
 <string name="read_privacy_policy">Đọc chính sách bảo mật</string>
 <string name="app_license_title_new">Giấy phép của NewPipe (Ngược dòng)</string>
 <string name="app_license">NewPipe là phần mềm miễn phí copyleft: Bạn có thể sử dụng, nghiên cứu, chia sẻ và cải tiến nó theo ý muốn. Cụ thể là bạn có thể phân phối lại và/hoặc sửa đổi nó theo các điều khoản của Giấy phép Công cộng GNU do Tổ chức Phần mềm Tự do xuất bản, phiên bản 3 của Giấy phép hoặc (tùy theo lựa chọn của bạn) bất kỳ phiên bản nào mới hơn.</string>
@@ -962,4 +961,5 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="update_log">### Sửa lỗi\n\n- Lỗi 403 mới (YouTube)</string>
 <string name="speeding_playback_title">Nhấn và giữ để tăng tốc độ phát lại</string>
 <string name="view_on_github">Xem trên GitHub</string>
+<string name="play_in_external">Người chơi bên ngoài</string>
 </resources>
