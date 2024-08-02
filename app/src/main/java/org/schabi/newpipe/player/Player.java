@@ -3862,6 +3862,7 @@ public final class Player implements
                 break;
 
             case VIDEO_STREAM:
+            case POST_LIVE_STREAM:
                 if (currentMetadata == null
                         || !currentMetadata.getMaybeQuality().isPresent()
                         || (info.getVideoStreams().isEmpty()
