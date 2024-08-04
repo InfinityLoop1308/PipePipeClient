@@ -7,7 +7,10 @@ import androidx.annotation.StringRes;
 
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.linkhandler.ChannelTabs;
+import org.schabi.newpipe.extractor.linkhandler.ListLinkHandler;
+import org.schabi.newpipe.extractor.search.filter.FilterItem;
 
+import java.util.List;
 import java.util.Set;
 
 public final class ChannelTabHelper {
@@ -89,12 +92,12 @@ public final class ChannelTabHelper {
     public static boolean fetchFeedChannelTab(final Context context,
                                               final SharedPreferences sharedPreferences,
                                               final ListLinkHandler tab) {
-        final List<String> contentFilters = tab.getContentFilters();
+        final List<FilterItem> contentFilters = tab.getContentFilters();
         if (contentFilters.isEmpty()) {
             return false; // this should never happen, but check just to be sure
         }
 
-        final int key = ChannelTabHelper.getFetchFeedTabKey(contentFilters.get(0));
+        final int key = ChannelTabHelper.getFetchFeedTabKey(contentFilters.get(0).getName());
         if (key == -1) {
             return false;
         }

@@ -16,6 +16,7 @@ import org.schabi.newpipe.extractor.channel.ChannelInfo
 import org.schabi.newpipe.extractor.feed.FeedInfo
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import org.schabi.newpipe.local.feed.FeedDatabaseManager
+import org.schabi.newpipe.local.feed.service.FeedUpdateInfo
 import org.schabi.newpipe.util.ExtractorHelper
 
 class SubscriptionManager(context: Context) {
@@ -85,21 +86,17 @@ class SubscriptionManager(context: Context) {
             }
     }
 
-    fun updateFromInfo(subscriptionId: Long, info: ListInfo<StreamInfoItem>) {
-        val subscriptionEntity = subscriptionTable.getSubscription(subscriptionId)
+    fun updateFromInfo(info: FeedUpdateInfo) {
+        val subscriptionEntity = subscriptionTable.getSubscription(info.uid)
 
-        if(info.name == null) return
+        subscriptionEntity.name = info.name
 
-        if (info is FeedInfo) {
-            subscriptionEntity.name = info.name
-        } else if (info is ChannelInfo) {
-            subscriptionEntity.setData(
-                info.name,
-                info.avatarUrl,
-                info.description,
-                info.subscriberCount
-            )
-        }
+        // some services do not provide an avatar URL
+        info.avatarUrl?.let { subscriptionEntity.avatarUrl = it }
+
+        // these two fields are null if the feed info was fetched using the fast feed method
+        info.description?.let { subscriptionEntity.description = it }
+        info.subscriberCount?.let { subscriptionEntity.subscriberCount = it }
 
         subscriptionTable.update(subscriptionEntity)
     }

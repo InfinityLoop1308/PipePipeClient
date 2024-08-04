@@ -41,11 +41,7 @@ class NotificationHelper(val context: Context) {
             context.getString(R.string.streams_notification_channel_id)
         )
             .setContentTitle(Localization.concatenateStrings(data.name, summary))
-            .setContentText(
-                data.listInfo.relatedItems.joinToString(
-                    context.getString(R.string.enumeration_comma)
-                ) { x -> x.name }
-            )
+            .setContentText(summary)
             .setNumber(newStreams.size)
             .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -68,7 +64,7 @@ class NotificationHelper(val context: Context) {
                 context,
                 data.pseudoId,
                 NavigationHelper
-                    .getChannelIntent(context, data.listInfo.serviceId, data.listInfo.url)
+                    .getChannelIntent(context, data.serviceId, data.url)
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                     PendingIntent.FLAG_IMMUTABLE
