@@ -914,7 +914,7 @@
 <string name="sponsor_promote">成为赞助者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">使用音乐播放器模式时,随机播放列表</string>
-<string name="update_log">### 修复错误\n\n- 新的 403 错误 (YouTube)</string>
+<string name="update_log">### 新功能\n- 为视频添加“在外部打开”按钮\n- 支持在动态中获取直播和其他标签（YouTube）\n\n### 错误修复\n- 无法观看新直播回放（YouTube）\n- 错误的频道名称（YouTube）\n\n### 其他\n- 提高YouTube的稳定性\n- 支持新的NicoNico（不包括NicoLive）</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 <string name="play_in_external">外部播放器</string>

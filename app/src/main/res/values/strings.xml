@@ -964,7 +964,7 @@
 <string name="sponsor_promote">Become a sponsor</string>
 <string name="random_play_order_title">Random Order</string>
 <string name="random_play_order_summary">When using Music Player Mode, shuffle the playlist</string>
-<string name="update_log">### Bug Fixes\n\n- New 403 errors (YouTube)</string>
+<string name="update_log">### New Features\n- Add "open in external" button for videos\n- Support fetch lives and other tabs in feed (YouTube)\n\n### Bug Fixes\n- Unable to watch new live replays (YouTube)\n- Wrong channel names (YouTube)\n\n### Others\n- Improve stability for YouTube\n- Support new NicoNico (not including NicoLive)</string>
 <string name="speeding_playback_title">Long-press to speeding the playback</string>
 <string name="view_on_github">View on GitHub</string>
 <string name="play_in_external">External player</string>
