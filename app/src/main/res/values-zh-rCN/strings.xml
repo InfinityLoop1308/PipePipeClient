@@ -344,7 +344,6 @@
 <string name="donation_encouragement">NewPipe 由志愿者利用空闲时间开发，为您带来最佳的用户体验。回馈帮助开发人员在享用一杯咖啡的同时让 NewPipe 变得更好。</string>
 <string name="give_back">回赠</string>
 <string name="website_title_new">网站（上游）</string>
-
 <string name="read_privacy_policy">阅读隐私政策</string>
 <string name="app_license_title_new">NewPipe 的许可证（上游）</string>
 <string name="app_license">NewPipe 是版权自由软件：您可以随时使用、研究共享和改进。您可以根据自由软件基金会发布的 GNU 通用公共许可证 GPLv3 或（由您选择）任何更高版本的许可证重新分发或修改该软件。</string>
@@ -915,7 +914,7 @@
 <string name="sponsor_promote">成为赞助者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">使用音乐播放器模式时,随机播放列表</string>
-<string name="update_log">### 新功能\n- 为视频添加“在外部打开”按钮\n- 支持在动态中获取直播和其他标签（YouTube）\n\n### 错误修复\n- 无法观看新直播回放（YouTube）\n- 错误的频道名称（YouTube）\n\n### 其他\n- 提高YouTube的稳定性\n- 支持新的NicoNico（不包括NicoLive）</string>
+<string name="update_log">### 新功能\n- 支持在动态中获取直播和其他标签（YouTube）\n\n### 错误修复\n- 无法观看新的直播回放（YouTube）\n- 错误的频道名称（YouTube）\n\n### 其他\n- 提高YouTube的稳定性\n- 支持新的NicoNico（不包括NicoLive）</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 </resources>
