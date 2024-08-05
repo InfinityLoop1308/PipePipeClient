@@ -454,9 +454,6 @@ public final class VideoDetailFragment
             case R.id.detail_controls_popup:
                 openPopupPlayer(false);
                 break;
-            case R.id.detail_controls_external:
-                showExternalPlaybackDialog();
-                break;
             case R.id.detail_controls_playlist_append:
                 if (getFM() != null && currentInfo != null) {
                     disposables.add(
@@ -707,7 +704,6 @@ public final class VideoDetailFragment
         binding.detailControlsOpenInBrowser.setOnClickListener(this);
         binding.detailControlsStartSleepTimer.setOnClickListener(this);
         binding.detailControlsPlayWithKodi.setOnClickListener(this);
-        binding.detailControlsExternal.setOnClickListener(this);
         if (DEBUG) {
             binding.detailControlsCrashThePlayer.setOnClickListener(
                     v -> VideoDetailPlayerCrasher.onCrashThePlayer(

@@ -706,6 +706,7 @@
 <string name="view_on_codeberg">CodeBergで表示</string>
 <string name="donation_encouragement_new">最高のユーザーエクスペリエンスを提供するために最善を尽くしましたが、寄付によってPipePipeをさらに良くする機会があります。十分な寄付があれば、プロジェクトの開発にさらに時間を割くことができます。</string>
 <string name="website_title_new">ウェブサイト（上流）</string>
+
 <string name="app_license_title_new">NewPipeのライセンス（上流）</string>
 <string name="duplicate_in_playlist">グレーアウトされたプレイリストにはすでにこのアイテムが含まれています。</string>
 <string name="playlist_add_stream_success_duplicate">重複が追加されました %d 回</string>
@@ -903,5 +904,4 @@
 <string name="update_log">### 新機能\n- 動画用の「外部で開く」ボタンを追加\n- フィード内のライブや他のタブを取得するサポート (YouTube)\n\n### バグ修正\n- 新しいライブリプレイが視聴できない (YouTube)\n- チャンネル名が間違っている (YouTube)\n\n### その他\n- YouTubeの安定性を向上\n- 新しいNicoNicoをサポート (NicoLiveを除く)</string>
 <string name="speeding_playback_title">長時間押は再生速度を速めることができます</string>
 <string name="view_on_github">GitHubで表示</string>
-<string name="play_in_external">外部プレーヤー</string>
 </resources>

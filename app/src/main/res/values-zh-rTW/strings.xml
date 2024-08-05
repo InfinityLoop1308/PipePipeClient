@@ -736,6 +736,7 @@
 <string name="view_on_codeberg">在 CodeBerg 上查看</string>
 <string name="donation_encouragement_new">我已盡力提供最佳的使用體驗，但您可以通過捐款使 PipePipe 變得更好。有了足夠的捐款，我可以投入更多時間開發該項目。</string>
 <string name="website_title_new">網站（上游）</string>
+
 <string name="app_license_title_new">NewPipe 的許可證（上游）</string>
 <string name="duplicate_in_playlist">已灰掉的播放清單已包含此項目。</string>
 <string name="playlist_add_stream_success_duplicate">重複添加 %d 次</string>
@@ -904,5 +905,4 @@
 <string name="update_log">### 新功能\n- 為影片新增「在外部開啟」按鈕\n- 支援在動態消息中獲取直播和其他標籤（YouTube）\n\n### 錯誤修正\n- 無法觀看新的直播重播（YouTube）\n- 錯誤的頻道名稱（YouTube）\n\n### 其他\n- 改善 YouTube 的穩定性\n- 支援新的 NicoNico（不包括 NicoLive）</string>
 <string name="speeding_playback_title">按住以加快播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
-<string name="play_in_external">外部播放器</string>
 </resources>

@@ -564,22 +564,6 @@
                                     app:drawableTopCompat="@drawable/ic_timer" />
 
                             <org.schabi.newpipe.views.NewPipeTextView
-                                    android:id="@+id/detail_controls_external"
-                                    android:layout_width="@dimen/detail_control_width"
-                                    android:layout_height="@dimen/detail_control_height"
-                                    android:layout_gravity="center_vertical"
-                                    android:layout_weight="1"
-                                    android:background="?attr/selectableItemBackgroundBorderless"
-                                    android:clickable="true"
-                                    android:contentDescription="@string/play_in_external"
-                                    android:focusable="true"
-                                    android:gravity="center"
-                                    android:paddingVertical="@dimen/detail_control_padding"
-                                    android:text="@string/play_in_external"
-                                    android:textSize="@dimen/detail_control_text_size"
-                                    app:drawableTopCompat="@drawable/ic_cast" />
-
-                            <org.schabi.newpipe.views.NewPipeTextView
                                 android:id="@+id/detail_controls_play_with_kodi"
                                 android:layout_width="@dimen/detail_control_width"
                                 android:layout_height="@dimen/detail_control_height"
