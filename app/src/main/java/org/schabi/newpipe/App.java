@@ -174,7 +174,7 @@ public class App extends MultiDexApplication {
                 if (isDisposedRxExceptionsReported()) {
                     reportException(actualThrowable);
                 } else {
-                    Log.e(TAG, "RxJavaPlugin: Undeliverable Exception received: ", actualThrowable);
+//                    Log.e(TAG, "RxJavaPlugin: Undeliverable Exception received: ", actualThrowable);
                 }
             }
 
