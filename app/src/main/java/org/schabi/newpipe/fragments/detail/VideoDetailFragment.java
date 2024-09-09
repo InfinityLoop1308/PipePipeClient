@@ -97,12 +97,7 @@ import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -149,6 +144,8 @@ public final class VideoDetailFragment
             App.PACKAGE_NAME + ".VideoDetailFragment.ACTION_VIDEO_ERROR";
     public static final String ACTION_SEEK_TO =
             App.PACKAGE_NAME + ".VideoDetailFragment.ACTION_SEEK_TO";
+    public static final String ACTION_ENTER_FULLSCREEN
+            = App.PACKAGE_NAME + ".VideoDetailFragment.ACTION_ENTER_FULLSCREEN";
 
     private static final String COMMENTS_TAB_TAG = "COMMENTS";
     private static final String RELATED_TAB_TAG = "NEXT VIDEO";
@@ -1555,6 +1552,21 @@ public final class VideoDetailFragment
                                     false, VideoDetailFragment.this);
                         }
                         break;
+                    case ACTION_ENTER_FULLSCREEN:
+                        if(player != null) {
+                            moveFocusToMainFragment(false);
+                            onScreenRotationButtonClicked();
+                            new Thread(() -> {
+                                try {
+                                    Thread.sleep(500);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                context.sendBroadcast(new Intent(ACTION_SHOW_MAIN_PLAYER));
+                            }).start();
+                        }
+
+                        break;
                 }
             }
         };
@@ -1562,6 +1574,7 @@ public final class VideoDetailFragment
         intentFilter.addAction(ACTION_SHOW_MAIN_PLAYER);
         intentFilter.addAction(ACTION_HIDE_MAIN_PLAYER);
         intentFilter.addAction(ACTION_PLAYER_STARTED);
+        intentFilter.addAction(ACTION_ENTER_FULLSCREEN);
         activity.registerReceiver(broadcastReceiver, intentFilter);
     }
 

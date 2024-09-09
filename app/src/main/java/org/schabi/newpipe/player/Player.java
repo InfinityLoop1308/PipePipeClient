@@ -33,15 +33,7 @@ import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 import static org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.ktx.ViewUtils.animateRotation;
-import static org.schabi.newpipe.player.MainPlayer.ACTION_CLOSE;
-import static org.schabi.newpipe.player.MainPlayer.ACTION_FAST_FORWARD;
-import static org.schabi.newpipe.player.MainPlayer.ACTION_FAST_REWIND;
-import static org.schabi.newpipe.player.MainPlayer.ACTION_PLAY_NEXT;
-import static org.schabi.newpipe.player.MainPlayer.ACTION_PLAY_PAUSE;
-import static org.schabi.newpipe.player.MainPlayer.ACTION_PLAY_PREVIOUS;
-import static org.schabi.newpipe.player.MainPlayer.ACTION_RECREATE_NOTIFICATION;
-import static org.schabi.newpipe.player.MainPlayer.ACTION_REPEAT;
-import static org.schabi.newpipe.player.MainPlayer.ACTION_SHUFFLE;
+import static org.schabi.newpipe.player.MainPlayer.*;
 import static org.schabi.newpipe.player.helper.PlayerHelper.*;
 import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_BACKGROUND;
 import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_NONE;
@@ -372,7 +364,7 @@ public final class Player implements
 
     private BroadcastReceiver broadcastReceiver;
     private IntentFilter intentFilter;
-    private PlayerServiceEventListener fragmentListener;
+    public PlayerServiceEventListener fragmentListener;
     private PlayerEventListener activityListener;
     private ContentObserver settingsContentObserver;
 
@@ -2806,6 +2798,15 @@ public final class Player implements
     }
     //endregion
 
+    public void onScreenRotationButtonClicked() {
+        if (!isVerticalVideo
+                || (service.isLandscape() && globalScreenOrientationLocked(context))) {
+            fragmentListener.onScreenRotationButtonClicked();
+        } else {
+            toggleFullscreen();
+        }
+    }
+
 
 
 
@@ -4227,12 +4228,7 @@ public final class Player implements
         } else if (v.getId() == binding.screenRotationButton.getId()) {
             // Only if it's not a vertical video or vertical video but in landscape with locked
             // orientation a screen orientation can be changed automatically
-            if (!isVerticalVideo
-                    || (service.isLandscape() && globalScreenOrientationLocked(context))) {
-                fragmentListener.onScreenRotationButtonClicked();
-            } else {
-                toggleFullscreen();
-            }
+            onScreenRotationButtonClicked();
         } else if (v.getId() == binding.switchMute.getId()) {
             onMuteUnmuteButtonClicked();
         } else if (v.getId() == binding.playerCloseButton.getId()) {

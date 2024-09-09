@@ -96,7 +96,7 @@ abstract class BasePlayerGestureListener(
         }
         return when (event.action) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_MOVE -> {
-                v.parent.requestDisallowInterceptTouchEvent(player.isFullscreen)
+                v.parent.requestDisallowInterceptTouchEvent(true)
                 true
             }
             MotionEvent.ACTION_UP -> {
@@ -327,17 +327,12 @@ abstract class BasePlayerGestureListener(
         distanceY: Float
     ): Boolean {
 
-        if (!player.isFullscreen) {
-            return false
-        }
-
         val isTouchingStatusBar: Boolean = initialEvent.y < getStatusBarHeight(service)
         val isTouchingNavigationBar: Boolean =
             initialEvent.y > (player.rootView.height - getNavigationBarHeight(service))
         if (isTouchingStatusBar || isTouchingNavigationBar) {
             return false
         }
-
         val insideThreshold = abs(movingEvent.y - initialEvent.y) <= MOVEMENT_THRESHOLD
         if (
             !isMovingInMain && (insideThreshold || abs(distanceX) > abs(distanceY)) ||
@@ -350,7 +345,7 @@ abstract class BasePlayerGestureListener(
 
         onScroll(
             MainPlayer.PlayerType.VIDEO,
-            getDisplayHalfPortion(initialEvent),
+            getDisplayPortion(initialEvent),
             initialEvent,
             movingEvent,
             distanceX,
@@ -399,7 +394,7 @@ abstract class BasePlayerGestureListener(
 
         onScroll(
             MainPlayer.PlayerType.POPUP,
-            getDisplayHalfPortion(initialEvent),
+            getDisplayPortion(initialEvent),
             initialEvent,
             movingEvent,
             distanceX,

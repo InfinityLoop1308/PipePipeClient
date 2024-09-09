@@ -92,18 +92,28 @@ public class PlayerGestureListener
             Log.d(TAG, "onScroll called with playerType = ["
                 + player.getPlayerType() + "], portion = [" + portion + "]");
         }
-        if (playerType == MainPlayer.PlayerType.VIDEO) {
 
+        if (playerType == MainPlayer.PlayerType.VIDEO) {
+            if ((player.isFullscreen() && distanceY < 0  && portion == DisplayPortion.MIDDLE) || (!player.isFullscreen() && distanceY > 0)) {
+                player.onScreenRotationButtonClicked();
+            }
+        }
+
+        if(!player.isFullscreen()) {
+            return;
+        }
+
+        if (playerType == MainPlayer.PlayerType.VIDEO) {
             // -- Brightness and Volume control --
             final boolean isBrightnessGestureEnabled =
                 PlayerHelper.isBrightnessGestureEnabled(service);
             final boolean isVolumeGestureEnabled = PlayerHelper.isVolumeGestureEnabled(service);
 
             if (isBrightnessGestureEnabled && isVolumeGestureEnabled) {
-                if (portion == DisplayPortion.LEFT_HALF) {
+                 if (portion == DisplayPortion.LEFT) {
                     onScrollMainBrightness(distanceX, distanceY);
 
-                } else /* DisplayPortion.RIGHT_HALF */ {
+                } else if (portion == DisplayPortion.RIGHT) {
                     onScrollMainVolume(distanceX, distanceY);
                 }
             } else if (isBrightnessGestureEnabled) {
