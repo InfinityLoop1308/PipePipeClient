@@ -958,7 +958,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sponsor_promote">Trở thành nhà tài trợ</string>
 <string name="random_play_order_title">Trình tự ngẫu nhiên</string>
 <string name="random_play_order_summary">Khi sử dụng Chế độ Phát Nhạc, xáo trộn danh sách phát</string>
-<string name="update_log">### Tính Năng Mới\n- Hỗ trợ lấy trực tiếp và các tab khác trong nguồn cấp dữ liệu (YouTube)\n\n### Sửa Lỗi\n- Không thể xem lại trực tiếp mới (YouTube)\n- Tên kênh sai (YouTube)\n\n### Khác\n- Cải thiện độ ổn định cho YouTube\n- Hỗ trợ NicoNico mới (không bao gồm NicoLive)</string>
+<string name="update_log">### Tính Năng Mới\n\n- Hỗ Trợ Cử Chỉ Toàn Màn Hình Kiểu YouTube\n\n### Sửa Lỗi\n\n- Một số nguồn cấp dữ liệu không tải được (YouTube)\n- Shorts không hiển thị trong các kênh (YouTube)\n- Không thể lấy chuỗi người dùng (NicoNico)\n- Bình luận bị giới hạn (BiliBili)\n- Nhiều lỗi gây ra sự cố ứng dụng trong một số tình huống nhất định\n\n### Khác\n\n- Cải thiện độ ổn định</string>
 <string name="speeding_playback_title">Nhấn và giữ để tăng tốc độ phát lại</string>
 <string name="view_on_github">Xem trên GitHub</string>
 </resources>

@@ -900,7 +900,7 @@
 <string name="sponsor_promote">スポンサーになる</string>
 <string name="random_play_order_title">ランダムな順序</string>
 <string name="random_play_order_summary">プレイリストをシャッフルする</string>
-<string name="update_log">### 新機能\n- フィード内でライブや他のタブを取得するサポート (YouTube)\n\n### バグ修正\n- 新しいライブリプレイが視聴できない (YouTube)\n- チャンネル名が間違っている (YouTube)\n\n### その他\n- YouTubeの安定性を向上\n- 新しいNicoNicoをサポート (NicoLiveを除く)</string>
+<string name="update_log">### 新機能\n\n- YouTubeスタイルのフルスクリーンジェスチャーをサポート\n\n### バグ修正\n\n- 一部のフィードが読み込めない（YouTube）\n- チャンネルにショートが表示されない（YouTube）\n- ユーザーシリーズを取得できない（NicoNico）\n- コメントが制限されている（BiliBili）\n- 特定の状況下でアプリがクラッシュするいくつかのバグ\n\n### その他\n\n- 安定性の向上</string>
 <string name="speeding_playback_title">長時間押は再生速度を速めることができます</string>
 <string name="view_on_github">GitHubで表示</string>
 </resources>
