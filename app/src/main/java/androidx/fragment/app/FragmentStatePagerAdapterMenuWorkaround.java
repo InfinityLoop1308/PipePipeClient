@@ -150,22 +150,19 @@ public abstract class FragmentStatePagerAdapterMenuWorkaround extends PagerAdapt
     @NonNull
     @Override
     public Object instantiateItem(@NonNull final ViewGroup container, final int position) {
-        // If we already have this item instantiated, there is nothing
-        // to do.  This can happen when we are restoring the entire pager
-        // from its saved state, where the fragment manager has already
-        // taken care of restoring the fragments we previously had instantiated.
-        if (mFragments.size() > position) {
-            final Fragment f = mFragments.get(position);
-            if (f != null) {
-                return f;
-            }
+        // Check if a fragment already exists for the given position
+        Fragment fragment = mFragments.size() > position ? mFragments.get(position) : null;
+
+        if (fragment != null) {
+            // If the fragment exists, return it directly
+            return fragment;
         }
 
         if (mCurTransaction == null) {
             mCurTransaction = mFragmentManager.beginTransaction();
         }
 
-        final Fragment fragment = getItem(position);
+        fragment = getItem(position);
         if (DEBUG) {
             Log.v(TAG, "Adding item #" + position + ": f=" + fragment);
         }
@@ -205,9 +202,20 @@ public abstract class FragmentStatePagerAdapterMenuWorkaround extends PagerAdapt
             Log.v(TAG, "Removing item #" + position + ": f=" + object
                     + " v=" + ((Fragment) object).getView());
         }
+
+        // Ensure the mSavedState list has enough capacity
         while (mSavedState.size() <= position) {
             mSavedState.add(null);
         }
+
+        // Ensure the mFragments list has enough capacity
+        while (mFragments.size() <= position) {
+            mFragments.add(null);
+        }
+
+        // Clear the fragment's saved view state
+        fragment.setInitialSavedState(null);
+
         mSavedState.set(position, fragment.isAdded()
                 ? mFragmentManager.saveFragmentInstanceState(fragment) : null);
         mFragments.set(position, null);
@@ -217,6 +225,7 @@ public abstract class FragmentStatePagerAdapterMenuWorkaround extends PagerAdapt
             mCurrentPrimaryItem = null;
         }
     }
+
 
     @Override
     @SuppressWarnings({"ReferenceEquality", "deprecation"})
@@ -281,13 +290,11 @@ public abstract class FragmentStatePagerAdapterMenuWorkaround extends PagerAdapt
     @Override
     @Nullable
     public Parcelable saveState() {
+        // Clear the lists before adding new states
+        mSavedState.clear();
+        mFragments.clear();
+
         Bundle state = null;
-        if (mSavedState.size() > 0) {
-            state = new Bundle();
-            final Fragment.SavedState[] fss = new Fragment.SavedState[mSavedState.size()];
-            mSavedState.toArray(fss);
-            state.putParcelableArray("states", fss);
-        }
         for (int i = 0; i < mFragments.size(); i++) {
             final Fragment f = mFragments.get(i);
             if (f != null && f.isAdded()) {
@@ -313,9 +320,12 @@ public abstract class FragmentStatePagerAdapterMenuWorkaround extends PagerAdapt
         if (state != null) {
             final Bundle bundle = (Bundle) state;
             bundle.setClassLoader(loader);
-            final Parcelable[] fss = bundle.getParcelableArray("states");
+
+            // Clear the lists before adding new states
             mSavedState.clear();
             mFragments.clear();
+
+            final Parcelable[] fss = bundle.getParcelableArray("states");
             if (fss != null) {
                 for (final Parcelable parcelable : fss) {
                     mSavedState.add((Fragment.SavedState) parcelable);
