@@ -911,10 +911,12 @@
 <string name="dont_auto_queue_long_description">只自动入队不超过6分钟的视频</string>
 <string name="enable_notification_text">请启用此应用程序的通知,以确保其正常运行。我们只会在必要时提醒你。</string>
 <string name="enable_notification_title">打开通知</string>
-<string name="sponsor_promote">成为赞助者</string>
+<string name="sponsor_promote">成为支持者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">使用音乐播放器模式时,随机播放列表</string>
 <string name="update_log">### 新功能\n\n- 支持 YouTube 风格的全屏手势\n\n### 错误修复\n\n- 一些 feed 加载失败（YouTube）\n- 短视频未在频道中显示（YouTube）\n- 无法获取用户系列（NicoNico）\n- 评论有限制（BiliBili）\n- 在特定情况下导致应用崩溃的若干错误\n\n### 其他\n\n- 提高稳定性</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
+<string name="donation_dialog_title">支持该项目</string>
+<string name="donation_dialog_message">感谢您使用 PipePipe！如果您觉得它有用，请考虑在 Ko-Fi 上成为支持者。您的支持对我很重要，并帮助我添加更多令人兴奋的新功能。每一点都很重要！😇</string>
 </resources>

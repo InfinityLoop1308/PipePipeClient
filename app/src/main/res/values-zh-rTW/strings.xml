@@ -898,10 +898,12 @@
 <string name="dont_auto_queue_long_description">只自動加入不超過6分鐘的視頻</string>
 <string name="enable_notification_text">請為此應用程式啟用通知以確保其正常運作。我們只會在必要時通知您。</string>
 <string name="enable_notification_title">啟用通知</string>
-<string name="sponsor_promote">成為赞助者</string>
+<string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在使用音樂播放器模式時,隨機播放播放清單</string>
 <string name="update_log">### 新功能\n\n- 支援 YouTube 風格的全螢幕手勢\n\n### 錯誤修正\n\n- 某些訂閱源無法加載 (YouTube)\n- 短片在頻道中不顯示 (YouTube)\n- 無法獲取用戶系列 (NicoNico)\n- 評論受到限制 (BiliBili)\n- 在特定情況下導致應用崩潰的幾個錯誤\n\n### 其他\n\n- 提高穩定性</string>
 <string name="speeding_playback_title">按住以加快播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
+<string name="donation_dialog_title">支持這個項目</string>
+<string name="donation_dialog_message">感謝您使用 PipePipe！如果您覺得它有用，請考慮在 Ko-Fi 上成為支持者。您的支持對我來說很重要，並幫助我添加更多令人興奮的新功能。每一分都很重要！😇</string>
 </resources>

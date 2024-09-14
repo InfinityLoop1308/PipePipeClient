@@ -962,10 +962,12 @@
 <string name="dont_auto_queue_long_description">Only auto queue videos shorter than 6 min</string>
 <string name="enable_notification_text">Please enable notifications for this app to ensure it functions normally. We will only alert you when necessary.</string>
 <string name="enable_notification_title">Enable notification</string>
-<string name="sponsor_promote">Become a sponsor</string>
+<string name="sponsor_promote">Become a supporter</string>
 <string name="random_play_order_title">Random Order</string>
 <string name="random_play_order_summary">When using Music Player Mode, shuffle the playlist</string>
 <string name="update_log">### New Features\n\n- Support YouTube-style fullscreen gestures\n\n### Bug Fixes\n\n- Some feeds failed to load (YouTube)\n- Shorts not showing in channels (YouTube)\n- Unable to get user series (NicoNico)\n- Comments are limited (BiliBili)\n- Several bugs that make the app crash under certain situations\n\n### Others\n\n- Improve stability</string>
 <string name="speeding_playback_title">Long-press to speeding the playback</string>
 <string name="view_on_github">View on GitHub</string>
+<string name="donation_dialog_title">Support the Project</string>
+<string name="donation_dialog_message">Thank you for using PipePipe! If you find it useful, please consider becoming a supporter on Ko-Fi. Your support is important to me and helps me add more exciting new features. Every bit counts! 😇</string>
 </resources>

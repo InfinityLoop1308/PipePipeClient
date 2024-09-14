@@ -23,6 +23,7 @@ package org.schabi.newpipe;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.*;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -187,12 +188,30 @@ public class MainActivity extends AppCompatActivity {
             builder.setTitle(R.string.fragment_feed_title);
             builder.setMessage(R.string.update_log);
             builder.setPositiveButton(R.string.ok, null);
+
+            AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
+            builder2.setTitle(R.string.donation_dialog_title);
+            builder2.setMessage(R.string.donation_dialog_message);
             // another button to copy to clipboard
-            builder.setNeutralButton(R.string.sponsor_promote, (dialog, which) -> {
+
+            builder2.setPositiveButton(R.string.sponsor_promote, (dialog, which) -> {
                 ShareUtils.openUrlInBrowser(this, getString(R.string.donation_url));
             });
-            builder.show();
+            builder2.setNegativeButton(R.string.no, null);
 
+            final AlertDialog dialog2 = builder2.create();
+
+            final AlertDialog dialog1 = builder.create();
+            dialog1.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    // Show the second dialog when the first dialog is dismissed
+                    dialog2.show();
+                }
+            });
+
+            // Show the first dialog
+            dialog1.show();
             // Update the stored version code
             prefs.edit().putInt("version_code", currentVersionCode).apply();
         }

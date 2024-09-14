@@ -955,10 +955,12 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="dont_auto_queue_long_description">Chỉ tự động xếp hàng các băng hình ngắn hơn 6 phút</string>
 <string name="enable_notification_text">Vui lòng bật thông báo cho ứng dụng này để đảm bảo nó hoạt động bình thường. Chúng tôi chỉ cảnh báo khi cần thiết.</string>
 <string name="enable_notification_title">Bật thông báo</string>
-<string name="sponsor_promote">Trở thành nhà tài trợ</string>
+<string name="sponsor_promote">Trở thành người ủng hộ</string>
 <string name="random_play_order_title">Trình tự ngẫu nhiên</string>
 <string name="random_play_order_summary">Khi sử dụng Chế độ Phát Nhạc, xáo trộn danh sách phát</string>
 <string name="update_log">### Tính Năng Mới\n\n- Hỗ Trợ Cử Chỉ Toàn Màn Hình Kiểu YouTube\n\n### Sửa Lỗi\n\n- Một số nguồn cấp dữ liệu không tải được (YouTube)\n- Shorts không hiển thị trong các kênh (YouTube)\n- Không thể lấy chuỗi người dùng (NicoNico)\n- Bình luận bị giới hạn (BiliBili)\n- Nhiều lỗi gây ra sự cố ứng dụng trong một số tình huống nhất định\n\n### Khác\n\n- Cải thiện độ ổn định</string>
 <string name="speeding_playback_title">Nhấn và giữ để tăng tốc độ phát lại</string>
 <string name="view_on_github">Xem trên GitHub</string>
+<string name="donation_dialog_title">Hỗ trợ Dự án</string>
+<string name="donation_dialog_message">Cảm ơn bạn đã sử dụng PipePipe! Nếu bạn thấy nó hữu ích, hãy xem xét trở thành người ủng hộ trên Ko-Fi. Sự ủng hộ của bạn rất quan trọng đối với tôi và giúp tôi bổ sung thêm nhiều tính năng mới thú vị. Mỗi sự hỗ trợ đều có ý nghĩa! 😇</string>
 </resources>

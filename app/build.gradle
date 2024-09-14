@@ -16,7 +16,7 @@ android {
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk 33
-        versionCode 1057
+        versionCode 1058
         versionName "3.8.0"
         archivesBaseName = 'PipePipe_' + versionName
 
