@@ -20,6 +20,7 @@ import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import org.schabi.newpipe.player.datasource.YoutubeHttpDataSource;
 
 import java.io.File;
+import java.lang.reflect.Method;
 
 /* package-private */ final class CacheFactory implements DataSource.Factory {
     private static final String TAG = CacheFactory.class.getSimpleName();
@@ -77,8 +78,14 @@ import java.io.File;
         if (cache == null) {
             final LeastRecentlyUsedCacheEvictor evictor
                     = new LeastRecentlyUsedCacheEvictor(PlayerHelper.getPreferredCacheSize());
-            cache = new SimpleCache(cacheDir, evictor, new StandaloneDatabaseProvider(context));
-            Log.d(TAG, "initExoPlayerCache: cacheDir = " + cacheDir.getAbsolutePath());
+            try {
+                cache = new SimpleCache(cacheDir, evictor, new StandaloneDatabaseProvider(context));
+                Log.d(TAG, "initExoPlayerCache: cacheDir = " + cacheDir.getAbsolutePath());
+            } catch (Exception e) {
+                clearCacheFolderLock(cacheDir);
+                cache = new SimpleCache(cacheDir, evictor, new StandaloneDatabaseProvider(context));
+            }
+
         }
 
         maxFileSize = PlayerHelper.getPreferredFileSize();
@@ -114,5 +121,15 @@ import java.io.File;
         final FileDataSource fileSource = new FileDataSource();
         final CacheDataSink dataSink = new CacheDataSink(cache, maxFileSize);
         return new CacheDataSource(cache, dataSource, fileSource, dataSink, CACHE_FLAGS, null);
+    }
+
+    private static void clearCacheFolderLock(File cacheDir) {
+        try {
+            Method method = SimpleCache.class.getDeclaredMethod("unlockFolder", File.class);
+            method.setAccessible(true);
+            method.invoke(null, cacheDir);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
