@@ -407,6 +407,7 @@
                 <data android:scheme="http" />
                 <data android:scheme="https" />
                 <data android:host="*.bilibili.com" />
+                <data android:host="bilibili.com" />
                 <data android:pathPrefix="/video/" />
                 <data android:pathPrefix="/bangumi/play/" />
                 <data android:pathPrefix="/space/" />
