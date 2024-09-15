@@ -17,7 +17,7 @@ android {
         //noinspection ExpiredTargetSdkVersion
         targetSdk 33
         versionCode 1059
-        versionName "3.8.0"
+        versionName "3.8.1"
         archivesBaseName = 'PipePipe_' + versionName
 
         multiDexEnabled true
