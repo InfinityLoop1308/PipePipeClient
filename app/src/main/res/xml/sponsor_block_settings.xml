@@ -22,13 +22,14 @@
         <org.schabi.newpipe.settings.custom.SponsorBlockApiUrlPreference
             app:iconSpaceReserved="false"
             android:key="@string/sponsor_block_api_url_key"
+            android:defaultValue="@string/sponsor_block_default_api_url"
             android:summary="@string/sponsor_block_api_url_summary"
             android:title="@string/sponsor_block_api_url_title"/>
 
         <SwitchPreference
             app:iconSpaceReserved="false"
             android:dependency="@string/sponsor_block_api_url_key"
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="@string/sponsor_block_enable_key"
             android:summary="@string/sponsor_block_enable_summary"
             android:title="@string/sponsor_block_enable_title"/>

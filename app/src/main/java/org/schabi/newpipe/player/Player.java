@@ -1169,7 +1169,7 @@ public final class Player implements
             binding.topControls.setClickable(true);
             binding.topControls.setFocusable(true);
             final boolean isSponsorBlockEnabled = getPrefs().getBoolean(
-                    context.getString(R.string.sponsor_block_enable_key), false);
+                    context.getString(R.string.sponsor_block_enable_key), true);
             binding.switchSponsorBlocking.setVisibility(
                     isSponsorBlockEnabled ? View.VISIBLE : View.GONE);
         }

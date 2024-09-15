@@ -80,7 +80,7 @@ public class SponsorBlockSettingsFragment extends BasePreferenceFragment {
         final String sponsorBlockApiUrlPreferenceValue =
                 getPreferenceManager()
                         .getSharedPreferences()
-                        .getString(getString(R.string.sponsor_block_api_url_key), null);
+                        .getString(getString(R.string.sponsor_block_api_url_key), getString(R.string.sponsor_block_default_api_url));
         updateDependencies(sponsorBlockApiUrlPreference, sponsorBlockApiUrlPreferenceValue);
     }
 

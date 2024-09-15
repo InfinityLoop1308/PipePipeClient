@@ -48,14 +48,14 @@ public final class SponsorBlockUtils {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         final boolean isSponsorBlockEnabled = prefs.getBoolean(context
-                .getString(R.string.sponsor_block_enable_key), false);
+                .getString(R.string.sponsor_block_enable_key), true);
 
         if (!isSponsorBlockEnabled) {
             return null;
         }
 
         final String apiUrl = prefs.getString(context
-                .getString(R.string.sponsor_block_api_url_key), null);
+                .getString(R.string.sponsor_block_api_url_key), context.getString(R.string.sponsor_block_default_api_url));
 
         if (streamInfo.getServiceId() != ServiceList.YouTube.getServiceId()
                 || apiUrl == null
