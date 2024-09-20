@@ -1,7 +1,9 @@
 package org.schabi.newpipe;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ResolveInfo;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -20,10 +22,7 @@ import org.schabi.newpipe.extractor.downloader.Downloader;
 import org.schabi.newpipe.extractor.services.youtube.YoutubeParsingHelper;
 import org.schabi.newpipe.ktx.ExceptionUtils;
 import org.schabi.newpipe.settings.NewPipeSettings;
-import org.schabi.newpipe.util.Localization;
-import org.schabi.newpipe.util.PicassoHelper;
-import org.schabi.newpipe.util.ServiceHelper;
-import org.schabi.newpipe.util.StateSaver;
+import org.schabi.newpipe.util.*;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -214,8 +213,18 @@ public class App extends MultiDexApplication {
 
         final CoreConfigurationBuilder acraConfig = new CoreConfigurationBuilder()
                 .withBuildConfigClass(BuildConfig.class);
-        ACRA.init(this, acraConfig);
+
+        if (isJobSenderServiceAvailable(this)) {
+            ACRA.init(this, acraConfig);
+        }
     }
+
+    public static boolean isJobSenderServiceAvailable(Context context) {
+        Intent intent = new Intent(context, org.acra.sender.JobSenderService.class);
+        ResolveInfo resolveInfo = context.getPackageManager().resolveService(intent, 0);
+        return resolveInfo != null;
+    }
+
 
     private void initNotificationChannels() {
         // Keep the importance below DEFAULT to avoid making noise on every notification update for
