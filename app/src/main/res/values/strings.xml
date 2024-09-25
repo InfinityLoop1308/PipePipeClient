@@ -390,7 +390,6 @@
 <string name="donation_encouragement_new">I have put in my best effort to provide you with the best user experience, but you have the opportunity to make PipePipe even better by donating. With sufficient donations, I can dedicate more time to developing the project. </string>
 <string name="give_back">Give back</string>
 <string name="website_title_new">Website (Upstream)</string>
-
 <string name="read_privacy_policy">Read privacy policy</string>
 <string name="app_license_title_new">NewPipe\'s License (Upstream)</string>
 <string name="app_license">NewPipe is copyleft libre software: You can use, study, share, and improve it at will. Specifically you can redistribute and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>
@@ -877,6 +876,7 @@
 <string name="account">Account</string>
 <string name="settings_category_niconico_account_title">NicoNico Account</string>
 <string name="settings_category_bilibili_account_title">BiliBili Account</string>
+<string name="settings_category_youtube_account_title">YouTube Account</string>
 <string name="login_warning">Please note that logging in may weaken your anonymity</string>
 <string name="login_title">Login</string>
 <string name="logout_title">Log out</string>

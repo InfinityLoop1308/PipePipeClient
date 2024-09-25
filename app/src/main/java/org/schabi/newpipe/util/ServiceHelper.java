@@ -269,6 +269,17 @@ public final class ServiceHelper {
             final Set<String> cookieFunctions = sharedPreferences.getStringSet(context.getString(
                     R.string.cookie_functions_bilibili_key), null);
             ServiceList.BiliBili.setCookieFunctions(cookieFunctions);
+        } else if (serviceId == ServiceList.YouTube.getServiceId()) {
+            final SharedPreferences sharedPreferences = PreferenceManager
+                    .getDefaultSharedPreferences(context);
+            final String tokens = sharedPreferences.getString(context.getString(
+                    R.string.youtube_cookies_key), null);
+            ServiceList.YouTube.setTokens(tokens);
+//            final String pot = sharedPreferences.getString(context.getString(R.string.youtube_po_token), null);
+//            ServiceList.YouTube.setAdditionalTokens(pot);
+//            if(sharedPreferences.getBoolean(context.getString(R.string.override_cookies_youtube_key), false)) {
+//                ServiceList.YouTube.setTokens(sharedPreferences.getString(context.getString(R.string.override_cookies_youtube_value_key), null));
+//            }
         }
     }
 

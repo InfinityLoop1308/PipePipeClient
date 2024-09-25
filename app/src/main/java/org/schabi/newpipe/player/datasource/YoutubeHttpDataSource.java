@@ -460,6 +460,10 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
                 backupUrlMap.containsKey(new AbstractMap.SimpleEntry<>(streamId, itag))) {
             this.dataSpec = this.dataSpec.withUri(Uri.parse(backupUrlMap.get(new AbstractMap.SimpleEntry<>(streamId, itag))));
         }
+//        if(ServiceList.YouTube.getAdditionalTokens() != null && !ServiceList.YouTube.getAdditionalTokens().isEmpty()
+//                && this.dataSpec.uri.getQueryParameter("pot") == null) {
+//            this.dataSpec = this.dataSpec.withUri(dataSpecParameter.uri.buildUpon().appendQueryParameter("pot", ServiceList.YouTube.getAdditionalTokens()).build());
+//        }
         bytesRead = 0;
         bytesToRead = 0;
         transferInitializing(dataSpecParameter);

@@ -467,6 +467,9 @@
             android:name=".RouterActivity$FetcherService"
             android:exported="false" />
 
+        <activity android:name=".views.YouTubeLoginWebViewActivity"
+                  android:configChanges="orientation|screenSize"
+                  android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name=".views.NicoNicoLoginWebViewActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
