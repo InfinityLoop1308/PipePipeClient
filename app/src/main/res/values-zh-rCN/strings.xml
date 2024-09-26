@@ -160,8 +160,7 @@
 <string name="youtube_restricted_mode_enabled_title">打开 YouTube 的“受限模式”</string>
 <string name="youtube_restricted_mode_enabled_summary">YouTube 提供了一种隐藏潜在成人内容的“受限模式”</string>
 <string name="restricted_video">该视频有年龄限制。\n\n如果您想观看，请在设置中打开“%1$s”。</string>
-<string name="restricted_video_no_stream_new">该视频有年龄限制。
-        \n由于新的 YouTube 年龄限制视频政策，PipePipe 无法访问其任何视频串流，因此无法播放。</string>
+<string name="restricted_video_no_stream_new">此视频受年龄限制。\n如果您想观看，请登录。</string>
 <string name="duration_live">直播</string>
 <string name="downloads">下载</string>
 <string name="downloads_title">下载</string>

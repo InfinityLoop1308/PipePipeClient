@@ -184,8 +184,7 @@
 <string name="youtube_restricted_mode_enabled_title">Turn on YouTube\'s \"Restricted Mode\"</string>
 <string name="youtube_restricted_mode_enabled_summary">YouTube provides a \"Restricted Mode\" which hides potentially mature content</string>
 <string name="restricted_video">This video is age restricted.\n\nTurn on \"%1$s\" in the settings if you want to see it.</string>
-<string name="restricted_video_no_stream_new">This video is age-restricted.
-\nDue to new YouTube policies with age-restricted videos, PipePipe cannot access any of its video streams and thus is unable to play it.</string>
+<string name="restricted_video_no_stream_new">This video is age-restricted. \nSign in if you want to see it.</string>
 <string name="duration_live">Live</string>
 <string name="downloads">Downloads</string>
 <string name="downloads_title">Downloads</string>

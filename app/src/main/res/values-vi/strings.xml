@@ -184,8 +184,7 @@
 <string name="youtube_restricted_mode_enabled_title">Bật \"Chế độ hạn chế\"</string> của YouTube
     <string name="youtube_restricted_mode_enabled_summary">YouTube cung cấp \"Chế độ hạn chế\" để ẩn nội dung có khả năng dành cho người trưởng thành</string>
 <string name="restricted_video">Băng hình này bị giới hạn độ tuổi.\n\nHãy bật \"%1$s\" trong thiết đặt nếu bạn muốn xem.</string>
-<string name="restricted_video_no_stream_new">Băng hình này bị giới hạn độ tuổi.
-\nDo chính sách mới của YouTube về giới hạn độ tuổi người xem băng hình, PipePipe không thể truy cập bất kỳ luồng băng hình nào và do đó không thể phát băng hình đó.</string>
+<string name="restricted_video_no_stream_new">Video này bị giới hạn độ tuổi. \nĐăng nhập nếu bạn muốn xem nó.</string>
 <string name="duration_live">Trực tiếp</string>
 <string name="downloads">Tải xuống</string>
 <string name="downloads_title">Tải xuống</string>

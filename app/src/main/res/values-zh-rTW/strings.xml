@@ -564,8 +564,7 @@
 <string name="youtube_music_premium_content_new">此影片僅供 YouTube Music Premium 會員使用，因此無法由 PipePipe 串流或下載。</string>
 <string name="soundcloud_go_plus_content_new">這是 SoundCloud Go+ 的曲目，因此至少在您的國家無法由 PipePipe 串流或下載。</string>
 <string name="georestricted_content">此內容在您所在的國家不可用。</string>
-<string name="restricted_video_no_stream_new">此影片有年齡限制。
-\n因為 YouTube 新的年齡影片限制政策，PipePipe 無法存取任何這類的視訊串流，因此無法播放。</string>
+<string name="restricted_video_no_stream_new">此影片受年齡限制。\n如果您想觀看，請登入。</string>
 <string name="radio">廣播</string>
 <string name="featured">精選</string>
 <string name="recaptcha_solve">解決</string>
