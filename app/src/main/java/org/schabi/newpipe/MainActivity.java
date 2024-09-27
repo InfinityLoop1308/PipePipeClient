@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
                     // Show the second dialog when the first dialog is dismissed
-                    if(storedVersionCode / 100 != 1058) {
+                    if(storedVersionCode / 100 < 1058) {
                         dialog2.show();
                     }
                 }

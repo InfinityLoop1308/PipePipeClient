@@ -900,7 +900,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在使用音樂播放器模式時,隨機播放播放清單</string>
-<string name="update_log">### 新功能\n\n- 支援 YouTube 風格的全螢幕手勢\n\n### 錯誤修正\n\n- 某些訂閱源無法加載 (YouTube)\n- 短片在頻道中不顯示 (YouTube)\n- 無法獲取用戶系列 (NicoNico)\n- 評論受到限制 (BiliBili)\n- 在特定情況下導致應用崩潰的幾個錯誤\n\n### 其他\n\n- 提高穩定性</string>
+<string name="update_log">### 新功能\n\n- 支援登入以避免被封鎖（YouTube）\n\n### 錯誤修正\n\n- 頻道訂閱列表/影片列表在返回上一頁時會一直滾動回到頂部\n- 音軌語言與偏好設定中的內容語言不匹配（YouTube）\n\n### 其他\n\n- 提高穩定性</string>
 <string name="speeding_playback_title">按住以加快播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這個項目</string>
