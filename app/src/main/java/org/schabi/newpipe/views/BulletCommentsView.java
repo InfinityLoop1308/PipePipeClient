@@ -114,7 +114,7 @@ public final class BulletCommentsView extends ConstraintLayout {
     private final int commentsRowsCount = 11;
     private int lastCalculatedCommentsRowsCount = 11;
     List<Long> rows = Collections.synchronizedList(new ArrayList<Long>());
-    List<Long> rowsRegular = Collections.synchronizedList(new ArrayList<Long>());
+    List<Map.Entry<Long, Integer>> rowsRegular = Collections.synchronizedList(new ArrayList<>());
     private final double commentRelativeTextSize = 1 / 13.5;
     PriorityQueue<BulletCommentsInfoItem> bulletCommentsInfoItemPool = new PriorityQueue<>();
 
@@ -192,7 +192,7 @@ public final class BulletCommentsView extends ConstraintLayout {
             rowsRegular.clear();
         }
         while(rowsRegular.size() < calculatedCommentRowsCount){
-            rowsRegular.add(0L);
+            rowsRegular.add(new AbstractMap.SimpleEntry<>(0L, 0));
         }
         while(rows.size() < calculatedCommentRowsCount){
             rows.add(0L);
@@ -271,9 +271,16 @@ public final class BulletCommentsView extends ConstraintLayout {
                     }
                 } else if (item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)) {
                     for(int i = 0; i < calculatedCommentRowsCount ;i++){
-                        long last = rowsRegular.get(i);
-                        if(current - last >= comparedDuration * durationFactor / 6){
-                            rowsRegular.set(i, current);
+                        long last_time = rowsRegular.get(i).getKey();
+                        long last_length = rowsRegular.get(i).getValue();
+                        long t = current - last_time;
+                        double t_all = comparedDuration * durationFactor;
+                        double lx = (last_length / 25.0 + 1) * width;
+                        double ly = (item.getCommentText().length() / 25.0 + 1) * width;
+                        double vx = lx / t_all;
+                        double vy = ly / t_all;
+                        if((vy - vx) * (t_all - t) < t * vx - (last_length / 25.0) * width) {
+                            rowsRegular.set(i, new AbstractMap.SimpleEntry<>(current, item.getCommentText().length()));
                             row = i;
                             break;
                         }
