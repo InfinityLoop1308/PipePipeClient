@@ -200,14 +200,18 @@ public final class BulletCommentsView extends ConstraintLayout {
         while(bulletCommentsInfoItemPool.size() > 0
                 && (drawUntilPosition.compareTo(Duration.ofSeconds(Long.MAX_VALUE)) == 0
                 || bulletCommentsInfoItemPool.peek().getDuration().toMillis() < drawUntilPosition.toMillis())) {
-            BulletCommentsInfoItem item = bulletCommentsInfoItemPool.poll();
-            long current = new Date().getTime();
+            BulletCommentsInfoItem item = bulletCommentsInfoItemPool.peek();
             long itemDuration = item.getDuration().toMillis();
             if(!(itemDuration == 0)
                     && !(drawUntilPosition.compareTo(Duration.ofSeconds(Long.MAX_VALUE)) == 0)
-                    && drawUntilPosition.toMillis() - itemDuration > 2000){
+                    && drawUntilPosition.toMillis() - itemDuration > item.getTimeOut()){
+                bulletCommentsInfoItemPool.poll();
                 continue;
             }
+            if (tryToDrawComment(item, calculatedCommentRowsCount, width, false) == -1) {
+                return;
+            }
+            bulletCommentsInfoItemPool.poll();
             //Create TextView.
             final TextView textView = new TextView(context);
             final Typeface fontToBeUsed;
@@ -257,51 +261,13 @@ public final class BulletCommentsView extends ConstraintLayout {
             if (true) {
                 //Setting initial position by addView() won't work properly.
                 //setTop(), ... etc. won't work.
-                int row = -1;
-                int comparedDuration = (int) (commentsDuration * 1000);
-                if(item.getPosition().equals(BulletCommentsInfoItem.Position.TOP)
-                        || item.getPosition().equals(BulletCommentsInfoItem.Position.SUPERCHAT)){
-                    for(int i = 0; i < calculatedCommentRowsCount ;i++){
-                        long last = rows.get(i);
-                        if(current - last >= comparedDuration){
-                            rows.set(i, current);
-                            row = i;
-                            break;
-                        }
-                    }
-                } else if (item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)) {
-                    for(int i = 0; i < calculatedCommentRowsCount ;i++){
-                        long last_time = rowsRegular.get(i).getKey();
-                        long last_length = rowsRegular.get(i).getValue();
-                        long t = current - last_time;
-                        double t_all = comparedDuration * durationFactor;
-                        double lx = (last_length / 25.0 + 1) * width;
-                        double ly = (item.getCommentText().length() / 25.0 + 1) * width;
-                        double vx = lx / t_all;
-                        double vy = ly / t_all;
-                        if((vy - vx) * (t_all - t) < t * vx - (last_length / 25.0) * width) {
-                            rowsRegular.set(i, new AbstractMap.SimpleEntry<>(current, item.getCommentText().length()));
-                            row = i;
-                            break;
-                        }
-                    }
-                } else {
-                    for(int i = calculatedCommentRowsCount - 1; i >= 0 ;i--){
-                        long last = rows.get(i);
-                        if(current - last >= comparedDuration){
-                            rows.set(i, current);
-                            row = i;
-                            break;
-                        }
-                    }
-                }
+                int row = tryToDrawComment(item, calculatedCommentRowsCount, width, true);
                 if(row == -1){
                     continue;
                 }
                 textView.setX(width);
                 //To get width with getWidth(), it should be called inside post().
                 //or it returns 0.
-                int finalRow = row;
                 textView.post(() -> {
                     //Create ObjectAnimator.
                     final int textWidth = textView.getWidth();
@@ -322,7 +288,7 @@ public final class BulletCommentsView extends ConstraintLayout {
                                 -textWidth
                         );
                     }
-                    textView.setY((float) (height * (0.5 + finalRow) / calculatedCommentRowsCount - textHeight / 2));
+                    textView.setY((float) (height * (0.5 + row) / calculatedCommentRowsCount - textHeight / 2));
 
                     final AnimatedTextView animatedTextView = new AnimatedTextView(
                             textView, animator);
@@ -350,5 +316,54 @@ public final class BulletCommentsView extends ConstraintLayout {
         }
         //Log.v(TAG, "Child count: " + binding.bulletCommentsContainer.getChildCount());
         //Log.v(TAG, "AnimatedTextView count: " + (long) animatedTextViews.size());
+    }
+
+    public int tryToDrawComment(BulletCommentsInfoItem item, int calculatedCommentRowsCount, int width, boolean reallyDo) {
+        long current = new Date().getTime();
+        int row = -1;
+        int comparedDuration = (int) (commentsDuration * 1000);
+        if(item.getPosition().equals(BulletCommentsInfoItem.Position.TOP)
+                || item.getPosition().equals(BulletCommentsInfoItem.Position.SUPERCHAT)){
+            for(int i = 0; i < calculatedCommentRowsCount ;i++){
+                long last = rows.get(i);
+                if(current - last >= comparedDuration){
+                    if (reallyDo) {
+                        rows.set(i, current);
+                    }
+                    row = i;
+                    break;
+                }
+            }
+        } else if (item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)) {
+            for(int i = 0; i < calculatedCommentRowsCount ;i++){
+                long last_time = rowsRegular.get(i).getKey();
+                long last_length = rowsRegular.get(i).getValue();
+                long t = current - last_time;
+                double t_all = comparedDuration * durationFactor;
+                double lx = (last_length / 25.0 + 1) * width;
+                double ly = (item.getCommentText().length() / 25.0 + 1) * width;
+                double vx = lx / t_all;
+                double vy = ly / t_all;
+                if((vy - vx) * (t_all - t) < t * vx - (last_length / 25.0) * width && t * vx - (last_length / 25.0) * width > 0) {
+                    if (reallyDo) {
+                        rowsRegular.set(i, new AbstractMap.SimpleEntry<>(current, item.getCommentText().length()));
+                    }
+                    row = i;
+                    break;
+                }
+            }
+        } else {
+            for(int i = calculatedCommentRowsCount - 1; i >= 0 ;i--){
+                long last = rows.get(i);
+                if(current - last >= comparedDuration){
+                    if (reallyDo) {
+                        rows.set(i, current);
+                    }
+                    row = i;
+                    break;
+                }
+            }
+        }
+        return row;
     }
 }

@@ -227,11 +227,9 @@ public class PlayerDataSource {
     public HlsMediaSource.Factory getNicoLiveHlsMediaSourceFactory(String liveUrl) {
         DataSource.Factory newFactory = new ResolvingDataSource.Factory(new NiconicoLiveDataSource
                 .Factory(context, new NiconicoLiveHttpDataSource.Factory(liveUrl)
-                .setDefaultRequestProperties(Map.of("Referer", "https://www.nicovideo.jp/",
-                        "Origin", "https://www.nicovideo.jp",
-                        "X-Frontend-ID", "6",
-                        "X-Frontend-Version", "0",
-                        "X-Niconico-Language", "en-us"
+                .setDefaultRequestProperties(Map.of("Referer", "https://live.nicovideo.jp",
+                        "Origin", "https://live.nicovideo.jp",
+                        "User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36"
                 ))
                 .setTransferListener(transferListener)), dataSpec -> {
             try {
