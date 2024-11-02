@@ -202,12 +202,6 @@ public final class BulletCommentsView extends ConstraintLayout {
                 || bulletCommentsInfoItemPool.peek().getDuration().toMillis() < drawUntilPosition.toMillis())) {
             BulletCommentsInfoItem item = bulletCommentsInfoItemPool.peek();
             long itemDuration = item.getDuration().toMillis();
-            if(!(itemDuration == 0)
-                    && !(drawUntilPosition.compareTo(Duration.ofSeconds(Long.MAX_VALUE)) == 0)
-                    && drawUntilPosition.toMillis() - itemDuration > item.getTimeOut()){
-                bulletCommentsInfoItemPool.poll();
-                continue;
-            }
             if (tryToDrawComment(item, calculatedCommentRowsCount, width, false) == -1) {
                 return;
             }
