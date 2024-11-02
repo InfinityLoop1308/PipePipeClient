@@ -100,7 +100,7 @@ abstract class BasePlayerGestureListener(
 
                 // Check if swiping up (negative y velocity)
                 if (yVelocity < 0) {
-                    v.parent.requestDisallowInterceptTouchEvent(true)
+                    v.parent.requestDisallowInterceptTouchEvent(player.isFullscreenGestureEnabled || player.isFullscreen)
                 } else {
                     v.parent.requestDisallowInterceptTouchEvent(player.isFullscreen)
                 }

@@ -296,6 +296,8 @@ public final class Player implements
     private boolean isVerticalVideo = false;
     private boolean fragmentIsVisible = false;
 
+    private boolean isFullscreenGestureEnabled = true;
+
     private List<VideoStream> availableStreams;
     private int selectedStreamIndex;
 
@@ -436,6 +438,8 @@ public final class Player implements
 
         windowManager = ContextCompat.getSystemService(context, WindowManager.class);
         longPressSpeedingFactor = Float.parseFloat(prefs.getString(context.getString(R.string.speeding_playback_key), "3"));
+
+        isFullscreenGestureEnabled = PlayerHelper.isFullscreenGestureEnabled(context);
     }
 
     private QualityResolver getQualityResolver() {
@@ -4925,6 +4929,10 @@ public final class Player implements
 
     public boolean isSomePopupMenuVisible() {
         return isSomePopupMenuVisible;
+    }
+
+    public boolean isFullscreenGestureEnabled() {
+        return isFullscreenGestureEnabled;
     }
 
     public void setSomePopupMenuVisible(final boolean somePopupMenuVisible) {

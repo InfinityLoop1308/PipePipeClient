@@ -321,6 +321,11 @@ public final class PlayerHelper {
                 .getBoolean(context.getString(R.string.brightness_gesture_control_key), true);
     }
 
+    public static boolean isFullscreenGestureEnabled(@NonNull final Context context) {
+        return getPreferences(context)
+                .getBoolean(context.getString(R.string.fullscreen_gesture_control_key), true);
+    }
+
     public static boolean isStartMainPlayerFullscreenEnabled(@NonNull final Context context) {
         return getPreferences(context)
                 .getBoolean(context.getString(R.string.start_main_player_fullscreen_key), false);

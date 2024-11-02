@@ -92,18 +92,13 @@ public class PlayerGestureListener
             Log.d(TAG, "onScroll called with playerType = ["
                 + player.getPlayerType() + "], portion = [" + portion + "]");
         }
-
         if (playerType == MainPlayer.PlayerType.VIDEO) {
-            if ((player.isFullscreen() && distanceY < 0  && portion == DisplayPortion.MIDDLE) || (!player.isFullscreen() && distanceY > 0)) {
+            final boolean isFullscreenGestureEnabled =
+                    PlayerHelper.isFullscreenGestureEnabled(service);
+            if (isFullscreenGestureEnabled && ((player.isFullscreen() && distanceY < 0  && portion == DisplayPortion.MIDDLE) || (!player.isFullscreen() && distanceY > 0))) {
                 player.onScreenRotationButtonClicked();
+                return ;
             }
-        }
-
-        if(!player.isFullscreen()) {
-            return;
-        }
-
-        if (playerType == MainPlayer.PlayerType.VIDEO) {
             // -- Brightness and Volume control --
             final boolean isBrightnessGestureEnabled =
                 PlayerHelper.isBrightnessGestureEnabled(service);

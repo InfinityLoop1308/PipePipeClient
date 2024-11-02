@@ -235,6 +235,14 @@
             app:iconSpaceReserved="false" />
 
         <SwitchPreferenceCompat
+                android:defaultValue="true"
+                android:key="@string/fullscreen_gesture_control_key"
+                android:summary="@string/fullscreen_gesture_control_summary"
+                android:title="@string/fullscreen_gesture_control_title"
+                app:singleLineTitle="false"
+                app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="@string/popup_remember_size_pos_key"
             android:summary="@string/popup_remember_size_pos_summary"

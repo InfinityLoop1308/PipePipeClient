@@ -918,4 +918,6 @@
 <string name="view_on_github">在GitHub上查看</string>
 <string name="donation_dialog_title">支持该项目</string>
 <string name="donation_dialog_message">感谢您使用 PipePipe！如果您觉得它有用，请考虑在 Ko-Fi 上成为支持者。您的支持对我很重要，并帮助我添加更多令人兴奋的新功能。每一点都很重要！😇</string>
+<string name="fullscreen_gesture_control_summary">使用手势进入/退出全屏</string>
+<string name="fullscreen_gesture_control_title">全屏手势控制</string>
 </resources>
