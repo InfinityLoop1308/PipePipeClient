@@ -3017,7 +3017,7 @@ public final class Player implements
                     if (timer != null) {
                         timer.cancel(true);
                     }
-                    playQueue.error();
+                    onBufferingFailed();
                 }
                 break;
             case ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE:
@@ -3042,7 +3042,7 @@ public final class Player implements
                             if (timer != null) {
                                 timer.cancel(true);
                             }
-                            playQueue.error();
+                            onBufferingFailed();
                         }
                         break;
                     }
@@ -3061,7 +3061,7 @@ public final class Player implements
                                 if (timer != null) {
                                     timer.cancel(true);
                                 }
-                                playQueue.error();
+                                onBufferingFailed();
                             }
                             break;
                         }
@@ -3077,7 +3077,7 @@ public final class Player implements
                             if (timer != null) {
                                 timer.cancel(true);
                             }
-                            playQueue.error();
+                            onBufferingFailed();
                         }
                         break;
                     }
@@ -5227,5 +5227,12 @@ public final class Player implements
 
     public boolean getLongPressSpeedingEnabled() {
         return longPressSpeedingEnabled;
+    }
+    
+    public void onBufferingFailed() {
+        pause();
+        pauseBCPlayer();
+        currentState = STATE_PAUSED;
+        notifyPlaybackUpdateToListeners();
     }
 }
