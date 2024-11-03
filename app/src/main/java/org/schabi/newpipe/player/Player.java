@@ -2354,7 +2354,7 @@ public final class Player implements
 
     private Disposable bcPlayerDrawCommentsObservable = null;
 
-    private void startBCPlayer() {
+    public void startBCPlayer() {
         if (bcPlayer == null | bcPlayerDrawCommentsObservable != null | !isBCPlayerVisible) {
             return;
         }
@@ -2375,7 +2375,9 @@ public final class Player implements
                     return ret;
                 })
                 .subscribe(s ->  {
-                            bcPlayer.drawComments(s.plus(bcPlayer.INTERVAL));
+                            if(isPlaying() && !audioPlayerSelected()){
+                                bcPlayer.drawComments(s.plus(bcPlayer.INTERVAL));
+                            }
                         },
                         e -> Log.e(TAG, Log.getStackTraceString(e))
                 );
@@ -2391,7 +2393,7 @@ public final class Player implements
         Log.d(TAG, "BulletCommentsView completed.");
     }
 
-    private void pauseBCPlayer() {
+    public void pauseBCPlayer() {
         if (bcPlayer == null) {
             return;
         }

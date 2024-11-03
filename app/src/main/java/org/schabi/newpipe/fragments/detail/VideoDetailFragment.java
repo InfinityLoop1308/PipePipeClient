@@ -2431,6 +2431,11 @@ public final class VideoDetailFragment
                                 && player.videoPlayerSelected()) {
                             player.toggleFullscreen();
                         }
+                        if (isPlayerAvailable()
+                                && player.isPlaying()
+                                && player.videoPlayerSelected()) {
+                            player.startBCPlayer();
+                        }
                         setOverlayLook(binding.appBarLayout, behavior, 1);
                         break;
                     case BottomSheetBehavior.STATE_COLLAPSED:
@@ -2443,6 +2448,7 @@ public final class VideoDetailFragment
                         setOverlayElementsClickable(true);
                         if (isPlayerAvailable()) {
                             player.closeItemsList();
+                            player.pauseBCPlayer();
                         }
                         setOverlayLook(binding.appBarLayout, behavior, 0);
                         break;
