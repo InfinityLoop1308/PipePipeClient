@@ -869,7 +869,7 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             return;
         }
 
-        if(itemListAdapter.sortMode != SortMode.ORIGIN) {
+        if(itemListAdapter.sortMode != SortMode.ORIGIN && itemListAdapter.sortMode != SortMode.ORIGIN_REVERSE) {
             itemListAdapter.sort(SortMode.ORIGIN);
         }
 
@@ -879,6 +879,10 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             if (item instanceof PlaylistStreamEntry) {
                 streamIds.add(((PlaylistStreamEntry) item).getStreamId());
             }
+        }
+
+        if(itemListAdapter.sortMode == SortMode.ORIGIN_REVERSE) {
+            Collections.reverse(streamIds);
         }
 
         if (DEBUG) {
