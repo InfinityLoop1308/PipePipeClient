@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 public class NiconicoLiveHttpDataSource extends PurifiedHttpDataSource {
-    private static final long FETCH_INTERVAL = 50000;
+    private static final long FETCH_INTERVAL = 50000000; //disable
     private final String liveUrl;
     private static final Map<String, Long> fetchHistory = new HashMap<>();
     private static String currentKey;

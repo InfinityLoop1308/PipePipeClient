@@ -207,7 +207,6 @@ public class PlayerDataSource {
         do {
             String liveUrl = nicoWebSocketClient.getUrl();
             if (liveUrl != null) {
-                webSocketClient.close();
                 return liveUrl;
             }
         } while (TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startTime) <= 10);
