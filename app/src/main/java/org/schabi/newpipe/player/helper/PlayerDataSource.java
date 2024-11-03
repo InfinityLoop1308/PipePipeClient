@@ -79,6 +79,8 @@ public class PlayerDataSource {
     private final TransferListener transferListener;
     private final Context context;
 
+    private NicoWebSocketClient nicoWebSocketClient;
+
     public PlayerDataSource(@NonNull final Context context,
                             @NonNull final String userAgent,
                             @NonNull final TransferListener transferListener) {
@@ -194,13 +196,14 @@ public class PlayerDataSource {
     }
 
     // NicoNicoMediaSourceFactories
-    public static String getNicoLiveUrl(String url) throws ParsingException, IOException, ReCaptchaException, JsonParserException {
+    public String getNicoLiveUrl(String url) throws ParsingException, IOException, ReCaptchaException, JsonParserException {
         DownloaderImpl downloader = DownloaderImpl.getInstance();
         Document liveResponse = Jsoup.parse(downloader.get(url).responseBody());
         String result = JsonParser.object().from(liveResponse
                         .select("script#embedded-data").attr("data-props"))
                 .getObject("site").getObject("relive").getString("webSocketUrl");
-        NicoWebSocketClient nicoWebSocketClient = new NicoWebSocketClient(URI.create(result), NiconicoService.getWebSocketHeaders());
+        disconnectWebSocketClients();
+        nicoWebSocketClient = new NicoWebSocketClient(URI.create(result), NiconicoService.getWebSocketHeaders());
         NicoWebSocketClient.WrappedWebSocketClient webSocketClient = nicoWebSocketClient.getWebSocketClient();
         webSocketClient.connect();
         long startTime = System.nanoTime();
@@ -260,5 +263,13 @@ public class PlayerDataSource {
         }
         return new ProgressiveMediaSource.Factory(factory)
                 .setContinueLoadingCheckIntervalBytes(continueLoadingCheckIntervalBytes);
+    }
+
+    public void disconnectWebSocketClients() {
+        try {
+            nicoWebSocketClient.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

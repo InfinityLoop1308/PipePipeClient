@@ -179,54 +179,46 @@ public class NiconicoLiveHttpDataSource extends PurifiedHttpDataSource {
     @Override
     public long open(DataSpec dataSpec) throws HttpDataSourceException
     {
-        String fetchUrl = dataSpec.uri.toString();
-        int type = 0;
-        List<String> anonStrings = Arrays.asList("anonymous-user-", "anonymous_user_", "ht2_nicolive=");
-//        System.out.println("Start fetching: " + new Date().toString() + " " + fetchUrl + " isFetching: " + isFetching);
-//        System.out.println("Current key: " + currentKey + " " + fetchHistory.entrySet().toString());
-        String fetchKey;
-        if (fetchUrl.contains(anonStrings.get(0))){
-            fetchKey = fetchUrl.split(anonStrings.get(0))[1].split("&")[0];
-        } else if (fetchUrl.contains(anonStrings.get(1))){
-            fetchKey = fetchUrl.split(anonStrings.get(1))[1].split("&")[0];
-            type = 1;
-        } else{
-            fetchKey = fetchUrl.split(anonStrings.get(2))[1].split("&")[0];
-            type = 2;
-        }
-
-        if(currentKey == null){
-            currentKey = fetchKey;
-        }
-        Long currentTime = new Date().getTime();
-        if(!fetchHistory.containsKey(currentKey)){
-            fetchHistory.put(currentKey, currentTime);
-        } else if (!isFetching && currentTime - fetchHistory.get(currentKey) > FETCH_INTERVAL && !fetchUrl.contains("playlist.m3u8")) {
-            // start a new thread and fetch the new key
-            int finalType = type;
-            new Thread(() -> {
-                try {
-//                    System.out.println("Start fetching new key: " + new Date().toString());
-                    isFetching = true;
-                    currentKey = PlayerDataSource.getNicoLiveUrl(liveUrl).split(anonStrings.get(finalType))[1].split("&")[0];
-                    fetchHistory.put(String.valueOf(currentKey), currentTime);
-                    isFetching = false;
-//                    System.out.println("End fetching new key: " + new Date().toString());
-                } catch (ParsingException | IOException | ReCaptchaException | JsonParserException e) {
-                    throw new RuntimeException(e);
-                }
-            }).start();
-        }
-        String newUrl = fetchUrl.replace(fetchKey, currentKey);
+//        String fetchUrl = dataSpec.uri.toString();
+//        int type = 0;
+//        List<String> anonStrings = Arrays.asList("anonymous-user-", "anonymous_user_", "ht2_nicolive=");
+////        System.out.println("Start fetching: " + new Date().toString() + " " + fetchUrl + " isFetching: " + isFetching);
+////        System.out.println("Current key: " + currentKey + " " + fetchHistory.entrySet().toString());
+//        String fetchKey;
+//        if (fetchUrl.contains(anonStrings.get(0))){
+//            fetchKey = fetchUrl.split(anonStrings.get(0))[1].split("&")[0];
+//        } else if (fetchUrl.contains(anonStrings.get(1))){
+//            fetchKey = fetchUrl.split(anonStrings.get(1))[1].split("&")[0];
+//            type = 1;
+//        } else{
+//            fetchKey = fetchUrl.split(anonStrings.get(2))[1].split("&")[0];
+//            type = 2;
+//        }
+//
+//        if(currentKey == null){
+//            currentKey = fetchKey;
+//        }
+//        Long currentTime = new Date().getTime();
+//        if(!fetchHistory.containsKey(currentKey)){
+//            fetchHistory.put(currentKey, currentTime);
+//        } else if (!isFetching && currentTime - fetchHistory.get(currentKey) > FETCH_INTERVAL && !fetchUrl.contains("playlist.m3u8")) {
+//            // start a new thread and fetch the new key
+////            int finalType = type;
+////            new Thread(() -> {
+////                try {
+//////                    System.out.println("Start fetching new key: " + new Date().toString());
+////                    isFetching = true;
+////                    currentKey = PlayerDataSource.getNicoLiveUrl(liveUrl).split(anonStrings.get(finalType))[1].split("&")[0];
+////                    fetchHistory.put(String.valueOf(currentKey), currentTime);
+////                    isFetching = false;
+//////                    System.out.println("End fetching new key: " + new Date().toString());
+////                } catch (ParsingException | IOException | ReCaptchaException | JsonParserException e) {
+////                    throw new RuntimeException(e);
+////                }
+////            }).start();
+//        }
+//        String newUrl = fetchUrl.replace(fetchKey, currentKey);
 //        System.out.println("End fetching: " + new Date().toString() + " " + newUrl);
-        return super.open(new DataSpec(Uri.parse(newUrl),
-                dataSpec.httpMethod,
-                dataSpec.httpBody,
-                dataSpec.absoluteStreamPosition,
-                dataSpec.position,
-                dataSpec.length,
-                dataSpec.key,
-                dataSpec.flags,
-                dataSpec.httpRequestHeaders));
+        return super.open(dataSpec);
     }
 }

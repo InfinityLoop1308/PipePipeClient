@@ -408,6 +408,8 @@ public final class Player implements
     private boolean longPressSpeedingEnabled = false;
     public float longPressSpeedingFactor = 1.0f;
 
+    private PlayerDataSource dataSource;
+
 
 
     public Player(@NonNull final MainPlayer service) {
@@ -419,7 +421,7 @@ public final class Player implements
         setupBroadcastReceiver();
 
         trackSelector = new DefaultTrackSelector(context, PlayerHelper.getQualitySelector());
-        final PlayerDataSource dataSource = new PlayerDataSource(context, DownloaderImpl.USER_AGENT,
+        dataSource = new PlayerDataSource(context, DownloaderImpl.USER_AGENT,
                 new DefaultBandwidthMeter.Builder(context).build());
         loadController = new LoadController();
 
@@ -977,6 +979,7 @@ public final class Player implements
         if(enqueueTimer != null){
             enqueueTimer.cancel(true);
         }
+        dataSource.disconnectWebSocketClients();
     }
 
     public void destroy() {
@@ -5234,5 +5237,6 @@ public final class Player implements
         pauseBCPlayer();
         currentState = STATE_PAUSED;
         notifyPlaybackUpdateToListeners();
+        dataSource.disconnectWebSocketClients();
     }
 }
