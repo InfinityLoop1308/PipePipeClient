@@ -158,6 +158,14 @@
             app:singleLineTitle="false"
             app:iconSpaceReserved="false" />
 
+        <SwitchPreferenceCompat
+                android:defaultValue="true"
+                android:key="@string/require_audio_focus_key"
+                android:summary="@string/require_audio_focus_summary"
+                android:title="@string/require_audio_focus_title"
+                app:singleLineTitle="false"
+                app:iconSpaceReserved="false" />
+
         <ListPreference
             android:defaultValue="@string/autoplay_value"
             android:entries="@array/autoplay_type_description"

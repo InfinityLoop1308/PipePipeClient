@@ -971,4 +971,6 @@
 <string name="donation_dialog_message">Thank you for using PipePipe! If you find it useful, please consider becoming a supporter on Ko-Fi. Your support is important to me and helps me add more exciting new features. Every bit counts! 😇</string>
 <string name="fullscreen_gesture_control_summary">Use gestures to enter / exit fullscreen</string>
 <string name="fullscreen_gesture_control_title">Fullscreen gesture control</string>
+<string name="require_audio_focus_summary">Make sure only PipePipe is playing audio</string>
+<string name="require_audio_focus_title">Require audio focus</string>
 </resources>

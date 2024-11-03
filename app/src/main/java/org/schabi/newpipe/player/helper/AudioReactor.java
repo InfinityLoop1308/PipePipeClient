@@ -14,8 +14,10 @@ import androidx.core.content.ContextCompat;
 import androidx.media.AudioFocusRequestCompat;
 import androidx.media.AudioManagerCompat;
 
+import androidx.preference.PreferenceManager;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
+import org.schabi.newpipe.R;
 
 public class AudioReactor implements AudioManager.OnAudioFocusChangeListener, AnalyticsListener {
 
@@ -58,7 +60,11 @@ public class AudioReactor implements AudioManager.OnAudioFocusChangeListener, An
     //////////////////////////////////////////////////////////////////////////*/
 
     public void requestAudioFocus() {
-        AudioManagerCompat.requestAudioFocus(audioManager, request);
+        boolean shouldRequestAudioFocus = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.require_audio_focus_key), true);
+        if (shouldRequestAudioFocus) {
+            AudioManagerCompat.requestAudioFocus(audioManager, request);
+        }
     }
 
     public void abandonAudioFocus() {

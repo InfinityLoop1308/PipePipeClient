@@ -964,4 +964,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="donation_dialog_message">Cảm ơn bạn đã sử dụng PipePipe! Nếu bạn thấy nó hữu ích, hãy xem xét trở thành người ủng hộ trên Ko-Fi. Sự ủng hộ của bạn rất quan trọng đối với tôi và giúp tôi bổ sung thêm nhiều tính năng mới thú vị. Mỗi sự hỗ trợ đều có ý nghĩa! 😇</string>
 <string name="fullscreen_gesture_control_summary">Sử dụng cử chỉ để vào / thoát toàn màn hình</string>
 <string name="fullscreen_gesture_control_title">Điều khiển cử chỉ toàn màn hình</string>
+<string name="require_audio_focus_summary">Đảm bảo chỉ có PipePipe đang phát âm thanh</string>
+<string name="require_audio_focus_title">Yêu cầu tiêu điểm âm thanh</string>
 </resources>

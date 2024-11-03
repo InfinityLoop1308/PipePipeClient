@@ -906,4 +906,6 @@
 <string name="donation_dialog_message">PipePipeをご利用いただきありがとうございます！役立つと感じた場合は、Ko-Fiでサポーターになることをご検討ください。あなたのサポートは私にとって重要であり、よりエキサイティングな新機能を追加するのに役立ちます。ほんの少しでも大切です！😇</string>
 <string name="fullscreen_gesture_control_summary">ジェスチャーを使用してフルスクリーンに入る / 退出する</string>
 <string name="fullscreen_gesture_control_title">フルスクリーンジェスチャー制御</string>
+<string name="require_audio_focus_summary">PipePipeだけがオーディオを再生していることを確認してください</string>
+<string name="require_audio_focus_title">オーディオフォーカスを要求する</string>
 </resources>

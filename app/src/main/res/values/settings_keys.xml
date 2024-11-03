@@ -1526,4 +1526,5 @@
         <item>5</item>
     </string-array>
     <string name="speeding_playback_default_value">3</string>
+    <string name="require_audio_focus_key">require_audio_focus_key</string>
 </resources>

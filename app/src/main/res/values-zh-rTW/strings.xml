@@ -907,4 +907,6 @@
 <string name="donation_dialog_message">感謝您使用 PipePipe！如果您覺得它有用，請考慮在 Ko-Fi 上成為支持者。您的支持對我來說很重要，並幫助我添加更多令人興奮的新功能。每一分都很重要！😇</string>
 <string name="fullscreen_gesture_control_summary">使用手勢進入/退出全螢幕</string>
 <string name="fullscreen_gesture_control_title">全螢幕手勢控制</string>
+<string name="require_audio_focus_summary">確保只有 PipePipe 在播放音頻</string>
+<string name="require_audio_focus_title">需要音訊焦點</string>
 </resources>
