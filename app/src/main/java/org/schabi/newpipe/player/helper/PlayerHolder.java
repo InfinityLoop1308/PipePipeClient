@@ -91,6 +91,11 @@ public final class PlayerHolder {
         return player.getPlayQueue().size();
     }
 
+    @Nullable
+    public PlayerServiceExtendedEventListener getListener() {
+        return listener;
+    }
+
     public void setListener(@Nullable final PlayerServiceExtendedEventListener newListener) {
         listener = newListener;
 

@@ -109,9 +109,11 @@ public final class PlayQueueActivity extends AppCompatActivity
     public boolean onPrepareOptionsMenu(final Menu m) {
         if (player != null) {
             menu.findItem(R.id.action_switch_popup)
-                    .setVisible(!player.popupPlayerSelected());
+                    .setVisible(player.audioPlayerSelected());
+            menu.findItem(R.id.action_switch_main)
+                    .setVisible(player.audioPlayerSelected());
             menu.findItem(R.id.action_switch_background)
-                    .setVisible(!player.audioPlayerSelected());
+                    .setVisible(false);
         }
         return super.onPrepareOptionsMenu(m);
     }

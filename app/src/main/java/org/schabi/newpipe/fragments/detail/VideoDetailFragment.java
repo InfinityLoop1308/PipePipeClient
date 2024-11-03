@@ -387,7 +387,10 @@ public final class VideoDetailFragment
         disposables.clear();
         positionSubscriber = null;
         currentWorker = null;
-        bottomSheetBehavior.setBottomSheetCallback(null);
+
+        // sometimes onDestroy is called after initListeners, making the bottomsheet unable to react properly
+        // so I have to remove the cleanup
+       // bottomSheetBehavior.setBottomSheetCallback(null);
 
         if (activity.isFinishing()) {
             playQueue = null;
@@ -550,7 +553,7 @@ public final class VideoDetailFragment
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                 break;
             case R.id.overlay_play_queue_button:
-                if (isPlayerAvailable() && player.audioPlayerSelected()) {
+                if (isPlayerAvailable()) {
                     Intent queueActivityIntent = NavigationHelper.getPlayQueueActivityIntent(activity);
                     activity.startActivity(queueActivityIntent);
                 }
@@ -1299,7 +1302,7 @@ public final class VideoDetailFragment
     }
 
     private void openMainPlayer() {
-        if (!isPlayerServiceAvailable()) {
+        if (!(isPlayerServiceAvailable() && playerHolder.getListener() != null)) {
             playerHolder.startService(autoPlayEnabled, this);
             return;
         }
