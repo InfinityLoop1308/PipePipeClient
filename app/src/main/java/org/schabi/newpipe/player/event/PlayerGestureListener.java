@@ -99,6 +99,9 @@ public class PlayerGestureListener
                 player.onScreenRotationButtonClicked();
                 return ;
             }
+            if(!player.isFullscreen()) {
+                return;
+            }
             // -- Brightness and Volume control --
             final boolean isBrightnessGestureEnabled =
                 PlayerHelper.isBrightnessGestureEnabled(service);
