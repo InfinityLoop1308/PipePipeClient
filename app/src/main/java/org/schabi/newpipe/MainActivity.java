@@ -436,7 +436,7 @@ public class MainActivity extends AppCompatActivity {
     private void showServices() {
         for (final StreamingService s : NewPipe.getServices()) {
             final String title = s.getServiceInfo().getName()
-                    + (ServiceHelper.isBeta(s) ? " (Deprecated)" : "");
+                    + (ServiceHelper.isBeta(s) ? " (Legacy)" : "");
 
             final MenuItem menuItem = drawerLayoutBinding.navigation.getMenu()
                     .add(R.id.menu_services_group, s.getServiceId(), ORDER, title)
