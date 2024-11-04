@@ -127,7 +127,7 @@ class NewVersionWorker(
 
             val supportedAbis = Build.SUPPORTED_ABIS
 
-            var versionName = githubStableObject.getString("name")
+            var versionName = githubStableObject.getString("name").split("-")[0]
             if (versionName.startsWith("v")) {
                 versionName = versionName.substring(1)
             }
