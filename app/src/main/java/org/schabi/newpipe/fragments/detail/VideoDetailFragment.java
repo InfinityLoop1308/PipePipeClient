@@ -2466,7 +2466,12 @@ public final class VideoDetailFragment
 
             @Override
             public void onSlide(@NonNull final View bottomSheet, final float slideOffset) {
-                setOverlayLook(binding.appBarLayout, behavior, slideOffset);
+                try {
+                    setOverlayLook(binding.appBarLayout, behavior, slideOffset);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
         });
 
