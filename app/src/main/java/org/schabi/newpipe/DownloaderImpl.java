@@ -1,14 +1,13 @@
 package org.schabi.newpipe;
 
 import android.content.Context;
-import android.os.Build;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
-
 import com.grack.nanojson.JsonParserException;
+import okhttp3.*;
 import org.schabi.newpipe.error.ReCaptchaActivity;
+import org.schabi.newpipe.extractor.downloader.CancellableCall;
 import org.schabi.newpipe.extractor.downloader.Downloader;
 import org.schabi.newpipe.extractor.downloader.Request;
 import org.schabi.newpipe.extractor.downloader.Response;
@@ -17,35 +16,20 @@ import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
 import org.schabi.newpipe.extractor.services.bilibili.BilibiliService;
 import org.schabi.newpipe.util.CookieUtils;
 import org.schabi.newpipe.util.InfoCache;
-import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.TLSSocketFactoryCompat;
-
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
-
-import okhttp3.CipherSuite;
-import okhttp3.ConnectionSpec;
-import okhttp3.OkHttpClient;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
-import okio.Buffer;
-import okio.BufferedSource;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static org.schabi.newpipe.MainActivity.DEBUG;
 
@@ -281,5 +265,89 @@ public final class DownloaderImpl extends Downloader {
         final String latestUrl = response.request().url().toString();
         return new Response(response.code(), response.message(), response.headers().toMultimap(),
                 responseBodyToReturn, rawBodyBytes, latestUrl);
+    }
+
+    public CancellableCall executeAsync(@NonNull final Request request, @NonNull final Downloader.AsyncCallback callback) {
+        final String httpMethod = request.httpMethod();
+        final String url = request.url();
+        final Map<String, List<String>> headers = request.headers();
+        final byte[] dataToSend = request.dataToSend();
+
+        RequestBody requestBody = null;
+        if (dataToSend != null) {
+            requestBody = RequestBody.create(null, dataToSend);
+        }
+
+        final okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder()
+                .method(httpMethod, requestBody).url(url)
+                .addHeader("User-Agent", USER_AGENT);
+
+        final String cookies = getCookies(url);
+        if (!cookies.isEmpty()) {
+            requestBuilder.addHeader("Cookie", cookies);
+        }
+
+        for (final Map.Entry<String, List<String>> pair : headers.entrySet()) {
+            final String headerName = pair.getKey();
+            final List<String> headerValueList = pair.getValue();
+
+            if (headerValueList.size() > 1) {
+                requestBuilder.removeHeader(headerName);
+                for (final String headerValue : headerValueList) {
+                    requestBuilder.addHeader(headerName, headerValue);
+                }
+            } else if (headerValueList.size() == 1) {
+                requestBuilder.header(headerName, headerValueList.get(0));
+            }
+
+        }
+
+        OkHttpClient tmpClient = client;
+        if (customTimeout != null) {
+            tmpClient = new OkHttpClient.Builder()
+                    .readTimeout(customTimeout, TimeUnit.SECONDS)
+                    .build();
+        }
+
+        Call call = tmpClient.newCall(requestBuilder.build());
+        CancellableCall cancellableCall = new CancellableCall(call);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                cancellableCall.setFinished();
+                callback.onError(e);
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                try {
+                    if (response.code() == 429) {
+                        callback.onError(new ReCaptchaException("reCaptcha Challenge requested", url));
+                        return;
+                    }
+
+                    ResponseBody body = response.body();
+                    String responseBodyToReturn = null;
+                    byte[] rawBodyBytes = null;
+
+                    if (body != null) {
+                        rawBodyBytes = body.bytes();
+                        responseBodyToReturn = new String(rawBodyBytes, StandardCharsets.UTF_8);
+                    }
+
+                    String latestUrl = response.request().url().toString();
+                    Response newPipeResponse = new Response(response.code(), response.message(),
+                            response.headers().toMultimap(), responseBodyToReturn, rawBodyBytes, latestUrl);
+
+                    callback.onSuccess(newPipeResponse);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    response.close();
+                    cancellableCall.setFinished();
+                }
+            }
+        });
+        return cancellableCall;
     }
 }
