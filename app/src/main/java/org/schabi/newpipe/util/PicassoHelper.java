@@ -95,7 +95,7 @@ public final class PicassoHelper {
                 .build();
 
         picassoInstance = new Picasso.Builder(context)
-                .memoryCache(picassoCache) // memory cache
+//                .memoryCache(picassoCache) // memory cache
                 .downloader(new OkHttp3Downloader(picassoDownloaderClient)) // disk cache
                 .defaultBitmapConfig(Bitmap.Config.RGB_565)
                 .build();
@@ -196,6 +196,7 @@ public final class PicassoHelper {
 
 
     private static RequestCreator loadImageDefault(final String url, final int placeholderResId) {
+        Log.e("loadImageDefault", String.valueOf(picassoCache.size()));
         if (!shouldLoadImages || isBlank(url)) {
             return picassoInstance
                     .load((String) null)
