@@ -185,8 +185,7 @@ public final class ExtractorHelper {
                 url + "?reply_placeholder_id=" + replyPage.getId(),
                 InfoItem.InfoType.COMMENT,
                 Single.fromCallable(() -> {
-                            final var info = CommentsInfo.getInfo(
-                                    NewPipe.getService(serviceId), url);
+                            final var info = CommentsInfo.getInfoTemplate(NewPipe.getService(serviceId).getCommentsExtractor(url));
                             // use CommentsInfo make a info template
                             final var replies = CommentsInfo.getMoreItems(
                                     NewPipe.getService(serviceId), info, replyPage);
