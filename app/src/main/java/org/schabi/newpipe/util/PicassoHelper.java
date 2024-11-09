@@ -196,7 +196,6 @@ public final class PicassoHelper {
 
 
     private static RequestCreator loadImageDefault(final String url, final int placeholderResId) {
-        Log.e("loadImageDefault", String.valueOf(picassoCache.size()));
         if (!shouldLoadImages || isBlank(url)) {
             return picassoInstance
                     .load((String) null)
