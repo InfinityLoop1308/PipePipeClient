@@ -233,8 +233,8 @@ public class MainActivity extends AppCompatActivity {
             builder.setNegativeButton(R.string.no, (dialog, which) -> prefs.edit().putBoolean(app.getString(R.string.update_app_key), false).apply());
             builder.show();
             prefs.edit().putInt("isFirstRun", 1).apply();
+            PermissionChecker.checkNotificationPermission(this);
         }
-        PermissionChecker.checkNotificationPermission(this);
     }
 
     private void setupDrawer() throws ExtractionException {
