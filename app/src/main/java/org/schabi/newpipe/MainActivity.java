@@ -454,7 +454,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void enhancePeertubeMenu(final StreamingService s, final MenuItem menuItem) {
         final PeertubeInstance currentInstance = PeertubeHelper.getCurrentInstance();
-        menuItem.setTitle(currentInstance.getName() + (ServiceHelper.isBeta(s) ? "(Deprecated)" : ""));
+        menuItem.setTitle(currentInstance.getName() + (ServiceHelper.isBeta(s) ? "(Legacy)" : ""));
         final Spinner spinner = InstanceSpinnerLayoutBinding.inflate(LayoutInflater.from(this))
                 .getRoot();
         final List<PeertubeInstance> instances = PeertubeHelper.getInstanceList(this);
