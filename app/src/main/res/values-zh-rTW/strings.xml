@@ -900,26 +900,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在使用音樂播放器模式時,隨機播放播放清單</string>
-<string name="update_log">### 新功能
-
-- 新增偏好設定以控制是否啟用全屏手勢
-- 改善彈幕/直播聊天的觀看體驗
-- 支援在反向排序模式下移動播放列表元素
-- 支援與其他應用同時播放音頻
-- 支援為所有影片自動翻譯字幕（YouTube）
-- 支援新的NicoNico直播（NicoNico）
-
-### 錯誤修正
-
-- 現在如果有網絡問題，當前項目將不會從播放佇列中移除。取而代之的是，PipePipe將停止播放。
-- 無法獲取某些影片的視頻流（YouTube）
-- 下載影片時，最佳音頻軌道應該始終被選擇（YouTube）
-- 無法提供高品質音頻和視頻（YouTube）
-- 無法獲取評論的回覆（BiliBili）
-- 彈幕與官方客戶端不同步（BiliBili）
-- 不顯示投票彈幕（BiliBili）
-- 推薦直播沒有項目（BiliBili）
-- 在播放多影片列表時，彈幕未正常工作（BiliBili）</string>
+<string name="update_log">### 性能\n\n- 顯著提升影片載入速度\n- 提高載入評論回覆的速度\n- 優化記憶體使用，顯著提升低記憶體裝置的流暢度\n\n### 錯誤修正\n\n- 登入後無法訪問高品質影片（YouTube）\n- 播放列表無法使用（YouTube）\n- 頻道頁面上的上傳時間不正確（BiliBili）\n\n### 其他\n\n- 提升穩定性</string>
 <string name="speeding_playback_title">按住以加快播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這個項目</string>

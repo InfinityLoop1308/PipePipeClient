@@ -899,7 +899,7 @@
 <string name="sponsor_promote">サポーターになる</string>
 <string name="random_play_order_title">ランダムな順序</string>
 <string name="random_play_order_summary">プレイリストをシャッフルする</string>
-<string name="update_log">### 新機能\n\n- フルスクリーンジェスチャーを有効にするかどうかを制御する設定を追加\n- 弾幕コメント / ライブチャットの視聴体験を改善\n- 逆ソートモードでプレイリスト要素を移動するサポート\n- 他のアプリと一緒に音声を再生するサポート\n- すべてのビデオに対する自動字幕翻訳をサポート (YouTube)\n- 新しいニコニコライブのサポート (ニコニコ)\n\n### バグ修正\n\n- ネットワーク問題が発生した場合でも、現在のアイテムは再生キューから削除されません。その代わりに、PipePipeは再生を停止します。\n- 一部のビデオのビデオストリームを取得できない (YouTube)\n- ビデオをダウンロードする際には、常にベストのオーディオトラックが選択されるべきです (YouTube)\n- 高品質のオーディオビデオが利用できない (YouTube)\n- コメントの返信を取得できない (BiliBili)\n- 弾幕コメントが公式クライアントと同期していない (BiliBili)\n- 投票弾幕コメントを表示しない (BiliBili)\n- 推奨ライブにアイテムがない (BiliBili)\n- マルチビデオリストを再生しているときに弾幕コメントが正しく動作しない (BiliBili)</string>
+<string name="update_log">### パフォーマンス\n\n- 動画の読み込み速度が大幅に向上\n- コメント返信の読み込み速度を向上\n- メモリ使用量を最適化し、メモリが限られたデバイスでのスムーズさを大幅に改善\n\n### バグ修正\n\n- ログイン後に高品質の動画にアクセスできない (YouTube)\n- プレイリストが機能しない (YouTube)\n- チャンネルページでアップロード時間が誤って表示される (BiliBili)\n\n### その他\n\n- 安定性を向上</string>
 <string name="speeding_playback_title">長時間押は再生速度を速めることができます</string>
 <string name="view_on_github">GitHubで表示</string>
 <string name="donation_dialog_title">プロジェクトをサポートする</string>

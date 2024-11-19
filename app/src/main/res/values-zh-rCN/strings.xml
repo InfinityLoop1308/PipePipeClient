@@ -913,7 +913,7 @@
 <string name="sponsor_promote">成为支持者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">使用音乐播放器模式时,随机播放列表</string>
-<string name="update_log">### 新功能\n\n- 添加偏好设置以控制是否启用全屏手势\n- 改善弹幕/直播聊天的观看体验\n- 支持在逆序模式下移动播放列表元素\n- 支持与其他应用同时播放音频\n- 支持所有视频的自动翻译字幕（YouTube）\n- 支持新的 NicoNico 直播（NicoNico）\n\n### 错误修复\n\n- 现在如果出现网络问题，当前项目不会从播放队列中移除。相反，PipePipe 将停止播放。\n- 无法获取某些视频的流媒体（YouTube）\n- 下载视频时应始终选择最佳音轨（YouTube）\n- 音质高的视频不可用（YouTube）\n- 无法获取评论的回复（BiliBili）\n- 弹幕与官方客户端不同步（BiliBili）\n- 不显示投票弹幕（BiliBili）\n- 推荐直播没有项目（BiliBili）\n- 播放多视频列表时弹幕无法正常工作（BiliBili）</string>
+<string name="update_log">### 性能\n\n- 显著提高视频加载速度\n- 加快评论回复加载速度\n- 优化内存使用，显著提高内存有限设备的流畅度\n\n### 错误修复\n\n- 登录后无法访问高质量视频（YouTube）\n- 播放列表无法工作（YouTube）\n- 频道页面的上传时间不正确（BiliBili）\n\n### 其他\n\n- 提高稳定性</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 <string name="donation_dialog_title">支持该项目</string>
