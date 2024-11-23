@@ -23,6 +23,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -230,7 +231,7 @@ public final class DownloaderImpl extends Downloader {
         }
 
         OkHttpClient tmpClient = client;
-        final okhttp3.Response response;
+        okhttp3.Response response = null;
 
         if (customTimeout != null) {
             tmpClient = new OkHttpClient.Builder()
@@ -238,7 +239,33 @@ public final class DownloaderImpl extends Downloader {
                     .build();
         }
 
-        response = tmpClient.newCall(requestBuilder.build()).execute();
+        int maxRetries = 2;
+        int retryCount = 0;
+
+        while (retryCount <= maxRetries && response == null) {
+            try {
+                response = tmpClient.newCall(requestBuilder.build()).execute();
+            } catch (UnknownHostException e) {
+                retryCount++;
+                if (retryCount <= maxRetries) {
+                    System.err.println("DNS lookup failed. Retrying (attempt " + retryCount + ")...");
+                    try {
+                        Thread.sleep(500); // Wait 0.5 second before retrying (optional)
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt(); // Preserve interrupt status
+                        break; // Exit retry loop if interrupted
+                    }
+                } else {
+                    System.err.println("DNS lookup failed after multiple retries.");
+                    throw e;
+                }
+            }
+        }
+
+        if(response == null) {
+            throw new IOException("Failed to execute request. We retried " + retryCount + " times.");
+        }
+
 
         if (response.code() == 429) {
             response.close();
