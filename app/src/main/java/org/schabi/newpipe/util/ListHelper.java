@@ -108,15 +108,12 @@ public final class ListHelper {
 
     public static int getDefaultAudioFormat(final Context context,
                                             final List<AudioStream> audioStreams) {
-        final MediaFormat defaultFormat = getDefaultFormat(context,
-                R.string.default_audio_format_key, R.string.default_audio_format_value);
-
         // If the user has chosen to limit resolution to conserve mobile data
         // usage then we should also limit our audio usage.
         if (isLimitingDataUsage(context)) {
-            return getMostCompactAudioIndex(defaultFormat, audioStreams);
+            return getMostCompactAudioIndex(null, audioStreams);
         } else {
-            return getHighestQualityAudioIndex(defaultFormat, audioStreams);
+            return getHighestQualityAudioIndex(null, audioStreams);
         }
     }
 
@@ -216,15 +213,7 @@ public final class ListHelper {
             @Nullable final List<VideoStream> videoOnlyStreams,
             final boolean ascendingOrder,
             final boolean preferVideoOnlyStreams) {
-        final SharedPreferences preferences
-                = PreferenceManager.getDefaultSharedPreferences(context);
-
-        final boolean showHigherResolutions = preferences.getBoolean(
-                context.getString(R.string.show_higher_resolutions_key), true);
-        final MediaFormat defaultFormat = getDefaultFormat(context,
-                R.string.default_video_format_key, R.string.default_video_format_value);
-
-        return getSortedStreamVideosList(defaultFormat, showHigherResolutions, videoStreams,
+        return getSortedStreamVideosList(true, videoStreams,
                 videoOnlyStreams, ascendingOrder, preferVideoOnlyStreams);
     }
 
@@ -300,7 +289,6 @@ public final class ListHelper {
      */
     @NonNull
     static List<VideoStream> getSortedStreamVideosList(
-            @Nullable final MediaFormat defaultFormat,
             final boolean showHigherResolutions,
             @Nullable final List<VideoStream> videoStreams,
             @Nullable final List<VideoStream> videoOnlyStreams,
@@ -329,13 +317,6 @@ public final class ListHelper {
         // Add all to the hashmap
         for (final VideoStream videoStream : allInitialStreams) {
             hashMap.put(videoStream.getResolution(), videoStream);
-        }
-
-        // Override the values when the key == resolution, with the defaultFormat
-        for (final VideoStream videoStream : allInitialStreams) {
-            if (videoStream.getFormat() == defaultFormat) {
-                hashMap.put(videoStream.getResolution(), videoStream);
-            }
         }
 
         // Return the sorted list
@@ -524,10 +505,8 @@ public final class ListHelper {
     private static int getDefaultResolutionWithDefaultFormat(@NonNull final Context context,
                                                              final String defaultResolution,
                                                              final List<VideoStream> videoStreams) {
-        final MediaFormat defaultFormat = getDefaultFormat(context,
-                R.string.default_video_format_key, R.string.default_video_format_value);
         return getDefaultResolutionIndex(defaultResolution,
-                context.getString(R.string.best_resolution_key), defaultFormat, videoStreams);
+                context.getString(R.string.best_resolution_key), null, videoStreams);
     }
 
     private static MediaFormat getDefaultFormat(@NonNull final Context context,
