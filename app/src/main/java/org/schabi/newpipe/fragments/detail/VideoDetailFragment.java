@@ -1266,12 +1266,7 @@ public final class VideoDetailFragment
             onScreenRotationButtonClicked();
         }
 
-        if (PreferenceManager.getDefaultSharedPreferences(activity)
-                .getBoolean(this.getString(R.string.use_external_video_player_key), false)) {
-            showExternalPlaybackDialog();
-        } else {
-            replaceQueueIfUserConfirms(this::openMainPlayer);
-        }
+        replaceQueueIfUserConfirms(this::openMainPlayer);
     }
 
     /**
@@ -1383,16 +1378,10 @@ public final class VideoDetailFragment
                 ));
     }
 
-    private boolean isExternalPlayerEnabled() {
-        return PreferenceManager.getDefaultSharedPreferences(requireContext())
-                .getBoolean(getString(R.string.use_external_video_player_key), false);
-    }
-
     // This method overrides default behaviour when setAutoPlay() is called.
     // Don't auto play if the user selected an external player or disabled it in settings
     private boolean isAutoplayEnabled() {
         return autoPlayEnabled
-                && !isExternalPlayerEnabled()
                 && (!isPlayerAvailable() || player.videoPlayerSelected())
                 && bottomSheetState != BottomSheetBehavior.STATE_HIDDEN
                 && PlayerHelper.isAutoplayAllowedByUser(requireContext());

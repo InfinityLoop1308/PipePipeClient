@@ -295,8 +295,7 @@ public class RouterActivity extends AppCompatActivity {
         } else if (selectedChoiceKey.equals(downloadKey)) {
             handleChoice(downloadKey);
         } else {
-            final boolean isExtVideoEnabled = preferences.getBoolean(
-                    getString(R.string.use_external_video_player_key), false);
+            final boolean isExtVideoEnabled = false;
             final boolean isExtAudioEnabled = preferences.getBoolean(
                     getString(R.string.use_external_audio_player_key), false);
             final boolean isVideoPlayerSelected = selectedChoiceKey.equals(videoPlayerKey)
@@ -440,8 +439,7 @@ public class RouterActivity extends AppCompatActivity {
 
         final SharedPreferences preferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
-        final boolean isExtVideoEnabled = preferences.getBoolean(
-                getString(R.string.use_external_video_player_key), false);
+        final boolean isExtVideoEnabled = false;
         final boolean isExtAudioEnabled = preferences.getBoolean(
                 getString(R.string.use_external_audio_player_key), false);
 
@@ -780,8 +778,7 @@ public class RouterActivity extends AppCompatActivity {
 
                 final SharedPreferences preferences = PreferenceManager
                         .getDefaultSharedPreferences(this);
-                final boolean isExtVideoEnabled = preferences.getBoolean(
-                        getString(R.string.use_external_video_player_key), false);
+                final boolean isExtVideoEnabled = false;
                 final boolean isExtAudioEnabled = preferences.getBoolean(
                         getString(R.string.use_external_audio_player_key), false);
 
