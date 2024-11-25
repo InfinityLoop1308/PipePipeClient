@@ -24,9 +24,7 @@ public final class KoreUtils {
 
     public static boolean shouldShowPlayWithKodi(@NonNull final Context context,
                                                  final int serviceId) {
-        return isServiceSupportedByKore(serviceId)
-                && PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(context.getString(R.string.show_play_with_kodi_key), false);
+        return false;
     }
 
     public static void showInstallKoreDialog(@NonNull final Context context) {
