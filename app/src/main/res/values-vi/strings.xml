@@ -844,20 +844,17 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="image_quality_low">Chất lượng thấp</string>
 <string name="image_quality_medium">Chất lượng trung bình</string>
 <string name="image_quality_high">Chất lượng cao</string>
-<string name="question_mark">\?</string>
-<string name="regular_bullet_comments_duration_key">regular_bullet_comments_duration_key</string>
 <string name="regular_bullet_comments_duration_summary">Thay đổi thời lượng của dấu đầu dòng bình luận thông thường/cuộn. Thời gian ngắn hơn có thể gây ra
         lắp bắp/bập bềnh/trễ.
     </string>
 <string name="regular_bullet_comments_duration_title">Thời lượng dấu đầu dòng bình luận thông thường</string>
-<string name="top_bottom_bullet_comments_duration_key">top_bottom_bullet_comments_duration_key</string>
 <string name="top_bottom_bullet_comments_duration_summary">Thay đổi thời lượng của dấu đầu dòng bình luận trên/dưới. </string>
 <string name="top_bottom_bullet_comments_duration_title">Thời lượng dấu đầu dòng bình luận trên/dưới</string>
 <string name="append_playlist_not_supported">Đây là danh sách phát vô hạn, vì vậy bạn không thể thêm nó vào danh sách phát khác.
     </string>
 <string name="add_failed">Thêm không được</string>
-<string name="bullet_comments_outline_radius_key">bullet_comments_outline_radius_key</string>
-<string name="bullet_comments_outline_radius_title">"Phác thảo bán kính dấu đầu dòng bình luận"</string>
+
+<string name="bullet_comments_outline_radius_title">Bán kính viền của nhận xét dấu đầu dòng</string>
 <string name="top_100">Top 100</string>
 <string name="recommended_videos">Băng hình được đề xuất</string>
 <string name="top_lives">Trực tiếp hàng đầu</string>

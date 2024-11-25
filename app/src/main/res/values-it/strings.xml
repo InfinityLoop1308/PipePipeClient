@@ -662,17 +662,14 @@
 <string name="image_quality_low">Qualità bassa</string>
 <string name="image_quality_medium">Qualità media</string>
 <string name="image_quality_high">Qualità alta</string>
-<string name="question_mark">\?</string>
-<string name="regular_bullet_comments_duration_key">chiave_durata_commenti_regolari</string>
 <string name="regular_bullet_comments_duration_summary">Cambia la durata dei commenti a proiettile regolari/rotanti. Una durata più breve può causare balbuzie/scatti/lag.</string>
 <string name="regular_bullet_comments_duration_title">Durata commenti a proiettile regolari</string>
-<string name="top_bottom_bullet_comments_duration_key">chiave_durata_commenti_alto_basso</string>
 <string name="top_bottom_bullet_comments_duration_summary">Cambia la durata dei commenti a proiettile dall\'alto/in fondo.</string>
 <string name="top_bottom_bullet_comments_duration_title">Durata commenti a proiettile dall\'alto/in fondo</string>
 <string name="append_playlist_not_supported">Questa è una playlist infinita, quindi non puoi aggiungerla ad altre playlist.</string>
 <string name="add_failed">Aggiunta fallita</string>
-<string name="bullet_comments_outline_radius_key">chiave_raggio_contorno_commenti_a_proiettile</string>
-<string name="bullet_comments_outline_radius_title">"Raggio del contorno dei commenti a proiettile"</string>
+
+<string name="bullet_comments_outline_radius_title">Raggio di contorno dei commenti puntati</string>
 <string name="top_100">Top 100</string>
 <string name="recommended_videos">Video consigliati</string>
 <string name="top_lives">Live più visti</string>

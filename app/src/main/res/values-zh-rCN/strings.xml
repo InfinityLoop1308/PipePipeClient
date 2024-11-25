@@ -745,16 +745,14 @@
 <string name="image_quality_low">低质量</string>
 <string name="image_quality_medium">中等质量</string>
 <string name="image_quality_high">高质量</string>
-<string name="regular_bullet_comments_duration_key">regular_bullet_comments_duration_key</string>
 <string name="regular_bullet_comments_duration_summary">更改常规/滚动弹幕持续时间。较短持续时间可能导致卡顿。</string>
 <string name="regular_bullet_comments_duration_title">常规弹幕持续时间</string>
-<string name="top_bottom_bullet_comments_duration_key">top_bottom_bullet_comments_duration_key</string>
 <string name="top_bottom_bullet_comments_duration_summary">更改顶部/底部弹幕持续时间。</string>
 <string name="top_bottom_bullet_comments_duration_title">顶部/底部弹幕持续时间</string>
 <string name="append_playlist_not_supported">这是无尽播放列表，因此您不能将其加入其他播放列表。</string>
 <string name="add_failed">添加失败</string>
-<string name="bullet_comments_outline_radius_key">bullet_comments_outline_radius_key</string>
-<string name="bullet_comments_outline_radius_title">"弹幕轮廓半径"</string>
+
+<string name="bullet_comments_outline_radius_title">弹幕轮廓半径</string>
 <string name="top_100">前 100</string>
 <string name="recommended_videos">推荐视频</string>
 <string name="top_lives">热门直播</string>
@@ -873,7 +871,6 @@
 <string name="sponsor_block_confirm_clear_whitelist">您确定要清除白名单吗？</string>
 <string name="sponsor_block_confirm_reset_colors">您确定要重置类别颜色吗？</string>
 <string name="sponsor_block_reset_colors_toast">颜色已重置。</string>
-<string name="question_mark">？</string>
 <string name="download_all_message">请确保您已选择下载文件夹并授予访问权限，否则下载将失败。已存在的文件将不会被覆盖。如果音频无法单独下载，将会下载相应的视频。</string>
 <string name="feed_show_watched">已完全观看</string>
 <string name="feed_show_partially_watched">部分观看</string>

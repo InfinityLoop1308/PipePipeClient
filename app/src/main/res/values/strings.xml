@@ -849,28 +849,18 @@
 <string name="image_quality_low">Low quality</string>
 <string name="image_quality_medium">Medium quality</string>
 <string name="image_quality_high">High quality</string>
-<string name="question_mark">\?</string>
-<string name="regular_bullet_comments_duration_key">regular_bullet_comments_duration_key</string>
-<string name="regular_bullet_comments_duration_summary">Change the duration of regular/rolling bullet comments. A shorter duration may cause
-        stutter/choppy/lag.
-    </string>
+<string name="regular_bullet_comments_duration_summary">Change the duration of regular/rolling bullet comments. A shorter duration may cause stutter/choppy/lag.</string>
 <string name="regular_bullet_comments_duration_title">Regular bullet comments duration</string>
-<string name="top_bottom_bullet_comments_duration_key">top_bottom_bullet_comments_duration_key</string>
 <string name="top_bottom_bullet_comments_duration_summary">Change the duration of top/bottom bullet comments. </string>
 <string name="top_bottom_bullet_comments_duration_title">Top/bottom bullet comments duration</string>
-<string name="append_playlist_not_supported">This is an infinite playlist, so you can not append it to other
-        playlists.
-    </string>
+<string name="append_playlist_not_supported">This is an infinite playlist, so you can not append it to other playlists.</string>
 <string name="add_failed">Add failed</string>
-<string name="bullet_comments_outline_radius_key">bullet_comments_outline_radius_key</string>
-<string name="bullet_comments_outline_radius_title">"Outline radius of bullet comments "</string>
+<string name="bullet_comments_outline_radius_title">Outline radius of bullet comments</string>
 <string name="top_100">Top 100</string>
 <string name="recommended_videos">Recommended Videos</string>
 <string name="top_lives">Top Lives</string>
 <string name="recommended_lives">Recommended Lives</string>
-<string name="enable_eye_protection_summary">Disable dynamic theme changing and use a eye protection theme for all
-        services
-    </string>
+<string name="enable_eye_protection_summary">Disable dynamic theme changing and use a eye protection theme for all services</string>
 <string name="enable_eye_protection_title">Enable eye protection</string>
 <string name="account">Account</string>
 <string name="settings_category_niconico_account_title">NicoNico Account</string>

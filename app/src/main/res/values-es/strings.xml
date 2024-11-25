@@ -744,19 +744,14 @@ Debe aceptarla para enviarnos el informe de errores.</string>
 <string name="image_quality_low">Calidad baja</string>
 <string name="image_quality_medium">Calidad media</string>
 <string name="image_quality_high">Calidad alta</string>
-<string name="question_mark">\?</string>
-<string name="regular_bullet_comments_duration_key">clave_duración_comentarios_balas_regulares</string>
-<string name="regular_bullet_comments_duration_summary">Cambie la duración de los comentarios de bala regulares/de desplazamiento. Una duración más corta puede causar tartamudeo/parpadeo/retraso.
-    </string>
+<string name="regular_bullet_comments_duration_summary">Cambie la duración de los comentarios de bala regulares/de desplazamiento. Una duración más corta puede causar tartamudeo/parpadeo/retraso.</string>
 <string name="regular_bullet_comments_duration_title">Duración de comentarios de bala regulares</string>
-<string name="top_bottom_bullet_comments_duration_key">clave_duración_comentarios_bala_superior_inferior</string>
 <string name="top_bottom_bullet_comments_duration_summary">Cambie la duración de los comentarios de bala superior/inferior. </string>
 <string name="top_bottom_bullet_comments_duration_title">Duración de comentarios de bala superior/inferior</string>
-<string name="append_playlist_not_supported">Esta es una lista de reproducción infinita, por lo que no puede agregarla a otras listas de reproducción.
-    </string>
+<string name="append_playlist_not_supported">Esta es una lista de reproducción infinita, por lo que no puede agregarla a otras listas de reproducción.</string>
 <string name="add_failed">Agregar fallido</string>
-<string name="bullet_comments_outline_radius_key">clave_radio_contorno_comentarios_bala</string>
-<string name="bullet_comments_outline_radius_title">"Radio del contorno de los comentarios de bala"</string>
+
+<string name="bullet_comments_outline_radius_title">Radio del contorno de los comentarios de viñeta</string>
 <string name="top_100">Top 100</string>
 <string name="recommended_videos">Videos recomendados</string>
 <string name="top_lives">Top en vivo</string>

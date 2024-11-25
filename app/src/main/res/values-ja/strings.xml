@@ -790,17 +790,14 @@
 <string name="image_quality_low">低品質</string>
 <string name="image_quality_medium">中品質</string>
 <string name="image_quality_high">高品質</string>
-<string name="question_mark">？</string>
-<string name="regular_bullet_comments_duration_key">regular_bullet_comments_duration_key</string>
 <string name="regular_bullet_comments_duration_summary">通常/ローリング弾幕コメントの表示時間を変更します。表示時間を短くすると、カクつき/チョップ/遅延が発生する可能性があります。</string>
 <string name="regular_bullet_comments_duration_title">通常の弾幕コメントの表示時間</string>
-<string name="top_bottom_bullet_comments_duration_key">top_bottom_bullet_comments_duration_key</string>
 <string name="top_bottom_bullet_comments_duration_summary">上部/下部弾幕コメントの表示時間を変更します。</string>
 <string name="top_bottom_bullet_comments_duration_title">上部/下部の弾幕コメントの表示時間</string>
 <string name="append_playlist_not_supported">これは無限のプレイリストなので、他のプレイリストに追加することはできません。</string>
 <string name="add_failed">追加に失敗しました</string>
-<string name="bullet_comments_outline_radius_key">bullet_comments_outline_radius_key</string>
-<string name="bullet_comments_outline_radius_title">弾幕コメントのアウトライン半径</string>
+
+<string name="bullet_comments_outline_radius_title">弾丸コメントのアウトライン半径</string>
 <string name="top_100">トップ100</string>
 <string name="recommended_videos">おすすめの動画</string>
 <string name="top_lives">トップライブ</string>

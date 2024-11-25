@@ -1527,4 +1527,7 @@
     </string-array>
     <string name="speeding_playback_default_value">3</string>
     <string name="require_audio_focus_key">require_audio_focus_key</string>
+    <string name="regular_bullet_comments_duration_key">regular_bullet_comments_duration_key</string>
+    <string name="top_bottom_bullet_comments_duration_key">top_bottom_bullet_comments_duration_key</string>
+    <string name="bullet_comments_outline_radius_key">bullet_comments_outline_radius_key</string>
 </resources>
