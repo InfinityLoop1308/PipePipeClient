@@ -974,7 +974,7 @@ public final class VideoDetailFragment
                     isLoading.set(false);
                     hideMainPlayerOnLoadingNewStream();
                     if (result.getAgeLimit() != NO_AGE_LIMIT && !prefs.getBoolean(
-                            getString(R.string.show_age_restricted_content), false)) {
+                            getString(R.string.show_age_restricted_content), true)) {
                         hideAgeRestrictedContent();
                     } else {
                         handleResult(result);
