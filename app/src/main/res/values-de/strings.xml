@@ -463,7 +463,7 @@
 <string name="previous_export">Vorheriger Export</string>
 <string name="subscriptions_import_unsuccessful">Abonnements konnten nicht importiert werden</string>
 <string name="subscriptions_export_unsuccessful">Abonnements konnten nicht exportiert werden</string>
-    <string name="import_youtube_instructions">YouTube-Abonnements von Google Takeout importieren:
+<string name="import_youtube_instructions">YouTube-Abonnements von Google Takeout importieren:
         \n
         \n1. Gehe zu dieser URL: %1$s
         \n2. Melde dich an, wenn du dazu aufgefordert wirst
@@ -472,7 +472,7 @@
         \n5. Klicke auf die Schaltfläche \"Herunterladen\", sobald sie erscheint
         \n6. Klicke unten auf DATEI IMPORTIEREN und wähle die heruntergeladene .zip-Datei aus
         \n7. [Falls der .zip-Import fehlschlägt] Entpacke die .csv-Datei (normalerweise unter \"YouTube and YouTube Music/subscriptions/subscriptions.csv\"), klicke unten auf DATEI IMPORTIEREN und wähle die extrahierte csv-Datei aus</string>
-    <string name="import_soundcloud_instructions">Importiere ein SoundCloud-Profil, indem du entweder die URL oder deine ID eingibst:\n\n1. Aktiviere den \"Desktop-Modus\" in einem Webbrowser (die Seite ist nicht für mobile Geräte verfügbar)\n2. Gehe zu dieser URL: %1$s\n3. Melde dich an, wenn du dazu aufgefordert wirst\n4. Kopiere die Profil-URL, zu der du weitergeleitet wurdest.</string>
+<string name="import_soundcloud_instructions">Importiere ein SoundCloud-Profil, indem du entweder die URL oder deine ID eingibst:\n\n1. Aktiviere den \"Desktop-Modus\" in einem Webbrowser (die Seite ist nicht für mobile Geräte verfügbar)\n2. Gehe zu dieser URL: %1$s\n3. Melde dich an, wenn du dazu aufgefordert wirst\n4. Kopiere die Profil-URL, zu der du weitergeleitet wurdest.</string>
 <string name="import_soundcloud_instructions_hint">IhreID, soundcloud.com/ihreid</string>
 <string name="import_network_expensive_warning">Beachten Sie, dass diese Operation netzwerkintensiv sein kann. \n\nMöchten Sie fortfahren?</string>
 <string name="playback_speed_control">Wiedergabegeschwindigkeitseinstellungen</string>
@@ -866,4 +866,7 @@
 <string name="fullscreen_gesture_control_title">Vollbild-Gestenkontrolle</string>
 <string name="require_audio_focus_summary">Stellen Sie sicher, dass nur PipePipe Audio abspielt</string>
 <string name="require_audio_focus_title">Audiofokus erforderlich</string>
+<string name="decoder_init_failure">Decoder-Initialisierung fehlgeschlagen</string>
+<string name="go_to_settings">Gehe zu den Einstellungen</string>
+<string name="unable_to_decode_summary">Ihr Gerät verfügt nicht über die erforderlichen Hardware-Decoder, daher können Sie dieses Video in PipePipe nicht abspielen.\nBitte laden Sie es herunter und spielen Sie es in VLC ab.</string>
 </resources>

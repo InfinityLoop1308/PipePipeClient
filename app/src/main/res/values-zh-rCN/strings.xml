@@ -922,4 +922,7 @@
 <string name="fullscreen_gesture_control_title">全屏手势控制</string>
 <string name="require_audio_focus_summary">确保只有 PipePipe 正在播放音频</string>
 <string name="require_audio_focus_title">需要音频焦点</string>
+<string name="decoder_init_failure">解码器初始化失败</string>
+<string name="go_to_settings">去设置</string>
+<string name="unable_to_decode_summary">您的设备缺乏所需的硬件解码器，因此无法在PipePipe中播放此视频。\n请下载并在VLC中播放。</string>
 </resources>

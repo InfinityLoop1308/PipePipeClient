@@ -177,9 +177,9 @@
 <string name="content">Contenido</string>
 <string name="show_age_restricted_content_title">Mostrar contenido restringido por edad</string>
 <string name="show_age_restricted_content_summary">Mostrar contenido posiblemente no adecuado para niños porque tiene un límite de edad (como 18+)</string>
- <string name="youtube_restricted_mode_enabled_title">Activar \"Modo Restringido\" de YouTube</string>
- <string name="youtube_restricted_mode_enabled_summary">YouTube ofrece un \"Modo Restringido\" que oculta contenido potencialmente para adultos</string>
- <string name="restricted_video">Este video tiene restricción de edad.\n\nActiva \"%1$s\" en la configuración si deseas verlo.</string>
+<string name="youtube_restricted_mode_enabled_title">Activar \"Modo Restringido\" de YouTube</string>
+<string name="youtube_restricted_mode_enabled_summary">YouTube ofrece un \"Modo Restringido\" que oculta contenido potencialmente para adultos</string>
+<string name="restricted_video">Este video tiene restricción de edad.\n\nActiva \"%1$s\" en la configuración si deseas verlo.</string>
 <string name="restricted_video_no_stream_new">Este video tiene restricción de edad.\nInicia sesión si lo deseas ver.</string>
 <string name="duration_live">En vivo</string>
 <string name="downloads">Descargas</string>
@@ -469,7 +469,7 @@
 <string name="previous_export">Exportación anterior</string>
 <string name="subscriptions_import_unsuccessful">No se pudieron importar suscripciones</string>
 <string name="subscriptions_export_unsuccessful">No se pudieron exportar suscripciones</string>
- <string name="import_youtube_instructions">Importar suscripciones de YouTube desde Google takeout:
+<string name="import_youtube_instructions">Importar suscripciones de YouTube desde Google takeout:
   \n
   \n1. Ve a esta URL: %1$s
   \n2. Inicia sesión cuando se te solicite
@@ -478,8 +478,8 @@
   \n5. Haz clic en el botón \"Descargar\" cuando aparezca
   \n6. Haz clic en IMPORTAR ARCHIVO abajo y selecciona el archivo .zip descargado
   \n7. [Si falla la importación del .zip] Extrae el archivo .csv (normalmente en \"YouTube and YouTube Music/subscriptions/subscriptions.csv\"), haz clic en IMPORTAR ARCHIVO abajo y selecciona el archivo csv extraído</string>
- <string name="import_soundcloud_instructions">Importa un perfil de SoundCloud escribiendo la URL o tu ID:\n\n1. Activa el \"modo escritorio\" en un navegador web (el sitio no está disponible para dispositivos móviles)\n2. Ve a esta URL: %1$s\n3. Inicia sesión cuando se te solicite\n4. Copia la URL del perfil a la que fuiste redirigido.</string>
- <string name="import_soundcloud_instructions_hint">tuID, soundcloud.com/tuid</string>
+<string name="import_soundcloud_instructions">Importa un perfil de SoundCloud escribiendo la URL o tu ID:\n\n1. Activa el \"modo escritorio\" en un navegador web (el sitio no está disponible para dispositivos móviles)\n2. Ve a esta URL: %1$s\n3. Inicia sesión cuando se te solicite\n4. Copia la URL del perfil a la que fuiste redirigido.</string>
+<string name="import_soundcloud_instructions_hint">tuID, soundcloud.com/tuid</string>
 <string name="import_network_expensive_warning">Tenga en cuenta que esta operación puede ser costosa en términos de red. \n\n¿Desea continuar?</string>
 <string name="playback_speed_control">Controles de velocidad de reproducción</string>
 <string name="playback_tempo">Tempo</string>
@@ -864,4 +864,7 @@ Debe aceptarla para enviarnos el informe de errores.</string>
 <string name="fullscreen_gesture_control_title">Control de gestos en pantalla completa</string>
 <string name="require_audio_focus_summary">Asegúrate de que solo PipePipe esté reproduciendo audio</string>
 <string name="require_audio_focus_title">Requiere enfoque de audio</string>
+<string name="decoder_init_failure">Fallo en la inicialización del decodificador</string>
+<string name="go_to_settings">Ir a configuraciones</string>
+<string name="unable_to_decode_summary">Su dispositivo no tiene los decodificadores de hardware requeridos, por lo que no puede reproducir este video en PipePipe.\nPor favor, descárguelo y reprodúzcalo en VLC.</string>
 </resources>

@@ -973,4 +973,7 @@
 <string name="fullscreen_gesture_control_title">Fullscreen gesture control</string>
 <string name="require_audio_focus_summary">Make sure only PipePipe is playing audio</string>
 <string name="require_audio_focus_title">Require audio focus</string>
+<string name="decoder_init_failure">Decoder initialization failed</string>
+<string name="go_to_settings">Go to settings</string>
+<string name="unable_to_decode_summary">Your device lacks the required hardware decoders, so you cannot play this video in PipePipe.\nPlease download and play it in VLC.</string>
 </resources>

@@ -780,4 +780,7 @@
 <string name="fullscreen_gesture_control_title">Controllo gestuale a schermo intero</string>
 <string name="require_audio_focus_summary">Assicurati che solo PipePipe stia riproducendo audio</string>
 <string name="require_audio_focus_title">Richiedi il focus audio</string>
+<string name="decoder_init_failure">Inizializzazione del decoder fallita</string>
+<string name="go_to_settings">Vai alle impostazioni</string>
+<string name="unable_to_decode_summary">Il tuo dispositivo non dispone dei decodificatori hardware richiesti, quindi non puoi riprodurre questo video in PipePipe.\nPer favore, scaricalo e riproducilo in VLC.</string>
 </resources>

@@ -1,21 +1,6 @@
 package org.schabi.newpipe.player;
 
-import static com.google.android.exoplayer2.PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW;
-import static com.google.android.exoplayer2.PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS;
-import static com.google.android.exoplayer2.PlaybackException.ERROR_CODE_IO_CLEARTEXT_NOT_PERMITTED;
-import static com.google.android.exoplayer2.PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND;
-import static com.google.android.exoplayer2.PlaybackException.ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE;
-import static com.google.android.exoplayer2.PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED;
-import static com.google.android.exoplayer2.PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT;
-import static com.google.android.exoplayer2.PlaybackException.ERROR_CODE_IO_NO_PERMISSION;
-import static com.google.android.exoplayer2.PlaybackException.ERROR_CODE_IO_READ_POSITION_OUT_OF_RANGE;
-import static com.google.android.exoplayer2.PlaybackException.ERROR_CODE_IO_UNSPECIFIED;
-import static com.google.android.exoplayer2.PlaybackException.ERROR_CODE_PARSING_CONTAINER_MALFORMED;
-import static com.google.android.exoplayer2.PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED;
-import static com.google.android.exoplayer2.PlaybackException.ERROR_CODE_PARSING_MANIFEST_MALFORMED;
-import static com.google.android.exoplayer2.PlaybackException.ERROR_CODE_PARSING_MANIFEST_UNSUPPORTED;
-import static com.google.android.exoplayer2.PlaybackException.ERROR_CODE_TIMEOUT;
-import static com.google.android.exoplayer2.PlaybackException.ERROR_CODE_UNSPECIFIED;
+import static com.google.android.exoplayer2.PlaybackException.*;
 import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_AUTO_TRANSITION;
 import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_INTERNAL;
 import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_REMOVE;
@@ -47,11 +32,8 @@ import static org.schabi.newpipe.util.SponsorBlockUtils.markSegments;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
+import android.app.AlertDialog;
+import android.content.*;
 import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.graphics.Bitmap;
@@ -122,6 +104,7 @@ import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.databinding.PlayerBinding;
 import org.schabi.newpipe.databinding.PlayerPopupCloseOverlayBinding;
+import org.schabi.newpipe.error.ErrorActivity;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
@@ -430,10 +413,7 @@ public final class Player implements
                         R.string.always_use_exoplayer_set_output_surface_workaround_key), false)
                 ? new CustomRenderersFactory(context) : new DefaultRenderersFactory(context);
 
-        renderFactory.setEnableDecoderFallback(
-                prefs.getBoolean(
-                        context.getString(
-                                R.string.use_exoplayer_decoder_fallback_key), false));
+        renderFactory.setEnableDecoderFallback(true);
 
         videoResolver = new VideoPlaybackResolver(context, dataSource, getQualityResolver());
         audioResolver = new AudioPlaybackResolver(context, dataSource);
@@ -3089,6 +3069,17 @@ public final class Player implements
                 setRecovery();
                 reloadPlayQueueManager();
                 simpleExoPlayer.prepare();
+                break;
+            case ERROR_CODE_DECODER_INIT_FAILED:
+                AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity())
+                        .setTitle(R.string.decoder_init_failure)
+                        .setMessage(R.string.unable_to_decode_summary)
+                        .setPositiveButton(R.string.ok, (dialog, which) -> {
+                            // Handle "Yes" click
+                        });
+                builder.show();
+
+                onPlaybackShutdown();
                 break;
             default:
                 // API, remote and renderer errors belong here:

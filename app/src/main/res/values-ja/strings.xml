@@ -908,4 +908,7 @@
 <string name="fullscreen_gesture_control_title">フルスクリーンジェスチャー制御</string>
 <string name="require_audio_focus_summary">PipePipeだけがオーディオを再生していることを確認してください</string>
 <string name="require_audio_focus_title">オーディオフォーカスを要求する</string>
+<string name="decoder_init_failure">デコーダーの初期化に失敗しました</string>
+<string name="go_to_settings">設定に行く</string>
+<string name="unable_to_decode_summary">お使いのデバイスには必要なハードウェアデコーダが欠けているため、PipePipe でこのビデオを再生することはできません。\nダウンロードして VLC で再生してください。</string>
 </resources>

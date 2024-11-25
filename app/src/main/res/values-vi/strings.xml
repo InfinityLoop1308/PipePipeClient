@@ -966,4 +966,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="fullscreen_gesture_control_title">Điều khiển cử chỉ toàn màn hình</string>
 <string name="require_audio_focus_summary">Đảm bảo chỉ có PipePipe đang phát âm thanh</string>
 <string name="require_audio_focus_title">Yêu cầu tiêu điểm âm thanh</string>
+<string name="decoder_init_failure">Khởi tạo bộ giải mã thất bại</string>
+<string name="go_to_settings">Đi đến cài đặt</string>
+<string name="unable_to_decode_summary">Thiết bị của bạn thiếu các bộ giải mã phần cứng cần thiết, vì vậy bạn không thể phát video này trong PipePipe. \nVui lòng tải xuống và phát nó trong VLC.</string>
 </resources>

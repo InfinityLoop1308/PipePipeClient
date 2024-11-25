@@ -19,8 +19,7 @@
 <string name="controls_download_desc">Télécharger le fichier de flux</string>
 <string name="search">Rechercher</string>
 <string name="settings">Paramètres</string>
-    <string name="did_you_mean">Vouliez-vous dire \"%1$s\" ?</string>
-
+<string name="did_you_mean">Vouliez-vous dire \"%1$s\" ?</string>
 <string name="search_showing_result_for">Affichage des résultats pour : %s</string>
 <string name="share_dialog_title">Partager avec</string>
 <string name="use_external_video_player_title">Utiliser un lecteur vidéo externe</string>
@@ -393,7 +392,7 @@
 <string name="previous_export">Exportation précédente</string>
 <string name="subscriptions_import_unsuccessful">Impossible d\'importer les abonnements</string>
 <string name="subscriptions_export_unsuccessful">Impossible d\'exporter les abonnements</string>
-    <string name="import_youtube_instructions">Importer les abonnements YouTube depuis Google takeout :
+<string name="import_youtube_instructions">Importer les abonnements YouTube depuis Google takeout :
         \n
         \n1. Allez à cette URL : %1$s
         \n2. Connectez-vous lorsque demandé
@@ -402,8 +401,7 @@
         \n5. Cliquez sur le bouton \"Télécharger\" une fois qu\'il apparaît
         \n6. Cliquez sur IMPORTER UN FICHIER ci-dessous et sélectionnez le fichier .zip téléchargé
         \n7. [Si l\'import du .zip échoue] Extrayez le fichier .csv (généralement sous \"YouTube and YouTube Music/subscriptions/subscriptions.csv\"), cliquez sur IMPORTER UN FICHIER ci-dessous et sélectionnez le fichier csv extrait</string>
-    <string name="import_soundcloud_instructions">Importez un profil SoundCloud en saisissant l\'URL ou votre identifiant :\n\n1. Activez le \"mode bureau\" dans un navigateur web (le site n\'est pas disponible pour les appareils mobiles)\n2. Allez à cette URL : %1$s\n3. Connectez-vous lorsque demandé\n4. Copiez l\'URL du profil vers laquelle vous avez été redirigé.</string>
-
+<string name="import_soundcloud_instructions">Importez un profil SoundCloud en saisissant l\'URL ou votre identifiant :\n\n1. Activez le \"mode bureau\" dans un navigateur web (le site n\'est pas disponible pour les appareils mobiles)\n2. Allez à cette URL : %1$s\n3. Connectez-vous lorsque demandé\n4. Copiez l\'URL du profil vers laquelle vous avez été redirigé.</string>
 <string name="import_soundcloud_instructions_hint">votreID, soundcloud.com/yourid</string>
 <string name="import_network_expensive_warning">Gardez à l\'esprit que cette opération peut être coûteuse en réseau.
 
@@ -822,4 +820,7 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="fullscreen_gesture_control_title">Contrôle gestuel en plein écran</string>
 <string name="require_audio_focus_summary">Assurez-vous que seul PipePipe joue de l\'audio</string>
 <string name="require_audio_focus_title">Nécessiter l\'accent audio</string>
+<string name="decoder_init_failure">Échec de l\'initialisation du décodeur</string>
+<string name="go_to_settings">Aller aux paramètres</string>
+<string name="unable_to_decode_summary">Votre appareil ne dispose pas des décodeurs matériels requis, donc vous ne pouvez pas lire cette vidéo dans PipePipe.\nVeuillez la télécharger et la lire dans VLC.</string>
 </resources>

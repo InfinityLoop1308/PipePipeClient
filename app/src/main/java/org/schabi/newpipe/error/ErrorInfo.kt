@@ -114,6 +114,7 @@ class ErrorInfo(
                     when (throwable.type) {
                         ExoPlaybackException.TYPE_SOURCE -> R.string.player_stream_failure
                         ExoPlaybackException.TYPE_UNEXPECTED -> R.string.player_recoverable_failure
+                        ExoPlaybackException.TYPE_RENDERER -> R.string.decoder_init_failure
                         else -> R.string.player_unrecoverable_failure
                     }
                 }
