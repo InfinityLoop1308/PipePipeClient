@@ -668,7 +668,6 @@
 <string name="top_bottom_bullet_comments_duration_title">Durata commenti a proiettile dall\'alto/in fondo</string>
 <string name="append_playlist_not_supported">Questa è una playlist infinita, quindi non puoi aggiungerla ad altre playlist.</string>
 <string name="add_failed">Aggiunta fallita</string>
-
 <string name="bullet_comments_outline_radius_title">Raggio di contorno dei commenti puntati</string>
 <string name="top_100">Top 100</string>
 <string name="recommended_videos">Video consigliati</string>
@@ -780,4 +779,8 @@
 <string name="decoder_init_failure">Inizializzazione del decoder fallita</string>
 <string name="go_to_settings">Vai alle impostazioni</string>
 <string name="unable_to_decode_summary">Il tuo dispositivo non dispone dei decodificatori hardware richiesti, quindi non puoi riprodurre questo video in PipePipe.\nPer favore, scaricalo e riproducilo in VLC.</string>
+<string name="settings_category_gestures_summary">Impostazioni dei gesti</string>
+<string name="settings_category_bullet_comments_summary">Impostazioni dei commenti a proiettile</string>
+<string name="settings_category_backup_title">Backup</string>
+<string name="settings_category_advanced_title">Avanzate</string>
 </resources>

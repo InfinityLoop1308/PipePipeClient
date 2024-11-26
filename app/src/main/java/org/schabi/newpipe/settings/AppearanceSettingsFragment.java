@@ -48,19 +48,6 @@ public class AppearanceSettingsFragment extends BasePreferenceFragment {
         }
     }
 
-    @Override
-    public boolean onPreferenceTreeClick(final Preference preference) {
-        if (getString(R.string.caption_settings_key).equals(preference.getKey())) {
-            try {
-                startActivity(new Intent(Settings.ACTION_CAPTIONING_SETTINGS));
-            } catch (final ActivityNotFoundException e) {
-                Toast.makeText(getActivity(), R.string.general_error, Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        return super.onPreferenceTreeClick(preference);
-    }
-
     private void removePreference(final String preferenceKey) {
         final Preference preference = findPreference(preferenceKey);
         if (preference != null) {

@@ -42,8 +42,6 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
 
     private boolean hasTabsChanged = false;
 
-    private boolean previousYoutubeRestrictedModeEnabled;
-    private String youtubeRestrictedModeEnabledKey;
 
     /*//////////////////////////////////////////////////////////////////////////
     // Fragment's LifeCycle
@@ -66,10 +64,6 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
             }
         });
 
-        youtubeRestrictedModeEnabledKey = getString(R.string.youtube_restricted_mode_enabled);
-        previousYoutubeRestrictedModeEnabled =
-                PreferenceManager.getDefaultSharedPreferences(requireContext())
-                        .getBoolean(youtubeRestrictedModeEnabledKey, false);
     }
 
     @Override
@@ -97,13 +91,7 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
     public void onResume() {
         super.onResume();
 
-        final boolean youtubeRestrictedModeEnabled =
-                PreferenceManager.getDefaultSharedPreferences(requireContext())
-                        .getBoolean(youtubeRestrictedModeEnabledKey, false);
-        if (previousYoutubeRestrictedModeEnabled != youtubeRestrictedModeEnabled) {
-            previousYoutubeRestrictedModeEnabled = youtubeRestrictedModeEnabled;
-            setupTabs();
-        } else if (hasTabsChanged) {
+        if (hasTabsChanged) {
             setupTabs();
         }
     }

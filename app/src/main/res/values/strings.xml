@@ -966,4 +966,8 @@
 <string name="decoder_init_failure">Decoder initialization failed</string>
 <string name="go_to_settings">Go to settings</string>
 <string name="unable_to_decode_summary">Your device lacks the required hardware decoders, so you cannot play this video in PipePipe.\nPlease download and play it in VLC.</string>
+<string name="settings_category_gestures_summary">Gesture Settings</string>
+<string name="settings_category_bullet_comments_summary">Bullet Comment Settings</string>
+<string name="settings_category_backup_title">Backup</string>
+<string name="settings_category_advanced_title">Advanced</string>
 </resources>

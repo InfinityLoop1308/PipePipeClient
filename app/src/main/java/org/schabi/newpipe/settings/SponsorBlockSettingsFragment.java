@@ -21,24 +21,6 @@ public class SponsorBlockSettingsFragment extends BasePreferenceFragment {
     public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
         addPreferencesFromResourceRegistry();
 
-        final Preference sponsorBlockWebsitePreference =
-                findPreference(getString(R.string.sponsor_block_home_page_key));
-        sponsorBlockWebsitePreference.setOnPreferenceClickListener((Preference p) -> {
-            final Intent i = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse(getString(R.string.sponsor_block_homepage_url)));
-            startActivity(i);
-            return true;
-        });
-
-        final Preference sponsorBlockPrivacyPreference =
-                findPreference(getString(R.string.sponsor_block_privacy_key));
-        sponsorBlockPrivacyPreference.setOnPreferenceClickListener((Preference p) -> {
-            final Intent i = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse(getString(R.string.sponsor_block_privacy_policy_url)));
-            startActivity(i);
-            return true;
-        });
-
         final Preference sponsorBlockApiUrlPreference =
                 findPreference(getString(R.string.sponsor_block_api_url_key));
         sponsorBlockApiUrlPreference

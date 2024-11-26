@@ -744,17 +744,17 @@ public final class VideoDetailFragment
 
     private View.OnTouchListener getOnControlsTouchListener() {
         return (view, motionEvent) -> {
-            if (!PreferenceManager.getDefaultSharedPreferences(activity)
-                    .getBoolean(getString(R.string.show_hold_to_append_key), true)) {
-                return false;
-            }
-
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                animate(binding.touchAppendDetail, true, 250, AnimationType.ALPHA,
-                        0, () ->
-                                animate(binding.touchAppendDetail, false, 1500,
-                                        AnimationType.ALPHA, 1000));
-            }
+//            if (!PreferenceManager.getDefaultSharedPreferences(activity)
+//                    .getBoolean(getString(R.string.show_hold_to_append_key), true)) {
+//                return false;
+//            }
+//
+//            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+//                animate(binding.touchAppendDetail, true, 250, AnimationType.ALPHA,
+//                        0, () ->
+//                                animate(binding.touchAppendDetail, false, 1500,
+//                                        AnimationType.ALPHA, 1000));
+//            }
             return false;
         };
     }
@@ -973,24 +973,19 @@ public final class VideoDetailFragment
                 .subscribe(result -> {
                     isLoading.set(false);
                     hideMainPlayerOnLoadingNewStream();
-                    if (result.getAgeLimit() != NO_AGE_LIMIT && !prefs.getBoolean(
-                            getString(R.string.show_age_restricted_content), true)) {
-                        hideAgeRestrictedContent();
-                    } else {
-                        handleResult(result);
-                        showContent();
-                        if (addToBackStack) {
-                            if (playQueue == null) {
-                                playQueue = new SinglePlayQueue(result);
-                            }
-                            if (stack.isEmpty() || !stack.peek().getPlayQueue().equals(playQueue)) {
-                                stack.push(new StackItem(serviceId, url, title, playQueue));
-                            }
+                    handleResult(result);
+                    showContent();
+                    if (addToBackStack) {
+                        if (playQueue == null) {
+                            playQueue = new SinglePlayQueue(result);
                         }
+                        if (stack.isEmpty() || !stack.peek().getPlayQueue().equals(playQueue)) {
+                            stack.push(new StackItem(serviceId, url, title, playQueue));
+                        }
+                    }
 
-                        if (isAutoplayEnabled()) {
-                            openVideoPlayerAutoFullscreen();
-                        }
+                    if (isAutoplayEnabled()) {
+                        openVideoPlayerAutoFullscreen();
                     }
                 }, throwable -> showError(new ErrorInfo(throwable, UserAction.REQUESTED_STREAM,
                         url == null ? "no url" : url, serviceId)));

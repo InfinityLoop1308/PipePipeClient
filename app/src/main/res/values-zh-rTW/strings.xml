@@ -813,7 +813,6 @@
 <string name="top_bottom_bullet_comments_duration_title">頂部/底部彈幕持續時間</string>
 <string name="append_playlist_not_supported">這是一個無限播放清單，因此無法將其附加到其他播放清單。</string>
 <string name="add_failed">添加失敗</string>
-
 <string name="bullet_comments_outline_radius_title">彈幕輪廓半徑</string>
 <string name="top_100">前 100 名</string>
 <string name="recommended_videos">推薦影片</string>
@@ -909,4 +908,8 @@
 <string name="decoder_init_failure">解碼器初始化失敗</string>
 <string name="go_to_settings">前往設定</string>
 <string name="unable_to_decode_summary">您的設備缺少所需的硬體解碼器，因此您無法在 PipePipe 播放此影片。 \n請下載並在 VLC 中播放。</string>
+<string name="settings_category_gestures_summary">手勢設定</string>
+<string name="settings_category_bullet_comments_summary">彈幕設定</string>
+<string name="settings_category_backup_title">備份</string>
+<string name="settings_category_advanced_title">進階</string>
 </resources>

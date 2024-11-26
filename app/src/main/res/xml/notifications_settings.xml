@@ -2,7 +2,35 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:key="general_preferences"
-	android:title="@string/notifications">
+	android:title="@string/settings_category_feed_title">
+
+	<org.schabi.newpipe.settings.custom.DurationListPreference
+			android:defaultValue="@string/feed_update_threshold_default_value"
+			android:entries="@array/feed_update_threshold_options"
+			android:entryValues="@array/feed_update_threshold_values"
+			android:key="@string/feed_update_threshold_key"
+			android:summary="@string/feed_update_threshold_summary"
+			android:title="@string/feed_update_threshold_title"
+			app:singleLineTitle="false"
+			app:iconSpaceReserved="false" />
+
+	<SwitchPreferenceCompat
+			android:defaultValue="false"
+			android:key="@string/feed_use_dedicated_fetch_method_key"
+			android:summary="@string/feed_use_dedicated_fetch_method_summary"
+			android:title="@string/feed_use_dedicated_fetch_method_title"
+			app:singleLineTitle="false"
+			app:iconSpaceReserved="false" />
+
+	<MultiSelectListPreference
+			android:key="@string/feed_fetch_channel_tabs_key"
+			android:summary="@string/feed_fetch_channel_tabs_summary"
+			android:title="@string/feed_fetch_channel_tabs"
+			android:entries="@array/feed_fetch_channel_tabs_description_list"
+			android:entryValues="@array/feed_fetch_channel_tabs_value_list"
+			android:defaultValue="@array/feed_fetch_channel_tabs_value_list"
+			app:iconSpaceReserved="false"
+			app:singleLineTitle="false" />
 
 	<SwitchPreference
 		android:defaultValue="false"

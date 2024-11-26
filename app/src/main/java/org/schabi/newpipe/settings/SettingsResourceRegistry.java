@@ -36,10 +36,15 @@ public final class SettingsResourceRegistry {
         add(DebugSettingsFragment.class, R.xml.debug_settings).setSearchable(false);
         add(DownloadSettingsFragment.class, R.xml.download_settings);
         add(HistorySettingsFragment.class, R.xml.history_settings);
-        add(NotificationSettingsFragment.class, R.xml.notifications_settings);
+        add(NotificationsSettingsFragment.class, R.xml.notifications_settings);
         add(PlayerNotificationSettingsFragment.class, R.xml.player_notification_settings);
         add(UpdateSettingsFragment.class, R.xml.update_settings);
         add(VideoAudioSettingsFragment.class, R.xml.video_audio_settings);
+        add(BehaviorSettingsFragment.class, R.xml.behavior_settings);
+        add(GestureSettingsFragment.class, R.xml.gesture_settings);
+        add(AdvancedSettingsFragment.class, R.xml.advanced_settings);
+        add(BackupSettingsFragment.class, R.xml.backup_settings);
+        add(BulletCommentsSettingsFragment.class, R.xml.bullet_comments_settings);
         add(ExoPlayerSettingsFragment.class, R.xml.exoplayer_settings);
         add(SponsorBlockSettingsFragment.class, R.xml.sponsor_block_settings);
         add(SponsorBlockCategoriesSettingsFragment.class, R.xml.sponsor_block_category_settings);

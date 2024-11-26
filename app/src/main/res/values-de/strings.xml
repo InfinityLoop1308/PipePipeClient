@@ -748,7 +748,6 @@
 <string name="top_bottom_bullet_comments_duration_title">Dauer der oberen/unteren Bullet-Kommentare</string>
 <string name="append_playlist_not_supported">Dies ist eine unendliche Wiedergabeliste, daher können Sie sie nicht zu anderen Wiedergabelisten hinzufügen.</string>
 <string name="add_failed">Hinzufügen fehlgeschlagen</string>
-
 <string name="bullet_comments_outline_radius_title">Umrissradius von Kommentarstichen</string>
 <string name="top_100">Top 100</string>
 <string name="recommended_videos">Empfohlene Videos</string>
@@ -860,4 +859,8 @@
 <string name="decoder_init_failure">Decoder-Initialisierung fehlgeschlagen</string>
 <string name="go_to_settings">Gehe zu den Einstellungen</string>
 <string name="unable_to_decode_summary">Ihr Gerät verfügt nicht über die erforderlichen Hardware-Decoder, daher können Sie dieses Video in PipePipe nicht abspielen.\nBitte laden Sie es herunter und spielen Sie es in VLC ab.</string>
+<string name="settings_category_gestures_summary">Gesteneinstellungen</string>
+<string name="settings_category_bullet_comments_summary">Einstellungen für Kommentarzeilen</string>
+<string name="settings_category_backup_title">Sicherung</string>
+<string name="settings_category_advanced_title">Erweitert</string>
 </resources>
