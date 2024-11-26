@@ -587,10 +587,15 @@ class FeedFragment : BaseStateFragment<FeedState>() {
                 execOnEnd = {
                     // Disabled animations would result in immediately hiding the button
                     // after it showed up
-                    if (DeviceUtils.hasAnimationsAnimatorDurationEnabled(context)) {
-                        // Hide the new items-"popup" after 10s
-                        hideNewItemsLoaded(true, 10000)
+                    try {
+                        if (DeviceUtils.hasAnimationsAnimatorDurationEnabled(context)) {
+                            // Hide the new items-"popup" after 10s
+                            hideNewItemsLoaded(true, 10000)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
+
                 }
             )
     }
