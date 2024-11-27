@@ -499,10 +499,6 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
                 }
             }
 
-            if (responseCode == 403 && !this.dataSpec.uri.toString().contains("&c=TVHTML5_SIMPLY_EMBEDDED_PLAYER")) {
-                shouldRefetch = true;
-            }
-
             final InputStream errorStream = httpURLConnection.getErrorStream();
             byte[] errorResponseBody;
             try {
