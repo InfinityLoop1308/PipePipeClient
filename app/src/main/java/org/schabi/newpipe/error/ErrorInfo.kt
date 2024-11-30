@@ -8,6 +8,7 @@ import kotlinx.parcelize.Parcelize
 import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.Info
 import org.schabi.newpipe.extractor.NewPipe
+import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.exceptions.AccountTerminatedException
 import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException
@@ -66,7 +67,7 @@ class ErrorInfo(
     constructor(throwable: Throwable, userAction: UserAction, request: String) :
         this(throwable, userAction, SERVICE_NONE, request)
     constructor(throwable: Throwable, userAction: UserAction, request: String, serviceId: Int) :
-        this(throwable, userAction, NewPipe.getNameOfService(serviceId), request)
+        this(throwable, userAction, getServiceNameFromId(serviceId), request)
     constructor(throwable: Throwable, userAction: UserAction, request: String, info: Info?) :
         this(throwable, userAction, getInfoServiceName(info), request)
 
@@ -74,7 +75,7 @@ class ErrorInfo(
     constructor(throwable: List<Throwable>, userAction: UserAction, request: String) :
         this(throwable, userAction, SERVICE_NONE, request)
     constructor(throwable: List<Throwable>, userAction: UserAction, request: String, serviceId: Int) :
-        this(throwable, userAction, NewPipe.getNameOfService(serviceId), request)
+        this(throwable, userAction, getServiceNameFromId(serviceId), request)
     constructor(throwable: List<Throwable>, userAction: UserAction, request: String, info: Info?) :
         this(throwable, userAction, getInfoServiceName(info), request)
 
@@ -96,7 +97,9 @@ class ErrorInfo(
             Array(min(throwable.size, 20)) { i -> getStackTrace(throwable[i]) }
 
         private fun getInfoServiceName(info: Info?) =
-            if (info == null) SERVICE_NONE else NewPipe.getNameOfService(info.serviceId)
+            if (info == null) SERVICE_NONE else getServiceNameFromId(info.serviceId)
+
+        private fun getServiceNameFromId(serviceId: Int) = NewPipe.getNameOfService(serviceId) + " (" + (if (ServiceList.all()[serviceId].hasTokens()) "Logged in" else "Anonymous") + ")"
 
         @StringRes
         private fun getMessageStringId(
