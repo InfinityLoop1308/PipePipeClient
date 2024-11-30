@@ -679,7 +679,7 @@
 <string name="settings_category_niconico_account_title">Account NicoNico</string>
 <string name="settings_category_bilibili_account_title">Account BiliBili</string>
 <string name="settings_category_youtube_account_title">Account YouTube</string>
-<string name="login_warning">Si prega di notare che l\'accesso potrebbe indebolire la tua anonimato</string>
+<string name="login_warning">I token saranno utilizzati solo quando necessario</string>
 <string name="login_title">Accedi</string>
 <string name="logout_title">Esci</string>
 <string name="bullet_comments_font_title">Carattere dei commenti a proiettile</string>

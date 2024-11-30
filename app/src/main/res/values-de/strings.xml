@@ -759,7 +759,7 @@
 <string name="settings_category_niconico_account_title">NicoNico Konto</string>
 <string name="settings_category_bilibili_account_title">BiliBili Konto</string>
 <string name="settings_category_youtube_account_title">YouTube Konto</string>
-<string name="login_warning">Bitte beachten Sie, dass das Einloggen Ihre Anonymität schwächen kann</string>
+<string name="login_warning">Tokens werden nur bei Bedarf verwendet</string>
 <string name="login_title">Einloggen</string>
 <string name="logout_title">Ausloggen</string>
 <string name="bullet_comments_font_title">Schriftart der Bullet-Kommentare</string>

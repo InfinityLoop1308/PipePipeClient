@@ -695,7 +695,7 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="settings_category_niconico_account_title">Compte NicoNico</string>
 <string name="settings_category_bilibili_account_title">Compte BiliBili</string>
 <string name="settings_category_youtube_account_title">Compte YouTube</string>
-<string name="login_warning">Veuillez noter que vous connecter peut affaiblir votre anonymat</string>
+<string name="login_warning">Les jetons ne seront utilisés que si nécessaire</string>
 <string name="login_title">Connexion</string>
 <string name="logout_title">Déconnexion</string>
 <string name="bullet_comments_font_title">Police des commentaires à balles</string>

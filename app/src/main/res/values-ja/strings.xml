@@ -806,7 +806,7 @@
 <string name="account">アカウント</string>
 <string name="settings_category_niconico_account_title">ニコニコアカウント</string>
 <string name="settings_category_bilibili_account_title">BiliBiliアカウント</string>
-<string name="login_warning">ログインすると匿名性が低下する可能性があることに注意してください</string>
+<string name="login_warning">トークンは必要な場合にのみ使用されます</string>
 <string name="login_title">ログイン</string>
 <string name="logout_title">ログアウト</string>
 <string name="bullet_comments_font_title">弾幕コメントのフォント</string>

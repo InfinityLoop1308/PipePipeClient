@@ -761,7 +761,7 @@ Debe aceptarla para enviarnos el informe de errores.</string>
 <string name="settings_category_niconico_account_title">Cuenta de NicoNico</string>
 <string name="settings_category_bilibili_account_title">Cuenta de BiliBili</string>
 <string name="settings_category_youtube_account_title">Cuenta de YouTube</string>
-<string name="login_warning">Tenga en cuenta que iniciar sesión puede debilitar su anonimato</string>
+<string name="login_warning">Los tokens solo se utilizarán cuando sea necesario</string>
 <string name="login_title">Iniciar sesión</string>
 <string name="logout_title">Cerrar sesión</string>
 <string name="bullet_comments_font_title">Fuente de los comentarios de bala</string>

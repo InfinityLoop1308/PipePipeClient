@@ -761,7 +761,7 @@
 <string name="account">账户</string>
 <string name="settings_category_niconico_account_title">NicoNico 账户</string>
 <string name="settings_category_bilibili_account_title">BiliBili 账户</string>
-<string name="login_warning">请注意，登录后会降低匿名度</string>
+<string name="login_warning">只有在必要时才会使用令牌</string>
 <string name="login_title">登录</string>
 <string name="logout_title">退出登录</string>
 <string name="bullet_comments_font_title">弹幕字体</string>

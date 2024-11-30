@@ -865,7 +865,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="account">Tài khoản</string>
 <string name="settings_category_niconico_account_title">Tài khoản NicoNico</string>
 <string name="settings_category_bilibili_account_title">Tài khoản BiliBili</string>
-<string name="login_warning">Xin lưu ý rằng việc đăng nhập có thể làm giảm tính ẩn danh của bạn</string>
+<string name="login_warning">Mã thông báo chỉ được sử dụng khi cần thiết</string>
 <string name="login_title">Đăng nhập</string>
 <string name="logout_title">Đăng xuất</string>
 <string name="bullet_comments_font_title">Phông chữ dấu đầu dòng bình luận</string>

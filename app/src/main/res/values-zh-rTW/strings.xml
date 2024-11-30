@@ -823,7 +823,7 @@
 <string name="account">帳戶</string>
 <string name="settings_category_niconico_account_title">NicoNico 帳戶</string>
 <string name="settings_category_bilibili_account_title">BiliBili 帳戶</string>
-<string name="login_warning">請注意，登錄可能會降低您的匿名性</string>
+<string name="login_warning">令牌只有在必要时才会被使用</string>
 <string name="login_title">登錄</string>
 <string name="logout_title">登出</string>
 <string name="bullet_comments_font_title">彈幕字體</string>
