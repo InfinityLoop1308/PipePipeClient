@@ -279,9 +279,10 @@ public final class ServiceHelper {
             ServiceList.YouTube.setContentLanguage(getPreferredLocalization(context));
 //            final String pot = sharedPreferences.getString(context.getString(R.string.youtube_po_token), null);
 //            ServiceList.YouTube.setAdditionalTokens(pot);
-//            if(sharedPreferences.getBoolean(context.getString(R.string.override_cookies_youtube_key), false)) {
-//                ServiceList.YouTube.setTokens(sharedPreferences.getString(context.getString(R.string.override_cookies_youtube_value_key), null));
-//            }
+            if(sharedPreferences.getBoolean(context.getString(R.string.override_cookies_youtube_key), false)) {
+                ServiceList.YouTube.setTokens(sharedPreferences.getString(context.getString(R.string.override_cookies_youtube_value_key), null));
+            }
+            CookieUtils.exportCookiesToNetscapeYouTube(context, ServiceList.YouTube.getTokens());
         }
     }
 

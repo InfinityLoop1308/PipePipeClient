@@ -16,6 +16,8 @@
         android:required="false" />
     <uses-feature android:name="android.software.leanback" android:required="false"/>
 
+    <uses-sdk tools:overrideLibrary="com.yausername.youtubedl_android, com.yausername.youtubedl_common" />
+
     <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />

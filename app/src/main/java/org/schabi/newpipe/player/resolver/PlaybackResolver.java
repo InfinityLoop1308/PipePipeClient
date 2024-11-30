@@ -376,29 +376,8 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
         final DeliveryMethod deliveryMethod = stream.getDeliveryMethod();
         switch (deliveryMethod) {
             case PROGRESSIVE_HTTP:
-                if ((stream instanceof VideoStream && ((VideoStream) stream).isVideoOnly())
-                        || stream instanceof AudioStream) {
-                    try {
-                        final String manifestString = YoutubeProgressiveDashManifestCreator
-                                .fromProgressiveStreamingUrl(stream.getContent(),
-                                        Objects.requireNonNull(stream.getItagItem()),
-                                        streamInfo.getDuration());
-                        return buildYoutubeManualDashMediaSource(dataSource,
-                                createDashManifest(manifestString, stream), stream, cacheKey,
-                                metadata);
-                    } catch (final CreationException | IOException | NullPointerException e) {
-                        Log.w(TAG, "Error when generating or parsing DASH manifest of "
-                                + "YouTube progressive stream, falling back to a "
-                                + "ProgressiveMediaSource.", e);
-                        return buildYoutubeProgressiveMediaSource(dataSource, stream, cacheKey,
-                                metadata);
-                    }
-                } else {
-                    // Legacy progressive streams, subtitles are handled by
-                    // VideoPlaybackResolver
-                    return buildYoutubeProgressiveMediaSource(dataSource, stream, cacheKey,
-                            metadata);
-                }
+                return buildYoutubeProgressiveMediaSource(dataSource, stream, cacheKey,
+                        metadata);
             case DASH:
                 // If the content is not a URL, uses the DASH delivery method and if the stream
                 // type of the stream is a video stream, it means the content is an OTF stream

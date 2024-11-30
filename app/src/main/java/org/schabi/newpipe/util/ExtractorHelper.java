@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import org.schabi.newpipe.extractor.*;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.linkhandler.SearchQueryHandler;
 import org.schabi.newpipe.extractor.search.filter.FilterItem;
@@ -36,14 +37,7 @@ import androidx.preference.PreferenceManager;
 
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
-import org.schabi.newpipe.extractor.Info;
-import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.ListExtractor.InfoItemsPage;
-import org.schabi.newpipe.extractor.ListInfo;
-import org.schabi.newpipe.extractor.MetaInfo;
-import org.schabi.newpipe.extractor.NewPipe;
-import org.schabi.newpipe.extractor.Page;
-import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.channel.ChannelInfo;
 import org.schabi.newpipe.extractor.channel.ChannelTabInfo;
 import org.schabi.newpipe.extractor.comments.CommentsInfo;
@@ -57,6 +51,7 @@ import org.schabi.newpipe.extractor.playlist.PlaylistInfo;
 import org.schabi.newpipe.extractor.search.SearchInfo;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
+import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.extractor.suggestion.SuggestionExtractor;
 import org.schabi.newpipe.util.external_communication.TextLinkifier;
 
@@ -128,7 +123,30 @@ public final class ExtractorHelper {
                                                    final boolean forceLoad) {
         checkServiceId(serviceId);
         return checkCache(forceLoad, serviceId, url, InfoItem.InfoType.STREAM,
-                Single.fromCallable(() -> StreamInfo.getInfo(NewPipe.getService(serviceId), url)));
+                Single.fromCallable(() -> {
+                    StreamInfo result = StreamInfo.getInfo(NewPipe.getService(serviceId), url);
+                    if (result.getServiceId() != ServiceList.YouTube.getServiceId()) {
+                        return result;
+                    }
+                    if(result.getAudioStreams().size() == 0 || result.getVideoStreams().size() == 0) {
+                        StreamInfo fallbackInfo = YtdlpHelper.getFallbackStreams(url);
+                        if(fallbackInfo == null) {
+                            Log.e(TAG, "Couldn't get fallback streams for " + url);
+                            return result;
+                        }
+                        if(result.getStreamType() == StreamType.LIVE_STREAM) {
+                            result.setHlsUrl(fallbackInfo.getVideoStreams().get(fallbackInfo.getVideoStreams().size() - 1).getContent());
+                        }
+                        if (fallbackInfo.getAudioStreams().size() > 0 || fallbackInfo.getVideoStreams().size() > 0) {
+                            result.setAudioStreams(fallbackInfo.getAudioStreams());
+                            result.setVideoStreams(fallbackInfo.getVideoStreams());
+                            result.setVideoOnlyStreams(fallbackInfo.getVideoOnlyStreams());
+                            return result;
+                        }
+                        Log.e(TAG, "Couldn't get fallback streams for " + url);
+                    }
+                    return result;
+                }));
     }
 
     public static Single<StreamInfo> getStreamInfoWithoutException(final int serviceId, final String url,
