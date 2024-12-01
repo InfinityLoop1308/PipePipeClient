@@ -970,4 +970,5 @@
 <string name="settings_category_bullet_comments_summary">Bullet Comment Settings</string>
 <string name="settings_category_backup_title">Backup</string>
 <string name="settings_category_advanced_title">Advanced</string>
+<string name="not_login">This content requires an account to view. Log in through Settings to continue.</string>
 </resources>

@@ -816,4 +816,5 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="settings_category_bullet_comments_summary">Paramètres des commentaires en rafale</string>
 <string name="settings_category_backup_title">Sauvegarde</string>
 <string name="settings_category_advanced_title">Avancé</string>
+<string name="not_login">Ce contenu nécessite un compte pour être consulté. Connectez-vous via Paramètres pour continuer.</string>
 </resources>

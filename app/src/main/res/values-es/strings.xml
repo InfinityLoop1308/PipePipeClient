@@ -865,4 +865,5 @@ Debe aceptarla para enviarnos el informe de errores.</string>
 <string name="settings_category_bullet_comments_summary">Configuración de comentarios de bala</string>
 <string name="settings_category_backup_title">Respaldar</string>
 <string name="settings_category_advanced_title">Avanzado</string>
+<string name="not_login">Este contenido requiere una cuenta para verlo. Inicia sesión a través de Configuración para continuar.</string>
 </resources>

@@ -969,4 +969,5 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="settings_category_bullet_comments_summary">Cài đặt bình luận đạn</string>
 <string name="settings_category_backup_title">Sao lưu</string>
 <string name="settings_category_advanced_title">Nâng cao</string>
+<string name="not_login">Nội dung này yêu cầu có tài khoản để xem. Đăng nhập thông qua Cài đặt để tiếp tục.</string>
 </resources>

@@ -6,6 +6,7 @@ import com.yausername.youtubedl_android.mapper.VideoFormat;
 import com.yausername.youtubedl_android.mapper.VideoInfo;
 import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.extractor.exceptions.NotLoginException;
 import org.schabi.newpipe.extractor.services.youtube.ItagItem;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
@@ -92,19 +93,12 @@ public class YtdlpHelper {
             streamInfo.setVideoOnlyStreams(videoOnlyStreams);
             System.out.println("Successfully got fallback streams for " + url);
             return streamInfo;
-//            if (audioStreams.size() > 0 && videoStreams.size() == 0 && videoOnlyStreams.size() == 0) {
-//                streamInfo.setStreamType(StreamType.AUDIO_STREAM);
-//            } else {
-//                streamInfo.setStreamType(StreamType.VIDEO_STREAM);
-//            }
-//            streamInfo.setAgeLimit(0);
-//            streamInfo.setThumbnailUrl(originStreamInfo.getThumbnail());
-//            streamInfo.setDuration(originStreamInfo.getDuration());
-//            streamInfo.setUploaderName(originStreamInfo.getUploader());
-//            streamInfo.setUploaderUrl("https://www.youtube.com/user/" + originStreamInfo.getUploaderId().substring(1));
         } catch (InterruptedException | YoutubeDL.CanceledException e) {
             throw new IOException(e);
         }  catch (Exception e) {
+            if (e.getMessage() != null && e.getMessage().contains("Sign in")) {
+                throw new NotLoginException(e);
+            }
             throw new ExtractionException(e);
         } finally {
             lock.unlock(); // Release the lock
