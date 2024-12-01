@@ -6,6 +6,7 @@ import com.yausername.youtubedl_android.mapper.VideoFormat;
 import com.yausername.youtubedl_android.mapper.VideoInfo;
 import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.extractor.exceptions.GeographicRestrictionException;
 import org.schabi.newpipe.extractor.exceptions.NotLoginException;
 import org.schabi.newpipe.extractor.services.youtube.ItagItem;
 import org.schabi.newpipe.extractor.stream.AudioStream;
@@ -96,8 +97,13 @@ public class YtdlpHelper {
         } catch (InterruptedException | YoutubeDL.CanceledException e) {
             throw new IOException(e);
         }  catch (Exception e) {
-            if (e.getMessage() != null && e.getMessage().contains("Sign in")) {
+            if (e.getMessage() == null) {
+                throw new ExtractionException(e);
+            }
+            if (e.getMessage().contains("Sign in")) {
                 throw new NotLoginException(e);
+            } else if (e.getMessage().contains("in your country")) {
+                throw new GeographicRestrictionException(e.getMessage());
             }
             throw new ExtractionException(e);
         } finally {
