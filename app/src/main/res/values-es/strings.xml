@@ -849,7 +849,7 @@ Debe aceptarla para enviarnos el informe de errores.</string>
 <string name="sponsor_promote">Conviértete en un patrocinador</string>
 <string name="random_play_order_title">Orden aleatorio</string>
 <string name="random_play_order_summary">Al usar el Modo de Reproductor de Música, baraja la lista de reproducción</string>
-<string name="update_log">### Rendimiento\n\n- Mejorar significativamente la velocidad de carga de videos\n- Aumentar la velocidad de carga de respuestas a comentarios\n- Optimizar el uso de memoria, mejorando significativamente la fluidez en dispositivos con memoria limitada\n\n### Correcciones de errores\n\n- No se pueden acceder a videos de alta calidad después de iniciar sesión (YouTube)\n- La lista de reproducción no funciona (YouTube)\n- Hora de carga incorrecta en la página del canal (BiliBili)\n\n### Otros\n\n- Mejorar la estabilidad</string>
+<string name="update_log">### Nuevas Funciones\n\n- Rediseñar la configuración para hacerla más clara\n- Soporta más idiomas: fr, de, it, es\n\n### Correcciones de Errores\n\n- Iniciar y cerrar sesión no tiene efecto inmediato\n- Los transmisiones recién terminadas no se pueden ver (YouTube)\n- Iniciar sesión no funciona debido a un nuevo bloqueo (YouTube)\n- Chat en vivo no disponible (YouTube)\n- Tendencias no disponibles para IP fuera de Japón (NicoNico)\n\n### Otros\n\n- Mejorar la estabilidad</string>
 <string name="speeding_playback_title">Mantener presionado para acelerar la reproducción</string>
 <string name="view_on_github">Ver en GitHub</string>
 <string name="donation_dialog_title">Apoya el proyecto</string>

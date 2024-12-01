@@ -953,7 +953,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sponsor_promote">Trở thành người ủng hộ</string>
 <string name="random_play_order_title">Trình tự ngẫu nhiên</string>
 <string name="random_play_order_summary">Khi sử dụng Chế độ Phát Nhạc, xáo trộn danh sách phát</string>
-<string name="update_log">### Hiệu suất\n\n- Cải thiện đáng kể tốc độ tải video\n- Tăng tốc độ tải trả lời bình luận\n- Tối ưu hóa việc sử dụng bộ nhớ, cải thiện đáng kể sự mượt mà trên các thiết bị có bộ nhớ hạn chế\n\n### Sửa lỗi\n\n- Không thể truy cập video chất lượng cao sau khi đăng nhập (YouTube)\n- Danh sách phát không hoạt động (YouTube)\n- Thời gian tải lên không chính xác trong trang kênh (BiliBili)\n\n### Khác\n\n- Cải thiện độ ổn định</string>
+<string name="update_log">### Tính Năng Mới\n\n- Thiết kế lại cài đặt để chúng rõ ràng hơn\n- Hỗ trợ thêm ngôn ngữ: fr, de, it, es\n\n### Sửa Lỗi\n\n- Đăng nhập và đăng xuất không có hiệu lực ngay lập tức\n- Các luồng mới kết thúc không thể xem được (YouTube)\n- Đăng nhập không hoạt động do chặn mới (YouTube)\n- Trò chuyện trực tiếp không khả dụng (YouTube)\n- Xu hướng không khả dụng cho ip ngoài nhật bản (NicoNico)\n\n### Khác\n\n- Cải thiện ổn định</string>
 <string name="speeding_playback_title">Nhấn và giữ để tăng tốc độ phát lại</string>
 <string name="view_on_github">Xem trên GitHub</string>
 <string name="donation_dialog_title">Hỗ trợ Dự án</string>

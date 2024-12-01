@@ -800,7 +800,7 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="sponsor_promote">Devenez un supporter</string>
 <string name="random_play_order_title">Ordre aléatoire</string>
 <string name="random_play_order_summary">Lors de l\'utilisation du mode lecteur de musique, mélanger la playlist</string>
-<string name="update_log">### Performance\n\n- Amélioration significative de la vitesse de chargement des vidéos\n- Augmentation de la vitesse de chargement des réponses aux commentaires\n- Optimisation de l\'utilisation de la mémoire, améliorant considérablement la fluidité sur les appareils avec mémoire limitée\n\n### Corrections de bugs\n\n- Impossible d\'accéder aux vidéos de haute qualité après connexion (YouTube)\n- Playlist ne fonctionnant pas (YouTube)\n- Heures d\'upload incorrectes sur la page de la chaîne (BiliBili)\n\n### Autres\n\n- Amélioration de la stabilité</string>
+<string name="update_log">### Nouveautés\n\n- Refonte des paramètres pour les rendre plus clairs\n- Support de plus de langues : fr, de, it, es\n\n### Corrections de bugs\n\n- La connexion et la déconnexion ne prennent pas effet immédiatement\n- Les diffusions récemment terminées ne peuvent pas être visionnées (YouTube)\n- La connexion ne fonctionne pas en raison d\'un nouveau blocage (YouTube)\n- Discussion en direct non disponible (YouTube)\n- Tendances non disponibles pour les IP en dehors du Japon (NicoNico)\n\n### Autres\n\n- Amélioration de la stabilité</string>
 <string name="speeding_playback_title">Appuyer longuement pour accélérer la lecture</string>
 <string name="view_on_github">Voir sur GitHub</string>
 <string name="donation_dialog_title">Soutenez le projet</string>

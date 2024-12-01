@@ -895,7 +895,7 @@
 <string name="sponsor_promote">サポーターになる</string>
 <string name="random_play_order_title">ランダムな順序</string>
 <string name="random_play_order_summary">プレイリストをシャッフルする</string>
-<string name="update_log">### パフォーマンス\n\n- 動画の読み込み速度が大幅に向上\n- コメント返信の読み込み速度を向上\n- メモリ使用量を最適化し、メモリが限られたデバイスでのスムーズさを大幅に改善\n\n### バグ修正\n\n- ログイン後に高品質の動画にアクセスできない (YouTube)\n- プレイリストが機能しない (YouTube)\n- チャンネルページでアップロード時間が誤って表示される (BiliBili)\n\n### その他\n\n- 安定性を向上</string>
+<string name="update_log">### 新機能\n\n- 設定をより明確にするために再設計\n- より多くの言語をサポート: フランス語、ドイツ語、イタリア語、スペイン語\n\n### バグ修正\n\n- サインインおよびサインアウトがすぐに反映されない\n- 終了したばかりのストリームが視聴できない (YouTube)\n- 新しいブロッキングによりサインインできない (YouTube)\n- ライブチャットが利用できない (YouTube)\n- 日本国外のIPにはトレンドが表示されない (NicoNico)\n\n### その他\n\n- 安定性の向上</string>
 <string name="speeding_playback_title">長時間押は再生速度を速めることができます</string>
 <string name="view_on_github">GitHubで表示</string>
 <string name="donation_dialog_title">プロジェクトをサポートする</string>

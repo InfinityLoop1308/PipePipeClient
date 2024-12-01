@@ -954,7 +954,7 @@
 <string name="sponsor_promote">Become a supporter</string>
 <string name="random_play_order_title">Random Order</string>
 <string name="random_play_order_summary">When using Music Player Mode, shuffle the playlist</string>
-<string name="update_log">### Performance\n\n- Significantly improve video loading speed\n- Increase the speed of loading comment replies\n- Optimize memory usage, significantly improving smoothness on devices with limited memory\n\n### Bug Fixes\n\n- Cannot access high quality videos after login (YouTube)\n- Playlist not working (YouTube)\n- Incorrect upload time in channel page (BiliBili)\n\n### Others\n\n- Improve stability</string>
+<string name="update_log">### New Features\n\n- Redesign the settings to make them clearer\n- Support more languages: fr, de, it, es\n\n### Bug Fixes\n\n- Sign in and out does not take effect immediately\n- Just ended streams can not be viewed (YouTube)\n- Sign in does not work due to new blocking (YouTube)\n- Live chat not available (YouTube)\n- Trending not available for ip outside japan (NicoNico)\n\n### Others\n\n- Improve stability</string>
 <string name="speeding_playback_title">Long-press to speeding the playback</string>
 <string name="view_on_github">View on GitHub</string>
 <string name="donation_dialog_title">Support the Project</string>

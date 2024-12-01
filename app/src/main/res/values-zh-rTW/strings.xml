@@ -896,7 +896,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在使用音樂播放器模式時,隨機播放播放清單</string>
-<string name="update_log">### 性能\n\n- 顯著提升影片載入速度\n- 提高載入評論回覆的速度\n- 優化記憶體使用，顯著提升低記憶體裝置的流暢度\n\n### 錯誤修正\n\n- 登入後無法訪問高品質影片（YouTube）\n- 播放列表無法使用（YouTube）\n- 頻道頁面上的上傳時間不正確（BiliBili）\n\n### 其他\n\n- 提升穩定性</string>
+<string name="update_log">### 新功能\n\n- 重新設計設置以更清晰\n- 支援更多語言：法文、德文、義大利文、西班牙文\n\n### 錯誤修復\n\n- 登入和登出未立即生效\n- 剛結束的串流無法觀看（YouTube）\n- 由於新的阻擋，登入無效（YouTube）\n- 即時聊天不可用（YouTube）\n- 趨勢在日本以外的IP不可用（NicoNico）\n\n### 其他\n\n- 改善穩定性</string>
 <string name="speeding_playback_title">按住以加快播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這個項目</string>

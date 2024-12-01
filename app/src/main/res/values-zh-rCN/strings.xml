@@ -909,7 +909,7 @@
 <string name="sponsor_promote">成为支持者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">使用音乐播放器模式时,随机播放列表</string>
-<string name="update_log">### 性能\n\n- 显著提高视频加载速度\n- 加快评论回复加载速度\n- 优化内存使用，显著提高内存有限设备的流畅度\n\n### 错误修复\n\n- 登录后无法访问高质量视频（YouTube）\n- 播放列表无法工作（YouTube）\n- 频道页面的上传时间不正确（BiliBili）\n\n### 其他\n\n- 提高稳定性</string>
+<string name="update_log">### 新功能\n\n- 重新设计设置界面，使其更清晰\n- 支持更多语言：法语、德语、意大利语、西班牙语\n\n### 错误修复\n\n- 登录和注销不会立即生效\n- 刚结束的流无法查看（YouTube）\n- 登录因新阻止机制无法工作（YouTube）\n- 实时聊天不可用（YouTube）\n- 趋势在日本以外的IP不可用（NicoNico）\n\n### 其他\n\n- 提高稳定性</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 <string name="donation_dialog_title">支持该项目</string>
