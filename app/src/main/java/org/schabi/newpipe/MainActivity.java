@@ -180,6 +180,8 @@ public class MainActivity extends AppCompatActivity {
 
         int currentVersionCode = BuildConfig.VERSION_CODE;
         int storedVersionCode = prefs.getInt("version_code", 0);
+        long lastShowDonationTime = prefs.getLong("last_show_donation_time", 0);
+        long currentTime = System.currentTimeMillis();
 
 // Check if the stored version code is different from the current version code
         if (currentVersionCode > storedVersionCode) {
@@ -206,7 +208,9 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
                     // Show the second dialog when the first dialog is dismissed
-                    if(storedVersionCode / 100 < 1061) {
+                    if((storedVersionCode / 100 < 1061 && currentTime - lastShowDonationTime > 14 * 24 * 60 * 60 * 1000)
+                            || currentTime - lastShowDonationTime > 60L * 24 * 60 * 60 * 1000) {
+                        prefs.edit().putLong("last_show_donation_time", currentTime).apply();
                         dialog2.show();
                     }
                 }
