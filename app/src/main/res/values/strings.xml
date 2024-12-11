@@ -971,4 +971,6 @@
 <string name="settings_category_backup_title">Backup</string>
 <string name="settings_category_advanced_title">Advanced</string>
 <string name="not_login">This content requires an account to view. Log in through Settings to continue.</string>
+<string name="advanced_formats_summary">If your device has support, enabling advanced formats can reduce data consumption and improve image quality.</string>
+<string name="advanced_formats_title">Enable advanced formats</string>
 </resources>

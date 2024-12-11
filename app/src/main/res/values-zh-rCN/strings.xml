@@ -926,4 +926,6 @@
 <string name="settings_category_backup_title">备份</string>
 <string name="settings_category_advanced_title">高级</string>
 <string name="not_login">此内容需要账户才能查看。请通过设置登录以继续。</string>
+<string name="advanced_formats_summary">如果您的设备支持，启用高级格式可以减少数据消耗并提高图像质量。</string>
+<string name="advanced_formats_title">启用高级格式</string>
 </resources>

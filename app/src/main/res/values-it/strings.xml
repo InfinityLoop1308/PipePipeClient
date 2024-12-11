@@ -784,4 +784,6 @@
 <string name="settings_category_backup_title">Backup</string>
 <string name="settings_category_advanced_title">Avanzate</string>
 <string name="not_login">Questo contenuto richiede un account per la visualizzazione. Accedi tramite Impostazioni per continuare.</string>
+<string name="advanced_formats_summary">Se il tuo dispositivo ha supporto, abilitare i formati avanzati può ridurre il consumo di dati e migliorare la qualità dell\'immagine.</string>
+<string name="advanced_formats_title">Abilita formati avanzati</string>
 </resources>

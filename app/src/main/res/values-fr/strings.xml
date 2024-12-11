@@ -817,4 +817,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="settings_category_backup_title">Sauvegarde</string>
 <string name="settings_category_advanced_title">Avancé</string>
 <string name="not_login">Ce contenu nécessite un compte pour être consulté. Connectez-vous via Paramètres pour continuer.</string>
+<string name="advanced_formats_summary">Si votre appareil est compatible, l\'activation des formats avancés peut réduire la consommation de données et améliorer la qualité de l\'image.</string>
+<string name="advanced_formats_title">Activer les formats avancés</string>
 </resources>

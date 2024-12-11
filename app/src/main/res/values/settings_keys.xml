@@ -1530,4 +1530,10 @@
     <string name="regular_bullet_comments_duration_key">regular_bullet_comments_duration_key</string>
     <string name="top_bottom_bullet_comments_duration_key">top_bottom_bullet_comments_duration_key</string>
     <string name="bullet_comments_outline_radius_key">bullet_comments_outline_radius_key</string>
+    <string name="advanced_formats_key">advanced_formats_key</string>
+    <string-array name="advanced_formats_values">
+        <item>WebM</item>
+        <item>H.265</item>
+        <item>AV1</item>
+    </string-array>
 </resources>

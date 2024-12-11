@@ -213,7 +213,10 @@ public final class ListHelper {
             @Nullable final List<VideoStream> videoOnlyStreams,
             final boolean ascendingOrder,
             final boolean preferVideoOnlyStreams) {
-        return getSortedStreamVideosList(true, videoStreams,
+        final SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        Set<String> advancedFormats = sharedPreferences.getStringSet(context.getString(R.string.advanced_formats_key), null);
+        return getSortedStreamVideosList(advancedFormats, videoStreams,
                 videoOnlyStreams, ascendingOrder, preferVideoOnlyStreams);
     }
 
@@ -289,12 +292,15 @@ public final class ListHelper {
      */
     @NonNull
     static List<VideoStream> getSortedStreamVideosList(
-            final boolean showHigherResolutions,
+            final Set<String> advancedFormats,
             @Nullable final List<VideoStream> videoStreams,
             @Nullable final List<VideoStream> videoOnlyStreams,
             final boolean ascendingOrder,
             final boolean preferVideoOnlyStreams
     ) {
+        boolean useWebM = advancedFormats.contains("WebM");
+        boolean useAV1 = advancedFormats.contains("AV1");
+        boolean useH265 = advancedFormats.contains("H.265");
         // Determine order of streams
         // The last added list is preferred
         final List<List<VideoStream>> videoStreamsOrdered =
@@ -307,20 +313,32 @@ public final class ListHelper {
                 .filter(Objects::nonNull)
                 .flatMap(List::stream)
                 // Filter out higher resolutions (or not if high resolutions should always be shown)
-                .filter(stream -> showHigherResolutions
-                        || !HIGH_RESOLUTION_LIST.contains(stream.getResolution()
-                        // Replace any frame rate with nothing
-                        .replaceAll("p\\d+$", "p")))
+                .filter(stream -> {
+                    try {
+                        if (stream.getFormat() == MediaFormat.WEBM) {
+                            return useWebM;
+                        } else if (stream.getCodec().startsWith("av01")) {
+                            return useAV1;
+                        } else if (stream.getCodec().startsWith("hev1") || stream.getCodec().startsWith("hvc1")) {
+                            return useH265;
+                        } else {
+                            return true;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return true;
+                })
                 .collect(Collectors.toList());
 
+        // Return the sorted list
+        List<VideoStream> result = sortStreamList(allInitialStreams, ascendingOrder);
         final HashMap<String, VideoStream> hashMap = new HashMap<>();
         // Add all to the hashmap
-        for (final VideoStream videoStream : allInitialStreams) {
+        for (final VideoStream videoStream : result) {
             hashMap.put(videoStream.getResolution(), videoStream);
         }
-
-        // Return the sorted list
-        return sortStreamList(new ArrayList<>(hashMap.values()), ascendingOrder);
+        return new ArrayList<>(hashMap.values());
     }
 
     /**
@@ -505,8 +523,9 @@ public final class ListHelper {
     private static int getDefaultResolutionWithDefaultFormat(@NonNull final Context context,
                                                              final String defaultResolution,
                                                              final List<VideoStream> videoStreams) {
+        final MediaFormat defaultFormat = MediaFormat.MPEG_4;
         return getDefaultResolutionIndex(defaultResolution,
-                context.getString(R.string.best_resolution_key), null, videoStreams);
+                context.getString(R.string.best_resolution_key), defaultFormat, videoStreams);
     }
 
     private static MediaFormat getDefaultFormat(@NonNull final Context context,
@@ -618,6 +637,10 @@ public final class ListHelper {
                 streamB.getResolution());
         if (resComp != 0) {
             return resComp;
+        }
+
+        if (streamA.getBitrate() - streamB.getBitrate() != 0) {
+            return streamA.getBitrate() - streamB.getBitrate();
         }
 
         // Same bitrate and format

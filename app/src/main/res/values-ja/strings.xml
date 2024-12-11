@@ -912,4 +912,6 @@
 <string name="settings_category_backup_title">バックアップ</string>
 <string name="settings_category_advanced_title">上級</string>
 <string name="not_login">このコンテンツを表示するにはアカウントが必要です。続行するには設定でログインしてください。</string>
+<string name="advanced_formats_summary">お使いのデバイスがサポートしている場合、高度なフォーマットを有効にすることでデータ使用量を削減し、画像品質を向上させることができます。</string>
+<string name="advanced_formats_title">高度な形式を有効にする</string>
 </resources>

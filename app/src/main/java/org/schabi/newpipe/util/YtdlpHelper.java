@@ -56,9 +56,6 @@ public class YtdlpHelper {
                             .setItagItem(itag)
                             .setMediaFormat(MediaFormat.getFromSuffix(videoFormat.getExt())).setAverageBitrate(videoFormat.getTbr() * 1000).build());
                 } else if (Objects.equals(videoFormat.getAcodec(), "none")) {
-                    if (Objects.equals(videoFormat.getExt(), "mp4")) {
-                        continue;
-                    }
                     ItagItem itag = new ItagItem(Integer.parseInt(videoFormat.getFormatId().split("-")[0]), ItagItem.ItagType.VIDEO_ONLY, MediaFormat.getFromSuffix(videoFormat.getExt()), videoFormat.getFormatNote(), videoFormat.getFps());
                     itag.setCodec(videoFormat.getVcodec());
                     itag.setBitrate(videoFormat.getTbr());

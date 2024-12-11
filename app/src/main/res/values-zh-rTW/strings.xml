@@ -913,4 +913,6 @@
 <string name="settings_category_backup_title">備份</string>
 <string name="settings_category_advanced_title">進階</string>
 <string name="not_login">此內容需要帳戶才能查看。通過設置登入以繼續。</string>
+<string name="advanced_formats_summary">如果您的設備有支持，啟用進階格式可以減少數據使用並改善圖像質量。</string>
+<string name="advanced_formats_title">啟用進階格式</string>
 </resources>

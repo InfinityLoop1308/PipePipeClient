@@ -864,4 +864,6 @@
 <string name="settings_category_backup_title">Sicherung</string>
 <string name="settings_category_advanced_title">Erweitert</string>
 <string name="not_login">Dieser Inhalt erfordert ein Konto zur Anzeige. Melden Sie sich über die Einstellungen an, um fortzufahren.</string>
+<string name="advanced_formats_summary">Wenn Ihr Gerät Unterstützung bietet, kann das Aktivieren von erweiterten Formaten den Datenverbrauch reduzieren und die Bildqualität verbessern.</string>
+<string name="advanced_formats_title">Erweiterte Formate aktivieren</string>
 </resources>

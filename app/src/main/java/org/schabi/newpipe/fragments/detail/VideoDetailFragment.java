@@ -1512,11 +1512,6 @@ public final class VideoDetailFragment
         binding.tabLayout.setVisibility(View.GONE);
     }
 
-    private void hideAgeRestrictedContent() {
-        showTextError(getString(R.string.restricted_video,
-                getString(R.string.show_age_restricted_content_title)));
-    }
-
     private void setupBroadcastReceiver() {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
