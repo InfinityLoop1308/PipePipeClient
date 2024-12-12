@@ -46,10 +46,14 @@ public class YtdlpHelper {
 
             String contentLanguage = getEnglishName(ServiceList.YouTube.getAudioLanguage());
             boolean hasContentLanguage = false;
+            boolean hasOriginal = false;
             for(VideoFormat videoFormat : originStreamInfo.getFormats()) {
                 if (Objects.equals(videoFormat.getVcodec(), "none") && !Objects.equals(videoFormat.getAcodec(), "none")) {
                     if (videoFormat.getFormatNote().contains(contentLanguage)) {
                         hasContentLanguage = true;
+                    }
+                    if (videoFormat.getFormatNote().contains("original")) {
+                        hasOriginal = true;
                     }
                 }
             }
@@ -64,15 +68,22 @@ public class YtdlpHelper {
                             continue;
                         }
                     } else {
-                        if (!videoFormat.getFormatNote().contains("original")) {
-                            continue;
+                        if (hasOriginal) {
+                            if (!videoFormat.getFormatNote().contains("original")) {
+                                continue;
+                            }
                         }
+
                     }
                     ItagItem itag = new ItagItem(Integer.parseInt(videoFormat.getFormatId().split("-")[0]), ItagItem.ItagType.AUDIO,
                             MediaFormat.getFromSuffix(videoFormat.getExt()), videoFormat.getTbr());
                     itag.setCodec(videoFormat.getAcodec());
                     itag.setBitrate(videoFormat.getTbr());
                     itag.setSampleRate(videoFormat.getAsr());
+                    itag.setInitStart(-1);
+                    itag.setInitEnd(-1);
+                    itag.setIndexStart(-1);
+                    itag.setIndexEnd(-1);
 
                     audioStreams.add(new AudioStream.Builder().setId(originStreamInfo.getId())
                             .setContent(videoFormat.getUrl(), true)
@@ -84,6 +95,10 @@ public class YtdlpHelper {
                     itag.setBitrate(videoFormat.getTbr());
                     itag.setWidth(videoFormat.getWidth());
                     itag.setHeight(videoFormat.getHeight());
+                    itag.setInitStart(-1);
+                    itag.setInitEnd(-1);
+                    itag.setIndexStart(-1);
+                    itag.setIndexEnd(-1);
                     String resolution = videoFormat.getFormatNote();
                     if (resolution == null) {
                         resolution = videoFormat.getHeight() + "p";
@@ -98,6 +113,10 @@ public class YtdlpHelper {
                     itag.setBitrate(videoFormat.getTbr());
                     itag.setWidth(videoFormat.getWidth());
                     itag.setHeight(videoFormat.getHeight());
+                    itag.setInitStart(-1);
+                    itag.setInitEnd(-1);
+                    itag.setIndexStart(-1);
+                    itag.setIndexEnd(-1);
                     String resolution = videoFormat.getFormatNote();
                     if (resolution == null) {
                         resolution = videoFormat.getHeight() + "p";
