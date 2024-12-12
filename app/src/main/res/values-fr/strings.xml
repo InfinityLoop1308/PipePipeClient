@@ -762,8 +762,8 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="navigate_to">Naviguer</string>
 <string name="sort_name">Trier par nom</string>
 <string name="sort_name_reverse">Trier par nom (inverse)</string>
-<string name="sort_origin">Origine</string>
-<string name="sort_origin_reverse">Origine (inverse)</string>
+<string name="sort_origin">Original</string>
+<string name="sort_origin_reverse">Original (inversé)</string>
 <string name="dialog_title_enable_update_checker">Activer le vérificateur de mise à jour</string>
 <string name="dialog_message_enable_update_checker">Voulez-vous activer le vérificateur de mise à jour?
     Vous pouvez le désactiver dans les paramètres.</string>
@@ -819,4 +819,5 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="not_login">Ce contenu nécessite un compte pour être consulté. Connectez-vous via Paramètres pour continuer.</string>
 <string name="advanced_formats_summary">Si votre appareil est compatible, l\'activation des formats avancés peut réduire la consommation de données et améliorer la qualité de l\'image.</string>
 <string name="advanced_formats_title">Activer les formats avancés</string>
+<string name="preferred_audio_language_title">Langue audio préférée</string>
 </resources>

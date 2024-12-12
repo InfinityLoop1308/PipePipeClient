@@ -810,8 +810,8 @@
 <string name="navigate_to">Navigieren</string>
 <string name="sort_name">Nach Name sortieren</string>
 <string name="sort_name_reverse">Nach Name sortieren (umgekehrt)</string>
-<string name="sort_origin">Herkunft</string>
-<string name="sort_origin_reverse">Herkunft (umgekehrt)</string>
+<string name="sort_origin">Original</string>
+<string name="sort_origin_reverse">Original (umgekehrt)</string>
 <string name="dialog_title_enable_update_checker">Update-Checker aktivieren</string>
 <string name="dialog_message_enable_update_checker">Möchten Sie den Update-Checker aktivieren? Sie können ihn in den Einstellungen deaktivieren.</string>
 <string name="title_staff_list">Mitarbeiterliste</string>
@@ -866,4 +866,5 @@
 <string name="not_login">Dieser Inhalt erfordert ein Konto zur Anzeige. Melden Sie sich über die Einstellungen an, um fortzufahren.</string>
 <string name="advanced_formats_summary">Wenn Ihr Gerät Unterstützung bietet, kann das Aktivieren von erweiterten Formaten den Datenverbrauch reduzieren und die Bildqualität verbessern.</string>
 <string name="advanced_formats_title">Erweiterte Formate aktivieren</string>
+<string name="preferred_audio_language_title">Bevorzugte Audiosprache</string>
 </resources>

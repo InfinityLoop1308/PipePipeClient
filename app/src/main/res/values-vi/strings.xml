@@ -916,8 +916,8 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="navigate_to">Điều hướng</string>
 <string name="sort_name">Sắp xếp theo tên</string>
 <string name="sort_name_reverse">Sắp xếp theo tên (đảo ngược)</string>
-<string name="sort_origin">Nguồn gốc</string>
-<string name="sort_origin_reverse">Nguồn gốc (đảo ngược)</string>
+<string name="sort_origin">Nguyên gốc</string>
+<string name="sort_origin_reverse">Nguyên bản (đảo ngược)</string>
 <string name="dialog_title_enable_update_checker">Bật trình kiểm tra cập nhật</string>
 <string name="dialog_message_enable_update_checker">Bạn có muốn bật trình kiểm tra cập nhật không? Bạn có thể tắt nó trong thiết đặt.</string>
 <string name="title_staff_list">Danh sách nhân viên</string>
@@ -972,4 +972,5 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="not_login">Nội dung này yêu cầu có tài khoản để xem. Đăng nhập thông qua Cài đặt để tiếp tục.</string>
 <string name="advanced_formats_summary">Nếu thiết bị của bạn có hỗ trợ, việc kích hoạt các định dạng nâng cao có thể giảm mức tiêu thụ dữ liệu và cải thiện chất lượng hình ảnh.</string>
 <string name="advanced_formats_title">Kích hoạt định dạng nâng cao</string>
+<string name="preferred_audio_language_title">Ngôn ngữ âm thanh ưu tiên</string>
 </resources>

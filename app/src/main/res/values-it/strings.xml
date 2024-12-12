@@ -730,8 +730,8 @@
 <string name="navigate_to">Naviga a</string>
 <string name="sort_name">Ordina per nome</string>
 <string name="sort_name_reverse">Ordina per nome (inverso)</string>
-<string name="sort_origin">Origine</string>
-<string name="sort_origin_reverse">Origine (inverso)</string>
+<string name="sort_origin">Originale</string>
+<string name="sort_origin_reverse">Originale (invertito)</string>
 <string name="dialog_title_enable_update_checker">Abilita il controllo aggiornamenti</string>
 <string name="dialog_message_enable_update_checker">Vuoi abilitare il controllo aggiornamenti? Puoi disabilitarlo nelle impostazioni.</string>
 <string name="title_staff_list">Lista del personale</string>
@@ -786,4 +786,5 @@
 <string name="not_login">Questo contenuto richiede un account per la visualizzazione. Accedi tramite Impostazioni per continuare.</string>
 <string name="advanced_formats_summary">Se il tuo dispositivo ha supporto, abilitare i formati avanzati può ridurre il consumo di dati e migliorare la qualità dell\'immagine.</string>
 <string name="advanced_formats_title">Abilita formati avanzati</string>
+<string name="preferred_audio_language_title">Lingua audio preferita</string>
 </resources>

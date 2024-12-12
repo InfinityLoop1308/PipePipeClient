@@ -857,8 +857,8 @@
 <string name="navigate_to">移動</string>
 <string name="sort_name">名前順に並び替え</string>
 <string name="sort_name_reverse">名前順に逆順に並び替え</string>
-<string name="sort_origin">原点</string>
-<string name="sort_origin_reverse">原点の逆順</string>
+<string name="sort_origin">オリジナル</string>
+<string name="sort_origin_reverse">オリジナル（逆）</string>
 <string name="dialog_title_enable_update_checker">更新チェッカーを有効にする</string>
 <string name="dialog_message_enable_update_checker">更新チェッカーを有効にしますか？設定で無効にすることもできます。</string>
 <string name="title_staff_list">スタッフリスト</string>
@@ -914,4 +914,5 @@
 <string name="not_login">このコンテンツを表示するにはアカウントが必要です。続行するには設定でログインしてください。</string>
 <string name="advanced_formats_summary">お使いのデバイスがサポートしている場合、高度なフォーマットを有効にすることでデータ使用量を削減し、画像品質を向上させることができます。</string>
 <string name="advanced_formats_title">高度な形式を有効にする</string>
+<string name="preferred_audio_language_title">優先オーディオ言語</string>
 </resources>

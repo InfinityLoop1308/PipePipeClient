@@ -5,6 +5,7 @@ import com.yausername.youtubedl_android.YoutubeDLRequest;
 import com.yausername.youtubedl_android.mapper.VideoFormat;
 import com.yausername.youtubedl_android.mapper.VideoInfo;
 import org.schabi.newpipe.extractor.MediaFormat;
+import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.exceptions.GeographicRestrictionException;
 import org.schabi.newpipe.extractor.exceptions.NotLoginException;
@@ -14,10 +15,13 @@ import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.schabi.newpipe.extractor.localization.Localization.getEnglishName;
 
 public class YtdlpHelper {
     private static final ConcurrentHashMap<String, ReentrantLock> locks = new ConcurrentHashMap<>();
@@ -40,11 +44,30 @@ public class YtdlpHelper {
             ArrayList<VideoStream> videoStreams = new ArrayList<>();
             ArrayList<VideoStream> videoOnlyStreams = new ArrayList<>();
 
+            String contentLanguage = getEnglishName(ServiceList.YouTube.getAudioLanguage());
+            boolean hasContentLanguage = false;
+            for(VideoFormat videoFormat : originStreamInfo.getFormats()) {
+                if (Objects.equals(videoFormat.getVcodec(), "none") && !Objects.equals(videoFormat.getAcodec(), "none")) {
+                    if (videoFormat.getFormatNote().contains(contentLanguage)) {
+                        hasContentLanguage = true;
+                    }
+                }
+            }
+
             for(VideoFormat videoFormat : originStreamInfo.getFormats()) {
                 if (Objects.equals(videoFormat.getVcodec(), "none") && Objects.equals(videoFormat.getAcodec(), "none")) {
                     continue;
                 }
                 if (Objects.equals(videoFormat.getVcodec(), "none")) {
+                    if (hasContentLanguage) {
+                        if (!videoFormat.getFormatNote().contains(contentLanguage)) {
+                            continue;
+                        }
+                    } else {
+                        if (!videoFormat.getFormatNote().contains("original")) {
+                            continue;
+                        }
+                    }
                     ItagItem itag = new ItagItem(Integer.parseInt(videoFormat.getFormatId().split("-")[0]), ItagItem.ItagType.AUDIO,
                             MediaFormat.getFromSuffix(videoFormat.getExt()), videoFormat.getTbr());
                     itag.setCodec(videoFormat.getAcodec());
@@ -54,7 +77,7 @@ public class YtdlpHelper {
                     audioStreams.add(new AudioStream.Builder().setId(originStreamInfo.getId())
                             .setContent(videoFormat.getUrl(), true)
                             .setItagItem(itag)
-                            .setMediaFormat(MediaFormat.getFromSuffix(videoFormat.getExt())).setAverageBitrate(videoFormat.getTbr() * 1000).build());
+                            .setMediaFormat(MediaFormat.getFromSuffix(videoFormat.getExt())).setAverageBitrate(videoFormat.getTbr()).build());
                 } else if (Objects.equals(videoFormat.getAcodec(), "none")) {
                     ItagItem itag = new ItagItem(Integer.parseInt(videoFormat.getFormatId().split("-")[0]), ItagItem.ItagType.VIDEO_ONLY, MediaFormat.getFromSuffix(videoFormat.getExt()), videoFormat.getFormatNote(), videoFormat.getFps());
                     itag.setCodec(videoFormat.getVcodec());

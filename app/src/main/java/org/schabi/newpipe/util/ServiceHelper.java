@@ -275,8 +275,11 @@ public final class ServiceHelper {
                     .getDefaultSharedPreferences(context);
             final String tokens = sharedPreferences.getString(context.getString(
                     R.string.youtube_cookies_key), null);
+            final String audioLanguage = sharedPreferences.getString(context.getString(
+                    R.string.preferred_audio_language_key),"original");
             ServiceList.YouTube.setTokens(tokens);
             ServiceList.YouTube.setContentLanguage(getPreferredLocalization(context));
+            ServiceList.YouTube.setAudioLanguage(audioLanguage);
 //            final String pot = sharedPreferences.getString(context.getString(R.string.youtube_po_token), null);
 //            ServiceList.YouTube.setAdditionalTokens(pot);
             if(sharedPreferences.getBoolean(context.getString(R.string.override_cookies_youtube_key), false)) {

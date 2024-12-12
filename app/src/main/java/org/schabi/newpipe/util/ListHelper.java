@@ -215,7 +215,7 @@ public final class ListHelper {
             final boolean preferVideoOnlyStreams) {
         final SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
-        Set<String> advancedFormats = sharedPreferences.getStringSet(context.getString(R.string.advanced_formats_key), null);
+        Set<String> advancedFormats = sharedPreferences.getStringSet(context.getString(R.string.advanced_formats_key), new HashSet<>());
         return getSortedStreamVideosList(advancedFormats, videoStreams,
                 videoOnlyStreams, ascendingOrder, preferVideoOnlyStreams);
     }

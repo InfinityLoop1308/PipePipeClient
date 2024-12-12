@@ -1531,9 +1531,62 @@
     <string name="top_bottom_bullet_comments_duration_key">top_bottom_bullet_comments_duration_key</string>
     <string name="bullet_comments_outline_radius_key">bullet_comments_outline_radius_key</string>
     <string name="advanced_formats_key">advanced_formats_key</string>
+    <string name="preferred_audio_language_key">preferred_audio_language_key</string>
     <string-array name="advanced_formats_values">
         <item>WebM</item>
         <item>H.265</item>
         <item>AV1</item>
     </string-array>
+    <string-array name="audio_langs">
+        <item>@string/sort_origin</item>
+        <!-- Global -->
+        <item>English</item> <!-- English -->
+
+        <!-- Europe -->
+        <item>Français</item> <!-- French -->
+        <item>Deutsch</item> <!-- German -->
+        <item>Español</item> <!-- Spanish -->
+        <item>Português</item> <!-- Portuguese -->
+        <item>Русский</item> <!-- Russian -->
+        <item>Türkçe</item> <!-- Turkish -->
+
+        <!-- Asia -->
+        <item>简体中文</item> <!-- Chinese (Simplified) -->
+        <item>日本語</item> <!-- Japanese -->
+        <item>हिन्दी</item> <!-- Hindi -->
+        <item>한국어</item> <!-- Korean -->
+        <item>ไทย</item> <!-- Thai -->
+        <item>Tiếng Việt</item> <!-- Vietnamese -->
+        <item>বাংলা</item> <!-- Bangla -->
+        <item>Bahasa Indonesia</item> <!-- Indonesian -->
+
+        <!-- Middle East -->
+        <item>العربية</item> <!-- Arabic -->
+    </string-array>
+    <string-array name="audio_lang_values">
+        <item>original</item>
+        <item>en</item> <!-- English -->
+
+        <!-- Europe -->
+        <item>fr</item> <!-- French -->
+        <item>de</item> <!-- German -->
+        <item>es</item> <!-- Spanish -->
+        <item>pt</item> <!-- Portuguese -->
+        <item>ru</item> <!-- Russian -->
+        <item>tr</item> <!-- Turkish -->
+
+        <!-- Asia -->
+        <item>zh</item> <!-- Chinese (Simplified) -->
+        <item>ja</item> <!-- Japanese -->
+        <item>hi</item> <!-- Hindi -->
+        <item>ko</item> <!-- Korean -->
+        <item>th</item> <!-- Thai -->
+        <item>vi</item> <!-- Vietnamese -->
+        <item>bn</item> <!-- Bangla -->
+        <item>id</item> <!-- Indonesian -->
+
+        <!-- Middle East -->
+        <item>ar</item> <!-- Arabic -->
+    </string-array>
+
 </resources>

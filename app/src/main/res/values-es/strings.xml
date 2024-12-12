@@ -812,8 +812,8 @@ Debe aceptarla para enviarnos el informe de errores.</string>
 <string name="navigate_to">Navegar</string>
 <string name="sort_name">Ordenar por nombre</string>
 <string name="sort_name_reverse">Ordenar por nombre (invertido)</string>
-<string name="sort_origin">Origen</string>
-<string name="sort_origin_reverse">Origen (invertido)</string>
+<string name="sort_origin">Original-es</string>
+<string name="sort_origin_reverse">Original (reverse-es)</string>
 <string name="dialog_title_enable_update_checker">Habilitar comprobador de actualizaciones</string>
 <string name="dialog_message_enable_update_checker">¿Quiere habilitar el comprobador de actualizaciones? Puede desactivarlo en configuraciones.</string>
 <string name="title_staff_list">Lista de personal</string>
@@ -868,4 +868,5 @@ Debe aceptarla para enviarnos el informe de errores.</string>
 <string name="not_login">Este contenido requiere una cuenta para verlo. Inicia sesión a través de Configuración para continuar.</string>
 <string name="advanced_formats_summary">Si tu dispositivo tiene soporte, habilitar formatos avanzados puede reducir el consumo de datos y mejorar la calidad de la imagen.</string>
 <string name="advanced_formats_title">Habilitar formatos avanzados</string>
+<string name="preferred_audio_language_title">Idioma de audio preferido</string>
 </resources>

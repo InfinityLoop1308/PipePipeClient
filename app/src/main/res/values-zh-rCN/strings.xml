@@ -887,8 +887,8 @@
 <string name="navigate_to">导航至</string>
 <string name="sort_name">按名称排序</string>
 <string name="sort_name_reverse">按名称排序（反向）</string>
-<string name="sort_origin">来源</string>
-<string name="sort_origin_reverse">来源（反向）</string>
+<string name="sort_origin">原始</string>
+<string name="sort_origin_reverse">原始（逆向）</string>
 <string name="dialog_title_enable_update_checker">启用更新检查器</string>
 <string name="dialog_message_enable_update_checker">您要启用更新检查器吗？您可以在设置中禁用它。</string>
 <string name="warning">警告</string>
@@ -928,4 +928,5 @@
 <string name="not_login">此内容需要账户才能查看。请通过设置登录以继续。</string>
 <string name="advanced_formats_summary">如果您的设备支持，启用高级格式可以减少数据消耗并提高图像质量。</string>
 <string name="advanced_formats_title">启用高级格式</string>
+<string name="preferred_audio_language_title">首选音频语言</string>
 </resources>

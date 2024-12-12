@@ -917,8 +917,8 @@
 <string name="navigate_to">Navigate</string>
 <string name="sort_name">Sort by name</string>
 <string name="sort_name_reverse">Sort by name (reverse)</string>
-<string name="sort_origin">Origin</string>
-<string name="sort_origin_reverse">Origin (reverse)</string>
+<string name="sort_origin">Original</string>
+<string name="sort_origin_reverse">Original (reverse)</string>
 <string name="dialog_title_enable_update_checker">Enable update checker</string>
 <string name="dialog_message_enable_update_checker">Do you want to enable update checker? You can disable it in settings.</string>
 <string name="title_staff_list">Staff List</string>
@@ -973,4 +973,5 @@
 <string name="not_login">This content requires an account to view. Log in through Settings to continue.</string>
 <string name="advanced_formats_summary">If your device has support, enabling advanced formats can reduce data consumption and improve image quality.</string>
 <string name="advanced_formats_title">Enable advanced formats</string>
+<string name="preferred_audio_language_title">Preferred audio language</string>
 </resources>

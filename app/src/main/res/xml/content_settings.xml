@@ -33,6 +33,16 @@
         app:singleLineTitle="false"
         app:iconSpaceReserved="false" />
 
+    <ListPreference
+        android:key="@string/preferred_audio_language_key"
+        android:defaultValue="@string/sort_origin"
+        android:entries="@array/audio_langs"
+        android:entryValues="@array/audio_lang_values"
+        android:title="@string/preferred_audio_language_title"
+        android:summary="%s"
+        app:singleLineTitle="false"
+        app:iconSpaceReserved="false" />
+
     <PreferenceScreen
         android:fragment="org.schabi.newpipe.settings.tabs.ChooseTabsFragment"
         android:key="@string/main_page_content_key"
