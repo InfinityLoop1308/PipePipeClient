@@ -820,4 +820,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="advanced_formats_summary">Si votre appareil est compatible, l\'activation des formats avancés peut réduire la consommation de données et améliorer la qualité de l\'image.</string>
 <string name="advanced_formats_title">Activer les formats avancés</string>
 <string name="preferred_audio_language_title">Langue audio préférée</string>
+<string name="comments_inner_scroll_title">Défilement intérieur des commentaires</string>
+<string name="comments_inner_scroll_summary">Rendre le positionnement de la vidéo fixe lors du défilement des commentaires</string>
 </resources>

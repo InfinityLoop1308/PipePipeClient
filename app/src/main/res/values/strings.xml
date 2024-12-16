@@ -974,4 +974,6 @@
 <string name="advanced_formats_summary">If your device has support, enabling advanced formats can reduce data consumption and improve image quality.</string>
 <string name="advanced_formats_title">Enable advanced formats</string>
 <string name="preferred_audio_language_title">Preferred audio language</string>
+<string name="comments_inner_scroll_title">Comments inner scroll</string>
+<string name="comments_inner_scroll_summary">Make video position fixed when scrolling comments</string>
 </resources>

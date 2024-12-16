@@ -787,4 +787,6 @@
 <string name="advanced_formats_summary">Se il tuo dispositivo ha supporto, abilitare i formati avanzati può ridurre il consumo di dati e migliorare la qualità dell\'immagine.</string>
 <string name="advanced_formats_title">Abilita formati avanzati</string>
 <string name="preferred_audio_language_title">Lingua audio preferita</string>
+<string name="comments_inner_scroll_title">Commenti allo scorrimento interno</string>
+<string name="comments_inner_scroll_summary">Rendi la posizione del video fissa durante lo scorrimento dei commenti</string>
 </resources>

@@ -867,4 +867,6 @@
 <string name="advanced_formats_summary">Wenn Ihr Gerät Unterstützung bietet, kann das Aktivieren von erweiterten Formaten den Datenverbrauch reduzieren und die Bildqualität verbessern.</string>
 <string name="advanced_formats_title">Erweiterte Formate aktivieren</string>
 <string name="preferred_audio_language_title">Bevorzugte Audiosprache</string>
+<string name="comments_inner_scroll_title">Kommentare innerer Bildlauf</string>
+<string name="comments_inner_scroll_summary">Video-Position beim Scrollen durch Kommentare fixieren</string>
 </resources>

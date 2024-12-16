@@ -1532,6 +1532,7 @@
     <string name="bullet_comments_outline_radius_key">bullet_comments_outline_radius_key</string>
     <string name="advanced_formats_key">advanced_formats_key</string>
     <string name="preferred_audio_language_key">preferred_audio_language_key</string>
+    <string name="comments_inner_scroll_key">comments_inner_scroll_key</string>
     <string-array name="advanced_formats_values">
         <item>WebM</item>
         <item>H.265</item>

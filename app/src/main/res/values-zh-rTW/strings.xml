@@ -916,4 +916,6 @@
 <string name="advanced_formats_summary">如果您的設備有支持，啟用進階格式可以減少數據使用並改善圖像質量。</string>
 <string name="advanced_formats_title">啟用進階格式</string>
 <string name="preferred_audio_language_title">首選音訊語言</string>
+<string name="comments_inner_scroll_title">評論內部滾動</string>
+<string name="comments_inner_scroll_summary">在捲動評論時讓影片位置固定</string>
 </resources>

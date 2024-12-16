@@ -529,7 +529,7 @@ public final class VideoDetailFragment
                 }
                 openVideoPlayerAutoFullscreen();
                 break;
-            case R.id.detail_title_root_layout:
+            case R.id.detail_toggle_secondary_controls_view:
                 toggleTitleAndSecondaryControls();
                 break;
             case R.id.overlay_thumbnail:
@@ -598,9 +598,12 @@ public final class VideoDetailFragment
                     openChannel(currentInfo.getUploaderUrl(), currentInfo.getUploaderName());
                 }
                 break;
-            case R.id.detail_title_root_layout:
+            case R.id.detail_video_title_view:
                 ShareUtils.copyToClipboard(requireContext(),
                         binding.detailVideoTitleView.getText().toString());
+                break;
+            case R.id.detail_toggle_secondary_controls_view:
+                hideTitleAndSecondaryControls();
                 break;
             case R.id.detail_controls_playlist_append:
                 if (getFM() != null && currentInfo != null) {
@@ -632,6 +635,20 @@ public final class VideoDetailFragment
             animateRotation(binding.detailToggleSecondaryControlsView,
                     Player.DEFAULT_CONTROLS_DURATION, 0);
             binding.detailSecondaryControlPanel.setVisibility(View.GONE);
+        }
+        // view pager height has changed, update the tab layout
+        updateTabLayoutVisibility();
+    }
+
+    private void hideTitleAndSecondaryControls() {
+        if (binding.detailContentRootHiding.getVisibility() == View.GONE) {
+            binding.detailVideoTitleView.setMaxLines(10);
+            animateRotation(binding.detailToggleSecondaryControlsView,
+                    Player.DEFAULT_CONTROLS_DURATION, 180);
+            binding.detailContentRootHiding.setVisibility(View.VISIBLE);
+        } else {
+            binding.detailVideoTitleView.setMaxLines(1);
+            binding.detailContentRootHiding.setVisibility(View.GONE);
         }
         // view pager height has changed, update the tab layout
         updateTabLayoutVisibility();
@@ -686,8 +703,10 @@ public final class VideoDetailFragment
     protected void initListeners() {
         super.initListeners();
 
-        binding.detailTitleRootLayout.setOnClickListener(this);
-        binding.detailTitleRootLayout.setOnLongClickListener(this);
+        binding.detailVideoTitleView.setOnClickListener(this);
+        binding.detailVideoTitleView.setOnLongClickListener(this);
+        binding.detailToggleSecondaryControlsView.setOnClickListener(this);
+        binding.detailToggleSecondaryControlsView.setOnLongClickListener(this);
         binding.detailUploaderRootLayout.setOnClickListener(this);
         binding.detailUploaderRootLayout.setOnLongClickListener(this);
         binding.detailThumbnailRootLayout.setOnClickListener(this);

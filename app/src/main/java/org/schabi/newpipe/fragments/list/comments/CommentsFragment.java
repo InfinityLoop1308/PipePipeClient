@@ -1,5 +1,6 @@
 package org.schabi.newpipe.fragments.list.comments;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.InfoItem;
@@ -80,6 +83,10 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfoItem, Com
         super.initViews(rootView, savedInstanceState);
 
         emptyStateDesc = rootView.findViewById(R.id.empty_state_desc);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        if (prefs.getBoolean("comments_inner_scroll_key", false)) {
+            itemsList.setNestedScrollingEnabled(false);
+        }
     }
 
     /*//////////////////////////////////////////////////////////////////////////

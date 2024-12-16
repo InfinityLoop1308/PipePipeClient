@@ -973,4 +973,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="advanced_formats_summary">Nếu thiết bị của bạn có hỗ trợ, việc kích hoạt các định dạng nâng cao có thể giảm mức tiêu thụ dữ liệu và cải thiện chất lượng hình ảnh.</string>
 <string name="advanced_formats_title">Kích hoạt định dạng nâng cao</string>
 <string name="preferred_audio_language_title">Ngôn ngữ âm thanh ưu tiên</string>
+<string name="comments_inner_scroll_title">Bình luận cuộn bên trong</string>
+<string name="comments_inner_scroll_summary">Làm cho vị trí video cố định khi cuộn bình luận</string>
 </resources>
