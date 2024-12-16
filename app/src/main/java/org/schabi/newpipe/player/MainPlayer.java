@@ -127,7 +127,10 @@ public final class MainPlayer extends Service {
                 || intent.getStringExtra(Player.PLAY_QUEUE_KEY) != null) {
             NotificationUtil.getInstance().createNotificationAndStartForeground(player, this);
         }
-
+        // null check
+        if (player == null) {
+            player = new Player(this);
+        }
         player.handleIntent(intent);
         if (player.getMediaSessionManager() != null) {
             player.getMediaSessionManager().handleMediaButtonIntent(intent);
