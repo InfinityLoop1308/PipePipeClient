@@ -367,9 +367,6 @@ public final class Player implements
     @NonNull private final SeekbarPreviewThumbnailHolder seekbarPreviewThumbnailHolder =
             new SeekbarPreviewThumbnailHolder();
 
-    private int retryCount = 0;
-    private String retryUrl;
-    private Future<?> timer;
     private Future<?> enqueueTimer;
     private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);;
 
@@ -1320,12 +1317,6 @@ public final class Player implements
             case VideoDetailFragment.ACTION_VIDEO_FRAGMENT_STOPPED:
                 fragmentIsVisible = false;
                 onFragmentStopped();
-                break;
-            case VideoDetailFragment.ACTION_VIDEO_ERROR:
-                if (DEBUG) {
-                    Log.d(TAG, "Unknown error received");
-                }
-                onPlayerError(new PlaybackException(null, null, ERROR_CODE_UNSPECIFIED));
                 break;
             case Intent.ACTION_CONFIGURATION_CHANGED:
                 assureCorrectAppLanguage(service);
@@ -2468,14 +2459,6 @@ public final class Player implements
             startProgressLoop();
         }
 
-        try {
-            retryCount = 0;
-            if (timer != null) {
-                timer.cancel(true);
-            }
-        } catch (Exception ignored) {
-        }
-
         updateStreamRelatedViews();
 
         if(getCurrentStreamInfo().isPresent()){
@@ -2520,15 +2503,6 @@ public final class Player implements
         binding.loadingPanel.setVisibility(View.VISIBLE);
 
         binding.getRoot().setKeepScreenOn(true);
-
-        if(timer == null || timer.isCancelled() || timer.isDone()){
-            timer = executor.schedule(new Runnable(){
-                public void run(){
-                    context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_VIDEO_ERROR));
-                }
-            }, 10000, TimeUnit.MILLISECONDS);
-        }
-
         if (NotificationUtil.getInstance().shouldUpdateBufferingSlot()) {
             NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, false);
         }
@@ -2537,10 +2511,6 @@ public final class Player implements
     private void onPaused() {
         if (DEBUG) {
             Log.d(TAG, "onPaused() called");
-        }
-        retryCount = 0;
-        if (timer != null) {
-                timer.cancel(true);
         }
         if (isProgressLoopRunning()) {
             stopProgressLoop();
@@ -2997,9 +2967,6 @@ public final class Player implements
             case ERROR_CODE_PARSING_MANIFEST_UNSUPPORTED:
                 // Source errors, signal on playQueue and move on:
                 if (!exoPlayerIsNull() && playQueue != null) {
-                    if (timer != null) {
-                        timer.cancel(true);
-                    }
                     onBufferingFailed();
                 }
                 break;
@@ -3010,65 +2977,8 @@ public final class Player implements
             case ERROR_CODE_IO_NETWORK_CONNECTION_FAILED:
             case ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT:
             case ERROR_CODE_UNSPECIFIED:
-                // Will reach here if any Expection is thrown when loading current item,
-                // but it seems exceptions like 403 will only thrown when our timer triggered Exception
-                // so either no or 2
-                if(playQueue == null){ // required? idk
-                    break;
-                }
-                if(playQueue.size() > 0){
-                    HttpDataSource.HttpDataSourceException exception;
-                    try{
-                        exception = (HttpDataSource.HttpDataSourceException) error.getCause();
-                    } catch (Exception e){ // not HttpDataSourceException, can't be fixed
-                        if (!exoPlayerIsNull() && playQueue != null) {
-                            if (timer != null) {
-                                timer.cancel(true);
-                            }
-                            onBufferingFailed();
-                        }
-                        break;
-                    }
-                    try{
-                        StreamInfo currentInfo = currentMetadata.getMaybeStreamInfo().get();
-
-                        List<VideoStream> sortedVideoList = ListHelper.getSortedStreamVideosList(context,
-                                        currentInfo.getVideoStreams(), currentInfo.getVideoOnlyStreams(), false, true)
-                                .stream().filter(s -> !videoResolver.getBlacklistUrls().contains(s.getContent())).collect(Collectors.toList());;
-
-                        List<AudioStream> audioStreams = currentInfo.getAudioStreams().stream()
-                                .filter(s -> !audioResolver.getBlacklistUrls().contains(s.getContent())).collect(Collectors.toList());
-
-                        if(sortedVideoList.size() == 0 || audioStreams.size() == 0){
-                            if (!exoPlayerIsNull() && playQueue != null) {
-                                if (timer != null) {
-                                    timer.cancel(true);
-                                }
-                                onBufferingFailed();
-                            }
-                            break;
-                        }
-
-                        videoResolver.addBlacklistUrl(sortedVideoList.get(getQualityResolver().getOverrideResolutionIndex(sortedVideoList, videoResolver.getPlaybackQuality())).getContent());
-                        audioResolver.addBlacklistUrl(audioStreams.get(getQualityResolver().getCurrentAudioQualityIndex(currentInfo.getAudioStreams())).getContent());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    if(currentMetadata == null || currentMetadata.getMaybeStreamInfo().isEmpty() || currentMetadata.getMaybeStreamInfo().get().getStreamsLength() == 0){
-                        if (!exoPlayerIsNull() && playQueue != null) {
-                            if (timer != null) {
-                                timer.cancel(true);
-                            }
-                            onBufferingFailed();
-                        }
-                        break;
-                    }
-                }
-                isCatchableException = true;
                 setRecovery();
                 reloadPlayQueueManager();
-                simpleExoPlayer.prepare();
                 break;
             case ERROR_CODE_DECODER_INIT_FAILED:
                 AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity())
