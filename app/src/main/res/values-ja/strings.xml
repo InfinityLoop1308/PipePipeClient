@@ -895,7 +895,7 @@
 <string name="sponsor_promote">サポーターになる</string>
 <string name="random_play_order_title">ランダムな順序</string>
 <string name="random_play_order_summary">プレイリストをシャッフルする</string>
-<string name="update_log">### 新機能\n\n- 設定をより明確にするために再設計\n- より多くの言語をサポート: フランス語、ドイツ語、イタリア語、スペイン語\n\n### バグ修正\n\n- サインインおよびサインアウトがすぐに反映されない\n- 終了したばかりのストリームが視聴できない (YouTube)\n- 新しいブロッキングによりサインインできない (YouTube)\n- ライブチャットが利用できない (YouTube)\n- 日本国外のIPにはトレンドが表示されない (NicoNico)\n\n### その他\n\n- 安定性の向上</string>
+<string name="update_log">### 新しい機能\n\n- コメントをスクロール中に動画の位置を固定するサポート\n\n### バグ修正\n\n- 動画視聴時のラグとエラー（YouTube）\n- 多言語動画の誤ったオーディオトラック（YouTube）\n- 特定のネットワーク条件下で動画情報を読み込めない（YouTube）\n- アルバムのサムネイルが表示されない（YT Music）\n- 一部のトレンド動画が正しく解析されない（NicoNico）\n\n### 挙動の変更\n\n- 互換性の問題を避けるためにデフォルトフォーマットをMP4に\n- 高度なフォーマットを使用するための設定を追加\n- 優先するオーディオ言語を指定するための個別の設定を追加\n- 10秒以上のロード時間は自動的にキャンセルされ、エラーをスローしなくなる\n- 読み込み失敗時に他の解像度をフォールバックとして使用しようとしなくなる\n\n### その他\n\n- 安定性の向上</string>
 <string name="speeding_playback_title">長時間押は再生速度を速めることができます</string>
 <string name="view_on_github">GitHubで表示</string>
 <string name="donation_dialog_title">プロジェクトをサポートする</string>

@@ -145,6 +145,21 @@ class XMLHandler:
             start += 100
         return result
 
+def escape(text):
+    result = ''
+    i = 0
+    while i < len(text):
+        if text[i] == '\\' and i + 1 < len(text) and text[i + 1] == "'":
+            result += "\\'"
+            i += 2
+        elif text[i] == "'":
+            result += "\\'"
+            i += 1
+        else:
+            result += text[i]
+            i += 1
+    return result.replace("\n", "\\n")
+
 
 class StringTranslator:
 
@@ -170,7 +185,7 @@ class StringTranslator:
                 print(result)
                 continue
             for key, value in result.items():
-                target.add_entry('resources', 'string', {'name': key}, value)
+                target.add_entry('resources', 'string', {'name': key}, escape(value))
             target.write_to_file()
 
     def translate_everything(self):
@@ -179,7 +194,7 @@ class StringTranslator:
             for updates in data:
                 result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2][7:])
                 for key, value in result.items():
-                    target.add_entry('resources', 'string', {'name': key}, value)
+                    target.add_entry('resources', 'string', {'name': key}, escape(value))
             target.write_to_file()
 
     def translate_item_updates_to_all(self, item_list):
@@ -187,7 +202,7 @@ class StringTranslator:
         for target in self.targets:
             result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2][7:])
             for key, value in result.items():
-                target.update_entry(f'string[name="{key}"]', value)
+                target.update_entry(f'string[name="{key}"]', escape(value))
             target.write_to_file()
 
     def add_new_entry(self, name, value):
@@ -196,7 +211,7 @@ class StringTranslator:
         updates = {name: value}
         for target in self.targets:
             result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2][7:])
-            target.add_entry('resources', 'string', {'name': name}, result[name])
+            target.add_entry('resources', 'string', {'name': name}, escape(result[name]))
             target.write_to_file()
 
     def translate_new_entries(self, item_list):
@@ -204,7 +219,7 @@ class StringTranslator:
         for target in self.targets:
             result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2][7:])
             for key, value in result.items():
-                target.add_entry('resources', 'string', {'name': key}, value)
+                target.add_entry('resources', 'string', {'name': key}, escape(value))
             target.write_to_file()
 
     def delete_entry(self, name):

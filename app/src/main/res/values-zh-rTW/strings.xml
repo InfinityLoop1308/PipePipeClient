@@ -896,7 +896,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在使用音樂播放器模式時,隨機播放播放清單</string>
-<string name="update_log">### 新功能\n\n- 重新設計設置以更清晰\n- 支援更多語言：法文、德文、義大利文、西班牙文\n\n### 錯誤修復\n\n- 登入和登出未立即生效\n- 剛結束的串流無法觀看（YouTube）\n- 由於新的阻擋，登入無效（YouTube）\n- 即時聊天不可用（YouTube）\n- 趨勢在日本以外的IP不可用（NicoNico）\n\n### 其他\n\n- 改善穩定性</string>
+<string name="update_log">### 新功能\n\n- 支持在滚动评论时使视频位置固定\n\n### 错误修复\n\n- 观看视频时出现卡顿和错误（YouTube）\n- 多语言视频的音轨错误（YouTube）\n- 在特定网络条件下无法加载视频信息（YouTube）\n- 专辑没有缩略图（YT Music）\n- 某些热门视频未正确解析（NicoNico）\n\n### 行为变化\n\n- 使用MP4作为默认格式以避免兼容性问题\n- 添加使用高级格式的偏好设置\n- 添加单独的偏好设置以指定首选音频语言\n- 加载时间超过10秒将不再自动取消并抛出错误\n- 加载失败时，视频将不再尝试使用其他分辨率作为后备\n\n### 其他\n\n- 提高稳定性</string>
 <string name="speeding_playback_title">按住以加快播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這個項目</string>
