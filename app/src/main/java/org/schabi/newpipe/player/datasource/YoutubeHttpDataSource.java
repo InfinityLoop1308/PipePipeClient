@@ -27,6 +27,7 @@ import androidx.annotation.Nullable;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.PlaybackException;
+import com.google.android.exoplayer2.metadata.icy.IcyHeaders;
 import com.google.android.exoplayer2.upstream.BaseDataSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSourceException;
@@ -392,7 +393,13 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
      */
     @Override
     public long open(@NonNull final DataSpec dataSpecParameter) throws HttpDataSourceException {
-        this.dataSpec = dataSpecParameter;
+        final Map<String, String> m1 = dataSpec.httpRequestHeaders;
+        final Map<String, String> m2 = new HashMap<>();
+        for (Map.Entry<String, String> entry : m1.entrySet())
+            if(!entry.getKey().equals(IcyHeaders.REQUEST_HEADER_ENABLE_METADATA_NAME))
+                m2.put(entry.getKey(), entry.getValue());
+
+        this.dataSpec = dataSpecParameter.withRequestHeaders(m2);
         bytesRead = 0;
         bytesToRead = 0;
         transferInitializing(dataSpecParameter);
