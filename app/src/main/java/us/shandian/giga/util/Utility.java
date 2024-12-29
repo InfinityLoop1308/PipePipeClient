@@ -343,14 +343,18 @@ public class Utility {
     public static void removeTempFileOfDownloadedVideo(StoredFileHelper storedFileHelper) {
         if(storedFileHelper.docTree == null) {
             // ioTree instead
-            File ioTree = storedFileHelper.ioFile;
-            for (final File file : ioTree.listFiles()) {
-                if (file.getName().equals(storedFileHelper.getName().replace(".mp4", ".tmp.mp4"))
-                        || file.getName().equals(storedFileHelper.getName().replace(".mp4", ".tmp"))) {
-                    file.delete();
+            try {
+                File ioTree = storedFileHelper.ioFile;
+                for (final File file : ioTree.listFiles()) {
+                    if (file.getName().equals(storedFileHelper.getName().replace(".mp4", ".tmp.mp4"))
+                            || file.getName().equals(storedFileHelper.getName().replace(".mp4", ".tmp"))) {
+                        file.delete();
+                    }
                 }
+                return;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            return ;
         }
         DocumentFile docTree = storedFileHelper.docTree;
         DocumentFile[] docFiles = docTree.listFiles();
