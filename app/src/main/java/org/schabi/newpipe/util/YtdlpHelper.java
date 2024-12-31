@@ -9,6 +9,7 @@ import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.exceptions.GeographicRestrictionException;
 import org.schabi.newpipe.extractor.exceptions.NotLoginException;
+import org.schabi.newpipe.extractor.exceptions.PrivateContentException;
 import org.schabi.newpipe.extractor.localization.DateWrapper;
 import org.schabi.newpipe.extractor.services.youtube.ItagItem;
 import org.schabi.newpipe.extractor.stream.*;
@@ -171,6 +172,8 @@ public class YtdlpHelper {
                 throw new NotLoginException(e);
             } else if (e.getMessage().contains("in your country")) {
                 throw new GeographicRestrictionException(e.getMessage());
+            } else if (e.getMessage().contains("private")) {
+                throw new PrivateContentException(e.getMessage());
             }
             throw new ExtractionException(e);
         } finally {
