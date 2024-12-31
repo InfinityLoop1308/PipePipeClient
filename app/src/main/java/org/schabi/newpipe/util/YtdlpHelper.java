@@ -9,12 +9,15 @@ import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.exceptions.GeographicRestrictionException;
 import org.schabi.newpipe.extractor.exceptions.NotLoginException;
+import org.schabi.newpipe.extractor.localization.DateWrapper;
 import org.schabi.newpipe.extractor.services.youtube.ItagItem;
-import org.schabi.newpipe.extractor.stream.AudioStream;
-import org.schabi.newpipe.extractor.stream.StreamInfo;
-import org.schabi.newpipe.extractor.stream.VideoStream;
+import org.schabi.newpipe.extractor.stream.*;
+import org.schabi.newpipe.extractor.utils.Utils;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
@@ -39,7 +42,7 @@ public class YtdlpHelper {
             request.addOption("--extractor-args", "youtube:player_client=default,-ios");
             request.addOption("--cookies", cookieFile);
             VideoInfo originStreamInfo = YoutubeDL.getInstance().getInfo(request);
-            StreamInfo streamInfo = new StreamInfo();
+            StreamInfo streamInfo = new StreamInfo(ServiceList.YouTube.getServiceId(), ServiceList.YouTube.getStreamLHFactory().getId(url), url, "");
             ArrayList<AudioStream> audioStreams = new ArrayList<>();
             ArrayList<VideoStream> videoStreams = new ArrayList<>();
             ArrayList<VideoStream> videoOnlyStreams = new ArrayList<>();
@@ -127,7 +130,32 @@ public class YtdlpHelper {
                             .setIsVideoOnly(true).setResolution(resolution).build());
                 }
             }
-
+            streamInfo.setSupportComments(true);
+            if (audioStreams.size() > 0 && videoStreams.size() == 0 && videoOnlyStreams.size() == 0) {
+                streamInfo.setStreamType(StreamType.AUDIO_STREAM);
+            } else {
+                streamInfo.setStreamType(StreamType.VIDEO_STREAM);
+                if (streamInfo.getService() == ServiceList.YouTube && videoOnlyStreams.isEmpty()) {
+                    streamInfo.setStreamType(StreamType.LIVE_STREAM);
+                    streamInfo.setHlsUrl(videoStreams.get(videoStreams.size() - 1).getContent());
+                    streamInfo.setSupportComments(false);
+                }
+            }
+            streamInfo.setName(originStreamInfo.getTitle());
+            streamInfo.setAgeLimit(0);
+            streamInfo.setThumbnailUrl(originStreamInfo.getThumbnail());
+            streamInfo.setDuration(originStreamInfo.getDuration());
+            streamInfo.setUploaderName(originStreamInfo.getUploader());
+            streamInfo.setUploaderUrl("https://www.youtube.com/" + originStreamInfo.getUploaderId());
+            streamInfo.setDescription(new Description(originStreamInfo.getDescription(), Description.PLAIN_TEXT));
+            streamInfo.setDislikeCount(Utils.parseLong(originStreamInfo.getDislikeCount()));
+            streamInfo.setTags(originStreamInfo.getTags());
+            streamInfo.setCategory(originStreamInfo.getCategories() == null ? "" : originStreamInfo.getCategories().get(0));
+            streamInfo.setLikeCount(Utils.parseLong(originStreamInfo.getLikeCount()));
+            streamInfo.setUploadDate(new DateWrapper(LocalDate.parse(originStreamInfo.getUploadDate(), DateTimeFormatter.BASIC_ISO_DATE)
+                    .atStartOfDay()
+                    .atOffset(ZoneOffset.UTC)));
+            streamInfo.setViewCount(Utils.parseLong(originStreamInfo.getViewCount()));
             streamInfo.setAudioStreams(audioStreams);
             streamInfo.setVideoStreams(videoStreams);
             streamInfo.setVideoOnlyStreams(videoOnlyStreams);

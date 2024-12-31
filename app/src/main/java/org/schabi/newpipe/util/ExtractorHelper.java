@@ -55,6 +55,7 @@ import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.extractor.suggestion.SuggestionExtractor;
 import org.schabi.newpipe.util.external_communication.TextLinkifier;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -123,30 +124,43 @@ public final class ExtractorHelper {
                                                    final boolean forceLoad) {
         checkServiceId(serviceId);
         return checkCache(forceLoad, serviceId, url, InfoItem.InfoType.STREAM,
-                Single.fromCallable(() -> {
-                    StreamInfo result = StreamInfo.getInfo(NewPipe.getService(serviceId), url);
-                    if (result.getServiceId() != ServiceList.YouTube.getServiceId()) {
-                        return result;
-                    }
-                    if(result.getAudioStreams().size() == 0 || result.getVideoStreams().size() == 0) {
-                        StreamInfo fallbackInfo = YtdlpHelper.getFallbackStreams(url);
-                        if(fallbackInfo == null) {
-                            Log.e(TAG, "Couldn't get fallback streams for " + url);
-                            return result;
-                        }
-                        if(result.getStreamType() == StreamType.LIVE_STREAM) {
-                            result.setHlsUrl(fallbackInfo.getVideoStreams().get(fallbackInfo.getVideoStreams().size() - 1).getContent());
-                        }
-                        if (fallbackInfo.getAudioStreams().size() > 0 || fallbackInfo.getVideoStreams().size() > 0) {
-                            result.setAudioStreams(fallbackInfo.getAudioStreams());
-                            result.setVideoStreams(fallbackInfo.getVideoStreams());
-                            result.setVideoOnlyStreams(fallbackInfo.getVideoOnlyStreams());
-                            return result;
-                        }
-                        Log.e(TAG, "Couldn't get fallback streams for " + url);
-                    }
-                    return result;
-                }));
+                Single.fromCallable(() -> getNewStreamInfo(serviceId, url)));
+    }
+
+    public static StreamInfo getNewStreamInfo(final int serviceId, final String url) throws ExtractionException, IOException {
+        StreamInfo result = null;
+        try {
+            result = StreamInfo.getInfo(NewPipe.getService(serviceId), url);
+        } catch (Exception e) {
+            if (serviceId != ServiceList.YouTube.getServiceId()) {
+                throw new ExtractionException(e);
+            }
+        }
+
+        if (serviceId != ServiceList.YouTube.getServiceId()) {
+            return result;
+        }
+
+        if (result != null && (result.getAudioStreams().size() > 0 || result.getVideoStreams().size() > 0)) {
+            return result;
+        }
+
+        StreamInfo fallbackInfo = YtdlpHelper.getFallbackStreams(url);
+        if(fallbackInfo.getAudioStreams().size() == 0 && fallbackInfo.getVideoStreams().size() == 0) {
+            Log.e(TAG, "Couldn't get fallback streams for " + url);
+            return result;
+        }
+        if (result != null) {
+            if(result.getStreamType() == StreamType.LIVE_STREAM) {
+                result.setHlsUrl(fallbackInfo.getVideoStreams().get(fallbackInfo.getVideoStreams().size() - 1).getContent());
+            }
+            result.setAudioStreams(fallbackInfo.getAudioStreams());
+            result.setVideoStreams(fallbackInfo.getVideoStreams());
+            result.setVideoOnlyStreams(fallbackInfo.getVideoOnlyStreams());
+            return result;
+        } else {
+            return fallbackInfo;
+        }
     }
 
     public static Single<StreamInfo> getStreamInfoWithoutException(final int serviceId, final String url,

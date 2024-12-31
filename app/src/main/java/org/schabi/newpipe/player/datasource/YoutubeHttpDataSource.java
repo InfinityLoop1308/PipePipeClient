@@ -19,6 +19,7 @@ import static org.schabi.newpipe.extractor.services.youtube.YoutubeParsingHelper
 import static org.schabi.newpipe.extractor.services.youtube.YoutubeParsingHelper.isWebStreamingUrl;
 import static org.schabi.newpipe.extractor.services.youtube.YoutubeParsingHelper.isTvHtml5SimplyEmbeddedPlayerStreamingUrl;
 import static java.lang.Math.min;
+import static org.schabi.newpipe.util.ExtractorHelper.getNewStreamInfo;
 
 import android.net.Uri;
 
@@ -49,6 +50,7 @@ import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor;
 import org.schabi.newpipe.extractor.stream.AudioStream;
+import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.extractor.utils.Utils;
 import org.schabi.newpipe.util.SerializedCache;
@@ -318,6 +320,7 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
     private long requestNumber;
 
     public static HashMap<Map.Entry<String, String>, String> backupUrlMap = new HashMap<>();
+    public static HashMap<Map.Entry<String, String>, Integer> retryCounts = new HashMap<>();
 
     private boolean shouldRefetch = false;
 
@@ -419,34 +422,28 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
             if (streamId == null || itag == null || mime == null) {
                 throw new RuntimeException("streamId, itag or mime is null");
             }
-            StreamingService youtube = ServiceList.all().get(0);
             try {
-                YoutubeStreamExtractor youtubeStreamExtractor =
-                        (YoutubeStreamExtractor) youtube.getStreamExtractor(youtube.getStreamLHFactory().fromId(streamId));
-                youtubeStreamExtractor.fetchPage();
+                StreamInfo streamInfo = getNewStreamInfo(ServiceList.YouTube.getServiceId(), ServiceList.YouTube.getStreamLHFactory().getUrl(streamId));
                 if (mime.startsWith("video")) {
-                    List<VideoStream> videoStreams = youtubeStreamExtractor.getVideoOnlyStreams();
-                    videoStreams.addAll(youtubeStreamExtractor.getVideoStreams());
+                    List<VideoStream> videoStreams = streamInfo.getVideoOnlyStreams();
+                    videoStreams.addAll(streamInfo.getVideoStreams());
                     for (int i = 0; i < videoStreams.size(); i++) {
                         if (videoStreams.get(i).getItag() == Integer.parseInt(itag)) {
                             newUrl = videoStreams.get(i).getContent();
                             break;
                         }
-                        if(i == videoStreams.size() - 1){
-                            throw new RuntimeException("Video not found");
-                        }
                     }
                 } else if (mime.startsWith("audio")) {
-                    List<AudioStream> audioStreams = youtubeStreamExtractor.getAudioStreams();
+                    List<AudioStream> audioStreams = streamInfo.getAudioStreams();
                     for (int i = 0; i < audioStreams.size(); i++) {
                         if (audioStreams.get(i).getItag() == Integer.parseInt(itag)) {
                             newUrl = audioStreams.get(i).getContent();
                             break;
                         }
-                        if(i == audioStreams.size() - 1){
-                            throw new RuntimeException("Audio not found");
-                        }
                     }
+                }
+                if (newUrl == null) {
+                    throw new RuntimeException("retry failed, newUrl is null");
                 }
                 backupUrlMap.put(new AbstractMap.SimpleEntry<>(streamId, itag), newUrl);
                 shouldRefetch = false;
@@ -497,6 +494,19 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
                             ? dataSpecParameter.length
                             : 0;
                 }
+            }
+
+            if (responseCode == 403) {
+                Integer retryCount = retryCounts.get(new AbstractMap.SimpleEntry<>(streamId, itag));
+                if (retryCount == null) {
+                    retryCount = 0;
+                }
+                if (retryCount >= 2) {
+                    throw new RuntimeException("403 error. We retried 2 times but failed");
+                }
+                shouldRefetch = true;
+                retryCount ++;
+                retryCounts.put(new AbstractMap.SimpleEntry<>(streamId, itag), retryCount);
             }
 
             final InputStream errorStream = httpURLConnection.getErrorStream();
