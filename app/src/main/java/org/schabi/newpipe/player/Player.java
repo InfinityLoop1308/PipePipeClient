@@ -2970,10 +2970,22 @@ public final class Player implements
                     onBufferingFailed();
                 }
                 break;
+            case ERROR_CODE_IO_UNSPECIFIED:
+                if (error.getCause().getMessage().contains("403")) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity())
+                            .setTitle(R.string.network_error)
+                            .setMessage(R.string.ip_blocked_summary)
+                            .setPositiveButton(R.string.ok, (dialog, which) -> {
+                                // Handle "Yes" click
+                            });
+                    builder.show();
+
+                    onPlaybackShutdown();
+                    break;
+                }
             case ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE:
             case ERROR_CODE_IO_BAD_HTTP_STATUS:
             case ERROR_CODE_TIMEOUT:
-            case ERROR_CODE_IO_UNSPECIFIED:
             case ERROR_CODE_IO_NETWORK_CONNECTION_FAILED:
             case ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT:
             case ERROR_CODE_UNSPECIFIED:

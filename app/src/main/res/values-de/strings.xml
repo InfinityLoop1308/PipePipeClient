@@ -869,4 +869,5 @@
 <string name="preferred_audio_language_title">Bevorzugte Audiosprache</string>
 <string name="comments_inner_scroll_title">Kommentare innerer Bildlauf</string>
 <string name="comments_inner_scroll_summary">Video-Position beim Scrollen durch Kommentare fixieren</string>
+<string name="ip_blocked_summary">Ihre IP-Adresse wird von YouTube blockiert. Melden Sie sich über die Einstellungen an, um fortzufahren.</string>
 </resources>

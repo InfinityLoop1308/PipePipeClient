@@ -931,4 +931,5 @@
 <string name="preferred_audio_language_title">首选音频语言</string>
 <string name="comments_inner_scroll_title">评论内滚动</string>
 <string name="comments_inner_scroll_summary">在滚动评论时使视频位置固定</string>
+<string name="ip_blocked_summary">您的IP已被YouTube封锁。请通过设置登录以继续。</string>
 </resources>

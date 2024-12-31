@@ -789,4 +789,5 @@
 <string name="preferred_audio_language_title">Lingua audio preferita</string>
 <string name="comments_inner_scroll_title">Commenti allo scorrimento interno</string>
 <string name="comments_inner_scroll_summary">Rendi la posizione del video fissa durante lo scorrimento dei commenti</string>
+<string name="ip_blocked_summary">Il tuo IP è bloccato da YouTube. Accedi attraverso Impostazioni per continuare.</string>
 </resources>

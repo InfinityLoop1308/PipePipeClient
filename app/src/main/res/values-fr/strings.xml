@@ -822,4 +822,5 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="preferred_audio_language_title">Langue audio préférée</string>
 <string name="comments_inner_scroll_title">Défilement intérieur des commentaires</string>
 <string name="comments_inner_scroll_summary">Rendre le positionnement de la vidéo fixe lors du défilement des commentaires</string>
+<string name="ip_blocked_summary">Votre IP est bloquée par YouTube. Connectez-vous via les paramètres pour continuer.</string>
 </resources>

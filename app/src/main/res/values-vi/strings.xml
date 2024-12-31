@@ -975,4 +975,5 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="preferred_audio_language_title">Ngôn ngữ âm thanh ưu tiên</string>
 <string name="comments_inner_scroll_title">Bình luận cuộn bên trong</string>
 <string name="comments_inner_scroll_summary">Làm cho vị trí video cố định khi cuộn bình luận</string>
+<string name="ip_blocked_summary">Địa chỉ IP của bạn bị YouTube chặn. Đăng nhập qua Cài đặt để tiếp tục.</string>
 </resources>

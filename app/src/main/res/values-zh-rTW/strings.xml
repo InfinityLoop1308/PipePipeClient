@@ -918,4 +918,5 @@
 <string name="preferred_audio_language_title">首選音訊語言</string>
 <string name="comments_inner_scroll_title">評論內部滾動</string>
 <string name="comments_inner_scroll_summary">在捲動評論時讓影片位置固定</string>
+<string name="ip_blocked_summary">你的 IP 已被 YouTube 封鎖。通過設置登錄以繼續。</string>
 </resources>

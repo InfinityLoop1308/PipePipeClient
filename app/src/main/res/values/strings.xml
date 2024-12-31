@@ -976,4 +976,5 @@
 <string name="preferred_audio_language_title">Preferred audio language</string>
 <string name="comments_inner_scroll_title">Comments inner scroll</string>
 <string name="comments_inner_scroll_summary">Make video position fixed when scrolling comments</string>
+<string name="ip_blocked_summary">Your IP is blocked by YouTube. Log in through Settings to continue.</string>
 </resources>

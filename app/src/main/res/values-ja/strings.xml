@@ -917,4 +917,5 @@
 <string name="preferred_audio_language_title">優先オーディオ言語</string>
 <string name="comments_inner_scroll_title">コメントの内側スクロール</string>
 <string name="comments_inner_scroll_summary">コメントをスクロールする際にビデオの位置を固定する</string>
+<string name="ip_blocked_summary">あなたのIPはYouTubeによってブロックされています。続行するには設定からログインしてください。</string>
 </resources>
