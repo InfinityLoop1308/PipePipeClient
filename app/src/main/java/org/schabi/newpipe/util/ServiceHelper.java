@@ -18,6 +18,9 @@ import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.services.peertube.PeertubeInstance;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -290,8 +293,20 @@ public final class ServiceHelper {
     }
 
     public static void initServices(final Context context) {
+        final SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
         for (final StreamingService s : ServiceList.all()) {
             initService(context, s.getServiceId());
+            String blockingKeywords = sharedPreferences.getString(context.getString(R.string.filter_by_keyword_key), null);
+            String blockingChannels = sharedPreferences.getString(context.getString(R.string.filter_by_channel_key), null);
+            if (blockingKeywords != null && !blockingKeywords.isEmpty()) {
+                s.setStreamKeywordFilter(new ArrayList<>(Arrays.asList(blockingKeywords.replace("，", ",").split(","))));
+            }
+            if (blockingChannels != null && !blockingChannels.isEmpty()) {
+                s.setStreamChannelFilter(new ArrayList<>(Arrays.asList(blockingChannels.replace("，", ",").split(","))));
+            }
+            Set<String> blockingFields = sharedPreferences.getStringSet(context.getString(R.string.filter_type_key), new HashSet<>());
+            s.setFilterTypes(blockingFields);
         }
     }
 }

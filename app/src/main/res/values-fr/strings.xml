@@ -823,4 +823,10 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="comments_inner_scroll_title">Défilement intérieur des commentaires</string>
 <string name="comments_inner_scroll_summary">Rendre le positionnement de la vidéo fixe lors du défilement des commentaires</string>
 <string name="ip_blocked_summary">Votre IP est bloquée par YouTube. Connectez-vous via les paramètres pour continuer.</string>
+<string name="settings_category_filter_title">Filtre de contenu</string>
+<string name="filter_by_keyword_title">Filtrer par mots-clés</string>
+<string name="filter_by_keyword_summary">Ajoutez ici les mots-clés que vous souhaitez bloquer, séparés par des virgules</string>
+<string name="search_result">Résultats de recherche</string>
+<string name="filter_field_summary">Appliquer le filtre à</string>
+<string name="channel_videos">Vidéos de la chaîne</string>
 </resources>

@@ -977,4 +977,12 @@
 <string name="comments_inner_scroll_title">Comments inner scroll</string>
 <string name="comments_inner_scroll_summary">Make video position fixed when scrolling comments</string>
 <string name="ip_blocked_summary">Your IP is blocked by YouTube. Log in through Settings to continue.</string>
+<string name="settings_category_filter_title">Content Filter</string>
+<string name="filter_by_keyword_title">Filter by keywords</string>
+<string name="filter_by_channel_title">Filter by channels</string>
+<string name="filter_by_keyword_summary">Add the keywords you want to block here, separated by commas</string>
+<string name="filter_by_channel_summary">Add the channel names you want to block here, separated by commas</string>
+<string name="search_result">Search results</string>
+<string name="filter_field_summary">Apply Filter To</string>
+<string name="channel_videos">Channel videos</string>
 </resources>

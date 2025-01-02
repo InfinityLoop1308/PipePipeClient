@@ -918,4 +918,10 @@
 <string name="comments_inner_scroll_title">コメントの内側スクロール</string>
 <string name="comments_inner_scroll_summary">コメントをスクロールする際にビデオの位置を固定する</string>
 <string name="ip_blocked_summary">あなたのIPはYouTubeによってブロックされています。続行するには設定からログインしてください。</string>
+<string name="settings_category_filter_title">コンテンツフィルター</string>
+<string name="filter_by_keyword_title">キーワードでフィルター</string>
+<string name="filter_by_keyword_summary">ここにブロックしたいキーワードをカンマで区切って追加してください</string>
+<string name="search_result">検索結果</string>
+<string name="filter_field_summary">フィルターを適用</string>
+<string name="channel_videos">チャンネル動画</string>
 </resources>

@@ -870,4 +870,10 @@
 <string name="comments_inner_scroll_title">Kommentare innerer Bildlauf</string>
 <string name="comments_inner_scroll_summary">Video-Position beim Scrollen durch Kommentare fixieren</string>
 <string name="ip_blocked_summary">Ihre IP-Adresse wird von YouTube blockiert. Melden Sie sich über die Einstellungen an, um fortzufahren.</string>
+<string name="settings_category_filter_title">Inhaltsfilter</string>
+<string name="filter_by_keyword_title">Nach Schlüsselwörtern filtern</string>
+<string name="filter_by_keyword_summary">Fügen Sie hier die Schlüsselwörter ein, die Sie blockieren möchten, getrennt durch Kommas</string>
+<string name="search_result">Suchergebnisse</string>
+<string name="filter_field_summary">Filter anwenden auf</string>
+<string name="channel_videos">Kanalvideos</string>
 </resources>

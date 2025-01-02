@@ -1533,6 +1533,7 @@
     <string name="advanced_formats_key">advanced_formats_key</string>
     <string name="preferred_audio_language_key">preferred_audio_language_key</string>
     <string name="comments_inner_scroll_key">comments_inner_scroll_key</string>
+    <string name="filter_by_keyword_key">filter_by_keyword_key</string>
     <string-array name="advanced_formats_values">
         <item>WebM</item>
         <item>H.265</item>
@@ -1589,5 +1590,18 @@
         <!-- Middle East -->
         <item>ar</item> <!-- Arabic -->
     </string-array>
-
+    <string name="filter_type_key">filter_type_key</string>
+    <string name="filter_by_channel_key">filter_by_channel_key</string>
+    <string-array name="filter_type_entries">
+        <item>@string/search_result</item>
+        <item>@string/recommended_videos</item>
+        <item>@string/related_items_tab_description</item>
+        <item>@string/channel_videos</item>
+    </string-array>
+    <string-array name="filter_type_values">
+        <item>search_result</item>
+        <item>recommendations</item>
+        <item>related_item</item>
+        <item>channels</item>
+    </string-array>
 </resources>

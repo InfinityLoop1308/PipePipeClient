@@ -919,4 +919,10 @@
 <string name="comments_inner_scroll_title">評論內部滾動</string>
 <string name="comments_inner_scroll_summary">在捲動評論時讓影片位置固定</string>
 <string name="ip_blocked_summary">你的 IP 已被 YouTube 封鎖。通過設置登錄以繼續。</string>
+<string name="settings_category_filter_title">內容過濾器</string>
+<string name="filter_by_keyword_title">按關鍵字篩選</string>
+<string name="filter_by_keyword_summary">在這裡添加您想要屏蔽的關鍵字，使用逗號分隔</string>
+<string name="search_result">搜尋結果</string>
+<string name="filter_field_summary">套用篩選到</string>
+<string name="channel_videos">頻道影片</string>
 </resources>

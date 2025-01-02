@@ -3,7 +3,7 @@ import json
 from forbiddenfruit import curse
 import sys
 import config
-
+from concurrent.futures import ThreadPoolExecutor
 
 def filter_list(self, func):
     """
@@ -199,20 +199,30 @@ class StringTranslator:
 
     def translate_item_updates_to_all(self, item_list):
         updates = self.base.load_strings_to_dict().filter(lambda k, v: k in item_list)
-        for target in self.targets:
+
+        def translate_and_update_target(target):
             result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2][7:])
             for key, value in result.items():
                 target.update_entry(f'string[name="{key}"]', escape(value))
             target.write_to_file()
 
+        # Process translations in parallel
+        with ThreadPoolExecutor() as executor:
+            executor.map(translate_and_update_target, self.targets)
+
     def add_new_entry(self, name, value):
         self.base.add_entry('resources', 'string', {'name': name}, value)
         self.base.write_to_file()
         updates = {name: value}
-        for target in self.targets:
+
+        def translate_and_update(target):
             result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2][7:])
             target.add_entry('resources', 'string', {'name': name}, escape(result[name]))
             target.write_to_file()
+
+            # Process translations in parallel
+        with ThreadPoolExecutor() as executor:
+            executor.map(translate_and_update, self.targets)
 
     def translate_new_entries(self, item_list):
         updates = self.base.load_strings_to_dict().filter(lambda k, v: k in item_list)
