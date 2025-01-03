@@ -982,4 +982,5 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="search_result">Kết quả tìm kiếm</string>
 <string name="filter_field_summary">Áp dụng bộ lọc cho</string>
 <string name="channel_videos">Video của kênh</string>
+<string name="success">Thành công</string>
 </resources>

@@ -829,4 +829,5 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="search_result">Résultats de recherche</string>
 <string name="filter_field_summary">Appliquer le filtre à</string>
 <string name="channel_videos">Vidéos de la chaîne</string>
+<string name="success">Succès</string>
 </resources>

@@ -985,4 +985,5 @@
 <string name="search_result">Search results</string>
 <string name="filter_field_summary">Apply Filter To</string>
 <string name="channel_videos">Channel videos</string>
+<string name="success">Success</string>
 </resources>

@@ -3,6 +3,7 @@ package org.schabi.newpipe.settings;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Toast;
 import androidx.preference.Preference;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.util.ServiceHelper;
@@ -68,6 +69,8 @@ public class YouTubeAccountSettingsFragment extends BasePreferenceFragment imple
             // save cookies to shared preferences
             defaultPreferences.edit().putString(getString(R.string.youtube_cookies_key), cookies).apply();
             ServiceHelper.initServices(this.getContext());
+            Toast.makeText(requireContext(), R.string.success, Toast.LENGTH_SHORT)
+                    .show();
 //            defaultPreferences.edit().putString(getString(R.string.youtube_po_token), pot).apply();
         }
     }

@@ -876,4 +876,5 @@
 <string name="search_result">Suchergebnisse</string>
 <string name="filter_field_summary">Filter anwenden auf</string>
 <string name="channel_videos">Kanalvideos</string>
+<string name="success">Erfolg</string>
 </resources>

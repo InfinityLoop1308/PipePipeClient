@@ -796,4 +796,5 @@
 <string name="search_result">Risultati di ricerca</string>
 <string name="filter_field_summary">Applica filtro a</string>
 <string name="channel_videos">video del canale</string>
+<string name="success">Successo</string>
 </resources>

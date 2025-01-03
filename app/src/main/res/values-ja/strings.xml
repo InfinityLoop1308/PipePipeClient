@@ -924,4 +924,5 @@
 <string name="search_result">検索結果</string>
 <string name="filter_field_summary">フィルターを適用</string>
 <string name="channel_videos">チャンネル動画</string>
+<string name="success">成功</string>
 </resources>

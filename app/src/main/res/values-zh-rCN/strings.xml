@@ -938,4 +938,5 @@
 <string name="search_result">搜索结果</string>
 <string name="filter_field_summary">应用过滤器至</string>
 <string name="channel_videos">频道视频</string>
+<string name="success">成功</string>
 </resources>

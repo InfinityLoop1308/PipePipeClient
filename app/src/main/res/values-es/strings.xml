@@ -878,4 +878,5 @@ Debe aceptarla para enviarnos el informe de errores.</string>
 <string name="search_result">Resultados de búsqueda</string>
 <string name="filter_field_summary">Aplicar filtro a</string>
 <string name="channel_videos">Videos del canal</string>
+<string name="success">Éxito</string>
 </resources>
