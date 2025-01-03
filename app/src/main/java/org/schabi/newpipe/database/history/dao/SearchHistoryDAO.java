@@ -49,4 +49,10 @@ public interface SearchHistoryDAO extends HistoryDAO<SearchHistoryEntry> {
     @Query("SELECT " + SEARCH + " FROM " + TABLE_NAME + " WHERE " + SEARCH + " LIKE :query || '%'"
             + " GROUP BY " + SEARCH + ORDER_BY_MAX_CREATION_DATE + " LIMIT :limit")
     Flowable<List<String>> getSimilarEntries(String query, int limit);
+
+    @Query("SELECT * FROM " + TABLE_NAME
+            + " WHERE " + SEARCH + " = :search"
+            + " LIMIT 1")
+    @Nullable
+    SearchHistoryEntry findBySearch(String search);
 }

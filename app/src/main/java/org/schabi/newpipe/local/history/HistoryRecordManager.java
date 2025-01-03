@@ -223,10 +223,11 @@ public class HistoryRecordManager {
         final SearchHistoryEntry newEntry = new SearchHistoryEntry(currentTime, serviceId, search);
 
         return Maybe.fromCallable(() -> database.runInTransaction(() -> {
-            final SearchHistoryEntry latestEntry = searchHistoryTable.getLatestEntry();
-            if (latestEntry != null && latestEntry.hasEqualValues(newEntry)) {
-                latestEntry.setCreationDate(currentTime);
-                return (long) searchHistoryTable.update(latestEntry);
+            // Check for any matching entry by search term only
+            final SearchHistoryEntry existingEntry = searchHistoryTable.findBySearch(search);
+            if (existingEntry != null) {
+                existingEntry.setCreationDate(currentTime);
+                return (long) searchHistoryTable.update(existingEntry);
             } else {
                 return searchHistoryTable.insert(newEntry);
             }
