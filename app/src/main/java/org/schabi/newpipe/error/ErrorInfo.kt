@@ -100,7 +100,12 @@ class ErrorInfo(
         private fun getInfoServiceName(info: Info?) =
             if (info == null) SERVICE_NONE else getServiceNameFromId(info.serviceId)
 
-        private fun getServiceNameFromId(serviceId: Int) = NewPipe.getNameOfService(serviceId) + " (" + (if (ServiceList.all()[serviceId].hasTokens()) "Logged in" else "Anonymous") + ")"
+        private fun getServiceNameFromId(serviceId: Int) = NewPipe.getNameOfService(serviceId) +
+                if (serviceId != -1) {
+                    " (" + (if (ServiceList.all()[serviceId].hasTokens()) "Logged in" else "Anonymous") + ")"
+                } else {
+                    ""
+                }
 
         @StringRes
         private fun getMessageStringId(
