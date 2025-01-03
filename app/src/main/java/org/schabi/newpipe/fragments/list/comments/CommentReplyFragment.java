@@ -63,14 +63,9 @@ public class CommentReplyFragment extends BaseFragment implements BackPressable 
                 false);
         final ImageButton backButton = view.findViewById(R.id.backButton);
         backButton.setOnClickListener(v -> closeSelf());
-        final CommentsFragment commentsFragment = CommentsFragment.getInstance(
-                serviceId, url, name, comment
-        );
         final CommentsFragment commentsReplyFragment = CommentsFragment.getInstance(
                 serviceId, url, name, replies
         );
-        getChildFragmentManager().beginTransaction()
-                .add(R.id.commentFragment, commentsFragment).commit();
         getChildFragmentManager().beginTransaction()
                 .add(R.id.commentReplyFragment, commentsReplyFragment).commit();
         return view;
