@@ -147,7 +147,7 @@ public final class PicassoHelper {
     }
 
     public static RequestCreator loadBanner(final String url) {
-        return loadImageDefault(url, R.drawable.channel_banner).transform(transformation);
+        return loadImageDefault(url, R.drawable.channel_banner);
     }
 
     public static RequestCreator loadPlaylistThumbnail(final String url) {
