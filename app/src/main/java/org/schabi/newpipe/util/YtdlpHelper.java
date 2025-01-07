@@ -84,10 +84,10 @@ public class YtdlpHelper {
                     itag.setCodec(videoFormat.getAcodec());
                     itag.setBitrate(videoFormat.getTbr());
                     itag.setSampleRate(videoFormat.getAsr());
-                    itag.setInitStart(-1);
-                    itag.setInitEnd(-1);
-                    itag.setIndexStart(-1);
-                    itag.setIndexEnd(-1);
+                    itag.setInitStart((int) videoFormat.getInitRange().getBegin());
+                    itag.setInitEnd((int) videoFormat.getInitRange().getEnd());
+                    itag.setIndexStart((int) videoFormat.getIndexRange().getBegin());
+                    itag.setIndexStart((int) videoFormat.getIndexRange().getEnd());
 
                     audioStreams.add(new AudioStream.Builder().setId(originStreamInfo.getId())
                             .setContent(videoFormat.getUrl(), true)
@@ -99,10 +99,10 @@ public class YtdlpHelper {
                     itag.setBitrate(videoFormat.getTbr());
                     itag.setWidth(videoFormat.getWidth());
                     itag.setHeight(videoFormat.getHeight());
-                    itag.setInitStart(-1);
-                    itag.setInitEnd(-1);
-                    itag.setIndexStart(-1);
-                    itag.setIndexEnd(-1);
+                    itag.setInitStart((int) videoFormat.getInitRange().getBegin());
+                    itag.setInitEnd((int) videoFormat.getInitRange().getEnd());
+                    itag.setIndexStart((int) videoFormat.getIndexRange().getBegin());
+                    itag.setIndexStart((int) videoFormat.getIndexRange().getEnd());
                     String resolution = videoFormat.getFormatNote();
                     if (resolution == null) {
                         resolution = videoFormat.getHeight() + "p";
@@ -117,10 +117,10 @@ public class YtdlpHelper {
                     itag.setBitrate(videoFormat.getTbr());
                     itag.setWidth(videoFormat.getWidth());
                     itag.setHeight(videoFormat.getHeight());
-                    itag.setInitStart(-1);
-                    itag.setInitEnd(-1);
-                    itag.setIndexStart(-1);
-                    itag.setIndexEnd(-1);
+                    itag.setInitStart((int) videoFormat.getInitRange().getBegin());
+                    itag.setInitEnd((int) videoFormat.getInitRange().getEnd());
+                    itag.setIndexStart((int) videoFormat.getIndexRange().getBegin());
+                    itag.setIndexStart((int) videoFormat.getIndexRange().getEnd());
                     String resolution = videoFormat.getFormatNote();
                     if (resolution == null) {
                         resolution = videoFormat.getHeight() + "p";

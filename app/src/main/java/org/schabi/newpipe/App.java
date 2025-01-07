@@ -104,7 +104,7 @@ public class App extends MultiDexApplication {
             YtdlpHelper.cookieFile = getCacheDir() + "/cookies.youtube.txt";
             Thread t = new Thread(() -> {
                 try {
-                    YoutubeDL.getInstance().updateYoutubeDL(this, YoutubeDL.UpdateChannel._NIGHTLY);
+                    YoutubeDL.getInstance().updateYoutubeDL(this, YoutubeDL.UpdateChannel._STABLE);
                 } catch (Exception e) {
                     Log.e(TAG, "failed to update youtubedl-android", e);
                 }

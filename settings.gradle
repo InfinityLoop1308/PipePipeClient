@@ -9,3 +9,9 @@ includeBuild('../PipePipeExtractor') {
         substitute module('com.github.TeamNewPipe:NewPipeExtractor') using project(':extractor')
     }
 }
+
+includeBuild('../youtubedl-android') {
+    dependencySubstitution {
+        substitute module('io.github.junkfood02.youtubedl-android:library') with project(':library')
+    }
+}
