@@ -1592,6 +1592,10 @@
     </string-array>
     <string name="filter_type_key">filter_type_key</string>
     <string name="filter_by_channel_key">filter_by_channel_key</string>
+    <string name="proxy_token_key">proxy_token_key</string>
+    <string name="enable_proxy_key">enable_proxy_key</string>
+    <string name="check_token_validity_key">check_token_validity_key</string>
+    <string name="donation_encouragement_key">donation_encouragement_key</string>
     <string-array name="filter_type_entries">
         <item>@string/search_result</item>
         <item>@string/recommended_videos</item>

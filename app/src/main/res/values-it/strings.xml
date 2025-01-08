@@ -180,7 +180,7 @@
 <string name="youtube_restricted_mode_enabled_title">Attiva la "Modalità Restrizione" di YouTube</string>
 <string name="youtube_restricted_mode_enabled_summary">YouTube fornisce una "Modalità Restrizione" che nasconde contenuti potenzialmente maturi</string>
 <string name="restricted_video">Questo video è limitato per età.\n\nAttiva "%1$s" nelle impostazioni se vuoi vederlo.</string>
-<string name="restricted_video_no_stream_new">Questo video è limitato per età. \nAccedi se vuoi vederlo.</string>
+<string name="restricted_video_no_stream_new">Questo video è soggetto a restrizioni di età. \nUsa il nostro proxy o accedi tramite Impostazioni se vuoi vederlo.</string>
 <string name="duration_live">Live</string>
 <string name="downloads">Download</string>
 <string name="downloads_title">Download</string>
@@ -783,13 +783,13 @@
 <string name="settings_category_bullet_comments_summary">Impostazioni dei commenti a proiettile</string>
 <string name="settings_category_backup_title">Backup</string>
 <string name="settings_category_advanced_title">Avanzate</string>
-<string name="not_login">Questo contenuto richiede un account per la visualizzazione. Accedi tramite Impostazioni per continuare.</string>
+<string name="not_login">Questo contenuto richiede un account per essere visualizzato. Usa il nostro proxy o accedi tramite Impostazioni per continuare.</string>
 <string name="advanced_formats_summary">Se il tuo dispositivo ha supporto, abilitare i formati avanzati può ridurre il consumo di dati e migliorare la qualità dell\'immagine.</string>
 <string name="advanced_formats_title">Abilita formati avanzati</string>
 <string name="preferred_audio_language_title">Lingua audio preferita</string>
 <string name="comments_inner_scroll_title">Commenti allo scorrimento interno</string>
 <string name="comments_inner_scroll_summary">Rendi la posizione del video fissa durante lo scorrimento dei commenti</string>
-<string name="ip_blocked_summary">Il tuo IP è bloccato da YouTube. Accedi attraverso Impostazioni per continuare.</string>
+<string name="ip_blocked_summary">Il tuo IP è bloccato da YouTube. Usa il nostro proxy o accedi tramite Impostazioni per continuare.</string>
 <string name="settings_category_filter_title">Filtro dei contenuti</string>
 <string name="filter_by_keyword_title">Filtra per parole chiave</string>
 <string name="filter_by_keyword_summary">Aggiungi qui le parole chiave che vuoi bloccare, separate da virgole</string>
@@ -797,4 +797,13 @@
 <string name="filter_field_summary">Applica filtro a</string>
 <string name="channel_videos">video del canale</string>
 <string name="success">Successo</string>
+<string name="settings_category_proxy_title">Proxy (Sostenitori)</string>
+<string name="proxy_token_title">Valore</string>
+<string name="proxy_token_summary">Incolla qui il tuo token. Puoi ottenere il tuo token tramite una donazione su Ko-fi.</string>
+<string name="enable_proxy_title">Abilita Proxy</string>
+<string name="enable_proxy_summary">Bypassa il blocco IP di YouTube e le restrizioni di età senza accesso</string>
+<string name="check_token_validity">Controlla la validità del token</string>
+<string name="valid_until">Valido fino</string>
+<string name="token_expired">Token scaduto</string>
+<string name="subscription_kofi_title">Diventa un sostenitore su Ko-fi</string>
 </resources>

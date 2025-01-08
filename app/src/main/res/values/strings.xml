@@ -184,7 +184,7 @@
 <string name="youtube_restricted_mode_enabled_title">Turn on YouTube\'s \"Restricted Mode\"</string>
 <string name="youtube_restricted_mode_enabled_summary">YouTube provides a \"Restricted Mode\" which hides potentially mature content</string>
 <string name="restricted_video">This video is age restricted.\n\nTurn on \"%1$s\" in the settings if you want to see it.</string>
-<string name="restricted_video_no_stream_new">This video is age-restricted. \nSign in if you want to see it.</string>
+<string name="restricted_video_no_stream_new">This video is age-restricted. \nUse our proxy or log in through Settings if you want to see it.</string>
 <string name="duration_live">Live</string>
 <string name="downloads">Downloads</string>
 <string name="downloads_title">Downloads</string>
@@ -970,13 +970,13 @@
 <string name="settings_category_bullet_comments_summary">Bullet Comment Settings</string>
 <string name="settings_category_backup_title">Backup</string>
 <string name="settings_category_advanced_title">Advanced</string>
-<string name="not_login">This content requires an account to view. Log in through Settings to continue.</string>
+<string name="not_login">This content requires an account to view. Use our proxy or log in through Settings to continue.</string>
 <string name="advanced_formats_summary">If your device has support, enabling advanced formats can reduce data consumption and improve image quality.</string>
 <string name="advanced_formats_title">Enable advanced formats</string>
 <string name="preferred_audio_language_title">Preferred audio language</string>
 <string name="comments_inner_scroll_title">Comments inner scroll</string>
 <string name="comments_inner_scroll_summary">Make video position fixed when scrolling comments</string>
-<string name="ip_blocked_summary">Your IP is blocked by YouTube. Log in through Settings to continue.</string>
+<string name="ip_blocked_summary">Your IP is blocked by YouTube. Use our proxy or log in through Settings to continue.</string>
 <string name="settings_category_filter_title">Content Filter</string>
 <string name="filter_by_keyword_title">Filter by keywords</string>
 <string name="filter_by_channel_title">Filter by channels</string>
@@ -986,4 +986,13 @@
 <string name="filter_field_summary">Apply Filter To</string>
 <string name="channel_videos">Channel videos</string>
 <string name="success">Success</string>
+<string name="settings_category_proxy_title">Proxy (Supporters)</string>
+<string name="proxy_token_title">Token</string>
+<string name="proxy_token_summary">Paste your token here. You can get your token through a Ko-fi donation.</string>
+<string name="enable_proxy_title">Enable Proxy</string>
+<string name="enable_proxy_summary">Bypass YouTube IP blocking &amp; age restrictions without login</string>
+<string name="check_token_validity">Check token validity</string>
+<string name="valid_until">Valid until</string>
+<string name="token_expired">Token expired</string>
+<string name="subscription_kofi_title">Become a supporter on Ko-fi</string>
 </resources>

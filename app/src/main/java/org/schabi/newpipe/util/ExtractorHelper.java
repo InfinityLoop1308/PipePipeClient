@@ -135,6 +135,9 @@ public final class ExtractorHelper {
             if (serviceId != ServiceList.YouTube.getServiceId()) {
                 throw new ExtractionException(e);
             }
+            if (ServiceList.YouTube.getProxyEnabled()) {
+                throw new ExtractionException(e);
+            }
         }
 
         if (serviceId != ServiceList.YouTube.getServiceId()) {
@@ -145,22 +148,31 @@ public final class ExtractorHelper {
             return result;
         }
 
-        StreamInfo fallbackInfo = YtdlpHelper.getFallbackStreams(url);
+        StreamInfo fallbackInfo = YtdlpHelper.getFallbackStreams(url, result.getExtraData());
         if(fallbackInfo.getAudioStreams().size() == 0 && fallbackInfo.getVideoStreams().size() == 0) {
             Log.e(TAG, "Couldn't get fallback streams for " + url);
             return result;
         }
-        if (result != null) {
-            if(result.getStreamType() == StreamType.LIVE_STREAM) {
-                result.setHlsUrl(fallbackInfo.getVideoStreams().get(fallbackInfo.getVideoStreams().size() - 1).getContent());
-            }
-            result.setAudioStreams(fallbackInfo.getAudioStreams());
-            result.setVideoStreams(fallbackInfo.getVideoStreams());
-            result.setVideoOnlyStreams(fallbackInfo.getVideoOnlyStreams());
-            return result;
-        } else {
-            return fallbackInfo;
-        }
+        result.setSupportComments(fallbackInfo.isSupportComments());
+        result.setStreamType(fallbackInfo.getStreamType());
+        result.setName(fallbackInfo.getName());
+        result.setAgeLimit(fallbackInfo.getAgeLimit());
+        result.setThumbnailUrl(fallbackInfo.getThumbnailUrl());
+        result.setDuration(fallbackInfo.getDuration());
+        result.setUploaderName(fallbackInfo.getUploaderName());
+        result.setUploaderUrl(fallbackInfo.getUploaderUrl());
+        result.setDescription(fallbackInfo.getDescription());
+        result.setDislikeCount(fallbackInfo.getDislikeCount());
+        result.setTags(fallbackInfo.getTags());
+        result.setCategory(fallbackInfo.getCategory());
+        result.setLikeCount(fallbackInfo.getLikeCount());
+        result.setUploadDate(fallbackInfo.getUploadDate());
+        result.setViewCount(fallbackInfo.getViewCount());
+        result.setAudioStreams(fallbackInfo.getAudioStreams());
+        result.setVideoStreams(fallbackInfo.getVideoStreams());
+        result.setVideoOnlyStreams(fallbackInfo.getVideoOnlyStreams());
+        result.setHlsUrl(fallbackInfo.getHlsUrl());
+        return result;
     }
 
     public static Single<StreamInfo> getStreamInfoWithoutException(final int serviceId, final String url,

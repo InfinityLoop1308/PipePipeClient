@@ -180,7 +180,7 @@
 <string name="youtube_restricted_mode_enabled_title">Activer le "Mode restreint" de YouTube</string>
 <string name="youtube_restricted_mode_enabled_summary">YouTube propose un "Mode restreint" qui masque le contenu potentiellement mature</string>
 <string name="restricted_video">Cette vidéo est soumise à une restriction d\'âge.\n\nActivez "%1$s" dans les paramètres si vous souhaitez la voir.</string>
-<string name="restricted_video_no_stream_new">Cette vidéo est soumise à une restriction d\'âge. \nConnectez-vous si vous souhaitez la voir.</string>
+<string name="restricted_video_no_stream_new">Cette vidéo est soumise à une limite d\'âge. \nUtilisez notre proxy ou connectez-vous via Paramètres si vous souhaitez la voir.</string>
 <string name="duration_live">En direct</string>
 <string name="downloads">Téléchargements</string>
 <string name="downloads_title">Téléchargements</string>
@@ -816,13 +816,13 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="settings_category_bullet_comments_summary">Paramètres des commentaires en rafale</string>
 <string name="settings_category_backup_title">Sauvegarde</string>
 <string name="settings_category_advanced_title">Avancé</string>
-<string name="not_login">Ce contenu nécessite un compte pour être consulté. Connectez-vous via Paramètres pour continuer.</string>
+<string name="not_login">Ce contenu nécessite un compte pour être vu. Utilisez notre proxy ou connectez-vous via les paramètres pour continuer.</string>
 <string name="advanced_formats_summary">Si votre appareil est compatible, l\'activation des formats avancés peut réduire la consommation de données et améliorer la qualité de l\'image.</string>
 <string name="advanced_formats_title">Activer les formats avancés</string>
 <string name="preferred_audio_language_title">Langue audio préférée</string>
 <string name="comments_inner_scroll_title">Défilement intérieur des commentaires</string>
 <string name="comments_inner_scroll_summary">Rendre le positionnement de la vidéo fixe lors du défilement des commentaires</string>
-<string name="ip_blocked_summary">Votre IP est bloquée par YouTube. Connectez-vous via les paramètres pour continuer.</string>
+<string name="ip_blocked_summary">Votre IP est bloquée par YouTube. Utilisez notre proxy ou connectez-vous via Paramètres pour continuer.</string>
 <string name="settings_category_filter_title">Filtre de contenu</string>
 <string name="filter_by_keyword_title">Filtrer par mots-clés</string>
 <string name="filter_by_keyword_summary">Ajoutez ici les mots-clés que vous souhaitez bloquer, séparés par des virgules</string>
@@ -830,4 +830,13 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="filter_field_summary">Appliquer le filtre à</string>
 <string name="channel_videos">Vidéos de la chaîne</string>
 <string name="success">Succès</string>
+<string name="settings_category_proxy_title">Proxy (Supporters)</string>
+<string name="proxy_token_title">Jeton</string>
+<string name="proxy_token_summary">Collez votre jeton ici. Vous pouvez obtenir votre jeton grâce à un don sur Ko-fi.</string>
+<string name="enable_proxy_title">Activer le proxy</string>
+<string name="enable_proxy_summary">Contourner le blocage IP de YouTube et les restrictions d\'âge sans se connecter</string>
+<string name="check_token_validity">Vérifier la validité du jeton</string>
+<string name="valid_until">Valide jusqu\'au</string>
+<string name="token_expired">Le jeton a expiré</string>
+<string name="subscription_kofi_title">Devenez un supporter sur Ko-fi</string>
 </resources>

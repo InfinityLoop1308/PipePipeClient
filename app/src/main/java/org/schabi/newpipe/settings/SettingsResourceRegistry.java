@@ -49,6 +49,7 @@ public final class SettingsResourceRegistry {
         add(SponsorBlockSettingsFragment.class, R.xml.sponsor_block_settings);
         add(SponsorBlockCategoriesSettingsFragment.class, R.xml.sponsor_block_category_settings);
         add(FilterSettingsFragment.class, R.xml.filter_settings);
+        add(ProxySettingsFragment.class, R.xml.proxy_settings);
     }
 
     private SettingRegistryEntry add(
