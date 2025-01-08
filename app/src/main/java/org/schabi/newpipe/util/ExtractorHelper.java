@@ -148,7 +148,7 @@ public final class ExtractorHelper {
             return result;
         }
 
-        StreamInfo fallbackInfo = YtdlpHelper.getFallbackStreams(url, result.getExtraData());
+        StreamInfo fallbackInfo = YtdlpHelper.getFallbackStreams(url, result == null ? null:result.getExtraData());
         if(fallbackInfo.getAudioStreams().size() == 0 && fallbackInfo.getVideoStreams().size() == 0) {
             Log.e(TAG, "Couldn't get fallback streams for " + url);
             return result;
