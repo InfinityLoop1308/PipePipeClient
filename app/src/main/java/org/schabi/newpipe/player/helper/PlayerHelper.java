@@ -281,13 +281,6 @@ public final class PlayerHelper {
             }
         }
 
-        if (relatedItems.get(0) instanceof StreamInfoItem
-                && !urls.contains(relatedItems.get(0).getUrl())) {
-            if(!dontAutoQueueLong || ((StreamInfoItem) relatedItems.get(0)).getDuration() < 360){
-                return getAutoQueuedSinglePlayQueue((StreamInfoItem) relatedItems.get(0));
-            }
-        }
-
         final List<StreamInfoItem> autoQueueItems = new ArrayList<>();
         for (final InfoItem item : relatedItems) {
             if (item instanceof StreamInfoItem && !urls.contains(item.getUrl())) {
