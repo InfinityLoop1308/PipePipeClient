@@ -26,6 +26,7 @@ import static org.schabi.newpipe.extractor.localization.Localization.getEnglishN
 public class YtdlpHelper {
     private static final ConcurrentHashMap<String, ReentrantLock> locks = new ConcurrentHashMap<>();
     public static String cookieFile;
+    public static boolean noCheckCert = false;
     public static StreamInfo getFallbackStreams(final String url, final JSONObject infoData) throws IOException, ExtractionException {
         ReentrantLock lock = locks.computeIfAbsent(url, k -> new ReentrantLock());
         if (!lock.tryLock()) {
@@ -39,6 +40,9 @@ public class YtdlpHelper {
                 YoutubeDLRequest request = new YoutubeDLRequest(url);
                 request.addOption("--extractor-args", "youtube:player_client=default,-ios");
                 request.addOption("--cookies", cookieFile);
+                if (noCheckCert) {
+                    request.addOption("--no-check-certificate");
+                }
                 VideoInfo originStreamInfo = YoutubeDL.getInstance().getInfo(request);
                 streamInfo = parseInfo(originStreamInfo, url);
             } else {

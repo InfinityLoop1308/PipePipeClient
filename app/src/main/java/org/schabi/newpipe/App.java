@@ -40,6 +40,8 @@ import io.reactivex.rxjava3.exceptions.UndeliverableException;
 import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.plugins.RxJavaPlugins;
 
+import static org.schabi.newpipe.MainActivity.DEBUG;
+
 /*
  * Copyright (C) Hans-Christoph Steiner 2016 <hans@eds.org>
  * App.java is part of NewPipe.
@@ -111,6 +113,9 @@ public class App extends MultiDexApplication {
             });
             t.start();
             Log.i(TAG, "youtubedl-android version: " + YoutubeDL.getInstance().version(this));
+            if (DEBUG) {
+                YtdlpHelper.noCheckCert = true;
+            }
         } catch (Exception e) {
             Log.e(TAG, "failed to initialize youtubedl-android", e);
         }
@@ -120,10 +125,10 @@ public class App extends MultiDexApplication {
         PicassoHelper.init(this);
         PicassoHelper.setShouldLoadImages(
                 prefs.getBoolean(getString(R.string.download_thumbnail_key), true));
-        PicassoHelper.setIndicatorsEnabled(MainActivity.DEBUG
+        PicassoHelper.setIndicatorsEnabled(DEBUG
                 && prefs.getBoolean(getString(R.string.show_image_indicators_key), false));
 
-        if (MainActivity.DEBUG) {
+        if (DEBUG) {
             YoutubeParsingHelper.setVisitorData(
                     prefs.getString(getString(R.string.youtube_visitor_data), null));
         }
