@@ -230,7 +230,11 @@ public final class DownloaderImpl extends Downloader {
         OkHttpClient tmpClient = client;
         okhttp3.Response response = null;
 
-        if (customTimeout != null) {
+        if(url.contains("pipepipe.dev")) {
+            tmpClient = new OkHttpClient.Builder()
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .build();
+        } else if (customTimeout != null) {
             tmpClient = new OkHttpClient.Builder()
                     .readTimeout(customTimeout, TimeUnit.SECONDS)
                     .build();
