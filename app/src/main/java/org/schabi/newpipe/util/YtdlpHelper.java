@@ -104,30 +104,48 @@ public class YtdlpHelper {
                     }
 
                 }
+                MediaFormat format = videoFormat.getAcodec().equals("opus")?MediaFormat.WEBMA_OPUS:MediaFormat.getFromSuffix(videoFormat.getExt());
                 ItagItem itag = new ItagItem(Integer.parseInt(videoFormat.getFormatId().split("-")[0]), ItagItem.ItagType.AUDIO,
-                        MediaFormat.getFromSuffix(videoFormat.getExt()), videoFormat.getTbr());
+                       format, videoFormat.getTbr());
                 itag.setCodec(videoFormat.getAcodec());
                 itag.setBitrate(videoFormat.getTbr());
                 itag.setSampleRate(videoFormat.getAsr());
-                itag.setInitStart((int) videoFormat.getInitRange().getBegin());
-                itag.setInitEnd((int) videoFormat.getInitRange().getEnd());
-                itag.setIndexStart((int) videoFormat.getIndexRange().getBegin());
-                itag.setIndexStart((int) videoFormat.getIndexRange().getEnd());
+                try {
+                    itag.setInitStart((int) videoFormat.getInitRange().getBegin());
+                    itag.setInitEnd((int) videoFormat.getInitRange().getEnd());
+                    itag.setIndexStart((int) videoFormat.getIndexRange().getBegin());
+                    itag.setIndexEnd((int) videoFormat.getIndexRange().getEnd());
+                } catch (Exception e) {
+                    itag.setInitStart(-1);
+                    itag.setInitEnd(-1);
+                    itag.setIndexStart(-1);
+                    itag.setIndexEnd(-1);
+                    e.printStackTrace();
+                }
 
-                audioStreams.add(new AudioStream.Builder().setId(originStreamInfo.getId())
+                audioStreams.add(new AudioStream.Builder().setId(originStreamInfo.getId() + UUID.randomUUID().toString().replaceAll("[^a-zA-Z]", ""))
                         .setContent(videoFormat.getUrl(), true)
                         .setItagItem(itag)
-                        .setMediaFormat(MediaFormat.getFromSuffix(videoFormat.getExt())).setAverageBitrate(videoFormat.getTbr()).build());
+                        .setMediaFormat(format).setAverageBitrate(videoFormat.getTbr()).build());
+                Collections.sort(audioStreams, Comparator.comparingInt(AudioStream::getBitrate).reversed());
             } else if (Objects.equals(videoFormat.getAcodec(), "none")) {
                 ItagItem itag = new ItagItem(Integer.parseInt(videoFormat.getFormatId().split("-")[0]), ItagItem.ItagType.VIDEO_ONLY, MediaFormat.getFromSuffix(videoFormat.getExt()), videoFormat.getFormatNote(), videoFormat.getFps());
                 itag.setCodec(videoFormat.getVcodec());
                 itag.setBitrate(videoFormat.getTbr());
                 itag.setWidth(videoFormat.getWidth());
                 itag.setHeight(videoFormat.getHeight());
-                itag.setInitStart((int) videoFormat.getInitRange().getBegin());
-                itag.setInitEnd((int) videoFormat.getInitRange().getEnd());
-                itag.setIndexStart((int) videoFormat.getIndexRange().getBegin());
-                itag.setIndexStart((int) videoFormat.getIndexRange().getEnd());
+                try {
+                    itag.setInitStart((int) videoFormat.getInitRange().getBegin());
+                    itag.setInitEnd((int) videoFormat.getInitRange().getEnd());
+                    itag.setIndexStart((int) videoFormat.getIndexRange().getBegin());
+                    itag.setIndexEnd((int) videoFormat.getIndexRange().getEnd());
+                } catch (Exception e) {
+                    itag.setInitStart(-1);
+                    itag.setInitEnd(-1);
+                    itag.setIndexStart(-1);
+                    itag.setIndexEnd(-1);
+                    e.printStackTrace();
+                }
                 String resolution = videoFormat.getFormatNote();
                 if (resolution == null) {
                     resolution = videoFormat.getHeight() + "p";
@@ -146,8 +164,12 @@ public class YtdlpHelper {
                     itag.setInitStart((int) videoFormat.getInitRange().getBegin());
                     itag.setInitEnd((int) videoFormat.getInitRange().getEnd());
                     itag.setIndexStart((int) videoFormat.getIndexRange().getBegin());
-                    itag.setIndexStart((int) videoFormat.getIndexRange().getEnd());
+                    itag.setIndexEnd((int) videoFormat.getIndexRange().getEnd());
                 } catch (Exception e) {
+                    itag.setInitStart(-1);
+                    itag.setInitEnd(-1);
+                    itag.setIndexStart(-1);
+                    itag.setIndexEnd(-1);
                     e.printStackTrace();
                 }
 
@@ -158,7 +180,7 @@ public class YtdlpHelper {
                 videoStreams.add(new VideoStream.Builder().setContent(videoFormat.getUrl(), true)
                         .setMediaFormat(MediaFormat.getFromSuffix(videoFormat.getExt())).setId(originStreamInfo.getId())
                         .setItagItem(itag)
-                        .setIsVideoOnly(true).setResolution(resolution).build());
+                        .setIsVideoOnly(false).setResolution(resolution).build());
             }
         }
         streamInfo.setSupportComments(true);

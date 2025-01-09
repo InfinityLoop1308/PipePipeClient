@@ -153,6 +153,9 @@ public final class ExtractorHelper {
             Log.e(TAG, "Couldn't get fallback streams for " + url);
             return result;
         }
+        if (result == null) {
+            result = fallbackInfo;
+        }
         result.setSupportComments(fallbackInfo.isSupportComments());
         result.setStreamType(fallbackInfo.getStreamType());
         result.setName(fallbackInfo.getName());

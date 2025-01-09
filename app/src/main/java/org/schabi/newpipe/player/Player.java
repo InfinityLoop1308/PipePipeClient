@@ -2971,7 +2971,7 @@ public final class Player implements
                 }
                 break;
             case ERROR_CODE_IO_UNSPECIFIED:
-                if (error.getCause().getMessage().contains("403")) {
+                if (error.getCause().getMessage() != null && error.getCause().getMessage().contains("403")) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity())
                             .setTitle(R.string.network_error)
                             .setMessage(R.string.ip_blocked_summary)
