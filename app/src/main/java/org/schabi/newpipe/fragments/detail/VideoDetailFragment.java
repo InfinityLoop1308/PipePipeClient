@@ -338,12 +338,12 @@ public final class VideoDetailFragment
 
         setupBrightness();
 
-        if (tabSettingsChanged) {
-            tabSettingsChanged = false;
-            initTabs();
-            if (currentInfo != null) {
-                updateTabs(currentInfo);
+        if (currentInfo != null) {
+            if (tabSettingsChanged) {
+                tabSettingsChanged = false;
+                initTabs();
             }
+            updateTabs(currentInfo);
         }
 
         // Check if it was loading when the fragment was stopped/paused
