@@ -1,9 +1,6 @@
 package org.schabi.newpipe.local.playlist;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
-import android.content.DialogInterface;
+import android.content.*;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Editable;
@@ -199,17 +196,17 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                 if (selectedItem instanceof PlaylistStreamEntry) {
                     final StreamEntity item =
                             ((PlaylistStreamEntry) selectedItem).getStreamEntity();
-                    NavigationHelper.openVideoDetailFragment(requireContext(), getFM(),
-                            item.getServiceId(), item.getUrl(), item.getTitle(), null, false);
-                    if (!autoBackgroundPlaying){
-                        return;
+                    if (autoBackgroundPlaying){
+                        final PlayQueue temp = getPlayQueue();
+                        temp.setIndex(utils.getIndexInQueue((PlaylistStreamEntry) selectedItem, temp, itemListAdapter.sortMode));
+                        if (randomBackgroundPlaying){
+                            temp.shuffle();
+                        }
+                        NavigationHelper.playOnBackgroundPlayer(activity, temp, false);
+                    } else {
+                        NavigationHelper.openVideoDetailFragment(requireContext(), getFM(),
+                                item.getServiceId(), item.getUrl(), item.getTitle(), null, false);
                     }
-                    final PlayQueue temp = getPlayQueue();
-                    temp.setIndex(utils.getIndexInQueue((PlaylistStreamEntry) selectedItem, temp, itemListAdapter.sortMode));
-                    if (randomBackgroundPlaying){
-                        temp.shuffle();
-                    }
-                    NavigationHelper.playOnBackgroundPlayer(activity, temp, false);
                 }
             }
 
@@ -982,6 +979,13 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                     StreamDialogDefaultEntry.DELETE
             );
 
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
+                    requireContext());
+            if (prefs.getBoolean(getString(R.string.auto_background_play_key), false)) {
+                dialogBuilder.addEntry(StreamDialogDefaultEntry.SHOW_STREAM_DETAILS);
+            }
+
+
             if(itemListAdapter.isFilterEnabled) {
                 dialogBuilder.addEntry(StreamDialogDefaultEntry.NAVIGATE_TO);
             }
@@ -1006,6 +1010,10 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                                 destroyCustomViewInActionBar();
                                 itemsList.smoothScrollToPosition(utils.getIndexInQueue(item, getPlayQueue(), itemListAdapter.sortMode) + 1);
                             })
+                    .setAction(
+                            StreamDialogDefaultEntry.SHOW_STREAM_DETAILS,
+                            (f, i) -> NavigationHelper.openVideoDetailFragment(requireContext(), getFM(),
+                                    i.getServiceId(), i.getUrl(), i.getName(), null, false))
                     .create()
                     .show();
         } catch (final IllegalArgumentException e) {

@@ -886,4 +886,5 @@
 <string name="valid_until">Gültig bis</string>
 <string name="token_expired">Token abgelaufen</string>
 <string name="subscription_kofi_title">Unterstützer auf Ko-fi werden</string>
+<string name="show_stream_details">Streamdetails anzeigen</string>
 </resources>

@@ -141,6 +141,11 @@ public enum StreamDialogDefaultEntry {
     NAVIGATE_TO(R.string.navigate_to, (fragment, item) -> {
         throw new UnsupportedOperationException("This needs to be implemented manually "
                 + "by using InfoItemDialog.Builder.setAction()");
+    }),
+
+    SHOW_STREAM_DETAILS(R.string.show_stream_details, (fragment, item) -> {
+        throw new UnsupportedOperationException("This needs to be implemented manually "
+                + "by using InfoItemDialog.Builder.setAction()");
     });
 
 

@@ -935,4 +935,5 @@
 <string name="valid_until">有效直到</string>
 <string name="token_expired">令牌已過期</string>
 <string name="subscription_kofi_title">在 Ko-fi 上成為支持者</string>
+<string name="show_stream_details">顯示串流詳細資訊</string>
 </resources>
