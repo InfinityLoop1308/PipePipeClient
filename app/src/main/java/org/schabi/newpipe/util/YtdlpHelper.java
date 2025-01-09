@@ -205,7 +205,6 @@ public class YtdlpHelper {
         streamInfo.setUploaderName(originStreamInfo.getUploader());
         streamInfo.setUploaderUrl("https://www.youtube.com/" + originStreamInfo.getUploaderId());
         streamInfo.setDescription(new Description(originStreamInfo.getDescription(), Description.PLAIN_TEXT));
-        streamInfo.setDislikeCount(Utils.parseLong(originStreamInfo.getDislikeCount()));
         streamInfo.setTags(originStreamInfo.getTags());
         streamInfo.setCategory(originStreamInfo.getCategories() == null ? "" : originStreamInfo.getCategories().get(0));
         streamInfo.setLikeCount(Utils.parseLong(originStreamInfo.getLikeCount()));

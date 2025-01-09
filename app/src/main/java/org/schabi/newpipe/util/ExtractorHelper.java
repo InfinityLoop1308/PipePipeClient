@@ -165,7 +165,6 @@ public final class ExtractorHelper {
         result.setUploaderName(fallbackInfo.getUploaderName());
         result.setUploaderUrl(fallbackInfo.getUploaderUrl());
         result.setDescription(fallbackInfo.getDescription());
-        result.setDislikeCount(fallbackInfo.getDislikeCount());
         result.setTags(fallbackInfo.getTags());
         result.setCategory(fallbackInfo.getCategory());
         result.setLikeCount(fallbackInfo.getLikeCount());
