@@ -174,6 +174,7 @@ public final class ExtractorHelper {
         result.setVideoStreams(fallbackInfo.getVideoStreams());
         result.setVideoOnlyStreams(fallbackInfo.getVideoOnlyStreams());
         result.setHlsUrl(fallbackInfo.getHlsUrl());
+        result.setExtraData(null);
         return result;
     }
 
