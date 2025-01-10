@@ -896,7 +896,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在使用音樂播放器模式時,隨機播放播放清單</string>
-<string name="update_log">### 新功能\n\n- 支持在滚动评论时使视频位置固定\n\n### 错误修复\n\n- 观看视频时出现卡顿和错误（YouTube）\n- 多语言视频的音轨错误（YouTube）\n- 在特定网络条件下无法加载视频信息（YouTube）\n- 专辑没有缩略图（YT Music）\n- 某些热门视频未正确解析（NicoNico）\n\n### 行为变化\n\n- 使用MP4作为默认格式以避免兼容性问题\n- 添加使用高级格式的偏好设置\n- 添加单独的偏好设置以指定首选音频语言\n- 加载时间超过10秒将不再自动取消并抛出错误\n- 加载失败时，视频将不再尝试使用其他分辨率作为后备\n\n### 其他\n\n- 提高稳定性</string>
+<string name="update_log">### 新功能\n\n- 支援內容過濾器：透過關鍵字和頻道名稱過濾掉不想要的項目 \n\n### 錯誤修復\n\n- 視頻無法播放：403 錯誤（YouTube）\n- 切換視頻時隨機崩潰（YouTube）\n- 頻道橫幅圖片模糊（YouTube）\n- 從背景播放回到應用時，新的評論/相關項目/描述未更新\n- 錯誤訊息未正確顯示\n- 當啟用內部滾動時，評論會被截斷\n- 在某些情況下，搜尋詞彙未添加到歷史記錄中\n- 相關項目未隨機自動加入隊列\n- 某些頻道的視頻列表不完整（NicoNico）\n- 無法播放付費視頻（BiliBili）\n\n\n### 行為變更\n\n- 在啟用音樂模式的情況下播放本地播放列表時，不會打開視頻詳細頁面\n- 登錄成功時顯示提示框\n- 使用新的提取方法以避免被 YouTube 屏蔽\n\n\n### 其他\n\n- 提升穩定性\n</string>
 <string name="speeding_playback_title">按住以加快播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這個項目</string>
