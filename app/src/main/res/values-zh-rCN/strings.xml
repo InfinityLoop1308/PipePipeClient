@@ -160,7 +160,7 @@
 <string name="youtube_restricted_mode_enabled_title">打开 YouTube 的“受限模式”</string>
 <string name="youtube_restricted_mode_enabled_summary">YouTube 提供了一种隐藏潜在成人内容的“受限模式”</string>
 <string name="restricted_video">该视频有年龄限制。\n\n如果您想观看，请在设置中打开“%1$s”。</string>
-<string name="restricted_video_no_stream_new">此视频受年龄限制。\n如果您想观看，请使用我们的代理或通过设置登录。</string>
+<string name="restricted_video_no_stream_new">此视频已设置年龄限制。\n如果要观看，请通过设置登录。</string>
 <string name="duration_live">直播</string>
 <string name="downloads">下载</string>
 <string name="downloads_title">下载</string>
@@ -925,13 +925,13 @@
 <string name="settings_category_bullet_comments_summary">弹幕设置</string>
 <string name="settings_category_backup_title">备份</string>
 <string name="settings_category_advanced_title">高级</string>
-<string name="not_login">此内容需要账户才能查看。使用我们的代理或通过设置登录以继续。</string>
+<string name="not_login">此内容需要帐户才能查看。请通过设置登录以继续。</string>
 <string name="advanced_formats_summary">如果您的设备支持，启用高级格式可以减少数据消耗并提高图像质量。</string>
 <string name="advanced_formats_title">启用高级格式</string>
 <string name="preferred_audio_language_title">首选音频语言</string>
 <string name="comments_inner_scroll_title">评论内滚动</string>
 <string name="comments_inner_scroll_summary">在滚动评论时使视频位置固定</string>
-<string name="ip_blocked_summary">你的IP已被YouTube封锁。请使用我们的代理或通过设置登录以继续。</string>
+<string name="ip_blocked_summary">您的IP已被YouTube暂时封锁。\n在一段时间内，您在播放某些视频时会遇到问题。</string>
 <string name="settings_category_filter_title">内容过滤器</string>
 <string name="filter_by_keyword_title">按关键词过滤</string>
 <string name="filter_by_keyword_summary">在此添加您想要屏蔽的关键词，用逗号分隔</string>

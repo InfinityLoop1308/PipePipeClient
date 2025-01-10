@@ -180,7 +180,7 @@
 <string name="youtube_restricted_mode_enabled_title">Activar \"Modo Restringido\" de YouTube</string>
 <string name="youtube_restricted_mode_enabled_summary">YouTube ofrece un \"Modo Restringido\" que oculta contenido potencialmente para adultos</string>
 <string name="restricted_video">Este video tiene restricción de edad.\n\nActiva \"%1$s\" en la configuración si deseas verlo.</string>
-<string name="restricted_video_no_stream_new">Este video tiene restricciones de edad. \nUtiliza nuestro proxy o inicia sesión a través de Configuración si deseas verlo.</string>
+<string name="restricted_video_no_stream_new">Este video tiene restricciones de edad. \nInicia sesión a través de Configuración si quieres verlo.</string>
 <string name="duration_live">En vivo</string>
 <string name="downloads">Descargas</string>
 <string name="downloads_title">Descargas</string>
@@ -865,13 +865,13 @@ Debe aceptarla para enviarnos el informe de errores.</string>
 <string name="settings_category_bullet_comments_summary">Configuración de comentarios de bala</string>
 <string name="settings_category_backup_title">Respaldar</string>
 <string name="settings_category_advanced_title">Avanzado</string>
-<string name="not_login">Este contenido requiere una cuenta para verlo. Utilice nuestro proxy o inicie sesión a través de Configuración para continuar.</string>
+<string name="not_login">Este contenido requiere una cuenta para verlo. Inicia sesión a través de Configuración para continuar.</string>
 <string name="advanced_formats_summary">Si tu dispositivo tiene soporte, habilitar formatos avanzados puede reducir el consumo de datos y mejorar la calidad de la imagen.</string>
 <string name="advanced_formats_title">Habilitar formatos avanzados</string>
 <string name="preferred_audio_language_title">Idioma de audio preferido</string>
 <string name="comments_inner_scroll_title">Comentarios de desplazamiento interno</string>
 <string name="comments_inner_scroll_summary">Hacer que la posición del video sea fija al desplazarse por los comentarios</string>
-<string name="ip_blocked_summary">Su IP está bloqueada por YouTube. Utilice nuestro proxy o inicie sesión a través de Configuración para continuar.</string>
+<string name="ip_blocked_summary">Tu IP ha sido bloqueada temporalmente por YouTube. Durante un período de tiempo, experimentarás problemas al reproducir ciertos videos.</string>
 <string name="settings_category_filter_title">Filtro de Contenido</string>
 <string name="filter_by_keyword_title">Filtrar por palabras clave</string>
 <string name="filter_by_keyword_summary">Agregue las palabras clave que desea bloquear aquí, separadas por comas</string>

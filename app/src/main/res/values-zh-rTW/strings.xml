@@ -564,7 +564,7 @@
 <string name="youtube_music_premium_content_new">此影片僅供 YouTube Music Premium 會員使用，因此無法由 PipePipe 串流或下載。</string>
 <string name="soundcloud_go_plus_content_new">這是 SoundCloud Go+ 的曲目，因此至少在您的國家無法由 PipePipe 串流或下載。</string>
 <string name="georestricted_content">此內容在您所在的國家不可用。</string>
-<string name="restricted_video_no_stream_new">此视频受到年龄限制。\n如果您想观看，请使用我们的代理或通过设置登录。</string>
+<string name="restricted_video_no_stream_new">此影片受年齡限制。\n如需觀看，請通過設置登錄。</string>
 <string name="radio">廣播</string>
 <string name="featured">精選</string>
 <string name="recaptcha_solve">解決</string>
@@ -912,13 +912,13 @@
 <string name="settings_category_bullet_comments_summary">彈幕設定</string>
 <string name="settings_category_backup_title">備份</string>
 <string name="settings_category_advanced_title">進階</string>
-<string name="not_login">此內容需要帳號才能檢視。使用我們的代理或通過設置中的登入以繼續。</string>
+<string name="not_login">此內容需要帳戶才能查看。請通過設置登錄以繼續。</string>
 <string name="advanced_formats_summary">如果您的設備有支持，啟用進階格式可以減少數據使用並改善圖像質量。</string>
 <string name="advanced_formats_title">啟用進階格式</string>
 <string name="preferred_audio_language_title">首選音訊語言</string>
 <string name="comments_inner_scroll_title">評論內部滾動</string>
 <string name="comments_inner_scroll_summary">在捲動評論時讓影片位置固定</string>
-<string name="ip_blocked_summary">YouTube已封鎖您的IP。請使用我們的代理或通過設定進行登入以繼續。</string>
+<string name="ip_blocked_summary">您的 IP 已被 YouTube 暫時封鎖。\n在一段時間內，您在播放某些影片時可能會遇到問題。</string>
 <string name="settings_category_filter_title">內容過濾器</string>
 <string name="filter_by_keyword_title">按關鍵字篩選</string>
 <string name="filter_by_keyword_summary">在這裡添加您想要屏蔽的關鍵字，使用逗號分隔</string>

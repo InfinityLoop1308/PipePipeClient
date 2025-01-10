@@ -184,7 +184,7 @@
 <string name="youtube_restricted_mode_enabled_title">Bật \"Chế độ hạn chế\"</string> của YouTube
     <string name="youtube_restricted_mode_enabled_summary">YouTube cung cấp \"Chế độ hạn chế\" để ẩn nội dung có khả năng dành cho người trưởng thành</string>
 <string name="restricted_video">Băng hình này bị giới hạn độ tuổi.\n\nHãy bật \"%1$s\" trong thiết đặt nếu bạn muốn xem.</string>
-<string name="restricted_video_no_stream_new">Video này bị giới hạn độ tuổi. \nSử dụng proxy của chúng tôi hoặc đăng nhập qua Cài đặt nếu bạn muốn xem nó.</string>
+<string name="restricted_video_no_stream_new">Video này bị giới hạn độ tuổi. \nĐăng nhập qua Cài đặt nếu bạn muốn xem.</string>
 <string name="duration_live">Trực tiếp</string>
 <string name="downloads">Tải xuống</string>
 <string name="downloads_title">Tải xuống</string>
@@ -969,13 +969,13 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="settings_category_bullet_comments_summary">Cài đặt bình luận đạn</string>
 <string name="settings_category_backup_title">Sao lưu</string>
 <string name="settings_category_advanced_title">Nâng cao</string>
-<string name="not_login">Nội dung này yêu cầu có tài khoản để xem. Sử dụng proxy của chúng tôi hoặc đăng nhập qua Cài đặt để tiếp tục.</string>
+<string name="not_login">Nội dung này yêu cầu có tài khoản để xem. Đăng nhập qua Cài đặt để tiếp tục.</string>
 <string name="advanced_formats_summary">Nếu thiết bị của bạn có hỗ trợ, việc kích hoạt các định dạng nâng cao có thể giảm mức tiêu thụ dữ liệu và cải thiện chất lượng hình ảnh.</string>
 <string name="advanced_formats_title">Kích hoạt định dạng nâng cao</string>
 <string name="preferred_audio_language_title">Ngôn ngữ âm thanh ưu tiên</string>
 <string name="comments_inner_scroll_title">Bình luận cuộn bên trong</string>
 <string name="comments_inner_scroll_summary">Làm cho vị trí video cố định khi cuộn bình luận</string>
-<string name="ip_blocked_summary">IP của bạn đã bị YouTube chặn. Sử dụng proxy của chúng tôi hoặc đăng nhập qua Cài đặt để tiếp tục.</string>
+<string name="ip_blocked_summary">IP của bạn đã bị YouTube tạm thời chặn. Trong một khoảng thời gian, bạn sẽ gặp sự cố khi phát một số video nhất định.</string>
 <string name="settings_category_filter_title">Bộ lọc nội dung</string>
 <string name="filter_by_keyword_title">Lọc theo từ khóa</string>
 <string name="filter_by_keyword_summary">Thêm các từ khóa bạn muốn chặn tại đây, cách nhau bằng dấu phẩy</string>

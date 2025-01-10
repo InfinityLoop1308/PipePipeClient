@@ -563,7 +563,7 @@
 <string name="soundcloud_go_plus_content_new">これは SoundCloud Go+ トラックなので、少なくともあなたの国では、PipePipeではストリーミングやダウンロードができません。</string>
 <string name="georestricted_content">このコンテンツは、お住まいの国ではご利用いただけません。</string>
 <string name="crash_the_app">アプリのクラッシュ</string>
-<string name="restricted_video_no_stream_new">このビデオは年齢制限があります。 \n見るには、プロキシを使用するか、[設定]からログインしてください。</string>
+<string name="restricted_video_no_stream_new">この動画は年齢制限があります。\n設定からログインして視聴してください。</string>
 <string name="select_night_theme_toast">以下からお好みの夜間テーマを選択できます</string>
 <string name="auto_device_theme_title">自動 (デバイスのテーマ)</string>
 <string name="night_theme_summary">お好みの夜間テーマを選択 — %s</string>
@@ -911,13 +911,13 @@
 <string name="settings_category_bullet_comments_summary">弾丸コメント設定</string>
 <string name="settings_category_backup_title">バックアップ</string>
 <string name="settings_category_advanced_title">上級</string>
-<string name="not_login">このコンテンツを表示するにはアカウントが必要です。継続するには、プロキシを使用するか、設定からログインしてください。</string>
+<string name="not_login">このコンテンツを視聴するにはアカウントが必要です。続行するには設定からログインしてください。</string>
 <string name="advanced_formats_summary">お使いのデバイスがサポートしている場合、高度なフォーマットを有効にすることでデータ使用量を削減し、画像品質を向上させることができます。</string>
 <string name="advanced_formats_title">高度な形式を有効にする</string>
 <string name="preferred_audio_language_title">優先オーディオ言語</string>
 <string name="comments_inner_scroll_title">コメントの内側スクロール</string>
 <string name="comments_inner_scroll_summary">コメントをスクロールする際にビデオの位置を固定する</string>
-<string name="ip_blocked_summary">YouTube によりあなたの IP アドレスがブロックされています。継続するには、プロキシを使用するか、設定を通じてログインしてください。</string>
+<string name="ip_blocked_summary">あなたのIPは一時的にYouTubeによってブロックされています。\n一定期間、特定の動画を再生する際に問題が発生します。</string>
 <string name="settings_category_filter_title">コンテンツフィルター</string>
 <string name="filter_by_keyword_title">キーワードでフィルター</string>
 <string name="filter_by_keyword_summary">ここにブロックしたいキーワードをカンマで区切って追加してください</string>
