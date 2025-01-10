@@ -77,11 +77,11 @@
         android:title="@string/sponsor_block"
         app:iconSpaceReserved="false" />
 
-    <PreferenceScreen
-            android:fragment="org.schabi.newpipe.settings.ProxySettingsFragment"
-            android:icon="@drawable/ic_proxy"
-            android:title="@string/settings_category_proxy_title"
-            app:iconSpaceReserved="false" />
+<!--    <PreferenceScreen-->
+<!--            android:fragment="org.schabi.newpipe.settings.ProxySettingsFragment"-->
+<!--            android:icon="@drawable/ic_proxy"-->
+<!--            android:title="@string/settings_category_proxy_title"-->
+<!--            app:iconSpaceReserved="false" />-->
 
     <PreferenceScreen
             android:fragment="org.schabi.newpipe.settings.AdvancedSettingsFragment"

@@ -128,7 +128,7 @@ public class YtdlpHelper {
                 }
 
                 audioStreams.add(new AudioStream.Builder().setId(originStreamInfo.getId() + UUID.randomUUID().toString().replaceAll("[^a-zA-Z]", ""))
-                        .setContent(videoFormat.getUrl(), true)
+                        .setContent(videoFormat.getUrl() + "&pppid=" + originStreamInfo.getId(), true)
                         .setItagItem(itag)
                         .setMediaFormat(format).setAverageBitrate(videoFormat.getTbr()).build());
                 Collections.sort(audioStreams, Comparator.comparingInt(AudioStream::getBitrate).reversed());
@@ -154,7 +154,7 @@ public class YtdlpHelper {
                 if (resolution == null) {
                     resolution = videoFormat.getHeight() + "p";
                 }
-                videoOnlyStreams.add(new VideoStream.Builder().setContent(videoFormat.getUrl(), true)
+                videoOnlyStreams.add(new VideoStream.Builder().setContent(videoFormat.getUrl() + "&pppid=" + originStreamInfo.getId(), true)
                         .setMediaFormat(MediaFormat.getFromSuffix(videoFormat.getExt())).setId(originStreamInfo.getId())
                         .setItagItem(itag)
                         .setIsVideoOnly(true).setResolution(resolution).build());
@@ -181,7 +181,7 @@ public class YtdlpHelper {
                 if (resolution == null) {
                     resolution = videoFormat.getHeight() + "p";
                 }
-                videoStreams.add(new VideoStream.Builder().setContent(videoFormat.getUrl(), true)
+                videoStreams.add(new VideoStream.Builder().setContent(videoFormat.getUrl() + "&pppid=" + originStreamInfo.getId(), true)
                         .setMediaFormat(MediaFormat.getFromSuffix(videoFormat.getExt())).setId(originStreamInfo.getId())
                         .setItagItem(itag)
                         .setIsVideoOnly(false).setResolution(resolution).build());

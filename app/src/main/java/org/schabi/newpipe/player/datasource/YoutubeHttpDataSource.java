@@ -411,14 +411,17 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
 
         String streamId = null, itag = null, mime = null;
         try {
-            streamId = Utils.getQueryValue(new URL(dataSpecParameter.uri.toString()), "sid");
+            streamId = Utils.getQueryValue(new URL(dataSpecParameter.uri.toString()), "pppid");
             itag = Utils.getQueryValue(new URL(dataSpecParameter.uri.toString()), "itag");
             mime = Utils.getQueryValue(new URL(dataSpecParameter.uri.toString()), "mime");
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
-
-        if(shouldRefetch) {
+        Integer retryCount = retryCounts.get(new AbstractMap.SimpleEntry<>(streamId, itag));
+        if (retryCount == null) {
+            retryCount = 0;
+        }
+        if(retryCount > 0) {  // start retry
             if (streamId == null || itag == null || mime == null) {
                 throw new RuntimeException("streamId, itag or mime is null");
             }
@@ -445,8 +448,8 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
                 if (newUrl == null) {
                     throw new RuntimeException("retry failed, newUrl is null");
                 }
+                retryCounts.put(new AbstractMap.SimpleEntry<>(streamId, itag), 0);
                 backupUrlMap.put(new AbstractMap.SimpleEntry<>(streamId, itag), newUrl);
-                shouldRefetch = false;
             } catch (ExtractionException | IOException e) {
                 throw new RuntimeException(e);
             }
@@ -474,9 +477,6 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
             responseMessage = httpURLConnection.getResponseMessage();
         } catch (final IOException e) {
             closeConnectionQuietly();
-            if (e instanceof UnknownHostException) {
-                shouldRefetch = true;
-            }
             throw HttpDataSourceException.createForIOException(e, dataSpec,
                     HttpDataSourceException.TYPE_OPEN);
         }
@@ -497,14 +497,9 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
             }
 
             if (responseCode == 403) {
-                Integer retryCount = retryCounts.get(new AbstractMap.SimpleEntry<>(streamId, itag));
-                if (retryCount == null) {
-                    retryCount = 0;
+                if (retryCount >= 0) {
+                    throw new RuntimeException("403 error. You IP is temporarily blocked from accessing this video.");
                 }
-                if (retryCount >= 2) {
-                    throw new RuntimeException("403 error. We retried 2 times but failed");
-                }
-                shouldRefetch = true;
                 retryCount ++;
                 retryCounts.put(new AbstractMap.SimpleEntry<>(streamId, itag), retryCount);
             }
