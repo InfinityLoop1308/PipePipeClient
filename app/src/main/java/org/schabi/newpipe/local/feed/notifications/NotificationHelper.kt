@@ -66,10 +66,7 @@ class NotificationHelper(val context: Context) {
                 NavigationHelper
                     .getChannelIntent(context, data.serviceId, data.url)
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                    PendingIntent.FLAG_IMMUTABLE
-                else
-                    0
+                PendingIntent.FLAG_IMMUTABLE
             )
         )
 

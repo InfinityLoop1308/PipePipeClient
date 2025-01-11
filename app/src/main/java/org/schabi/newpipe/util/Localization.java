@@ -186,24 +186,9 @@ public final class Localization {
     }
 
     public static String shortCount(final Context context, final long count) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return CompactDecimalFormat.getInstance(getAppLocale(context),
-                    CompactDecimalFormat.CompactStyle.SHORT).format(count);
-        }
+        return CompactDecimalFormat.getInstance(getAppLocale(context),
+                CompactDecimalFormat.CompactStyle.SHORT).format(count);
 
-        final double value = (double) count;
-        if (count >= 1000000000) {
-            return localizeNumber(context, round(value / 1000000000, 1))
-                    + context.getString(R.string.short_billion);
-        } else if (count >= 1000000) {
-            return localizeNumber(context, round(value / 1000000, 1))
-                    + context.getString(R.string.short_million);
-        } else if (count >= 1000) {
-            return localizeNumber(context, round(value / 1000, 1))
-                    + context.getString(R.string.short_thousand);
-        } else {
-            return localizeNumber(context, value);
-        }
     }
 
     public static String listeningCount(final Context context, final long listeningCount) {

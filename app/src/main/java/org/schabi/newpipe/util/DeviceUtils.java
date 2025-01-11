@@ -136,14 +136,12 @@ public final class DeviceUtils {
                 || pm.hasSystemFeature(PackageManager.FEATURE_TELEVISION);
 
         // from https://stackoverflow.com/a/58932366
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            final boolean isBatteryAbsent = context.getSystemService(BatteryManager.class)
-                    .getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) == 0;
-            isTv = isTv || (isBatteryAbsent
-                    && !pm.hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN)
-                    && pm.hasSystemFeature(PackageManager.FEATURE_USB_HOST)
-                    && pm.hasSystemFeature(PackageManager.FEATURE_ETHERNET));
-        }
+        final boolean isBatteryAbsent = context.getSystemService(BatteryManager.class)
+                .getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) == 0;
+        isTv = isTv || (isBatteryAbsent
+                && !pm.hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN)
+                && pm.hasSystemFeature(PackageManager.FEATURE_USB_HOST)
+                && pm.hasSystemFeature(PackageManager.FEATURE_ETHERNET));
 
         isTv = isTv || pm.hasSystemFeature(PackageManager.FEATURE_LEANBACK);
 
@@ -231,7 +229,7 @@ public final class DeviceUtils {
     }
 
     public static boolean isInMultiWindow(final AppCompatActivity activity) {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && activity.isInMultiWindowMode();
+        return activity.isInMultiWindowMode();
     }
 
     public static boolean hasAnimationsAnimatorDurationEnabled(final Context context) {

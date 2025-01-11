@@ -138,13 +138,8 @@ public abstract class BaseImportExportService extends Service {
                 .setProgress(maxProgress.get(), currentProgress.get(), maxProgress.get() == -1);
 
         final String progressText = currentProgress + "/" + maxProgress;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            if (!TextUtils.isEmpty(text)) {
-                notificationBuilder.setContentText(text + "  (" + progressText + ")");
-            }
-        } else {
-            notificationBuilder.setContentInfo(progressText);
-            notificationBuilder.setContentText(text);
+        if (!TextUtils.isEmpty(text)) {
+            notificationBuilder.setContentText(text + "  (" + progressText + ")");
         }
 
         notificationManager.notify(getNotificationId(), notificationBuilder.build());

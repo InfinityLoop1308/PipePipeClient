@@ -156,7 +156,7 @@ class FeedLoadService : Service() {
             this,
             NOTIFICATION_ID,
             Intent(ACTION_CANCEL),
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+            PendingIntent.FLAG_IMMUTABLE
         )
 
         return NotificationCompat.Builder(this, getString(R.string.notification_channel_id))
@@ -193,15 +193,8 @@ class FeedLoadService : Service() {
         } else {
             val progressText = state.currentProgress.toString() + "/" + state.maxProgress
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                if (state.updateDescription.isNotEmpty()) {
-                    notificationBuilder.setContentText("${state.updateDescription}  ($progressText)")
-                }
-            } else {
-                notificationBuilder.setContentInfo(progressText)
-                if (state.updateDescription.isNotEmpty()) {
-                    notificationBuilder.setContentText(state.updateDescription)
-                }
+            if (state.updateDescription.isNotEmpty()) {
+                notificationBuilder.setContentText("${state.updateDescription}  ($progressText)")
             }
         }
 

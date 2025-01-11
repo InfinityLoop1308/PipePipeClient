@@ -129,13 +129,8 @@ public final class NotificationUtil {
                         contextProvider.getString(R.string.notification_colorize_key), true));
 
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                builder.setDeleteIntent(PendingIntent.getBroadcast(contextProvider, NOTIFICATION_ID,
-                        new Intent(ACTION_CLOSE), PendingIntent.FLAG_IMMUTABLE | FLAG_UPDATE_CURRENT));
-            } else {
-                builder.setDeleteIntent(PendingIntent.getBroadcast(contextProvider, NOTIFICATION_ID,
-                        new Intent(ACTION_CLOSE), FLAG_UPDATE_CURRENT));
-            }
+            builder.setDeleteIntent(PendingIntent.getBroadcast(contextProvider, NOTIFICATION_ID,
+                    new Intent(ACTION_CLOSE), PendingIntent.FLAG_IMMUTABLE | FLAG_UPDATE_CURRENT));
         } else {
             builder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                     .setMediaSession(player.getMediaSessionManager().getSessionToken()));
@@ -154,8 +149,7 @@ public final class NotificationUtil {
 
         // also update content intent, in case the user switched players
         notificationBuilder.setContentIntent(PendingIntent.getActivity(player.getContext(),
-                NOTIFICATION_ID, getIntentForNotification(player), Build.VERSION.SDK_INT >= Build.VERSION_CODES.M?
-                        PendingIntent.FLAG_IMMUTABLE | FLAG_UPDATE_CURRENT : FLAG_UPDATE_CURRENT));
+                NOTIFICATION_ID, getIntentForNotification(player), PendingIntent.FLAG_IMMUTABLE | FLAG_UPDATE_CURRENT));
         notificationBuilder.setContentTitle(player.getVideoTitle());
         notificationBuilder.setContentText(player.getUploaderName());
         notificationBuilder.setTicker(player.getVideoTitle());
@@ -348,8 +342,7 @@ public final class NotificationUtil {
                                                 final String intentAction) {
         return new NotificationCompat.Action(drawable, player.getContext().getString(title),
                 PendingIntent.getBroadcast(player.getContext(), NOTIFICATION_ID,
-                        new Intent(intentAction), Build.VERSION.SDK_INT >= Build.VERSION_CODES.M?
-                                PendingIntent.FLAG_IMMUTABLE | FLAG_UPDATE_CURRENT : FLAG_UPDATE_CURRENT));
+                        new Intent(intentAction), PendingIntent.FLAG_IMMUTABLE | FLAG_UPDATE_CURRENT));
     }
 
     private Intent getIntentForNotification(final Player player) {

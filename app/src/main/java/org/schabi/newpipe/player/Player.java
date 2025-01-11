@@ -4958,25 +4958,22 @@ public final class Player implements
         // make sure there is nothing left over from previous calls
         cleanupVideoSurface();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // >=API23
-            surfaceHolderCallback = new SurfaceHolderCallback(context, simpleExoPlayer);
-            binding.surfaceView.getHolder().addCallback(surfaceHolderCallback);
-            final Surface surface = binding.surfaceView.getHolder().getSurface();
-            // ensure player is using an unreleased surface, which the surfaceView might not be
-            // when starting playback on background or during player switching
-            if (surface.isValid()) {
-                // initially set the surface manually otherwise
-                // onRenderedFirstFrame() will not be called
-                simpleExoPlayer.setVideoSurface(surface);
-            }
-        } else {
-            simpleExoPlayer.setVideoSurfaceView(binding.surfaceView);
+        // >=API23
+        surfaceHolderCallback = new SurfaceHolderCallback(context, simpleExoPlayer);
+        binding.surfaceView.getHolder().addCallback(surfaceHolderCallback);
+        final Surface surface = binding.surfaceView.getHolder().getSurface();
+        // ensure player is using an unreleased surface, which the surfaceView might not be
+        // when starting playback on background or during player switching
+        if (surface.isValid()) {
+            // initially set the surface manually otherwise
+            // onRenderedFirstFrame() will not be called
+            simpleExoPlayer.setVideoSurface(surface);
         }
     }
 
     private void cleanupVideoSurface() {
         // Only for API >= 23
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && surfaceHolderCallback != null) {
+        if (surfaceHolderCallback != null) {
             if (binding != null) {
                 binding.surfaceView.getHolder().removeCallback(surfaceHolderCallback);
             }
