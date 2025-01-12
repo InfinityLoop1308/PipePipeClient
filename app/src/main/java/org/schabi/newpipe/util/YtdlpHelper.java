@@ -1,5 +1,7 @@
 package org.schabi.newpipe.util;
 
+import com.grack.nanojson.JsonParser;
+import com.grack.nanojson.JsonParserException;
 import com.yausername.youtubedl_android.YoutubeDL;
 import com.yausername.youtubedl_android.YoutubeDLRequest;
 import com.yausername.youtubedl_android.mapper.VideoFormat;
@@ -10,6 +12,8 @@ import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.exceptions.*;
 import org.schabi.newpipe.extractor.localization.DateWrapper;
 import org.schabi.newpipe.extractor.services.youtube.ItagItem;
+import org.schabi.newpipe.extractor.services.youtube.YoutubeParsingHelper;
+import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor;
 import org.schabi.newpipe.extractor.stream.*;
 import org.schabi.newpipe.extractor.utils.Utils;
 
@@ -204,10 +208,28 @@ public class YtdlpHelper {
         streamInfo.setDuration(originStreamInfo.getDuration());
         streamInfo.setUploaderName(originStreamInfo.getUploader());
         streamInfo.setUploaderUrl("https://www.youtube.com/" + originStreamInfo.getUploaderId());
+        streamInfo.setUploaderAvatarUrl(originStreamInfo.getChannelAvatar());
+        streamInfo.setUploaderSubscriberCount(originStreamInfo.getChannelFollowerCount());
+        streamInfo.setUploaderVerified(originStreamInfo.getChannelIsVerified());
+        try {
+            streamInfo.setMetaInfo(YoutubeParsingHelper.getMetaInfo(JsonParser.array().from(originStreamInfo.getContentsRaw())));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            YoutubeStreamExtractor streamExtractor = (YoutubeStreamExtractor) ServiceList.YouTube.getStreamExtractor(url);
+            streamInfo.setRelatedItems(streamExtractor.getRelatedItemsFromResults(JsonParser.array().from(originStreamInfo.getRelatedItemsRaw())).getItems());
+            streamInfo.setSupportRelatedItems(true);
+        }  catch (Exception e) {
+            e.printStackTrace();
+        }
+
         streamInfo.setDescription(new Description(originStreamInfo.getDescription(), Description.PLAIN_TEXT));
         streamInfo.setTags(originStreamInfo.getTags());
         streamInfo.setCategory(originStreamInfo.getCategories() == null ? "" : originStreamInfo.getCategories().get(0));
         streamInfo.setLikeCount(Utils.parseLong(originStreamInfo.getLikeCount()));
+        streamInfo.setDislikeCount(Utils.parseLong(originStreamInfo.getDislikeCount()));
         streamInfo.setUploadDate(new DateWrapper(LocalDate.parse(originStreamInfo.getUploadDate(), DateTimeFormatter.BASIC_ISO_DATE)
                 .atStartOfDay()
                 .atOffset(ZoneOffset.UTC)));

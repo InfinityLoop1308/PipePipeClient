@@ -129,53 +129,15 @@ public final class ExtractorHelper {
 
     public static StreamInfo getNewStreamInfo(final int serviceId, final String url) throws ExtractionException, IOException {
         StreamInfo result = null;
-        try {
-            result = StreamInfo.getInfo(NewPipe.getService(serviceId), url);
-        } catch (Exception e) {
-            if (serviceId != ServiceList.YouTube.getServiceId()) {
-                throw new ExtractionException(e);
-            }
-            if (ServiceList.YouTube.getProxyEnabled()) {
-                throw new ExtractionException(e);
-            }
-        }
-
         if (serviceId != ServiceList.YouTube.getServiceId()) {
-            return result;
-        }
-
-        if (result != null && (result.getAudioStreams().size() > 0 || result.getVideoStreams().size() > 0)) {
-            return result;
+            return StreamInfo.getInfo(NewPipe.getService(serviceId), url);
         }
 
         StreamInfo fallbackInfo = YtdlpHelper.getFallbackStreams(url, result == null ? null:result.getExtraData());
         if(fallbackInfo.getAudioStreams().size() == 0 && fallbackInfo.getVideoStreams().size() == 0) {
-            Log.e(TAG, "Couldn't get fallback streams for " + url);
-            return result;
+            throw new ExtractionException("Couldn't get fallback streams for " + url);
         }
-        if (result == null) {
-            result = fallbackInfo;
-        }
-        result.setSupportComments(fallbackInfo.isSupportComments());
-        result.setStreamType(fallbackInfo.getStreamType());
-        result.setName(fallbackInfo.getName());
-        result.setAgeLimit(fallbackInfo.getAgeLimit());
-        result.setThumbnailUrl(fallbackInfo.getThumbnailUrl());
-        result.setDuration(fallbackInfo.getDuration());
-        result.setUploaderName(fallbackInfo.getUploaderName());
-        result.setUploaderUrl(fallbackInfo.getUploaderUrl());
-        result.setDescription(fallbackInfo.getDescription());
-        result.setTags(fallbackInfo.getTags());
-        result.setCategory(fallbackInfo.getCategory());
-        result.setLikeCount(fallbackInfo.getLikeCount());
-        result.setUploadDate(fallbackInfo.getUploadDate());
-        result.setViewCount(fallbackInfo.getViewCount());
-        result.setAudioStreams(fallbackInfo.getAudioStreams());
-        result.setVideoStreams(fallbackInfo.getVideoStreams());
-        result.setVideoOnlyStreams(fallbackInfo.getVideoOnlyStreams());
-        result.setHlsUrl(fallbackInfo.getHlsUrl());
-        result.setExtraData(null);
-        return result;
+        return fallbackInfo;
     }
 
     public static Single<StreamInfo> getStreamInfoWithoutException(final int serviceId, final String url,
