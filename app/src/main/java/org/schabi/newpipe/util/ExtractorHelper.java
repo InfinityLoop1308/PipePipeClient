@@ -133,7 +133,7 @@ public final class ExtractorHelper {
             return StreamInfo.getInfo(NewPipe.getService(serviceId), url);
         }
 
-        StreamInfo fallbackInfo = YtdlpHelper.getFallbackStreams(url, result == null ? null:result.getExtraData());
+        StreamInfo fallbackInfo = YtdlpHelper.getFallbackStreams(url, null);
         if(fallbackInfo.getAudioStreams().size() == 0 && fallbackInfo.getVideoStreams().size() == 0) {
             throw new ExtractionException("Couldn't get fallback streams for " + url);
         }
