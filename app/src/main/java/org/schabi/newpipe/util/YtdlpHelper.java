@@ -42,7 +42,8 @@ public class YtdlpHelper {
             System.out.println("Getting fallback streams for " + url);
             if (!ServiceList.YouTube.getProxyEnabled()) {
                 YoutubeDLRequest request = new YoutubeDLRequest(url);
-                request.addOption("--extractor-args", "youtube:player_client=default,-ios");
+                String config = ServiceList.YouTube.getYtdlpConfig() == null ? "": ServiceList.YouTube.getYtdlpConfig();
+                request.addOption("--extractor-args", "youtube:player_client=default,-ios;player_skip=webpage;" + config);
                 request.addOption("--cookies", cookieFile);
                 if (noCheckCert) {
                     request.addOption("--no-check-certificate");
