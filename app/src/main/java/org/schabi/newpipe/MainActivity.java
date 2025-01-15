@@ -60,6 +60,7 @@ import org.schabi.newpipe.databinding.InstanceSpinnerLayoutBinding;
 import org.schabi.newpipe.databinding.ToolbarLayoutBinding;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.services.peertube.PeertubeInstance;
@@ -238,6 +239,21 @@ public class MainActivity extends AppCompatActivity {
             builder.show();
             prefs.edit().putInt("isFirstRun", 1).apply();
             PermissionChecker.checkNotificationPermission(this);
+        }
+
+        boolean hasSetCompatibilityMode = prefs.getBoolean("has_set_compatibility_mode", false);
+
+        if (!hasSetCompatibilityMode) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.enable_compatibility_mode_title);
+            builder.setMessage(R.string.dialog_enable_youtube_compatibility_mode);
+            builder.setPositiveButton(R.string.yes, (dialog, which) -> {
+                prefs.edit().putBoolean(getString(R.string.enable_compatibility_mode_key), true).apply();
+                ServiceList.YouTube.setYtdlpEnabled(true);
+            });
+            builder.setNegativeButton(R.string.no, (dialog, which) -> prefs.edit().putBoolean(getString(R.string.enable_compatibility_mode_key), false).apply());
+            builder.show();
+            prefs.edit().putBoolean("has_set_compatibility_mode", true).apply();
         }
     }
 

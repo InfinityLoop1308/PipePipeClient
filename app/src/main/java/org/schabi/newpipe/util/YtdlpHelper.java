@@ -31,7 +31,7 @@ public class YtdlpHelper {
     private static final ConcurrentHashMap<String, ReentrantLock> locks = new ConcurrentHashMap<>();
     public static String cookieFile;
     public static boolean noCheckCert = false;
-    public static StreamInfo getFallbackStreams(final String url, final JSONObject infoData) throws IOException, ExtractionException {
+    public static StreamInfo getFallbackStreams(final String url) throws IOException, ExtractionException {
         ReentrantLock lock = locks.computeIfAbsent(url, k -> new ReentrantLock());
         if (!lock.tryLock()) {
             System.out.println("Operation skipped for " + url + " because another thread is processing it.");
@@ -40,19 +40,17 @@ public class YtdlpHelper {
         try {
             StreamInfo streamInfo;
             System.out.println("Getting fallback streams for " + url);
-            if (!ServiceList.YouTube.getProxyEnabled()) {
-                YoutubeDLRequest request = new YoutubeDLRequest(url);
-                String config = ServiceList.YouTube.getYtdlpConfig() == null ? "": ServiceList.YouTube.getYtdlpConfig();
-                request.addOption("--extractor-args", "youtube:player_client=default,-ios;player_skip=webpage;" + config);
-                request.addOption("--cookies", cookieFile);
-                if (noCheckCert) {
-                    request.addOption("--no-check-certificate");
-                }
-                VideoInfo originStreamInfo = YoutubeDL.getInstance().getInfo(request);
-                streamInfo = parseInfo(originStreamInfo, url);
-            } else {
-                streamInfo = parseInfo(YoutubeDL.getInstance().getInfoFromJson(infoData.toString()), url);
+
+            YoutubeDLRequest request = new YoutubeDLRequest(url);
+            String config = ServiceList.YouTube.getYtdlpConfig() == null ? "": ServiceList.YouTube.getYtdlpConfig();
+            request.addOption("--extractor-args", "youtube:player_client=default,-ios;player_skip=webpage;" + config);
+            request.addOption("--cookies", cookieFile);
+            if (noCheckCert) {
+                request.addOption("--no-check-certificate");
             }
+            VideoInfo originStreamInfo = YoutubeDL.getInstance().getInfo(request);
+            streamInfo = parseInfo(originStreamInfo, url);
+
             System.out.println("Successfully got fallback streams for " + url);
             return streamInfo;
         } catch (InterruptedException | YoutubeDL.CanceledException e) {

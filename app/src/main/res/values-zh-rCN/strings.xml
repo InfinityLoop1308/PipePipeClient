@@ -949,4 +949,7 @@
 <string name="token_expired">令牌已过期</string>
 <string name="subscription_kofi_title">在 Ko-fi 上成为支持者</string>
 <string name="show_stream_details">显示流详情</string>
+<string name="enable_compatibility_mode_summary">以兼容模式运行 YouTube 提取器。这会降低加载速度，尤其是在较旧的设备上，但可以确保提取和播放过程中不会出现错误</string>
+<string name="dialog_enable_youtube_compatibility_mode">YouTube 现在可以以兼容模式加载。它会降低加载速度，尤其是在较旧的设备上，但可以确保提取和播放过程中没有错误。如果您在 4.1.0 版本之前遇到播放时的 403 网络错误，强烈建议启用此功能。\n您现在要启用它吗？您可以稍后在高级设置中更改此设置。</string>
+<string name="enable_compatibility_mode_title">为 YouTube 启用兼容模式</string>
 </resources>

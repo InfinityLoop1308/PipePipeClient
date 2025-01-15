@@ -1608,4 +1608,5 @@
         <item>related_item</item>
         <item>channels</item>
     </string-array>
+    <string name="enable_compatibility_mode_key">enable_compatibility_mode_key</string>
 </resources>

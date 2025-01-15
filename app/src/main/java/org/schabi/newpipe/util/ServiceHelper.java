@@ -282,16 +282,12 @@ public final class ServiceHelper {
                     R.string.youtube_cookies_key), null);
             final String audioLanguage = sharedPreferences.getString(context.getString(
                     R.string.preferred_audio_language_key),"original");
-            final String proxyToken = sharedPreferences.getString(context.getString(R.string.proxy_token_key), "");
-            final Boolean proxyEnabled = sharedPreferences.getBoolean(context.getString(R.string.enable_proxy_key), false);
+            final boolean useYtdlp = sharedPreferences.getBoolean(context.getString(
+                    R.string.enable_compatibility_mode_key),false);
             ServiceList.YouTube.setTokens(tokens);
-            if (proxyEnabled) {
-                ServiceList.YouTube.setTokens(null);
-                ServiceList.YouTube.setProxyToken(proxyToken);
-                ServiceList.YouTube.setProxyEnabled(true);
-            }
             ServiceList.YouTube.setContentLanguage(getPreferredLocalization(context));
             ServiceList.YouTube.setAudioLanguage(audioLanguage);
+            ServiceList.YouTube.setYtdlpEnabled(useYtdlp);
 //            final String pot = sharedPreferences.getString(context.getString(R.string.youtube_po_token), null);
 //            ServiceList.YouTube.setAdditionalTokens(pot);
             if(sharedPreferences.getBoolean(context.getString(R.string.override_cookies_youtube_key), false)) {

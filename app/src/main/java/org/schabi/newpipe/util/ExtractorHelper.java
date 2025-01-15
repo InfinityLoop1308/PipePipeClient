@@ -128,13 +128,19 @@ public final class ExtractorHelper {
     }
 
     public static StreamInfo getNewStreamInfo(final int serviceId, final String url) throws ExtractionException, IOException {
-        StreamInfo result = null;
         if (serviceId != ServiceList.YouTube.getServiceId()) {
             return StreamInfo.getInfo(NewPipe.getService(serviceId), url);
         }
+        StreamInfo result = null;
+        if (!ServiceList.YouTube.isYtdlpEnabled()) {
+            result = StreamInfo.getInfo(NewPipe.getService(serviceId), url);
+            if (!result.getAudioStreams().isEmpty() || !result.getVideoStreams().isEmpty()) {
+                return result;
+            }
+        }
 
-        StreamInfo fallbackInfo = YtdlpHelper.getFallbackStreams(url, null);
-        if(fallbackInfo.getAudioStreams().size() == 0 && fallbackInfo.getVideoStreams().size() == 0) {
+        StreamInfo fallbackInfo = YtdlpHelper.getFallbackStreams(url);
+        if(fallbackInfo.getAudioStreams().isEmpty() && fallbackInfo.getVideoStreams().isEmpty()) {
             throw new ExtractionException("Couldn't get fallback streams for " + url);
         }
         return fallbackInfo;
