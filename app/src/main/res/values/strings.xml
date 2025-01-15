@@ -976,7 +976,7 @@
 <string name="preferred_audio_language_title">Preferred audio language</string>
 <string name="comments_inner_scroll_title">Comments inner scroll</string>
 <string name="comments_inner_scroll_summary">Make video position fixed when scrolling comments</string>
-<string name="ip_blocked_summary">Your IP has been temporarily blocked by YouTube. For a period of time, you will experience issues when playing certain videos.</string>
+<string name="ip_blocked_summary">Your IP has been temporarily blocked by YouTube. For a period of time, you will experience issues when playing certain videos. If the error persists, please enable compatibility mode in Advanced Settings.</string>
 <string name="settings_category_filter_title">Content Filter</string>
 <string name="filter_by_keyword_title">Filter by keywords</string>
 <string name="filter_by_channel_title">Filter by channels</string>
