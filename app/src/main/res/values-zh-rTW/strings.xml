@@ -918,7 +918,7 @@
 <string name="preferred_audio_language_title">首選音訊語言</string>
 <string name="comments_inner_scroll_title">評論內部滾動</string>
 <string name="comments_inner_scroll_summary">在捲動評論時讓影片位置固定</string>
-<string name="ip_blocked_summary">您的 IP 地址已被 YouTube 暫時封鎖。\n在一段時間內，您在播放某些視頻時可能會遇到問題。\n如果問題持續，請在進階設定中啟用相容模式。</string>
+<string name="ip_blocked_summary">YouTube 暫時封鎖了您的 IP。在一段時間內，您在播放某些視頻時會遇到問題。如果錯誤持續發生，請通過設置登錄以繼續。</string>
 <string name="settings_category_filter_title">內容過濾器</string>
 <string name="filter_by_keyword_title">按關鍵字篩選</string>
 <string name="filter_by_keyword_summary">在這裡添加您想要屏蔽的關鍵字，使用逗號分隔</string>

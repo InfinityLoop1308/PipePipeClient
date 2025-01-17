@@ -917,7 +917,7 @@
 <string name="preferred_audio_language_title">優先オーディオ言語</string>
 <string name="comments_inner_scroll_title">コメントの内側スクロール</string>
 <string name="comments_inner_scroll_summary">コメントをスクロールする際にビデオの位置を固定する</string>
-<string name="ip_blocked_summary">あなたのIPは一時的にYouTubeによってブロックされています。\n一定期間、一部の動画を再生する際に問題が発生します。\n問題が解決しない場合は、高度な設定で互換モードを有効にしてください。</string>
+<string name="ip_blocked_summary">あなたのIPはYouTubeによって一時的にブロックされています。\nしばらくの間、特定の動画を再生する際に問題が発生する場合があります。\nエラーが続く場合は、設定からログインして続行してください。</string>
 <string name="settings_category_filter_title">コンテンツフィルター</string>
 <string name="filter_by_keyword_title">キーワードでフィルター</string>
 <string name="filter_by_keyword_summary">ここにブロックしたいキーワードをカンマで区切って追加してください</string>

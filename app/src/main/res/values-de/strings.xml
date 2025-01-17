@@ -869,7 +869,7 @@
 <string name="preferred_audio_language_title">Bevorzugte Audiosprache</string>
 <string name="comments_inner_scroll_title">Kommentare innerer Bildlauf</string>
 <string name="comments_inner_scroll_summary">Video-Position beim Scrollen durch Kommentare fixieren</string>
-<string name="ip_blocked_summary">Ihre IP wurde vorübergehend von YouTube blockiert. Für einen bestimmten Zeitraum werden Sie Probleme beim Abspielen bestimmter Videos haben. Wenn der Fehler weiterhin besteht, aktivieren Sie den Kompatibilitätsmodus in den erweiterten Einstellungen.</string>
+<string name="ip_blocked_summary">Ihre IP wurde von YouTube vorübergehend blockiert. Für eine gewisse Zeit werden Sie Probleme beim Abspielen bestimmter Videos haben. Wenn der Fehler weiterhin besteht, melden Sie sich bitte über die Einstellungen an, um fortzufahren.</string>
 <string name="settings_category_filter_title">Inhaltsfilter</string>
 <string name="filter_by_keyword_title">Nach Schlüsselwörtern filtern</string>
 <string name="filter_by_keyword_summary">Fügen Sie hier die Schlüsselwörter ein, die Sie blockieren möchten, getrennt durch Kommas</string>

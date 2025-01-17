@@ -789,7 +789,7 @@
 <string name="preferred_audio_language_title">Lingua audio preferita</string>
 <string name="comments_inner_scroll_title">Commenti allo scorrimento interno</string>
 <string name="comments_inner_scroll_summary">Rendi la posizione del video fissa durante lo scorrimento dei commenti</string>
-<string name="ip_blocked_summary">Il tuo IP è stato temporaneamente bloccato da YouTube. Per un periodo di tempo, riscontrerai problemi durante la riproduzione di alcuni video. Se l\'errore persiste, abilita la modalità di compatibilità nelle Impostazioni Avanzate.</string>
+<string name="ip_blocked_summary">Il tuo IP è stato temporaneamente bloccato da YouTube. Per un certo periodo di tempo, riscontrerai problemi durante la riproduzione di alcuni video. Se l\'errore persiste, accedi tramite Impostazioni per continuare.</string>
 <string name="settings_category_filter_title">Filtro dei contenuti</string>
 <string name="filter_by_keyword_title">Filtra per parole chiave</string>
 <string name="filter_by_keyword_summary">Aggiungi qui le parole chiave che vuoi bloccare, separate da virgole</string>

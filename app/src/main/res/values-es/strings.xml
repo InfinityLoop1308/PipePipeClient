@@ -871,7 +871,7 @@ Debe aceptarla para enviarnos el informe de errores.</string>
 <string name="preferred_audio_language_title">Idioma de audio preferido</string>
 <string name="comments_inner_scroll_title">Comentarios de desplazamiento interno</string>
 <string name="comments_inner_scroll_summary">Hacer que la posición del video sea fija al desplazarse por los comentarios</string>
-<string name="ip_blocked_summary">Tu IP ha sido bloqueada temporalmente por YouTube. Durante un período de tiempo, experimentarás problemas al reproducir ciertos videos. Si el error persiste, habilita el modo de compatibilidad en la Configuración avanzada.</string>
+<string name="ip_blocked_summary">Su IP ha sido bloqueada temporalmente por YouTube. Durante un periodo de tiempo, experimentará problemas al reproducir ciertos videos. Si el error persiste, por favor inicie sesión a través de Configuración para continuar.</string>
 <string name="settings_category_filter_title">Filtro de Contenido</string>
 <string name="filter_by_keyword_title">Filtrar por palabras clave</string>
 <string name="filter_by_keyword_summary">Agregue las palabras clave que desea bloquear aquí, separadas por comas</string>
