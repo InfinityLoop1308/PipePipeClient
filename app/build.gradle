@@ -123,8 +123,6 @@ android {
         includeInBundle = false
     }
 
-    packagingOptions { jniLibs { useLegacyPackaging = true } }
-
     namespace 'org.schabi.newpipe'
 }
 
@@ -331,7 +329,6 @@ dependencies {
     androidTestImplementation "org.assertj:assertj-core:${assertJVersion}"
 
     implementation 'com.arthenica:ffmpeg-kit-https:5.1.LTS'
-    implementation("com.github.InfinityLoop1308.youtubedl-android:library:e81e09e9a1")
 }
 
 static String getGitWorkingBranch() {

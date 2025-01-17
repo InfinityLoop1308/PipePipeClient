@@ -128,7 +128,7 @@ public final class ExtractorHelper {
     }
 
     public static StreamInfo getNewStreamInfo(final int serviceId, final String url) throws ExtractionException, IOException {
-        if (serviceId != ServiceList.YouTube.getServiceId()) {
+        if (true) {
             return StreamInfo.getInfo(NewPipe.getService(serviceId), url);
         }
         StreamInfo result = null;

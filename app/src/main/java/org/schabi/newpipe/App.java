@@ -14,7 +14,6 @@ import androidx.preference.PreferenceManager;
 
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
-import com.yausername.youtubedl_android.YoutubeDL;
 
 import org.acra.ACRA;
 import org.acra.config.CoreConfigurationBuilder;
@@ -101,24 +100,6 @@ public class App extends MultiDexApplication {
         initNotificationChannels();
 
         ServiceHelper.initServices(this);
-        try {
-            YoutubeDL.getInstance().init(this);
-            YtdlpHelper.cookieFile = getCacheDir() + "/cookies.youtube.txt";
-            Thread t = new Thread(() -> {
-                try {
-                    YoutubeDL.getInstance().updateYoutubeDL(this, YoutubeDL.UpdateChannel._STABLE);
-                } catch (Exception e) {
-                    Log.e(TAG, "failed to update youtubedl-android", e);
-                }
-            });
-            t.start();
-            Log.i(TAG, "youtubedl-android version: " + YoutubeDL.getInstance().version(this));
-            if (DEBUG) {
-                YtdlpHelper.noCheckCert = true;
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "failed to initialize youtubedl-android", e);
-        }
 
         // Initialize image loader
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);

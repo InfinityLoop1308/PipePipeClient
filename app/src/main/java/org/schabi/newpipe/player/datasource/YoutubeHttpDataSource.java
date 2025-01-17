@@ -497,7 +497,7 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
             }
 
             if (responseCode == 403) {
-                if (retryCount >= 1) {
+                if (retryCount >= 0) {
                     throw new RuntimeException("403 error. You IP is temporarily blocked from accessing this video.");
                 }
                 retryCount ++;
