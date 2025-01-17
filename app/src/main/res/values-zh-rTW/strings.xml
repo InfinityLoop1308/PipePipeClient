@@ -896,7 +896,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在使用音樂播放器模式時,隨機播放播放清單</string>
-<string name="update_log">(4.1.1 更新：提升 YouTube 的加載速度)\n\n### 新功能\n\n- 支援內容過濾器：可根據關鍵字和頻道名稱過濾掉不需要的項目 \n\n### 錯誤修復\n\n- 視頻無法播放：403 錯誤 (YouTube)\n- 切換視頻時隨機崩潰 (YouTube)\n- 頻道橫幅圖像模糊 (YouTube)\n- 從背景播放恢復到 App 時，新評論/相關項目/描述未更新\n- 錯誤訊息未正確顯示\n- 啟用內部滾動時評論被截斷\n- 某些條件下，搜尋詞語未被加入到歷史記錄\n- 相關項目未隨機自動排隊\n- 某些頻道的視頻列表不完整(NicoNico)\n- 無法播放付費視頻 (BiliBili)\n\n\n### 行為變更\n\n- 啟用音樂模式時，播放本地播放列表不會打開視頻詳情頁面\n- 登錄成功時顯示提示\n- 使用新的提取方法以避免被 YouTube 阻擋\n\n\n### 其他\n\n- 提升穩定性\n</string>
+<string name="update_log">### Bug 修復\n\n- 從4.1.0開始載入速度緩慢（YouTube）\n- 載入影片時隨機失敗（YouTube）\n- 缺少字幕、片段、直播聊天（YouTube）\n- 切換網絡後的播放器錯誤（YouTube）\n</string>
 <string name="speeding_playback_title">按住以加快播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這個項目</string>

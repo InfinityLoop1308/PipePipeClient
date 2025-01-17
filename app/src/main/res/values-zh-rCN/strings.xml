@@ -909,7 +909,7 @@
 <string name="sponsor_promote">成为支持者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">使用音乐播放器模式时,随机播放列表</string>
-<string name="update_log">(4.1.1 更新: 提高 YouTube 加载速度)\n\n### 新功能\n\n- 支持内容过滤：通过关键词和频道名称过滤任意位置的不需要的内容\n\n### Bug 修复\n\n- 视频无法播放：403 错误（YouTube）\n- 切换视频时随机崩溃（YouTube）\n- 频道横幅图片模糊（YouTube）\n- 从后台播放恢复到应用时，新评论/相关项/描述未更新\n- 错误消息没有正确显示\n- 当启用内部滚动时，评论被截断\n- 在某些条件下，搜索词未添加到历史记录\n- 相关项随机未自动加入队列\n- 一些频道视频列表不完整（NicoNico）\n- 无法播放付费视频（BiliBili）\n\n\n### 行为变化\n\n- 在启用音乐模式时播放本地播放列表时，不打开视频详情页\n- 登录成功时显示提示\n- 使用新的提取方法以避免被 YouTube 阻止\n\n\n### 其他\n\n- 改善稳定性\n</string>
+<string name="update_log">### 错误修复\n\n- 从 4.1.0 开始加载速度缓慢（YouTube）\n- 加载视频时随机失败（YouTube）\n- 缺少字幕、片段和直播聊天（YouTube）\n- 切换网络后播放器错误（YouTube）\n</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 <string name="donation_dialog_title">支持该项目</string>
