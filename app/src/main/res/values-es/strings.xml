@@ -889,7 +889,4 @@ Debe aceptarla para enviarnos el informe de errores.</string>
 <string name="token_expired">Token caducado</string>
 <string name="subscription_kofi_title">Conviértete en un patrocinador en Ko-fi</string>
 <string name="show_stream_details">Mostrar detalles de la transmisión</string>
-<string name="enable_compatibility_mode_summary">Ejecute el extractor de YouTube en modo de compatibilidad. Esto ralentizará las velocidades de carga, especialmente en dispositivos más antiguos, pero garantiza que no haya errores durante la extracción y reproducción.</string>
-<string name="dialog_enable_youtube_compatibility_mode">YouTube ahora se puede cargar en modo de compatibilidad. Reducirá las velocidades de carga, especialmente en dispositivos más antiguos, pero garantiza que no haya errores durante la extracción y la reproducción. Si encontró un error de red 403 al reproducir antes de la versión 4.1.0, se recomienda encarecidamente habilitar esta función. \n¿Quieres habilitarlo ahora? Puedes cambiar esto más tarde en Configuración Avanzada.</string>
-<string name="enable_compatibility_mode_title">Habilitar modo de compatibilidad para YouTube</string>
 </resources>

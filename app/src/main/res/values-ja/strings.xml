@@ -935,7 +935,4 @@
 <string name="token_expired">トークンの有効期限が切れました</string>
 <string name="subscription_kofi_title">Ko-fiでサポーターになる</string>
 <string name="show_stream_details">ストリームの詳細を表示</string>
-<string name="enable_compatibility_mode_summary">YouTube抽出ツールを互換モードで実行します。\nこれにより特に古いデバイスでは読み込み速度が遅くなりますが、抽出および再生中にエラーが発生しないことを保証します。</string>
-<string name="dialog_enable_youtube_compatibility_mode">YouTubeを互換モードで読み込むことができるようになりました。このモードでは読み込み速度が遅くなる可能性があります、特に古いデバイスでは顕著ですが、抽出や再生中のエラーを防ぐことができます。以前のバージョン4.1.0で再生中に403ネットワークエラーが発生した場合、この機能を有効にすることを強くお勧めします。\n今すぐ有効にしますか？この設定は後で高度な設定で変更できます。</string>
-<string name="enable_compatibility_mode_title">YouTubeの互換モードを有効にする</string>
 </resources>

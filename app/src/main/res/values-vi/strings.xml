@@ -993,7 +993,4 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="token_expired">Token đã hết hạn</string>
 <string name="subscription_kofi_title">Trở thành người hỗ trợ trên Ko-fi</string>
 <string name="show_stream_details">Hiển thị chi tiết luồng</string>
-<string name="enable_compatibility_mode_summary">Chạy trình trích xuất YouTube ở chế độ tương thích. Điều này sẽ làm chậm tốc độ tải, đặc biệt trên các thiết bị cũ hơn, nhưng đảm bảo không có lỗi trong quá trình trích xuất và phát lại</string>
-<string name="dialog_enable_youtube_compatibility_mode">YouTube hiện có thể được tải ở chế độ tương thích. Điều này sẽ làm chậm tốc độ tải, đặc biệt trên các thiết bị cũ hơn, nhưng đảm bảo rằng không có lỗi trong quá trình trích xuất và phát lại. Nếu bạn gặp lỗi mạng 403 khi phát trước phiên bản 4.1.0, rất khuyến nghị kích hoạt tính năng này. \nBạn có muốn kích hoạt nó ngay bây giờ không? Bạn có thể thay đổi điều này sau trong Cài đặt Nâng cao.</string>
-<string name="enable_compatibility_mode_title">Bật chế độ tương thích cho YouTube</string>
 </resources>

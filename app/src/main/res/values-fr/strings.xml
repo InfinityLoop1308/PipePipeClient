@@ -840,7 +840,4 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="token_expired">Le jeton a expiré</string>
 <string name="subscription_kofi_title">Devenez un supporter sur Ko-fi</string>
 <string name="show_stream_details">Afficher les détails du flux</string>
-<string name="enable_compatibility_mode_summary">Exécutez l\'extracteur YouTube en mode de compatibilité. Cela ralentira les vitesses de chargement, en particulier sur les appareils plus anciens, mais cela garantit qu\'il n\'y a pas d\'erreurs lors de l\'extraction et de la lecture</string>
-<string name="dialog_enable_youtube_compatibility_mode">YouTube peut désormais être chargé en mode compatibilité. Cela ralentira les vitesses de chargement, en particulier sur les appareils plus anciens, mais garantit qu\'il n\'y a pas d\'erreurs lors de l\'extraction et de la lecture. Si vous avez rencontré une erreur réseau 403 lors de la lecture avant la version 4.1.0, il est fortement recommandé d\'activer cette fonctionnalité. \nVoulez-vous l\'activer maintenant ? Vous pouvez modifier cela plus tard dans les paramètres avancés.</string>
-<string name="enable_compatibility_mode_title">Activer le mode de compatibilité pour YouTube</string>
 </resources>

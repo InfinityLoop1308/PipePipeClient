@@ -887,7 +887,4 @@
 <string name="token_expired">Token abgelaufen</string>
 <string name="subscription_kofi_title">Unterstützer auf Ko-fi werden</string>
 <string name="show_stream_details">Streamdetails anzeigen</string>
-<string name="enable_compatibility_mode_summary">Führen Sie den YouTube-Extractor im Kompatibilitätsmodus aus. Dies wird die Ladegeschwindigkeiten verlangsamen, insbesondere auf älteren Geräten, stellt jedoch sicher, dass es während der Extraktion und Wiedergabe keine Fehler gibt</string>
-<string name="dialog_enable_youtube_compatibility_mode">YouTube kann jetzt im Kompatibilitätsmodus geladen werden. Dies wird die Ladegeschwindigkeit verlangsamen, insbesondere auf älteren Geräten, stellt jedoch sicher, dass es keine Fehler während der Extraktion und Wiedergabe gibt. Wenn Sie vor Version 4.1.0 einen 403-Netzwerkfehler beim Abspielen hatten, wird dringend empfohlen, diese Funktion zu aktivieren. \nMöchten Sie sie jetzt aktivieren? Sie können dies später in den erweiterten Einstellungen ändern.</string>
-<string name="enable_compatibility_mode_title">Aktivieren Sie den Kompatibilitätsmodus für YouTube</string>
 </resources>
