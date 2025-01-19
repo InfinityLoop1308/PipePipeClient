@@ -896,7 +896,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在使用音樂播放器模式時,隨機播放播放清單</string>
-<string name="update_log">### Bug 修復\n\n- 從4.1.0開始載入速度緩慢（YouTube）\n- 載入影片時隨機失敗（YouTube）\n- 缺少字幕、片段、直播聊天（YouTube）\n- 切換網絡後的播放器錯誤（YouTube）\n</string>
+<string name="update_log">### 錯誤修正\n\n- (4.1.3)頻繁要求登入\n- 從4.1.0開始加載速度緩慢（YouTube）\n- 加載影片時隨機失敗（YouTube）\n- 缺少字幕、段落、直播聊天（YouTube）\n- 切換網路後播放器錯誤（YouTube）\n</string>
 <string name="speeding_playback_title">按住以加快播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這個項目</string>
@@ -938,4 +938,5 @@
 <string name="show_stream_details">顯示串流詳細資訊</string>
 <string name="show_prerelease_description">預發布版本更新較快，但可能包含一些錯誤</string>
 <string name="show_prerelease_title">顯示預發行版本</string>
+<string name="temp">YouTube 正在加大力度封鎖第三方客戶端，特別是匿名訪問，因此我們最近不得不頻繁更新以解決所有出現的問題。\n我們了解頻繁更新可能會令人感到疲憊，因此從 4.1.3 版本開始，我們將為每個新版本設置 3-7 天的預發行期。在更新設置中，您可以選擇是否同時檢查預發行版。\n我們相信最終會打贏這場與 YouTube 的戰鬥。謝謝您的支持！</string>
 </resources>

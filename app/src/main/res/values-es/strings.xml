@@ -849,7 +849,7 @@ Debe aceptarla para enviarnos el informe de errores.</string>
 <string name="sponsor_promote">Conviértete en un patrocinador</string>
 <string name="random_play_order_title">Orden aleatorio</string>
 <string name="random_play_order_summary">Al usar el Modo de Reproductor de Música, baraja la lista de reproducción</string>
-<string name="update_log">### Correcciones de errores\n\n- Carga lenta desde la versión 4.1.0 (YouTube)\n- Falla aleatoria al cargar videos (YouTube)\n- Falta de subtítulos, segmentos, chat en vivo (YouTube)\n- Error del reproductor después de cambiar de red (YouTube)\n</string>
+<string name="update_log">### Correcciones de errores\n\n- (4.1.3)Pide iniciar sesión con frecuencia\n- Velocidad de carga lenta a partir de 4.1.0 (YouTube)\n- Falla aleatoria al cargar videos (YouTube)\n- Falta de subtítulos, segmentos, chat en vivo (YouTube)\n- Error del reproductor después de cambiar de red (YouTube)\n</string>
 <string name="speeding_playback_title">Mantener presionado para acelerar la reproducción</string>
 <string name="view_on_github">Ver en GitHub</string>
 <string name="donation_dialog_title">Apoya el proyecto</string>
@@ -891,4 +891,5 @@ Debe aceptarla para enviarnos el informe de errores.</string>
 <string name="show_stream_details">Mostrar detalles de la transmisión</string>
 <string name="show_prerelease_description">Las actualizaciones de prelanzamiento son más rápidas, pero pueden contener algunos errores</string>
 <string name="show_prerelease_title">Mostrar pre-lanzamientos</string>
+<string name="temp">YouTube está incrementando sus esfuerzos para bloquear clientes de terceros, especialmente para el acceso anónimo, por lo que hemos tenido que actualizar con frecuencia recientemente para abordar todos los problemas que surgen.\nEntendemos que las actualizaciones frecuentes pueden ser agotadoras, así que a partir de la versión 4.1.3, estableceremos un período de pre-lanzamiento de 3–7 días para cada nueva versión. En la configuración de actualización, puedes elegir si deseas buscar pre-lanzamientos al mismo tiempo.\nCreemos que eventualmente ganaremos esta lucha con YouTube. ¡Gracias por tu apoyo!</string>
 </resources>
