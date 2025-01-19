@@ -17,6 +17,7 @@ import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import com.grack.nanojson.JsonObject
 import com.grack.nanojson.JsonParser
 import com.grack.nanojson.JsonParserException
 import org.schabi.newpipe.extractor.downloader.Response
@@ -120,12 +121,22 @@ class NewVersionWorker(
 
         // Parse the json from the response.
         try {
-            val githubStableObject = JsonParser.`array`()
-                .from(response.responseBody()).getObject(0)
+            val githubReleases = JsonParser.`array`()
+                .from(response.responseBody())
+            val includePreRelease = prefs.getBoolean(applicationContext.getString(R.string.show_prerelease_key), false)
+            var githubStableObject: JsonObject? = null
+            for (i in 0 until githubReleases.size) {
+                val githubRelease = githubReleases.getObject(i)
+                if (!includePreRelease && githubRelease.getBoolean("prerelease")) {
+                    continue
+                }
+                githubStableObject = githubRelease
+            }
+
 
             val supportedAbis = Build.SUPPORTED_ABIS
 
-            var versionName = githubStableObject.getString("name").split("-")[0]
+            var versionName = githubStableObject!!.getString("name").split("-")[0]
             if (versionName.startsWith("v")) {
                 versionName = versionName.substring(1)
             }

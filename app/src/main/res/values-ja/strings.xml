@@ -935,4 +935,6 @@
 <string name="token_expired">トークンの有効期限が切れました</string>
 <string name="subscription_kofi_title">Ko-fiでサポーターになる</string>
 <string name="show_stream_details">ストリームの詳細を表示</string>
+<string name="show_prerelease_description">プレリリースはより速く更新されますが、いくつかのバグが含まれている可能性があります</string>
+<string name="show_prerelease_title">プレリリースを表示</string>
 </resources>

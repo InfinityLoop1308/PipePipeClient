@@ -889,4 +889,6 @@ Debe aceptarla para enviarnos el informe de errores.</string>
 <string name="token_expired">Token caducado</string>
 <string name="subscription_kofi_title">Conviértete en un patrocinador en Ko-fi</string>
 <string name="show_stream_details">Mostrar detalles de la transmisión</string>
+<string name="show_prerelease_description">Las actualizaciones de prelanzamiento son más rápidas, pero pueden contener algunos errores</string>
+<string name="show_prerelease_title">Mostrar pre-lanzamientos</string>
 </resources>

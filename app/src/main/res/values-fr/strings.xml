@@ -840,4 +840,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="token_expired">Le jeton a expiré</string>
 <string name="subscription_kofi_title">Devenez un supporter sur Ko-fi</string>
 <string name="show_stream_details">Afficher les détails du flux</string>
+<string name="show_prerelease_description">Les pré-versions se mettent à jour plus rapidement, mais peuvent contenir des bugs</string>
+<string name="show_prerelease_title">Afficher les pré-versions</string>
 </resources>

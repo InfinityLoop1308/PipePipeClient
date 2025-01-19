@@ -993,4 +993,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="token_expired">Token đã hết hạn</string>
 <string name="subscription_kofi_title">Trở thành người hỗ trợ trên Ko-fi</string>
 <string name="show_stream_details">Hiển thị chi tiết luồng</string>
+<string name="show_prerelease_description">Các phiên bản phát hành trước cập nhật nhanh hơn, nhưng có thể chứa một số lỗi</string>
+<string name="show_prerelease_title">Hiển thị các bản phát hành trước</string>
 </resources>

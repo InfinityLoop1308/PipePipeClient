@@ -887,4 +887,6 @@
 <string name="token_expired">Token abgelaufen</string>
 <string name="subscription_kofi_title">Unterstützer auf Ko-fi werden</string>
 <string name="show_stream_details">Streamdetails anzeigen</string>
+<string name="show_prerelease_description">Vorabversionen werden schneller aktualisiert, können jedoch einige Fehler enthalten</string>
+<string name="show_prerelease_title">Vorabversionen anzeigen</string>
 </resources>

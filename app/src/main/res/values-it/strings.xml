@@ -807,4 +807,6 @@
 <string name="token_expired">Token scaduto</string>
 <string name="subscription_kofi_title">Diventa un sostenitore su Ko-fi</string>
 <string name="show_stream_details">Mostra i dettagli del flusso</string>
+<string name="show_prerelease_description">Gli aggiornamenti delle versioni pre-rilasciate sono più veloci, ma possono contenere alcuni bug</string>
+<string name="show_prerelease_title">Mostra le versioni pre-release</string>
 </resources>

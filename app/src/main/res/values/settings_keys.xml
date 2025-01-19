@@ -1596,6 +1596,7 @@
     <string name="enable_proxy_key">enable_proxy_key</string>
     <string name="check_token_validity_key">check_token_validity_key</string>
     <string name="donation_encouragement_key">donation_encouragement_key</string>
+    <string name="show_prerelease_key">show_prerelease_key</string>
     <string-array name="filter_type_entries">
         <item>@string/search_result</item>
         <item>@string/recommended_videos</item>
