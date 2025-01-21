@@ -122,14 +122,14 @@ public final class MainPlayer extends Service {
             // Player is not working, no need to process media button's action
             return START_NOT_STICKY;
         }
+        // null check
+        if (player == null) {
+            player = new Player(this);
+        }
 
         if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())
                 || intent.getStringExtra(Player.PLAY_QUEUE_KEY) != null) {
             NotificationUtil.getInstance().createNotificationAndStartForeground(player, this);
-        }
-        // null check
-        if (player == null) {
-            player = new Player(this);
         }
         player.handleIntent(intent);
         if (player.getMediaSessionManager() != null) {
