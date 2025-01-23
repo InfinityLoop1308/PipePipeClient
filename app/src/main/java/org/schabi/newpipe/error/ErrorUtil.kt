@@ -108,7 +108,9 @@ class ErrorUtil {
         @JvmStatic
         fun createNotification(context: Context, errorInfo: ErrorInfo) {
             var pendingIntentFlags = PendingIntent.FLAG_UPDATE_CURRENT
-            pendingIntentFlags = pendingIntentFlags or PendingIntent.FLAG_IMMUTABLE
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                pendingIntentFlags = pendingIntentFlags or PendingIntent.FLAG_IMMUTABLE
+            }
 
             val notificationBuilder: NotificationCompat.Builder =
                 NotificationCompat.Builder(

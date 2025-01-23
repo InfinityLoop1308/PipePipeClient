@@ -24,7 +24,12 @@ public class PermissionChecker {
     // Check if the notification is enabled for this package
     private static boolean isNotificationEnabled(Context context) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        return notificationManager.areNotificationsEnabled();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            return notificationManager.areNotificationsEnabled();
+        } else {
+            // For older versions, you might want to check specific settings using Settings.Secure
+            return true; // Assuming it is enabled by default as you can't check on older versions
+        }
     }
 
     // Intent to open the notification settings for this app

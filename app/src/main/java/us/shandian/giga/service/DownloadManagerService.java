@@ -150,7 +150,8 @@ public class DownloadManagerService extends Service {
 
         mOpenDownloadList = PendingIntent.getActivity(this, 0,
                 openDownloadListIntent,
-                PendingIntent.FLAG_IMMUTABLE | FLAG_UPDATE_CURRENT);
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M?
+                        PendingIntent.FLAG_IMMUTABLE | FLAG_UPDATE_CURRENT : FLAG_UPDATE_CURRENT);
 
         icLauncher = BitmapFactory.decodeResource(this.getResources(), R.mipmap.ic_launcher);
 
@@ -507,7 +508,8 @@ public class DownloadManagerService extends Service {
 
     private PendingIntent makePendingIntent(String action) {
         Intent intent = new Intent(this, DownloadManagerService.class).setAction(action);
-        return PendingIntent.getService(this, intent.hashCode(), intent, PendingIntent.FLAG_IMMUTABLE | FLAG_UPDATE_CURRENT);
+        return PendingIntent.getService(this, intent.hashCode(), intent, Build.VERSION.SDK_INT >= Build.VERSION_CODES.M?
+                PendingIntent.FLAG_IMMUTABLE | FLAG_UPDATE_CURRENT : FLAG_UPDATE_CURRENT);
     }
 
     private void manageLock(boolean acquire) {
