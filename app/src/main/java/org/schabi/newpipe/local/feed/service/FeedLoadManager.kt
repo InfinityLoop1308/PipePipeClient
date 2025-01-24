@@ -172,6 +172,9 @@ class FeedLoadManager(private val context: Context) {
                             .flatMap { (channelTabInfo, linkHandler) ->
                                 errors.addAll(channelTabInfo.errors)
                                 if (channelTabInfo.relatedItems.isEmpty()) {
+                                    if (channelTabInfo.nextPage == null) {
+                                        return@flatMap emptyList()
+                                    }
                                     val infoItemsPage = getMoreChannelTabItems(
                                         subscriptionEntity.serviceId,
                                         linkHandler, channelTabInfo.nextPage
