@@ -2402,63 +2402,66 @@ public final class VideoDetailFragment
             @Override
             public void onStateChanged(@NonNull final View bottomSheet, final int newState) {
                 bottomSheetState = newState;
+                try {
+                    switch (newState) {
+                        case BottomSheetBehavior.STATE_HIDDEN:
+                            moveFocusToMainFragment(true);
+                            manageSpaceAtTheBottom(true);
 
-                switch (newState) {
-                    case BottomSheetBehavior.STATE_HIDDEN:
-                        moveFocusToMainFragment(true);
-                        manageSpaceAtTheBottom(true);
+                            bottomSheetBehavior.setPeekHeight(0);
+                            cleanUp();
+                            break;
+                        case BottomSheetBehavior.STATE_EXPANDED:
+                            moveFocusToMainFragment(false);
+                            manageSpaceAtTheBottom(false);
 
-                        bottomSheetBehavior.setPeekHeight(0);
-                        cleanUp();
-                        break;
-                    case BottomSheetBehavior.STATE_EXPANDED:
-                        moveFocusToMainFragment(false);
-                        manageSpaceAtTheBottom(false);
+                            bottomSheetBehavior.setPeekHeight(peekHeight);
+                            // Disable click because overlay buttons located on top of buttons
+                            // from the player
+                            setOverlayElementsClickable(false);
+                            hideSystemUiIfNeeded();
+                            // Conditions when the player should be expanded to fullscreen
+                            if (DeviceUtils.isLandscape(requireContext())
+                                    && isPlayerAvailable()
+                                    && player.isPlaying()
+                                    && !player.isFullscreen()
+                                    && !DeviceUtils.isTablet(activity)
+                                    && player.videoPlayerSelected()) {
+                                player.toggleFullscreen();
+                            }
+                            if (isPlayerAvailable()
+                                    && player.isPlaying()
+                                    && player.videoPlayerSelected()) {
+                                player.startBCPlayer();
+                            }
+                            setOverlayLook(binding.appBarLayout, behavior, 1);
+                            break;
+                        case BottomSheetBehavior.STATE_COLLAPSED:
+                            moveFocusToMainFragment(true);
+                            manageSpaceAtTheBottom(false);
 
-                        bottomSheetBehavior.setPeekHeight(peekHeight);
-                        // Disable click because overlay buttons located on top of buttons
-                        // from the player
-                        setOverlayElementsClickable(false);
-                        hideSystemUiIfNeeded();
-                        // Conditions when the player should be expanded to fullscreen
-                        if (DeviceUtils.isLandscape(requireContext())
-                                && isPlayerAvailable()
-                                && player.isPlaying()
-                                && !player.isFullscreen()
-                                && !DeviceUtils.isTablet(activity)
-                                && player.videoPlayerSelected()) {
-                            player.toggleFullscreen();
-                        }
-                        if (isPlayerAvailable()
-                                && player.isPlaying()
-                                && player.videoPlayerSelected()) {
-                            player.startBCPlayer();
-                        }
-                        setOverlayLook(binding.appBarLayout, behavior, 1);
-                        break;
-                    case BottomSheetBehavior.STATE_COLLAPSED:
-                        moveFocusToMainFragment(true);
-                        manageSpaceAtTheBottom(false);
+                            bottomSheetBehavior.setPeekHeight(peekHeight);
 
-                        bottomSheetBehavior.setPeekHeight(peekHeight);
-
-                        // Re-enable clicks
-                        setOverlayElementsClickable(true);
-                        if (isPlayerAvailable()) {
-                            player.closeItemsList();
-                            player.pauseBCPlayer();
-                        }
-                        setOverlayLook(binding.appBarLayout, behavior, 0);
-                        break;
-                    case BottomSheetBehavior.STATE_DRAGGING:
-                    case BottomSheetBehavior.STATE_SETTLING:
-                        if (isPlayerAvailable() && player.isFullscreen()) {
-                            showSystemUi();
-                        }
-                        if (isPlayerAvailable() && player.isControlsVisible()) {
-                            player.hideControls(0, 0);
-                        }
-                        break;
+                            // Re-enable clicks
+                            setOverlayElementsClickable(true);
+                            if (isPlayerAvailable()) {
+                                player.closeItemsList();
+                                player.pauseBCPlayer();
+                            }
+                            setOverlayLook(binding.appBarLayout, behavior, 0);
+                            break;
+                        case BottomSheetBehavior.STATE_DRAGGING:
+                        case BottomSheetBehavior.STATE_SETTLING:
+                            if (isPlayerAvailable() && player.isFullscreen()) {
+                                showSystemUi();
+                            }
+                            if (isPlayerAvailable() && player.isControlsVisible()) {
+                                player.hideControls(0, 0);
+                            }
+                            break;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
 
