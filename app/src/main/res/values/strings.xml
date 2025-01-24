@@ -999,4 +999,5 @@
 <string name="show_prerelease_description">Pre-releases update faster, but may contain some bugs</string>
 <string name="show_prerelease_title">Show pre-releases</string>
 <string name="temp">YouTube is increasing its efforts to block third–party clients, especially for anonymous access, so we have had to update frequently recently to address all the issues that arise.\n\nWe understand that frequent updates can be tiring, so starting from version 4.1.3, we will set a 3–7 day pre-release period for each new version. In the update settings, you can choose whether to check for pre-releases at the same time.\n\nWe believe we will eventually win this fight with YouTube. Thank you for your support!</string>
+<string name="show_dislike_title">Show dislike count</string>
 </resources>

@@ -810,4 +810,5 @@
 <string name="show_prerelease_description">Gli aggiornamenti delle versioni pre-rilasciate sono più veloci, ma possono contenere alcuni bug</string>
 <string name="show_prerelease_title">Mostra le versioni pre-release</string>
 <string name="temp">YouTube sta intensificando i suoi sforzi per bloccare i client di terze parti, specialmente per l\'accesso anonimo, quindi abbiamo dovuto aggiornare frequentemente di recente per affrontare tutti i problemi che si presentano.\nCapisci che aggiornamenti frequenti possono essere stancanti, quindi a partire dalla versione 4.1.3, imposteremo un periodo di pre-rilascio di 3-7 giorni per ogni nuova versione. Nelle impostazioni degli aggiornamenti, puoi scegliere se controllare i pre-rilasci contemporaneamente.\nCrediamo che alla fine vinceremo questa lotta con YouTube. Grazie per il tuo supporto!</string>
+<string name="show_dislike_title">Mostra il conteggio dei non mi piace</string>
 </resources>

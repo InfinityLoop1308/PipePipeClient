@@ -892,4 +892,5 @@ Debe aceptarla para enviarnos el informe de errores.</string>
 <string name="show_prerelease_description">Las actualizaciones de prelanzamiento son más rápidas, pero pueden contener algunos errores</string>
 <string name="show_prerelease_title">Mostrar pre-lanzamientos</string>
 <string name="temp">YouTube está incrementando sus esfuerzos para bloquear clientes de terceros, especialmente para el acceso anónimo, por lo que hemos tenido que actualizar con frecuencia recientemente para abordar todos los problemas que surgen.\nEntendemos que las actualizaciones frecuentes pueden ser agotadoras, así que a partir de la versión 4.1.3, estableceremos un período de pre-lanzamiento de 3–7 días para cada nueva versión. En la configuración de actualización, puedes elegir si deseas buscar pre-lanzamientos al mismo tiempo.\nCreemos que eventualmente ganaremos esta lucha con YouTube. ¡Gracias por tu apoyo!</string>
+<string name="show_dislike_title">Mostrar conteo de no me gusta</string>
 </resources>

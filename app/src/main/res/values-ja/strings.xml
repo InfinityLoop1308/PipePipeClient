@@ -938,4 +938,5 @@
 <string name="show_prerelease_description">プレリリースはより速く更新されますが、いくつかのバグが含まれている可能性があります</string>
 <string name="show_prerelease_title">プレリリースを表示</string>
 <string name="temp">YouTubeは、特に匿名アクセスに対して、サードパーティクライアントをブロックする取り組みを強化しているため、私たちは最近すべての問題に対応するために頻繁に更新を行わなければなりませんでした。\n頻繁な更新は疲れることもあると理解しているため、バージョン4.1.3からは、各新しいバージョンに対して3〜7日のプレリリース期間を設定します。更新設定で、プレリリースを同時に確認するかどうかを選択できます。\n私たちは最終的にYouTubeとの戦いに勝つと信じています。サポートをありがとうございます！</string>
+<string name="show_dislike_title">嫌いの数を表示</string>
 </resources>

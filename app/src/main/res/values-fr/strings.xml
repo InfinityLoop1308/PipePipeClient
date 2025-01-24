@@ -843,4 +843,5 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="show_prerelease_description">Les pré-versions se mettent à jour plus rapidement, mais peuvent contenir des bugs</string>
 <string name="show_prerelease_title">Afficher les pré-versions</string>
 <string name="temp">YouTube redouble ses efforts pour bloquer les clients tiers, en particulier pour un accès anonyme, nous avons donc dû mettre à jour fréquemment récemment pour résoudre tous les problèmes qui surviennent.\nNous comprenons que des mises à jour fréquentes peuvent être fatigantes, c\'est pourquoi, à partir de la version 4.1.3, nous établirons une période de pré-version de 3 à 7 jours pour chaque nouvelle version. Dans les paramètres de mise à jour, vous pouvez choisir si vous souhaitez vérifier les pré-versions en même temps.\nNous croyons que nous finirons par gagner ce combat avec YouTube. Merci pour votre soutien !</string>
+<string name="show_dislike_title">Afficher le nombre de désapprobations</string>
 </resources>

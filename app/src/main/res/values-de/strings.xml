@@ -890,4 +890,5 @@
 <string name="show_prerelease_description">Vorabversionen werden schneller aktualisiert, können jedoch einige Fehler enthalten</string>
 <string name="show_prerelease_title">Vorabversionen anzeigen</string>
 <string name="temp">YouTube verstärkt seine Bemühungen, Drittanbieter-Clients, insbesondere für anonymen Zugriff, zu blockieren, sodass wir kürzlich häufig aktualisieren mussten, um alle auftretenden Probleme zu beheben.\nWir verstehen, dass häufige Updates ermüdend sein können, daher werden wir ab Version 4.1.3 für jede neue Version eine Vorabveröffentlichungsperiode von 3–7 Tagen festlegen. In den Update-Einstellungen können Sie wählen, ob Sie gleichzeitig auf Vorabveröffentlichungen prüfen möchten.\nWir glauben, dass wir diesen Kampf mit YouTube schließlich gewinnen werden. Danke für Ihre Unterstützung!</string>
+<string name="show_dislike_title">Anzahl der Dislikes anzeigen</string>
 </resources>
