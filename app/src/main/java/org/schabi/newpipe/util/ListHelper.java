@@ -193,6 +193,9 @@ public final class ListHelper {
         boolean useDolbyAudio = advancedFormats.contains("Dolby Atmos");
         return streamList.stream()
                 .filter(stream -> {
+                    if (stream.getCodec() == null) {
+                        return true;
+                    }
                     if (stream.getCodec().toLowerCase(Locale.ROOT).equals("flac")) {
                         return false; // flac support has issue: InsufficientCapacityException, at least for BiliBili
                     } else if (stream.getCodec().equals("ec-3")) {
