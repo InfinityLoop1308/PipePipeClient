@@ -31,8 +31,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.google.android.exoplayer2.C.TIME_UNSET;
-import static org.schabi.newpipe.util.ListHelper.removeNonUrlAndTorrentStreams;
-import static org.schabi.newpipe.util.ListHelper.removeTorrentStreams;
+import static org.schabi.newpipe.util.ListHelper.*;
 
 public class VideoPlaybackResolver implements PlaybackResolver {
     private static final String TAG = VideoPlaybackResolver.class.getSimpleName();
@@ -108,9 +107,10 @@ public class VideoPlaybackResolver implements PlaybackResolver {
         }
 
         // Create optional audio stream source
-        final List<AudioStream> audioStreams = info.getAudioStreams()
+        List<AudioStream> audioStreams = info.getAudioStreams()
                 .stream().filter(s -> !blacklistUrls.contains(s.getContent())).collect(Collectors.toList());
         removeTorrentStreams(audioStreams);
+        audioStreams = filterUnsupportedFormats(audioStreams, context);
         final AudioStream audio = audioStreams.isEmpty() ? null : audioStreams.get(
                 ListHelper.getDefaultAudioFormat(context, audioStreams));
 

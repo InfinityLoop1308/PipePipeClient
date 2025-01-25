@@ -17,16 +17,7 @@ import org.schabi.newpipe.extractor.stream.DeliveryMethod;
 import org.schabi.newpipe.extractor.stream.Stream;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public final class ListHelper {
@@ -192,6 +183,24 @@ public final class ListHelper {
         }
 
         return streamList;
+    }
+
+    public static List<AudioStream> filterUnsupportedFormats(@NonNull final List<AudioStream> streamList,
+                                                             @NonNull final Context context) {
+        final SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        Set<String> advancedFormats = sharedPreferences.getStringSet(context.getString(R.string.advanced_formats_key), new HashSet<>());
+        boolean useDolbyAudio = advancedFormats.contains("Dolby Atmos");
+        return streamList.stream()
+                .filter(stream -> {
+                    if (stream.getCodec().toLowerCase(Locale.ROOT).equals("flac")) {
+                        return false; // flac support has issue: InsufficientCapacityException, at least for BiliBili
+                    } else if (stream.getCodec().equals("ec-3")) {
+                        return useDolbyAudio;
+                    } else {
+                        return true;
+                    }
+                }).collect(Collectors.toList());
     }
 
     /**

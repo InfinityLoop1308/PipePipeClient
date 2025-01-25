@@ -1538,6 +1538,7 @@
         <item>WebM</item>
         <item>H.265</item>
         <item>AV1</item>
+        <item>Dolby Atmos</item>
     </string-array>
     <string-array name="audio_langs">
         <item>@string/sort_origin</item>
