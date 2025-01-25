@@ -44,7 +44,7 @@ public class NicoNicoAccountSettingsFragment extends BasePreferenceFragment impl
     }
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if(key.equals(getString(R.string.override_cookies_youtube_key)) || key.equals(getString(R.string.override_cookies_youtube_value_key))) {
+        if(key.equals(getString(R.string.override_cookies_niconico_key)) || key.equals(getString(R.string.override_cookies_niconico_value_key))) {
             ServiceHelper.initServices(this.getContext());
         }
     }

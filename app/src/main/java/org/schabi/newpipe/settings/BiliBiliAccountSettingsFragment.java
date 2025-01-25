@@ -42,7 +42,7 @@ public class BiliBiliAccountSettingsFragment extends BasePreferenceFragment impl
     }
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if(key.equals(getString(R.string.override_cookies_youtube_key)) || key.equals(getString(R.string.override_cookies_youtube_value_key))) {
+        if(key.equals(getString(R.string.override_cookies_bilibili_key)) || key.equals(getString(R.string.override_cookies_bilibili_value_key))) {
             ServiceHelper.initServices(this.getContext());
         }
     }
