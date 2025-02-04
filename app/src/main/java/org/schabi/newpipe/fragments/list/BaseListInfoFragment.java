@@ -285,4 +285,16 @@ public abstract class BaseListInfoFragment<I extends InfoItem, L extends ListInf
             showSnackBarError(errorInfo);
         }
     }
+
+    public int getServiceId() {
+        return serviceId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getUrl() {
+        return url;
+    }
 }

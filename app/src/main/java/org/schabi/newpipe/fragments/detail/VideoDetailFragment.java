@@ -42,6 +42,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.exoplayer2.PlaybackException;
@@ -68,6 +69,7 @@ import org.schabi.newpipe.extractor.stream.*;
 import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.fragments.BaseStateFragment;
 import org.schabi.newpipe.fragments.EmptyFragment;
+import org.schabi.newpipe.fragments.list.comments.CommentReplyFragment;
 import org.schabi.newpipe.fragments.list.comments.CommentsFragment;
 import org.schabi.newpipe.fragments.list.comments.CommentsFragmentContainer;
 import org.schabi.newpipe.fragments.list.videos.RelatedItemsFragment;
@@ -859,9 +861,14 @@ public final class VideoDetailFragment
     private boolean callCommentFragmentOnBack() {
         final String currentPage = pageAdapter.getItemTitle(binding.viewPager.getCurrentItem());
         if (COMMENTS_TAB_TAG.equals(currentPage)) {
-            final Fragment fragment = getFM()
+            final FragmentManager fm = getFM();
+            final Fragment fragment = fm
                     .findFragmentById(R.id.fragment_container_view);
             if (fragment instanceof BackPressable) {
+                if (fm.getBackStackEntryCount() > 1) {
+                    fm.popBackStack();
+                    return true;
+                }
                 return ((BackPressable) fragment).onBackPressed();
             }
         }
@@ -1126,7 +1133,13 @@ public final class VideoDetailFragment
                 tabContentDescriptions.remove(Integer.valueOf(R.string.comments_tab_description));
             }
         } else{
-            pageAdapter.updateItem(COMMENTS_TAB_TAG, CommentsFragmentContainer.getInstance(serviceId, url, title));
+            int index = pageAdapter.getItemPositionByTitle(COMMENTS_TAB_TAG);
+            if (index == -1 || !(pageAdapter.getItem(index) instanceof CommentsFragmentContainer)) {
+                pageAdapter.updateItem(COMMENTS_TAB_TAG, CommentsFragmentContainer.getInstance(serviceId, url, title));
+            } else {
+                Fragment existing = pageAdapter.getItem(index);
+                ((CommentsFragmentContainer) existing).update(serviceId, url, title);
+            }
         }
 
         if (showDescription) {
@@ -2480,10 +2493,25 @@ public final class VideoDetailFragment
 
         // User opened a new page and the player will hide itself
         activity.getSupportFragmentManager().addOnBackStackChangedListener(() -> {
-            if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            Fragment currentFragment = activity.getSupportFragmentManager()
+                    .findFragmentById(R.id.fragment_container_view);
+            if (shouldTriggerCollapse(currentFragment) &&
+                    bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
+    }
+
+    private boolean shouldTriggerCollapse(Fragment fragment) {
+        // 定义需要排除的Fragment类型列表
+        List<Class<? extends Fragment>> excludedFragments = Arrays.asList(
+                CommentsFragment.class,
+                CommentReplyFragment.class
+        );
+
+        // 检查当前Fragment是否在排除列表中
+        return excludedFragments.stream()
+                .noneMatch(clazz -> clazz.isInstance(fragment));
     }
 
     private void updateOverlayData(@Nullable final String overlayTitle,
