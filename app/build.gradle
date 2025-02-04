@@ -328,7 +328,7 @@ dependencies {
     androidTestImplementation "androidx.room:room-testing:${androidxRoomVersion}"
     androidTestImplementation "org.assertj:assertj-core:${assertJVersion}"
 
-    implementation 'com.arthenica:ffmpeg-kit-https:5.1.LTS'
+    implementation 'com.arthenica:ffmpeg-kit-https:6.0-2.LTS'
 }
 
 static String getGitWorkingBranch() {
