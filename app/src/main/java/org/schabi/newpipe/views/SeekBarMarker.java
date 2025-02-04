@@ -9,7 +9,7 @@ public class SeekBarMarker {
 
     public SeekBarMarker(final double startTime,
                          final double endTime,
-                         final int maxTime,
+                         final long maxTime,
                          final int color) {
         this.startTime = startTime;
         this.endTime = endTime;

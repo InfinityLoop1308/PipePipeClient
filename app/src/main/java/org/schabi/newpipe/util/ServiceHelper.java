@@ -18,6 +18,7 @@ import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.services.peertube.PeertubeInstance;
+import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockApiSettings;
 import org.schabi.newpipe.extractor.utils.Utils;
 
 import java.util.ArrayList;
@@ -330,6 +331,54 @@ public final class ServiceHelper {
             }
             Set<String> blockingFields = sharedPreferences.getStringSet(context.getString(R.string.filter_type_key), new HashSet<>());
             s.setFilterTypes(blockingFields);
+
+            SponsorBlockApiSettings sponsorBlockApiSettings = buildSponsorBlockApiSettings(context);
+            s.setSponsorBlockApiSettings(sponsorBlockApiSettings);
         }
+    }
+
+    private static SponsorBlockApiSettings buildSponsorBlockApiSettings(
+            final Context context) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        final boolean isSponsorBlockEnabled = prefs.getBoolean(context
+                .getString(R.string.sponsor_block_enable_key), false);
+
+        if (!isSponsorBlockEnabled) {
+            return null;
+        }
+
+        final SponsorBlockApiSettings result = new SponsorBlockApiSettings();
+        result.apiUrl =
+                prefs.getString(context.getString(R.string.sponsor_block_api_url_key), null);
+        result.includeSponsorCategory =
+                prefs.getBoolean(context
+                        .getString(R.string.sponsor_block_category_sponsor_key), false);
+        result.includeIntroCategory =
+                prefs.getBoolean(context
+                        .getString(R.string.sponsor_block_category_intro_key), false);
+        result.includeOutroCategory =
+                prefs.getBoolean(context
+                        .getString(R.string.sponsor_block_category_outro_key), false);
+        result.includeInteractionCategory =
+                prefs.getBoolean(context
+                        .getString(R.string.sponsor_block_category_interaction_key), false);
+        result.includeHighlightCategory =
+                prefs.getBoolean(context
+                        .getString(R.string.sponsor_block_category_highlight_key), false);
+        result.includeSelfPromoCategory =
+                prefs.getBoolean(context
+                        .getString(R.string.sponsor_block_category_self_promo_key), false);
+        result.includeMusicCategory =
+                prefs.getBoolean(context
+                        .getString(R.string.sponsor_block_category_non_music_key), false);
+        result.includePreviewCategory =
+                prefs.getBoolean(context
+                        .getString(R.string.sponsor_block_category_preview_key), false);
+        result.includeFillerCategory =
+                prefs.getBoolean(context
+                        .getString(R.string.sponsor_block_category_filler_key), false);
+
+        return result;
     }
 }

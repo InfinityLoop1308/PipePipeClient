@@ -3,7 +3,6 @@ package org.schabi.newpipe.player;
 import static org.schabi.newpipe.QueueItemMenuUtil.openPopupMenu;
 import static org.schabi.newpipe.player.helper.PlayerHelper.formatSpeed;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
-import static org.schabi.newpipe.util.SponsorBlockUtils.markSegments;
 
 import android.content.*;
 import android.os.Bundle;
@@ -223,13 +222,6 @@ public final class PlayQueueActivity extends AppCompatActivity
                 } else {
                     buildComponents();
                     if (player != null) {
-                        final PlayQueueItem item = player.getPlayQueue().getItem();
-                        final Context context = getApplicationContext();
-                        final SharedPreferences prefs =
-                                PreferenceManager.getDefaultSharedPreferences(context);
-                        markSegments(item, queueControlBinding.seekBar, context, prefs);
-
-
                         player.setActivityListener(PlayQueueActivity.this);
                     }
                 }

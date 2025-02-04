@@ -41,7 +41,6 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.internal.subscriptions.EmptySubscription;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.PublishSubject;
-import org.schabi.newpipe.util.SponsorBlockUtils;
 
 import static org.schabi.newpipe.player.mediasource.FailedMediaSource.MediaSourceResolutionException;
 import static org.schabi.newpipe.player.mediasource.FailedMediaSource.StreamInfoLoadException;
@@ -443,13 +442,6 @@ public class MediaSourceManager {
             final MediaItemTag tag = MediaItemTag.from(source.getMediaItem()).get();
             final long expiration = System.currentTimeMillis()
                     + ServiceHelper.getCacheExpirationMillis(streamInfo.getServiceId());
-            try {
-                stream.setVideoSegments(
-                        SponsorBlockUtils.getYouTubeVideoSegments(
-                                context, streamInfo));
-            } catch (final UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
-            }
             return new LoadedMediaSource(source, tag, stream, expiration);
         }).onErrorReturn(throwable -> {
             if (throwable instanceof ExtractionException) {

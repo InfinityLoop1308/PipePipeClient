@@ -13,6 +13,7 @@ import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_ONE;
 import static com.google.android.exoplayer2.Player.RepeatMode;
+import static org.schabi.newpipe.MainActivity.DEBUG;
 import static org.schabi.newpipe.QueueItemMenuUtil.openPopupMenu;
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 import static org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty;
@@ -27,7 +28,6 @@ import static org.schabi.newpipe.util.ListHelper.getPopupResolutionIndex;
 import static org.schabi.newpipe.util.ListHelper.getResolutionIndex;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.schabi.newpipe.util.SponsorBlockUtils.markSegments;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -111,6 +111,8 @@ import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.*;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
+import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockAction;
+import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockSegment;
 import org.schabi.newpipe.extractor.stream.*;
 import org.schabi.newpipe.fragments.OnScrollBelowItemsListener;
 import org.schabi.newpipe.fragments.detail.VideoDetailFragment;
@@ -220,6 +222,7 @@ public final class Player implements
     public static final int DEFAULT_CONTROLS_HIDE_TIME = 2000;  // 2 Seconds
     public static final int DPAD_CONTROLS_HIDE_TIME = 7000;  // 7 Seconds
     public static final int SEEK_OVERLAY_DURATION = 450; // 450 millis
+    private static final int UNSKIP_WINDOW_MILLIS = 5000; // 5 seconds
 
     /*//////////////////////////////////////////////////////////////////////////
     // Other constants
@@ -381,7 +384,10 @@ public final class Player implements
     //////////////////////////////////////////////////////////////////////////*/
     private SponsorBlockMode sponsorBlockMode = SponsorBlockMode.DISABLED;
     private int lastSkipTarget = -1;
+    private SponsorBlockSegment lastSegment;
+    private boolean autoSkipGracePeriod = false;
 
+    private final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
     /*//////////////////////////////////////////////////////////////////////////
     // Gesture
     //////////////////////////////////////////////////////////////////////////*/
@@ -396,6 +402,25 @@ public final class Player implements
         this.service = service;
         context = service;
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        final boolean isSponsorBlockEnabled = prefs.getBoolean(
+                context.getString(R.string.sponsor_block_enable_key), false);
+
+        setSponsorBlockMode(isSponsorBlockEnabled
+                ? SponsorBlockMode.ENABLED
+                : SponsorBlockMode.DISABLED);
+
+        preferenceChangeListener =
+                (sharedPreferences, key) -> {
+                    if (context.getString(R.string.sponsor_block_enable_key).equals(key)) {
+                        setSponsorBlockMode(sharedPreferences.getBoolean(key, false)
+                                ? SponsorBlockMode.ENABLED
+                                : SponsorBlockMode.DISABLED);
+                    }
+                };
+
+        prefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+
         recordManager = new HistoryRecordManager(context);
 
         setupBroadcastReceiver();
@@ -570,10 +595,10 @@ public final class Player implements
         binding.openInBrowser.setOnClickListener(this);
         binding.playerCloseButton.setOnClickListener(this);
         binding.switchMute.setOnClickListener(this);
-        binding.switchSponsorBlocking.setOnClickListener(this);
-        binding.switchSponsorBlocking.setOnLongClickListener(this);
         binding.sleepTimer.setOnClickListener(this);
         binding.sleepTimer.setOnLongClickListener(this);
+        binding.skipButton.setOnClickListener(this);
+        binding.unskipButton.setOnClickListener(this);
 
         settingsContentObserver = new ContentObserver(new Handler()) {
             @Override
@@ -1128,7 +1153,6 @@ public final class Player implements
             binding.topControls.setClickable(false);
             binding.topControls.setFocusable(false);
             binding.bottomControls.bringToFront();
-            binding.switchSponsorBlocking.setVisibility(View.GONE);
             closeItemsList();
         } else if (videoPlayerSelected()) {
             binding.fullScreenButton.setVisibility(View.GONE);
@@ -1152,10 +1176,6 @@ public final class Player implements
             // down in fullscreen mode (just larger area to make easy to locate by finger)
             binding.topControls.setClickable(true);
             binding.topControls.setFocusable(true);
-            final boolean isSponsorBlockEnabled = getPrefs().getBoolean(
-                    context.getString(R.string.sponsor_block_enable_key), true);
-            binding.switchSponsorBlocking.setVisibility(
-                    isSponsorBlockEnabled ? View.VISIBLE : View.GONE);
         }
         showHideKodiButton();
 
@@ -1780,9 +1800,17 @@ public final class Player implements
     }
 
     public void triggerProgressUpdate() {
-        triggerProgressUpdate(false);
+        triggerProgressUpdate(false, false, false, false);
     }
-    private void triggerProgressUpdate(final boolean isRewind) {
+
+    public void triggerProgressUpdate(final boolean isRewind) {
+        triggerProgressUpdate(isRewind, false, false, false);
+    }
+
+    private void triggerProgressUpdate(final boolean isRewind,
+                                       final boolean isGracedRewind,
+                                       final boolean bypassSecondaryMode,
+                                       final boolean isUnSkip) {
         if (exoPlayerIsNull()) {
             return;
         }
@@ -1805,27 +1833,78 @@ public final class Player implements
                 currentProgress,
                 (int) simpleExoPlayer.getDuration(),
                 simpleExoPlayer.getBufferedPercentage());
+        triggerCheckForSponsorBlockSegments(currentProgress, isRewind,
+                isGracedRewind, bypassSecondaryMode, isUnSkip);
+    }
 
-        if (sponsorBlockMode == SponsorBlockMode.ENABLED && isPrepared) {
-            final VideoSegment segment = getSkippableSegment(currentProgress);
-            if (segment == null) {
-                lastSkipTarget = -1;
+    private void triggerCheckForSponsorBlockSegments(final int currentProgress,
+                                                     final boolean isRewind,
+                                                     final boolean isGracedRewind,
+                                                     final boolean bypassSecondaryMode,
+                                                     final boolean isUnSkip) {
+        if (sponsorBlockMode != SponsorBlockMode.ENABLED || !isPrepared) {
+            return;
+        }
+
+        getSkippableSponsorBlockSegment(currentProgress).ifPresent(sponsorBlockSegment -> {
+
+            final boolean showManualButtons = prefs.getBoolean(
+                    context.getString(R.string.sponsor_block_show_manual_skip_key), false);
+            // per-sponsorBlockSegment category skip setting
+            final SponsorBlockSecondaryMode secondaryMode = getSecondaryMode(sponsorBlockSegment);
+
+            // show/hide manual skip buttons
+            if (showManualButtons && secondaryMode != SponsorBlockSecondaryMode.HIGHLIGHT) {
+                if (currentProgress < sponsorBlockSegment.endTime
+                        && currentProgress > sponsorBlockSegment.startTime) {
+                    showAutoSkip();
+                } else {
+                    hideAutoSkip();
+                }
+
+                if (currentProgress > sponsorBlockSegment.startTime
+                        && currentProgress < sponsorBlockSegment.endTime + UNSKIP_WINDOW_MILLIS) {
+                    showAutoUnskip();
+                } else {
+                    hideAutoUnskip();
+                }
+            }
+
+            if (DEBUG) {
+                Log.d("SPONSOR_BLOCK", "Un-skip grace: isGracedRewind = "
+                        + isGracedRewind + ", autoSkipGracePeriod = " + autoSkipGracePeriod);
+            }
+
+            // temporarily pause auto skipping
+            // bypass grace when this is an un-skip request
+            if (!isGracedRewind) {
+                if (autoSkipGracePeriod) {
+                    return;
+                }
+            } else {
+
+                autoSkipGracePeriod = true;
+            }
+
+            // prevent skip looping in unship window
+            if (lastSegment == sponsorBlockSegment && !bypassSecondaryMode) {
+                return;
+            }
+
+            // Do not skip if highlight mode. Do not skip if manual mode + no explicit bypass
+            if (secondaryMode == SponsorBlockSecondaryMode.HIGHLIGHT
+                    || (secondaryMode == SponsorBlockSecondaryMode.MANUAL
+                    && !bypassSecondaryMode)) {
                 return;
             }
 
             int skipTarget = isRewind
-                    ? (int) Math.ceil((segment.startTime)) - 1
-                    : (int) Math.ceil((segment.endTime));
+                    ? (int) Math.ceil((sponsorBlockSegment.startTime)) - 1
+                    : (int) Math.ceil((sponsorBlockSegment.endTime));
 
             if (skipTarget < 0) {
                 skipTarget = 0;
             }
-
-            if (lastSkipTarget == skipTarget) {
-                return;
-            }
-
-            lastSkipTarget = skipTarget;
 
             // temporarily force EXACT seek parameters to prevent infinite skip looping
             final SeekParameters seekParams = simpleExoPlayer.getSeekParameters();
@@ -1834,45 +1913,22 @@ public final class Player implements
             seekTo(skipTarget);
 
             simpleExoPlayer.setSeekParameters(seekParams);
+            if (!isRewind || isGracedRewind) {
+                // DO NOT TRACK for non-graced rewinds to work, BUT always track for graced
+                lastSegment = sponsorBlockSegment;
+            }
 
-            if (prefs.getBoolean(
-                    context.getString(R.string.sponsor_block_notifications_key), false)) {
-                String toastText = "";
+            if (isUnSkip) {
+                return;
+            }
 
-                switch (segment.category) {
-                    case "sponsor":
-                        toastText = context
-                                .getString(R.string.sponsor_block_skip_sponsor_toast);
-                        break;
-                    case "intro":
-                        toastText = context
-                                .getString(R.string.sponsor_block_skip_intro_toast);
-                        break;
-                    case "outro":
-                        toastText = context
-                                .getString(R.string.sponsor_block_skip_outro_toast);
-                        break;
-                    case "interaction":
-                        toastText = context
-                                .getString(R.string.sponsor_block_skip_interaction_toast);
-                        break;
-                    case "selfpromo":
-                        toastText = context
-                                .getString(R.string.sponsor_block_skip_self_promo_toast);
-                        break;
-                    case "music_offtopic":
-                        toastText = context
-                                .getString(R.string.sponsor_block_skip_non_music_toast);
-                        break;
-                    case "preview":
-                        toastText = context
-                                .getString(R.string.sponsor_block_skip_preview_toast);
-                        break;
-                    case "filler":
-                        toastText = context
-                                .getString(R.string.sponsor_block_skip_filler_toast);
-                        break;
-                }
+            final boolean canShowNotifications = prefs.getBoolean(
+                    context.getString(R.string.sponsor_block_notifications_key), false);
+
+            if (canShowNotifications) {
+                final String toastText =
+                        SponsorBlockHelper.convertCategoryToSkipMessage(
+                                context, sponsorBlockSegment.category);
 
                 Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show();
             }
@@ -1881,7 +1937,43 @@ public final class Player implements
                 Log.d("SPONSOR_BLOCK", "Skipped segment: currentProgress = ["
                         + currentProgress + "], skipped to = [" + skipTarget + "]");
             }
+        });
+    }
+
+    public void showAutoUnskip() {
+        binding.unskipButton.setVisibility(View.VISIBLE);
+    }
+
+    public void hideAutoUnskip() {
+        binding.unskipButton.setVisibility(View.GONE);
+    }
+
+    public void showAutoSkip() {
+        binding.skipButton.setVisibility(View.VISIBLE);
+    }
+    public void hideAutoSkip() {
+        binding.skipButton.setVisibility(View.GONE);
+    }
+    public void onUnskipClicked() {
+        if (DEBUG) {
+            Log.d(TAG, "onUnskipClicked() called");
         }
+        toggleUnskip();
+    }
+
+    public void onSkipClicked() {
+        if (DEBUG) {
+            Log.d(TAG, "onSkipClicked() called");
+        }
+        toggleSkip();
+    }
+    public void toggleUnskip() {
+        triggerProgressUpdate(true, true, true, true);
+    }
+
+    public void toggleSkip() {
+        autoSkipGracePeriod = false;
+        triggerProgressUpdate(false, true, true, false);
     }
 
     private Disposable getProgressUpdateDisposable() {
@@ -1910,7 +2002,7 @@ public final class Player implements
         SeekbarPreviewThumbnailHelper
                 .tryResizeAndSetSeekbarPreviewThumbnail(
                         getContext(),
-                        seekbarPreviewThumbnailHolder.getBitmapAt(progress),
+                        seekbarPreviewThumbnailHolder.getBitmapAt(progress).get(),
                         binding.currentSeekbarPreviewThumbnail,
                         binding.subtitleView::getWidth);
 
@@ -2419,7 +2511,6 @@ public final class Player implements
         setVideoDurationToControls((int) simpleExoPlayer.getDuration());
 
         binding.playbackSpeed.setText(formatSpeed(getPlaybackSpeed()));
-        markSegments(currentItem, binding.playbackSeekBar, context, getPrefs());
         if (playWhenReady) {
             audioReactor.requestAudioFocus();
         }
@@ -3299,6 +3390,13 @@ public final class Player implements
             Log.d(TAG, "fastRewind() called");
         }
         seekBy(-retrieveSeekDurationFromPreferences(this));
+        if (prefs.getBoolean(
+                context.getString(R.string.sponsor_block_graced_rewind_key), false)) {
+            triggerProgressUpdate(true, true, false, false);
+            return;
+        }
+
+        destroyUnskipVars(); // destroy, else rewind into segment won't skip
         triggerProgressUpdate(true);
     }
     //endregion
@@ -3379,22 +3477,6 @@ public final class Player implements
 
         binding.titleTextView.setText(info.getName());
         binding.channelTextView.setText(info.getUploaderName());
-        if(currentMetadata.getServiceId() != ServiceList.YouTube.getServiceId()){
-            binding.switchSponsorBlocking.setVisibility(View.GONE);
-        }
-        String sponsorBlockModePrefString = prefs.getString(context.getString(R.string.pref_sponsorblock_mode_key), "ENABLED");
-        switch (sponsorBlockModePrefString){
-            case "ENABLED":
-                sponsorBlockMode = SponsorBlockMode.ENABLED;
-                break;
-            case "DISABLED":
-                sponsorBlockMode = SponsorBlockMode.DISABLED;
-                break;
-            case "IGNORE":
-                sponsorBlockMode = SponsorBlockMode.IGNORE;
-                break;
-        }
-        setBlockSponsorsButton(binding.switchSponsorBlocking);
 
         this.seekbarPreviewThumbnailHolder.resetFrom(this.getContext(), info.getPreviewFrames());
 
@@ -4158,8 +4240,10 @@ public final class Player implements
             onMuteUnmuteButtonClicked();
         } else if (v.getId() == binding.playerCloseButton.getId()) {
             context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_HIDE_MAIN_PLAYER));
-        } else if (v.getId() == binding.switchSponsorBlocking.getId()) {
-            onSponsorBlockButtonClicked();
+        } else if (v.getId() == binding.skipButton.getId()) {
+            onSkipClicked();
+        } else if (v.getId() == binding.unskipButton.getId()) {
+            onUnskipClicked();
         }
 
         manageControlsAfterOnClick(v);
@@ -4199,8 +4283,6 @@ public final class Player implements
             hideSystemUIIfNeeded();
         } else if (v.getId() == binding.share.getId()) {
             ShareUtils.copyToClipboard(context, getVideoUrlAtCurrentTime());
-        } else if (v.getId() == binding.switchSponsorBlocking.getId()) {
-            onBlockingSponsorsButtonLongClicked();
         } else if (v.getId() == binding.sleepTimer.getId()) {
             onSleepTimerLongClicked();
         }
@@ -5001,116 +5083,148 @@ public final class Player implements
         prefs.edit().putString(context.getString(R.string.pref_sponsorblock_mode_key), mode.name()).apply();
     }
 
-    public VideoSegment getSkippableSegment(final int progress) {
-        // currentItem may get set to something later (asynchronously)
-        if (currentItem == null) {
-            return null;
-        }
-
-        final VideoSegment[] videoSegments = currentItem.getVideoSegments();
-        if (videoSegments == null) {
-            return null;
-        }
-
-        for (final VideoSegment segment : videoSegments) {
-            if (progress < segment.startTime) {
-                continue;
+    public Optional<SponsorBlockSegment> getSkippableSponsorBlockSegment(final int progress) {
+        return getCurrentStreamInfo().map(info -> {
+            final SponsorBlockSegment[] sponsorBlockSegments = info.getSponsorBlockSegments();
+            if (sponsorBlockSegments == null) {
+                return null;
             }
 
-            if (progress > segment.endTime) {
-                continue;
+            for (final SponsorBlockSegment sponsorBlockSegment : sponsorBlockSegments) {
+                if (sponsorBlockSegment.action != SponsorBlockAction.SKIP) {
+                    continue;
+                }
+
+                if (progress < sponsorBlockSegment.startTime) {
+                    continue;
+                }
+
+                if (progress > sponsorBlockSegment.endTime) {
+                    continue;
+                }
+
+                return sponsorBlockSegment;
             }
 
-            return segment;
-        }
+            // fallback on old SponsorBlockSegment (for un-skip)
+            if (lastSegment != null
+                    && progress > lastSegment.endTime + UNSKIP_WINDOW_MILLIS) {
+                // un-skip window is over
+                hideUnskipButtons();
+                destroyUnskipVars();
+            } else if (lastSegment != null
+                    && progress < lastSegment.endTime + UNSKIP_WINDOW_MILLIS
+                    && progress >= lastSegment.startTime) {
+                // use old sponsorBlockSegment if exists AND currentProgress in bounds
+                return lastSegment;
+            }
 
-        return null;
+            hideUnskipButtons();
+            return null;
+        });
     }
 
-    public void onSponsorBlockButtonClicked() {
+    private void hideUnskipButtons() {
         if (DEBUG) {
-            Log.d(TAG, "onBlockingSponsorsButtonClicked() called");
+            Log.d("SPONSOR_BLOCK", "Hiding manual skip buttons (UNSKIP)");
         }
-
-        switch (getSponsorBlockMode()) {
-            case DISABLED:
-                setSponsorBlockMode(SponsorBlockMode.ENABLED);
-                break;
-            case ENABLED:
-                setSponsorBlockMode(SponsorBlockMode.DISABLED);
-                break;
-            case IGNORE:
-                // ignored
-        }
-
-        setBlockSponsorsButton(binding.switchSponsorBlocking);
+        hideAutoSkip();
+        hideAutoUnskip();
     }
-    public void onBlockingSponsorsButtonLongClicked() {
+
+    private void destroyUnskipVars() {
+        lastSegment = null;
+        autoSkipGracePeriod = false;
+
         if (DEBUG) {
-            Log.d(TAG, "onBlockingSponsorsButtonLongClicked() called");
+            Log.d("SPONSOR_BLOCK", "Destroyed last segment variables (UNSKIP)");
         }
-
-        final MediaItemTag metaData = currentMetadata;
-
-        if (metaData == null) {
-            return;
-        }
-
-        final Set<String> uploaderWhitelist = new HashSet<>(getPrefs().getStringSet(
-                context.getString(R.string.sponsor_block_whitelist_key),
-                new HashSet<>()));
-
-        final String toastText;
-
-        final String uploaderName = metaData.getUploaderName();
-
-        if (getSponsorBlockMode() == SponsorBlockMode.IGNORE) {
-            uploaderWhitelist.remove(uploaderName);
-            setSponsorBlockMode(SponsorBlockMode.ENABLED);
-            toastText = context
-                    .getString(R.string.sponsor_block_uploader_removed_from_whitelist_toast);
-        } else {
-            uploaderWhitelist.add(uploaderName);
-            setSponsorBlockMode(SponsorBlockMode.IGNORE);
-            toastText = context
-                    .getString(R.string.sponsor_block_uploader_added_to_whitelist_toast);
-        }
-
-        getPrefs()
-                .edit()
-                .putStringSet(
-                        context.getString(R.string.sponsor_block_whitelist_key),
-                        new HashSet<>(uploaderWhitelist))
-                .apply();
-
-        setBlockSponsorsButton(binding.switchSponsorBlocking);
-        Toast.makeText(context, toastText, Toast.LENGTH_LONG).show();
     }
 
-    protected void setBlockSponsorsButton(final ImageButton button) {
-        if (button == null) {
-            return;
+    private SponsorBlockSecondaryMode getSecondaryMode(final SponsorBlockSegment segment) {
+        if (segment == null) {
+            return SponsorBlockSecondaryMode.DISABLED;
         }
 
-        final int resId;
-
-        switch (getSponsorBlockMode()) {
-            case DISABLED:
-                resId = R.drawable.ic_sponsor_block_disable;
+        // get pref
+        final String defaultValue = context.getString(R.string.sponsor_block_skip_mode_enabled);
+        final String key;
+        switch (segment.category) {
+            case SPONSOR:
+                key = prefs.getString(
+                        context.getString(R.string.sponsor_block_category_sponsor_mode_key),
+                        defaultValue);
                 break;
-            case ENABLED:
-                resId = R.drawable.ic_sponsor_block_enable;
+            case INTRO:
+                key = prefs.getString(
+                        context.getString(R.string.sponsor_block_category_intro_mode_key),
+                        defaultValue);
                 break;
-            case IGNORE:
-                resId = R.drawable.ic_sponsor_block_exclude;
+            case OUTRO:
+                key = prefs.getString(
+                        context.getString(R.string.sponsor_block_category_outro_mode_key),
+                        defaultValue);
+                break;
+            case INTERACTION:
+                key = prefs.getString(
+                        context.getString(R.string.sponsor_block_category_interaction_mode_key),
+                        defaultValue);
+                break;
+            case HIGHLIGHT:
+                key = "Highlight Only"; // not a regular "skippable" segment
+                break;
+            case SELF_PROMO:
+                key = prefs.getString(
+                        context.getString(R.string.sponsor_block_category_self_promo_mode_key),
+                        defaultValue);
+                break;
+            case NON_MUSIC:
+                key = prefs.getString(
+                        context.getString(R.string.sponsor_block_category_non_music_mode_key),
+                        defaultValue);
+                break;
+            case PREVIEW:
+                key = prefs.getString(
+                        context.getString(R.string.sponsor_block_category_preview_mode_key),
+                        defaultValue);
+                break;
+            case FILLER:
+                key = prefs.getString(
+                        context.getString(R.string.sponsor_block_category_filler_mode_key),
+                        defaultValue);
                 break;
             default:
-                return;
+                key = "";
+                break;
         }
 
-        button.setImageDrawable(AppCompatResources.getDrawable(context, resId));
+// map pref to enum
+        final SponsorBlockSecondaryMode pref;
+        switch (key) {
+            case "Automatic":
+                pref = SponsorBlockSecondaryMode.ENABLED;
+                break;
+            case "Manual":
+                pref = SponsorBlockSecondaryMode.MANUAL;
+                break;
+            case "Highlight Only":
+                pref = SponsorBlockSecondaryMode.HIGHLIGHT;
+                break;
+            default:
+                pref = SponsorBlockSecondaryMode.DISABLED;
+                break;
+        }
+        if (DEBUG) {
+            Log.d("SPONSOR_BLOCK", "Sponsor segment secondary mode: category = ["
+                    + segment.category + "], preference = [" + pref + "]");
+        }
+
+        return pref;
     }
 
+    public void onMarkSeekbarRequested(@NonNull final StreamInfo streamInfo) {
+        SponsorBlockHelper.markSegments(context, binding.playbackSeekBar, streamInfo);
+    }
     //endregion
 
     /**
