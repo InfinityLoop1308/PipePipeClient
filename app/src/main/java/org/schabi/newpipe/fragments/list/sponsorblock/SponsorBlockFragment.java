@@ -1,10 +1,13 @@
 package org.schabi.newpipe.fragments.list.sponsorblock;
 
+import static org.schabi.newpipe.fragments.detail.VideoDetailFragment.ACTION_MARK_SEEKBAR;
 import static org.schabi.newpipe.util.TimeUtils.millisecondsToString;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +18,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
+import io.reactivex.rxjava3.core.Single;
 import org.schabi.newpipe.BaseFragment;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.FragmentSponsorBlockBinding;
-import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockAction;
-import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockCategory;
-import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockSegment;
+import org.schabi.newpipe.extractor.sponsorblock.*;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.local.sponsorblock.SponsorBlockDataManager;
 import org.schabi.newpipe.util.SponsorBlockHelper;
@@ -29,6 +31,8 @@ import org.schabi.newpipe.util.SponsorBlockMode;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+
+import java.io.UnsupportedEncodingException;
 
 public class SponsorBlockFragment
         extends BaseFragment
@@ -70,7 +74,32 @@ public class SponsorBlockFragment
         }
 
         segmentListAdapter = new SponsorBlockSegmentListAdapter(context, this);
-        segmentListAdapter.setItems(streamInfo.getSponsorBlockSegments());
+
+        Disposable disposable = Single.fromCallable(() -> {
+                    SponsorBlockApiSettings sponsorBlockApiSettings = streamInfo.getService().getSponsorBlockApiSettings();
+                    if (sponsorBlockApiSettings != null) {
+                        try {
+                            return SponsorBlockExtractorHelper.getSegments(streamInfo, sponsorBlockApiSettings);
+                        } catch (UnsupportedEncodingException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    return new SponsorBlockSegment[0];
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        segments -> {
+                            streamInfo.setSponsorBlockSegments(segments);
+                            context.sendBroadcast(new Intent(ACTION_MARK_SEEKBAR));
+                            segmentListAdapter.setItems(segments);
+                            segmentListAdapter.notifyDataSetChanged();
+                        },
+                        throwable -> {
+                            Toast.makeText(context, "Failed to load segments", Toast.LENGTH_SHORT).show();
+                            Log.e("SponsorBlock", "Error loading segments", throwable);
+                        }
+                );
     }
 
     @Override
