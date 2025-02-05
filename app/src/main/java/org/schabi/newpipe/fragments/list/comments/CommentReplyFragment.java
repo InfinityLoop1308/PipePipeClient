@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import androidx.fragment.app.FragmentManager;
 import org.schabi.newpipe.BaseFragment;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.Page;
@@ -62,7 +63,7 @@ public class CommentReplyFragment extends BaseFragment implements BackPressable 
         final View view = inflater.inflate(R.layout.fragment_comments_reply, container,
                 false);
         final ImageButton backButton = view.findViewById(R.id.backButton);
-        backButton.setOnClickListener(v -> closeSelf());
+        backButton.setOnClickListener(v -> onBackPressed());
         final CommentsFragment commentsReplyFragment = CommentsFragment.getInstance(
                 serviceId, url, name, replies
         );
@@ -86,11 +87,8 @@ public class CommentReplyFragment extends BaseFragment implements BackPressable 
 
     @Override
     public boolean onBackPressed() {
-        closeSelf();
+        final FragmentManager fm = getFM();
+        fm.popBackStack();
         return true;
-    }
-
-    private void closeSelf() {
-        getFM().beginTransaction().remove(this).commit();
     }
 }
