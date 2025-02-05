@@ -2615,8 +2615,8 @@ public final class VideoDetailFragment
 
         // User opened a new page and the player will hide itself
         activity.getSupportFragmentManager().addOnBackStackChangedListener(() -> {
-            Fragment currentFragment = activity.getSupportFragmentManager()
-                    .findFragmentById(R.id.fragment_container_view);
+            List<Fragment> fragments = activity.getSupportFragmentManager().getFragments();
+            Fragment currentFragment = fragments.get(fragments.size() - 1);
             if (shouldTriggerCollapse(currentFragment) &&
                     bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
