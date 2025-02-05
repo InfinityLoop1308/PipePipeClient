@@ -2719,7 +2719,8 @@ public final class VideoDetailFragment
                 startTime,
                 endTime,
                 SponsorBlockCategory.PENDING,
-                SponsorBlockAction.SKIP);
+                SponsorBlockAction.SKIP,
+                currentInfo.getServiceId());
 
         currentInfo.addSponsorBlockSegment(segment);
 
@@ -2757,18 +2758,11 @@ public final class VideoDetailFragment
 
         final Context context = requireContext();
 
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        final String apiUrl = prefs.getString(context
-                .getString(R.string.sponsor_block_api_url_key), null);
-        if (apiUrl == null || apiUrl.isEmpty()) {
-            return;
-        }
-
         submitSegmentSubscriber = Single.fromCallable(() ->
                         SponsorBlockExtractorHelper.submitSponsorBlockSegment(
                                 currentInfo,
                                 newSegment,
-                                apiUrl))
+                                SponsorBlockExtractorHelper.getApiUrl(currentInfo)))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {

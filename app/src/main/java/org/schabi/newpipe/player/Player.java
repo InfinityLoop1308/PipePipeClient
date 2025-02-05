@@ -1999,12 +1999,15 @@ public final class Player implements
         binding.currentDisplaySeek.setText(getTimeString(progress));
 
         // Seekbar Preview Thumbnail
-        SeekbarPreviewThumbnailHelper
-                .tryResizeAndSetSeekbarPreviewThumbnail(
-                        getContext(),
-                        seekbarPreviewThumbnailHolder.getBitmapAt(progress).get(),
-                        binding.currentSeekbarPreviewThumbnail,
-                        binding.subtitleView::getWidth);
+        if (!seekbarPreviewThumbnailHolder.getBitmapAt(progress).isEmpty()) {
+            SeekbarPreviewThumbnailHelper
+                    .tryResizeAndSetSeekbarPreviewThumbnail(
+                            getContext(),
+                            seekbarPreviewThumbnailHolder.getBitmapAt(progress).get(),
+                            binding.currentSeekbarPreviewThumbnail,
+                            binding.subtitleView::getWidth);
+        }
+
 
         adjustSeekbarPreviewContainer();
     }

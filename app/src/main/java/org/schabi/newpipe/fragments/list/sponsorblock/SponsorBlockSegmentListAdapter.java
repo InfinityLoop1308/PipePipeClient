@@ -102,6 +102,7 @@ public class SponsorBlockSegmentListAdapter extends
         private final ImageView itemSegmentVoteDownImageView;
         private Disposable voteSubscriber;
         private String segmentUuid;
+        private int segmentServiceId;
         private boolean isVoting;
         private boolean hasUpVoted;
         private boolean hasDownVoted;
@@ -165,6 +166,7 @@ public class SponsorBlockSegmentListAdapter extends
 
             // uuid
             segmentUuid = sponsorBlockSegment.uuid;
+            segmentServiceId = sponsorBlockSegment.serviceId;
 
             // category color
             final Integer segmentColor =
@@ -235,17 +237,10 @@ public class SponsorBlockSegmentListAdapter extends
 
             final Context context = itemView.getContext();
 
-            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            final String apiUrl = prefs.getString(context
-                    .getString(R.string.sponsor_block_api_url_key), null);
-            if (apiUrl == null || apiUrl.isEmpty()) {
-                return;
-            }
-
             voteSubscriber = Single.fromCallable(() -> {
                         isVoting = true;
                         return SponsorBlockExtractorHelper.submitSponsorBlockSegmentVote(
-                                segmentUuid, apiUrl, value);
+                                segmentUuid, SponsorBlockExtractorHelper.getApiUrl(segmentServiceId), value);
                     })
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

@@ -339,7 +339,7 @@ public class SponsorBlockFragment
                     : SponsorBlockAction.SKIP;
             final SponsorBlockSegment newSegment =
                     new SponsorBlockSegment(
-                            "", markedStartTime, markedEndTime, category, action);
+                            "", markedStartTime, markedEndTime, category, action, -1);
             if (sponsorBlockFragmentListener != null) {
                 sponsorBlockFragmentListener.onRequestSubmitPendingSegment(newSegment);
             }
