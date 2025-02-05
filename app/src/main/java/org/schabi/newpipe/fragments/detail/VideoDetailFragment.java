@@ -66,6 +66,7 @@ import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.ServiceList;
+import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockAction;
@@ -113,6 +114,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import static android.text.TextUtils.isEmpty;
 import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.COMMENTS;
+import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.SPONSORBLOCK;
 import static org.schabi.newpipe.extractor.services.bilibili.utils.isFirstP;
 import static org.schabi.newpipe.extractor.stream.StreamExtractor.NO_AGE_LIMIT;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
@@ -1110,7 +1112,7 @@ public final class VideoDetailFragment
                 // Fragment already added
                 Log.e(TAG, "initTabs() error adding description tab", e);
             }
-            if (showSponsorBlock) {
+            if (shouldShowSponsorBlock()) {
                 // temp empty fragment. will be updated in handleResult
                 pageAdapter.addFragment(EmptyFragment.newInstance(false), SPONSOR_BLOCK_TAB_TAG);
                 tabIcons.add(R.drawable.ic_sponsor_block_enable);
@@ -1197,7 +1199,7 @@ public final class VideoDetailFragment
             pageAdapter.updateItem(DESCRIPTION_TAB_TAG, new DescriptionFragment(info));
         }
 
-        if (showSponsorBlock) {
+        if (shouldShowSponsorBlock()) {
             if (info.getServiceId() == ServiceList.BiliBili.getServiceId() && !isFirstP(info.getId())) {
                 // exclude for BiliBili multi-part videos since it needs to deal with cid
                 int index = pageAdapter.getItemPositionByTitle(SPONSOR_BLOCK_TAB_TAG);
@@ -1242,6 +1244,17 @@ public final class VideoDetailFragment
                     .getServiceInfo()
                     .getMediaCapabilities()
                     .contains(COMMENTS);
+        } catch (final ExtractionException e) {
+            return false;
+        }
+    }
+
+    private boolean shouldShowSponsorBlock() {
+        try {
+            return showSponsorBlock && NewPipe.getService(serviceId)
+                    .getServiceInfo()
+                    .getMediaCapabilities()
+                    .contains(SPONSORBLOCK);
         } catch (final ExtractionException e) {
             return false;
         }
