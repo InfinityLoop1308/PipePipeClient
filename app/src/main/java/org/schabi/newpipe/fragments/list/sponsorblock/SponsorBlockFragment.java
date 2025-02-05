@@ -18,6 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
+import icepick.Icepick;
+import icepick.State;
 import io.reactivex.rxjava3.core.Single;
 import org.schabi.newpipe.BaseFragment;
 import org.schabi.newpipe.R;
@@ -38,10 +40,13 @@ public class SponsorBlockFragment
         extends BaseFragment
         implements CompoundButton.OnCheckedChangeListener,
         SponsorBlockSegmentListAdapterListener {
+    @State
     StreamInfo streamInfo = null;
     FragmentSponsorBlockBinding binding;
-    private Integer markedStartTime = null;
-    private Integer markedEndTime = null;
+    @State
+    Integer markedStartTime = null;
+    @State
+    Integer markedEndTime = null;
     private SponsorBlockSegmentListAdapter segmentListAdapter;
     private int currentProgress = -1;
     private @Nullable SponsorBlockFragmentListener sponsorBlockFragmentListener;
@@ -69,11 +74,13 @@ public class SponsorBlockFragment
     public void onAttach(@NonNull final Context context) {
         super.onAttach(context);
 
-        if (streamInfo == null) {
-            return;
+        if (segmentListAdapter == null) {
+            segmentListAdapter = new SponsorBlockSegmentListAdapter(context, this);
         }
 
-        segmentListAdapter = new SponsorBlockSegmentListAdapter(context, this);
+        if (streamInfo == null || streamInfo.isFetchSponsorBlockFinished()) {
+            return;
+        }
 
         Disposable disposable = Single.fromCallable(() -> {
                     SponsorBlockApiSettings sponsorBlockApiSettings = streamInfo.getService().getSponsorBlockApiSettings();
@@ -91,6 +98,7 @@ public class SponsorBlockFragment
                 .subscribe(
                         segments -> {
                             streamInfo.setSponsorBlockSegments(segments);
+                            streamInfo.setFetchSponsorBlockFinished(true);
                             context.sendBroadcast(new Intent(ACTION_MARK_SEEKBAR));
                             segmentListAdapter.setItems(segments);
                             segmentListAdapter.notifyDataSetChanged();
@@ -258,6 +266,7 @@ public class SponsorBlockFragment
         }
 
         segmentListAdapter.setItems(streamInfo.getSponsorBlockSegments());
+        segmentListAdapter.notifyDataSetChanged();
     }
 
     private void doMarkPendingSegment(final boolean isStart) {
@@ -381,6 +390,31 @@ public class SponsorBlockFragment
     public void onSkipToTimestampRequested(final long positionMillis) {
         if (sponsorBlockFragmentListener != null) {
             sponsorBlockFragmentListener.onSeekToRequested(positionMillis);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Icepick.saveInstanceState(this, outState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            Icepick.restoreInstanceState(this, savedInstanceState);
+        }
+        refreshSponsorBlockSegments();
+        updatePendingSegmentUI();
+    }
+
+    private void updatePendingSegmentUI() {
+        if (markedStartTime != null) {
+            binding.sponsorBlockControlsSegmentStart.setText(millisecondsToString(markedStartTime));
+        }
+        if (markedEndTime != null) {
+            binding.sponsorBlockControlsSegmentEnd.setText(millisecondsToString(markedEndTime));
         }
     }
 }
