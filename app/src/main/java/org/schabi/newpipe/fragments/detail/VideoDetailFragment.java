@@ -65,6 +65,7 @@ import org.schabi.newpipe.error.ReCaptchaActivity;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockAction;
@@ -112,6 +113,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import static android.text.TextUtils.isEmpty;
 import static org.schabi.newpipe.extractor.StreamingService.ServiceInfo.MediaCapability.COMMENTS;
+import static org.schabi.newpipe.extractor.services.bilibili.utils.isFirstP;
 import static org.schabi.newpipe.extractor.stream.StreamExtractor.NO_AGE_LIMIT;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.ktx.ViewUtils.animateRotation;
@@ -1196,25 +1198,35 @@ public final class VideoDetailFragment
         }
 
         if (showSponsorBlock) {
-            final SponsorBlockFragment sponsorBlockFragment = new SponsorBlockFragment(info);
-            sponsorBlockFragment.setListener(this);
+            if (info.getServiceId() == ServiceList.BiliBili.getServiceId() && !isFirstP(info.getId())) {
+                // exclude for BiliBili multi-part videos since it needs to deal with cid
+                int index = pageAdapter.getItemPositionByTitle(SPONSOR_BLOCK_TAB_TAG);
+                if(index != -1){
+                    pageAdapter.removeItem(index);
+                    tabIcons.remove(Integer.valueOf(R.drawable.ic_sponsor_block_enable));
+                    tabContentDescriptions.remove(Integer.valueOf(R.string.sponsor_block));
+                }
+            } else {
+                final SponsorBlockFragment sponsorBlockFragment = new SponsorBlockFragment(info);
+                sponsorBlockFragment.setListener(this);
 
-            pageAdapter.updateItem(SPONSOR_BLOCK_TAB_TAG, sponsorBlockFragment);
+                pageAdapter.updateItem(SPONSOR_BLOCK_TAB_TAG, sponsorBlockFragment);
 
-            workerSponsorBlockModeCheck =
-                    sponsorBlockDataManager
-                            .isWhiteListed(info.getUploaderName())
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(isWhitelisted -> {
-                                if (currentSponsorBlockMode == null) {
-                                    currentSponsorBlockMode = isWhitelisted
-                                            ? SponsorBlockMode.DISABLED
-                                            : SponsorBlockMode.ENABLED;
-                                }
-                                sponsorBlockFragment.setSponsorBlockMode(currentSponsorBlockMode);
-                                sponsorBlockFragment.setIsWhitelisted(isWhitelisted);
-                            });
+                workerSponsorBlockModeCheck =
+                        sponsorBlockDataManager
+                                .isWhiteListed(info.getUploaderName())
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(isWhitelisted -> {
+                                    if (currentSponsorBlockMode == null) {
+                                        currentSponsorBlockMode = isWhitelisted
+                                                ? SponsorBlockMode.DISABLED
+                                                : SponsorBlockMode.ENABLED;
+                                    }
+                                    sponsorBlockFragment.setSponsorBlockMode(currentSponsorBlockMode);
+                                    sponsorBlockFragment.setIsWhitelisted(isWhitelisted);
+                                });
+            }
         }
 
         binding.viewPager.setVisibility(View.VISIBLE);
