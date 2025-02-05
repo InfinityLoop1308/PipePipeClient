@@ -178,15 +178,21 @@ class StringTranslator:
         self.translator = Translator()
 
     def translate_latest_updates_to_all(self, length, ignore_update=False):
-        updates = self.base.load_strings_to_dict(tail_length=length)
-        for target in self.targets:
+        updates = self.base.load_strings_to_dict(tail_length=int(length))
+        def translate_and_update_target(target):
             result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2][7:])
             if ignore_update:
                 print(result)
-                continue
+                return
             for key, value in result.items():
-                target.add_entry('resources', 'string', {'name': key}, escape(value))
+                try :
+                    target.update_entry(f'string[name="{key}"]', escape(value))
+                except:
+                    target.add_entry('resources', 'string', {'name': key}, escape(value))
             target.write_to_file()
+            # Process translations in parallel
+        with ThreadPoolExecutor() as executor:
+            executor.map(translate_and_update_target, self.targets)
 
     def translate_everything(self):
         data = self.base.load_strings_to_dict_by_part()
@@ -203,12 +209,16 @@ class StringTranslator:
         def translate_and_update_target(target):
             result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2][7:])
             for key, value in result.items():
-                target.update_entry(f'string[name="{key}"]', escape(value))
+                try :
+                    target.update_entry(f'string[name="{key}"]', escape(value))
+                except:
+                    target.add_entry('resources', 'string', {'name': key}, escape(value))
             target.write_to_file()
 
         # Process translations in parallel
         with ThreadPoolExecutor() as executor:
             executor.map(translate_and_update_target, self.targets)
+
 
     def add_new_entry(self, name, value):
         self.base.add_entry('resources', 'string', {'name': name}, value)
@@ -255,4 +265,4 @@ if __name__ == '__main__':
     elif args[1] == 'translate':
         translator.translate_everything()
     else:
-        translator.translate_latest_updates_to_all(10, ignore_update=False)
+        translator.translate_latest_updates_to_all(args[1])
