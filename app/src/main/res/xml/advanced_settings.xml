@@ -17,13 +17,5 @@
             android:title="@string/settings_category_exoplayer_title"
             app:singleLineTitle="false"
             app:iconSpaceReserved="false" />
-    <MultiSelectListPreference
-            android:key="@string/advanced_formats_key"
-            android:title="@string/advanced_formats_title"
-            android:summary="@string/advanced_formats_summary"
-            android:entries="@array/advanced_formats_values"
-            android:entryValues="@array/advanced_formats_values"
-            app:singleLineTitle="false"
-            app:iconSpaceReserved="false" />
 
 </PreferenceScreen>

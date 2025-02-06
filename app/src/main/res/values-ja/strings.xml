@@ -912,7 +912,7 @@
 <string name="settings_category_backup_title">バックアップ</string>
 <string name="settings_category_advanced_title">上級</string>
 <string name="not_login">このコンテンツを視聴するにはアカウントが必要です。続行するには設定からログインしてください。</string>
-<string name="advanced_formats_summary">お使いのデバイスがサポートしている場合、高度なフォーマットを有効にすることでデータ使用量を削減し、画像品質を向上させることができます。</string>
+<string name="advanced_formats_summary">デバイスが対応している場合、高度なフォーマットを有効にすると、データ消費を削減し、より高い解像度を提供できます。\nYouTubeで2k/4kコンテンツを表示するには、WEBMまたはAV1を有効にする必要があります。</string>
 <string name="advanced_formats_title">高度な形式を有効にする</string>
 <string name="preferred_audio_language_title">優先オーディオ言語</string>
 <string name="comments_inner_scroll_title">コメントの内側スクロール</string>

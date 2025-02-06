@@ -864,7 +864,7 @@
 <string name="settings_category_backup_title">Sicherung</string>
 <string name="settings_category_advanced_title">Erweitert</string>
 <string name="not_login">Dieses Video erfordert ein Konto, um es anzusehen. Melden Sie sich über die Einstellungen an, um fortzufahren.</string>
-<string name="advanced_formats_summary">Wenn Ihr Gerät Unterstützung bietet, kann das Aktivieren von erweiterten Formaten den Datenverbrauch reduzieren und die Bildqualität verbessern.</string>
+<string name="advanced_formats_summary">Wenn Ihr Gerät dies unterstützt, kann das Aktivieren fortgeschrittener Formate den Datenverbrauch reduzieren und höhere Auflösungen bieten. \nWEBM oder AV1 müssen aktiviert sein, um 2k/4k-Inhalte auf YouTube anzuzeigen.</string>
 <string name="advanced_formats_title">Erweiterte Formate aktivieren</string>
 <string name="preferred_audio_language_title">Bevorzugte Audiosprache</string>
 <string name="comments_inner_scroll_title">Kommentare innerer Bildlauf</string>
