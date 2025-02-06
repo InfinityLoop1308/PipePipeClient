@@ -221,13 +221,13 @@ public class MainActivity extends AppCompatActivity {
             // Update the stored version code
             prefs.edit().putInt("version_code", currentVersionCode).apply();
 
-            if (currentVersionCode / 100 == 1068) {
-                AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
-                builder3.setMessage(R.string.temp);
-                builder3.setPositiveButton(R.string.ok, (dialog, which) -> {
-                });
-                builder3.show();
-            }
+//            if (currentVersionCode / 100 == 1068) {
+//                AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
+//                builder3.setMessage(R.string.temp);
+//                builder3.setPositiveButton(R.string.ok, (dialog, which) -> {
+//                });
+//                builder3.show();
+//            }
         }
 
         int isFirstRun = prefs.getInt("isFirstRun", 0);
