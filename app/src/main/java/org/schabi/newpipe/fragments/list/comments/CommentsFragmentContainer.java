@@ -63,6 +63,10 @@ public class CommentsFragmentContainer extends BaseFragment {
             FragmentManager fm,
             int sid, String u, String title) {
 
+        if (fm == null) {
+            return;
+        }
+
         Fragment existing = fm.findFragmentById(R.id.fragment_container_view);
         if (existing instanceof CommentsFragment) {
             CommentsFragment cf = (CommentsFragment) existing;
