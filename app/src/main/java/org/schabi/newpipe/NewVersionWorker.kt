@@ -48,9 +48,9 @@ class NewVersionWorker(
         versionName: String,
         apkLocationUrl: String?,
     ) {
-        val versionCodes = versionName.split(".")
-        val buildVersionCodes = BuildConfig.VERSION_NAME.split(".")
-        if (!compareVersionName(buildVersionCodes, versionCodes)) {
+        val currentVersion = parseVersion(BuildConfig.VERSION_NAME)
+        val newVersion = parseVersion(versionName)
+        if (compareVersions(currentVersion, newVersion) > 0) {
             ContextCompat.getMainExecutor(applicationContext).execute {
                 Toast.makeText(
                     applicationContext, R.string.app_update_unavailable_toast,
@@ -123,47 +123,52 @@ class NewVersionWorker(
 
         // Parse the json from the response.
         try {
-            val githubReleases = JsonParser.`array`()
-                .from(response.responseBody())
+            val githubReleases = JsonParser.`array`().from(response.responseBody())
             val includePreRelease = prefs.getBoolean(applicationContext.getString(R.string.show_prerelease_key), false)
-            var githubStableObject: JsonObject? = null
+            var selectedRelease: JsonObject? = null
+
+            // 选择最新符合要求的版本（稳定版或包括预发布）
             for (i in 0 until githubReleases.size) {
-                val githubRelease = githubReleases.getObject(i)
-                if (!includePreRelease && githubRelease.getBoolean("prerelease")) {
-                    continue
-                }
-                githubStableObject = githubRelease
-            }
-
-
-            val supportedAbis = Build.SUPPORTED_ABIS
-
-            var versionName = githubStableObject!!.getString("name").split("-")[0]
-            if (versionName.startsWith("v")) {
-                versionName = versionName.substring(1)
-            }
-            // for assets if abi is supported return the URL
-            var apkLocationUrl: String? = null
-            for (i in 0 until githubStableObject.getArray("assets").size) {
-                val asset = githubStableObject.getArray("assets").getObject(i)
-                // if universal use it to init apkLocationUrl
-                if (asset.getString("name").endsWith(".apk") && asset.getString("name").contains("universal")) {
-                    apkLocationUrl = asset.getString("browser_download_url")
-                }
-                if (asset.getString("name").endsWith(".apk") && asset.getString("name").contains(supportedAbis[0])) {
-                    apkLocationUrl = asset.getString("browser_download_url")
-                    break
+                val release = githubReleases.getObject(i)
+                if (!includePreRelease && release.getBoolean("prerelease")) continue
+                if (selectedRelease == null || isNewerRelease(release, selectedRelease)) {
+                    selectedRelease = release
                 }
             }
-            compareAppVersionAndShowNotification(versionName, apkLocationUrl)
+
+            selectedRelease?.let { release ->
+                val versionName = release.getString("name").removePrefix("v")
+                val apkUrl = findCompatibleApkUrl(release, Build.SUPPORTED_ABIS)
+                compareAppVersionAndShowNotification(versionName, apkUrl)
+            }
         } catch (e: JsonParserException) {
-            // Most likely something is wrong in data received from NEWPIPE_API_URL.
-            // Do not alarm user and fail silently.
-            if (DEBUG) {
-                Log.w(TAG, "Could not get NewPipe API: invalid json", e)
-            }
+            if (DEBUG) Log.w(TAG, "JSON解析错误", e)
         }
     }
+
+    private fun isNewerRelease(newRelease: JsonObject, currentRelease: JsonObject): Boolean {
+        val newVersion = parseVersion(newRelease.getString("name").removePrefix("v"))
+        val currentVersion = parseVersion(currentRelease.getString("name").removePrefix("v"))
+        return compareVersions(newVersion, currentVersion) > 0
+    }
+
+    private fun findCompatibleApkUrl(release: JsonObject, abis: Array<String>): String? {
+        val assets = release.getArray("assets")
+        var universalUrl: String? = null
+        for (i in 0 until assets.size) {
+            val asset = assets.getObject(i)
+            val name = asset.getString("name")
+            if (name.endsWith(".apk")) {
+                when {
+                    name.contains("universal") -> universalUrl = asset.getString("browser_download_url")
+                    abis.any { name.contains(it) } -> return asset.getString("browser_download_url")
+                }
+            }
+        }
+        return universalUrl
+    }
+
+
 
     override fun doWork(): Result {
         return try {
@@ -203,5 +208,53 @@ class NewVersionWorker(
                 .build()
             WorkManager.getInstance(context).enqueue(workRequest)
         }
+    }
+}
+
+data class Version(
+    val major: Int,
+    val minor: Int,
+    val patch: Int,
+    val betaVersion: Int? // null表示正式版，数字表示beta版本号
+)
+
+private fun parseVersion(versionStr: String): Version {
+    val normalized = versionStr.removePrefix("v")
+    val parts = normalized.split("-beta", limit = 2)
+    val mainPart = parts[0]
+
+    val mainParts = mainPart.split(".").map {
+        it.toIntOrNull() ?: throw IllegalArgumentException("Invalid version part: $it")
+    }
+
+    val (major, minor, patch) = mainParts
+
+    // beta版本号处理
+    val betaVersion = when {
+        parts.size == 1 -> null  // 没有beta部分，是正式版
+        parts[1].isEmpty() -> 0  // 是 "-beta" 结尾
+        else -> parts[1].toIntOrNull() // 是 "-beta1" 这样的格式
+    }
+
+    return Version(major, minor, patch, betaVersion)
+}
+
+private fun compareVersions(v1: Version, v2: Version): Int {
+    // 先比较主版本号
+    val mainCompare = when {
+        v1.major != v2.major -> v1.major.compareTo(v2.major)
+        v1.minor != v2.minor -> v1.minor.compareTo(v2.minor)
+        v1.patch != v2.patch -> v1.patch.compareTo(v2.patch)
+        else -> 0
+    }
+
+    if (mainCompare != 0) return mainCompare
+
+    // 主版本号相同，比较beta版本
+    return when {
+        v1.betaVersion == null && v2.betaVersion == null -> 0  // 都是正式版
+        v1.betaVersion == null -> 1  // v1是正式版，比beta版大
+        v2.betaVersion == null -> -1 // v2是正式版，比beta版大
+        else -> v1.betaVersion.compareTo(v2.betaVersion) // 比较beta版本号
     }
 }
