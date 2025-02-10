@@ -69,5 +69,7 @@
     <color name="dark_collector_accent_color">#FFFFFF</color>
     <color name="dark_collector_statusbar_color">#121212</color>
 
+    <color name="main_theme_color">#6f0e3d</color>
+
 
 </resources>
