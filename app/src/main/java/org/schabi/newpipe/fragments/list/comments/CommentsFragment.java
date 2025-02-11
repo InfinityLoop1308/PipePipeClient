@@ -168,7 +168,9 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfoItem, Com
                         ? R.string.comments_are_disabled
                         : R.string.no_comments);
 
-        ViewUtils.slideUp(requireView(), 120, 150, 0.06f);
+        if (isAdded() && getView() != null) {
+            ViewUtils.slideUp(getView(), 120, 150, 0.06f);
+        }
         disposables.clear();
     }
 
