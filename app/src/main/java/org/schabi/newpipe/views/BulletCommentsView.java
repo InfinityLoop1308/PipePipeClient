@@ -3,7 +3,6 @@ package org.schabi.newpipe.views;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -22,7 +21,6 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import androidx.core.content.res.ResourcesCompat;
-import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.BulletCommentsPlayerBinding;
@@ -30,6 +28,7 @@ import org.schabi.newpipe.extractor.bulletComments.BulletCommentsInfoItem;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class BulletCommentsView extends ConstraintLayout {
     private final String TAG = "BulletCommentsView";
@@ -116,7 +115,8 @@ public final class BulletCommentsView extends ConstraintLayout {
     List<Long> rows = Collections.synchronizedList(new ArrayList<Long>());
     List<Map.Entry<Long, Integer>> rowsRegular = Collections.synchronizedList(new ArrayList<>());
     private final double commentRelativeTextSize = 1 / 13.5;
-    PriorityQueue<BulletCommentsInfoItem> bulletCommentsInfoItemPool = new PriorityQueue<>();
+    PriorityQueue<BulletCommentsInfoItem> bulletCommentsInfoItemRegularPool = new PriorityQueue<>();
+    PriorityQueue<BulletCommentsInfoItem> bulletCommentsInfoItemFixedPool = new PriorityQueue<>();
 
     /**
      * Duration of comments. get from preferences. key: "bullet_comments_key"
@@ -180,9 +180,9 @@ public final class BulletCommentsView extends ConstraintLayout {
 //            // should only apply when the stream is a YouTube live replay
 //            bulletCommentsInfoItemPool.clear();
 //        }
-        bulletCommentsInfoItemPool.addAll(Arrays.asList(items));
+        bulletCommentsInfoItemRegularPool.addAll(Arrays.asList(items).stream().filter(x->x.getPosition() == BulletCommentsInfoItem.Position.REGULAR).collect(Collectors.toList()));
+        bulletCommentsInfoItemFixedPool.addAll(Arrays.asList(items).stream().filter(x->x.getPosition() != BulletCommentsInfoItem.Position.REGULAR).collect(Collectors.toList()));
         //Log.v(TAG, "New comments count: " + items.length);
-        final Context context = binding.bulletCommentsContainer.getContext();
         final int height = getHeight();
         final int width = getWidth();
         final int calculatedCommentRowsCount = height / Math.min(height, width) * commentsRowsCount;
@@ -197,14 +197,71 @@ public final class BulletCommentsView extends ConstraintLayout {
         while(rows.size() < calculatedCommentRowsCount){
             rows.add(0L);
         }
-        while(bulletCommentsInfoItemPool.size() > 0
+        drawCommentsByPool(bulletCommentsInfoItemRegularPool, drawUntilPosition, height, width, calculatedCommentRowsCount);
+        drawCommentsByPool(bulletCommentsInfoItemFixedPool, drawUntilPosition, height, width, calculatedCommentRowsCount);
+        //Log.v(TAG, "Child count: " + binding.bulletCommentsContainer.getChildCount());
+        //Log.v(TAG, "AnimatedTextView count: " + (long) animatedTextViews.size());
+    }
+
+    public int tryToDrawComment(BulletCommentsInfoItem item, int calculatedCommentRowsCount, int width, boolean reallyDo) {
+        long current = new Date().getTime();
+        int row = -1;
+        int comparedDuration = (int) (commentsDuration * 1000);
+        if(item.getPosition().equals(BulletCommentsInfoItem.Position.TOP)
+                || item.getPosition().equals(BulletCommentsInfoItem.Position.SUPERCHAT)){
+            for(int i = 0; i < calculatedCommentRowsCount ;i++){
+                long last = rows.get(i);
+                if(current - last >= comparedDuration){
+                    if (reallyDo) {
+                        rows.set(i, current);
+                    }
+                    row = i;
+                    break;
+                }
+            }
+        } else if (item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)) {
+            for(int i = 0; i < calculatedCommentRowsCount ;i++){
+                long last_time = rowsRegular.get(i).getKey();
+                long last_length = rowsRegular.get(i).getValue();
+                long t = current - last_time;
+                double t_all = comparedDuration * durationFactor;
+                double lx = (last_length / 25.0 + 1) * width;
+                double ly = (item.getCommentText().length() / 25.0 + 1) * width;
+                double vx = lx / t_all;
+                double vy = ly / t_all;
+                if((vy - vx) * (t_all - t) < t * vx - (last_length / 25.0) * width && t * vx - (last_length / 25.0) * width > 0) {
+                    if (reallyDo) {
+                        rowsRegular.set(i, new AbstractMap.SimpleEntry<>(current, item.getCommentText().length()));
+                    }
+                    row = i;
+                    break;
+                }
+            }
+        } else {
+            for(int i = calculatedCommentRowsCount - 1; i >= 0 ;i--){
+                long last = rows.get(i);
+                if(current - last >= comparedDuration){
+                    if (reallyDo) {
+                        rows.set(i, current);
+                    }
+                    row = i;
+                    break;
+                }
+            }
+        }
+        return row;
+    }
+
+    private void drawCommentsByPool(PriorityQueue<BulletCommentsInfoItem> pool, Duration drawUntilPosition, int height, int width, int calculatedCommentRowsCount) {
+        final Context context = binding.bulletCommentsContainer.getContext();
+        while(!pool.isEmpty()
                 && (drawUntilPosition.compareTo(Duration.ofSeconds(Long.MAX_VALUE)) == 0
-                || bulletCommentsInfoItemPool.peek().getDuration().toMillis() < drawUntilPosition.toMillis())) {
-            BulletCommentsInfoItem item = bulletCommentsInfoItemPool.peek();
+                || pool.peek().getDuration().toMillis() < drawUntilPosition.toMillis())) {
+            BulletCommentsInfoItem item = pool.peek();
             if (item.isLive() && tryToDrawComment(item, calculatedCommentRowsCount, width, false) == -1) {
                 return;
             }
-            bulletCommentsInfoItemPool.poll();
+            pool.poll();
             //Create TextView.
             final TextView textView = new TextView(context);
             final Typeface fontToBeUsed;
@@ -265,7 +322,7 @@ public final class BulletCommentsView extends ConstraintLayout {
                     //Create ObjectAnimator.
                     final int textWidth = textView.getWidth();
                     final int textHeight = textView.getHeight();
-                            ObjectAnimator animator;
+                    ObjectAnimator animator;
                     if(!item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)){
                         animator = ObjectAnimator.ofFloat(
                                 textView,
@@ -307,56 +364,5 @@ public final class BulletCommentsView extends ConstraintLayout {
             }
             binding.bulletCommentsContainer.addView(textView);
         }
-        //Log.v(TAG, "Child count: " + binding.bulletCommentsContainer.getChildCount());
-        //Log.v(TAG, "AnimatedTextView count: " + (long) animatedTextViews.size());
-    }
-
-    public int tryToDrawComment(BulletCommentsInfoItem item, int calculatedCommentRowsCount, int width, boolean reallyDo) {
-        long current = new Date().getTime();
-        int row = -1;
-        int comparedDuration = (int) (commentsDuration * 1000);
-        if(item.getPosition().equals(BulletCommentsInfoItem.Position.TOP)
-                || item.getPosition().equals(BulletCommentsInfoItem.Position.SUPERCHAT)){
-            for(int i = 0; i < calculatedCommentRowsCount ;i++){
-                long last = rows.get(i);
-                if(current - last >= comparedDuration){
-                    if (reallyDo) {
-                        rows.set(i, current);
-                    }
-                    row = i;
-                    break;
-                }
-            }
-        } else if (item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)) {
-            for(int i = 0; i < calculatedCommentRowsCount ;i++){
-                long last_time = rowsRegular.get(i).getKey();
-                long last_length = rowsRegular.get(i).getValue();
-                long t = current - last_time;
-                double t_all = comparedDuration * durationFactor;
-                double lx = (last_length / 25.0 + 1) * width;
-                double ly = (item.getCommentText().length() / 25.0 + 1) * width;
-                double vx = lx / t_all;
-                double vy = ly / t_all;
-                if((vy - vx) * (t_all - t) < t * vx - (last_length / 25.0) * width && t * vx - (last_length / 25.0) * width > 0) {
-                    if (reallyDo) {
-                        rowsRegular.set(i, new AbstractMap.SimpleEntry<>(current, item.getCommentText().length()));
-                    }
-                    row = i;
-                    break;
-                }
-            }
-        } else {
-            for(int i = calculatedCommentRowsCount - 1; i >= 0 ;i--){
-                long last = rows.get(i);
-                if(current - last >= comparedDuration){
-                    if (reallyDo) {
-                        rows.set(i, current);
-                    }
-                    row = i;
-                    break;
-                }
-            }
-        }
-        return row;
     }
 }
