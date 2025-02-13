@@ -154,8 +154,6 @@ public final class VideoDetailFragment
             App.PACKAGE_NAME + ".VideoDetailFragment.ACTION_SEEK_TO";
     public static final String ACTION_ENTER_FULLSCREEN
             = App.PACKAGE_NAME + ".VideoDetailFragment.ACTION_ENTER_FULLSCREEN";
-    public static final String ACTION_MARK_SEEKBAR
-            = App.PACKAGE_NAME + ".VideoDetailFragment.ACTION_MARK_SEEKBAR";
 
     private static final String COMMENTS_TAB_TAG = "COMMENTS";
     private static final String RELATED_TAB_TAG = "NEXT VIDEO";
@@ -1678,11 +1676,7 @@ public final class VideoDetailFragment
                                 context.sendBroadcast(new Intent(ACTION_SHOW_MAIN_PLAYER));
                             }).start();
                         }
-                        break;
-                    case ACTION_MARK_SEEKBAR:
-                        if (player != null && currentInfo != null) {
-                            player.onMarkSeekbarRequested(currentInfo);
-                        }
+
                         break;
                 }
             }
@@ -1692,7 +1686,6 @@ public final class VideoDetailFragment
         intentFilter.addAction(ACTION_HIDE_MAIN_PLAYER);
         intentFilter.addAction(ACTION_PLAYER_STARTED);
         intentFilter.addAction(ACTION_ENTER_FULLSCREEN);
-        intentFilter.addAction(ACTION_MARK_SEEKBAR);
         activity.registerReceiver(broadcastReceiver, intentFilter);
     }
 
