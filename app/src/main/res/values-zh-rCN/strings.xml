@@ -909,7 +909,7 @@
 <string name="sponsor_promote">成为支持者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">使用音乐播放器模式时,随机播放列表</string>
-<string name="update_log">### 新功能\n- 支持Sponsorblock手动模式\n- 支持Sponsorblock提交\n- 增加开关以控制是否显示不喜欢计数\n- 在播放列表中显示总时长\n- 完全支持AV1格式，包括2k60、4k60和8k60视频（YouTube）\n- 支持SponsorBlock（BiliBili）\n\n### Bug修复\n- 禁用“跳过赞助商”也禁用了彩色进度条\n- 无法更新某些频道的订阅\n- 缩小和恢复后评论滚动位置丢失\n- 登录状态未能立即更新（BiliBili、NicoNico）\n- 未正确处理H265编解码器（BiliBili）\n- 无法获取频道播放列表（BiliBili）\n- 无法加载某些影片（BiliBili）\n- 改善地域限制和付费内容的错误信息（NicoNico）\n- 某些视频没有频道信息（NicoNico）\n- 随机403错误（SoundCloud）\n- 一些小bug修复\n\n### 性能\n- 改善视频界面的流畅度，尤其是在进入和退出全屏模式时。\n- 异步加载Sponsorblock信息以提高性能\n\n### 行为变化\n- 为高级格式添加杜比全景声，并禁用高分辨率以避免无声问题（BiliBili）\n- 将高级格式设置移至播放器设置以使其更清晰\n\n### 其他\n- 更新图标和启动画面</string>
+<string name="update_log">### 新特性\n- 支持手动模式用于 Sponsorblock\n- 支持 Sponsorblock 提交\n- 添加一个开关以控制是否显示不喜欢计数\n- 在播放列表中显示总时长\n- 完全支持 AV1 格式，包括 2k60、4k60 和 8k60 视频（YouTube）\n- 支持 SponsorBlock（BiliBili）\n\n### Bug 修复\n- 禁用“跳过赞助”也会禁用彩色进度条\n- 无法为某些频道更新动态\n- 评论滚动位置在最小化和恢复后丢失\n- 视频加载失败的原因未正确显示（YouTube）\n- 有时没有弹幕（YouTube）\n- 登录状态未立即更新（BiliBili、NicoNico）\n- H265 编码未被正确处理（BiliBili）\n- 无法获取频道播放列表（BiliBili）\n- 无法加载一些电影（BiliBili）\n- 提高针对地区限制和付费内容的错误消息（NicoNico）\n- 某些视频没有频道信息（NicoNico）\n- 随机 403 错误（SoundCloud）\n- 一些次要 bug 修复\n\n### 性能\n- 提高视频界面的流畅度，特别是在进入和退出全屏模式时。\n\n### 界面\n- 改善弹幕的显示效果\n\n### 行为变化\n- 添加杜比全景声到高级格式并禁用高保真以避免无声音问题（BiliBili）\n- 将高级格式设置移动到播放器设置中以更清晰\n\n### 其他\n- 更新图标和启动画面</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 <string name="donation_dialog_title">支持该项目</string>
