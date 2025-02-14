@@ -50,7 +50,7 @@ class NewVersionWorker(
     ) {
         val currentVersion = parseVersion(BuildConfig.VERSION_NAME)
         val newVersion = parseVersion(versionName)
-        if (compareVersions(currentVersion, newVersion) > 0) {
+        if (compareVersions(currentVersion, newVersion) >= 0) {
             ContextCompat.getMainExecutor(applicationContext).execute {
                 Toast.makeText(
                     applicationContext, R.string.app_update_unavailable_toast,
