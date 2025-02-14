@@ -937,4 +937,5 @@ Debe aceptarla para enviarnos el informe de errores.</string>
 <string name="sponsor_block_manual_skip_button">Omitir</string>
 <string name="sponsor_block_show_manual_skip_title">Mostrar botones manuales</string>
 <string name="sponsor_block_show_manual_skip_summary">Mostrar botones en pantalla para omitir/desomitir manualmente segmentos. Se recomienda habilitar esto al configurar las categorías de SponsorBlock para omitir manualmente.</string>
+<string name="video_not_released">El video no se ha lanzado aún.</string>
 </resources>

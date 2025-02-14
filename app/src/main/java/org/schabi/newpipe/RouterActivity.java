@@ -46,17 +46,7 @@ import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.StreamingService.LinkType;
 import org.schabi.newpipe.extractor.channel.ChannelInfo;
-import org.schabi.newpipe.extractor.exceptions.AgeRestrictedContentException;
-import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException;
-import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException;
-import org.schabi.newpipe.extractor.exceptions.ExtractionException;
-import org.schabi.newpipe.extractor.exceptions.GeographicRestrictionException;
-import org.schabi.newpipe.extractor.exceptions.LiveNotStartException;
-import org.schabi.newpipe.extractor.exceptions.PaidContentException;
-import org.schabi.newpipe.extractor.exceptions.PrivateContentException;
-import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
-import org.schabi.newpipe.extractor.exceptions.SoundCloudGoPlusContentException;
-import org.schabi.newpipe.extractor.exceptions.YoutubeMusicPremiumContentException;
+import org.schabi.newpipe.extractor.exceptions.*;
 import org.schabi.newpipe.extractor.playlist.PlaylistInfo;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.VideoStream;
@@ -223,6 +213,8 @@ public class RouterActivity extends AppCompatActivity {
             Toast.makeText(context, R.string.georestricted_content, Toast.LENGTH_LONG).show();
         } else if (throwable instanceof LiveNotStartException) {
             Toast.makeText(context, R.string.live_not_started, Toast.LENGTH_LONG).show();
+        } else if (throwable instanceof VideoNotReleaseException) {
+            Toast.makeText(context, R.string.video_not_released, Toast.LENGTH_LONG).show();
         } else if (throwable instanceof PaidContentException) {
             Toast.makeText(context, R.string.paid_content_new, Toast.LENGTH_LONG).show();
         } else if (throwable instanceof PrivateContentException) {

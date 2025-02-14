@@ -888,4 +888,5 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="sponsor_block_manual_skip_button">Ignorer</string>
 <string name="sponsor_block_show_manual_skip_title">Afficher les boutons manuels</string>
 <string name="sponsor_block_show_manual_skip_summary">Afficher sur l\'écran des boutons pour ignorer/ne pas ignorer manuellement les segments. Il est recommandé d\'activer cette option lors de la configuration des catégories SponsorBlock à être ignorées manuellement.</string>
+<string name="video_not_released">La vidéo n\'a pas encore été publiée.</string>
 </resources>
