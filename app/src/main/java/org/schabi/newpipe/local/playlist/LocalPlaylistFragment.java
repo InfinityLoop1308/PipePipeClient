@@ -164,10 +164,67 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
         }
     }
 
+
+    private void setupTouchListeners(View view) {
+        // Skip if this is our EditText
+        if (view == editText) {
+            return;
+        }
+
+        // For other views, set a touch listener to clear focus
+        if (!(view instanceof EditText)) {
+            view.setOnTouchListener((v, event) -> {
+                if (event.getAction() == MotionEvent.ACTION_DOWN && editText != null && editText.hasFocus()) {
+                    editText.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                }
+                // Always return false to allow the event to be processed by the view
+                return false;
+            });
+        }
+
+        // If it's a ViewGroup, apply to all children
+        if (view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                setupTouchListeners(viewGroup.getChildAt(i));
+            }
+        }
+
+        // Add specific listener for the RecyclerView
+        if (view.getId() == R.id.items_list) {
+            RecyclerView recyclerView = (RecyclerView) view;
+            recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+                @Override
+                public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                    if (e.getAction() == MotionEvent.ACTION_DOWN && editText != null && editText.hasFocus()) {
+                        editText.clearFocus();
+                        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                    }
+                    return false;
+                }
+
+                @Override
+                public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                    // Not needed
+                }
+
+                @Override
+                public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+                    // Not needed
+                }
+            });
+        }
+    }
+
+
     @Override
     protected void initViews(final View rootView, final Bundle savedInstanceState) {
         super.initViews(rootView, savedInstanceState);
         setTitle(name);
+        setupTouchListeners(rootView);
     }
 
     @Override
@@ -434,6 +491,7 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             searchClear = customView.findViewById(R.id.toolbar_search_clear_local);
             searchClear.setOnClickListener(v -> {
                 if (TextUtils.isEmpty(editText.getText())) {
+                    editText.clearFocus(); // Clear focus when the search is cleared
                     destroyCustomViewInActionBar();
                     return;
                 }
