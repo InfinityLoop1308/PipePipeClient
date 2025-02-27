@@ -43,7 +43,11 @@ public class CommentsFragmentContainer extends BaseFragment {
             final LayoutInflater inflater, @Nullable final ViewGroup container,
             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_container, container, false);
-        setFragment(getFM(), serviceId, url, name);
+        // Only set the fragment if this is not a configuration change (like rotation)
+        // or if the fragment doesn't exist yet
+        if (savedInstanceState == null) {
+            setFragment(getFM(), serviceId, url, name);
+        }
         return view;
     }
 
