@@ -249,9 +249,56 @@ class StringTranslator:
             target.delete_entry(f'string[name="{name}"]')
             target.write_to_file()
 
+    def update_translations_from_xml(self, input_xml_path, language):
+        """
+        Update translations in an existing XML file with entries from an input XML file.
+
+        Parameters:
+        input_xml_path (str): Path to the input XML file containing new translations
+        language (str): Target language code (e.g., 'zh-rCN', 'fr', 'de')
+
+        Returns:
+        bool: True if successful, False otherwise
+        """
+        try:
+            # Load the input XML file
+            input_xml = XMLHandler(input_xml_path)
+            input_strings = input_xml.load_strings_to_dict()
+
+            # Find the target XML file for the specified language
+            target = None
+            for xml_handler in self.targets:
+                if language in xml_handler.file_path:
+                    target = xml_handler
+                    break
+
+            if not target:
+                print(f"Error: No translation file found for language '{language}'")
+                return False
+
+            # Load existing translations
+            existing_strings = target.load_strings_to_dict()
+
+            # Find common entries between input and existing translations
+            common_keys = set(input_strings.keys()) & set(existing_strings.keys())
+
+            # Update the entries in the target XML
+            for key in common_keys:
+                target.update_entry(f'string[name="{key}"]', escape(input_strings[key]))
+
+            # Save the updated XML
+            target.write_to_file()
+
+            print(f"Successfully updated {len(common_keys)} translations for language '{language}'")
+            return True
+
+        except Exception as e:
+            print(f"Error updating translations: {str(e)}")
+            return False
 
 if __name__ == '__main__':
     translator = StringTranslator()
+    # translator.update_translations_from_xml('tmp.xml', 'ja')
     # read params
     args = sys.argv
     if args[1] == 'add':
