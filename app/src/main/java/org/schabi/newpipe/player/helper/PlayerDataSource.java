@@ -268,8 +268,7 @@ public class PlayerDataSource {
     public void disconnectWebSocketClients() {
         try {
             nicoWebSocketClient.disconnect();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignore) {
         }
     }
 }
