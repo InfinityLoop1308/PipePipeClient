@@ -18,6 +18,7 @@ import org.schabi.newpipe.extractor.comments.CommentsInfo;
 import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
 import org.schabi.newpipe.fragments.list.BaseListInfoFragment;
 import org.schabi.newpipe.ktx.ViewUtils;
+import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ExtractorHelper;
 
 import java.util.List;
@@ -79,7 +80,7 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfoItem, Com
 
         emptyStateDesc = rootView.findViewById(R.id.empty_state_desc);
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        if (prefs.getBoolean("comments_inner_scroll_key", false)) {
+        if (!DeviceUtils.isLandscape(requireContext()) && prefs.getBoolean("comments_inner_scroll_key", false)) {
             itemsList.setNestedScrollingEnabled(false);
             itemsList.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
