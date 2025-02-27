@@ -401,9 +401,13 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 if(item instanceof PlaylistStreamEntry) {
                     if (((PlaylistStreamEntry)item).getStreamEntity().getTitle().toLowerCase().contains(text.toLowerCase())) {
                         filteredItems.add(item);
+                    } else if (((PlaylistStreamEntry)item).getStreamEntity().getUploader().toLowerCase().contains(text.toLowerCase())) {
+                        filteredItems.add(item);
                     }
                 } else if(item instanceof StreamStatisticsEntry) {
                     if (((StreamStatisticsEntry) item).getStreamEntity().getTitle().toLowerCase().contains(text.toLowerCase())) {
+                        filteredItems.add(item);
+                    } else if (((StreamStatisticsEntry) item).getStreamEntity().getUploader().toLowerCase().contains(text.toLowerCase())) {
                         filteredItems.add(item);
                     }
                 }
