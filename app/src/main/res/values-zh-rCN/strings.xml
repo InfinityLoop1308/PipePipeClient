@@ -909,7 +909,7 @@
 <string name="sponsor_promote">成为支持者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">使用音乐播放器模式时,随机播放列表</string>
-<string name="update_log">### 新特性\n- 支持手动模式用于 Sponsorblock\n- 支持 Sponsorblock 提交\n- 添加一个开关以控制是否显示不喜欢计数\n- 在播放列表中显示总时长\n- 完全支持 AV1 格式，包括 2k60、4k60 和 8k60 视频（YouTube）\n- 支持 SponsorBlock（BiliBili）\n\n### Bug 修复\n- 禁用“跳过赞助”也会禁用彩色进度条\n- 无法为某些频道更新动态\n- 评论滚动位置在最小化和恢复后丢失\n- 视频加载失败的原因未正确显示（YouTube）\n- 有时没有弹幕（YouTube）\n- 登录状态未立即更新（BiliBili、NicoNico）\n- H265 编码未被正确处理（BiliBili）\n- 无法获取频道播放列表（BiliBili）\n- 无法加载一些电影（BiliBili）\n- 提高针对地区限制和付费内容的错误消息（NicoNico）\n- 某些视频没有频道信息（NicoNico）\n- 随机 403 错误（SoundCloud）\n- 一些次要 bug 修复\n\n### 性能\n- 提高视频界面的流畅度，特别是在进入和退出全屏模式时。\n\n### 界面\n- 改善弹幕的显示效果\n\n### 行为变化\n- 添加杜比全景声到高级格式并禁用高保真以避免无声音问题（BiliBili）\n- 将高级格式设置移动到播放器设置中以更清晰\n\n### 其他\n- 更新图标和启动画面</string>
+<string name="update_log">### 新功能\n- 支持使用上传者名称在播放列表中搜索\n\n### 错误修复\n- 更新检查器未按预期工作\n- 无法在 Android 8 下运行\n- 启用内置滚动的全屏模式下性能较差\n- 有时评论未显示\n- 本地播放列表搜索完成后软键盘未隐藏\n- 用户页面上的“在浏览器中打开”不起作用（NicoNico）\n- 一些小错误修复\n\n### 用户界面\n- 更新日语和西班牙语翻译\n\n### 其他\n- 改善稳定性</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 <string name="donation_dialog_title">支持该项目</string>
