@@ -952,4 +952,6 @@
 <string name="sponsor_block_show_manual_skip_title">手動ボタンを表示</string>
 <string name="sponsor_block_show_manual_skip_summary">手動でセグメントをスキップ/スキップ解除するためのボタンを画面上に表示します。これを有効にすることは、手動でスキップするようにSponsorBlockカテゴリを設定する際に推奨されます。</string>
 <string name="video_not_released">ビデオはまだリリースされていません。</string>
+<string name="filter_shorts_title">短編動画をフィルタ</string>
+<string name="filter_shorts_summary">短編動画を結果から除外します。YouTube のみで機能します。</string>
 </resources>

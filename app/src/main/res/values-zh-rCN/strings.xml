@@ -998,4 +998,6 @@
 <string name="sponsor_block_show_manual_skip_title">显示手动按钮</string>
 <string name="sponsor_block_show_manual_skip_summary">在屏幕上显示按钮以手动跳过/取消跳过片段。在配置SponsorBlock类别为手动跳过时，建议启用此功能。</string>
 <string name="video_not_released">该视频尚未发布。</string>
+<string name="filter_shorts_title">筛选短视频</string>
+<string name="filter_shorts_summary">从结果中移除短视频。仅适用于 YouTube。</string>
 </resources>

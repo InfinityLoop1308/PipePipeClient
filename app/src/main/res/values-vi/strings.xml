@@ -1042,4 +1042,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sponsor_block_show_manual_skip_title">Hiển thị các nút thủ công</string>
 <string name="sponsor_block_show_manual_skip_summary">Hiển thị các nút trên màn hình để tự tay bỏ qua/không bỏ qua đoạn. Khuyến nghị bật tính năng này khi cấu hình Danh mục Bỏ Qua của SponsorBlock thành thủ công.</string>
 <string name="video_not_released">Video chưa phát hành.</string>
+<string name="filter_shorts_title">Lọc video ngắn</string>
+<string name="filter_shorts_summary">Xóa video ngắn khỏi kết quả. Chỉ hoạt động cho YouTube.</string>
 </resources>

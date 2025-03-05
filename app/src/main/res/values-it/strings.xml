@@ -856,4 +856,6 @@
 <string name="sponsor_block_show_manual_skip_title">Mostra pulsanti manuali</string>
 <string name="sponsor_block_show_manual_skip_summary">Mostra sullo schermo i pulsanti per saltare/non saltare i segmenti manualmente. Abilitarlo è consigliato quando si configurano le categorie SponsorBlock da saltare manualmente.</string>
 <string name="video_not_released">Il video non è ancora stato rilasciato.</string>
+<string name="filter_shorts_title">Filtra video brevi</string>
+<string name="filter_shorts_summary">Rimuovere i video brevi dai risultati. Funziona solo per YouTube.</string>
 </resources>

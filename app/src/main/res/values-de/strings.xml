@@ -936,4 +936,6 @@
 <string name="sponsor_block_show_manual_skip_title">Manuelle Tasten anzeigen</string>
 <string name="sponsor_block_show_manual_skip_summary">Zeigt Tasten auf dem Bildschirm an, um Segmente manuell zu überspringen/nicht zu überspringen. Es wird empfohlen, dies zu aktivieren, wenn Sie Kategorien von SponsorBlock konfigurieren, die manuell übersprungen werden sollen.</string>
 <string name="video_not_released">Das Video wurde noch nicht veröffentlicht.</string>
+<string name="filter_shorts_title">Kurze Videos filtern</string>
+<string name="filter_shorts_summary">Kurze Videos aus den Ergebnissen entfernen. Funktioniert nur für YouTube.</string>
 </resources>

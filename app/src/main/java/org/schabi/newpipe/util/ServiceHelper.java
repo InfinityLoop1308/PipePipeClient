@@ -323,6 +323,8 @@ public final class ServiceHelper {
             initService(context, s.getServiceId());
             String blockingKeywords = sharedPreferences.getString(context.getString(R.string.filter_by_keyword_key), null);
             String blockingChannels = sharedPreferences.getString(context.getString(R.string.filter_by_channel_key), null);
+            boolean blockShorts = sharedPreferences.getBoolean(context.getString(R.string.filter_shorts_key), false);
+            s.setFilterShorts(blockShorts);
             if (blockingKeywords != null && !blockingKeywords.isEmpty()) {
                 s.setStreamKeywordFilter(new ArrayList<>(Arrays.asList(blockingKeywords.replace("，", ",").split(","))));
             }

@@ -998,4 +998,6 @@
 <string name="settings_category_proxy_title">Proxy (Partidarios)</string>
 <string name="video_not_released">El directo aún no se ha publicado.</string>
 <string name="filter_by_channel_title">Filtrar por canales</string>
+<string name="filter_shorts_title">Filtrar videos cortos</string>
+<string name="filter_shorts_summary">Eliminar videos cortos de los resultados. Solo funciona para YouTube.</string>
 </resources>

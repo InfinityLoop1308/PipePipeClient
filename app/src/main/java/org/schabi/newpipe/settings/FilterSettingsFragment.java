@@ -13,6 +13,7 @@ public class FilterSettingsFragment extends BasePreferenceFragment {
         addPreferencesFromResourceRegistry();
         Preference filter_by_keyword = findPreference(getString(R.string.filter_by_keyword_key));
         Preference filter_by_channel = findPreference(getString(R.string.filter_by_channel_key));
+        Preference filter_shorts = findPreference(getString(R.string.filter_shorts_key));
         Preference filter_type = findPreference(getString(R.string.filter_type_key));
 
         filter_by_keyword.setOnPreferenceChangeListener((preference, newValue) -> {
@@ -24,6 +25,13 @@ public class FilterSettingsFragment extends BasePreferenceFragment {
             return true;
         });
         filter_by_channel.setOnPreferenceChangeListener((preference, newValue) -> {
+            new Handler().postDelayed(() -> {
+                // Now SharedPreferences will have the new value
+                ServiceHelper.initServices(getContext());
+            }, 100); // 100ms delay should be enough, you can adjust if needed
+            return true;
+        });
+        filter_shorts.setOnPreferenceChangeListener((preference, newValue) -> {
             new Handler().postDelayed(() -> {
                 // Now SharedPreferences will have the new value
                 ServiceHelper.initServices(getContext());
