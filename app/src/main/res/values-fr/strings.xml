@@ -892,4 +892,8 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="filter_shorts_title">Filtrer les vidéos courtes</string>
 <string name="filter_shorts_summary">Supprimer les vidéos courtes des résultats. Fonctionne uniquement pour YouTube.</string>
 <string name="paid_video">Payé</string>
+<string name="share_playlist">Partager la playlist</string>
+<string name="share_playlist_with_titles_message">Partagez la playlist avec des détails tels que le nom de la playlist et les titres des vidéos ou comme une simple liste d\'URLs de vidéos</string>
+<string name="share_playlist_with_titles">Partager avec les titres</string>
+<string name="share_playlist_with_list">Partager la liste d\'URLs</string>
 </resources>

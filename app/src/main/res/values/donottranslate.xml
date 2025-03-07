@@ -31,4 +31,6 @@
     <string name="sponsor_block_default_api_url">https://sponsor.ajay.app/api/</string>
     <string name="sponsor_block_privacy_policy_url">https://gist.github.com/ajayyy/aa9f8ded2b573d4f73a3ffa0ef74f796</string>
     <string name="settings_category_sponsor_block_title">SponsorBlock</string>
+    <string name="video_details_list_item">- %1$s: %2$s</string>
+    <string name="share_playlist_content_details">%1$s\n%2$s</string>
 </resources>

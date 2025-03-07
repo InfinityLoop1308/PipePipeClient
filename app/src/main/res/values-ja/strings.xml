@@ -955,4 +955,8 @@
 <string name="filter_shorts_title">短編動画をフィルタ</string>
 <string name="filter_shorts_summary">短編動画を結果から除外します。YouTube のみで機能します。</string>
 <string name="paid_video">有料</string>
+<string name="share_playlist">プレイリストを共有</string>
+<string name="share_playlist_with_titles_message">プレイリスト名や動画タイトルなどの詳細と共にプレイリストを共有するか、動画のURLリストとしてシンプルに共有します</string>
+<string name="share_playlist_with_titles">タイトルと共に共有</string>
+<string name="share_playlist_with_list">URLリストを共有</string>
 </resources>

@@ -988,4 +988,8 @@
 <string name="filter_shorts_title">篩選短片</string>
 <string name="filter_shorts_summary">從結果中移除短片。僅適用於YouTube。</string>
 <string name="paid_video">付費</string>
+<string name="share_playlist">分享播放清單</string>
+<string name="share_playlist_with_titles_message">分享播放清單，包括播放清單名稱和視頻標題的詳細信息，或僅作為視頻網址的簡單列表</string>
+<string name="share_playlist_with_titles">分享標題</string>
+<string name="share_playlist_with_list">分享 URL 清單</string>
 </resources>

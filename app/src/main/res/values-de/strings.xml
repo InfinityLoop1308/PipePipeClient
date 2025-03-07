@@ -939,4 +939,8 @@
 <string name="filter_shorts_title">Kurze Videos filtern</string>
 <string name="filter_shorts_summary">Kurze Videos aus den Ergebnissen entfernen. Funktioniert nur für YouTube.</string>
 <string name="paid_video">Bezahlt</string>
+<string name="share_playlist">Playlist teilen</string>
+<string name="share_playlist_with_titles_message">Playlist mit Details wie Playlistname und Videotiteln oder als einfache Liste von Video-URLs teilen</string>
+<string name="share_playlist_with_titles">Mit Titeln teilen</string>
+<string name="share_playlist_with_list">URL-Liste teilen</string>
 </resources>

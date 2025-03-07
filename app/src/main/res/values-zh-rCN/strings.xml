@@ -1001,4 +1001,8 @@
 <string name="filter_shorts_title">筛选短视频</string>
 <string name="filter_shorts_summary">从结果中移除短视频。仅适用于 YouTube。</string>
 <string name="paid_video">付费</string>
+<string name="share_playlist">分享播放列表</string>
+<string name="share_playlist_with_titles_message">分享播放列表，包括播放列表名称和视频标题等详细信息，或作为简单的视频 URL 列表</string>
+<string name="share_playlist_with_titles">分享标题</string>
+<string name="share_playlist_with_list">分享 URL 列表</string>
 </resources>

@@ -23,6 +23,7 @@ import androidx.viewbinding.ViewBinding;
 import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -55,12 +56,16 @@ import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
 import org.schabi.newpipe.util.*;
+import org.schabi.newpipe.util.external_communication.ShareUtils;
+
 import us.shandian.giga.get.DirectDownloader;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
+import static org.schabi.newpipe.error.ErrorUtil.showUiErrorSnackbar;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.util.SparseItemUtil.fetchStreamInfoAndSaveToDatabase;
 import static org.schabi.newpipe.util.SparseItemUtil.fetchStreamInfoAndSaveToDatabaseWithoutToast;
@@ -441,7 +446,9 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        if (item.getItemId() == R.id.menu_item_remove_watched) {
+        if (item.getItemId() == R.id.menu_item_share_playlist) {
+            createShareConfirmationDialog();
+        } else if (item.getItemId() == R.id.menu_item_remove_watched) {
             if (!isRemovingWatched) {
                 new AlertDialog.Builder(requireContext())
                         .setMessage(R.string.remove_watched_popup_warning)
@@ -1146,5 +1153,55 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
         }
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(activity.getWindow().getDecorView().getWindowToken(), 0);
+    }
+
+    /**
+     * Shares the playlist as a list of stream URLs if {@code shouldSharePlaylistDetails} is
+     * set to {@code false}. Shares the playlist name along with a list of video titles and URLs
+     * if {@code shouldSharePlaylistDetails} is set to {@code true}.
+     *
+     * @param shouldSharePlaylistDetails Whether the playlist details should be included in the
+     *                                   shared content.
+     */
+    private void sharePlaylist(final boolean shouldSharePlaylistDetails) {
+        final Context context = requireContext();
+
+        disposables.add(playlistManager.getPlaylistStreams(playlistId)
+                .flatMapSingle(playlist -> Single.just(playlist.stream()
+                        .map(PlaylistStreamEntry::getStreamEntity)
+                        .map(streamEntity -> {
+                            if (shouldSharePlaylistDetails) {
+                                return context.getString(R.string.video_details_list_item,
+                                        streamEntity.getTitle(), streamEntity.getUrl());
+                            } else {
+                                return streamEntity.getUrl();
+                            }
+                        })
+                        .collect(Collectors.joining("\n"))))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(urlsText -> ShareUtils.shareText(
+                                context, name, shouldSharePlaylistDetails
+                                        ? context.getString(R.string.share_playlist_content_details,
+                                        name, urlsText) : urlsText),
+                        throwable -> showUiErrorSnackbar(this, "Sharing playlist", throwable)));
+    }
+
+    /**
+     * Creates a dialog to confirm whether the user wants to share the playlist
+     * with the playlist details or just the list of stream URLs.
+     * After the user has made a choice, the playlist is shared.
+     */
+    private void createShareConfirmationDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.share_playlist)
+                .setMessage(R.string.share_playlist_with_titles_message)
+                .setCancelable(true)
+                .setPositiveButton(R.string.share_playlist_with_titles, (dialog, which) ->
+                        sharePlaylist(/* shouldSharePlaylistDetails= */ true)
+                )
+                .setNegativeButton(R.string.share_playlist_with_list, (dialog, which) ->
+                        sharePlaylist(/* shouldSharePlaylistDetails= */ false)
+                )
+                .show();
     }
 }

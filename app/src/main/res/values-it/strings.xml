@@ -859,4 +859,8 @@
 <string name="filter_shorts_title">Filtra video brevi</string>
 <string name="filter_shorts_summary">Rimuovere i video brevi dai risultati. Funziona solo per YouTube.</string>
 <string name="paid_video">Pagato</string>
+<string name="share_playlist">Condividi Playlist</string>
+<string name="share_playlist_with_titles_message">Condividi la playlist con dettagli come il nome della playlist e i titoli dei video o come una semplice lista di URL video</string>
+<string name="share_playlist_with_titles">Condividi con Titoli</string>
+<string name="share_playlist_with_list">Condividi elenco URL</string>
 </resources>

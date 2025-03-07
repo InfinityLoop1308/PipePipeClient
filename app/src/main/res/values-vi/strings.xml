@@ -1045,4 +1045,8 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="filter_shorts_title">Lọc video ngắn</string>
 <string name="filter_shorts_summary">Xóa video ngắn khỏi kết quả. Chỉ hoạt động cho YouTube.</string>
 <string name="paid_video">Trả phí</string>
+<string name="share_playlist">Chia sẻ danh sách phát</string>
+<string name="share_playlist_with_titles_message">Chia sẻ danh sách phát với các chi tiết như tên danh sách phát và tiêu đề video hoặc dưới dạng danh sách đơn giản các URL video</string>
+<string name="share_playlist_with_titles">Chia sẻ với tiêu đề</string>
+<string name="share_playlist_with_list">Chia sẻ danh sách URL</string>
 </resources>
