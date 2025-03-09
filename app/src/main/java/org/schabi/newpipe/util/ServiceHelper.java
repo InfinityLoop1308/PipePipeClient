@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static org.schabi.newpipe.extractor.ServiceList.NicoNico;
 import static org.schabi.newpipe.extractor.ServiceList.SoundCloud;
@@ -326,10 +327,10 @@ public final class ServiceHelper {
             boolean blockShorts = sharedPreferences.getBoolean(context.getString(R.string.filter_shorts_key), false);
             s.setFilterShorts(blockShorts);
             if (blockingKeywords != null && !blockingKeywords.isEmpty()) {
-                s.setStreamKeywordFilter(new ArrayList<>(Arrays.asList(blockingKeywords.replace("，", ",").split(","))));
+                s.setStreamKeywordFilter(new ArrayList<>(Arrays.asList(blockingKeywords.replace("，", ",").split(",")).stream().map(String::trim).collect(Collectors.toList())));
             }
             if (blockingChannels != null && !blockingChannels.isEmpty()) {
-                s.setStreamChannelFilter(new ArrayList<>(Arrays.asList(blockingChannels.replace("，", ",").split(","))));
+                s.setStreamChannelFilter(new ArrayList<>(Arrays.asList(blockingChannels.replace("，", ",").split(",")).stream().map(String::trim).collect(Collectors.toList())));
             }
             Set<String> blockingFields = sharedPreferences.getStringSet(context.getString(R.string.filter_type_key), new HashSet<>());
             s.setFilterTypes(blockingFields);
