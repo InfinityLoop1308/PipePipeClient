@@ -858,4 +858,5 @@
 <string name="video_not_released">Il video non è ancora stato rilasciato.</string>
 <string name="filter_shorts_title">Filtra video brevi</string>
 <string name="filter_shorts_summary">Rimuovere i video brevi dai risultati. Funziona solo per YouTube.</string>
+<string name="paid_video">Pagato</string>
 </resources>

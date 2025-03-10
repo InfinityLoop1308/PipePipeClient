@@ -1000,4 +1000,5 @@
 <string name="filter_by_channel_title">Filtrar por canales</string>
 <string name="filter_shorts_title">Filtrar videos cortos</string>
 <string name="filter_shorts_summary">Eliminar videos cortos de los resultados. Solo funciona para YouTube.</string>
+<string name="paid_video">Pagado</string>
 </resources>

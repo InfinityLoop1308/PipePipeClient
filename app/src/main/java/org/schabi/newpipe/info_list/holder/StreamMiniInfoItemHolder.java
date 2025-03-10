@@ -54,7 +54,13 @@ public class StreamMiniInfoItemHolder extends InfoItemHolder {
         itemVideoTitleView.setText(item.getName());
         itemUploaderView.setText(item.getUploaderName());
 
-        if (item.getDuration() > 0) {
+        if (item.requiresMembership()) {
+            itemDurationView.setText(R.string.paid_video);
+            itemDurationView.setBackgroundColor(ContextCompat.getColor(itemBuilder.getContext(),
+                    R.color.paid_video_background_color));
+            itemDurationView.setVisibility(View.VISIBLE);
+            itemProgressView.setVisibility(View.GONE);
+        } else if (item.getDuration() > 0) {
             itemDurationView.setText(Localization.getDurationString(item.getDuration()));
             itemDurationView.setBackgroundColor(ContextCompat.getColor(itemBuilder.getContext(),
                     R.color.duration_background_color));

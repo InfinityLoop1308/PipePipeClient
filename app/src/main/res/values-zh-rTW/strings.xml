@@ -987,4 +987,5 @@
 <string name="video_not_released">影片尚未發布。</string>
 <string name="filter_shorts_title">篩選短片</string>
 <string name="filter_shorts_summary">從結果中移除短片。僅適用於YouTube。</string>
+<string name="paid_video">付費</string>
 </resources>

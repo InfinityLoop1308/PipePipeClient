@@ -1000,4 +1000,5 @@
 <string name="video_not_released">该视频尚未发布。</string>
 <string name="filter_shorts_title">筛选短视频</string>
 <string name="filter_shorts_summary">从结果中移除短视频。仅适用于 YouTube。</string>
+<string name="paid_video">付费</string>
 </resources>

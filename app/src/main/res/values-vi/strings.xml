@@ -1044,4 +1044,5 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="video_not_released">Video chưa phát hành.</string>
 <string name="filter_shorts_title">Lọc video ngắn</string>
 <string name="filter_shorts_summary">Xóa video ngắn khỏi kết quả. Chỉ hoạt động cho YouTube.</string>
+<string name="paid_video">Trả phí</string>
 </resources>

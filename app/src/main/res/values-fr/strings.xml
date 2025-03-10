@@ -891,4 +891,5 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="video_not_released">La vidéo n\'a pas encore été publiée.</string>
 <string name="filter_shorts_title">Filtrer les vidéos courtes</string>
 <string name="filter_shorts_summary">Supprimer les vidéos courtes des résultats. Fonctionne uniquement pour YouTube.</string>
+<string name="paid_video">Payé</string>
 </resources>

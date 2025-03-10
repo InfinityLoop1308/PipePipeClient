@@ -1039,4 +1039,5 @@
 <string name="video_not_released">The video has not released yet.</string>
 <string name="filter_shorts_title">Filter short videos</string>
 <string name="filter_shorts_summary">Remove short videos from results. Only work for YouTube.</string>
+<string name="paid_video">Paid</string>
 </resources>
