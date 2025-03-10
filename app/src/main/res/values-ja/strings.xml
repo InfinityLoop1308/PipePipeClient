@@ -959,4 +959,6 @@
 <string name="share_playlist_with_titles_message">プレイリスト名や動画タイトルなどの詳細と共にプレイリストを共有するか、動画のURLリストとしてシンプルに共有します</string>
 <string name="share_playlist_with_titles">タイトルと共に共有</string>
 <string name="share_playlist_with_list">URLリストを共有</string>
+<string name="add_to_filter_list">チャンネルをブロックリストに追加</string>
+<string name="add_to_filter_list_confirm">%sをブロックリストに追加しますか？</string>
 </resources>

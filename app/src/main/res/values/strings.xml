@@ -1044,4 +1044,6 @@
 <string name="share_playlist_with_titles_message">Share playlist with details such as playlist name and video titles or as a simple list of video URLs</string>
 <string name="share_playlist_with_titles">Share with Titles</string>
 <string name="share_playlist_with_list">Share URL list</string>
+<string name="add_to_filter_list">Add channel to blocking list</string>
+<string name="add_to_filter_list_confirm">Do you want to add %s to blocking list?</string>
 </resources>

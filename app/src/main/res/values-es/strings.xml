@@ -1005,4 +1005,6 @@
 <string name="share_playlist_with_titles_message">Compartir lista de reproducción con detalles como el nombre de la lista y los títulos de los videos o como una simple lista de URL de videos</string>
 <string name="share_playlist_with_titles">Compartir con títulos</string>
 <string name="share_playlist_with_list">Compartir lista de URL</string>
+<string name="add_to_filter_list">Agregar canal a la lista de bloqueo</string>
+<string name="add_to_filter_list_confirm">¿Quieres añadir %s a la lista de bloqueo?</string>
 </resources>

@@ -863,4 +863,6 @@
 <string name="share_playlist_with_titles_message">Condividi la playlist con dettagli come il nome della playlist e i titoli dei video o come una semplice lista di URL video</string>
 <string name="share_playlist_with_titles">Condividi con Titoli</string>
 <string name="share_playlist_with_list">Condividi elenco URL</string>
+<string name="add_to_filter_list">Aggiungi canale all\'elenco di blocco</string>
+<string name="add_to_filter_list_confirm">Vuoi aggiungere %s all\'elenco di blocco?</string>
 </resources>

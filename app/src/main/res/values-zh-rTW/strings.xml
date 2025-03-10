@@ -992,4 +992,6 @@
 <string name="share_playlist_with_titles_message">分享播放清單，包括播放清單名稱和視頻標題的詳細信息，或僅作為視頻網址的簡單列表</string>
 <string name="share_playlist_with_titles">分享標題</string>
 <string name="share_playlist_with_list">分享 URL 清單</string>
+<string name="add_to_filter_list">將頻道添加到封鎖清單</string>
+<string name="add_to_filter_list_confirm">您想將 %s 加入阻擋清單嗎？</string>
 </resources>

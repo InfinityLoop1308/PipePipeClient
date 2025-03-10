@@ -943,4 +943,6 @@
 <string name="share_playlist_with_titles_message">Playlist mit Details wie Playlistname und Videotiteln oder als einfache Liste von Video-URLs teilen</string>
 <string name="share_playlist_with_titles">Mit Titeln teilen</string>
 <string name="share_playlist_with_list">URL-Liste teilen</string>
+<string name="add_to_filter_list">Kanal zur Sperrliste hinzufügen</string>
+<string name="add_to_filter_list_confirm">Möchten Sie %s zur Sperrliste hinzufügen?</string>
 </resources>

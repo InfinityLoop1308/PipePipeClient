@@ -5,11 +5,15 @@ import static org.schabi.newpipe.util.SparseItemUtil.fetchItemInfoIfSparse;
 import static org.schabi.newpipe.util.SparseItemUtil.fetchStreamInfoAndSaveToDatabase;
 import static org.schabi.newpipe.util.SparseItemUtil.fetchUploaderUrlIfSparse;
 
+import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.net.Uri;
 
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
+import androidx.preference.PreferenceManager;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.download.DownloadDialog;
@@ -17,6 +21,7 @@ import org.schabi.newpipe.local.dialog.PlaylistAppendDialog;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.util.NavigationHelper;
+import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
@@ -137,6 +142,39 @@ public enum StreamDialogDefaultEntry {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe()
     ),
+
+    ADD_TO_FILTER_LIST(R.string.add_to_filter_list, (fragment, item) -> {
+        // Create confirmation dialog
+        new AlertDialog.Builder(fragment.requireContext())
+                .setMessage(fragment.getString(R.string.add_to_filter_list_confirm, item.getUploaderName()))
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    // User confirmed - execute blocking logic
+                    final SharedPreferences pref = PreferenceManager
+                            .getDefaultSharedPreferences(fragment.requireContext());
+                    // Get the key from string resources
+                    String filterKey = fragment.requireContext().getString(R.string.filter_by_channel_key);
+                    // Retrieve current filter list or default to empty
+                    String currentValue = pref.getString(filterKey, "");
+                    // Update the value based on conditions
+                    if (currentValue.isEmpty()) {
+                        currentValue = item.getUploaderName();
+                    } else {
+                        currentValue += ", " + item.getUploaderName();
+                    }
+                    // Save the updated value back to SharedPreferences
+                    pref.edit()
+                            .putString(filterKey, currentValue)
+                            .apply();
+                    ServiceHelper.initServices(fragment.requireContext());
+                    Toast.makeText(
+                            fragment.requireContext(), R.string.recaptcha_done_button,
+                            Toast.LENGTH_SHORT
+                    ).show();
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }),
+
 
     NAVIGATE_TO(R.string.navigate_to, (fragment, item) -> {
         throw new UnsupportedOperationException("This needs to be implemented manually "

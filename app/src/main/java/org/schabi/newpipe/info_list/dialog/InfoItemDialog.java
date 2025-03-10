@@ -304,6 +304,9 @@ public final class InfoItemDialog {
             return this;
         }
 
+
+
+
         /**
          * Add the entries which are usually at the top of the action list.
          * <br/>
@@ -331,6 +334,7 @@ public final class InfoItemDialog {
             addPlayWithKodiEntryIfNeeded();
             addMarkAsWatchedEntryIfNeeded();
             addEntry(StreamDialogDefaultEntry.SHOW_CHANNEL_DETAILS);
+            addEntry(StreamDialogDefaultEntry.ADD_TO_FILTER_LIST);
             return this;
         }
 

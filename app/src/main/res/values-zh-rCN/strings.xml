@@ -1005,4 +1005,6 @@
 <string name="share_playlist_with_titles_message">分享播放列表，包括播放列表名称和视频标题等详细信息，或作为简单的视频 URL 列表</string>
 <string name="share_playlist_with_titles">分享标题</string>
 <string name="share_playlist_with_list">分享 URL 列表</string>
+<string name="add_to_filter_list">将频道添加到屏蔽列表</string>
+<string name="add_to_filter_list_confirm">您想将 %s 添加到阻止列表吗？</string>
 </resources>
