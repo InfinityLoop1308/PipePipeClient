@@ -311,5 +311,5 @@ if __name__ == '__main__':
         translator.translate_new_entries(args[2:])
     elif args[1] == 'translate':
         translator.translate_everything()
-    else:
-        translator.translate_latest_updates_to_all(args[1])
+    elif args[1] == 'update_latest':
+        translator.translate_latest_updates_to_all(args[2])
