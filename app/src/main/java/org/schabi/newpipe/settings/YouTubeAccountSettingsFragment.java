@@ -29,8 +29,8 @@ public class YouTubeAccountSettingsFragment extends BasePreferenceFragment imple
         logout.setOnPreferenceClickListener(preference -> {
             // Clear cookies
             defaultPreferences.edit().putString(getString(R.string.youtube_cookies_key), "").apply();
+            defaultPreferences.edit().putString(getString(R.string.youtube_po_token_key), "").apply();
             ServiceHelper.initServices(this.getContext());
-//            defaultPreferences.edit().putString(getString(R.string.youtube_po_token), "").apply();
             return true;
         });
         if (defaultPreferences.getString(getString(R.string.youtube_cookies_key), "").equals("")) {
@@ -39,8 +39,8 @@ public class YouTubeAccountSettingsFragment extends BasePreferenceFragment imple
             login.setEnabled(false);
         }
 
-        Preference override_cookies_youtube_value = findPreference(getString(R.string.override_cookies_youtube_value_key));
-        override_cookies_youtube_value.setEnabled(defaultPreferences.getBoolean(getString(R.string.override_cookies_youtube_key), false));
+//        Preference override_cookies_youtube_value = findPreference(getString(R.string.override_cookies_youtube_value_key));
+//        override_cookies_youtube_value.setEnabled(defaultPreferences.getBoolean(getString(R.string.override_cookies_youtube_key), false));
     }
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -68,10 +68,10 @@ public class YouTubeAccountSettingsFragment extends BasePreferenceFragment imple
             String pot = data.getStringExtra("pot");
             // save cookies to shared preferences
             defaultPreferences.edit().putString(getString(R.string.youtube_cookies_key), cookies).apply();
+            defaultPreferences.edit().putString(getString(R.string.youtube_po_token_key), pot).apply();
             ServiceHelper.initServices(this.getContext());
             Toast.makeText(requireContext(), R.string.success, Toast.LENGTH_SHORT)
                     .show();
-//            defaultPreferences.edit().putString(getString(R.string.youtube_po_token), pot).apply();
         }
     }
 

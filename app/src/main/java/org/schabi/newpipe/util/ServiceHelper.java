@@ -294,12 +294,12 @@ public final class ServiceHelper {
             }
             ServiceList.YouTube.setContentLanguage(getPreferredLocalization(context));
             ServiceList.YouTube.setAudioLanguage(audioLanguage);
-//            final String pot = sharedPreferences.getString(context.getString(R.string.youtube_po_token), null);
-//            ServiceList.YouTube.setAdditionalTokens(pot);
-            if(sharedPreferences.getBoolean(context.getString(R.string.override_cookies_youtube_key), false)) {
-                ServiceList.YouTube.setTokens(sharedPreferences.getString(context.getString(R.string.override_cookies_youtube_value_key), null));
-            }
-            CookieUtils.exportCookiesToNetscapeYouTube(context, ServiceList.YouTube.getTokens());
+            final String pot = sharedPreferences.getString(context.getString(R.string.youtube_po_token_key), null);
+            ServiceList.YouTube.setAdditionalTokens(pot);
+//            if(sharedPreferences.getBoolean(context.getString(R.string.override_cookies_youtube_key), false)) {
+//                ServiceList.YouTube.setTokens(sharedPreferences.getString(context.getString(R.string.override_cookies_youtube_value_key), null));
+//            }
+//            CookieUtils.exportCookiesToNetscapeYouTube(context, ServiceList.YouTube.getTokens());
             Thread t = new Thread(() -> {
                 DownloaderImpl downloader = DownloaderImpl.getInstance();
                 try {

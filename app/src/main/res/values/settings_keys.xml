@@ -1633,6 +1633,7 @@
     <string name="show_dislike_key">show_dislike_key</string>
     <string name="filter_shorts_key">filter_shorts_key</string>
     <string name="loading_timeout_key">loading_timeout_key</string>
+    <string name="youtube_po_token_key">youtube_po_token_key</string>
     <string-array name="filter_type_entries">
         <item>@string/search_result</item>
         <item>@string/recommended_videos</item>
