@@ -898,4 +898,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="share_playlist_with_list">Partager la liste d\'URLs</string>
 <string name="add_to_filter_list">Ajouter la chaîne à la liste de blocage</string>
 <string name="add_to_filter_list_confirm">Voulez-vous ajouter %s à la liste de blocage ?</string>
+<string name="loading_timeout_title">Délai d\'attente pour le chargement de la vidéo</string>
+<string name="loading_timeout_description">Définissez le temps maximum autorisé pour attendre le chargement des informations vidéo. Si le chargement n\'est pas terminé dans ce délai, la demande de chargement sera annulée, et une erreur explicite sera signalée.</string>
 </resources>

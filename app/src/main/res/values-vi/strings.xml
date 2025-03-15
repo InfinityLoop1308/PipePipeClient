@@ -1051,4 +1051,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="share_playlist_with_list">Chia sẻ danh sách URL</string>
 <string name="add_to_filter_list">Thêm kênh vào danh sách chặn</string>
 <string name="add_to_filter_list_confirm">Bạn có muốn thêm %s vào danh sách chặn không?</string>
+<string name="loading_timeout_title">Thời gian chờ tải video</string>
+<string name="loading_timeout_description">Đặt thời gian tối đa được phép chờ thông tin video tải. Nếu việc tải không hoàn thành trong thời gian này, yêu cầu tải sẽ bị hủy và một lỗi rõ ràng sẽ được báo cáo.</string>
 </resources>

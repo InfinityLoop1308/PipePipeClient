@@ -337,6 +337,10 @@ public final class ServiceHelper {
 
             SponsorBlockApiSettings sponsorBlockApiSettings = buildSponsorBlockApiSettings(context);
             s.setSponsorBlockApiSettings(sponsorBlockApiSettings);
+
+            String loadingTimeout = sharedPreferences.getString("loading_timeout_key", "5");
+            int loadingTimeoutInt = Integer.parseInt(loadingTimeout);
+            s.setLoadingTimeout(loadingTimeoutInt);
         }
     }
 

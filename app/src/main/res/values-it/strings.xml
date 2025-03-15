@@ -865,4 +865,6 @@
 <string name="share_playlist_with_list">Condividi elenco URL</string>
 <string name="add_to_filter_list">Aggiungi canale all\'elenco di blocco</string>
 <string name="add_to_filter_list_confirm">Vuoi aggiungere %s all\'elenco di blocco?</string>
+<string name="loading_timeout_title">Timeout di caricamento del video</string>
+<string name="loading_timeout_description">Imposta il tempo massimo consentito per l\'attesa del caricamento delle informazioni del video. Se il caricamento non viene completato entro questo tempo, la richiesta di caricamento verrà annullata e verrà segnalato un errore esplicito.</string>
 </resources>

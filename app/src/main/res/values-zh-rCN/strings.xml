@@ -1007,4 +1007,6 @@
 <string name="share_playlist_with_list">分享 URL 列表</string>
 <string name="add_to_filter_list">将频道添加到屏蔽列表</string>
 <string name="add_to_filter_list_confirm">您想将 %s 添加到阻止列表吗？</string>
+<string name="loading_timeout_title">视频加载超时</string>
+<string name="loading_timeout_description">设置允许等待视频信息加载的最长时间。如果在此时间内未完成加载，加载请求将被取消，并会报告明确的错误。</string>
 </resources>

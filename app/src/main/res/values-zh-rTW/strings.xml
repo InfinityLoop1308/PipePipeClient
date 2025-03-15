@@ -994,4 +994,6 @@
 <string name="share_playlist_with_list">分享 URL 清單</string>
 <string name="add_to_filter_list">將頻道添加到封鎖清單</string>
 <string name="add_to_filter_list_confirm">您想將 %s 加入阻擋清單嗎？</string>
+<string name="loading_timeout_title">影片載入超時</string>
+<string name="loading_timeout_description">設置允許等待視頻信息加載的最長時間。如果在此時間內加載未完成，則將取消加載請求，並報告明確的錯誤。</string>
 </resources>

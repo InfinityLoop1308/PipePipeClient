@@ -55,6 +55,16 @@
         <item>25000</item>
         <item>30000</item>
     </string-array>
+    <string-array name="loading_timeout_value">
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>25</item>
+        <item>30</item>
+    </string-array>
+
+    <string name="loading_timeout_default_value">5</string>
 
     <string name="progressive_load_interval_key">progressive_load_interval</string>
     <string name="progressive_load_interval_default_value">1</string>
@@ -1622,6 +1632,7 @@
     <string name="show_prerelease_key">show_prerelease_key</string>
     <string name="show_dislike_key">show_dislike_key</string>
     <string name="filter_shorts_key">filter_shorts_key</string>
+    <string name="loading_timeout_key">loading_timeout_key</string>
     <string-array name="filter_type_entries">
         <item>@string/search_result</item>
         <item>@string/recommended_videos</item>

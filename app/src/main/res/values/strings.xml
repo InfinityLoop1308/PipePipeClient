@@ -1046,4 +1046,6 @@
 <string name="share_playlist_with_list">Share URL list</string>
 <string name="add_to_filter_list">Add channel to blocking list</string>
 <string name="add_to_filter_list_confirm">Do you want to add %s to blocking list?</string>
+<string name="loading_timeout_title">Video loading timeout</string>
+<string name="loading_timeout_description">Set the maximum time allowed to wait for video information to load. If the loading is not completed within this time, the loading request will be canceled, and an explicit error will be reported.</string>
 </resources>
