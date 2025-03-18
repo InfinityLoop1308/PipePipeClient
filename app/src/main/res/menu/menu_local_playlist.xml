@@ -37,7 +37,7 @@
         android:id="@+id/menu_item_share_playlist"
         android:icon="@drawable/ic_share"
         android:title="@string/share"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
     <item
         android:id="@+id/menu_item_rename_playlist"
         android:title="@string/rename_playlist"
