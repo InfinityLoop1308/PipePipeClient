@@ -221,13 +221,10 @@ public class MainActivity extends AppCompatActivity {
             // Update the stored version code
             prefs.edit().putInt("version_code", currentVersionCode).apply();
 
-//            if (currentVersionCode / 100 == 1068) {
-//                AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
-//                builder3.setMessage(R.string.temp);
-//                builder3.setPositiveButton(R.string.ok, (dialog, which) -> {
-//                });
-//                builder3.show();
-//            }
+            if (currentVersionCode / 100 == 1072 && prefs.getString(getString(R.string.youtube_po_token_key), "").equals("")) {
+                prefs.edit().putString(getString(R.string.youtube_cookies_key), "").apply();
+                prefs.edit().putString(getString(R.string.youtube_po_token_key), "").apply();
+            }
         }
 
         int isFirstRun = prefs.getInt("isFirstRun", 0);
