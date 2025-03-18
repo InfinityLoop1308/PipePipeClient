@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
                     // Show the second dialog when the first dialog is dismissed
-                    if((storedVersionCode / 100 < 1070 && currentTime - lastShowDonationTime > 14 * 24 * 60 * 60 * 1000)
+                    if((storedVersionCode / 100 < 1072 && currentTime - lastShowDonationTime > 14 * 24 * 60 * 60 * 1000)
                             || currentTime - lastShowDonationTime > 60L * 24 * 60 * 60 * 1000) {
                         prefs.edit().putLong("last_show_donation_time", currentTime).apply();
                         dialog2.show();

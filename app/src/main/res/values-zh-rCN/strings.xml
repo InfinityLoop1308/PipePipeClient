@@ -909,7 +909,7 @@
 <string name="sponsor_promote">成为支持者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">使用音乐播放器模式时,随机播放列表</string>
-<string name="update_log">### 新功能\n- 支持使用上传者名称在播放列表中搜索\n\n### 错误修复\n- 更新检查器未按预期工作\n- 无法在 Android 8 下运行\n- 启用内置滚动的全屏模式下性能较差\n- 有时评论未显示\n- 本地播放列表搜索完成后软键盘未隐藏\n- 用户页面上的“在浏览器中打开”不起作用（NicoNico）\n- 一些小错误修复\n\n### 用户界面\n- 更新日语和西班牙语翻译\n\n### 其他\n- 改善稳定性</string>
+<string name="update_log">### 新功能\n- 支持过滤掉短视频（YouTube）\n- 支持从长按菜单添加频道到屏蔽列表\n- 在结果列表中明确标注付费视频\n- 在动态中自动过滤掉付费视频\n- 添加分享本地播放列表 URLs 的选项\n- 允许用户更改加载超时时间以适应慢速网络\n\n### Bug 修复\n- 内容过滤器在存在前导空格时无法工作\n- 登录时出现 403 错误（YouTube）\n\n### 界面\n- 更新西班牙语翻译</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 <string name="donation_dialog_title">支持该项目</string>
