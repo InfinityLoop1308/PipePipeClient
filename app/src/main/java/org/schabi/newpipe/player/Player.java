@@ -2173,7 +2173,7 @@ public final class Player implements
 
         final boolean showPrev = playQueue.getIndex() != 0;
         final boolean showNext = playQueue.getIndex() + 1 != playQueue.getStreams().size();
-        final boolean showQueue = playQueue.getStreams().size() > 1 && !popupPlayerSelected();
+        final boolean showQueue = !popupPlayerSelected();
         /* only when stream has segments and is not playing in popup player */
         final boolean showSegment = !popupPlayerSelected()
                 && !getCurrentStreamInfo()
