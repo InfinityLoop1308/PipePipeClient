@@ -265,6 +265,7 @@ public class RouterActivity extends AppCompatActivity {
         final String backgroundPlayerKey = getString(R.string.background_player_key);
         final String popupPlayerKey = getString(R.string.popup_player_key);
         final String downloadKey = getString(R.string.download_key);
+        final String addToPlaylistKey = getString(R.string.add_to_playlist_key);
         final String alwaysAskKey = getString(R.string.always_ask_open_action_key);
 
         if (selectedChoiceKey.equals(alwaysAskKey)) {
@@ -286,6 +287,8 @@ public class RouterActivity extends AppCompatActivity {
             handleChoice(showInfoKey);
         } else if (selectedChoiceKey.equals(downloadKey)) {
             handleChoice(downloadKey);
+        } else if (selectedChoiceKey.equals(addToPlaylistKey)) {
+            handleChoice(addToPlaylistKey);
         } else {
             final boolean isExtVideoEnabled = false;
             final boolean isExtAudioEnabled = preferences.getBoolean(
