@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
             // Update the stored version code
             prefs.edit().putInt("version_code", currentVersionCode).apply();
 
-            if (currentVersionCode / 100 == 1072 && prefs.getString(getString(R.string.youtube_po_token_key), "").equals("")) {
+            if (storedVersionCode / 100 < 1072 && prefs.getString(getString(R.string.youtube_po_token_key), "").equals("")) {
                 prefs.edit().putString(getString(R.string.youtube_cookies_key), "").apply();
                 prefs.edit().putString(getString(R.string.youtube_po_token_key), "").apply();
             }
