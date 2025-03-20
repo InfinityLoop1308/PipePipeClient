@@ -947,4 +947,5 @@
 <string name="add_to_filter_list_confirm">Möchten Sie %s zur Sperrliste hinzufügen?</string>
 <string name="loading_timeout_title">Video-Ladezeitüberschreitung</string>
 <string name="loading_timeout_description">Legen Sie die maximale Zeit fest, die für das Warten auf das Laden der Videoinformationen erlaubt ist. Wenn das Laden innerhalb dieser Zeit nicht abgeschlossen wird, wird die Ladeanforderung abgebrochen und es wird ein expliziter Fehler gemeldet.</string>
+<string name="always_start_from_beginning_title">Immer von Anfang an abspielen</string>
 </resources>

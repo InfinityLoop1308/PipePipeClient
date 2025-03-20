@@ -990,8 +990,8 @@
 <string name="sponsor_promote">Become a supporter</string>
 <string name="random_play_order_title">Random Order</string>
 <string name="random_play_order_summary">When using Music Player Mode, shuffle the playlist</string>
-    <string name="update_log">### New Features\n- Support filter out short videos (YouTube)\n- Support add channel to blocking list from long-click menu\n- Explicitly mark paid videos in results lists\n- Automatically filter out paid videos in Feeds\n- Add an option to share local playlist URLs \n- Allow change the loading timeout for users with slow network\n\n### Bug Fixes\n- Content filter not working if there are leading spaces\n- 403 error when logged in (YouTube)\n\n### UI\n- Update Spanish translation</string>
-    <string name="speeding_playback_title">Long-press to speeding the playback</string>
+<string name="update_log">### New Features\n- Support filter out short videos (YouTube)\n- Support add channel to blocking list from long-click menu\n- Explicitly mark paid videos in results lists\n- Automatically filter out paid videos in Feeds\n- Add an option to share local playlist URLs \n- Allow change the loading timeout for users with slow network\n\n### Bug Fixes\n- Content filter not working if there are leading spaces\n- 403 error when logged in (YouTube)\n\n### UI\n- Update Spanish translation</string>
+<string name="speeding_playback_title">Long-press to speeding the playback</string>
 <string name="view_on_github">View on GitHub</string>
 <string name="donation_dialog_title">Support the Project</string>
 <string name="donation_dialog_message">Thank you for using PipePipe! If you find it useful, please consider becoming a supporter on Ko-Fi. Your support is important to me and helps me add more exciting new features. Every bit counts! 😇</string>
@@ -1048,4 +1048,5 @@
 <string name="add_to_filter_list_confirm">Do you want to add %s to blocking list?</string>
 <string name="loading_timeout_title">Video loading timeout</string>
 <string name="loading_timeout_description">Set the maximum time allowed to wait for video information to load. If the loading is not completed within this time, the loading request will be canceled, and an explicit error will be reported.</string>
+<string name="always_start_from_beginning_title">Always start play from beginning</string>
 </resources>

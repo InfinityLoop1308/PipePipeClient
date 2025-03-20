@@ -963,4 +963,5 @@
 <string name="add_to_filter_list_confirm">%sをブロックリストに追加しますか？</string>
 <string name="loading_timeout_title">ビデオの読み込みがタイムアウトしました</string>
 <string name="loading_timeout_description">ビデオ情報の読み込みを待機する許容最大時間を設定します。この時間内に読み込みが完了しない場合、読み込みリクエストはキャンセルされ、明示的なエラーが報告されます。</string>
+<string name="always_start_from_beginning_title">常に最初から再生を開始</string>
 </resources>

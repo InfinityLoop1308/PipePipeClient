@@ -791,7 +791,10 @@ public final class Player implements
                     == com.google.android.exoplayer2.Player.STATE_IDLE) {
                 simpleExoPlayer.prepare();
             }
-            simpleExoPlayer.seekTo(playQueue.getIndex(), newQueue.getItem().getRecoveryPosition());
+            if (shouldSeek()) {
+                simpleExoPlayer.seekTo(playQueue.getIndex(), newQueue.getItem().getRecoveryPosition());
+            }
+
             simpleExoPlayer.setPlayWhenReady(playWhenReady);
 
         } else if (!exoPlayerIsNull()
@@ -3233,13 +3236,17 @@ public final class Player implements
                         + "size=[" + currentPlaylistSize + "].");
             }
 
-            if (item.getRecoveryPosition() != PlayQueueItem.RECOVERY_UNSET) {
+            if (item.getRecoveryPosition() != PlayQueueItem.RECOVERY_UNSET && shouldSeek()) {
                 simpleExoPlayer.seekTo(currentPlayQueueIndex, item.getRecoveryPosition());
                 playQueue.unsetRecovery(currentPlayQueueIndex);
             } else {
                 simpleExoPlayer.seekToDefaultPosition(currentPlayQueueIndex);
             }
         }
+    }
+
+    public boolean shouldSeek() {
+        return !prefs.getBoolean(context.getString(R.string.always_start_from_beginning_key), false);
     }
 
     public void seekTo(final long positionMillis) {

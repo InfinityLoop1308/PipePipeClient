@@ -1009,4 +1009,5 @@
 <string name="add_to_filter_list_confirm">¿Quieres añadir %s a la lista de bloqueo?</string>
 <string name="loading_timeout_title">Tiempo de espera de carga de video</string>
 <string name="loading_timeout_description">Establezca el tiempo máximo permitido para esperar a que se cargue la información del video. Si la carga no se completa dentro de este tiempo, se cancelará la solicitud de carga y se informará de un error explícito.</string>
+<string name="always_start_from_beginning_title">Siempre empieza a reproducir desde el principio</string>
 </resources>
