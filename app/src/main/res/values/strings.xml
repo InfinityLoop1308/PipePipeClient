@@ -1049,4 +1049,6 @@
 <string name="loading_timeout_title">Video loading timeout</string>
 <string name="loading_timeout_description">Set the maximum time allowed to wait for video information to load. If the loading is not completed within this time, the loading request will be canceled, and an explicit error will be reported.</string>
 <string name="always_start_from_beginning_title">Always start play from beginning</string>
+<string name="fetch_full_playlist_title">Load full playlist</string>
+<string name="fetch_full_playlist_summary">Load all content at once when opening playlists</string>
 </resources>

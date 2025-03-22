@@ -341,6 +341,8 @@ public final class ServiceHelper {
             String loadingTimeout = sharedPreferences.getString("loading_timeout_key", "5");
             int loadingTimeoutInt = Integer.parseInt(loadingTimeout);
             s.setLoadingTimeout(loadingTimeoutInt);
+            boolean fetchFullPlaylist = sharedPreferences.getBoolean(context.getString(R.string.fetch_full_playlist_key), false);
+            s.setFetchFullPlaylist(fetchFullPlaylist);
         }
     }
 

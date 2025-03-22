@@ -7,8 +7,9 @@ import android.provider.Settings;
 import com.google.android.material.snackbar.Snackbar;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.util.PermissionHelper;
+import org.schabi.newpipe.util.ServiceHelper;
 
-public class BehaviorSettingsFragment extends BasePreferenceFragment {
+public class BehaviorSettingsFragment extends BasePreferenceFragment{
     private SharedPreferences.OnSharedPreferenceChangeListener listener;
 
     @Override
@@ -34,6 +35,8 @@ public class BehaviorSettingsFragment extends BasePreferenceFragment {
                             .show();
 
                 }
+            } else if(s.equals(getString(R.string.fetch_full_playlist_key))) {
+                ServiceHelper.initServices(this.getContext());
             }
         };
     }

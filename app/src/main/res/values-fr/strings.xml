@@ -901,4 +901,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="loading_timeout_title">Délai d\'attente pour le chargement de la vidéo</string>
 <string name="loading_timeout_description">Définissez le temps maximum autorisé pour attendre le chargement des informations vidéo. Si le chargement n\'est pas terminé dans ce délai, la demande de chargement sera annulée, et une erreur explicite sera signalée.</string>
 <string name="always_start_from_beginning_title">Toujours commencer la lecture depuis le début</string>
+<string name="fetch_full_playlist_title">Charger la playlist complète</string>
+<string name="fetch_full_playlist_summary">Charger tout le contenu en même temps lors de l\'ouverture des playlists</string>
 </resources>
