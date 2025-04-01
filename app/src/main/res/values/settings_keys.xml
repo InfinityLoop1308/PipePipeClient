@@ -64,7 +64,7 @@
         <item>30</item>
     </string-array>
 
-    <string name="loading_timeout_default_value">5</string>
+    <string name="loading_timeout_default_value">10</string>
 
     <string name="progressive_load_interval_key">progressive_load_interval</string>
     <string name="progressive_load_interval_default_value">1</string>

@@ -338,7 +338,7 @@ public final class ServiceHelper {
             SponsorBlockApiSettings sponsorBlockApiSettings = buildSponsorBlockApiSettings(context);
             s.setSponsorBlockApiSettings(sponsorBlockApiSettings);
 
-            String loadingTimeout = sharedPreferences.getString("loading_timeout_key", "5");
+            String loadingTimeout = sharedPreferences.getString("loading_timeout_key", "10");
             int loadingTimeoutInt = Integer.parseInt(loadingTimeout);
             s.setLoadingTimeout(loadingTimeoutInt);
             boolean fetchFullPlaylist = sharedPreferences.getBoolean(context.getString(R.string.fetch_full_playlist_key), false);
