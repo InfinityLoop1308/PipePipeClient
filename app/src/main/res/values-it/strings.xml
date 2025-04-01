@@ -767,7 +767,7 @@
 <string name="sponsor_promote">Diventa un sostenitore</string>
 <string name="random_play_order_title">Ordine casuale</string>
 <string name="random_play_order_summary">Quando usi la Modalità Lettore Musicale, mescola la playlist</string>
-<string name="update_log">### Nuove Funzionalità\n- Supporto per escludere i video brevi (YouTube)\n- Supporto per aggiungere il canale alla lista di blocco dal menu di pressione prolungata\n- Contrassegna esplicitamente i video a pagamento nelle liste dei risultati\n- Filtra automaticamente i video a pagamento nei Feed\n- Aggiungi un\'opzione per condividere gli URL delle playlist locali\n- Consenti di modificare il timeout di caricamento per utenti con rete lenta\n\n### Correzioni di Bugs\n- Filtro dei contenuti non funzionante se ci sono spazi iniziali\n- Errore 403 quando si è connessi (YouTube)\n\n### Interfaccia Utente\n- Aggiorna traduzione in spagnolo</string>
+<string name="update_log">### Nuove Funzionalità\n- Supporto alla scheda Podcast (YouTube)\n- Supporto all\'impostazione "Inizia sempre la riproduzione dall\'inizio"\n- Aggiungi un interruttore per controllare se caricare l\'intera pagina delle playlist\n\n### Correzioni di Bug\n- I video non riuscivano a caricarsi se si era connessi (YouTube)\n- L\'azione preferita \'apri\' impostata su "aggiungi alla playlist" non funzionava\n\n### UI\n- Mostra il pulsante della coda anche se c\'è solo 1 elemento nella coda di riproduzione</string>
 <string name="speeding_playback_title">Premi a lungo per aumentare la velocità di riproduzione</string>
 <string name="view_on_github">Visualizza su GitHub</string>
 <string name="donation_dialog_title">Supporta il progetto</string>

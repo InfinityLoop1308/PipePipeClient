@@ -847,7 +847,7 @@
 <string name="sponsor_promote">Unterstützer werden</string>
 <string name="random_play_order_title">Zufällige Reihenfolge</string>
 <string name="random_play_order_summary">Beim Verwenden des Musikspielermodus die Wiedergabeliste mischen</string>
-<string name="update_log">### Neue Funktionen\n- Unterstützung zum Herausfiltern kurzer Videos (YouTube)\n- Unterstützung zum Hinzufügen von Kanälen zur Blockierliste über das Langklickmenü\n- Bezahlte Videos in Ergebnislisten explizit kennzeichnen\n- Bezahlte Videos automatisch aus Feeds herausfiltern\n- Eine Option zum Teilen lokaler Playlist-URLs hinzufügen\n- Die Ladezeitüberschreitung für Benutzer mit langsamer Verbindung ändern\n\n### Fehlerbehebungen\n- Inhaltsfilter funktioniert nicht, wenn führende Leerzeichen vorhanden sind\n- 403-Fehler beim Einloggen (YouTube)\n\n### UI\n- Spanische Übersetzung aktualisieren</string>
+<string name="update_log">### Neue Funktionen\n- Unterstützung für Podcast-Tab (YouTube)\n- Unterstützung für die Einstellung "Wiedergabe immer von Anfang an starten"\n- Einen Schalter hinzufügen, um zu steuern, ob die vollständige Seite der Wiedergabelisten geladen wird\n\n### Fehlerbehebungen\n- Videos konnten nicht geladen werden, wenn man eingeloggt war (YouTube)\n- Bevorzugte Aktion \'öffnen\' auf "zur Wiedergabeliste hinzufügen" setzen funktioniert nicht\n\n### Benutzeroberfläche\n- Warteschlangen-Button anzeigen, auch wenn nur 1 Element in der Wiedergabewarteschlange ist</string>
 <string name="speeding_playback_title">Langes Drücken, um die Wiedergabe zu beschleunigen</string>
 <string name="view_on_github">Auf GitHub ansehen</string>
 <string name="donation_dialog_title">Projekt unterstützen</string>

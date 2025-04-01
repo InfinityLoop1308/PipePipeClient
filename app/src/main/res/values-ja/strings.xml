@@ -863,7 +863,7 @@
 <string name="sponsor_promote">サポーターになる</string>
 <string name="random_play_order_title">ランダムな順序</string>
 <string name="random_play_order_summary">プレイリストをシャッフルする</string>
-<string name="update_log">### 新機能\n- 短い動画を除外するサポート (YouTube)\n- 長押しメニューからブロックリストにチャンネルを追加するサポート\n- 結果リストで有料動画を明示的に表示\n- フィードで有料動画を自動的に除外\n- ローカルプレイリストのURLを共有するオプションを追加\n- ネットワークが遅いユーザーのために読み込みタイムアウトを変更可能に\n\n### バグ修正\n- 先頭にスペースがあるとコンテンツフィルターが機能しない問題\n- ログイン時の403エラー (YouTube)\n\n### UI\n- スペイン語翻訳の更新</string>
+<string name="update_log">### 新機能\n- ポッドキャストタブのサポート (YouTube)\n- 「常に最初から再生を開始する」設定のサポート\n- プレイリストの全ページを読み込むかどうかを制御するスイッチを追加\n\n### バグ修正\n- ログインしていると動画が読み込めない問題 (YouTube)\n- 優先する「開く」アクションを「プレイリストに追加」に設定しても機能しない問題\n\n### UI\n- 再生キューに1つしかアイテムがない場合でもキューボタンを表示</string>
 <string name="speeding_playback_title">長時間押は再生速度を速めることができます</string>
 <string name="view_on_github">GitHubで表示</string>
 <string name="donation_dialog_title">プロジェクトをサポートする</string>

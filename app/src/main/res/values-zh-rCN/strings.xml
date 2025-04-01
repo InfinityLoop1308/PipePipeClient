@@ -909,7 +909,7 @@
 <string name="sponsor_promote">成为支持者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">使用音乐播放器模式时,随机播放列表</string>
-<string name="update_log">### 新功能\n- 支持过滤掉短视频（YouTube）\n- 支持从长按菜单添加频道到屏蔽列表\n- 在结果列表中明确标注付费视频\n- 在动态中自动过滤掉付费视频\n- 添加分享本地播放列表 URLs 的选项\n- 允许用户更改加载超时时间以适应慢速网络\n\n### Bug 修复\n- 内容过滤器在存在前导空格时无法工作\n- 登录时出现 403 错误（YouTube）\n\n### 界面\n- 更新西班牙语翻译</string>
+<string name="update_log">### 新功能\n- 支持播客标签（YouTube）\n- 支持“始终从头开始播放”设置\n- 添加开关以控制是否加载完整的播放列表页面\n\n### 错误修复\n- 登录后视频加载失败（YouTube）\n- 设置首选“打开”操作为“添加到播放列表”不起作用\n\n### 用户界面\n- 即使播放队列中只有1个项目，也显示队列按钮</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 <string name="donation_dialog_title">支持该项目</string>

@@ -908,7 +908,7 @@
 <string name="sponsor_promote">Conviértete en un patrocinador</string>
 <string name="random_play_order_title">Orden aleatorio</string>
 <string name="random_play_order_summary">Al usar el Modo de Reproductor de Música, baraja la lista de reproducción</string>
-<string name="update_log">### Nuevas Funciones\n- Soporte para filtrar videos cortos (YouTube)\n- Soporte para añadir un canal a la lista de bloqueo desde el menú de pulsación larga\n- Marcar explícitamente videos pagados en las listas de resultados\n- Filtrar automáticamente videos pagados en los Feeds\n- Añadir una opción para compartir URLs de listas de reproducción locales \n- Permitir cambiar el tiempo de espera de carga para usuarios con red lenta\n\n### Corrección de Errores\n- El filtro de contenido no funciona si hay espacios iniciales\n- Error 403 al iniciar sesión (YouTube)\n\n### Interfaz de Usuario\n- Actualizar la traducción al español</string>
+<string name="update_log">### Nuevas características\n- Soporte para la pestaña de Podcast (YouTube)\n- Soporte para la configuración "Siempre comenzar la reproducción desde el principio"\n- Agregar un interruptor para controlar si se carga la página completa de listas de reproducción\n\n### Correcciones de errores\n- Los videos no se cargaban si se iniciaba sesión (YouTube)\n- La acción preferida de \'abrir\' para "agregar a la lista de reproducción" no funcionaba\n\n### Interfaz de usuario\n- Mostrar el botón de cola incluso si solo hay 1 elemento en la cola de reproducción</string>
 <string name="speeding_playback_title">Mantener presionado para acelerar la reproducción</string>
 <string name="view_on_github">Ver en GitHub</string>
 <string name="donation_dialog_title">Apoya el proyecto</string>

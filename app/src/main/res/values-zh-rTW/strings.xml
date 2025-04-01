@@ -896,7 +896,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在使用音樂播放器模式時,隨機播放播放清單</string>
-<string name="update_log">### 新功能\n- 支援過濾短影片（YouTube）\n- 支援從長按選單中將頻道加入阻擋清單\n- 在結果列表中明確標記付費影片\n- 自動過濾訂閱內容中的付費影片\n- 新增選項以分享本地播放列表網址\n- 允許用戶在網速慢的情況下更改加載超時時間\n\n### 錯誤修正\n- 如果有前導空格，內容過濾器無效\n- 登入時出現 403 錯誤（YouTube）\n\n### 使用者介面\n- 更新西班牙語翻譯</string>
+<string name="update_log">### 新功能\n- 支援 Podcast 標籤（YouTube）\n- 支援「總是從頭開始播放」設定\n- 新增開關以控制是否載入完整的播放清單頁面\n\n### 錯誤修正\n- 登入後影片無法載入（YouTube）\n- 設定偏好的「開啟」動作為「新增至播放清單」無法運作\n\n### 使用者介面\n- 即使播放佇列中只有 1 個項目，也顯示佇列按鈕</string>
 <string name="speeding_playback_title">按住以加快播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這個項目</string>
