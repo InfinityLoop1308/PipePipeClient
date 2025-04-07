@@ -31,13 +31,11 @@ import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.fragments.BaseStateFragment;
 import org.schabi.newpipe.fragments.OnScrollBelowItemsListener;
 import org.schabi.newpipe.info_list.InfoListAdapter;
-import org.schabi.newpipe.info_list.ItemViewMode;
 import org.schabi.newpipe.info_list.dialog.InfoItemDialog;
 import org.schabi.newpipe.info_list.InfoListAdapter;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.OnClickGesture;
 import org.schabi.newpipe.util.StateSaver;
-import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.views.SuperScrollLayoutManager;
 
 import javax.annotation.Nonnull;
@@ -99,7 +97,11 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
 
         if (updateFlags != 0) {
             if ((updateFlags & LIST_MODE_UPDATE_FLAG) != 0) {
-                refreshItemViewMode();
+                final boolean useGrid = isGridLayout();
+                itemsList.setLayoutManager(useGrid
+                        ? getGridLayoutManager() : getListLayoutManager());
+                infoListAdapter.setUseGridVariant(useGrid);
+                infoListAdapter.notifyDataSetChanged();
             }
             updateFlags = 0;
         }
@@ -226,23 +228,15 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         return lm;
     }
 
-    /**
-     * Updates the item view mode based on user preference.
-     */
-    private void refreshItemViewMode() {
-        final ItemViewMode itemViewMode = getItemViewMode();
-        itemsList.setLayoutManager((itemViewMode == ItemViewMode.GRID)
-                ? getGridLayoutManager() : getListLayoutManager());
-        infoListAdapter.setItemViewMode(itemViewMode);
-        infoListAdapter.notifyDataSetChanged();
-    }
-
     @Override
     protected void initViews(final View rootView, final Bundle savedInstanceState) {
         super.initViews(rootView, savedInstanceState);
 
+        final boolean useGrid = isGridLayout();
         itemsList = rootView.findViewById(R.id.items_list);
-        refreshItemViewMode();
+        itemsList.setLayoutManager(useGrid ? getGridLayoutManager() : getListLayoutManager());
+
+        infoListAdapter.setUseGridVariant(useGrid);
 
         final Supplier<View> listHeaderSupplier = getListHeaderSupplier();
         if (listHeaderSupplier != null) {
@@ -536,11 +530,16 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         }
     }
 
-    /**
-     * Returns preferred item view mode.
-     * @return ItemViewMode
-     */
-    protected ItemViewMode getItemViewMode() {
-        return ThemeHelper.getItemViewMode(requireContext());
+    protected boolean isGridLayout() {
+        final String listMode = PreferenceManager.getDefaultSharedPreferences(activity)
+                .getString(getString(R.string.list_view_mode_key),
+                        getString(R.string.list_view_mode_value));
+        if ("auto".equals(listMode)) {
+            final Configuration configuration = getResources().getConfiguration();
+            return configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+                    && configuration.isLayoutSizeAtLeast(Configuration.SCREENLAYOUT_SIZE_LARGE);
+        } else {
+            return "grid".equals(listMode);
+        }
     }
 }

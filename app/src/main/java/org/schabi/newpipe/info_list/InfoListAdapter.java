@@ -23,12 +23,10 @@ import org.schabi.newpipe.info_list.holder.ChannelMiniInfoItemHolder;
 import org.schabi.newpipe.info_list.holder.CommentsInfoItemHolder;
 import org.schabi.newpipe.info_list.holder.CommentsMiniInfoItemHolder;
 import org.schabi.newpipe.info_list.holder.InfoItemHolder;
-import org.schabi.newpipe.info_list.holder.PlaylistCardInfoItemHolder;
 import org.schabi.newpipe.info_list.holder.PlaylistGridInfoItemHolder;
 import org.schabi.newpipe.info_list.holder.PlaylistInfoItemHolder;
 import org.schabi.newpipe.info_list.holder.PlaylistMiniInfoItemHolder;
 import org.schabi.newpipe.info_list.holder.StaffInfoItemHolder;
-import org.schabi.newpipe.info_list.holder.StreamCardInfoItemHolder;
 import org.schabi.newpipe.info_list.holder.StreamGridInfoItemHolder;
 import org.schabi.newpipe.info_list.holder.StreamInfoItemHolder;
 import org.schabi.newpipe.info_list.holder.StreamMiniInfoItemHolder;
@@ -70,14 +68,12 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int MINI_STREAM_HOLDER_TYPE = 0x100;
     private static final int STREAM_HOLDER_TYPE = 0x101;
     private static final int GRID_STREAM_HOLDER_TYPE = 0x102;
-    private static final int CARD_STREAM_HOLDER_TYPE = 0x103;
     private static final int MINI_CHANNEL_HOLDER_TYPE = 0x200;
     private static final int CHANNEL_HOLDER_TYPE = 0x201;
     private static final int GRID_CHANNEL_HOLDER_TYPE = 0x202;
     private static final int MINI_PLAYLIST_HOLDER_TYPE = 0x300;
     private static final int PLAYLIST_HOLDER_TYPE = 0x301;
     private static final int GRID_PLAYLIST_HOLDER_TYPE = 0x302;
-    private static final int CARD_PLAYLIST_HOLDER_TYPE = 0x303;
     private static final int MINI_COMMENT_HOLDER_TYPE = 0x400;
     private static final int COMMENT_HOLDER_TYPE = 0x401;
     private static final int STAFF_TYPE = 0x816;
@@ -88,9 +84,8 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private final HistoryRecordManager recordManager;
 
     private boolean useMiniVariant = false;
+    private boolean useGridVariant = false;
     private boolean showFooter = false;
-
-    private ItemViewMode itemMode = ItemViewMode.LIST;
 
     private Supplier<View> headerSupplier = null;
 
@@ -125,8 +120,8 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.useMiniVariant = useMiniVariant;
     }
 
-    public void setItemViewMode(final ItemViewMode itemViewMode) {
-        this.itemMode = itemViewMode;
+    public void setUseGridVariant(final boolean useGridVariant) {
+        this.useGridVariant = useGridVariant;
     }
 
     public void addInfoItemList(@Nullable final List<? extends InfoItem> data) {
@@ -251,33 +246,14 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final InfoItem item = infoItemList.get(position);
         switch (item.getInfoType()) {
             case STREAM:
-                if (itemMode == ItemViewMode.CARD) {
-                    return CARD_STREAM_HOLDER_TYPE;
-                } else if (itemMode == ItemViewMode.GRID) {
-                    return GRID_STREAM_HOLDER_TYPE;
-                } else if (useMiniVariant) {
-                    return MINI_STREAM_HOLDER_TYPE;
-                } else {
-                    return STREAM_HOLDER_TYPE;
-                }
+                return useGridVariant ? GRID_STREAM_HOLDER_TYPE : useMiniVariant
+                        ? MINI_STREAM_HOLDER_TYPE : STREAM_HOLDER_TYPE;
             case CHANNEL:
-                if (itemMode == ItemViewMode.GRID) {
-                    return GRID_CHANNEL_HOLDER_TYPE;
-                } else if (useMiniVariant) {
-                    return MINI_CHANNEL_HOLDER_TYPE;
-                } else {
-                    return CHANNEL_HOLDER_TYPE;
-                }
+                return useGridVariant ? GRID_CHANNEL_HOLDER_TYPE : useMiniVariant
+                        ? MINI_CHANNEL_HOLDER_TYPE : CHANNEL_HOLDER_TYPE;
             case PLAYLIST:
-                if (itemMode == ItemViewMode.CARD) {
-                    return CARD_PLAYLIST_HOLDER_TYPE;
-                } else if (itemMode == ItemViewMode.GRID) {
-                    return GRID_PLAYLIST_HOLDER_TYPE;
-                } else if (useMiniVariant) {
-                    return MINI_PLAYLIST_HOLDER_TYPE;
-                } else {
-                    return PLAYLIST_HOLDER_TYPE;
-                }
+                return useGridVariant ? GRID_PLAYLIST_HOLDER_TYPE : useMiniVariant
+                        ? MINI_PLAYLIST_HOLDER_TYPE : PLAYLIST_HOLDER_TYPE;
             case COMMENT:
                 return useMiniVariant ? MINI_COMMENT_HOLDER_TYPE : COMMENT_HOLDER_TYPE;
             case STAFF:
@@ -312,8 +288,6 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 return new StreamInfoItemHolder(infoItemBuilder, parent);
             case GRID_STREAM_HOLDER_TYPE:
                 return new StreamGridInfoItemHolder(infoItemBuilder, parent);
-            case CARD_STREAM_HOLDER_TYPE:
-                return new StreamCardInfoItemHolder(infoItemBuilder, parent);
             case MINI_CHANNEL_HOLDER_TYPE:
                 return new ChannelMiniInfoItemHolder(infoItemBuilder, parent);
             case CHANNEL_HOLDER_TYPE:
@@ -326,8 +300,6 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 return new PlaylistInfoItemHolder(infoItemBuilder, parent);
             case GRID_PLAYLIST_HOLDER_TYPE:
                 return new PlaylistGridInfoItemHolder(infoItemBuilder, parent);
-            case CARD_PLAYLIST_HOLDER_TYPE:
-                return new PlaylistCardInfoItemHolder(infoItemBuilder, parent);
             case MINI_COMMENT_HOLDER_TYPE:
                 return new CommentsMiniInfoItemHolder(infoItemBuilder, parent);
             case COMMENT_HOLDER_TYPE:

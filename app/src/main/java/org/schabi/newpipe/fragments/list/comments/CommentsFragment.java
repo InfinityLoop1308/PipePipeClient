@@ -17,7 +17,6 @@ import org.schabi.newpipe.extractor.Page;
 import org.schabi.newpipe.extractor.comments.CommentsInfo;
 import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
 import org.schabi.newpipe.fragments.list.BaseListInfoFragment;
-import org.schabi.newpipe.info_list.ItemViewMode;
 import org.schabi.newpipe.ktx.ViewUtils;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ExtractorHelper;
@@ -190,7 +189,7 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfoItem, Com
     }
 
     @Override
-    protected ItemViewMode getItemViewMode() {
-        return ItemViewMode.LIST;
+    protected boolean isGridLayout() {
+        return false;
     }
 }
