@@ -296,6 +296,45 @@ class StringTranslator:
             print(f"Error updating translations: {str(e)}")
             return False
 
+    def update_with_replace(self, name, new_value):
+        """
+        Update an existing entry with a new value and translate it to all target languages.
+
+        Parameters:
+        name (str): The name of the string entry to update
+        new_value (str): The new value to set for the entry
+        """
+        # Update the base XML with the new value
+        try:
+            self.base.update_entry(f'string[name="{name}"]', new_value)
+            self.base.write_to_file()
+        except Exception as e:
+            raise Exception(f"Failed to update base entry '{name}': {str(e)}")
+
+        # Prepare the update dictionary
+        updates = {name: new_value}
+
+        def translate_and_update_target(target):
+            try:
+                # Get translation for the target language
+                result = self.translator.get_translated_dict(updates, target.file_path.split('/')[-2][7:])
+                translated_value = result[name]
+
+                # Update or add the entry in the target XML
+                try:
+                    target.update_entry(f'string[name="{name}"]', escape(translated_value))
+                except:
+                    target.add_entry('resources', 'string', {'name': name}, escape(translated_value))
+
+                target.write_to_file()
+            except Exception as e:
+                print(f"Error updating target {target.file_path}: {str(e)}")
+
+        # Process translations in parallel
+        with ThreadPoolExecutor() as executor:
+            executor.map(translate_and_update_target, self.targets)
+
+
 if __name__ == '__main__':
     translator = StringTranslator()
     # translator.update_translations_from_xml('tmp.xml', 'ja')
@@ -305,7 +344,7 @@ if __name__ == '__main__':
         translator.add_new_entry(args[2], args[3])
     elif args[1] == 'delete' or args[1] == 'remove':
         translator.delete_entry(args[2])
-    elif args[1] == 'update':
+    elif args[1] == 'update_multi':
         translator.translate_item_updates_to_all(args[2:])
     elif args[1] == 'add_multi':
         translator.translate_new_entries(args[2:])
@@ -313,3 +352,5 @@ if __name__ == '__main__':
         translator.translate_everything()
     elif args[1] == 'update_latest':
         translator.translate_latest_updates_to_all(args[2])
+    elif args[1] == 'update':
+        translator.update_with_replace(args[2], args[3])
