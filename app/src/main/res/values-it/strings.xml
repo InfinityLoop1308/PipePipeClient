@@ -767,7 +767,7 @@
 <string name="sponsor_promote">Diventa un sostenitore</string>
 <string name="random_play_order_title">Ordine casuale</string>
 <string name="random_play_order_summary">Quando usi la Modalità Lettore Musicale, mescola la playlist</string>
-<string name="update_log">### Nuove Funzionalità\n- Supporto alla scheda Podcast (YouTube)\n- Supporto all\'impostazione "Inizia sempre la riproduzione dall\'inizio"\n- Aggiungi un interruttore per controllare se caricare l\'intera pagina delle playlist\n\n### Correzioni di Bug\n- I video non riuscivano a caricarsi se si era connessi (YouTube)\n- L\'azione preferita \'apri\' impostata su "aggiungi alla playlist" non funzionava\n\n### UI\n- Mostra il pulsante della coda anche se c\'è solo 1 elemento nella coda di riproduzione</string>
+<string name="update_log">### Correzioni di bug\n- Alcuni utenti non riescono a riprodurre video di YouTube (IP bloccato / errore 403)</string>
 <string name="speeding_playback_title">Premi a lungo per aumentare la velocità di riproduzione</string>
 <string name="view_on_github">Visualizza su GitHub</string>
 <string name="donation_dialog_title">Supporta il progetto</string>
@@ -809,7 +809,7 @@
 <string name="show_stream_details">Mostra i dettagli del flusso</string>
 <string name="show_prerelease_description">Gli aggiornamenti delle versioni pre-rilasciate sono più veloci, ma possono contenere alcuni bug</string>
 <string name="show_prerelease_title">Mostra le versioni pre-release</string>
-<string name="temp">YouTube sta intensificando i suoi sforzi per bloccare i client di terze parti, specialmente per l\'accesso anonimo, quindi abbiamo dovuto aggiornare frequentemente di recente per affrontare tutti i problemi che si presentano.\nCapisci che aggiornamenti frequenti possono essere stancanti, quindi a partire dalla versione 4.1.3, imposteremo un periodo di pre-rilascio di 3-7 giorni per ogni nuova versione. Nelle impostazioni degli aggiornamenti, puoi scegliere se controllare i pre-rilasci contemporaneamente.\nCrediamo che alla fine vinceremo questa lotta con YouTube. Grazie per il tuo supporto!</string>
+<string name="temp">YouTube continua a cambiare la sua crittografia di recente, il che può interferire con l\'estrazione e la riproduzione. Quando individuiamo questi problemi, ci impegniamo a risolverli e a distribuire una nuova versione il più rapidamente possibile. Per rimanere aggiornati, suggeriamo di attivare l\'opzione \'Controlla aggiornamenti\' in modo da ricevere la correzione non appena è pronta. (Gli aggiornamenti tramite F-Droid richiedono 3-10 giorni in più a causa del processo di build.)</string>
 <string name="show_dislike_title">Mostra il conteggio dei non mi piace</string>
 <string name="sponsor_block_category_highlight">Evidenziare</string>
 <string name="sponsor_block_category_self_promo">Promozione non pagata/Auto-promozione</string>

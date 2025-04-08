@@ -847,7 +847,7 @@
 <string name="sponsor_promote">Unterstützer werden</string>
 <string name="random_play_order_title">Zufällige Reihenfolge</string>
 <string name="random_play_order_summary">Beim Verwenden des Musikspielermodus die Wiedergabeliste mischen</string>
-<string name="update_log">### Neue Funktionen\n- Unterstützung für Podcast-Tab (YouTube)\n- Unterstützung für die Einstellung "Wiedergabe immer von Anfang an starten"\n- Einen Schalter hinzufügen, um zu steuern, ob die vollständige Seite der Wiedergabelisten geladen wird\n\n### Fehlerbehebungen\n- Videos konnten nicht geladen werden, wenn man eingeloggt war (YouTube)\n- Bevorzugte Aktion \'öffnen\' auf "zur Wiedergabeliste hinzufügen" setzen funktioniert nicht\n\n### Benutzeroberfläche\n- Warteschlangen-Button anzeigen, auch wenn nur 1 Element in der Wiedergabewarteschlange ist</string>
+<string name="update_log">### Fehlerbehebungen\n- Einige Benutzer können keine YouTube-Videos abspielen (IP blockiert / 403 Fehler)</string>
 <string name="speeding_playback_title">Langes Drücken, um die Wiedergabe zu beschleunigen</string>
 <string name="view_on_github">Auf GitHub ansehen</string>
 <string name="donation_dialog_title">Projekt unterstützen</string>
@@ -889,7 +889,7 @@
 <string name="show_stream_details">Streamdetails anzeigen</string>
 <string name="show_prerelease_description">Vorabversionen werden schneller aktualisiert, können jedoch einige Fehler enthalten</string>
 <string name="show_prerelease_title">Vorabversionen anzeigen</string>
-<string name="temp">YouTube verstärkt seine Bemühungen, Drittanbieter-Clients, insbesondere für anonymen Zugriff, zu blockieren, sodass wir kürzlich häufig aktualisieren mussten, um alle auftretenden Probleme zu beheben.\nWir verstehen, dass häufige Updates ermüdend sein können, daher werden wir ab Version 4.1.3 für jede neue Version eine Vorabveröffentlichungsperiode von 3–7 Tagen festlegen. In den Update-Einstellungen können Sie wählen, ob Sie gleichzeitig auf Vorabveröffentlichungen prüfen möchten.\nWir glauben, dass wir diesen Kampf mit YouTube schließlich gewinnen werden. Danke für Ihre Unterstützung!</string>
+<string name="temp">YouTube ändert kürzlich ständig seine Verschlüsselung, was die Extraktion und Wiedergabe stören kann. Wenn wir diese Probleme bemerken, werden wir uns sofort darum kümmern, sie zu beheben und so schnell wie möglich eine neue Version herausbringen. Um auf dem neuesten Stand zu bleiben, empfehlen wir, die Option \'Auf Updates prüfen\' zu aktivieren, damit Sie die Lösung erhalten, sobald sie verfügbar ist. (Updates über F-Droid dauern aufgrund des Build-Prozesses 3-10 Tage länger.)</string>
 <string name="show_dislike_title">Anzahl der Dislikes anzeigen</string>
 <string name="sponsor_block_category_highlight">Hervorheben</string>
 <string name="sponsor_block_category_self_promo">Unbezahlt/Selbstpromotion</string>

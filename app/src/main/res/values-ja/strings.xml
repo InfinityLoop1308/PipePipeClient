@@ -863,7 +863,7 @@
 <string name="sponsor_promote">サポーターになる</string>
 <string name="random_play_order_title">ランダムな順序</string>
 <string name="random_play_order_summary">プレイリストをシャッフルする</string>
-<string name="update_log">### 新機能\n- ポッドキャストタブのサポート (YouTube)\n- 「常に最初から再生を開始する」設定のサポート\n- プレイリストの全ページを読み込むかどうかを制御するスイッチを追加\n\n### バグ修正\n- ログインしていると動画が読み込めない問題 (YouTube)\n- 優先する「開く」アクションを「プレイリストに追加」に設定しても機能しない問題\n\n### UI\n- 再生キューに1つしかアイテムがない場合でもキューボタンを表示</string>
+<string name="update_log">### バグ修正\n- 一部のユーザーがYouTube動画を再生できない（IPブロック/403エラー）</string>
 <string name="speeding_playback_title">長時間押は再生速度を速めることができます</string>
 <string name="view_on_github">GitHubで表示</string>
 <string name="donation_dialog_title">プロジェクトをサポートする</string>
@@ -905,7 +905,7 @@
 <string name="show_stream_details">ストリームの詳細を表示</string>
 <string name="show_prerelease_description">プレリリースはより速く更新されますが、いくつかのバグが含まれている可能性があります</string>
 <string name="show_prerelease_title">プレリリースを表示</string>
-<string name="temp">YouTubeは、特に匿名アクセスに対して、サードパーティクライアントをブロックする取り組みを強化しているため、私たちは最近すべての問題に対応するために頻繁に更新を行わなければなりませんでした。\n        頻繁な更新は疲れることもあると理解しているため、バージョン4.1.3からは、各新しいバージョンに対して3〜7日のプレリリース期間を設定します。更新設定で、プレリリースを同時に確認するかどうかを選択できます。\n        私たちは最終的にYouTubeとの戦いに勝つと信じています。サポートをありがとうございます！</string>
+<string name="temp">YouTubeは最近暗号化を変更しており、これが抽出や再生に影響を与えることがあります。これらの問題を発見した場合、すぐに修正に取り組み、できるだけ早く新しいバージョンをリリースします。最新の状態を保つために、「更新を確認する」オプションをオンにすることをお勧めします。これにより、修正が準備でき次第すぐに受け取ることができます。（F-Droid経由の更新はビルドプロセスのために3〜10日遅れます。）</string>
 <string name="show_dislike_title">嫌いの数を表示</string>
 <string name="sponsor_block_category_highlight">見どころ</string>
 <string name="sponsor_block_category_self_promo">未払い/セルフプロモーション</string>

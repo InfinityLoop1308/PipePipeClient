@@ -953,7 +953,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sponsor_promote">Trở thành người ủng hộ</string>
 <string name="random_play_order_title">Trình tự ngẫu nhiên</string>
 <string name="random_play_order_summary">Khi sử dụng Chế độ Phát Nhạc, xáo trộn danh sách phát</string>
-<string name="update_log">### Tính Năng Mới\n- Hỗ trợ Tab Podcast (YouTube)\n- Hỗ trợ cài đặt "Luôn bắt đầu phát lại từ đầu"\n- Thêm công tắc để kiểm soát việc tải toàn bộ trang danh sách phát\n\n### Sửa Lỗi\n- Video không tải được nếu đã đăng nhập (YouTube)\n- Thiết lập hành động \'mở\' ưu tiên thành "thêm vào danh sách phát" không hoạt động\n\n### Giao Diện\n- Hiển thị nút hàng đợi ngay cả khi chỉ có 1 mục trong hàng đợi phát</string>
+<string name="update_log">### Sửa lỗi\n- Một số người dùng không thể phát video YouTube (IP bị chặn / lỗi 403)</string>
 <string name="speeding_playback_title">Nhấn và giữ để tăng tốc độ phát lại</string>
 <string name="view_on_github">Xem trên GitHub</string>
 <string name="donation_dialog_title">Hỗ trợ Dự án</string>
@@ -995,7 +995,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="show_stream_details">Hiển thị chi tiết luồng</string>
 <string name="show_prerelease_description">Các phiên bản phát hành trước cập nhật nhanh hơn, nhưng có thể chứa một số lỗi</string>
 <string name="show_prerelease_title">Hiển thị các bản phát hành trước</string>
-<string name="temp">YouTube đang gia tăng nỗ lực để chặn các ứng dụng khách của bên thứ ba, đặc biệt là truy cập ẩn danh, vì vậy chúng tôi đã phải cập nhật thường xuyên gần đây để giải quyết tất cả các vấn đề phát sinh.\nChúng tôi hiểu rằng cập nhật thường xuyên có thể gây mệt mỏi, vì vậy bắt đầu từ phiên bản 4.1.3, chúng tôi sẽ thiết lập khoảng thời gian phát hành trước từ 3–7 ngày cho mỗi phiên bản mới. Trong cài đặt cập nhật, bạn có thể chọn liệu có kiểm tra các phiên bản phát hành trước cùng một lúc hay không.\nChúng tôi tin rằng cuối cùng chúng tôi sẽ chiến thắng trong cuộc chiến này với YouTube. Cảm ơn bạn đã ủng hộ!</string>
+<string name="temp">YouTube liên tục thay đổi mã hóa gần đây, điều này có thể làm hỏng việc trích xuất và phát lại. Khi chúng tôi phát hiện ra những vấn đề này, chúng tôi sẽ nhanh chóng sửa chữa chúng và phát hành phiên bản mới nhanh nhất có thể. Để luôn cập nhật, chúng tôi đề xuất bật tùy chọn \'Kiểm tra Cập nhật\' để bạn nhận được bản sửa lỗi ngay khi nó sẵn sàng. (Cập nhật qua F-Droid mất thêm 3-10 ngày do quá trình xây dựng.)</string>
 <string name="show_dislike_title">Hiển thị số lượt không thích</string>
 <string name="sponsor_block_category_highlight">Nổi bật</string>
 <string name="sponsor_block_category_self_promo">Quảng cáo Cá nhân/Không trả tiền</string>

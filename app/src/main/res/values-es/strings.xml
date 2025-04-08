@@ -908,7 +908,7 @@
 <string name="sponsor_promote">Conviértete en un patrocinador</string>
 <string name="random_play_order_title">Orden aleatorio</string>
 <string name="random_play_order_summary">Al usar el Modo de Reproductor de Música, baraja la lista de reproducción</string>
-<string name="update_log">### Nuevas características\n- Soporte para la pestaña de Podcast (YouTube)\n- Soporte para la configuración "Siempre comenzar la reproducción desde el principio"\n- Agregar un interruptor para controlar si se carga la página completa de listas de reproducción\n\n### Correcciones de errores\n- Los videos no se cargaban si se iniciaba sesión (YouTube)\n- La acción preferida de \'abrir\' para "agregar a la lista de reproducción" no funcionaba\n\n### Interfaz de usuario\n- Mostrar el botón de cola incluso si solo hay 1 elemento en la cola de reproducción</string>
+<string name="update_log">### Corrección de errores\n- Algunos usuarios no pueden reproducir videos de YouTube (IP bloqueada / error 403)</string>
 <string name="speeding_playback_title">Mantener presionado para acelerar la reproducción</string>
 <string name="view_on_github">Ver en GitHub</string>
 <string name="donation_dialog_title">Apoya el proyecto</string>
@@ -1012,4 +1012,5 @@
 <string name="always_start_from_beginning_title">Siempre empieza a reproducir desde el principio</string>
 <string name="fetch_full_playlist_title">Cargar lista de reproducción completa</string>
 <string name="fetch_full_playlist_summary">Carga todo el contenido de una vez al abrir las listas de reproducción</string>
+<string name="temp">YouTube sigue cambiando su cifrado recientemente, lo que puede estropear la extracción y reproducción. Cuando detectamos estos problemas, nos apresuramos a solucionarlos y lanzamos una nueva versión lo más rápido posible. Para mantenerse actualizado, sugerimos activar la opción \'Buscar actualizaciones\' para que obtenga la solución tan pronto como esté lista. (Las actualizaciones a través de F-Droid tardan de 3 a 10 días más debido al proceso de compilación.)</string>
 </resources>
