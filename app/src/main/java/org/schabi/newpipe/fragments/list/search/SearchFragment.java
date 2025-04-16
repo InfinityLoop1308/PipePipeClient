@@ -171,7 +171,18 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
 
     public static SearchFragment getInstance(final int serviceId, final String searchString) {
         final SearchFragment searchFragment = new SearchFragment();
-        searchFragment.setQuery(serviceId, searchString, null, null);
+
+        List<FilterItem> defaultContentFilter = new ArrayList<>();
+        List<FilterItem> defaultSortFilter = new ArrayList<>();
+
+        try {
+            StreamingService service = NewPipe.getService(serviceId);
+            defaultContentFilter.add(service.getSearchQHFactory().getFilterItem(0)); // 默认 "all"
+        } catch (Exception e) {
+            Log.e("Search", "Failed to initialize default filters", e);
+        }
+
+        searchFragment.setQuery(serviceId, searchString, defaultContentFilter, defaultSortFilter);
 
         if (!TextUtils.isEmpty(searchString)) {
             searchFragment.setSearchOnResume();
@@ -179,6 +190,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
 
         return searchFragment;
     }
+
 
     /**
      * Set wasLoading to true so when the fragment onResume is called, the initial search is done.
@@ -221,6 +233,11 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         super.onViewCreated(rootView, savedInstanceState);
         showSearchOnStart();
         initSearchListeners();
+
+        if (!TextUtils.isEmpty(searchString) && infoListAdapter.getItemsList().isEmpty()) {
+            searchEditText.setText(searchString);
+            search(searchString);
+        }
     }
 
     private void updateService() {
