@@ -1,18 +1,10 @@
 package org.schabi.newpipe.local.subscription
 
 import android.app.Activity
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.Bundle
 import android.os.Parcelable
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
@@ -40,21 +32,12 @@ import org.schabi.newpipe.ktx.animate
 import org.schabi.newpipe.local.subscription.SubscriptionViewModel.SubscriptionState
 import org.schabi.newpipe.local.subscription.dialog.FeedGroupDialog
 import org.schabi.newpipe.local.subscription.dialog.FeedGroupReorderDialog
-import org.schabi.newpipe.local.subscription.item.ChannelItem
-import org.schabi.newpipe.local.subscription.item.EmptyPlaceholderItem
-import org.schabi.newpipe.local.subscription.item.FeedGroupAddItem
-import org.schabi.newpipe.local.subscription.item.FeedGroupCardItem
-import org.schabi.newpipe.local.subscription.item.FeedGroupCarouselItem
-import org.schabi.newpipe.local.subscription.item.FeedImportExportItem
-import org.schabi.newpipe.local.subscription.item.HeaderWithMenuItem
+import org.schabi.newpipe.local.subscription.item.*
 import org.schabi.newpipe.local.subscription.item.HeaderWithMenuItem.Companion.PAYLOAD_UPDATE_VISIBILITY_MENU_ITEM
 import org.schabi.newpipe.local.subscription.services.SubscriptionsExportService
 import org.schabi.newpipe.local.subscription.services.SubscriptionsExportService.EXPORT_COMPLETE_ACTION
 import org.schabi.newpipe.local.subscription.services.SubscriptionsImportService
-import org.schabi.newpipe.local.subscription.services.SubscriptionsImportService.IMPORT_COMPLETE_ACTION
-import org.schabi.newpipe.local.subscription.services.SubscriptionsImportService.KEY_MODE
-import org.schabi.newpipe.local.subscription.services.SubscriptionsImportService.KEY_VALUE
-import org.schabi.newpipe.local.subscription.services.SubscriptionsImportService.PREVIOUS_EXPORT_MODE
+import org.schabi.newpipe.local.subscription.services.SubscriptionsImportService.*
 import org.schabi.newpipe.streams.io.NoFileManagerSafeGuard
 import org.schabi.newpipe.streams.io.StoredFileHelper
 import org.schabi.newpipe.util.NavigationHelper
@@ -63,8 +46,7 @@ import org.schabi.newpipe.util.ThemeHelper.getGridSpanCountChannels
 import org.schabi.newpipe.util.ThemeHelper.shouldUseGridLayout
 import org.schabi.newpipe.util.external_communication.ShareUtils
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
     private var _binding: FragmentSubscriptionBinding? = null
@@ -123,6 +105,13 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
     override fun onResume() {
         super.onResume()
         setupBroadcastReceiver()
+
+        // Sync the search view with the current filter state
+        val currentQuery = viewModel.getCurrentSearchQuery() // Add this getter to your ViewModel
+        importExportItem.updateSearchQuery(currentQuery)
+
+        // Make sure the filter is applied correctly
+        viewModel.updateSearchQuery(currentQuery)
     }
 
     override fun onPause() {
@@ -260,16 +249,19 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
             groupAdapter.add(this)
         }
 
-        subscriptionsSection.setPlaceholder(EmptyPlaceholderItem())
-        subscriptionsSection.setHideWhenEmpty(true)
-
+        // Import/Export section
         importExportItem = FeedImportExportItem(
             { onImportPreviousSelected() },
             { onImportFromServiceSelected(it) },
             { onExportSelected() },
-            importExportItemExpandedState ?: false
+            importExportItemExpandedState ?: false,
+            { query -> viewModel.updateSearchQuery(query) }
         )
         groupAdapter.add(Section(importExportItem, listOf(subscriptionsSection)))
+
+        // Subscriptions section
+        subscriptionsSection.setPlaceholder(EmptyPlaceholderItem())
+        subscriptionsSection.setHideWhenEmpty(true)
     }
 
     override fun initViews(rootView: View, savedInstanceState: Bundle?) {
@@ -285,7 +277,34 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
         viewModel = ViewModelProvider(this).get(SubscriptionViewModel::class.java)
         viewModel.stateLiveData.observe(viewLifecycleOwner) { it?.let(this::handleResult) }
         viewModel.feedGroupsLiveData.observe(viewLifecycleOwner) { it?.let(this::handleFeedGroups) }
+        viewModel.filteredSubscriptionsLiveData.observe(viewLifecycleOwner) { filteredSubscriptions ->
+            if (filteredSubscriptions != null) {
+                updateSubscriptionItems(filteredSubscriptions)
+            }
+        }
+
+        // Make sure to trigger initial load if needed
+        if (viewModel.filteredSubscriptionsLiveData.value == null) {
+            viewModel.updateSearchQuery("")
+        }
     }
+
+    private fun updateSubscriptionItems(items: List<Group>) {
+        val shouldUseGridLayout = shouldUseGridLayout(context)
+
+        items.forEach {
+            if (it is ChannelItem) {
+                it.gesturesListener = listenerChannelItem
+                it.itemVersion = when {
+                    shouldUseGridLayout -> ChannelItem.ItemVersion.GRID
+                    else -> ChannelItem.ItemVersion.MINI
+                }
+            }
+        }
+
+        subscriptionsSection.update(items)
+    }
+
 
     private fun showLongTapDialog(selectedItem: ChannelInfoItem) {
         val commands = arrayOf(
@@ -368,7 +387,7 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
                     }
                 }
 
-                subscriptionsSection.update(result.subscriptions)
+                // Don't update the section here, it will be updated by filteredSubscriptionsLiveData
                 subscriptionsSection.setHideWhenEmpty(false)
 
                 if (result.subscriptions.isEmpty() && importExportItemExpandedState == null) {

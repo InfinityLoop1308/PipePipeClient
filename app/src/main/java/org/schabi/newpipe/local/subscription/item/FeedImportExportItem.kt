@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
+import androidx.appcompat.widget.SearchView
 import com.xwray.groupie.viewbinding.BindableItem
 import com.xwray.groupie.viewbinding.GroupieViewHolder
 import org.schabi.newpipe.R
@@ -22,10 +23,15 @@ class FeedImportExportItem(
     val onImportPreviousSelected: () -> Unit,
     val onImportFromServiceSelected: (Int) -> Unit,
     val onExportSelected: () -> Unit,
-    var isExpanded: Boolean = false
+    var isExpanded: Boolean = false,
+    private val searchListener: (String) -> Unit
 ) : BindableItem<FeedImportExportGroupBinding>() {
+
+    private var currentQuery = ""
+
     companion object {
         const val REFRESH_EXPANDED_STATUS = 123
+        const val PAYLOAD_UPDATE_SEARCH = "update_search"
     }
 
     override fun bind(viewBinding: FeedImportExportGroupBinding, position: Int, payloads: MutableList<Any>) {
@@ -34,8 +40,40 @@ class FeedImportExportItem(
             return
         }
 
+        // Get reference to the search view we'll add to the layout
+        val searchView = viewBinding.subscriptionSearch
+
+        // Clear any previous listeners to avoid duplicates
+        searchView.setOnQueryTextListener(null)
+
+        // Set the search view text to match the current filter state
+        if (searchView.query.toString() != currentQuery) {
+            searchView.setQuery(currentQuery, false)
+        }
+
+        // Set new listener
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = true
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                val query = newText ?: ""
+                currentQuery = query
+                searchListener(query)
+                return true
+            }
+        })
+
+
         super.bind(viewBinding, position, payloads)
     }
+
+    // Method to update the search query from outside
+    fun updateSearchQuery(query: String) {
+        currentQuery = query
+        // Force a refresh of the view
+        notifyChanged(PAYLOAD_UPDATE_SEARCH)
+    }
+
 
     override fun getLayout(): Int = R.layout.feed_import_export_group
 

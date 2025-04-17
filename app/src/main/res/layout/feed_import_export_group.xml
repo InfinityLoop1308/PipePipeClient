@@ -34,18 +34,23 @@
         android:orientation="horizontal">
 
         <org.schabi.newpipe.views.NewPipeTextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
             android:paddingTop="8dp"
-            android:paddingRight="16dp"
             android:paddingBottom="8dp"
             android:text="@string/tab_subscriptions"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="16sp"
             android:textStyle="bold" />
 
+        <androidx.appcompat.widget.SearchView
+                android:id="@+id/subscription_search"
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_weight="1"
+                app:iconifiedByDefault="true"
+        />
         <ImageView
             android:id="@+id/import_export_expand_icon"
             android:layout_width="24dp"
