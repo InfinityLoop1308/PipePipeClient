@@ -924,7 +924,7 @@
 <string name="settings_category_bullet_comments_summary">Configuración de comentarios en viñeta</string>
 <string name="settings_category_backup_title">Respaldar</string>
 <string name="settings_category_advanced_title">Avanzado</string>
-<string name="not_login">Este contenido requiere una cuenta para verlo. Inicia sesión a través de Configuración para continuar.</string>
+<string name="not_login">Tu IP está bloqueada por YouTube. Intenta usar una VPN o iniciar sesión a través de Configuración para continuar.</string>
 <string name="advanced_formats_summary">Si su dispositivo tiene soporte, habilitar formatos avanzados puede reducir el consumo de datos y proporcionar resoluciones más altas. \nWEBM o AV1 deben estar habilitados para mostrar contenidos en 2k/4k en YouTube.</string>
 <string name="advanced_formats_title">Habilitar formatos avanzados</string>
 <string name="preferred_audio_language_title">Idioma de audio preferido</string>

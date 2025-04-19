@@ -353,4 +353,7 @@ if __name__ == '__main__':
     elif args[1] == 'update_latest':
         translator.translate_latest_updates_to_all(args[2])
     elif args[1] == 'update':
-        translator.update_with_replace(args[2], args[3])
+        if len(args) == 3:
+            translator.translate_item_updates_to_all(args[2:])
+        else:
+            translator.update_with_replace(args[2], args[3])

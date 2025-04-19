@@ -912,7 +912,7 @@
 <string name="settings_category_bullet_comments_summary">彈幕設定</string>
 <string name="settings_category_backup_title">備份</string>
 <string name="settings_category_advanced_title">進階</string>
-<string name="not_login">此內容需要帳戶才能查看。請通過設置登錄以繼續。</string>
+<string name="not_login">您的 IP 被 YouTube 封鎖。嘗試使用 VPN 或通過設置登錄以繼續。</string>
 <string name="advanced_formats_summary">如果您的設備支持，啟用高級格式可以減少數據消耗並提供更高的解析度。 \n要在 YouTube 上顯示 2k/4k 內容，必須啟用 WEBM 或 AV1。</string>
 <string name="advanced_formats_title">啟用進階格式</string>
 <string name="preferred_audio_language_title">首選音訊語言</string>
