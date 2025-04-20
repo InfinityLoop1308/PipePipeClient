@@ -2212,22 +2212,31 @@ public final class VideoDetailFragment
 
     @Override
     public void onScreenRotationButtonClicked() {
-        // In tablet user experience will be better if screen will not be rotated
-        // from landscape to portrait every time.
-        // Just turn on fullscreen mode in landscape orientation
-        // or portrait & unlocked global orientation
         final boolean isLandscape = DeviceUtils.isLandscape(requireContext());
-        if (DeviceUtils.isTablet(activity)
-                && (!globalScreenOrientationLocked(activity) || isLandscape)) {
+        final boolean isTablet    = DeviceUtils.isTablet(activity);
+        final boolean autoLocked  = globalScreenOrientationLocked(activity);
+
+        // 1. 平板且（系统可自动旋转 或 当前已横），直接切播放器全屏/非全屏
+        if (isTablet && (!autoLocked || isLandscape)) {
             player.toggleFullscreen();
             return;
         }
 
-        final int newOrientation = isLandscape
-                ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                : ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
-
-        activity.setRequestedOrientation(newOrientation);
+        // 2. 手机 or 平板但系统锁定了自动旋转，就去真正设置屏幕方向
+        if (!autoLocked) {
+            if (isLandscape) {
+                player.toggleFullscreen();
+            } else {
+                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+            }
+        } else {
+            // 系统锁定时，再用“强制模式”来切
+            activity.setRequestedOrientation(
+                    isLandscape
+                            ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                            : ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            );
+        }
     }
 
     /*
