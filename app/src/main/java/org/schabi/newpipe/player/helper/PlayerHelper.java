@@ -47,6 +47,7 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.MediaFormat;
+import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
@@ -278,6 +279,16 @@ public final class PlayerHelper {
         if(info.getServiceId() == 5){
             if (info.isRoundPlayStream()) {
                 return getAutoQueuedSinglePlayQueue((StreamInfoItem) relatedItems.get(0));
+            }
+        }
+
+        // if YouTube, only enqueue the first one since others are not guaranteed to be related
+        if (relatedItems.get(0) instanceof StreamInfoItem && info.getService().getServiceId() == ServiceList.YouTube.getServiceId()
+                && !urls.contains(relatedItems.get(0).getUrl())) {
+            if(!dontAutoQueueLong || ((StreamInfoItem) relatedItems.get(0)).getDuration() < 360){
+                return getAutoQueuedSinglePlayQueue((StreamInfoItem) relatedItems.get(0));
+            } else {
+                return null;
             }
         }
 
