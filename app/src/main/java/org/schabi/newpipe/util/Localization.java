@@ -86,16 +86,8 @@ public final class Localization {
 
     public static org.schabi.newpipe.extractor.localization.Localization getPreferredLocalization(
             final Context context) {
-        final String contentLanguage = PreferenceManager
-                .getDefaultSharedPreferences(context)
-                .getString(context.getString(R.string.content_language_key),
-                        context.getString(R.string.default_localization_key));
-        if (contentLanguage.equals(context.getString(R.string.default_localization_key))) {
-            return org.schabi.newpipe.extractor.localization.Localization
-                    .fromLocale(Locale.getDefault());
-        }
         return org.schabi.newpipe.extractor.localization.Localization
-                .fromLocalizationCode(contentLanguage);
+                .fromLocalizationCode("en");
     }
 
     public static ContentCountry getPreferredContentCountry(final Context context) {
@@ -111,7 +103,7 @@ public final class Localization {
     public static Locale getPreferredLocale(final Context context) {
         final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 
-        final String languageCode = sp.getString(context.getString(R.string.content_language_key),
+        final String languageCode = sp.getString(context.getString(R.string.app_language_key),
                 context.getString(R.string.default_localization_key));
 
         try {
