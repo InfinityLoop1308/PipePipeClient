@@ -27,6 +27,7 @@ public final class Migrations {
     public static final int DB_VER_7 = 7;
     public static final int DB_VER_8 = 8;
     public static final int DB_VER_9 = 9;
+    public static final int DB_VER_900 = 900;
 
     private static final String TAG = Migrations.class.getName();
     public static final boolean DEBUG = MainActivity.DEBUG;
@@ -367,7 +368,17 @@ public final class Migrations {
         }
     };
 
+    public static final Migration MIGRATION_6_900 = new Migration(DB_VER_6, DB_VER_900) {
+        @Override
+        public void migrate(@NonNull final SupportSQLiteDatabase database) {
+            String updateSql = "UPDATE " + "streams" +
+                    " SET " + "url" + " = REPLACE(" + "url" + ", '" + "https://bilibili.com" + "', '" + "https://www.bilibili.com/video" + "')" +
+                    " WHERE " + "url" + " LIKE '" + "https://bilibili.com" + "/%'"; // Use LIKE to ensure it's a prefix match
 
+            // Execute the SQL
+            database.execSQL(updateSql);
+        }
+    };
 
     private Migrations() {
     }
