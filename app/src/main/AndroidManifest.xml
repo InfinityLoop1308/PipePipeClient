@@ -477,6 +477,15 @@
                   android:configChanges="orientation|screenSize"
                   android:theme="@style/Theme.AppCompat.NoActionBar" />
 
+        <activity
+                android:name=".settings.KeywordFilterListActivity"
+                android:label="@string/filter_by_keyword_title"
+                android:parentActivityName=".settings.SettingsActivity" />
+        <activity
+                android:name=".settings.ChannelFilterListActivity"
+                android:label="@string/filter_by_channel_title"
+                android:parentActivityName=".settings.SettingsActivity" />
+
         <!-- opting out of sending metrics to Google in Android System WebView -->
         <meta-data android:name="android.webkit.WebView.MetricsOptOut" android:value="true" />
         <!-- see https://github.com/TeamNewPipe/NewPipe/issues/3947 -->

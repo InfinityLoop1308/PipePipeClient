@@ -903,4 +903,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="always_start_from_beginning_title">Toujours commencer la lecture depuis le début</string>
 <string name="fetch_full_playlist_title">Charger la playlist complète</string>
 <string name="fetch_full_playlist_summary">Charger tout le contenu en même temps lors de l\'ouverture des playlists</string>
+<string name="add_filter">Ajouter un filtre</string>
+<string name="no_filters">Pas de filtres</string>
 </resources>

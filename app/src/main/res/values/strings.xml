@@ -1052,4 +1052,6 @@
 <string name="always_start_from_beginning_title">Always start play from beginning</string>
 <string name="fetch_full_playlist_title">Load full playlist</string>
 <string name="fetch_full_playlist_summary">Load all content at once when opening playlists</string>
+<string name="add_filter">Add Filter</string>
+<string name="no_filters">No filters</string>
 </resources>

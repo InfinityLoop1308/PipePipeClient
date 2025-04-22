@@ -1056,4 +1056,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="always_start_from_beginning_title">Luôn bắt đầu phát từ đầu</string>
 <string name="fetch_full_playlist_title">Tải toàn bộ danh sách phát</string>
 <string name="fetch_full_playlist_summary">Tải tất cả nội dung cùng lúc khi mở danh sách phát</string>
+<string name="add_filter">Thêm bộ lọc</string>
+<string name="no_filters">Không có bộ lọc</string>
 </resources>

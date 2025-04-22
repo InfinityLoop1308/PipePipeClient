@@ -1013,4 +1013,6 @@
 <string name="fetch_full_playlist_title">Cargar lista de reproducción completa</string>
 <string name="fetch_full_playlist_summary">Carga todo el contenido de una vez al abrir las listas de reproducción</string>
 <string name="temp">YouTube sigue cambiando su cifrado recientemente, lo que puede estropear la extracción y reproducción. Cuando detectamos estos problemas, nos apresuramos a solucionarlos y lanzamos una nueva versión lo más rápido posible. Para mantenerse actualizado, sugerimos activar la opción \'Buscar actualizaciones\' para que obtenga la solución tan pronto como esté lista. (Las actualizaciones a través de F-Droid tardan de 3 a 10 días más debido al proceso de compilación.)</string>
+<string name="add_filter">Añadir filtro</string>
+<string name="no_filters">Sin filtros</string>
 </resources>

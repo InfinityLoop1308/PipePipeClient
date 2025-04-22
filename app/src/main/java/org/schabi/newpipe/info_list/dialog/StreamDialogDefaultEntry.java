@@ -26,7 +26,9 @@ import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
@@ -152,18 +154,14 @@ public enum StreamDialogDefaultEntry {
                     final SharedPreferences pref = PreferenceManager
                             .getDefaultSharedPreferences(fragment.requireContext());
                     // Get the key from string resources
-                    String filterKey = fragment.requireContext().getString(R.string.filter_by_channel_key);
-                    // Retrieve current filter list or default to empty
-                    String currentValue = pref.getString(filterKey, "");
-                    // Update the value based on conditions
-                    if (currentValue.isEmpty()) {
-                        currentValue = item.getUploaderName();
-                    } else {
-                        currentValue += ", " + item.getUploaderName();
-                    }
-                    // Save the updated value back to SharedPreferences
+                    String filterKey = fragment.requireContext().getString(R.string.filter_by_channel_key) + "_set";
+                    // Retrieve current filter set or default to empty
+                    Set<String> currentFilters = new HashSet<>(pref.getStringSet(filterKey, new HashSet<>()));
+                    // Add the new channel to the set
+                    currentFilters.add(item.getUploaderName());
+                    // Save the updated set back to SharedPreferences
                     pref.edit()
-                            .putString(filterKey, currentValue)
+                            .putStringSet(filterKey, currentFilters)
                             .apply();
                     ServiceHelper.initServices(fragment.requireContext());
                     Toast.makeText(

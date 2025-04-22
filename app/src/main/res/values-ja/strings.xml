@@ -966,4 +966,6 @@
 <string name="always_start_from_beginning_title">常に最初から再生を開始</string>
 <string name="fetch_full_playlist_title">完全なプレイリストを読み込む</string>
 <string name="fetch_full_playlist_summary">プレイリストを開くときにすべてのコンテンツを一度に読み込む</string>
+<string name="add_filter">フィルターを追加</string>
+<string name="no_filters">フィルターなし</string>
 </resources>

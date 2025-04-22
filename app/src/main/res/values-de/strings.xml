@@ -950,4 +950,6 @@
 <string name="always_start_from_beginning_title">Immer von Anfang an abspielen</string>
 <string name="fetch_full_playlist_title">Gesamte Playlist laden</string>
 <string name="fetch_full_playlist_summary">Laden Sie beim Öffnen von Playlists alle Inhalte auf einmal</string>
+<string name="add_filter">Filter hinzufügen</string>
+<string name="no_filters">Keine Filter</string>
 </resources>

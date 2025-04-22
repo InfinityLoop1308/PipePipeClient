@@ -870,4 +870,6 @@
 <string name="always_start_from_beginning_title">Inizia sempre a riprodurre dall\'inizio</string>
 <string name="fetch_full_playlist_title">Carica l\'intera playlist</string>
 <string name="fetch_full_playlist_summary">Carica tutti i contenuti contemporaneamente quando apri le playlist</string>
+<string name="add_filter">Aggiungi filtro</string>
+<string name="no_filters">Nessun filtro</string>
 </resources>

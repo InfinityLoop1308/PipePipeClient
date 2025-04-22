@@ -1,5 +1,6 @@
 package org.schabi.newpipe.settings;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.annotation.Nullable;
@@ -11,38 +12,35 @@ public class FilterSettingsFragment extends BasePreferenceFragment {
     @Override
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
         addPreferencesFromResourceRegistry();
+
         Preference filter_by_keyword = findPreference(getString(R.string.filter_by_keyword_key));
         Preference filter_by_channel = findPreference(getString(R.string.filter_by_channel_key));
         Preference filter_shorts = findPreference(getString(R.string.filter_shorts_key));
         Preference filter_type = findPreference(getString(R.string.filter_type_key));
 
-        filter_by_keyword.setOnPreferenceChangeListener((preference, newValue) -> {
-            // Return true first to allow the value to be saved
-            new Handler().postDelayed(() -> {
-                // Now SharedPreferences will have the new value
-                ServiceHelper.initServices(getContext());
-            }, 100); // 100ms delay should be enough, you can adjust if needed
+        filter_by_keyword.setOnPreferenceClickListener(preference -> {
+            Intent intent = new Intent(getActivity(), KeywordFilterListActivity.class);
+            startActivity(intent);
             return true;
         });
-        filter_by_channel.setOnPreferenceChangeListener((preference, newValue) -> {
-            new Handler().postDelayed(() -> {
-                // Now SharedPreferences will have the new value
-                ServiceHelper.initServices(getContext());
-            }, 100); // 100ms delay should be enough, you can adjust if needed
+
+        filter_by_channel.setOnPreferenceClickListener(preference -> {
+            Intent intent = new Intent(getActivity(), ChannelFilterListActivity.class);
+            startActivity(intent);
             return true;
         });
+
         filter_shorts.setOnPreferenceChangeListener((preference, newValue) -> {
             new Handler().postDelayed(() -> {
-                // Now SharedPreferences will have the new value
                 ServiceHelper.initServices(getContext());
-            }, 100); // 100ms delay should be enough, you can adjust if needed
+            }, 100);
             return true;
         });
+
         filter_type.setOnPreferenceChangeListener((preference, newValue) -> {
             new Handler().postDelayed(() -> {
-                // Now SharedPreferences will have the new value
                 ServiceHelper.initServices(getContext());
-            }, 100); // 100ms delay should be enough, you can adjust if needed
+            }, 100);
             return true;
         });
     }

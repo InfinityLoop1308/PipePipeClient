@@ -99,6 +99,8 @@ public class App extends MultiDexApplication {
         StateSaver.init(this);
         initNotificationChannels();
 
+        FilterPreferenceMigrator.migrateIfNeeded(this);
+
         ServiceHelper.initServices(this);
 
         // Initialize image loader

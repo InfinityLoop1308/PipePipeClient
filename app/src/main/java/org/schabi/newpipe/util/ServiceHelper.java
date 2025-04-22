@@ -322,16 +322,19 @@ public final class ServiceHelper {
                 .getDefaultSharedPreferences(context);
         for (final StreamingService s : ServiceList.all()) {
             initService(context, s.getServiceId());
-            String blockingKeywords = sharedPreferences.getString(context.getString(R.string.filter_by_keyword_key), null);
-            String blockingChannels = sharedPreferences.getString(context.getString(R.string.filter_by_channel_key), null);
+            Set<String> blockingKeywords = sharedPreferences.getStringSet(context.getString(R.string.filter_by_keyword_key) + "_set", new HashSet<>());
+            Set<String> blockingChannels = sharedPreferences.getStringSet(context.getString(R.string.filter_by_channel_key) + "_set", new HashSet<>());
             boolean blockShorts = sharedPreferences.getBoolean(context.getString(R.string.filter_shorts_key), false);
             s.setFilterShorts(blockShorts);
-            if (blockingKeywords != null && !blockingKeywords.isEmpty()) {
-                s.setStreamKeywordFilter(new ArrayList<>(Arrays.asList(blockingKeywords.replace("，", ",").split(",")).stream().map(String::trim).collect(Collectors.toList())));
+
+            if (!blockingKeywords.isEmpty()) {
+                s.setStreamKeywordFilter(new ArrayList<>(blockingKeywords));
             }
-            if (blockingChannels != null && !blockingChannels.isEmpty()) {
-                s.setStreamChannelFilter(new ArrayList<>(Arrays.asList(blockingChannels.replace("，", ",").split(",")).stream().map(String::trim).collect(Collectors.toList())));
+
+            if (!blockingChannels.isEmpty()) {
+                s.setStreamChannelFilter(new ArrayList<>(blockingChannels));
             }
+
             Set<String> blockingFields = sharedPreferences.getStringSet(context.getString(R.string.filter_type_key), new HashSet<>());
             s.setFilterTypes(blockingFields);
 

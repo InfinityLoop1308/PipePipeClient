@@ -999,4 +999,6 @@
 <string name="always_start_from_beginning_title">始终从头开始播放</string>
 <string name="fetch_full_playlist_title">載入完整播放列表</string>
 <string name="fetch_full_playlist_summary">打開播放列表時一次加載所有內容</string>
+<string name="add_filter">添加篩選器</string>
+<string name="no_filters">沒有篩選器</string>
 </resources>
