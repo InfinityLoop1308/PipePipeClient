@@ -863,7 +863,7 @@
 <string name="sponsor_promote">サポーターになる</string>
 <string name="random_play_order_title">ランダムな順序</string>
 <string name="random_play_order_summary">プレイリストをシャッフルする</string>
-<string name="update_log">### バグ修正\n- 一部のユーザーがYouTube動画を再生できない（IPブロック/403エラー）</string>
+<string name="update_log">### 新機能\n- カードモードをサポート\n- ローカルチャンネルの検索（フィルター）をサポート\n- ダウンロードしたコンテンツのダウンロード日時を表示\n\n### バグ修正\n- 一部の動画が読み込まれない（YouTube）\n- 特定の条件下で検索が自動的に開始されない\n- フルスクリーンをジェスチャーで退出して自動回転がオンの場合、アプリが縦向きのままになる\n- チャンネルフィルタが先頭/末尾のスペースを持つチャンネルに影響を与えない\n- キーワードフィルタが大文字小文字を区別しない\n- 最後の再生進行バーが機能しない（BiliBili）\n- トレンドが機能しない（NicoNico）\n\n### UI\n- 誤解を避けるために「IPブロック」エラーテキストを更新\n\n### 動作\n- YouTube動画の自動キューにおいて常に最初の関連項目を選択\n- 今や背景ボタンはローカルプレイリストを再生している場合のみシャッフルします</string>
 <string name="speeding_playback_title">長時間押は再生速度を速めることができます</string>
 <string name="view_on_github">GitHubで表示</string>
 <string name="donation_dialog_title">プロジェクトをサポートする</string>

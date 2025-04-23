@@ -908,7 +908,7 @@
 <string name="sponsor_promote">Conviértete en un patrocinador</string>
 <string name="random_play_order_title">Orden aleatorio</string>
 <string name="random_play_order_summary">Al usar el Modo de Reproductor de Música, baraja la lista de reproducción</string>
-<string name="update_log">### Corrección de errores\n- Algunos usuarios no pueden reproducir videos de YouTube (IP bloqueada / error 403)</string>
+<string name="update_log">### Nuevas Funciones\n- Soporte para modo de tarjeta\n- Soporte para buscar(filtrar) canales locales\n- Mostrar fecha de descarga de los contenidos descargados\n\n### Corrección de Errores\n- Algunos videos no se cargan (YouTube)\n- La búsqueda no comienza automáticamente bajo ciertas condiciones\n- La aplicación queda atascada en modo retrato si se usa el gesto para salir de pantalla completa con autorrotación activada.\n- El filtro de canales no afecta a los canales con espacios al principio/final\n- Los Filtros de Palabras Clave no son insensibles a mayúsculas\n- La barra de progreso de la última reproducción no funciona (BiliBili)\n- Tendencias no funcionan (NicoNico)\n\n### IU\n- Actualizar el texto de error \'ip bloqueada\' para evitar confusión\n\n### Comportamiento\n- Siempre seleccionar los primeros elementos relacionados para auto-enqueuing para videos de YouTube\n- Ahora el botón de fondo solo mezclará al reproducir una lista de reproducción local</string>
 <string name="speeding_playback_title">Mantener presionado para acelerar la reproducción</string>
 <string name="view_on_github">Ver en GitHub</string>
 <string name="donation_dialog_title">Apoya el proyecto</string>

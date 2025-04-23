@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
                     // Show the second dialog when the first dialog is dismissed
-                    if((storedVersionCode / 100 < 1072 && currentTime - lastShowDonationTime > 14 * 24 * 60 * 60 * 1000)
+                    if((storedVersionCode / 100 < 1075 && currentTime - lastShowDonationTime > 14 * 24 * 60 * 60 * 1000)
                             || currentTime - lastShowDonationTime > 60L * 24 * 60 * 60 * 1000) {
                         prefs.edit().putLong("last_show_donation_time", currentTime).apply();
                         dialog2.show();
@@ -222,13 +222,13 @@ public class MainActivity extends AppCompatActivity {
             prefs.edit().putInt("version_code", currentVersionCode).apply();
 
 
-            if (currentVersionCode / 100 == 1074) {
-                AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
-                builder3.setMessage(R.string.temp);
-                builder3.setPositiveButton(R.string.ok, (dialog, which) -> {
-                });
-                builder3.show();
-            }
+//            if (currentVersionCode / 100 == 1074) {
+//                AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
+//                builder3.setMessage(R.string.temp);
+//                builder3.setPositiveButton(R.string.ok, (dialog, which) -> {
+//                });
+//                builder3.show();
+//            }
 
             if (storedVersionCode / 100 < 1072 && prefs.getString(getString(R.string.youtube_po_token_key), "").equals("")) {
                 prefs.edit().putString(getString(R.string.youtube_cookies_key), "").apply();
