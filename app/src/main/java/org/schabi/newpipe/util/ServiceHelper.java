@@ -300,20 +300,6 @@ public final class ServiceHelper {
 //                ServiceList.YouTube.setTokens(sharedPreferences.getString(context.getString(R.string.override_cookies_youtube_value_key), null));
 //            }
 //            CookieUtils.exportCookiesToNetscapeYouTube(context, ServiceList.YouTube.getTokens());
-            Thread t = new Thread(() -> {
-                DownloaderImpl downloader = DownloaderImpl.getInstance();
-                try {
-                    String resp = downloader.get("https://www.youtube.com/iframe_api").responseBody();
-                    String versionId = Utils.findFirstMatchFirstGroup(resp, "player\\\\?/([0-9a-fA-F]{8})\\\\?/");
-                    String playerUrl = "https://www.youtube.com/s/player/%s/player_ias.vflset/en_US/base.js".replace("%s", versionId);
-                    resp = downloader.get(playerUrl).responseBody();
-                    String sts = Utils.findFirstMatchFirstGroup(resp, "(?:signatureTimestamp|sts)\\s*:\\s*(?<sts>[0-9]{5})");
-                    ServiceList.YouTube.setYtdlpConfig("player_version=" + versionId + ";sts=" + sts);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-            t.start();
         }
     }
 
