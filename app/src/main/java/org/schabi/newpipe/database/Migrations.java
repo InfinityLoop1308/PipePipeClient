@@ -380,6 +380,47 @@ public final class Migrations {
         }
     };
 
+    public static final Migration MIGRATION_9_900 = new Migration(DB_VER_9, DB_VER_900) {
+        public void migrate(@NonNull final SupportSQLiteDatabase database) {
+            // Re-create the thumbnail_url field in the playlist table
+            database.execSQL("CREATE TABLE IF NOT EXISTS `playlists_new`"
+                    + "(uid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                    + "name TEXT, "
+                    + "display_index INTEGER NOT NULL DEFAULT 0, "
+                    + "thumbnail_url TEXT)");
+
+            database.execSQL("INSERT INTO playlists_new"
+                    + " SELECT uid, name, 0, thumbnail_stream_id "
+                    + " FROM playlists");
+
+            database.execSQL("DROP TABLE playlists");
+            database.execSQL("ALTER TABLE playlists_new RENAME TO playlists");
+            database.execSQL("CREATE INDEX IF NOT EXISTS "
+                    + "`index_playlists_name` ON `playlists` (`name`)");
+
+            database.execSQL("CREATE TABLE `remote_playlists_tmp` "
+                    + "(`uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                    + "`service_id` INTEGER NOT NULL, `name` TEXT, `url` TEXT, "
+                    + "`thumbnail_url` TEXT, `uploader` TEXT, "
+                    + "`display_index` INTEGER NOT NULL DEFAULT 0,"
+                    + "`stream_count` INTEGER)");
+            database.execSQL("INSERT INTO `remote_playlists_tmp` (`uid`, `service_id`, "
+                    + "`name`, `url`, `thumbnail_url`, `uploader`, `stream_count`)"
+                    + "SELECT `uid`, `service_id`, `name`, `url`, `thumbnail_url`, `uploader`, "
+                    + "`stream_count` FROM `remote_playlists`");
+
+            // Replace the old table.
+            database.execSQL("DROP TABLE `remote_playlists`");
+            database.execSQL("ALTER TABLE `remote_playlists_tmp` RENAME TO `remote_playlists`");
+            // Create index on the new table.
+            database.execSQL("CREATE INDEX `index_remote_playlists_name` "
+                    + "ON `remote_playlists` (`name`)");
+            database.execSQL("CREATE UNIQUE INDEX `index_remote_playlists_service_id_url` "
+                    + "ON `remote_playlists` (`service_id`, `url`)");
+        }
+    };
+
+
     private Migrations() {
     }
 }
