@@ -991,7 +991,7 @@
 <string name="sponsor_promote">Become a supporter</string>
 <string name="random_play_order_title">Random Order</string>
 <string name="random_play_order_summary">When using Music Player Mode, shuffle the playlist</string>
-<string name="update_log">### New Features\n- Support card mode\n- Support search(filter) local channels\n- Show download date of downloaded contents\n\n### Bug Fixes\n- Some videos doesn\'t load (YouTube)\n- Search doesn\'t start automatically under certain conditions\n- App stuck in portrait mode if using gesture to exit full screen with autorotation on.\n- Channel Filter does not affect channels with leading/trailing spaces\n- Keyword Filters are not case-insensitive\n- Last playback progress bar doesn\'t work (BiliBili)\n- Trending not working (NicoNico)\n\n### UI\n- Update \'ip blocked\' error text to avoid misleading\n\n### Behavior\n- Always select the first related items for auto-enqueuing for YouTube videos\n- Now background button will only shuffle when playing a local playlist</string>
+<string name="update_log">### Bug Fixes\n- Cannot import data from NewPipe \n- Missing subtitles translations (YouTube) \n- Unexpected crash under certain conditions (YouTube)</string>
 <string name="speeding_playback_title">Long-press to speeding the playback</string>
 <string name="view_on_github">View on GitHub</string>
 <string name="donation_dialog_title">Support the Project</string>

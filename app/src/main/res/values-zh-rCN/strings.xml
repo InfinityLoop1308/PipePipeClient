@@ -909,7 +909,7 @@
 <string name="sponsor_promote">成为支持者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">使用音乐播放器模式时,随机播放列表</string>
-<string name="update_log">### 新功能\n- 支持卡片模式\n- 支持搜索（过滤）本地频道\n- 显示已下载内容的下载日期\n\n### Bug 修复\n- 一些视频无法加载（YouTube）\n- 在某些条件下，搜索不会自动开始\n- 如果在自动旋转开启的情况下使用手势退出全屏，应用卡在竖屏模式\n- 频道过滤器不影响带有前/后空格的频道\n- 关键词过滤不区分大小写\n- 上次播放进度条不起作用（BiliBili）\n- 热门功能不起作用（NicoNico）\n\n### UI\n- 更新\'ip 被封锁\'错误文本以避免误导\n\n### 行为\n- 现在总是选择第一个相关项目进行 YouTube 视频的自动排队\n- 现在背景按钮仅在播放本地播放列表时进行随机播放</string>
+<string name="update_log">### 错误修复\n- 无法从 NewPipe 导入数据 \n- 缺少字幕翻译（YouTube） \n- 在某些情况下意外崩溃（YouTube）</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 <string name="donation_dialog_title">支持该项目</string>

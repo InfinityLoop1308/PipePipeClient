@@ -847,7 +847,7 @@
 <string name="sponsor_promote">Unterstützer werden</string>
 <string name="random_play_order_title">Zufällige Reihenfolge</string>
 <string name="random_play_order_summary">Beim Verwenden des Musikspielermodus die Wiedergabeliste mischen</string>
-<string name="update_log">### Neue Funktionen\n- Kartenmodus unterstützen\n- Suchfunktion (Filter) für lokale Kanäle unterstützen\n- Download-Datum von heruntergeladenen Inhalten anzeigen\n\n### Fehlerbehebungen\n- Einige Videos laden nicht (YouTube)\n- Die Suche startet unter bestimmten Bedingungen nicht automatisch\n- App bleibt im Hochformatmodus hängen, wenn beim Verlassen des Vollbilds mit Gesten die automatische Drehung eingeschaltet ist.\n- Kanalfilter wirken sich nicht auf Kanäle mit führenden/nachstehenden Leerzeichen aus\n- Schlüsselwort-Filter sind nicht groß-/kleinschreibungsunabhängig\n- Letzte Wiedergabefortschrittsleiste funktioniert nicht (BiliBili)\n- Trends funktionieren nicht (NicoNico)\n\n### UI\n- Text für \'IP blockiert\' Fehler aktualisieren, um Fehlinterpretationen zu vermeiden\n\n### Verhalten\n- Immer die ersten verwandten Elemente für das automatische Einreihen von YouTube-Videos auswählen\n- Jetzt wird die Hintergrundtaste nur noch gemischt, wenn eine lokale Wiedergabeliste abgespielt wird</string>
+<string name="update_log">### Fehlerbehebungen\n- Daten können nicht aus NewPipe importiert werden \n- Fehlende Untertitelübersetzungen (YouTube) \n- Unerwarteter Absturz unter bestimmten Bedingungen (YouTube)</string>
 <string name="speeding_playback_title">Langes Drücken, um die Wiedergabe zu beschleunigen</string>
 <string name="view_on_github">Auf GitHub ansehen</string>
 <string name="donation_dialog_title">Projekt unterstützen</string>

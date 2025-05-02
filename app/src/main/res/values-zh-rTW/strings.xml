@@ -896,7 +896,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在使用音樂播放器模式時,隨機播放播放清單</string>
-<string name="update_log">### 新功能\n- 支援卡片模式\n- 支援搜尋（篩選）本地頻道\n- 顯示下載內容的下載日期\n\n### 錯誤修正\n- 部分影片無法載入（YouTube）\n- 在某些條件下搜尋無法自動開始\n- 使用手勢退出全屏並打開自動旋轉時，應用程式卡在縱向模式\n- 頻道過濾器不影響有前導或尾隨空格的頻道\n- 關鍵字篩選器不區分大小寫\n- 最後播放進度條不起作用（BiliBili）\n- 趨勢無法正常運作（NicoNico）\n\n### UI\n- 更新\'IP被封鎖\'錯誤文字以避免誤導\n\n### 行為\n- 對於YouTube影片，始終選擇第一個相關項進行自動排隊\n- 現在背景按鈕只會在播放本地播放列表時洗牌</string>
+<string name="update_log">### Bug Fixes\n- 无法从 NewPipe 导入数据 \n- 缺少字幕翻译（YouTube）\n- 在某些情况下意外崩溃（YouTube）</string>
 <string name="speeding_playback_title">按住以加快播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這個項目</string>
