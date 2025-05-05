@@ -2411,7 +2411,7 @@ public final class Player implements
         } catch (final ExtractionException e) {
             Log.e(TAG, Log.getStackTraceString(e));
         }
-        isBCPlayerVisible = prefs.getBoolean("isBCPlayerVisible", true);
+        isBCPlayerVisible = prefs.getBoolean("isBCPlayerVisible", false);
         Log.i(TAG, "BulletCommentPlayer initial visibility: " + isBCPlayerVisible);
         if (bcPlayer == null) {
             // If set to INVISIBLE, the space remains.
@@ -2491,7 +2491,7 @@ public final class Player implements
         Log.d(TAG, "BulletCommentsView cleared.");
     }
 
-    private boolean isBCPlayerVisible;
+    private boolean isBCPlayerVisible = false;
 
     private void onSwitchBCPlayerVisibilityClicked() {
         isBCPlayerVisible = !isBCPlayerVisible;
