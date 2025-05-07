@@ -1,5 +1,6 @@
 package org.schabi.newpipe.fragments.list.comments;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -10,7 +11,9 @@ import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
+import androidx.preference.PreferenceManager;
 import org.schabi.newpipe.BaseFragment;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.Page;
@@ -64,6 +67,22 @@ public class CommentReplyFragment extends BaseFragment implements BackPressable 
                 false);
         final ImageButton backButton = view.findViewById(R.id.backButton);
         backButton.setOnClickListener(v -> onBackPressed());
+
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        if (!prefs.getBoolean("comments_inner_scroll_key", false)) {
+            final CommentsFragment commentsFragment = CommentsFragment.getInstance(
+                    serviceId, url, name, comment
+            );
+            getChildFragmentManager().beginTransaction()
+                    .add(R.id.commentFragment, commentsFragment).commit();
+
+            int marginStart = getResources().getDimensionPixelSize(R.dimen.video_item_search_avatar_left_margin);
+            FragmentContainerView commentReplyFragment = view.findViewById(R.id.commentReplyFragment);
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) commentReplyFragment.getLayoutParams();
+            params.setMarginStart(marginStart);
+            commentReplyFragment.setLayoutParams(params);
+        }
+
         final CommentsFragment commentsReplyFragment = CommentsFragment.getInstance(
                 serviceId, url, name, replies
         );
