@@ -96,7 +96,7 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
 
         streamUrl = item.getUrl();
 
-        itemContentView.setLines(COMMENT_DEFAULT_LINES);
+        itemContentView.setMinLines(COMMENT_DEFAULT_LINES);
         commentText = item.getCommentText();
         itemContentView.setText(commentText, TextView.BufferType.SPANNABLE);
         itemContentView.setOnTouchListener(CommentTextOnTouchListener.INSTANCE);
@@ -200,7 +200,7 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
     private void ellipsize() {
         boolean hasEllipsis = false;
 
-        if (itemContentView.getLineCount() > COMMENT_DEFAULT_LINES) {
+        if (false) {
             final int endOfLastLine = itemContentView
                     .getLayout()
                     .getLineEnd(COMMENT_DEFAULT_LINES - 1);
@@ -224,7 +224,7 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
 
     private void toggleEllipsize() {
         if (itemContentView.getText().toString().equals(commentText)) {
-            if (itemContentView.getLineCount() > COMMENT_DEFAULT_LINES) {
+            if (false) {
                 ellipsize();
             }
         } else {
