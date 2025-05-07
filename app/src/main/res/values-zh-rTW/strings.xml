@@ -738,11 +738,11 @@
 <string name="msg_running_new">PipePipe 下載中</string>
 <string name="title_activity_about_new">關於 PipePipe</string>
 <string name="view_on_codeberg">在 CodeBerg 上查看</string>
-<string name="donation_encouragement_new">我已盡力提供最佳使用體驗，但您可以透過捐款使 PipePipe 變得更好。有了足夠收入，我可以投入更多時間開發該項目。</string>
+<string name="donation_encouragement_new">我已盡力提供最佳使用體驗，但您可透過捐款使 PipePipe 變得更好。有了足夠收入，我能投入更多時間開發這項計畫。</string>
 <string name="website_title_new">網站（上游）</string>
 <string name="app_license_title_new">NewPipe 的許可證（上游）</string>
 <string name="duplicate_in_playlist">已灰掉的播放清單已包含此項目。</string>
-<string name="playlist_add_stream_success_duplicate">重複添加 %d 次</string>
+<string name="playlist_add_stream_success_duplicate">重複新增 %d 次</string>
 <string name="youtube_visitor_data_title">YouTube 訪客數據</string>
 <string name="youtube_visitor_data_summary">在所有 YouTube 桌面請求上發送訪客數據 cookie。可用於重現 A/B 測試。</string>
 <string name="percent">百分比</string>
@@ -776,11 +776,11 @@
 <string name="sponsor_block_skip_filler_toast">已跳過填充 / 笑話</string>
 <string name="sponsor_block_toggle_skipping">切換跳過贊助</string>
 <string name="sponsor_block_clear_whitelist_title">清除白名單</string>
-<string name="sponsor_block_clear_whitelist_summary">清除 SponsorBlock 將忽略的上傳者清單。</string>
+<string name="sponsor_block_clear_whitelist_summary">清除 SponsorBlock 將略過的上傳者清單。</string>
 <string name="sponsor_block_enabled_toast">SponsorBlock 已啟用</string>
 <string name="sponsor_block_disabled_toast">SponsorBlock 已停用</string>
 <string name="sponsor_block_whitelist_cleared_toast">白名單已清除</string>
-<string name="sponsor_block_uploader_added_to_whitelist_toast">上傳者已添加至白名單</string>
+<string name="sponsor_block_uploader_added_to_whitelist_toast">上傳者已新增至白名單</string>
 <string name="sponsor_block_uploader_removed_from_whitelist_toast">上傳者已從白名單移除</string>
 <string name="sponsor_block_confirm_clear_whitelist">您確定要清除白名單嗎？</string>
 <string name="sponsor_block_confirm_reset_colors">您確定要重設分類顏色嗎？</string>
@@ -873,7 +873,7 @@
 <string name="use_exoplayer_decoder_fallback_summary">如果您遇到解碼器初始化問題，啟用此選項將使其在主解碼器初始化失敗時回退到優先級較低的解碼器。這可能導致播放性能不如使用主解碼器時好</string>
 <string name="always_use_exoplayer_set_output_surface_workaround_title">一律使用 ExoPlayer 的視訊輸出表層設定解決方案</string>
 <string name="always_use_exoplayer_set_output_surface_workaround_summary">當表層發生變化時，本方案將釋放並重新實施視訊編解碼器，而非直接將表層配置傳送至編解碼器。這個選項已在某些存在該問題的裝置上由 ExoPlayer 使用，僅對 Android 6 以上有效\n\n啟用後可能避免切換目前影片播放器或全螢幕模式時的錯誤</string>
-<string name="high_res">播放和下載（適用進階內容/更高的影片解析度和音訊品質）</string>
+<string name="high_res">播放和下載（適用進階內容 / 更高的影片解析度和音訊品質）</string>
 <string name="ai_subtitle">擷取串流詳細資訊（用於 AI 字幕）</string>
 <string name="cookie_functions_title">存取控制</string>
 <string name="navigate_to">導覽至</string>
