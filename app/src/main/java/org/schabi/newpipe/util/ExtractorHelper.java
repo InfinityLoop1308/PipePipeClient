@@ -154,7 +154,7 @@ public final class ExtractorHelper {
                     try{
                         return StreamInfo.getInfo(NewPipe.getService(serviceId), url);
                     } catch (Exception e){
-                        // return something to avoid crash
+                        System.err.println("Error processing stream item: " + url + " - " + e.getMessage());
                         return new StreamInfo();
                     }
                 }));

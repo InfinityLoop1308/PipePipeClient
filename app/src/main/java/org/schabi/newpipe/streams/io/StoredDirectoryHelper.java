@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import static android.provider.DocumentsContract.Document.COLUMN_DISPLAY_NAME;
+import static android.provider.DocumentsContract.Document.COLUMN_SIZE;
 import static android.provider.DocumentsContract.Root.COLUMN_DOCUMENT_ID;
 import static org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty;
 
@@ -212,8 +213,65 @@ public class StoredDirectoryHelper {
         }
 
         final DocumentFile res = findFileSAFHelper(context, docTree, filename);
-        return res == null ? null : res.getUri();
+        return (res == null || res.length() > 0) ? null : res.getUri();
     }
+
+    /**
+     * Checks if a file with the given base name exists (regardless of extension) and has non-zero length.
+     *
+     * @param baseFilename The base filename without extension (e.g. "test" for "test.m4a")
+     * @return true if a file with this base name exists and has length > 0, false otherwise
+     */
+    public boolean findFileWithoutExtension(final String baseFilename) {
+        if (docTree == null) {
+            // For regular file system
+            File directory = ioTree;
+            File[] matchingFiles = directory.listFiles((dir, name) ->
+                    name.startsWith(baseFilename + ".") || name.equals(baseFilename));
+
+            if (matchingFiles != null) {
+                for (File file : matchingFiles) {
+                    if (file.exists() && file.length() > 0) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        // For Storage Access Framework
+        if (context == null || !docTree.canRead()) {
+            return false;
+        }
+
+        final Uri childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(docTree.getUri(),
+                DocumentsContract.getDocumentId(docTree.getUri()));
+        final String[] projection = {COLUMN_DISPLAY_NAME, COLUMN_DOCUMENT_ID, COLUMN_SIZE};
+        final ContentResolver contentResolver = context.getContentResolver();
+
+        try (Cursor cursor = contentResolver.query(childrenUri, projection, null, null, null)) {
+            if (cursor == null) {
+                return false;
+            }
+
+            while (cursor.moveToNext()) {
+                String name = cursor.getString(0);
+                long size = cursor.getLong(2);
+
+                if (name != null) {
+                    int dotIndex = name.lastIndexOf('.');
+                    String nameWithoutExt = (dotIndex > 0) ? name.substring(0, dotIndex) : name;
+
+                    if (nameWithoutExt.equals(baseFilename) && size > 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
 
     public boolean canWrite() {
         return docTree == null ? ioTree.canWrite() : docTree.canWrite();

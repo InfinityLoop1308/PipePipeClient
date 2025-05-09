@@ -904,5 +904,12 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="fetch_full_playlist_title">Charger la playlist complète</string>
 <string name="fetch_full_playlist_summary">Charger tout le contenu en même temps lors de l\'ouverture des playlists</string>
 <string name="add_filter">Ajouter un filtre</string>
-<string name="no_filters">Pas de filtres</string>
+<string name="no_filters">Aucun filtre</string>
+<string name="stream_processing_notification_title">Traitement des flux</string>
+<string name="stream_processing_starting">Démarrage du traitement des flux...</string>
+<string name="stream_processing_progress">Traitement : %1$d/%2$d</string>
+<string name="stream_processing_failed_count">(Échec : %d)</string>
+<string name="stream_processing_complete">Traitement terminé. Succès : %1$d, Échec : %2$d, Ignoré : %3$d</string>
+<string name="stream_processing_failed">Le traitement des flux a échoué.</string>
+<string name="failed_streams">Flux échoués</string>
 </resources>

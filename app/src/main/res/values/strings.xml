@@ -1054,4 +1054,11 @@
 <string name="fetch_full_playlist_summary">Load all content at once when opening playlists</string>
 <string name="add_filter">Add Filter</string>
 <string name="no_filters">No filters</string>
+<string name="stream_processing_notification_title">Processing Streams</string>
+<string name="stream_processing_starting">Starting stream processing...</string>
+<string name="stream_processing_progress">Processing: %1$d/%2$d</string>
+<string name="stream_processing_failed_count">(Failed: %d)</string>
+    <string name="stream_processing_complete">Processing complete. Success: %1$d, Failed: %2$d, Skipped: %3$d</string>
+<string name="stream_processing_failed">Stream processing failed.</string>
+<string name="failed_streams">Failed Streams</string>
 </resources>

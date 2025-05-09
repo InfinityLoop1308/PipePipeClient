@@ -55,13 +55,14 @@ class Translator:
         self.client = openai.OpenAI(api_key=config.api_key, base_url=config.base_url)
 
     def translate(self, content, language):
+        extra_note = ""
         response = self.client.chat.completions.create(
             model="gpt-4o-2024-08-06",
             response_format={"type": "json_object"},
             messages=[
                 {
                     "role": "user",
-                    "content": f"Translate the values(not including the keys) in the dict to values-{language}. Always preserve new line tokens like \\n. Output result in json format. \n\n{content}",
+                    "content": f"Translate the values(not including the keys) in the dict to values-{language}. Always preserve new line tokens like \\n. Output result in json format. \n\n{content}" + extra_note,
                 }
             ],
             temperature=0,

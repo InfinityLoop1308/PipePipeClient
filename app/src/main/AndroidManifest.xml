@@ -486,6 +486,13 @@
                 android:label="@string/filter_by_channel_title"
                 android:parentActivityName=".settings.SettingsActivity" />
 
+        <activity
+                android:name="org.schabi.newpipe.util.StreamFailureDetailActivity"
+                android:theme="@style/Theme.AppCompat.Dialog.Alert"
+                android:exported="false"
+                android:taskAffinity=""
+                android:excludeFromRecents="true"/>
+
         <!-- opting out of sending metrics to Google in Android System WebView -->
         <meta-data android:name="android.webkit.WebView.MetricsOptOut" android:value="true" />
         <!-- see https://github.com/TeamNewPipe/NewPipe/issues/3947 -->

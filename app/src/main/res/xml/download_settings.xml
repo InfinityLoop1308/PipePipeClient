@@ -35,6 +35,16 @@
         app:iconSpaceReserved="false" />
 
     <ListPreference
+            android:defaultValue="@string/default_file_charset_value"
+            android:entries="@array/settings_filename_charset_name"
+            android:entryValues="@array/settings_filename_charset"
+            android:key="@string/settings_file_charset_key"
+            android:summary="%s"
+            android:title="@string/settings_file_charset_title"
+            app:singleLineTitle="false"
+            app:iconSpaceReserved="false" />
+
+    <ListPreference
         android:defaultValue="@string/downloads_maximum_retry_default"
         android:entries="@array/downloads_maximum_retry_list"
         android:entryValues="@array/downloads_maximum_retry_list"

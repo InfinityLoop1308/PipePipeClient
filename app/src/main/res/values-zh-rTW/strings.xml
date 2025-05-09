@@ -1005,5 +1005,12 @@
 <string name="fetch_full_playlist_title">載入完整播放清單</string>
 <string name="fetch_full_playlist_summary">開啟播放清單時一次載入所有內容</string>
 <string name="add_filter">新增篩選器</string>
-<string name="no_filters">沒有篩選器</string>
+<string name="no_filters">無篩選器</string>
+<string name="stream_processing_notification_title">正在處理串流</string>
+<string name="stream_processing_starting">正在開始串流處理...</string>
+<string name="stream_processing_progress">處理中：%1$d/%2$d</string>
+<string name="stream_processing_failed_count">（失敗：%d）</string>
+<string name="stream_processing_complete">處理完成。成功：%1$d，失敗：%2$d，跳過：%3$d</string>
+<string name="stream_processing_failed">串流處理失敗。</string>
+<string name="failed_streams">失敗的串流</string>
 </resources>

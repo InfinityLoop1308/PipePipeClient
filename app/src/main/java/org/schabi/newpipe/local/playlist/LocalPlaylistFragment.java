@@ -67,8 +67,6 @@ import java.util.stream.Collectors;
 
 import static org.schabi.newpipe.error.ErrorUtil.showUiErrorSnackbar;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
-import static org.schabi.newpipe.util.SparseItemUtil.fetchStreamInfoAndSaveToDatabase;
-import static org.schabi.newpipe.util.SparseItemUtil.fetchStreamInfoAndSaveToDatabaseWithoutToast;
 import static org.schabi.newpipe.util.ThemeHelper.shouldUseGridLayout;
 
 public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistStreamEntry>, Void> implements BackPressable {
@@ -104,8 +102,7 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
     private boolean autoBackgroundPlaying = false;
     private boolean randomBackgroundPlaying = false;
 
-    private Disposable videoDownloadDisposable;
-    private Disposable audioDownloadDisposable;
+    private Disposable disposable;
     private EditText editText;
     private View searchClear;
     private TextWatcher textWatcher = new TextWatcher() {
@@ -512,39 +509,24 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             }
             editText.addTextChangedListener(textWatcher);
         } else if (item.getItemId() == R.id.menu_item_download_all) {
-            // add a alert of warning that this func is still beta
             AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-            if (itemListAdapter.getItemsList().size() > 50) {
-                builder.setTitle(getString(R.string.warning))
-                        .setMessage(getString(R.string.download_temp_warning))
-                        .setPositiveButton(getString(R.string.ok), null);
-                AlertDialog dialog = builder.create();
-                dialog.show();
-                return true;
-            }
-
-
 
             builder = new AlertDialog.Builder(requireContext());
             builder.setMessage(R.string.download_all_message)
                     .setTitle(R.string.download_all);
-            // create aa lambda
 
             builder.setPositiveButton(R.string.video, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            videoDownloadDisposable = playlistManager.getPlaylistStreams(playlistId)
+                            disposable = playlistManager.getPlaylistStreams(playlistId)
                                     .observeOn(Schedulers.io())
                                     .subscribe(streams -> {
-                                        videoDownloadDisposable.dispose();
-                                        for (PlaylistStreamEntry playlistStreamEntry : streams) {
-                                            StreamInfoItem infoItem = playlistStreamEntry.toStreamInfoItem();
-                                            fetchStreamInfoAndSaveToDatabaseWithoutToast(requireContext(), infoItem.getServiceId(),
-                                                    infoItem.getUrl(), info -> {
-                                                        if (info != null) {
-                                                            new DirectDownloader(requireContext(), info, DirectDownloader.DownloadType.VIDEO);
-                                                        }
-                                                    });
-                                        }
+                                        disposable.dispose();
+                                         StreamProcessor streamProcessor = new StreamProcessor();
+                                         streamProcessor.processStreamsSequentiallyWithProgress(requireContext(),
+                                                 streams.stream()
+                                                 .map(PlaylistStreamEntry::toStreamInfoItem)
+                                                 .collect(Collectors.toList()), DirectDownloader.DownloadType.VIDEO);
+
                                     }, throwable -> {
                                     });
                         }
@@ -552,19 +534,16 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             );
             builder.setNegativeButton(R.string.audio, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    audioDownloadDisposable = playlistManager.getPlaylistStreams(playlistId)
+                    disposable = playlistManager.getPlaylistStreams(playlistId)
                             .observeOn(Schedulers.io())
                             .subscribe(streams -> {
-                                audioDownloadDisposable.dispose();
-                                for (PlaylistStreamEntry playlistStreamEntry : streams) {
-                                    StreamInfoItem infoItem = playlistStreamEntry.toStreamInfoItem();
-                                    fetchStreamInfoAndSaveToDatabaseWithoutToast(requireContext(), infoItem.getServiceId(),
-                                            infoItem.getUrl(), info -> {
-                                                if (info != null) {
-                                                    new DirectDownloader(requireContext(), info, DirectDownloader.DownloadType.AUDIO);
-                                                }
-                                            });
-                                }
+                                disposable.dispose();
+                                StreamProcessor streamProcessor = new StreamProcessor();
+                                streamProcessor.processStreamsSequentiallyWithProgress(requireContext(),
+                                        streams.stream()
+                                                .map(PlaylistStreamEntry::toStreamInfoItem)
+                                                .collect(Collectors.toList()), DirectDownloader.DownloadType.AUDIO);
+
                             }, throwable -> {
                             });
                 }

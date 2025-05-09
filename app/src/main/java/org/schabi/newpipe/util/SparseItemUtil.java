@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import io.reactivex.rxjava3.core.Single;
 import org.schabi.newpipe.NewPipeDatabase;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
@@ -130,20 +131,20 @@ public final class SparseItemUtil {
                 ));
     }
 
-    public static void fetchStreamInfoAndSaveToDatabaseWithoutToast(@NonNull final Context context,
-                                                        final int serviceId,
-                                                        @NonNull final String url,
-                                                        final Consumer<StreamInfo> callback) {
+    public static Single<StreamInfo> fetchStreamInfoAndSaveToDatabaseRx(
+            @NonNull final Context context,
+            final int serviceId,
+            @NonNull final String url) {
 
-        ExtractorHelper.getStreamInfoWithoutException(serviceId, url, false)
+        return ExtractorHelper.getStreamInfoWithoutException(serviceId, url, false)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe(result -> {
-                    if(result.getServiceId() == -1) {
-                        return;
+                .flatMap(result -> {
+                    if (result.getServiceId() == -1) {
+                        return Single.just(result);
                     }
-                    // save to database in the background (not on main thread)
-                    Completable.fromAction(() -> NewPipeDatabase.getInstance(context)
+                    // save to database in the background
+                    return Completable.fromAction(() -> NewPipeDatabase.getInstance(context)
                                     .streamDAO().upsert(new StreamEntity(result)))
                             .subscribeOn(Schedulers.io())
                             .observeOn(Schedulers.io())
@@ -151,13 +152,11 @@ public final class SparseItemUtil {
                                     ErrorUtil.createNotification(context,
                                             new ErrorInfo(throwable, UserAction.REQUESTED_STREAM,
                                                     "Saving stream info to database", result)))
-                            .subscribe();
-
-                    // call callback on main thread with the obtained result
-                    callback.accept(result);
-                }, throwable -> ErrorUtil.createNotification(context,
-                        new ErrorInfo(throwable, UserAction.REQUESTED_STREAM,
-                                "Loading stream info: " + url, serviceId)
-                ));
+                            .andThen(Single.just(result)); // Emit the result after saving
+                })
+                .doOnError(throwable ->
+                        System.err.println("Error processing stream item: " + url + " - " + throwable.getMessage())
+                );
     }
+
 }

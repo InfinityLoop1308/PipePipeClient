@@ -10,7 +10,7 @@ import org.schabi.newpipe.R;
 import java.util.regex.Pattern;
 
 public final class FilenameUtils {
-    private static final String CHARSET_MOST_SPECIAL = "[\\n\\r|?*<\":\\\\>/']+";
+    private static final String CHARSET_MOST_SPECIAL = "[\\n\\r|?*<:\\\\>/]+";
     private static final String CHARSET_ONLY_LETTERS_AND_DIGITS = "[^\\w\\d]+";
 
     private FilenameUtils() { }
@@ -31,7 +31,8 @@ public final class FilenameUtils {
         final String defaultCharset = context.getString(R.string.default_file_charset_value);
 
         final String replacementChar = "_";
-        String selectedCharset = null;
+        String selectedCharset = sharedPreferences.getString(
+                context.getString(R.string.settings_file_charset_key), null);
 
         final String charset;
 

@@ -872,4 +872,11 @@
 <string name="fetch_full_playlist_summary">Carica tutti i contenuti contemporaneamente quando apri le playlist</string>
 <string name="add_filter">Aggiungi filtro</string>
 <string name="no_filters">Nessun filtro</string>
+<string name="stream_processing_notification_title">Elaborazione dei flussi</string>
+<string name="stream_processing_starting">Avvio dell\'elaborazione dei flussi...</string>
+<string name="stream_processing_progress">Elaborazione: %1$d/%2$d</string>
+<string name="stream_processing_failed_count">(Falliti: %d)</string>
+<string name="stream_processing_complete">Elaborazione completata. Successo: %1$d, Fallito: %2$d, Saltato: %3$d</string>
+<string name="stream_processing_failed">Elaborazione dei flussi fallita.</string>
+<string name="failed_streams">Stream falliti</string>
 </resources>

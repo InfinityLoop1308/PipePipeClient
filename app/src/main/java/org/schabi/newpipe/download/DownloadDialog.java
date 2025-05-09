@@ -708,7 +708,7 @@ public class DownloadDialog extends DialogFragment
     }
 
     private String getNameEditText() {
-        final String str = dialogBinding.fileName.getText().toString().trim();
+        final String str = dialogBinding.fileName.getText().toString();
 
         return FilenameUtils.createFilename(context, str.isEmpty() ? currentInfo.getName() : str);
     }

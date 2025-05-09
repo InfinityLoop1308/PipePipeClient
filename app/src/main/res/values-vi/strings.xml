@@ -1058,4 +1058,11 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="fetch_full_playlist_summary">Tải tất cả nội dung cùng lúc khi mở danh sách phát</string>
 <string name="add_filter">Thêm bộ lọc</string>
 <string name="no_filters">Không có bộ lọc</string>
+<string name="stream_processing_notification_title">Đang xử lý luồng</string>
+<string name="stream_processing_starting">Bắt đầu xử lý luồng...</string>
+<string name="stream_processing_progress">Đang xử lý: %1$d/%2$d</string>
+<string name="stream_processing_failed_count">(Thất bại: %d)</string>
+<string name="stream_processing_complete">Xử lý hoàn tất. Thành công: %1$d, Thất bại: %2$d, Bỏ qua: %3$d</string>
+<string name="stream_processing_failed">Xử lý luồng thất bại.</string>
+<string name="failed_streams">Luồng không thành công</string>
 </resources>

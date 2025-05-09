@@ -1014,4 +1014,11 @@
 <string name="fetch_full_playlist_summary">打开播放列表时一次性加载所有内容</string>
 <string name="add_filter">添加过滤器</string>
 <string name="no_filters">没有过滤器</string>
+<string name="stream_processing_notification_title">正在处理流</string>
+<string name="stream_processing_starting">开始流处理...</string>
+<string name="stream_processing_progress">处理: %1$d/%2$d</string>
+<string name="stream_processing_failed_count">(失败: %d)</string>
+<string name="stream_processing_complete">处理完成。成功：%1$d，失败：%2$d，跳过：%3$d</string>
+<string name="stream_processing_failed">流处理失败。</string>
+<string name="failed_streams">失败的流</string>
 </resources>

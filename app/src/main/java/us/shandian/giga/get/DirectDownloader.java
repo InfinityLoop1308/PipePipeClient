@@ -6,13 +6,9 @@ import android.util.SparseArray;
 import androidx.preference.PreferenceManager;
 import icepick.State;
 import org.schabi.newpipe.R;
-import org.schabi.newpipe.error.ErrorInfo;
-import org.schabi.newpipe.error.ErrorUtil;
-import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.stream.*;
-import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.streams.io.StoredDirectoryHelper;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
 import org.schabi.newpipe.util.ListHelper;
@@ -23,9 +19,11 @@ import us.shandian.giga.service.DownloadManager;
 import us.shandian.giga.service.DownloadManagerService;
 
 import java.io.IOException;
-import java.io.OutputStream; // Keep for BiliBili video case if it writes to outputstream directly
+// Keep for BiliBili video case if it writes to outputstream directly
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.schabi.newpipe.util.FilenameUtils.createFilename;
 
 public class DirectDownloader {
 
@@ -40,9 +38,6 @@ public class DirectDownloader {
     int selectedVideoIndex = 0;
     @State
     int selectedAudioIndex = 0;
-    private StoredDirectoryHelper mainStorageAudio = null;
-    private StoredDirectoryHelper mainStorageVideo = null;
-    private DownloadManager downloadManager = null;
 
     private StreamItemAdapter<AudioStream, Stream> audioStreamsAdapter;
     private StreamItemAdapter<VideoStream, AudioStream> videoStreamsAdapter;
@@ -120,16 +115,11 @@ public class DirectDownloader {
                 secondaryStreams);
         this.audioStreamsAdapter = new StreamItemAdapter<>(context, wrappedAudioStreams);
 
-        String filenameTmp = currentInfo.getName().concat(".");
+        String filenameTmp = createFilename(context, currentInfo.getName()).concat(".");
         StoredDirectoryHelper mainStorage;
         MediaFormat format;
         String mimeTmp;
         String uri;
-        boolean shouldUseAudioStorage = false;
-        if(audioStreamsAdapter.getAll().size() == 0) {
-            type = DownloadType.VIDEO;
-            shouldUseAudioStorage = true;
-        }
         switch (type) {
             case AUDIO:
                 format = audioStreamsAdapter.getItem(selectedAudioIndex).getFormat();
@@ -159,7 +149,7 @@ public class DirectDownloader {
                     throw new RuntimeException("No download path selected");
                 }
                 try {
-                    mainStorage = new StoredDirectoryHelper(context, Uri.parse(uri), shouldUseAudioStorage? DownloadManager.TAG_AUDIO: DownloadManager.TAG_VIDEO);
+                    mainStorage = new StoredDirectoryHelper(context, Uri.parse(uri), DownloadManager.TAG_VIDEO);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -171,17 +161,8 @@ public class DirectDownloader {
         StoredFileHelper storage;
         String filename = filenameTmp;
         String mime = mimeTmp;
-        try {
-            if (targetFile == null) {
-                // the file does not exist, but it is probably used in a pending download
-                storage = new StoredFileHelper(mainStorage.getUri(), filename, mime,
-                        mainStorage.getTag());
-            } else {
-                return; // we don't re-download files that already exist
-            }
-        } catch (final Exception e) {
-            ErrorUtil.createNotification(context,
-                    new ErrorInfo(e, UserAction.DOWNLOAD_FAILED, "Getting storage"));
+        if (targetFile != null) {
+            return;
         }
         if (!mainStorage.mkdirs()) {
             // the directory does not exist and we can't create it

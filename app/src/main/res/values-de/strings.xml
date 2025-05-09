@@ -952,4 +952,11 @@
 <string name="fetch_full_playlist_summary">Laden Sie beim Öffnen von Playlists alle Inhalte auf einmal</string>
 <string name="add_filter">Filter hinzufügen</string>
 <string name="no_filters">Keine Filter</string>
+<string name="stream_processing_notification_title">Verarbeitung von Streams</string>
+<string name="stream_processing_starting">Stream-Verarbeitung wird gestartet...</string>
+<string name="stream_processing_progress">Verarbeitung: %1$d/%2$d</string>
+<string name="stream_processing_failed_count">(Fehlgeschlagen: %d)</string>
+<string name="stream_processing_complete">Verarbeitung abgeschlossen. Erfolgreich: %1$d, Fehlgeschlagen: %2$d, Übersprungen: %3$d</string>
+<string name="stream_processing_failed">Stream-Verarbeitung fehlgeschlagen.</string>
+<string name="failed_streams">Fehlgeschlagene Streams</string>
 </resources>
