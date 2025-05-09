@@ -23,7 +23,7 @@ import us.shandian.giga.service.DownloadManager;
 import us.shandian.giga.service.DownloadManagerService;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.OutputStream; // Keep for BiliBili video case if it writes to outputstream directly
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,25 +37,19 @@ public class DirectDownloader {
     @State
     StreamItemAdapter.StreamSizeWrapper<VideoStream> wrappedVideoStreams = StreamItemAdapter.StreamSizeWrapper.empty();
     @State
-    StreamItemAdapter.StreamSizeWrapper<SubtitlesStream> wrappedSubtitleStreams = StreamItemAdapter.StreamSizeWrapper.empty();
-    @State
     int selectedVideoIndex = 0;
     @State
     int selectedAudioIndex = 0;
-    @State
-    int selectedSubtitleIndex = 0;
     private StoredDirectoryHelper mainStorageAudio = null;
     private StoredDirectoryHelper mainStorageVideo = null;
     private DownloadManager downloadManager = null;
 
     private StreamItemAdapter<AudioStream, Stream> audioStreamsAdapter;
     private StreamItemAdapter<VideoStream, AudioStream> videoStreamsAdapter;
-    private StreamItemAdapter<SubtitlesStream, Stream> subtitleStreamsAdapter;
 
     public enum DownloadType {
         AUDIO,
-        VIDEO,
-        SUBTITLES
+        VIDEO
     }
 
     private DownloadType type;
@@ -69,7 +63,6 @@ public class DirectDownloader {
         this.setVideoStreams(streamsList);
         this.setSelectedVideoStream(selectedStreamIndex);
         this.setAudioStreams(info.getAudioStreams());
-        this.setSubtitleStreams(info.getSubtitles());
         this.setInfo(info);
         this.type = type;
         this.context = context;
@@ -96,15 +89,6 @@ public class DirectDownloader {
         this.wrappedVideoStreams = wvs;
     }
 
-    public void setSubtitleStreams(final List<SubtitlesStream> subtitleStreams) {
-        setSubtitleStreams(new StreamItemAdapter.StreamSizeWrapper<>(subtitleStreams, context));
-    }
-
-    public void setSubtitleStreams(
-            final StreamItemAdapter.StreamSizeWrapper<SubtitlesStream> wss) {
-        this.wrappedSubtitleStreams = wss;
-    }
-
     public void setSelectedVideoStream(final int svi) {
         this.selectedVideoIndex = svi;
     }
@@ -113,9 +97,6 @@ public class DirectDownloader {
         this.selectedAudioIndex = sai;
     }
 
-    public void setSelectedSubtitleStream(final int ssi) {
-        this.selectedSubtitleIndex = ssi;
-    }
 
     public void init(){
         final SparseArray<SecondaryStreamHelper<AudioStream>> secondaryStreams
@@ -138,7 +119,6 @@ public class DirectDownloader {
         this.videoStreamsAdapter = new StreamItemAdapter<>(context, wrappedVideoStreams,
                 secondaryStreams);
         this.audioStreamsAdapter = new StreamItemAdapter<>(context, wrappedAudioStreams);
-        this.subtitleStreamsAdapter = new StreamItemAdapter<>(context, wrappedSubtitleStreams);
 
         String filenameTmp = currentInfo.getName().concat(".");
         StoredDirectoryHelper mainStorage;
@@ -180,20 +160,6 @@ public class DirectDownloader {
                 }
                 try {
                     mainStorage = new StoredDirectoryHelper(context, Uri.parse(uri), shouldUseAudioStorage? DownloadManager.TAG_AUDIO: DownloadManager.TAG_VIDEO);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                break;
-            case SUBTITLES:
-                format = subtitleStreamsAdapter.getItem(selectedSubtitleIndex).getFormat();
-                mimeTmp = format.mimeType;
-                filenameTmp += (format == MediaFormat.TTML ? MediaFormat.SRT : format).suffix;
-                uri = PreferenceManager.getDefaultSharedPreferences(context).getString(context.getString(R.string.download_path_video_key), "");
-                if (uri.isEmpty()) {
-                    throw new RuntimeException("No download path selected");
-                }
-                try {
-                    mainStorage = new StoredDirectoryHelper(context, Uri.parse(uri), DownloadManager.TAG_VIDEO);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -288,28 +254,6 @@ public class DirectDownloader {
                     if (secondary.getSizeInBytes() > 0 && videoSize > 0) {
                         nearLength = secondary.getSizeInBytes() + videoSize;
                     }
-                }
-                break;
-            case SUBTITLES:
-                threads = 1; // use unique thread for subtitles due small file size
-                kind = 's';
-                selectedStream = subtitleStreamsAdapter.getItem(selectedSubtitleIndex);
-                if(currentInfo.getServiceId() == ServiceList.BiliBili.getServiceId()){
-                    try {
-                        OutputStream outputStream = storage.context.getContentResolver().openOutputStream(storage.getUri());
-                        outputStream.write(selectedStream.getContent().getBytes());
-                        outputStream.close();
-                        return;
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                if (selectedStream.getFormat() == MediaFormat.TTML) {
-                    psName = Postprocessing.ALGORITHM_TTML_CONVERTER;
-                    psArgs = new String[]{
-                            selectedStream.getFormat().getSuffix(),
-                            "false" // ignore empty frames
-                    };
                 }
                 break;
             default:
