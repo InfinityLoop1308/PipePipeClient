@@ -52,12 +52,12 @@
         app:singleLineTitle="false"
         app:iconSpaceReserved="false" />
 
-    <SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:key="@string/downloads_queue_limit"
-        android:summary="@string/enable_queue_limit_desc"
-        android:title="@string/enable_queue_limit"
-        app:singleLineTitle="false"
-        app:iconSpaceReserved="false" />
+<!--    <SwitchPreferenceCompat-->
+<!--        android:defaultValue="true"-->
+<!--        android:key="@string/downloads_queue_limit"-->
+<!--        android:summary="@string/enable_queue_limit_desc"-->
+<!--        android:title="@string/enable_queue_limit"-->
+<!--        app:singleLineTitle="false"-->
+<!--        app:iconSpaceReserved="false" />-->
 
 </PreferenceScreen>

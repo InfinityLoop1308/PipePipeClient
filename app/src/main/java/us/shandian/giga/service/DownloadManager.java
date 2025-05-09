@@ -47,7 +47,7 @@ public class DownloadManager {
 
     int mPrefMaxRetry;
     boolean mPrefMeteredDownloads;
-    boolean mPrefQueueLimit;
+    boolean mPrefQueueLimit = true;
     private boolean mSelfMissionsControl;
 
     StoredDirectoryHelper mMainStorageAudio;
