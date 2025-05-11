@@ -10,7 +10,7 @@ import org.schabi.newpipe.R;
 import java.util.regex.Pattern;
 
 public final class FilenameUtils {
-    private static final String CHARSET_MOST_SPECIAL = "[\\n\\r|?*<:\\\\>/]+";
+    private static final String CHARSET_MOST_SPECIAL = "[\\n\\r|?*<\":\\\\>/]+";
     private static final String CHARSET_ONLY_LETTERS_AND_DIGITS = "[^\\w\\d]+";
 
     private FilenameUtils() { }
