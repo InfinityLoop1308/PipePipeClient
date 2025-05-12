@@ -975,4 +975,6 @@
 <string name="stream_processing_complete">処理が完了しました。成功: %1$d、失敗: %2$d、スキップ: %3$d</string>
 <string name="stream_processing_failed">ストリーム処理に失敗しました。</string>
 <string name="failed_streams">失敗したストリーム</string>
+<string name="auto_ellipsize_summary">タイトルやコメントが長すぎる場合は自動的に短縮します</string>
+<string name="auto_ellipsize_title">自動省略</string>
 </resources>

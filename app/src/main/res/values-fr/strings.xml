@@ -912,4 +912,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="stream_processing_complete">Traitement terminé. Succès : %1$d, Échec : %2$d, Ignoré : %3$d</string>
 <string name="stream_processing_failed">Le traitement des flux a échoué.</string>
 <string name="failed_streams">Flux échoués</string>
+<string name="auto_ellipsize_summary">Raccourcir automatiquement le titre et les commentaires qui sont trop longs</string>
+<string name="auto_ellipsize_title">Ellipsage automatique</string>
 </resources>

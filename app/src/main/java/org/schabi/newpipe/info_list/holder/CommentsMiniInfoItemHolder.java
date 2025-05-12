@@ -1,5 +1,6 @@
 package org.schabi.newpipe.info_list.holder;
 
+import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.text.util.LinkifyCompat;
 
+import androidx.preference.PreferenceManager;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.extractor.InfoItem;
@@ -50,6 +52,8 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
     private String commentText;
     private String streamUrl;
 
+    private boolean shouldEllipsize = false;
+
     CommentsMiniInfoItemHolder(final InfoItemBuilder infoItemBuilder, final int layoutId,
                                final ViewGroup parent) {
         super(infoItemBuilder, layoutId, parent);
@@ -65,6 +69,9 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
                 .getResources().getDimension(R.dimen.comments_horizontal_padding);
         commentVerticalPadding = (int) infoItemBuilder.getContext()
                 .getResources().getDimension(R.dimen.comments_vertical_padding);
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(parent.getContext());
+        shouldEllipsize = pref.getBoolean(parent.getContext().getString(R.string.auto_ellipsize_key), false);
     }
 
     public CommentsMiniInfoItemHolder(final InfoItemBuilder infoItemBuilder,
@@ -101,11 +108,14 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
         itemContentView.setText(commentText, TextView.BufferType.SPANNABLE);
         itemContentView.setOnTouchListener(CommentTextOnTouchListener.INSTANCE);
 
-        if (itemContentView.getLineCount() == 0) {
-            itemContentView.post(this::ellipsize);
-        } else {
-            ellipsize();
+        if (shouldEllipsize) {
+            if (itemContentView.getLineCount() == 0) {
+                itemContentView.post(this::ellipsize);
+            } else {
+                ellipsize();
+            }
         }
+
 
         if (item.getLikeCount() >= 0) {
             itemLikesCountView.setText(
@@ -200,7 +210,7 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
     private void ellipsize() {
         boolean hasEllipsis = false;
 
-        if (false) {
+        if (itemContentView.getLineCount() > COMMENT_DEFAULT_LINES) {
             final int endOfLastLine = itemContentView
                     .getLayout()
                     .getLineEnd(COMMENT_DEFAULT_LINES - 1);
@@ -224,7 +234,7 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
 
     private void toggleEllipsize() {
         if (itemContentView.getText().toString().equals(commentText)) {
-            if (false) {
+            if (itemContentView.getLineCount() > COMMENT_DEFAULT_LINES) {
                 ellipsize();
             }
         } else {

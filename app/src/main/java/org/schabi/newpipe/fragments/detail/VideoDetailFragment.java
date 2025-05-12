@@ -1715,6 +1715,9 @@ public final class VideoDetailFragment
     @Override
     public void showLoading() {
 
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        boolean shouldEllipsize = prefs.getBoolean(activity.getString(R.string.auto_ellipsize_key), false);
+
         super.showLoading();
 
         //if data is already cached, transition from VISIBLE -> INVISIBLE -> VISIBLE is not required
@@ -1728,7 +1731,7 @@ public final class VideoDetailFragment
         animate(binding.positionView, false, 50);
 
         binding.detailVideoTitleView.setText(title);
-        binding.detailVideoTitleView.setMaxLines(1);
+        binding.detailVideoTitleView.setMaxLines(shouldEllipsize? 1: 10);
         animate(binding.detailVideoTitleView, true, 0);
 
         binding.detailToggleSecondaryControlsView.setVisibility(View.GONE);

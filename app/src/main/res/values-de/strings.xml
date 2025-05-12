@@ -959,4 +959,6 @@
 <string name="stream_processing_complete">Verarbeitung abgeschlossen. Erfolgreich: %1$d, Fehlgeschlagen: %2$d, Übersprungen: %3$d</string>
 <string name="stream_processing_failed">Stream-Verarbeitung fehlgeschlagen.</string>
 <string name="failed_streams">Fehlgeschlagene Streams</string>
+<string name="auto_ellipsize_summary">Titel und Kommentare, die zu lang sind, automatisch kürzen</string>
+<string name="auto_ellipsize_title">Automatisch Ellipsen</string>
 </resources>

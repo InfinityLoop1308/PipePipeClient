@@ -1021,4 +1021,6 @@
 <string name="stream_processing_complete">处理完成。成功：%1$d，失败：%2$d，跳过：%3$d</string>
 <string name="stream_processing_failed">流处理失败。</string>
 <string name="failed_streams">失败的流</string>
+<string name="auto_ellipsize_summary">自动缩短过长的标题和评论</string>
+<string name="auto_ellipsize_title">自动省略</string>
 </resources>

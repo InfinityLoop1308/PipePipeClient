@@ -1013,4 +1013,6 @@
 <string name="stream_processing_complete">處理完成。成功：%1$d，失敗：%2$d，跳過：%3$d</string>
 <string name="stream_processing_failed">串流處理失敗。</string>
 <string name="failed_streams">失敗的串流</string>
+<string name="auto_ellipsize_summary">自動縮短過長的標題和評論</string>
+<string name="auto_ellipsize_title">自動省略</string>
 </resources>
