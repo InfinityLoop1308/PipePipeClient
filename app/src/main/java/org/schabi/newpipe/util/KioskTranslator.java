@@ -89,8 +89,6 @@ public final class KioskTranslator {
                 return R.drawable.ic_stars;
             case "Radio":
                 return R.drawable.ic_radio;
-            case "Recommended Podcasts":
-                return R.drawable.ic_podcast;
             default:
                 return 0;
         }
