@@ -1063,4 +1063,5 @@
 <string name="failed_streams">Failed Streams</string>
 <string name="auto_ellipsize_summary">Automatically shorten title and comments that is too long</string>
 <string name="auto_ellipsize_title">Auto Ellipsize</string>
+<string name="announcement">Announcement</string>
 </resources>

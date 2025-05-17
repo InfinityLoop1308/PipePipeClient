@@ -961,4 +961,5 @@
 <string name="failed_streams">Fehlgeschlagene Streams</string>
 <string name="auto_ellipsize_summary">Titel und Kommentare, die zu lang sind, automatisch kürzen</string>
 <string name="auto_ellipsize_title">Automatisch Ellipsen</string>
+<string name="announcement">Ankündigung</string>
 </resources>

@@ -20,6 +20,7 @@
 
 package org.schabi.newpipe;
 
+import static org.schabi.newpipe.util.AnnouncementParser.parseContentsBeforeId;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
 import android.app.AlertDialog;
@@ -62,6 +63,7 @@ import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
 import org.schabi.newpipe.extractor.services.peertube.PeertubeInstance;
 import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.fragments.MainFragment;
@@ -76,6 +78,7 @@ import org.schabi.newpipe.util.*;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.views.FocusOverlayView;
 
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -235,6 +238,27 @@ public class MainActivity extends AppCompatActivity {
                 prefs.edit().putString(getString(R.string.youtube_po_token_key), "").apply();
             }
         }
+
+        String lastAnnouncementId = prefs.getString("last_announcement_id", null);
+        try {
+            NewPipe.getDownloader().getAsync("https://github.com/InfinityLoop1308/PipePipe/wiki/Announcement", resp -> {
+                AnnouncementParser.ParsedResult result = parseContentsBeforeId(resp.responseBody(), lastAnnouncementId);
+                if(result.latestId != null) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(() -> {
+                        AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
+                        builder3.setMessage(result.contents);
+                        builder3.setTitle(R.string.announcement);
+                        builder3.setPositiveButton(R.string.ok, (dialog, which) -> {
+                            prefs.edit().putString("last_announcement_id", result.latestId).apply();
+                        });
+                        builder3.show();
+                    });
+                }
+            });
+        } catch (Exception ignore) {
+        }
+
 
         int isFirstRun = prefs.getInt("isFirstRun", 0);
         // if is First run and update checker is not enabled, show a dialog to ask if user want to enable update checker

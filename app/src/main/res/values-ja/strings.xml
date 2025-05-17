@@ -977,4 +977,5 @@
 <string name="failed_streams">失敗したストリーム</string>
 <string name="auto_ellipsize_summary">タイトルやコメントが長すぎる場合は自動的に短縮します</string>
 <string name="auto_ellipsize_title">自動省略</string>
+<string name="announcement">お知らせ</string>
 </resources>
