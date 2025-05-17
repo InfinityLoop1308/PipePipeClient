@@ -356,9 +356,9 @@ public class Utility {
                 e.printStackTrace();
             }
         }
-        DocumentFile docTree = storedFileHelper.docTree;
-        DocumentFile[] docFiles = docTree.listFiles();
         try{
+            DocumentFile docTree = storedFileHelper.docTree;
+            DocumentFile[] docFiles = docTree.listFiles();
             for (DocumentFile docFile : docFiles) {
                 if (docFile.getName().equals(storedFileHelper.getName().replace(".mp4", ".tmp.mp4"))
                         || docFile.getName().equals(storedFileHelper.getName().replace(".mp4", ".tmp"))) {
