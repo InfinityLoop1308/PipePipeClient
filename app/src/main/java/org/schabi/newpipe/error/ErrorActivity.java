@@ -68,7 +68,7 @@ public class ErrorActivity extends AppCompatActivity {
     // BUNDLE TAGS
     public static final String ERROR_INFO = "error_info";
 
-    public static final String ERROR_EMAIL_ADDRESS = "jfv9ou19@anonaddy.me";
+    public static final String ERROR_EMAIL_ADDRESS = "feedback@pipepipe.dev";
     public static final String ERROR_EMAIL_SUBJECT = "Exception in ";
 
     public static final String ERROR_GITHUB_ISSUE_URL
@@ -241,7 +241,7 @@ public class ErrorActivity extends AppCompatActivity {
      * @return the casted return activity or null
      */
     @Nullable
-    static Class<? extends Activity> getReturnActivity(final Class<?> returnActivity) {
+    static Class<? extends Activity> getReturnActiIssuesvity(final Class<?> returnActivity) {
         Class<? extends Activity> checkedReturnActivity = null;
         if (returnActivity != null) {
             if (Activity.class.isAssignableFrom(returnActivity)) {
