@@ -863,7 +863,7 @@
 <string name="sponsor_promote">サポーターになる</string>
 <string name="random_play_order_title">ランダムな順序</string>
 <string name="random_play_order_summary">プレイリストをシャッフルする</string>
-<string name="update_log">### バグ修正\n- NewPipeからデータをインポートできません \n- 字幕の翻訳がありません (YouTube) \n- 特定の条件下での予期せぬクラッシュ (YouTube)</string>
+<string name="update_log">### 新機能\n- サイズ制限なしでローカルプレイリスト全体のダウンロードをサポート\n- ダウンロードの安定性を向上\n- デフォルトで完全なタイトルとコメントを表示するかどうかを制御する設定を追加\n\n### バグ修正\n- タイトルが常に英語に翻訳される（YouTube）\n- NewPipeから移行した際にライブタブが有効にならない\n- NewPipeからのインポートが特定の条件下で失敗\n- オーディオのバッチダウンロードが失敗する（NicoNico）\n- 特定の条件下で動画をダウンロードすると予期しないクラッシュが発生する（BiliBili）\n- ノートの返信が正しく解析されないことがある（BiliBili）\n\n### UI\n- タブレットでより大きなグリッドアイテムサイズを使用する4.3.0の変更を元に戻す\n- コメント返信UIを改善\n- 「おすすめポッドキャスト」を削除\n\n### 挙動\n- デフォルトで弾丸コメント/ライブチャットを無効にする\n\n</string>
 <string name="speeding_playback_title">長時間押は再生速度を速めることができます</string>
 <string name="view_on_github">GitHubで表示</string>
 <string name="donation_dialog_title">プロジェクトをサポートする</string>

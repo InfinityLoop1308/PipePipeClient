@@ -953,7 +953,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sponsor_promote">Trở thành người ủng hộ</string>
 <string name="random_play_order_title">Trình tự ngẫu nhiên</string>
 <string name="random_play_order_summary">Khi sử dụng Chế độ Phát Nhạc, xáo trộn danh sách phát</string>
-<string name="update_log">### Sửa Lỗi\n- Không thể nhập dữ liệu từ NewPipe \n- Thiếu bản dịch phụ đề (YouTube) \n- Sập ứng dụng bất ngờ trong một số điều kiện (YouTube)</string>
+<string name="update_log">### Tính năng mới\n- Hỗ trợ tải xuống toàn bộ danh sách phát cục bộ mà không giới hạn kích thước\n- Cải thiện độ ổn định khi tải xuống\n- Thêm cài đặt để kiểm soát việc hiển thị tiêu đề và bình luận đầy đủ theo mặc định\n\n### Sửa lỗi\n- Tiêu đề luôn được dịch sang tiếng Anh (YouTube)\n- Các tab trực tiếp không được kích hoạt khi di chuyển từ NewPipe\n- Nhập từ NewPipe thất bại trong một số điều kiện nhất định\n- Tải xuống hàng loạt thất bại cho âm thanh (NicoNico)\n- Sự cố không mong muốn khi tải xuống video trong một số điều kiện nhất định (BiliBili)\n- Phản hồi ghi chú đôi khi không được phân tích đúng cách (BiliBili)\n\n### Giao diện người dùng\n- Hoàn nguyên thay đổi trong 4.3.0 sử dụng kích thước mục lưới lớn hơn trên máy tính bảng\n- Cải thiện giao diện phản hồi bình luận \n- Xóa "Podcast được đề xuất"\n\n### Hành vi\n- Vô hiệu hóa bình luận dạng bullet/trò chuyện trực tiếp theo mặc định\n\n</string>
 <string name="speeding_playback_title">Nhấn và giữ để tăng tốc độ phát lại</string>
 <string name="view_on_github">Xem trên GitHub</string>
 <string name="donation_dialog_title">Hỗ trợ Dự án</string>

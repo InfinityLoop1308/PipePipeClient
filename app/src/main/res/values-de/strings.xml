@@ -847,7 +847,7 @@
 <string name="sponsor_promote">Unterstützer werden</string>
 <string name="random_play_order_title">Zufällige Reihenfolge</string>
 <string name="random_play_order_summary">Beim Verwenden des Musikspielermodus die Wiedergabeliste mischen</string>
-<string name="update_log">### Fehlerbehebungen\n- Daten können nicht aus NewPipe importiert werden \n- Fehlende Untertitelübersetzungen (YouTube) \n- Unerwarteter Absturz unter bestimmten Bedingungen (YouTube)</string>
+<string name="update_log">### Neue Funktionen\n- Unterstützung zum Herunterladen der vollständigen lokalen Wiedergabeliste ohne Größenbeschränkung\n- Verbesserung der Download-Stabilität\n- Eine Einstellung hinzufügen, um zu steuern, ob vollständige Titel und Kommentare standardmäßig angezeigt werden\n\n### Fehlerbehebungen\n- Titel werden immer ins Englische übersetzt (YouTube)\n- Live-Tabs sind nicht aktiviert, wenn sie von NewPipe migriert werden\n- Import aus NewPipe schlägt unter bestimmten Bedingungen fehl \n- Batch-Download für Audios fehlgeschlagen (NicoNico)\n- Unerwarteter Absturz beim Herunterladen von Videos unter bestimmten Bedingungen (BiliBili)\n- Notizantworten werden manchmal nicht korrekt geparst (BiliBili)\n\n### Benutzeroberfläche\n- Die Änderung in 4.3.0 rückgängig machen, die eine größere Rasterelementgröße auf Tablets verwendet\n- Benutzeroberfläche für Kommentarantworten verbessern \n- "Empfohlene Podcasts" entfernen\n\n### Verhalten\n- Bullet-Kommentare/live-Chats standardmäßig deaktivieren\n\n</string>
 <string name="speeding_playback_title">Langes Drücken, um die Wiedergabe zu beschleunigen</string>
 <string name="view_on_github">Auf GitHub ansehen</string>
 <string name="donation_dialog_title">Projekt unterstützen</string>

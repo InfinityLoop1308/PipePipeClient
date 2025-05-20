@@ -901,7 +901,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">使用音樂播放器模式時隨機播放清單</string>
-<string name="update_log">### 修正問題 \n- 無法從 NewPipe 匯入資料 \n- 缺少字幕翻譯（YouTube）\n- 某些情況下意外崩潰（YouTube）</string>
+<string name="update_log">### 新功能\n- 支援下載完整的本地播放列表，無大小限制\n- 改善下載穩定性\n- 新增設定以控制是否預設顯示完整標題和評論\n\n### 錯誤修正\n- 標題總是翻譯成英文（YouTube）\n- 從 NewPipe 遷移時未啟用直播標籤\n- 在某些情況下從 NewPipe 導入失敗\n- 批量下載音頻失敗（NicoNico）\n- 在某些情況下下載視頻時意外崩潰（BiliBili）\n- 有時候筆記回覆解析不正確（BiliBili）\n\n### UI\n- 還原 4.3.0 中在平板上使用較大網格項目大小的更改\n- 改善評論回覆 UI\n- 移除「推薦播客」\n\n### 行為\n- 預設禁用彈幕/直播聊天\n\n</string>
 <string name="speeding_playback_title">按住以加速播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這項計畫</string>

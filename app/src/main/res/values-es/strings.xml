@@ -908,7 +908,7 @@
 <string name="sponsor_promote">Conviértete en un patrocinador</string>
 <string name="random_play_order_title">Orden aleatorio</string>
 <string name="random_play_order_summary">Al usar el Modo de Reproductor de Música, baraja la lista de reproducción</string>
-<string name="update_log">### Soluciones de errores\n- No se puede importar datos de NewPipe \n- Traducciones de subtítulos faltantes (YouTube) \n- Fallo inesperado bajo ciertas condiciones (YouTube)</string>
+<string name="update_log">### Nuevas características\n- Soporte para descargar listas de reproducción locales completas sin límite de tamaño\n- Mejorar la estabilidad de descarga\n- Agregar una configuración para controlar si mostrar títulos completos y comentarios por defecto\n\n### Corrección de errores\n- Los títulos siempre se traducen al inglés (YouTube)\n- Las pestañas en vivo no están habilitadas cuando se migra desde NewPipe\n- La importación desde NewPipe falló bajo ciertas condiciones \n- La descarga por lotes falló para audios (NicoNico)\n- Fallo inesperado al descargar videos bajo ciertas condiciones (BiliBili)\n- Las respuestas a notas no se analizan correctamente a veces (BiliBili)\n\n### Interfaz de usuario\n- Revertir el cambio en 4.3.0 que usa un tamaño de elemento de cuadrícula más grande en tabletas\n- Mejorar la interfaz de usuario de respuesta a comentarios \n- Eliminar "Podcasts recomendados"\n\n### Comportamiento\n- Deshabilitar comentarios de viñetas/chats en vivo por defecto\n\n</string>
 <string name="speeding_playback_title">Mantener presionado para acelerar la reproducción</string>
 <string name="view_on_github">Ver en GitHub</string>
 <string name="donation_dialog_title">Apoya el proyecto</string>
