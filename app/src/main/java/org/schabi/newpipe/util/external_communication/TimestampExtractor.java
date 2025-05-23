@@ -8,7 +8,13 @@ import java.util.regex.Pattern;
  */
 public final class TimestampExtractor {
     public static final Pattern TIMESTAMPS_PATTERN = Pattern.compile(
-            "(?:^|(?!:)\\W)(?:([0-5]?[0-9]):)?([0-5]?[0-9]):([0-5][0-9])(?=$|(?!:)\\W)");
+            "(?<=(?:^|(?!:)\\W))" + // Positive lookbehind for the context
+                    "(?:([0-5]?[0-9])[:：]\\s?)?" + // Optional hours (Group 1)
+                    "([0-5]?[0-9])[:：]\\s?" +    // Minutes (Group 2)
+                    "([0-5][0-9])" +             // Seconds (Group 3)
+                    "(?!(?:[:：]\\s?[0-5]?[0-9]))" // Negative lookahead to prevent further timestamp parts
+    );
+
 
     private TimestampExtractor() {
         // No impl pls
@@ -33,7 +39,11 @@ public final class TimestampExtractor {
         final int timestampEnd = timestampMatches.end(3);
 
         final String parsedTimestamp = baseText.substring(timestampStart, timestampEnd);
-        final String[] timestampParts = parsedTimestamp.split(":");
+        String[] timestampParts = parsedTimestamp.split(":");
+
+        if (timestampParts.length == 1) {
+            timestampParts = parsedTimestamp.split("：");
+        }
 
         final int seconds;
         if (timestampParts.length == 3) { // timestamp format: XX:XX:XX
