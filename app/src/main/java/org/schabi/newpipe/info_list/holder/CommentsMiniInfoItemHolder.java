@@ -115,6 +115,7 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
                 ellipsize();
             }
         }
+        linkify();
 
 
         if (item.getLikeCount() >= 0) {
