@@ -48,6 +48,7 @@ public class DownloadMission extends Mission {
     public static final int ERROR_RESOURCE_GONE = 1013;
     public static final int ERROR_HTTP_NO_CONTENT = 204;
     static final int ERROR_HTTP_FORBIDDEN = 403;
+    static final int ERROR_HTTP_AUTH = 401;
 
     /**
      * The urls of the file to download

@@ -15,6 +15,7 @@ import java.nio.channels.ClosedByInterruptException;
 import us.shandian.giga.util.Utility;
 
 import static org.schabi.newpipe.BuildConfig.DEBUG;
+import static us.shandian.giga.get.DownloadMission.ERROR_HTTP_AUTH;
 import static us.shandian.giga.get.DownloadMission.ERROR_HTTP_FORBIDDEN;
 
 public class DownloadInitializer extends Thread {
@@ -175,7 +176,8 @@ public class DownloadInitializer extends Thread {
             } catch (Exception e) {
                 if (!mMission.running || super.isInterrupted()) return;
 
-                if (e instanceof DownloadMission.HttpError && ((DownloadMission.HttpError) e).statusCode == ERROR_HTTP_FORBIDDEN) {
+                if (e instanceof DownloadMission.HttpError && ((((DownloadMission.HttpError) e).statusCode == ERROR_HTTP_FORBIDDEN)
+                        || ((DownloadMission.HttpError) e).statusCode == ERROR_HTTP_AUTH)) {
                     // for youtube streams. The url has expired
                     interrupt();
                     mMission.doRecover(ERROR_HTTP_FORBIDDEN);
