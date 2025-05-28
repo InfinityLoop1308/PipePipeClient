@@ -62,38 +62,24 @@ public final class ShareUtils {
     public static boolean openUrlInBrowser(@NonNull final Context context,
                                            final String url,
                                            final boolean httpDefaultBrowserTest) {
-        final String defaultPackageName;
         final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        if (httpDefaultBrowserTest) {
-            defaultPackageName = getDefaultAppPackageName(context, new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("http://")).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-        } else {
-            defaultPackageName = getDefaultAppPackageName(context, intent);
-        }
-
-        if (defaultPackageName.equals("android")) {
-            // No browser set as default (doesn't work on some devices)
-            openAppChooser(context, intent, true);
-        } else {
-            if (defaultPackageName.isEmpty()) {
-                // No app installed to open a web url
+        try {
+            // First try to open with the default browser
+            context.startActivity(intent);
+            return true;
+        } catch (ActivityNotFoundException e1) {
+            try {
+                // If no direct handler, try the app chooser
+                openAppChooser(context, intent, true);
+                return true;
+            } catch (ActivityNotFoundException e2) {
+                // If even the app chooser fails, show error and return false
                 Toast.makeText(context, R.string.no_app_to_open_intent, Toast.LENGTH_LONG).show();
                 return false;
-            } else {
-                try {
-                    intent.setPackage(defaultPackageName);
-                    context.startActivity(intent);
-                } catch (final ActivityNotFoundException e) {
-                    // Not a browser but an app chooser because of OEMs changes
-                    intent.setPackage(null);
-                    openAppChooser(context, intent, true);
-                }
             }
         }
-
-        return true;
     }
 
     /**
