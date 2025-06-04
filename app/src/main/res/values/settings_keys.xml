@@ -1570,7 +1570,7 @@
     <string name="comments_inner_scroll_key">comments_inner_scroll_key</string>
     <string name="filter_by_keyword_key">filter_by_keyword_key</string>
     <string-array name="advanced_formats_values">
-        <item>WebM</item>
+        <item>VP9</item>
         <item>H.265</item>
         <item>AV1</item>
         <item>Dolby Atmos</item>

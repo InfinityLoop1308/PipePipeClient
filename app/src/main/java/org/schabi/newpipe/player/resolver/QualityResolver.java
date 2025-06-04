@@ -8,7 +8,7 @@ import java.util.List;
 public interface QualityResolver {
     int getDefaultResolutionIndex(List<VideoStream> sortedVideos);
 
-    int getOverrideResolutionIndex(List<VideoStream> sortedVideos, String playbackQuality);
+    int getOverrideResolutionIndex(List<VideoStream> sortedVideos, int selectedIndex);
 
     int getCurrentAudioQualityIndex(List<AudioStream> audioStreams);
 }

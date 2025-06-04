@@ -54,46 +54,12 @@ public final class ListHelper {
      * @see #getDefaultResolutionIndex(String, String, MediaFormat, List)
      * @param context           Android app context
      * @param videoStreams      list of the video streams to check
-     * @param defaultResolution the default resolution to look for
-     * @return index of the video stream with the default index
-     */
-    public static int getResolutionIndex(final Context context,
-                                         final List<VideoStream> videoStreams,
-                                         String defaultResolution) {
-        if (defaultResolution == null) {
-            defaultResolution = computeDefaultResolution(context,
-                    R.string.default_resolution_key, R.string.default_resolution_value);
-        }
-        return getDefaultResolutionWithDefaultFormat(context, defaultResolution, videoStreams);
-    }
-
-    /**
-     * @see #getDefaultResolutionIndex(String, String, MediaFormat, List)
-     * @param context           Android app context
-     * @param videoStreams      list of the video streams to check
      * @return index of the video stream with the default index
      */
     public static int getPopupDefaultResolutionIndex(final Context context,
                                                      final List<VideoStream> videoStreams) {
         final String defaultResolution = computeDefaultResolution(context,
                 R.string.default_popup_resolution_key, R.string.default_popup_resolution_value);
-        return getDefaultResolutionWithDefaultFormat(context, defaultResolution, videoStreams);
-    }
-
-    /**
-     * @see #getDefaultResolutionIndex(String, String, MediaFormat, List)
-     * @param context           Android app context
-     * @param videoStreams      list of the video streams to check
-     * @param defaultResolution the default resolution to look for
-     * @return index of the video stream with the default index
-     */
-    public static int getPopupResolutionIndex(final Context context,
-                                              final List<VideoStream> videoStreams,
-                                              String defaultResolution) {
-        if (defaultResolution == null) {
-            defaultResolution = computeDefaultResolution(context,
-                    R.string.default_resolution_key, R.string.default_resolution_value);
-        }
         return getDefaultResolutionWithDefaultFormat(context, defaultResolution, videoStreams);
     }
 
@@ -310,7 +276,7 @@ public final class ListHelper {
             final boolean ascendingOrder,
             final boolean preferVideoOnlyStreams
     ) {
-        boolean useWebM = advancedFormats.contains("WebM");
+        boolean useWebM = advancedFormats.contains("VP9");
         boolean useAV1 = advancedFormats.contains("AV1");
         boolean useH265 = advancedFormats.contains("H.265");
         // Determine order of streams
@@ -344,13 +310,13 @@ public final class ListHelper {
                 .collect(Collectors.toList());
 
         // Return the sorted list
-        List<VideoStream> result = sortStreamList(allInitialStreams, ascendingOrder);
         final HashMap<String, VideoStream> hashMap = new HashMap<>();
         // Add all to the hashmap
-        for (final VideoStream videoStream : result) {
-            hashMap.put(videoStream.getResolution(), videoStream);
+        for (final VideoStream videoStream : allInitialStreams) {
+            hashMap.put(videoStream.getCodec().split("\\.")[0] + videoStream.getResolution(), videoStream);
         }
-        return new ArrayList<>(hashMap.values());
+
+        return sortStreamList(new ArrayList<>(hashMap.values()), ascendingOrder);
     }
 
     /**

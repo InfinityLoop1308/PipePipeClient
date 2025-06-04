@@ -24,8 +24,6 @@ import static org.schabi.newpipe.player.helper.PlayerHelper.*;
 import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_BACKGROUND;
 import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_NONE;
 import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_POPUP;
-import static org.schabi.newpipe.util.ListHelper.getPopupResolutionIndex;
-import static org.schabi.newpipe.util.ListHelper.getResolutionIndex;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
@@ -457,10 +455,8 @@ public final class Player implements
 
             @Override
             public int getOverrideResolutionIndex(final List<VideoStream> sortedVideos,
-                                                  final String playbackQuality) {
-                return videoPlayerSelected()
-                        ? getResolutionIndex(context, sortedVideos, playbackQuality)
-                        : getPopupResolutionIndex(context, sortedVideos, playbackQuality);
+                                                  final int selectedIndex) {
+                return selectedIndex;
             }
 
             @Override
@@ -739,9 +735,9 @@ public final class Player implements
         // We need to setup audioOnly before super(), see "sourceOf"
         isAudioOnly = audioPlayerSelected();
 
-        if (intent.hasExtra(PLAYBACK_QUALITY)) {
-            setPlaybackQuality(intent.getStringExtra(PLAYBACK_QUALITY));
-        }
+//        if (intent.hasExtra(PLAYBACK_QUALITY)) {
+//            setPlaybackQuality(intent.getStringExtra(PLAYBACK_QUALITY));
+//        }
 
         // Resolve enqueue intents
         if (intent.getBooleanExtra(ENQUEUE, false) && playQueue != null) {
@@ -3947,8 +3943,7 @@ public final class Player implements
 
         for (int i = 0; i < availableStreams.size(); i++) {
             final VideoStream videoStream = availableStreams.get(i);
-            qualityPopupMenu.getMenu().add(POPUP_MENU_ID_QUALITY, i, Menu.NONE, MediaFormat
-                    .getNameById(videoStream.getFormatId()) + " " + videoStream.resolution);
+            qualityPopupMenu.getMenu().add(POPUP_MENU_ID_QUALITY, i, Menu.NONE, videoStream.getCodec().toUpperCase().split("\\.")[0] + " " + videoStream.resolution);
         }
         if (getSelectedVideoStream() != null) {
             binding.qualityTextView.setText(getSelectedVideoStream().resolution);
@@ -4069,9 +4064,8 @@ public final class Player implements
             }
 
             saveStreamProgressState(); //TODO added, check if good
-            final String newResolution = availableStreams.get(menuItemIndex).resolution;
             setRecovery();
-            setPlaybackQuality(newResolution);
+            setSelectedIndex(menuItemIndex);
             reloadPlayQueueManager();
 
             binding.qualityTextView.setText(menuItem.getTitle());
@@ -4113,8 +4107,8 @@ public final class Player implements
         isSomePopupMenuVisible = true;
     }
 
-    private void setPlaybackQuality(@Nullable final String quality) {
-        videoResolver.setPlaybackQuality(quality);
+    private void setSelectedIndex(int index) {
+        videoResolver.setSelectedIndex(index);
     }
     //endregion
 

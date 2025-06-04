@@ -172,7 +172,13 @@ public class StreamItemAdapter<T extends Stream, U extends Stream> extends BaseA
             // noinspection AndroidLintSetTextI18n
             formatNameView.setText("opus");
         } else {
-            formatNameView.setText(stream.getFormat().getName());
+            String text = "";
+            if (stream instanceof VideoStream) {
+                text = ((VideoStream) stream).getCodec().toUpperCase().split("\\.")[0];
+            } else {
+                text = stream.getFormat().getName();
+            }
+            formatNameView.setText(text);
         }
 
         qualityView.setText(qualityString);

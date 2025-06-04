@@ -5,8 +5,8 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import org.schabi.newpipe.MainActivity
-import org.schabi.newpipe.extractor.MediaFormat
 import org.schabi.newpipe.player.Player
+import java.util.*
 
 /**
  * Click listener for the qualityTextView of the player
@@ -32,7 +32,8 @@ class QualityClickListener(
         val videoStream = player.selectedVideoStream
         if (videoStream != null) {
             player.binding.qualityTextView.text =
-                MediaFormat.getNameById(videoStream.formatId) + " " + videoStream.resolution
+                videoStream.codec.uppercase(Locale.getDefault()).split("\\.".toRegex()).dropLastWhile { it.isEmpty() }
+                    .toTypedArray()[0] + " " + videoStream.resolution
         }
 
         player.saveWasPlaying()
