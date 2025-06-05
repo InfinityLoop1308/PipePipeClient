@@ -175,6 +175,9 @@ public class StreamItemAdapter<T extends Stream, U extends Stream> extends BaseA
             String text = "";
             if (stream instanceof VideoStream) {
                 text = ((VideoStream) stream).getCodec().toUpperCase().split("\\.")[0];
+                if (text.isEmpty()) {
+                    text = stream.getFormat().getName();
+                }
             } else {
                 text = stream.getFormat().getName();
             }
