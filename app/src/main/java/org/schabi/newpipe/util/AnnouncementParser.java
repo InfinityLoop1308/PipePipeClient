@@ -5,6 +5,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class AnnouncementParser {
 
     public static class ParsedResult {
@@ -29,6 +32,8 @@ public class AnnouncementParser {
         StringBuilder contents = new StringBuilder();
         String latestId = null;
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMMdd");
+
         Document doc = Jsoup.parse(html);
         Elements headings = doc.select("div.markdown-heading");
 
@@ -36,7 +41,7 @@ public class AnnouncementParser {
             String currentId = heading.selectFirst("h2.heading-element").text();
 
             // Stop if we reach the target ID
-            if (currentId.equals(beforeId)) {
+            if (currentId.equals(beforeId) || LocalDate.parse(currentId, formatter).isBefore(LocalDate.parse(beforeId, formatter))) {
                 break;
             }
 
