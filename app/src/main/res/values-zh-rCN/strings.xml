@@ -909,7 +909,7 @@
 <string name="sponsor_promote">成为支持者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">使用音乐播放器模式时,随机播放列表</string>
-<string name="update_log">### 新功能\n- 支持下载完整的本地播放列表，无大小限制\n- 提高下载稳定性\n- 添加设置以控制默认是否显示完整标题和评论\n\n### 错误修复\n- 标题总是翻译成英文（YouTube）\n- 从 NewPipe 迁移时未启用直播标签\n- 在某些情况下从 NewPipe 导入失败\n- 批量下载音频失败（NicoNico）\n- 在某些情况下下载视频时意外崩溃（BiliBili）\n- 有时回复的评论未正确解析（BiliBili）\n\n### 用户界面\n- 恢复 4.3.0 中在平板电脑上使用较大网格项大小的更改\n- 改进评论回复界面\n- 移除“推荐播客”\n\n### 行为\n- 默认禁用弹幕/直播聊天\n\n</string>
+<string name="update_log">### 新功能\n- 使评论和描述中的时间戳检测更智能\n- 改进质量菜单，使内容更清晰\n\n### 错误修复\n- 评论中的链接无法正常工作\n- 即使有合适的应用程序，也会显示“您的设备上没有应用程序可以打开此内容”的提示\n- 播放列表仅加载前100个视频（YouTube）\n- 在某些条件下下载失败（YouTube）\n- 某些视频在某些条件下没有音频（YouTube）\n- 无法解析某些频道（YouTube）\n- 自杀/自残内容无法加载（YouTube）\n- 某些元信息解析不正确（YouTube）\n- 解析某些评论时出错（BiliBili）</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 <string name="donation_dialog_title">支持该项目</string>
