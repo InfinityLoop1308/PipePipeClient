@@ -210,13 +210,9 @@ class ImageViewerActivity : AppCompatActivity() {
     }
 
     private fun updateCountIndicator(position: Int) {
-        if (urls.size > 1) {
-            @SuppressLint("SetTextI18n")
-            binding.countIndicator.text = "${position + 1} / ${urls.size}"
-            binding.countIndicator.visibility = View.VISIBLE
-        } else {
-            binding.countIndicator.visibility = View.GONE
-        }
+        @SuppressLint("SetTextI18n")
+        binding.countIndicator.text = "${position + 1} / ${urls.size}"
+        binding.countIndicator.visibility = View.VISIBLE
     }
 
     //region Save
