@@ -123,6 +123,10 @@
         </activity>
 
         <activity
+            android:name=".util.ImageViewerActivity"
+            android:theme="@style/BlackTheme" />
+
+        <activity
             android:name=".error.ReCaptchaActivity"
             android:label="@string/recaptcha" />
 

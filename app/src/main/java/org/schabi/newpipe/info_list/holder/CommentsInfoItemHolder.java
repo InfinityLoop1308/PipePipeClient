@@ -6,15 +6,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.fragment.app.FragmentActivity;
-
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.Image;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
 import org.schabi.newpipe.info_list.InfoItemBuilder;
-import org.schabi.newpipe.info_list.dialog.PictureDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
+import org.schabi.newpipe.util.ImageViewerActivity;
 
 import java.util.Collection;
 
@@ -76,15 +74,7 @@ public class CommentsInfoItemHolder extends CommentsMiniInfoItemHolder {
                     itemViewImageView.getContext().getString(R.string.button_view_pictures, pictures.size())
             );
             itemViewImageView.setOnClickListener(v -> {
-                PictureDialog pictureDialog = PictureDialog.from(pictures);
-
-                if (itemBuilder != null && itemBuilder.getContext() instanceof FragmentActivity) {
-                    pictureDialog.show(
-                            ((FragmentActivity) itemBuilder.getContext()).getSupportFragmentManager(),
-                            "PICTURE_DIALOG"
-                    );
-                }
-
+                v.getContext().startActivity(ImageViewerActivity.intent(v.getContext(), pictures));
             });
         } else {
             itemViewImageView.setVisibility(View.GONE);
