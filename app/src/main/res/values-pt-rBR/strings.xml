@@ -563,7 +563,7 @@
     <string name="recovering">recuperando</string>
     <string name="enqueue">Adicionar à fila</string>
     <string name="permission_denied">Ação negada pelo sistema</string>
-    <string name="checking_updates_toast">Verificando por atualizazções...</string>
+    <string name="checking_updates_toast">Verificando por atualizações...</string>
     <!-- download notifications -->
     <string name="download_failed">Falha ao baixar</string>
     <plurals name="download_finished_notification">
