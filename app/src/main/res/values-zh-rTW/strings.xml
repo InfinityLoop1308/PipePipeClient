@@ -900,7 +900,7 @@
 <string name="enable_notification_title">啟用通知</string>
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
-<string name="random_play_order_summary">使用音樂播放器模式時隨機播放清單</string>
+<string name="random_play_order_summary">在背景播放時自動隨機播放您的本地播放列表</string>
 <string name="update_log">### 新功能\n- 使評論和描述中的時間戳檢測更智能\n- 改善質量菜單，使事情更清晰\n\n### 錯誤修復\n- 評論中的鏈接無法正常工作\n- 即使有合適的應用程序，仍顯示“您的設備上沒有應用程序可以打開此內容”的提示\n- 播放列表僅加載前100個視頻（YouTube）\n- 在某些情況下下載失敗（YouTube）\n- 某些視頻在某些情況下沒有音頻（YouTube）\n- 無法解析某些頻道（YouTube）\n- 自殺/自殘內容無法加載（YouTube）\n- 某些元信息解析不正確（YouTube）\n- 解析某些評論時出錯（BiliBili）</string>
 <string name="speeding_playback_title">按住以加速播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>

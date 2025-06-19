@@ -748,8 +748,19 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                 NavigationHelper.playOnMainPlayer(activity, getPlayQueue()));
         playlistControlBinding.playlistCtrlPlayPopupButton.setOnClickListener(view ->
                 NavigationHelper.playOnPopupPlayer(activity, getPlayQueue(), false));
-        playlistControlBinding.playlistCtrlPlayBgButton.setOnClickListener(view ->
-                NavigationHelper.playOnBackgroundPlayerShuffled(activity, getPlayQueue(), false));
+
+
+
+        playlistControlBinding.playlistCtrlPlayBgButton.setOnClickListener(view -> {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
+                    requireContext());
+            if (prefs.getBoolean(getString(R.string.random_music_play_mode_key), false)) {
+                NavigationHelper.playOnBackgroundPlayerShuffled(activity, getPlayQueue(), false);
+            } else {
+                NavigationHelper.playOnBackgroundPlayer(activity, getPlayQueue(), false);
+            }
+
+        });
 
         playlistControlBinding.playlistCtrlPlayPopupButton.setOnLongClickListener(view -> {
             NavigationHelper.enqueueOnPlayer(activity, getPlayQueue(), PlayerType.POPUP);

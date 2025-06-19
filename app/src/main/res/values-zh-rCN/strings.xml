@@ -908,7 +908,7 @@
 <string name="enable_notification_title">打开通知</string>
 <string name="sponsor_promote">成为支持者</string>
 <string name="random_play_order_title">随机顺序</string>
-<string name="random_play_order_summary">使用音乐播放器模式时,随机播放列表</string>
+<string name="random_play_order_summary">在后台播放时自动随机播放您的本地播放列表</string>
 <string name="update_log">### 新功能\n- 使评论和描述中的时间戳检测更智能\n- 改进质量菜单，使内容更清晰\n\n### 错误修复\n- 评论中的链接无法正常工作\n- 即使有合适的应用程序，也会显示“您的设备上没有应用程序可以打开此内容”的提示\n- 播放列表仅加载前100个视频（YouTube）\n- 在某些条件下下载失败（YouTube）\n- 某些视频在某些条件下没有音频（YouTube）\n- 无法解析某些频道（YouTube）\n- 自杀/自残内容无法加载（YouTube）\n- 某些元信息解析不正确（YouTube）\n- 解析某些评论时出错（BiliBili）</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>

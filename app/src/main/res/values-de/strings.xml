@@ -846,7 +846,7 @@
 <string name="enable_notification_title">Benachrichtigungen aktivieren</string>
 <string name="sponsor_promote">Unterstützer werden</string>
 <string name="random_play_order_title">Zufällige Reihenfolge</string>
-<string name="random_play_order_summary">Beim Verwenden des Musikspielermodus die Wiedergabeliste mischen</string>
+<string name="random_play_order_summary">Automatisch Ihre lokalen Wiedergabelisten mischen, wenn sie im Hintergrund abgespielt werden</string>
 <string name="update_log">### Neue Funktionen\n- Machen Sie die Erkennung von Zeitstempeln in Kommentaren und Beschreibungen intelligenter\n- Verbessern Sie das Qualitätsmenü, um die Dinge klarer zu machen\n\n### Fehlerbehebungen\n- Links in Kommentaren funktionieren nicht \n- "Keine App auf Ihrem Gerät kann dies öffnen" Toast wird angezeigt, auch wenn geeignete Apps vorhanden sind \n- Wiedergabelisten laden nur die ersten 100 Videos (YouTube)\n- Download schlägt unter bestimmten Bedingungen fehl (YouTube)\n- Einige Videos haben unter bestimmten Bedingungen keinen Ton (YouTube)\n- Einige Kanäle konnten nicht analysiert werden (YouTube) \n- Inhalte zu Selbstmord/Selbstverletzung werden nicht geladen (YouTube)\n- Einige Metainformationen werden nicht korrekt analysiert (YouTube)\n- Fehler beim Analysieren einiger Kommentare (BiliBili)</string>
 <string name="speeding_playback_title">Langes Drücken, um die Wiedergabe zu beschleunigen</string>
 <string name="view_on_github">Auf GitHub ansehen</string>

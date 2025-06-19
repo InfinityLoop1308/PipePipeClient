@@ -766,7 +766,7 @@
 <string name="enable_notification_title">Abilita notifiche</string>
 <string name="sponsor_promote">Diventa un sostenitore</string>
 <string name="random_play_order_title">Ordine casuale</string>
-<string name="random_play_order_summary">Quando usi la Modalità Lettore Musicale, mescola la playlist</string>
+<string name="random_play_order_summary">Mescola automaticamente le tue playlist locali quando vengono riprodotte in background</string>
 <string name="update_log">### Nuove Funzionalità\n- Rendi il rilevamento dei timestamp nei commenti e nelle descrizioni più intelligente\n- Migliora il menu di qualità per rendere le cose più chiare\n\n### Correzioni di Bug\n- I link nei commenti non funzionano \n- Viene mostrato il messaggio "Nessuna app sul tuo dispositivo può aprire questo" anche con app adatte \n- Le playlist caricano solo i primi 100 video (YouTube)\n- Il download fallisce in determinate condizioni (YouTube)\n- Alcuni video non hanno audio in determinate condizioni (YouTube)\n- Impossibile analizzare alcuni canali (YouTube) \n- I contenuti di suicidio/autolesionismo non si caricano (YouTube)\n- Alcune informazioni meta non vengono analizzate correttamente (YouTube)\n- Errore nell\'analisi di alcuni commenti (BiliBili)</string>
 <string name="speeding_playback_title">Premi a lungo per aumentare la velocità di riproduzione</string>
 <string name="view_on_github">Visualizza su GitHub</string>

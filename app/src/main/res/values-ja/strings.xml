@@ -862,7 +862,7 @@
 <string name="enable_notification_title">通知を有効にする</string>
 <string name="sponsor_promote">サポーターになる</string>
 <string name="random_play_order_title">ランダムな順序</string>
-<string name="random_play_order_summary">プレイリストをシャッフルする</string>
+<string name="random_play_order_summary">バックグラウンドで再生する際にローカルプレイリストを自動的にシャッフルします</string>
 <string name="update_log">### 新機能\n- コメントと説明でのタイムスタンプ検出をよりスマートにする\n- 品質メニューを改善して、より明確にする\n\n### バグ修正\n- コメント内のリンクが機能しない\n- 適切なアプリがあるにもかかわらず「デバイスに開けるアプリがありません」というトーストが表示される\n- プレイリストが最初の100本の動画のみを読み込む（YouTube）\n- 特定の条件下でダウンロードが失敗する（YouTube）\n- 特定の条件下で音声がない動画がある（YouTube）\n- 一部のチャンネルの解析に失敗する（YouTube）\n- 自殺/自傷コンテンツが読み込まれない（YouTube）\n- 一部のメタ情報が正しく解析されない（YouTube）\n- 一部のコメントの解析に失敗する（BiliBili）</string>
 <string name="speeding_playback_title">長時間押は再生速度を速めることができます</string>
 <string name="view_on_github">GitHubで表示</string>
