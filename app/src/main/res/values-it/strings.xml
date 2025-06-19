@@ -882,4 +882,6 @@
 <string name="auto_ellipsize_summary">Accorcia automaticamente il titolo e i commenti che sono troppo lunghi</string>
 <string name="auto_ellipsize_title">Auto Ellissi</string>
 <string name="announcement">Annuncio</string>
+<string name="remove_from_group">Rimuovi dal gruppo</string>
+<string name="channel_removed_from_group">Rimosso dal gruppo</string>
 </resources>

@@ -39,10 +39,14 @@ class SubscriptionManager(context: Context) {
                         currentGroupId, filterQuery
                     )
                 } else {
-                    subscriptionTable.getSubscriptionsFiltered(filterQuery)
+                    if (currentGroupId != FeedGroupEntity.GROUP_ALL_ID) {
+                        subscriptionTable.getSubscriptionsForCurrentGroupFiltered(currentGroupId, filterQuery)
+                    }
+                    else subscriptionTable.getSubscriptionsFiltered(filterQuery)
                 }
             }
             showOnlyUngrouped -> subscriptionTable.getSubscriptionsOnlyUngrouped(currentGroupId)
+            currentGroupId != FeedGroupEntity.GROUP_ALL_ID -> subscriptionTable.getSubscriptionsForCurrentGroup(currentGroupId)
             else -> subscriptionTable.all
         }
     }

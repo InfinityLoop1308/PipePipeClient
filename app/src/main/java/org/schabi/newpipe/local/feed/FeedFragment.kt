@@ -78,6 +78,7 @@ import org.schabi.newpipe.local.subscription.SubscriptionManager
 import org.schabi.newpipe.util.DeviceUtils
 import org.schabi.newpipe.util.Localization
 import org.schabi.newpipe.util.NavigationHelper
+import org.schabi.newpipe.util.NavigationHelper.openFeedChannelsFragment
 import org.schabi.newpipe.util.ThemeHelper.getGridSpanCountStreams
 import org.schabi.newpipe.util.ThemeHelper.getItemViewMode
 import org.schabi.newpipe.util.ThemeHelper.resolveDrawable
@@ -243,6 +244,8 @@ class FeedFragment : BaseStateFragment<FeedState>() {
             updateTogglePlayedItemsButton(item)
             viewModel.togglePlayedItems(showPlayedItems)
             viewModel.saveShowPlayedItemsToPreferences(showPlayedItems)
+        } else if (item.itemId == R.id.menu_item_feed_channel_list) {
+            openFeedChannelsFragment(fm, groupId, groupName)
         }
 
         return super.onOptionsItemSelected(item)

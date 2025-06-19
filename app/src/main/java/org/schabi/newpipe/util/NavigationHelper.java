@@ -49,6 +49,7 @@ import org.schabi.newpipe.local.feed.FeedFragment;
 import org.schabi.newpipe.local.history.StatisticsPlaylistFragment;
 import org.schabi.newpipe.local.playlist.LocalPlaylistFragment;
 import org.schabi.newpipe.local.subscription.SubscriptionFragment;
+import org.schabi.newpipe.local.subscription.SubscriptionListFragment;
 import org.schabi.newpipe.local.subscription.SubscriptionsImportFragment;
 import org.schabi.newpipe.player.MainPlayer;
 import org.schabi.newpipe.player.MainPlayer.PlayerType;
@@ -458,6 +459,23 @@ public final class NavigationHelper {
                 .addToBackStack(null)
                 .commit();
     }
+
+    public static void openFeedChannelsFragment(
+            final FragmentManager fragmentManager,
+            final long groupId,
+            final String groupName
+    ) {
+        defaultTransaction(fragmentManager)
+                .replace(R.id.fragment_holder, SubscriptionListFragment.newInstance(groupId, groupName))
+                .addToBackStack(null)
+                .commit();
+    }
+
+    // Overload for opening all subscriptions
+    public static void openFeedChannelsFragment(final FragmentManager fragmentManager) {
+        openFeedChannelsFragment(fragmentManager, FeedGroupEntity.GROUP_ALL_ID, "");
+    }
+
 
     public static void openBookmarksFragment(final FragmentManager fragmentManager) {
         defaultTransaction(fragmentManager)

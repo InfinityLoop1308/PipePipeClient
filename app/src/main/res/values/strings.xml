@@ -1064,4 +1064,6 @@
 <string name="auto_ellipsize_summary">Automatically shorten title and comments that is too long</string>
 <string name="auto_ellipsize_title">Auto Ellipsize</string>
 <string name="announcement">Announcement</string>
+<string name="remove_from_group">Remove from group</string>
+<string name="channel_removed_from_group">Removed from group</string>
 </resources>

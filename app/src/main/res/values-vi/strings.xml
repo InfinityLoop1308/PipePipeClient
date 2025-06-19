@@ -1068,4 +1068,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="auto_ellipsize_summary">Tự động rút ngắn tiêu đề và nhận xét quá dài</string>
 <string name="auto_ellipsize_title">Tự động rút gọn</string>
 <string name="announcement">Thông báo</string>
+<string name="remove_from_group">Xóa khỏi nhóm</string>
+<string name="channel_removed_from_group">Đã xóa khỏi nhóm</string>
 </resources>

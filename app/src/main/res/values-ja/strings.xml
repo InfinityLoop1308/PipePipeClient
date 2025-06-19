@@ -978,4 +978,6 @@
 <string name="auto_ellipsize_summary">タイトルやコメントが長すぎる場合は自動的に短縮します</string>
 <string name="auto_ellipsize_title">自動省略</string>
 <string name="announcement">お知らせ</string>
+<string name="remove_from_group">グループから削除</string>
+<string name="channel_removed_from_group">グループから削除されました</string>
 </resources>
