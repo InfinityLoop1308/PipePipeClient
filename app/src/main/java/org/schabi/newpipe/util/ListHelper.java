@@ -618,7 +618,7 @@ public final class ListHelper {
         }
 
         if (streamA.getBitrate() - streamB.getBitrate() != 0) {
-            return streamA.getBitrate() - streamB.getBitrate();
+            return - streamA.getBitrate() + streamB.getBitrate();
         }
 
         // Same bitrate and format
