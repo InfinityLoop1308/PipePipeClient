@@ -641,6 +641,7 @@ public class RouterActivity extends AppCompatActivity {
                     final DownloadDialog downloadDialog = DownloadDialog.newInstance(result);
                     downloadDialog.setVideoStreams(sortedVideoStreams);
                     downloadDialog.setAudioStreams(result.getAudioStreams());
+                    downloadDialog.setSubtitleStreams(result.getSubtitles());
                     downloadDialog.setSelectedVideoStream(selectedVideoStreamIndex);
                     downloadDialog.setOnDismissListener(dialog -> finish());
                     downloadDialog.show(fm, "downloadDialog");
