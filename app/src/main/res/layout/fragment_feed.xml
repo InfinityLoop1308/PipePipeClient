@@ -48,6 +48,13 @@
                 tools:text="@tools:sample/lorem/random" />
         </LinearLayout>
 
+        <include
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/playlist_control"
+                layout="@layout/playlist_control"
+                android:layout_below="@id/refresh_info_container" />
+
         <ImageView
             android:id="@+id/refreshIcon"
             android:layout_width="24dp"

@@ -60,6 +60,7 @@ import org.schabi.newpipe.R
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.database.subscription.SubscriptionEntity
 import org.schabi.newpipe.databinding.FragmentFeedBinding
+import org.schabi.newpipe.databinding.PlaylistControlBinding
 import org.schabi.newpipe.error.ErrorInfo
 import org.schabi.newpipe.error.UserAction
 import org.schabi.newpipe.extractor.exceptions.AccountTerminatedException
@@ -75,6 +76,9 @@ import org.schabi.newpipe.ktx.slideUp
 import org.schabi.newpipe.local.feed.item.StreamItem
 import org.schabi.newpipe.local.feed.service.FeedLoadService
 import org.schabi.newpipe.local.subscription.SubscriptionManager
+import org.schabi.newpipe.player.MainPlayer
+import org.schabi.newpipe.player.playqueue.PlayQueue
+import org.schabi.newpipe.player.playqueue.SinglePlayQueue
 import org.schabi.newpipe.util.DeviceUtils
 import org.schabi.newpipe.util.Localization
 import org.schabi.newpipe.util.NavigationHelper
@@ -108,6 +112,12 @@ class FeedFragment : BaseStateFragment<FeedState>() {
 
     private var lastNewItemsCount = 0
 
+    private var playlistControlBinding: PlaylistControlBinding? = null
+
+    private var autoBackgroundPlaying = false
+    private var randomBackgroundPlaying = false
+
+
     init {
         setHasOptionsMenu(true)
     }
@@ -126,6 +136,10 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         }
         PreferenceManager.getDefaultSharedPreferences(activity)
             .registerOnSharedPreferenceChangeListener(onSettingsChangeListener)
+
+        val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        autoBackgroundPlaying = prefs.getBoolean(getString(R.string.auto_background_play_key), false)
+        randomBackgroundPlaying = prefs.getBoolean(getString(R.string.random_music_play_mode_key), false)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -135,6 +149,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
     override fun onViewCreated(rootView: View, savedInstanceState: Bundle?) {
         // super.onViewCreated() calls initListeners() which require the binding to be initialized
         _feedBinding = FragmentFeedBinding.bind(rootView)
+        playlistControlBinding = PlaylistControlBinding.bind(feedBinding.playlistControl.root)
         super.onViewCreated(rootView, savedInstanceState)
 
         val factory = FeedViewModel.Factory(requireContext(), groupId)
@@ -199,6 +214,73 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         feedBinding.newItemsLoadedButton.setOnClickListener {
             hideNewItemsLoaded(true)
             feedBinding.itemsList.scrollToPosition(0)
+        }
+        setupPlaylistControlListeners()
+    }
+
+    private fun setupPlaylistControlListeners() {
+        playlistControlBinding?.let { binding ->
+            binding.playlistCtrlPlayAllButton.setOnClickListener {
+                val playQueue = getPlayQueue()
+                if (playQueue.streams.isNotEmpty()) {
+                    NavigationHelper.playOnMainPlayer(activity, playQueue)
+                }
+            }
+
+            binding.playlistCtrlPlayPopupButton.setOnClickListener {
+                val playQueue = getPlayQueue()
+                if (playQueue.streams.isNotEmpty()) {
+                    NavigationHelper.playOnPopupPlayer(activity, playQueue, false)
+                }
+            }
+
+            binding.playlistCtrlPlayBgButton.setOnClickListener {
+                val playQueue = getPlayQueue()
+                if (playQueue.streams.isNotEmpty()) {
+                    val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                    if (prefs.getBoolean(getString(R.string.random_music_play_mode_key), false)) {
+                        NavigationHelper.playOnBackgroundPlayerShuffled(activity, playQueue, false)
+                    } else {
+                        NavigationHelper.playOnBackgroundPlayer(activity, playQueue, false)
+                    }
+                }
+            }
+
+            // Long click listeners for enqueue functionality
+            binding.playlistCtrlPlayPopupButton.setOnLongClickListener {
+                val playQueue = getPlayQueue()
+                if (playQueue.streams.isNotEmpty()) {
+                    NavigationHelper.enqueueOnPlayer(activity, playQueue, MainPlayer.PlayerType.POPUP)
+                }
+                true
+            }
+
+            binding.playlistCtrlPlayBgButton.setOnLongClickListener {
+                val playQueue = getPlayQueue()
+                if (playQueue.streams.isNotEmpty()) {
+                    NavigationHelper.enqueueOnPlayer(activity, playQueue, MainPlayer.PlayerType.AUDIO)
+                }
+                true
+            }
+        }
+    }
+
+    // Add method to create PlayQueue from feed items
+    private fun getPlayQueue(startIndex: Int = 0): PlayQueue {
+        val streamInfoItems = mutableListOf<StreamInfoItem>()
+
+        // Extract StreamInfoItems from the current adapter items
+        for (i in 0 until groupAdapter.itemCount) {
+            val item = groupAdapter.getItem(i)
+            if (item is StreamItem) {
+                streamInfoItems.add(item.streamWithState.stream.toStreamInfoItem())
+            }
+        }
+
+        return if (streamInfoItems.isNotEmpty()) {
+            SinglePlayQueue(streamInfoItems, startIndex)
+        } else {
+            SinglePlayQueue(emptyList(), 0)
         }
     }
 
@@ -274,6 +356,14 @@ class FeedFragment : BaseStateFragment<FeedState>() {
 
         feedBinding.itemsList.adapter = null
         _feedBinding = null
+        playlistControlBinding?.let { binding ->
+            binding.playlistCtrlPlayAllButton.setOnClickListener(null)
+            binding.playlistCtrlPlayPopupButton.setOnClickListener(null)
+            binding.playlistCtrlPlayBgButton.setOnClickListener(null)
+            binding.playlistCtrlPlayPopupButton.setOnLongClickListener(null)
+            binding.playlistCtrlPlayBgButton.setOnLongClickListener(null)
+        }
+        playlistControlBinding = null
         super.onDestroyView()
     }
 
@@ -313,6 +403,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         feedBinding.refreshRootView.animate(true, 200)
         feedBinding.loadingProgressText.animate(false, 0)
         feedBinding.swipeRefreshLayout.isRefreshing = false
+        playlistControlBinding?.root?.isVisible = false
     }
 
     override fun handleResult(result: FeedState) {
@@ -367,10 +458,22 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         override fun onItemClick(item: Item<*>, view: View) {
             if (item is StreamItem && !isRefreshing) {
                 val stream = item.streamWithState.stream
-                NavigationHelper.openVideoDetailFragment(
-                    requireContext(), fm,
-                    stream.serviceId, stream.url, stream.title, null, false
-                )
+
+                if (autoBackgroundPlaying) {
+                    // Find the index of the clicked item
+                    val clickedIndex = groupAdapter.getAdapterPosition(item)
+                    val playQueue = getPlayQueue(clickedIndex)
+
+                    if (randomBackgroundPlaying) {
+                        playQueue.shuffle()
+                    }
+                    NavigationHelper.playOnBackgroundPlayer(activity, playQueue, false)
+                } else {
+                    NavigationHelper.openVideoDetailFragment(
+                        requireContext(), fm,
+                        stream.serviceId, stream.url, stream.title, null, false
+                    )
+                }
             }
         }
 
@@ -391,6 +494,8 @@ class FeedFragment : BaseStateFragment<FeedState>() {
             else -> StreamItem.ItemVersion.NORMAL
         }
         loadedState.items.forEach { it.itemVersion = itemVersion }
+
+        playlistControlBinding?.root?.isVisible = loadedState.items.isNotEmpty()
 
         // This need to be saved in a variable as the update occurs async
         val oldOldestSubscriptionUpdate = oldestSubscriptionUpdate
