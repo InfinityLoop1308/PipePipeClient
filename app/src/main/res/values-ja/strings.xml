@@ -980,4 +980,9 @@
 <string name="announcement">お知らせ</string>
 <string name="remove_from_group">グループから削除</string>
 <string name="channel_removed_from_group">グループから削除されました</string>
+<string name="max_bullet_comments_rows_top_summary">トップの弾丸コメントの最大行数</string>
+<string name="max_bullet_comments_rows_bottom_summary">ボトムの弾丸コメントの最大行数</string>
+<string name="max_bullet_comments_rows_regular_summary">通常の弾丸コメントの最大行数</string>
+<string name="enable_max_rows_customization_title">最大行数のカスタマイズ</string>
+<string name="enable_max_rows_customization_summary">弾丸コメントの最大行数をカスタマイズするために有効にする</string>
 </resources>

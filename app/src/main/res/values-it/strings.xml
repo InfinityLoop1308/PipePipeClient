@@ -884,4 +884,9 @@
 <string name="announcement">Annuncio</string>
 <string name="remove_from_group">Rimuovi dal gruppo</string>
 <string name="channel_removed_from_group">Rimosso dal gruppo</string>
+<string name="max_bullet_comments_rows_top_summary">Righe massime per i commenti a pallini superiori</string>
+<string name="max_bullet_comments_rows_bottom_summary">Righe massime per i commenti a pallini inferiori</string>
+<string name="max_bullet_comments_rows_regular_summary">Righe massime per i commenti a pallini regolari</string>
+<string name="enable_max_rows_customization_title">Personalizza righe massime</string>
+<string name="enable_max_rows_customization_summary">Abilita per personalizzare il numero massimo di righe per i commenti a pallini</string>
 </resources>

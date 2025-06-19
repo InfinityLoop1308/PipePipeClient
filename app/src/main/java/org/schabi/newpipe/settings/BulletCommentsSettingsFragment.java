@@ -1,21 +1,9 @@
 package org.schabi.newpipe.settings;
 
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.text.format.DateUtils;
-import android.widget.Toast;
-import androidx.annotation.Nullable;
-import androidx.preference.ListPreference;
 import androidx.preference.SeekBarPreference;
-import com.google.android.material.snackbar.Snackbar;
 import org.schabi.newpipe.R;
-import org.schabi.newpipe.util.PermissionHelper;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public class BulletCommentsSettingsFragment extends BasePreferenceFragment {
 
@@ -39,13 +27,44 @@ public class BulletCommentsSettingsFragment extends BasePreferenceFragment {
                 assert regularBulletCommentsDuration != null;
                 regularBulletCommentsDuration.setSummary(newSetting + " seconds");
             }
+            // Add listeners for the rows preferences
+            else if (s.equals(getString(R.string.max_bullet_comments_rows_top_key)) ||
+                    s.equals(getString(R.string.max_bullet_comments_rows_bottom_key)) ||
+                    s.equals(getString(R.string.max_bullet_comments_rows_regular_key))) {
+                final int newSetting = sharedPreferences.getInt(s, 15);
+                final SeekBarPreference rowsPref = findPreference(s);
+                if (rowsPref != null) {
+                    rowsPref.setSummary(String.valueOf(newSetting));
+                }
+            }
         };
+
+        // Initialize min values for duration preferences
         final SeekBarPreference regularBulletCommentsDuration = findPreference(getString(R.string.regular_bullet_comments_duration_key));
         assert regularBulletCommentsDuration != null;
         regularBulletCommentsDuration.setMin(5);
         final SeekBarPreference topBottomBulletCommentsDuration = findPreference(getString(R.string.top_bottom_bullet_comments_duration_key));
         assert topBottomBulletCommentsDuration != null;
         topBottomBulletCommentsDuration.setMin(5);
+
+        // Initialize summaries for rows preferences
+        SeekBarPreference topRowsPref = findPreference(getString(R.string.max_bullet_comments_rows_top_key));
+        SeekBarPreference bottomRowsPref = findPreference(getString(R.string.max_bullet_comments_rows_bottom_key));
+        SeekBarPreference regularRowsPref = findPreference(getString(R.string.max_bullet_comments_rows_regular_key));
+
+        SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
+        if (topRowsPref != null) {
+            topRowsPref.setSummary(String.valueOf(sharedPreferences.getInt(
+                    getString(R.string.max_bullet_comments_rows_top_key), 15)));
+        }
+        if (bottomRowsPref != null) {
+            bottomRowsPref.setSummary(String.valueOf(sharedPreferences.getInt(
+                    getString(R.string.max_bullet_comments_rows_bottom_key), 15)));
+        }
+        if (regularRowsPref != null) {
+            regularRowsPref.setSummary(String.valueOf(sharedPreferences.getInt(
+                    getString(R.string.max_bullet_comments_rows_regular_key), 15)));
+        }
     }
 
     @Override
@@ -53,7 +72,6 @@ public class BulletCommentsSettingsFragment extends BasePreferenceFragment {
         super.onResume();
         getPreferenceManager().getSharedPreferences()
                 .registerOnSharedPreferenceChangeListener(listener);
-
     }
 
     @Override

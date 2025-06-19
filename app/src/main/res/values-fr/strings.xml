@@ -917,4 +917,9 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="announcement">Annonce</string>
 <string name="remove_from_group">Retirer du groupe</string>
 <string name="channel_removed_from_group">Retiré du groupe</string>
+<string name="max_bullet_comments_rows_top_summary">Nombre maximal de lignes pour les commentaires en haut</string>
+<string name="max_bullet_comments_rows_bottom_summary">Nombre maximal de lignes pour les commentaires en bas</string>
+<string name="max_bullet_comments_rows_regular_summary">Nombre maximal de lignes pour les commentaires réguliers</string>
+<string name="enable_max_rows_customization_title">Personnaliser le nombre maximal de lignes</string>
+<string name="enable_max_rows_customization_summary">Activer pour personnaliser le nombre maximal de lignes pour les commentaires</string>
 </resources>

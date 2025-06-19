@@ -1564,6 +1564,10 @@
     <string name="require_audio_focus_key">require_audio_focus_key</string>
     <string name="regular_bullet_comments_duration_key">regular_bullet_comments_duration_key</string>
     <string name="top_bottom_bullet_comments_duration_key">top_bottom_bullet_comments_duration_key</string>
+    <string name="max_bullet_comments_rows_top_key">max_bullet_comments_rows_top_key</string>
+    <string name="max_bullet_comments_rows_bottom_key">max_bullet_comments_rows_bottom_key</string>
+    <string name="max_bullet_comments_rows_regular_key">max_bullet_comments_rows_regular_key</string>
+
     <string name="bullet_comments_outline_radius_key">bullet_comments_outline_radius_key</string>
     <string name="advanced_formats_key">advanced_formats_key</string>
     <string name="preferred_audio_language_key">preferred_audio_language_key</string>
@@ -1640,6 +1644,7 @@
     <string name="always_start_from_beginning_key">always_start_from_beginning_key</string>
     <string name="fetch_full_playlist_key">fetch_full_playlist_key</string>
     <string name="auto_ellipsize_key">auto_ellipsize_key</string>
+    <string name="enable_max_rows_customization_key">enable_max_rows_customization_key</string>
     <string-array name="filter_type_entries">
         <item>@string/search_result</item>
         <item>@string/recommended_videos</item>

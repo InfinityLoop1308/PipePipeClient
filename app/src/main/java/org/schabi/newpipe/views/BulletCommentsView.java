@@ -73,6 +73,15 @@ public final class BulletCommentsView extends ConstraintLayout {
         commentsDuration = prefs.getInt("top_bottom_bullet_comments_key", 8);
         durationFactor = (float) prefs.getInt("regular_bullet_comments_duration_key", 8) / (float) commentsDuration;
         outlineRadius = prefs.getInt("bullet_comments_outline_radius_key", 2);
+
+
+        boolean limitMaxRows = prefs.getBoolean(context.getString(R.string.enable_max_rows_customization_key), false);
+        if (limitMaxRows) {
+            maxRowsTop = prefs.getInt(context.getString(R.string.max_bullet_comments_rows_top_key), 15);
+            maxRowsBottom = prefs.getInt(context.getString(R.string.max_bullet_comments_rows_bottom_key), 15);
+            maxRowsRegular = prefs.getInt(context.getString(R.string.max_bullet_comments_rows_bottom_key), 15);
+        }
+
         font = prefs.getString("bullet_comments_font_key", "LXGW WenKai Screen");
         opacity = prefs.getInt("bullet_comments_opacity_key", 0xFF);
         //Not this: BulletCommentsPlayerBinding.inflate(LayoutInflater.from(context));
@@ -127,6 +136,10 @@ public final class BulletCommentsView extends ConstraintLayout {
     private String font;
     private int opacity; // 0~255, 0: hide
     private final List<AnimatedTextView> animatedTextViews = new ArrayList<>();
+
+    private int maxRowsTop = 1000000;
+    private int maxRowsBottom = 1000000;
+    private int maxRowsRegular = 1000000;
 
     /**
      * Clear all child views.
@@ -209,7 +222,7 @@ public final class BulletCommentsView extends ConstraintLayout {
         int comparedDuration = (int) (commentsDuration * 1000);
         if(item.getPosition().equals(BulletCommentsInfoItem.Position.TOP)
                 || item.getPosition().equals(BulletCommentsInfoItem.Position.SUPERCHAT)){
-            for(int i = 0; i < calculatedCommentRowsCount ;i++){
+            for(int i = 0; i < Math.min(maxRowsTop, calculatedCommentRowsCount) ;i++){
                 long last = rows.get(i);
                 if(current - last >= comparedDuration){
                     if (reallyDo) {
@@ -220,7 +233,7 @@ public final class BulletCommentsView extends ConstraintLayout {
                 }
             }
         } else if (item.getPosition().equals(BulletCommentsInfoItem.Position.REGULAR)) {
-            for(int i = 0; i < calculatedCommentRowsCount ;i++){
+            for(int i = 0; i < Math.min(maxRowsRegular, calculatedCommentRowsCount) ;i++){
                 long last_time = rowsRegular.get(i).getKey();
                 long last_length = rowsRegular.get(i).getValue();
                 long t = current - last_time;
@@ -238,7 +251,7 @@ public final class BulletCommentsView extends ConstraintLayout {
                 }
             }
         } else {
-            for(int i = calculatedCommentRowsCount - 1; i >= 0 ;i--){
+            for(int i = calculatedCommentRowsCount - 1; i >= Math.max(0, calculatedCommentRowsCount - maxRowsBottom) ;i--){
                 long last = rows.get(i);
                 if(current - last >= comparedDuration){
                     if (reallyDo) {
