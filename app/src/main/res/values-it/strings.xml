@@ -889,4 +889,6 @@
 <string name="max_bullet_comments_rows_regular_summary">Righe massime per i commenti a pallini regolari</string>
 <string name="enable_max_rows_customization_title">Personalizza righe massime</string>
 <string name="enable_max_rows_customization_summary">Abilita per personalizzare il numero massimo di righe per i commenti a pallini</string>
+<string name="exit_app_title">Esci dall\'app</string>
+<string name="exit_app_message">Sei sicuro di voler uscire?</string>
 </resources>

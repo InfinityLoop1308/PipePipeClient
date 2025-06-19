@@ -922,4 +922,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="max_bullet_comments_rows_regular_summary">Nombre maximal de lignes pour les commentaires réguliers</string>
 <string name="enable_max_rows_customization_title">Personnaliser le nombre maximal de lignes</string>
 <string name="enable_max_rows_customization_summary">Activer pour personnaliser le nombre maximal de lignes pour les commentaires</string>
+<string name="exit_app_title">Quitter l\'application</string>
+<string name="exit_app_message">Êtes-vous sûr de vouloir quitter ?</string>
 </resources>

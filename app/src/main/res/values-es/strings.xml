@@ -1032,4 +1032,6 @@
 <string name="max_bullet_comments_rows_regular_summary">Máximo de filas para comentarios de viñetas regulares</string>
 <string name="enable_max_rows_customization_title">Personalizar máximo de filas</string>
 <string name="enable_max_rows_customization_summary">Habilitar para personalizar el máximo de filas para comentarios de viñetas</string>
+<string name="exit_app_title">Salir de la aplicación</string>
+<string name="exit_app_message">¿Estás seguro de que quieres salir?</string>
 </resources>

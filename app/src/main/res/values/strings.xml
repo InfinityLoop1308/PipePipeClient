@@ -1071,4 +1071,6 @@
 <string name="max_bullet_comments_rows_regular_summary">Max rows for regular bullet comments</string>
 <string name="enable_max_rows_customization_title">Customize Max Rows</string>
 <string name="enable_max_rows_customization_summary">Enable to customize maximum rows for bullet comments</string>
+<string name="exit_app_title">Exit App</string>
+<string name="exit_app_message">Are you sure you want to exit?</string>
 </resources>

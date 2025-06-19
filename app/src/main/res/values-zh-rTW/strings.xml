@@ -1023,4 +1023,6 @@
 <string name="max_bullet_comments_rows_regular_summary">常規彈幕的最大行數</string>
 <string name="enable_max_rows_customization_title">自定義最大行數</string>
 <string name="enable_max_rows_customization_summary">啟用以自定義彈幕的最大行數</string>
+<string name="exit_app_title">退出應用程式</string>
+<string name="exit_app_message">您確定要退出嗎？</string>
 </resources>

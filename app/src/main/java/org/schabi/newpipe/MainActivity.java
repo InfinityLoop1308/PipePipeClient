@@ -634,6 +634,21 @@ public class MainActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    private void showExitConfirmationDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.exit_app_title) // Add this string resource
+                .setMessage(R.string.exit_app_message) // Add this string resource
+                .setPositiveButton(R.string.yes, (dialog, which) -> {
+                    finish(); // Exit the app
+                })
+                .setNegativeButton(R.string.no, (dialog, which) -> {
+                    dialog.dismiss(); // Just close the dialog
+                })
+                .setCancelable(true) // Allow dismissing with back button or outside tap
+                .show();
+    }
+
+
     @Override
     public void onBackPressed() {
         if (DEBUG) {
@@ -675,8 +690,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        // Show confirmation dialog only when we're about to exit the app
         if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
-            finish();
+            showExitConfirmationDialog();
         } else {
             super.onBackPressed();
         }

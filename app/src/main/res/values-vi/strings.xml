@@ -1075,4 +1075,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="max_bullet_comments_rows_regular_summary">Số hàng tối đa cho nhận xét dạng gạch đầu dòng thông thường</string>
 <string name="enable_max_rows_customization_title">Tùy chỉnh Số Hàng Tối Đa</string>
 <string name="enable_max_rows_customization_summary">Bật để tùy chỉnh số hàng tối đa cho nhận xét dạng gạch đầu dòng</string>
+<string name="exit_app_title">Thoát ứng dụng</string>
+<string name="exit_app_message">Bạn có chắc chắn muốn thoát không?</string>
 </resources>

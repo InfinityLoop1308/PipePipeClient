@@ -969,4 +969,6 @@
 <string name="max_bullet_comments_rows_regular_summary">Maximale Zeilen für reguläre Bullet-Kommentare</string>
 <string name="enable_max_rows_customization_title">Maximale Zeilen anpassen</string>
 <string name="enable_max_rows_customization_summary">Aktivieren, um die maximale Anzahl der Zeilen für Bullet-Kommentare anzupassen</string>
+<string name="exit_app_title">App verlassen</string>
+<string name="exit_app_message">Sind Sie sicher, dass Sie die App verlassen möchten?</string>
 </resources>

@@ -985,4 +985,6 @@
 <string name="max_bullet_comments_rows_regular_summary">通常の弾丸コメントの最大行数</string>
 <string name="enable_max_rows_customization_title">最大行数のカスタマイズ</string>
 <string name="enable_max_rows_customization_summary">弾丸コメントの最大行数をカスタマイズするために有効にする</string>
+<string name="exit_app_title">アプリを終了</string>
+<string name="exit_app_message">終了してもよろしいですか？</string>
 </resources>
