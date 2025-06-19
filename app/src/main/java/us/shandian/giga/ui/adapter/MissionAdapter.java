@@ -2,6 +2,7 @@ package us.shandian.giga.ui.adapter;
 
 import android.annotation.SuppressLint;
 import android.app.NotificationManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -74,6 +75,7 @@ import us.shandian.giga.util.Utility;
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static android.content.Intent.FLAG_GRANT_PREFIX_URI_PERMISSION;
 import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
+import static org.schabi.newpipe.util.external_communication.ShareUtils.openAppChooser;
 import static us.shandian.giga.get.DownloadMission.ERROR_CONNECT_HOST;
 import static us.shandian.giga.get.DownloadMission.ERROR_FILE_CREATION;
 import static us.shandian.giga.get.DownloadMission.ERROR_HTTP_NO_CONTENT;
@@ -367,10 +369,18 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
             intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
         }
 
-        if (intent.resolveActivity(mContext.getPackageManager()) != null) {
-            ShareUtils.openIntentInApp(mContext, intent, false);
-        } else {
-            Toast.makeText(mContext, R.string.toast_no_player, Toast.LENGTH_LONG).show();
+
+        try {
+            // First try to open with the default browser
+            mContext.startActivity(intent);
+        } catch (ActivityNotFoundException e1) {
+            try {
+                // If no direct handler, try the app chooser
+                openAppChooser(mContext, intent, true);
+            } catch (ActivityNotFoundException e2) {
+                // If even the app chooser fails, show error and return false
+                Toast.makeText(mContext, R.string.toast_no_player, Toast.LENGTH_LONG).show();
+            }
         }
     }
 

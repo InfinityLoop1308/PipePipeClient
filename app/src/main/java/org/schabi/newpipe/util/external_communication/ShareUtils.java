@@ -147,9 +147,9 @@ public final class ShareUtils {
      * @param intent          the intent to open
      * @param setTitleChooser set the title "Open with" to the chooser if true, else not
      */
-    private static void openAppChooser(@NonNull final Context context,
-                                       @NonNull final Intent intent,
-                                       final boolean setTitleChooser) {
+    public static void openAppChooser(@NonNull final Context context,
+                                      @NonNull final Intent intent,
+                                      final boolean setTitleChooser) {
         final Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
         chooserIntent.putExtra(Intent.EXTRA_INTENT, intent);
         chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
