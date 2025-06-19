@@ -926,7 +926,7 @@
 <string name="settings_category_backup_title">备份</string>
 <string name="settings_category_advanced_title">高级</string>
 <string name="not_login">您的IP已被YouTube封锁。尝试使用VPN或通过设置登录以继续。</string>
-<string name="advanced_formats_summary">如果您的设备支持，启用高级格式可以减少数据消耗并提供更高的分辨率。\n在 YouTube 上显示 2k/4k 内容必须启用 WEBM 或 AV1。</string>
+<string name="advanced_formats_summary">如果您的设备支持，启用高级格式可以减少数据消耗并提供更高的分辨率。\n必须启用 WEBM 或 AV1 才能在 YouTube 上显示 2k/4k 内容。\n使用您的设备不支持的格式将导致黑屏或崩溃。</string>
 <string name="advanced_formats_title">启用高级格式</string>
 <string name="preferred_audio_language_title">首选音频语言</string>
 <string name="comments_inner_scroll_title">评论内滚动</string>

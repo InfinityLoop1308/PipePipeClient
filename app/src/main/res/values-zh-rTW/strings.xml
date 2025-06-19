@@ -918,7 +918,7 @@
 <string name="settings_category_backup_title">備份</string>
 <string name="settings_category_advanced_title">進階</string>
 <string name="not_login">您的 IP 已被 YouTube 封鎖。請試著前往設定登入或透過 VPN 以繼續。</string>
-<string name="advanced_formats_summary">若您的裝置支援，啟用進階格式可減少數據用量並提供更高解析度。 \n如要在 YouTube 上顯示 2k / 4k 內容，您必須啟用 WEBM 或 AV1。</string>
+<string name="advanced_formats_summary">如果您的設備支持，啟用高級格式可以減少數據消耗並提供更高的分辨率。\n必須啟用 WEBM 或 AV1 才能在 YouTube 上顯示 2k/4k 內容。\n使用您的設備不支持的格式將導致黑屏或崩潰。</string>
 <string name="advanced_formats_title">啟用進階格式</string>
 <string name="preferred_audio_language_title">預設音訊語言</string>
 <string name="comments_inner_scroll_title">評論內部捲動</string>

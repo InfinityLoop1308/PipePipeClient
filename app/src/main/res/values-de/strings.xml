@@ -864,7 +864,7 @@
 <string name="settings_category_backup_title">Sicherung</string>
 <string name="settings_category_advanced_title">Erweitert</string>
 <string name="not_login">Ihre IP-Adresse wird von YouTube blockiert. Versuchen Sie, ein VPN zu verwenden oder sich über die Einstellungen anzumelden, um fortzufahren.</string>
-<string name="advanced_formats_summary">Wenn Ihr Gerät dies unterstützt, kann das Aktivieren fortgeschrittener Formate den Datenverbrauch reduzieren und höhere Auflösungen bieten. \nWEBM oder AV1 müssen aktiviert sein, um 2k/4k-Inhalte auf YouTube anzuzeigen.</string>
+<string name="advanced_formats_summary">Wenn Ihr Gerät Unterstützung bietet, kann das Aktivieren erweiterter Formate den Datenverbrauch reduzieren und höhere Auflösungen bereitstellen. \nWEBM oder AV1 müssen aktiviert sein, um 2k/4k-Inhalte auf YouTube anzuzeigen. \nDie Verwendung eines Formats, das Ihr Gerät nicht unterstützt, führt zu einem schwarzen Bildschirm oder Absturz.</string>
 <string name="advanced_formats_title">Erweiterte Formate aktivieren</string>
 <string name="preferred_audio_language_title">Bevorzugte Audiosprache</string>
 <string name="comments_inner_scroll_title">Kommentare innerer Bildlauf</string>

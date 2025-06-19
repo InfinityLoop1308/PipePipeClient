@@ -156,7 +156,7 @@ public final class ListHelper {
         final SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
         Set<String> advancedFormats = sharedPreferences.getStringSet(context.getString(R.string.advanced_formats_key), new HashSet<>());
-        boolean useDolbyAudio = advancedFormats.contains("Dolby Atmos");
+        boolean useDolbyAudio = advancedFormats.contains("EC-3");
         return streamList.stream()
                 .filter(stream -> {
                     if (stream.getCodec() == null) {
@@ -277,8 +277,8 @@ public final class ListHelper {
             final boolean preferVideoOnlyStreams
     ) {
         boolean useWebM = advancedFormats.contains("VP9");
-        boolean useAV1 = advancedFormats.contains("AV1");
-        boolean useH265 = advancedFormats.contains("H.265");
+        boolean useAV1 = advancedFormats.contains("AV01");
+        boolean useH265 = advancedFormats.contains("HEVC");
         // Determine order of streams
         // The last added list is preferred
         final List<List<VideoStream>> videoStreamsOrdered =

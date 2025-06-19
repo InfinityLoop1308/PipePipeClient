@@ -29,6 +29,7 @@
             android:summary="@string/advanced_formats_summary"
             android:entries="@array/advanced_formats_values"
             android:entryValues="@array/advanced_formats_values"
+            android:defaultValue="@array/default_advanced_formats_values"
             app:singleLineTitle="false"
             app:iconSpaceReserved="false" />
 
