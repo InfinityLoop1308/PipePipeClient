@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import static org.schabi.newpipe.util.ThemeHelper.isGrid;
+
 /*
  * Created by Christian Schabesberger on 01.08.16.
  *
@@ -285,7 +287,7 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 }
                 if (itemViewMode == ItemViewMode.CARD) {
                     return LOCAL_PLAYLIST_CARD_HOLDER_TYPE;
-                } else if (itemViewMode == ItemViewMode.GRID) {
+                } else if (isGrid(itemViewMode)) {
                     return LOCAL_PLAYLIST_GRID_HOLDER_TYPE;
                 } else {
                     return LOCAL_PLAYLIST_HOLDER_TYPE;
@@ -296,7 +298,7 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 }
                 if (itemViewMode == ItemViewMode.CARD) {
                     return REMOTE_PLAYLIST_CARD_HOLDER_TYPE;
-                } else if (itemViewMode == ItemViewMode.GRID) {
+                } else if (isGrid(itemViewMode)) {
                     return REMOTE_PLAYLIST_GRID_HOLDER_TYPE;
                 } else {
                     return REMOTE_PLAYLIST_HOLDER_TYPE;
@@ -304,7 +306,7 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
             case PLAYLIST_STREAM_ITEM:
                 if (itemViewMode == ItemViewMode.CARD) {
                     return STREAM_PLAYLIST_CARD_HOLDER_TYPE;
-                } else if (itemViewMode == ItemViewMode.GRID) {
+                } else if (isGrid(itemViewMode)) {
                     return STREAM_PLAYLIST_GRID_HOLDER_TYPE;
                 } else {
                     return STREAM_PLAYLIST_HOLDER_TYPE;
@@ -312,7 +314,7 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
             case STATISTIC_STREAM_ITEM:
                 if (itemViewMode == ItemViewMode.CARD) {
                     return STREAM_STATISTICS_CARD_HOLDER_TYPE;
-                } else if (itemViewMode == ItemViewMode.GRID) {
+                } else if (isGrid(itemViewMode)) {
                     return STREAM_STATISTICS_GRID_HOLDER_TYPE;
                 } else {
                     return STREAM_STATISTICS_HOLDER_TYPE;

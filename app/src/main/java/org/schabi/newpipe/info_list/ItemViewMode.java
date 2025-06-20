@@ -16,6 +16,8 @@ public enum ItemViewMode {
      * Grid mode places two cards per row.
      */
     GRID,
+
+    LARGE_GRID,
     /**
      * A full width card in phone - portrait.
      */

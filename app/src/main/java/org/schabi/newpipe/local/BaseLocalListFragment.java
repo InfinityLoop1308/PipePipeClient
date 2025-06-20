@@ -26,7 +26,7 @@ import org.schabi.newpipe.info_list.ItemViewMode;
 
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.ktx.ViewUtils.animateHideRecyclerViewAllowingScrolling;
-import static org.schabi.newpipe.util.ThemeHelper.getItemViewMode;
+import static org.schabi.newpipe.util.ThemeHelper.*;
 
 /**
  * This fragment is design to be used with persistent data such as
@@ -89,7 +89,7 @@ public abstract class BaseLocalListFragment<I, N> extends BaseStateFragment<I>
      */
     private void refreshItemViewMode() {
         final ItemViewMode itemViewMode = getItemViewMode(requireContext());
-        itemsList.setLayoutManager((itemViewMode == ItemViewMode.GRID)
+        itemsList.setLayoutManager((isGrid(itemViewMode))
                 ? getGridLayoutManager() : getListLayoutManager());
         itemListAdapter.setItemViewMode(itemViewMode);
         itemListAdapter.notifyDataSetChanged();
@@ -110,7 +110,7 @@ public abstract class BaseLocalListFragment<I, N> extends BaseStateFragment<I>
 
     protected RecyclerView.LayoutManager getGridLayoutManager() {
         final Resources resources = activity.getResources();
-        int width = resources.getDimensionPixelSize(R.dimen.video_item_grid_thumbnail_image_width);
+        int width = getGridWidth(activity);
         width += (24 * resources.getDisplayMetrics().density);
         final int spanCount = (int) Math.floor(resources.getDisplayMetrics().widthPixels
                 / (double) width);

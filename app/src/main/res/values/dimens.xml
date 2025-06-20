@@ -36,7 +36,9 @@
     <dimen name="video_item_search_avatar_left_margin">27dp</dimen>
     <dimen name="video_item_search_avatar_right_margin">33dp</dimen>
     <dimen name="video_item_grid_thumbnail_image_width">164dp</dimen>
+    <dimen name="video_item_grid_thumbnail_image_large_width">180dp</dimen>
     <dimen name="video_item_grid_thumbnail_image_height">92dp</dimen>
+    <dimen name="video_item_grid_thumbnail_image_large_height">100dp</dimen>
 
     <dimen name="channel_item_grid_thumbnail_image_size">42dp</dimen>
     <dimen name="channel_item_grid_min_width">128dp</dimen>

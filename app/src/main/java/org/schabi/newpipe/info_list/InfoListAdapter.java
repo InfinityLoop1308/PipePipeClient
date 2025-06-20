@@ -40,6 +40,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static org.schabi.newpipe.util.ThemeHelper.isGrid;
+
 /*
  * Created by Christian Schabesberger on 01.08.16.
  *
@@ -253,7 +255,7 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             case STREAM:
                 if (itemMode == ItemViewMode.CARD) {
                     return CARD_STREAM_HOLDER_TYPE;
-                } else if (itemMode == ItemViewMode.GRID) {
+                } else if (isGrid(itemMode)) {
                     return GRID_STREAM_HOLDER_TYPE;
                 } else if (useMiniVariant) {
                     return MINI_STREAM_HOLDER_TYPE;
@@ -261,7 +263,7 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     return STREAM_HOLDER_TYPE;
                 }
             case CHANNEL:
-                if (itemMode == ItemViewMode.GRID) {
+                if (isGrid(itemMode)) {
                     return GRID_CHANNEL_HOLDER_TYPE;
                 } else if (useMiniVariant) {
                     return MINI_CHANNEL_HOLDER_TYPE;
@@ -271,7 +273,7 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             case PLAYLIST:
                 if (itemMode == ItemViewMode.CARD) {
                     return CARD_PLAYLIST_HOLDER_TYPE;
-                } else if (itemMode == ItemViewMode.GRID) {
+                } else if (isGrid(itemMode)) {
                     return GRID_PLAYLIST_HOLDER_TYPE;
                 } else if (useMiniVariant) {
                     return MINI_PLAYLIST_HOLDER_TYPE;

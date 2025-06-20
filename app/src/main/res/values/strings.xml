@@ -553,6 +553,7 @@
 <string name="list_view_mode">List view mode</string>
 <string name="list">List</string>
 <string name="grid">Grid</string>
+<string name="large_grid">Large Grid</string>
 <string name="card">Card</string>
 <string name="auto">Auto</string>
 <!-- Seekbar Preview Thumbnail-->

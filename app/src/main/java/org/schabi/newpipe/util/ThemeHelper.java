@@ -329,7 +329,27 @@ public final class ThemeHelper {
      */
     public static boolean shouldUseGridLayout(final Context context) {
         final ItemViewMode mode = getItemViewMode(context);
-        return mode == ItemViewMode.GRID;
+        return isGrid(mode);
+    }
+
+    public static boolean isGrid(ItemViewMode mode)  {
+        return mode == ItemViewMode.GRID || mode == ItemViewMode.LARGE_GRID;
+    }
+
+    public static int getGridWidth(Context context) {
+        final ItemViewMode mode = getItemViewMode(context);
+        if (mode == ItemViewMode.LARGE_GRID) {
+            return context.getResources().getDimensionPixelSize(R.dimen.video_item_grid_thumbnail_image_large_width);
+        }
+        return context.getResources().getDimensionPixelSize(R.dimen.video_item_grid_thumbnail_image_width);
+    }
+
+    public static int getGridHeight(Context context) {
+        final ItemViewMode mode = getItemViewMode(context);
+        if (mode == ItemViewMode.LARGE_GRID) {
+            return context.getResources().getDimensionPixelSize(R.dimen.video_item_grid_thumbnail_image_large_height);
+        }
+        return context.getResources().getDimensionPixelSize(R.dimen.video_item_grid_thumbnail_image_height);
     }
 
     /**
@@ -357,6 +377,8 @@ public final class ThemeHelper {
             result = ItemViewMode.LIST;
         } else if (listMode.equals(context.getString(R.string.list_view_mode_grid_key))) {
             result = ItemViewMode.GRID;
+        } else if (listMode.equals(context.getString(R.string.list_view_mode_large_grid_key))) {
+            result = ItemViewMode.LARGE_GRID;
         } else if (listMode.equals(context.getString(R.string.list_view_mode_card_key))) {
             result = ItemViewMode.CARD;
         } else {
@@ -384,7 +406,7 @@ public final class ThemeHelper {
     public static int getGridSpanCountStreams(final Context context) {
         final Resources res = context.getResources();
         return getGridSpanCount(context,
-                res.getDimensionPixelSize(R.dimen.video_item_grid_thumbnail_image_width)
+                getGridWidth(context)
                         + res.getDimensionPixelSize(R.dimen.video_item_search_padding) * 2);
     }
 

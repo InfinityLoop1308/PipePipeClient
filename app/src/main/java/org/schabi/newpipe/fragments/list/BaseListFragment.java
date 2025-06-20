@@ -2,6 +2,8 @@ package org.schabi.newpipe.fragments.list;
 
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.ktx.ViewUtils.animateHideRecyclerViewAllowingScrolling;
+import static org.schabi.newpipe.util.ThemeHelper.getGridWidth;
+import static org.schabi.newpipe.util.ThemeHelper.isGrid;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -217,7 +219,7 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
 
     protected RecyclerView.LayoutManager getGridLayoutManager() {
         final Resources resources = activity.getResources();
-        int width = resources.getDimensionPixelSize(R.dimen.video_item_grid_thumbnail_image_width);
+        int width = getGridWidth(activity);
         width += (24 * resources.getDisplayMetrics().density);
         final int spanCount = (int) Math.floor(resources.getDisplayMetrics().widthPixels
                 / (double) width);
@@ -231,7 +233,7 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
      */
     private void refreshItemViewMode() {
         final ItemViewMode itemViewMode = getItemViewMode();
-        itemsList.setLayoutManager((itemViewMode == ItemViewMode.GRID)
+        itemsList.setLayoutManager((isGrid(itemViewMode))
                 ? getGridLayoutManager() : getListLayoutManager());
         infoListAdapter.setItemViewMode(itemViewMode);
         infoListAdapter.notifyDataSetChanged();
