@@ -1653,6 +1653,7 @@
     <string name="auto_ellipsize_key">auto_ellipsize_key</string>
     <string name="enable_max_rows_customization_key">enable_max_rows_customization_key</string>
     <string name="always_list_mode_for_bookmark_key">always_list_mode_for_bookmark_key</string>
+    <string name="exit_app_confirmation_key">exit_app_confirmation_key</string>
     <string-array name="filter_type_entries">
         <item>@string/search_result</item>
         <item>@string/recommended_videos</item>

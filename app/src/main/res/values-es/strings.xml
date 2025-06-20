@@ -1038,4 +1038,6 @@
 <string name="feed_groups_grid_layout_summary">En la página de Suscripciones, mostrar grupos de canales en una cuadrícula en lugar de desplazamiento horizontal</string>
 <string name="press_back_again_to_exit">Presiona atrás nuevamente para salir</string>
 <string name="need_login_hint"> Este contenido requiere una cuenta para ver. Inicia sesión a través de la configuración para continuar.</string>
+<string name="exit_app_confirmation_message">Mostrar un toast de "presiona atrás de nuevo para salir" para evitar salir accidentalmente</string>
+<string name="exit_app_confirmation_title">Confirmación de salida de la aplicación</string>
 </resources>

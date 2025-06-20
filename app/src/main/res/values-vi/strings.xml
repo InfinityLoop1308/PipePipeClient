@@ -1081,4 +1081,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="feed_groups_grid_layout_summary">Trong trang Đăng ký, hiển thị các nhóm kênh dưới dạng lưới thay vì cuộn ngang</string>
 <string name="press_back_again_to_exit">Nhấn quay lại lần nữa để thoát</string>
 <string name="need_login_hint"> Nội dung này yêu cầu tài khoản để xem. Đăng nhập qua cài đặt để tiếp tục.</string>
+<string name="exit_app_confirmation_message">Hiển thị thông báo "nhấn quay lại lần nữa để thoát" để tránh thoát nhầm</string>
+<string name="exit_app_confirmation_title">Xác nhận thoát ứng dụng</string>
 </resources>

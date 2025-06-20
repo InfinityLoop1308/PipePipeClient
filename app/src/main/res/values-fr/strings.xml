@@ -928,4 +928,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="feed_groups_grid_layout_summary">Dans la page des abonnements, afficher les groupes de chaînes dans une grille au lieu d\'un défilement horizontal</string>
 <string name="press_back_again_to_exit">Appuyez à nouveau sur retour pour quitter</string>
 <string name="need_login_hint"> Ce contenu nécessite un compte pour être consulté. Connectez-vous via les paramètres pour continuer.</string>
+<string name="exit_app_confirmation_message">Afficher un toast "appuyez à nouveau sur retour pour quitter" pour éviter de quitter accidentellement</string>
+<string name="exit_app_confirmation_title">Confirmation de sortie de l\'application</string>
 </resources>

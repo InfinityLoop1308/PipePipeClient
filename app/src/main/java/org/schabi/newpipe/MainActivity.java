@@ -678,11 +678,13 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+
         // Show toast and exit logic only when we're about to exit the app
-        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 1 ) {
             long currentTime = System.currentTimeMillis();
 
-            if (currentTime - lastBackPressTime < BACK_PRESS_TIMEOUT) {
+            if (!pref.getBoolean(getString(R.string.exit_app_confirmation_key), true) || currentTime - lastBackPressTime < BACK_PRESS_TIMEOUT) {
                 // Second back press within timeout - exit the app
                 finish();
                 return;

@@ -991,4 +991,6 @@
 <string name="feed_groups_grid_layout_summary">サブスクリプションページで、チャンネルグループを水平スクロールの代わりにグリッドで表示する</string>
 <string name="press_back_again_to_exit">もう一度戻るボタンを押して終了します</string>
 <string name="need_login_hint"> このコンテンツを表示するにはアカウントが必要です。設定からログインして続行してください。</string>
+<string name="exit_app_confirmation_message">「もう一度戻るボタンを押すと終了します」というトーストを表示して、誤って終了するのを防ぎます</string>
+<string name="exit_app_confirmation_title">アプリ終了の確認</string>
 </resources>

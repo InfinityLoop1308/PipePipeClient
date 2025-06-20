@@ -1037,4 +1037,6 @@
 <string name="feed_groups_grid_layout_summary">在订阅页面中，将频道组显示为网格而不是水平滚动</string>
 <string name="press_back_again_to_exit">再次按返回键退出</string>
 <string name="need_login_hint"> 此内容需要账户才能查看。通过设置登录以继续。</string>
+<string name="exit_app_confirmation_message">显示“再次按返回键退出”提示以避免意外退出</string>
+<string name="exit_app_confirmation_title">退出应用确认</string>
 </resources>

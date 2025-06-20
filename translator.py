@@ -340,7 +340,7 @@ class StringTranslator:
             print(f"Error updating translations: {str(e)}")
             return False
 
-    def update_with_replace(self, name, new_value=None):
+    def update_with_replace(self, name, new_value):
         """
         Update an existing entry with a new value and translate it to all target languages.
 
@@ -348,27 +348,6 @@ class StringTranslator:
         name (str): The name of the string entry to update
         new_value (str): The new value to set for the entry. If None, will prompt user via editor.
         """
-        # If new_value is not provided, get it from the user via editor
-        if new_value is None:
-            # Try to get the current value to show as initial content
-            try:
-                current_strings = self.base.load_strings_to_dict()
-                initial_content = current_strings.get(name, "")
-            except:
-                initial_content = ""
-
-            print(f"Opening editor to input new value for '{name}'...")
-            print("Current value will be shown as initial content. Save and exit to confirm.")
-
-            new_value = get_user_input_from_vim(initial_content)
-
-            if new_value is None:
-                print("Update cancelled.")
-                return
-
-            if not new_value.strip():
-                print("Empty value provided. Update cancelled.")
-                return
 
         # Update the base XML with the new value
         try:
@@ -403,6 +382,21 @@ class StringTranslator:
 
         print(f"Successfully updated and translated '{name}' to all target languages.")
 
+def get_value_from_vim():
+    # If new_value is not provided, get it from the user via editor
+        # Try to get the current value to show as initial content
+    try:
+        current_strings = self.base.load_strings_to_dict()
+        initial_content = current_strings.get(name, "")
+    except:
+        initial_content = ""
+
+    print(f"Opening editor to input new value for '{name}'...")
+    print("Current value will be shown as initial content. Save and exit to confirm.")
+
+    return get_user_input_from_vim(initial_content)
+
+
 
 if __name__ == '__main__':
     translator = StringTranslator()
@@ -410,7 +404,10 @@ if __name__ == '__main__':
     # read params
     args = sys.argv
     if args[1] == 'add':
-        translator.add_new_entry(args[2], args[3])
+        if args[-1] == '-i':
+            translator.add_new_entry(args[2], get_user_input_from_vim())
+        else:
+            translator.add_new_entry(args[2], args[3])
     elif args[1] == 'delete' or args[1] == 'remove':
         translator.delete_entry(args[2])
     elif args[1] == 'update_multi':
@@ -425,7 +422,7 @@ if __name__ == '__main__':
         if len(args) == 3:
             translator.translate_item_updates_to_all(args[2:])
         elif args[-1] == "-i":
-            translator.update_with_replace(args[2])
+            translator.update_with_replace(args[2], get_user_input_from_vim())
         elif len(args) == 4:
             translator.update_with_replace(args[2], args[3])
 

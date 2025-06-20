@@ -975,4 +975,6 @@
 <string name="feed_groups_grid_layout_summary">Auf der Abonnementseite werden Kanalgruppen in einem Raster anstelle eines horizontalen Bildlaufs angezeigt</string>
 <string name="press_back_again_to_exit">Drücken Sie erneut zurück, um zu beenden</string>
 <string name="need_login_hint"> Dieser Inhalt erfordert ein Konto, um angezeigt zu werden. Melden Sie sich über die Einstellungen an, um fortzufahren.</string>
+<string name="exit_app_confirmation_message">Zeigen Sie einen "Drücken Sie erneut zurück, um zu beenden" Toast, um versehentliches Beenden zu vermeiden</string>
+<string name="exit_app_confirmation_title">Bestätigung zum Beenden der App</string>
 </resources>

@@ -895,4 +895,6 @@
 <string name="feed_groups_grid_layout_summary">Nella pagina delle iscrizioni, mostra i gruppi di canali in una griglia invece di scorrere orizzontalmente</string>
 <string name="press_back_again_to_exit">Premi di nuovo indietro per uscire</string>
 <string name="need_login_hint"> Questo contenuto richiede un account per essere visualizzato. Accedi tramite le impostazioni per continuare.</string>
+<string name="exit_app_confirmation_message">Mostra un toast "premi di nuovo indietro per uscire" per evitare uscite accidentali</string>
+<string name="exit_app_confirmation_title">Conferma uscita dall\'app</string>
 </resources>
