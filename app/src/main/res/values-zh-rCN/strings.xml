@@ -909,7 +909,7 @@
 <string name="sponsor_promote">成为支持者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">在后台播放时自动随机播放您的本地播放列表</string>
-<string name="update_log">### 新功能\n- 使评论和描述中的时间戳检测更智能\n- 改进质量菜单，使内容更清晰\n\n### 错误修复\n- 评论中的链接无法正常工作\n- 即使有合适的应用程序，也会显示“您的设备上没有应用程序可以打开此内容”的提示\n- 播放列表仅加载前100个视频（YouTube）\n- 在某些条件下下载失败（YouTube）\n- 某些视频在某些条件下没有音频（YouTube）\n- 无法解析某些频道（YouTube）\n- 自杀/自残内容无法加载（YouTube）\n- 某些元信息解析不正确（YouTube）\n- 解析某些评论时出错（BiliBili）</string>
+<string name="update_log">### 新功能\n\n- 更新提取器以避免大多数403问题（YouTube）\n- 添加一个单独的屏幕以显示频道组的频道\n- 支持将频道组订阅源设置为主页标签\n- 支持在频道组订阅源中进行关键词搜索\n- 支持大网格布局\n- 支持书签始终使用列表模式\n- 支持在订阅页面以网格形式显示频道组列表\n- 允许限制弹幕的最大行数\n- 支持将订阅源作为播放列表播放\n- 默认启用vp9和hevc\n- 播放时优先使用高级格式\n- 添加退出应用前的确认对话框\n- 改进评论中附加图片的图片查看器（BiliBili）\n\n### 错误修复\n\n- 登录后所有视频仅以360p播放（YouTube）\n- Shorts标签中的缩略图分辨率低（YouTube）\n- 从共享链接下载时无法下载字幕\n- 在某些条件下显示“没有安装应用来播放此文件”\n\n### 行为\n\n- 使背景按钮行为由“随机顺序”设置控制</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 <string name="donation_dialog_title">支持该项目</string>

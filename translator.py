@@ -4,6 +4,9 @@ from forbiddenfruit import curse
 import sys
 import config
 from concurrent.futures import ThreadPoolExecutor
+import tempfile
+import subprocess
+import os
 
 def filter_list(self, func):
     """
@@ -162,6 +165,46 @@ def escape(text):
     return result.replace("\n", "\\n")
 
 
+def get_user_input_from_vim(initial_content=""):
+    """
+    Open vim editor for user to input text.
+
+    Parameters:
+    initial_content (str): Initial content to show in the editor
+
+    Returns:
+    str: The content entered by the user, or None if cancelled
+    """
+    # Create a temporary file
+    with tempfile.NamedTemporaryFile(mode='w+', suffix='.txt', delete=False) as tmp_file:
+        tmp_file.write(initial_content)
+        tmp_file_path = tmp_file.name
+
+    try:
+        # Open vim with the temporary file
+        editor = os.environ.get('EDITOR', 'vim')
+        subprocess.run([editor, tmp_file_path], check=True)
+
+        # Read the content back
+        with open(tmp_file_path, 'r') as tmp_file:
+            content = tmp_file.read().strip()
+
+        return content if content else None
+
+    except subprocess.CalledProcessError:
+        print("Editor was cancelled or failed.")
+        return None
+    except Exception as e:
+        print(f"Error opening editor: {str(e)}")
+        return None
+    finally:
+        # Clean up the temporary file
+        try:
+            os.unlink(tmp_file_path)
+        except:
+            pass
+
+
 class StringTranslator:
 
     def __init__(self):
@@ -297,18 +340,41 @@ class StringTranslator:
             print(f"Error updating translations: {str(e)}")
             return False
 
-    def update_with_replace(self, name, new_value):
+    def update_with_replace(self, name, new_value=None):
         """
         Update an existing entry with a new value and translate it to all target languages.
 
         Parameters:
         name (str): The name of the string entry to update
-        new_value (str): The new value to set for the entry
+        new_value (str): The new value to set for the entry. If None, will prompt user via editor.
         """
+        # If new_value is not provided, get it from the user via editor
+        if new_value is None:
+            # Try to get the current value to show as initial content
+            try:
+                current_strings = self.base.load_strings_to_dict()
+                initial_content = current_strings.get(name, "")
+            except:
+                initial_content = ""
+
+            print(f"Opening editor to input new value for '{name}'...")
+            print("Current value will be shown as initial content. Save and exit to confirm.")
+
+            new_value = get_user_input_from_vim(initial_content)
+
+            if new_value is None:
+                print("Update cancelled.")
+                return
+
+            if not new_value.strip():
+                print("Empty value provided. Update cancelled.")
+                return
+
         # Update the base XML with the new value
         try:
             self.base.update_entry(f'string[name="{name}"]', new_value)
             self.base.write_to_file()
+            print(f"Updated base entry '{name}' with new value.")
         except Exception as e:
             raise Exception(f"Failed to update base entry '{name}': {str(e)}")
 
@@ -335,6 +401,8 @@ class StringTranslator:
         with ThreadPoolExecutor() as executor:
             executor.map(translate_and_update_target, self.targets)
 
+        print(f"Successfully updated and translated '{name}' to all target languages.")
+
 
 if __name__ == '__main__':
     translator = StringTranslator()
@@ -356,5 +424,8 @@ if __name__ == '__main__':
     elif args[1] == 'update':
         if len(args) == 3:
             translator.translate_item_updates_to_all(args[2:])
-        else:
+        elif args[-1] == "-i":
+            translator.update_with_replace(args[2])
+        elif len(args) == 4:
             translator.update_with_replace(args[2], args[3])
+

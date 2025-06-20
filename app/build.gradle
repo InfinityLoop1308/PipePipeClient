@@ -16,8 +16,8 @@ android {
         minSdk 21
         //noinspection ExpiredTargetSdkVersion
         targetSdk 33
-        versionCode 1079
-        versionName "4.4.2"
+        versionCode 1080
+        versionName "4.5.0"
         archivesBaseName = 'PipePipe_' + versionName
 
         multiDexEnabled true
