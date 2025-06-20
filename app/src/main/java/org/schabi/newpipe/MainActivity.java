@@ -118,6 +118,9 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int ORDER = 0;
 
+    private long lastBackPressTime = 0;
+    private static final int BACK_PRESS_TIMEOUT = 2000;
+
     /*//////////////////////////////////////////////////////////////////////////
     // Activity's LifeCycle
     //////////////////////////////////////////////////////////////////////////*/
@@ -634,21 +637,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    private void showExitConfirmationDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.exit_app_title) // Add this string resource
-                .setMessage(R.string.exit_app_message) // Add this string resource
-                .setPositiveButton(R.string.yes, (dialog, which) -> {
-                    finish(); // Exit the app
-                })
-                .setNegativeButton(R.string.no, (dialog, which) -> {
-                    dialog.dismiss(); // Just close the dialog
-                })
-                .setCancelable(true) // Allow dismissing with back button or outside tap
-                .show();
-    }
-
-
     @Override
     public void onBackPressed() {
         if (DEBUG) {
@@ -690,13 +678,24 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        // Show confirmation dialog only when we're about to exit the app
+        // Show toast and exit logic only when we're about to exit the app
         if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
-            showExitConfirmationDialog();
+            long currentTime = System.currentTimeMillis();
+
+            if (currentTime - lastBackPressTime < BACK_PRESS_TIMEOUT) {
+                // Second back press within timeout - exit the app
+                finish();
+                return;
+            }
+
+            // First back press or timeout exceeded - show toast
+            lastBackPressTime = currentTime;
+            Toast.makeText(this, R.string.press_back_again_to_exit, Toast.LENGTH_SHORT).show();
         } else {
             super.onBackPressed();
         }
     }
+
 
     @Override
     public void onRequestPermissionsResult(final int requestCode,

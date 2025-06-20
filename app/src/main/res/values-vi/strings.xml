@@ -1075,10 +1075,9 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="max_bullet_comments_rows_regular_summary">Số hàng tối đa cho nhận xét dạng gạch đầu dòng thông thường</string>
 <string name="enable_max_rows_customization_title">Tùy chỉnh Số Hàng Tối Đa</string>
 <string name="enable_max_rows_customization_summary">Bật để tùy chỉnh số hàng tối đa cho nhận xét dạng gạch đầu dòng</string>
-<string name="exit_app_title">Thoát ứng dụng</string>
-<string name="exit_app_message">Bạn có chắc chắn muốn thoát không?</string>
 <string name="always_list_mode_for_bookmark_title">Luôn sử dụng chế độ danh sách cho Dấu trang</string>
 <string name="select_channel_group_prompt">Chọn một nhóm kênh</string>
 <string name="feed_groups_grid_layout_title">Sử dụng bố cục lưới cho danh sách nhóm kênh</string>
 <string name="feed_groups_grid_layout_summary">Trong trang Đăng ký, hiển thị các nhóm kênh dưới dạng lưới thay vì cuộn ngang</string>
+<string name="press_back_again_to_exit">Nhấn quay lại lần nữa để thoát</string>
 </resources>

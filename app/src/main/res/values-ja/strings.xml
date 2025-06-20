@@ -985,10 +985,9 @@
 <string name="max_bullet_comments_rows_regular_summary">通常の弾丸コメントの最大行数</string>
 <string name="enable_max_rows_customization_title">最大行数のカスタマイズ</string>
 <string name="enable_max_rows_customization_summary">弾丸コメントの最大行数をカスタマイズするために有効にする</string>
-<string name="exit_app_title">アプリを終了</string>
-<string name="exit_app_message">終了してもよろしいですか？</string>
 <string name="always_list_mode_for_bookmark_title">ブックマークには常にリストモードを使用</string>
 <string name="select_channel_group_prompt">チャンネルグループを選択</string>
 <string name="feed_groups_grid_layout_title">チャンネルグループリストにグリッドレイアウトを使用する</string>
 <string name="feed_groups_grid_layout_summary">サブスクリプションページで、チャンネルグループを水平スクロールの代わりにグリッドで表示する</string>
+<string name="press_back_again_to_exit">もう一度戻るボタンを押して終了します</string>
 </resources>
