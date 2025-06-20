@@ -1026,4 +1026,5 @@
 <string name="exit_app_title">退出應用程式</string>
 <string name="exit_app_message">您確定要退出嗎？</string>
 <string name="always_list_mode_for_bookmark_title">總是使用清單模式顯示書籤</string>
+<string name="select_channel_group_prompt">選擇頻道群組</string>
 </resources>

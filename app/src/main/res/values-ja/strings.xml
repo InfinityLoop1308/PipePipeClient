@@ -988,4 +988,5 @@
 <string name="exit_app_title">アプリを終了</string>
 <string name="exit_app_message">終了してもよろしいですか？</string>
 <string name="always_list_mode_for_bookmark_title">ブックマークには常にリストモードを使用</string>
+<string name="select_channel_group_prompt">チャンネルグループを選択</string>
 </resources>

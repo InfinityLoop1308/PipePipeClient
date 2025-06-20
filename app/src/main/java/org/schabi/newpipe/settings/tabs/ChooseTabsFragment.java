@@ -30,6 +30,7 @@ import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.settings.SelectChannelFragment;
+import org.schabi.newpipe.settings.SelectChannelGroupFragment;
 import org.schabi.newpipe.settings.SelectKioskFragment;
 import org.schabi.newpipe.settings.SelectPlaylistFragment;
 import org.schabi.newpipe.settings.tabs.AddTabDialog.ChooseTabListItem;
@@ -203,6 +204,12 @@ public class ChooseTabsFragment extends Fragment {
                         });
                 selectPlaylistFragment.show(getParentFragmentManager(), "select_playlist");
                 return;
+            case CHANNEL_GROUP:  // Add this case
+                final SelectChannelGroupFragment selectChannelGroupFragment = new SelectChannelGroupFragment();
+                selectChannelGroupFragment.setOnSelectedListener((groupId, groupName) ->
+                        addTab(new Tab.ChannelGroupTab(groupId, groupName)));
+                selectChannelGroupFragment.show(getParentFragmentManager(), "select_channel_group");
+                return;
             default:
                 addTab(type.getTab());
                 break;
@@ -243,6 +250,11 @@ public class ChooseTabsFragment extends Fragment {
                     returnList.add(new ChooseTabListItem(tab.getTabId(),
                             getString(R.string.playlist_page_summary),
                             tab.getTabIconRes(context)));
+                    break;
+                case CHANNEL_GROUP:  // Add this case
+                    returnList.add(new ChooseTabListItem(tab.getTabId(),
+                            getString(R.string.channel_group_tab_summary), // You'll need to add this string
+                            R.drawable.ic_rss_feed));
                     break;
                 default:
                     if (!tabList.contains(tab)) {

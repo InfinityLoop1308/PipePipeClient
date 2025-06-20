@@ -892,4 +892,5 @@
 <string name="exit_app_title">Esci dall\'app</string>
 <string name="exit_app_message">Sei sicuro di voler uscire?</string>
 <string name="always_list_mode_for_bookmark_title">Usa sempre la modalità elenco per i segnalibri</string>
+<string name="select_channel_group_prompt">Seleziona un gruppo di canali</string>
 </resources>

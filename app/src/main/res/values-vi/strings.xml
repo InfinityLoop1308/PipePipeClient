@@ -1078,4 +1078,5 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="exit_app_title">Thoát ứng dụng</string>
 <string name="exit_app_message">Bạn có chắc chắn muốn thoát không?</string>
 <string name="always_list_mode_for_bookmark_title">Luôn sử dụng chế độ danh sách cho Dấu trang</string>
+<string name="select_channel_group_prompt">Chọn một nhóm kênh</string>
 </resources>

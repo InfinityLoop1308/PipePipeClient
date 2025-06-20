@@ -93,6 +93,8 @@ public abstract class Tab {
                     return new ChannelTab(jsonObject);
                 case PLAYLIST:
                     return new PlaylistTab(jsonObject);
+                case CHANNEL_GROUP:
+                    return new ChannelGroupTab(jsonObject);
             }
         }
 
@@ -162,7 +164,8 @@ public abstract class Tab {
         HISTORY(new HistoryTab()),
         KIOSK(new KioskTab()),
         CHANNEL(new ChannelTab()),
-        PLAYLIST(new PlaylistTab());
+        PLAYLIST(new PlaylistTab()),
+        CHANNEL_GROUP(new ChannelGroupTab());
 
         private final Tab tab;
 
@@ -650,6 +653,83 @@ public abstract class Tab {
 
         public LocalItemType getPlaylistType() {
             return playlistType;
+        }
+    }
+    public static class ChannelGroupTab extends Tab {
+        public static final int ID = 9;
+        private static final String JSON_GROUP_ID_KEY = "group_id";
+        private static final String JSON_GROUP_NAME_KEY = "group_name";
+        private long groupId;
+        private String groupName;
+
+        private ChannelGroupTab() {
+            this(-1, NO_NAME);
+        }
+
+        public ChannelGroupTab(final long groupId, final String groupName) {
+            this.groupId = groupId;
+            this.groupName = groupName;
+        }
+
+        public ChannelGroupTab(final JsonObject jsonObject) {
+            super(jsonObject);
+        }
+
+        @Override
+        public int getTabId() {
+            return ID;
+        }
+
+        @Override
+        public String getTabName(final Context context) {
+            return groupName;
+        }
+
+        @DrawableRes
+        @Override
+        public int getTabIconRes(final Context context) {
+            return R.drawable.ic_rss_feed; // Same as FeedTab
+        }
+
+        @Override
+        public Fragment getFragment(final Context context) {
+            return FeedFragment.newInstance(groupId, groupName);
+        }
+
+        @Override
+        protected void writeDataToJson(final JsonStringWriter writerSink) {
+            writerSink.value(JSON_GROUP_ID_KEY, groupId)
+                    .value(JSON_GROUP_NAME_KEY, groupName);
+        }
+
+        @Override
+        protected void readDataFromJson(final JsonObject jsonObject) {
+            groupId = jsonObject.getLong(JSON_GROUP_ID_KEY, -1);
+            groupName = jsonObject.getString(JSON_GROUP_NAME_KEY, NO_NAME);
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (!(obj instanceof ChannelGroupTab)) {
+                return false;
+            }
+            final ChannelGroupTab other = (ChannelGroupTab) obj;
+            return super.equals(obj)
+                    && groupId == other.groupId
+                    && groupName.equals(other.groupName);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getTabId(), groupId, groupName);
+        }
+
+        public long getGroupId() {
+            return groupId;
+        }
+
+        public String getGroupName() {
+            return groupName;
         }
     }
 }
