@@ -28,14 +28,14 @@ import android.graphics.Typeface
 import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
 import android.os.Parcelable
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.EditText
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
@@ -117,10 +117,27 @@ class FeedFragment : BaseStateFragment<FeedState>() {
     private var autoBackgroundPlaying = false
     private var randomBackgroundPlaying = false
 
+    // Search related variables
+    private var editText: EditText? = null
+    private var searchClear: View? = null
+    private var originalItems = mutableListOf<StreamItem>()
+    private var filteredItems = mutableListOf<StreamItem>()
+    private var isFilterEnabled = false
+
+    private val textWatcher = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            filterItems(s.toString())
+        }
+
+        override fun afterTextChanged(s: Editable?) {}
+    }
 
     init {
         setHasOptionsMenu(true)
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -151,6 +168,18 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         _feedBinding = FragmentFeedBinding.bind(rootView)
         playlistControlBinding = PlaylistControlBinding.bind(feedBinding.playlistControl.root)
         super.onViewCreated(rootView, savedInstanceState)
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (activity?.supportActionBar?.customView != null) {
+                    destroyCustomViewInActionBar()
+                } else {
+                    // Let the system handle the back press if search isn't active
+                    isEnabled = false
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
 
         val factory = FeedViewModel.Factory(requireContext(), groupId)
         viewModel = ViewModelProvider(this, factory).get(FeedViewModel::class.java)
@@ -268,17 +297,15 @@ class FeedFragment : BaseStateFragment<FeedState>() {
     // Add method to create PlayQueue from feed items
     private fun getPlayQueue(startIndex: Int = 0): PlayQueue {
         val streamInfoItems = mutableListOf<StreamInfoItem>()
+        val itemsToUse = if (isFilterEnabled) filteredItems else originalItems
 
-        // Extract StreamInfoItems from the current adapter items
-        for (i in 0 until groupAdapter.itemCount) {
-            val item = groupAdapter.getItem(i)
-            if (item is StreamItem) {
-                streamInfoItems.add(item.streamWithState.stream.toStreamInfoItem())
-            }
+        // Extract StreamInfoItems from the current items
+        for (item in itemsToUse) {
+            streamInfoItems.add(item.streamWithState.stream.toStreamInfoItem())
         }
 
         return if (streamInfoItems.isNotEmpty()) {
-            SinglePlayQueue(streamInfoItems, startIndex)
+            SinglePlayQueue(streamInfoItems, startIndex.coerceAtMost(streamInfoItems.size - 1))
         } else {
             SinglePlayQueue(emptyList(), 0)
         }
@@ -328,6 +355,9 @@ class FeedFragment : BaseStateFragment<FeedState>() {
             viewModel.saveShowPlayedItemsToPreferences(showPlayedItems)
         } else if (item.itemId == R.id.menu_item_feed_channel_list) {
             openFeedChannelsFragment(fm, groupId, groupName)
+        } else if (item.itemId == R.id.action_search_feed) {
+            setupSearchInActionBar()
+            return true
         }
 
         return super.onOptionsItemSelected(item)
@@ -351,6 +381,10 @@ class FeedFragment : BaseStateFragment<FeedState>() {
     }
 
     override fun onDestroyView() {
+
+        if (activity.supportActionBar?.customView != null) {
+            destroyCustomViewInActionBar()
+        }
         // Ensure that all animations are canceled
         tryGetNewItemsLoadedButton()?.clearAnimation()
 
@@ -364,6 +398,12 @@ class FeedFragment : BaseStateFragment<FeedState>() {
             binding.playlistCtrlPlayBgButton.setOnLongClickListener(null)
         }
         playlistControlBinding = null
+
+        originalItems.clear()
+        filteredItems.clear()
+        editText = null
+        searchClear = null
+
         super.onDestroyView()
     }
 
@@ -374,6 +414,168 @@ class FeedFragment : BaseStateFragment<FeedState>() {
             if (showPlayedItems) R.drawable.ic_visibility_on else R.drawable.ic_visibility_off
         )
     }
+
+    /*
+     Search
+     */
+
+    private fun setupSearchInActionBar() {
+        val actionBar = activity.supportActionBar ?: return
+        val customView = layoutInflater.inflate(R.layout.feed_search_toolbar, null, false)
+
+        actionBar.setCustomView(customView)
+        actionBar.setDisplayShowCustomEnabled(true)
+
+        editText = activity.findViewById(R.id.toolbar_search_edit_text_feed)
+        editText?.requestFocus()
+
+        val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
+
+        // Hide the search menu item
+        try {
+            activity.findViewById<View>(R.id.action_search_feed)?.visibility = View.GONE
+        } catch (e: Exception) {
+            // ignore
+        }
+
+        searchClear = customView.findViewById(R.id.toolbar_search_clear_feed)
+        searchClear?.setOnClickListener {
+            if (editText?.text?.isEmpty() == true) {
+                editText?.clearFocus()
+                destroyCustomViewInActionBar()
+            } else {
+                editText?.setText("")
+            }
+        }
+
+        try {
+            editText?.removeTextChangedListener(textWatcher)
+        } catch (e: Exception) {
+            // ignore
+        }
+        editText?.addTextChangedListener(textWatcher)
+
+        setupTouchListeners(feedBinding.root)
+    }
+
+    private fun setupTouchListeners(view: View) {
+        // Skip if this is our EditText
+        if (view == editText) {
+            return
+        }
+
+        // For other views, set a touch listener to clear focus
+        if (view !is EditText) {
+            view.setOnTouchListener { _, event ->
+                if (event.action == MotionEvent.ACTION_DOWN && editText?.hasFocus() == true) {
+                    editText?.clearFocus()
+                    val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(editText?.windowToken, 0)
+                }
+                false
+            }
+        }
+
+        // If it's a ViewGroup, apply to all children
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                setupTouchListeners(view.getChildAt(i))
+            }
+        }
+
+        // Add specific listener for the RecyclerView
+        if (view.id == R.id.items_list) {
+            val recyclerView = view as RecyclerView
+            recyclerView.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
+                override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                    if (e.action == MotionEvent.ACTION_DOWN && editText?.hasFocus() == true) {
+                        editText?.clearFocus()
+                        val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        imm.hideSoftInputFromWindow(editText?.windowToken, 0)
+                    }
+                    return false
+                }
+
+                override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {}
+                override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
+            })
+        }
+    }
+
+    private fun filterItems(text: String) {
+        isFilterEnabled = text.isNotEmpty()
+        filteredItems.clear()
+
+        if (text.isEmpty()) {
+            filteredItems.addAll(originalItems)
+        } else {
+            for (item in originalItems) {
+                val stream = item.streamWithState.stream
+                if (stream.title.lowercase().contains(text.lowercase()) ||
+                    stream.uploader.lowercase().contains(text.lowercase()) == true) {
+                    filteredItems.add(item)
+                }
+            }
+        }
+
+        // Use synchronous update to avoid race conditions during rapid filtering
+        try {
+            groupAdapter.update(if (isFilterEnabled) filteredItems else originalItems)
+        } catch (e: Exception) {
+            // Fallback to async if needed
+            groupAdapter.updateAsync(if (isFilterEnabled) filteredItems else originalItems, null)
+        }
+
+        // Always scroll to top when filter changes
+        feedBinding.itemsList.post {
+            feedBinding.itemsList.layoutManager?.scrollToPosition(0)
+        }
+    }
+
+    private fun clearFilter() {
+        isFilterEnabled = false
+        filteredItems.clear()
+        // Cancel any ongoing diff operations before starting a new one
+        try {
+            // Update synchronously to avoid race conditions
+            groupAdapter.update(originalItems)
+        } catch (e: Exception) {
+            // Fallback to async with proper synchronization
+            groupAdapter.updateAsync(originalItems, null)
+        }
+        // Always scroll to top when clearing filter
+        feedBinding.itemsList.post {
+            feedBinding.itemsList.layoutManager?.scrollToPosition(0)
+        }
+    }
+
+    private fun destroyCustomViewInActionBar() {
+        val actionBar = activity.supportActionBar ?: return
+
+        // Remove text watcher first to prevent additional filtering during cleanup
+        try {
+            editText?.removeTextChangedListener(textWatcher)
+        } catch (e: Exception) {
+            // ignore
+        }
+
+        actionBar.setCustomView(null)
+        actionBar.setDisplayShowCustomEnabled(false)
+
+        val searchLocal = activity.findViewById<View>(R.id.action_search_feed)
+        searchLocal?.visibility = View.VISIBLE
+
+        // Clear filter after removing listeners
+        clearFilter()
+
+        val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(activity.window.decorView.windowToken, 0)
+
+        editText = null
+        searchClear = null
+    }
+
 
     // //////////////////////////////////////////////////////////////////////////
     // Handling
@@ -496,6 +698,12 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         }
         loadedState.items.forEach { it.itemVersion = itemVersion }
 
+        // Store original items for filtering
+        originalItems.clear()
+        originalItems.addAll(loadedState.items)
+        filteredItems.clear()
+        filteredItems.addAll(originalItems)
+
         playlistControlBinding?.root?.isVisible = loadedState.items.isNotEmpty()
 
         // This need to be saved in a variable as the update occurs async
@@ -506,7 +714,6 @@ class FeedFragment : BaseStateFragment<FeedState>() {
                 highlightNewItemsAfter(oldOldestSubscriptionUpdate)
             }
         }
-
         listState?.run {
             feedBinding.itemsList.layoutManager?.onRestoreInstanceState(listState)
             listState = null
