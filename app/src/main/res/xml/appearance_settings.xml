@@ -39,6 +39,13 @@
         app:singleLineTitle="false"
         app:iconSpaceReserved="false" />
 
+    <SwitchPreference
+            android:key="feed_groups_grid_layout"
+            android:title="@string/feed_groups_grid_layout_title"
+            android:summary="@string/feed_groups_grid_layout_summary"
+            app:singleLineTitle="false"
+            app:iconSpaceReserved="false"
+            android:defaultValue="false" />
 
     <ListPreference
         android:defaultValue="@string/tablet_mode_auto_key"

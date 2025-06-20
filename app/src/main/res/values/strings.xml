@@ -1077,4 +1077,7 @@
 <string name="always_list_mode_for_bookmark_title">Always use list mode for Bookmarks</string>
 <string name="select_channel_group_prompt">Select a channel group</string>
 <string name="channel_group_tab_summary">Channel Group</string>
+<string name="feed_groups_grid_layout_title">Use grid layout for channel group list</string>
+<string name="feed_groups_grid_layout_summary">In the Subscriptions page, show channel groups in a grid instead of horizontal scroll</string>
+
 </resources>

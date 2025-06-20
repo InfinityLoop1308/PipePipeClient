@@ -989,4 +989,6 @@
 <string name="exit_app_message">終了してもよろしいですか？</string>
 <string name="always_list_mode_for_bookmark_title">ブックマークには常にリストモードを使用</string>
 <string name="select_channel_group_prompt">チャンネルグループを選択</string>
+<string name="feed_groups_grid_layout_title">チャンネルグループリストにグリッドレイアウトを使用する</string>
+<string name="feed_groups_grid_layout_summary">サブスクリプションページで、チャンネルグループを水平スクロールの代わりにグリッドで表示する</string>
 </resources>

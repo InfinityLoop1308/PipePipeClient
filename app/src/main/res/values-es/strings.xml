@@ -1036,4 +1036,6 @@
 <string name="exit_app_message">¿Estás seguro de que quieres salir?</string>
 <string name="always_list_mode_for_bookmark_title">Usar siempre el modo de lista para los marcadores</string>
 <string name="select_channel_group_prompt">Seleccione un grupo de canales</string>
+<string name="feed_groups_grid_layout_title">Usar diseño de cuadrícula para la lista de grupos de canales</string>
+<string name="feed_groups_grid_layout_summary">En la página de Suscripciones, mostrar grupos de canales en una cuadrícula en lugar de desplazamiento horizontal</string>
 </resources>

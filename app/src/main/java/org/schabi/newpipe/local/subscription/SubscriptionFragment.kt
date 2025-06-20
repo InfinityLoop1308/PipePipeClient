@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts.StartActivityFo
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import com.xwray.groupie.Group
 import com.xwray.groupie.GroupAdapter
@@ -47,6 +48,7 @@ import org.schabi.newpipe.util.ThemeHelper.shouldUseGridLayout
 import org.schabi.newpipe.util.external_communication.ShareUtils
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.max
 
 class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
     private var _binding: FragmentSubscriptionBinding? = null
@@ -219,7 +221,7 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
 
     private fun setupInitialLayout() {
         Section().apply {
-            val carouselAdapter = GroupAdapter<GroupieViewHolder<FeedItemCarouselBinding>>()
+            val carouselAdapter = GroupAdapter<GroupieViewHolder<*>>()
 
             carouselAdapter.add(FeedGroupCardItem(-1, getString(R.string.all), FeedGroupIcon.RSS))
             carouselAdapter.add(feedGroupsSection)
@@ -238,7 +240,17 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
                 return@setOnItemLongClickListener true
             }
 
-            feedGroupsCarousel = FeedGroupCarouselItem(requireContext(), carouselAdapter)
+            // Get preference for feed group layout
+            val useGridLayout = getFeedGroupLayoutPreference()
+            val gridSpanCount = if (useGridLayout) getFeedGroupGridSpanCount() else 2
+
+            feedGroupsCarousel = FeedGroupCarouselItem(
+                requireContext(),
+                carouselAdapter,
+                useGridLayout,
+                gridSpanCount
+            )
+
             feedGroupsSortMenuItem = HeaderWithMenuItem(
                 getString(R.string.feed_groups_header_title),
                 R.drawable.ic_sort,
@@ -262,6 +274,19 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
         // Subscriptions section
         subscriptionsSection.setPlaceholder(EmptyPlaceholderItem())
         subscriptionsSection.setHideWhenEmpty(true)
+    }
+
+    private fun getFeedGroupLayoutPreference(): Boolean {
+        // Replace with your actual preference key
+        return PreferenceManager.getDefaultSharedPreferences(requireContext())
+            .getBoolean("feed_groups_grid_layout", false)
+    }
+
+    private fun getFeedGroupGridSpanCount(): Int {
+        val resources = resources
+        val screenWidthDp = resources.configuration.screenWidthDp.toFloat()
+        val minItemWidthDp = 80
+        return max(3.0, (screenWidthDp / minItemWidthDp).toInt().toDouble()).toInt()
     }
 
     override fun initViews(rootView: View, savedInstanceState: Bundle?) {

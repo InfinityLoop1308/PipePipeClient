@@ -1079,4 +1079,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="exit_app_message">Bạn có chắc chắn muốn thoát không?</string>
 <string name="always_list_mode_for_bookmark_title">Luôn sử dụng chế độ danh sách cho Dấu trang</string>
 <string name="select_channel_group_prompt">Chọn một nhóm kênh</string>
+<string name="feed_groups_grid_layout_title">Sử dụng bố cục lưới cho danh sách nhóm kênh</string>
+<string name="feed_groups_grid_layout_summary">Trong trang Đăng ký, hiển thị các nhóm kênh dưới dạng lưới thay vì cuộn ngang</string>
 </resources>

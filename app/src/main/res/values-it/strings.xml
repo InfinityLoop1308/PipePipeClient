@@ -893,4 +893,6 @@
 <string name="exit_app_message">Sei sicuro di voler uscire?</string>
 <string name="always_list_mode_for_bookmark_title">Usa sempre la modalità elenco per i segnalibri</string>
 <string name="select_channel_group_prompt">Seleziona un gruppo di canali</string>
+<string name="feed_groups_grid_layout_title">Usa il layout a griglia per l\'elenco dei gruppi di canali</string>
+<string name="feed_groups_grid_layout_summary">Nella pagina delle iscrizioni, mostra i gruppi di canali in una griglia invece di scorrere orizzontalmente</string>
 </resources>

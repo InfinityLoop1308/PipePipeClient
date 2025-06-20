@@ -1035,4 +1035,6 @@
 <string name="exit_app_message">您确定要退出吗？</string>
 <string name="always_list_mode_for_bookmark_title">始终使用列表模式显示书签</string>
 <string name="select_channel_group_prompt">选择一个频道组</string>
+<string name="feed_groups_grid_layout_title">对频道组列表使用网格布局</string>
+<string name="feed_groups_grid_layout_summary">在订阅页面中，将频道组显示为网格而不是水平滚动</string>
 </resources>
