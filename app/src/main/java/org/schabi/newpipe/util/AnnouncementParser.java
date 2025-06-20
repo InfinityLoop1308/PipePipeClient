@@ -41,7 +41,7 @@ public class AnnouncementParser {
             String currentId = heading.selectFirst("h2.heading-element").text();
 
             // Stop if we reach the target ID
-            if (currentId.equals(beforeId) || LocalDate.parse(currentId, formatter).isBefore(LocalDate.parse(beforeId, formatter))) {
+            if (currentId.equals(beforeId) || (beforeId != null && LocalDate.parse(currentId, formatter).isBefore(LocalDate.parse(beforeId, formatter)))) {
                 break;
             }
 
