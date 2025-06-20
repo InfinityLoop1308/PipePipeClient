@@ -917,7 +917,7 @@
 <string name="settings_category_bullet_comments_summary">彈幕設定</string>
 <string name="settings_category_backup_title">備份</string>
 <string name="settings_category_advanced_title">進階</string>
-<string name="not_login">您的 IP 已被 YouTube 封鎖。請試著前往設定登入或透過 VPN 以繼續。</string>
+<string name="anti_bot_youtube_hint">您的 IP 已被 YouTube 封鎖。請試著前往設定登入或透過 VPN 以繼續。</string>
 <string name="advanced_formats_summary">如果您的設備支持，啟用高級格式可以減少數據消耗並提供更高的分辨率。\n必須啟用 WEBM 或 AV1 才能在 YouTube 上顯示 2k/4k 內容。\n使用您的設備不支持的格式將導致黑屏或崩潰。</string>
 <string name="advanced_formats_title">啟用進階格式</string>
 <string name="preferred_audio_language_title">預設音訊語言</string>
@@ -1028,4 +1028,5 @@
 <string name="feed_groups_grid_layout_title">使用網格佈局顯示頻道群組列表</string>
 <string name="feed_groups_grid_layout_summary">在訂閱頁面中，將頻道群組顯示為網格而不是水平滾動</string>
 <string name="press_back_again_to_exit">再次按返回键以退出</string>
+<string name="need_login_hint"> 此內容需要帳戶才能查看。通過設置登錄以繼續。</string>
 </resources>

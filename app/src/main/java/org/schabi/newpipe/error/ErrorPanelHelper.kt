@@ -22,7 +22,8 @@ import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException
 import org.schabi.newpipe.extractor.exceptions.GeographicRestrictionException
 import org.schabi.newpipe.extractor.exceptions.LiveNotStartException
-import org.schabi.newpipe.extractor.exceptions.NotLoginException
+import org.schabi.newpipe.extractor.exceptions.AntiBotException
+import org.schabi.newpipe.extractor.exceptions.NeedLoginException
 import org.schabi.newpipe.extractor.exceptions.PaidContentException
 import org.schabi.newpipe.extractor.exceptions.PrivateContentException
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException
@@ -182,7 +183,8 @@ class ErrorPanelHelper(
         @StringRes
         fun getExceptionDescription(throwable: Throwable?): Int {
             return when (throwable) {
-                is NotLoginException -> R.string.not_login
+                is AntiBotException -> R.string.anti_bot_youtube_hint
+                is NeedLoginException -> R.string.need_login_hint
                 is LiveNotStartException -> R.string.live_not_started
                 is AgeRestrictedContentException -> R.string.restricted_video_no_stream_new
                 is GeographicRestrictionException -> R.string.georestricted_content

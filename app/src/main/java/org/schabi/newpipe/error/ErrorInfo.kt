@@ -13,7 +13,8 @@ import org.schabi.newpipe.extractor.exceptions.AccountTerminatedException
 import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException
 import org.schabi.newpipe.extractor.exceptions.ExtractionException
-import org.schabi.newpipe.extractor.exceptions.NotLoginException
+import org.schabi.newpipe.extractor.exceptions.AntiBotException
+import org.schabi.newpipe.extractor.exceptions.NeedLoginException
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor.DeobfuscateException
 import org.schabi.newpipe.ktx.isNetworkRelated
 import java.io.PrintWriter
@@ -118,7 +119,8 @@ class ErrorInfo(
                 throwable != null && throwable.isNetworkRelated -> R.string.network_error
                 throwable is ContentNotSupportedException -> R.string.content_not_supported_new
                 throwable is DeobfuscateException -> R.string.youtube_signature_deobfuscation_error
-                throwable is NotLoginException -> R.string.not_login
+                throwable is AntiBotException -> R.string.anti_bot_youtube_hint
+                throwable is NeedLoginException -> R.string.need_login_hint
                 throwable is ExtractionException -> R.string.parsing_error
                 throwable is ExoPlaybackException -> {
                     when (throwable.type) {

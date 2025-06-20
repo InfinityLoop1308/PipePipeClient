@@ -969,7 +969,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="settings_category_bullet_comments_summary">Cài đặt bình luận đạn</string>
 <string name="settings_category_backup_title">Sao lưu</string>
 <string name="settings_category_advanced_title">Nâng cao</string>
-<string name="not_login">IP của bạn đã bị YouTube chặn. Hãy thử sử dụng VPN hoặc đăng nhập qua Cài đặt để tiếp tục.</string>
+<string name="anti_bot_youtube_hint">IP của bạn đã bị YouTube chặn. Hãy thử sử dụng VPN hoặc đăng nhập qua Cài đặt để tiếp tục.</string>
 <string name="advanced_formats_summary">Nếu thiết bị của bạn có hỗ trợ, việc bật các định dạng nâng cao có thể giảm tiêu thụ dữ liệu và cung cấp độ phân giải cao hơn. \nWEBM hoặc AV1 phải được bật để hiển thị nội dung 2k/4k trên YouTube. \nSử dụng định dạng mà thiết bị của bạn không hỗ trợ sẽ dẫn đến màn hình đen hoặc sự cố.</string>
 <string name="advanced_formats_title">Kích hoạt định dạng nâng cao</string>
 <string name="preferred_audio_language_title">Ngôn ngữ âm thanh ưu tiên</string>
@@ -1080,4 +1080,5 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="feed_groups_grid_layout_title">Sử dụng bố cục lưới cho danh sách nhóm kênh</string>
 <string name="feed_groups_grid_layout_summary">Trong trang Đăng ký, hiển thị các nhóm kênh dưới dạng lưới thay vì cuộn ngang</string>
 <string name="press_back_again_to_exit">Nhấn quay lại lần nữa để thoát</string>
+<string name="need_login_hint"> Nội dung này yêu cầu tài khoản để xem. Đăng nhập qua cài đặt để tiếp tục.</string>
 </resources>

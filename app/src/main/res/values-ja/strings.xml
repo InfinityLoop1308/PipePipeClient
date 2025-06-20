@@ -879,7 +879,7 @@
 <string name="settings_category_bullet_comments_summary">弾丸コメント設定</string>
 <string name="settings_category_backup_title">バックアップ</string>
 <string name="settings_category_advanced_title">上級</string>
-<string name="not_login">あなたのIPはYouTubeによってブロックされています。続行するには、VPNを使用するか、設定からログインしてください。</string>
+<string name="anti_bot_youtube_hint">あなたのIPはYouTubeによってブロックされています。続行するには、VPNを使用するか、設定からログインしてください。</string>
 <string name="advanced_formats_summary">デバイスがサポートしている場合、高度なフォーマットを有効にするとデータ消費を削減し、高解像度を提供できます。 \nYouTubeで2k/4kコンテンツを表示するには、WEBMまたはAV1を有効にする必要があります。 \nデバイスがサポートしていないフォーマットを使用すると、黒い画面やクラッシュが発生する可能性があります。</string>
 <string name="advanced_formats_title">高度な形式を有効にする</string>
 <string name="preferred_audio_language_title">優先オーディオ言語</string>
@@ -990,4 +990,5 @@
 <string name="feed_groups_grid_layout_title">チャンネルグループリストにグリッドレイアウトを使用する</string>
 <string name="feed_groups_grid_layout_summary">サブスクリプションページで、チャンネルグループを水平スクロールの代わりにグリッドで表示する</string>
 <string name="press_back_again_to_exit">もう一度戻るボタンを押して終了します</string>
+<string name="need_login_hint"> このコンテンツを表示するにはアカウントが必要です。設定からログインして続行してください。</string>
 </resources>

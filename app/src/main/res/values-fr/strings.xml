@@ -816,7 +816,7 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="settings_category_bullet_comments_summary">Paramètres des commentaires en rafale</string>
 <string name="settings_category_backup_title">Sauvegarde</string>
 <string name="settings_category_advanced_title">Avancé</string>
-<string name="not_login">Votre IP est bloquée par YouTube. Essayez d\'utiliser un VPN ou de vous connecter via les paramètres pour continuer.</string>
+<string name="anti_bot_youtube_hint">Votre IP est bloquée par YouTube. Essayez d\'utiliser un VPN ou de vous connecter via les paramètres pour continuer.</string>
 <string name="advanced_formats_summary">Si votre appareil est compatible, l\'activation des formats avancés peut réduire la consommation de données et offrir des résolutions plus élevées. \nWEBM ou AV1 doivent être activés pour afficher des contenus en 2k/4k sur YouTube. \nUtiliser un format que votre appareil ne prend pas en charge entraînera un écran noir ou un plantage.</string>
 <string name="advanced_formats_title">Activer les formats avancés</string>
 <string name="preferred_audio_language_title">Langue audio préférée</string>
@@ -927,4 +927,5 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="feed_groups_grid_layout_title">Utiliser la disposition en grille pour la liste des groupes de chaînes</string>
 <string name="feed_groups_grid_layout_summary">Dans la page des abonnements, afficher les groupes de chaînes dans une grille au lieu d\'un défilement horizontal</string>
 <string name="press_back_again_to_exit">Appuyez à nouveau sur retour pour quitter</string>
+<string name="need_login_hint"> Ce contenu nécessite un compte pour être consulté. Connectez-vous via les paramètres pour continuer.</string>
 </resources>
