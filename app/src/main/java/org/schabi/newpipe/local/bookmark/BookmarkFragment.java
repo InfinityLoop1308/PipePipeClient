@@ -2,6 +2,7 @@ package org.schabi.newpipe.local.bookmark;
 
 import static org.schabi.newpipe.util.ThemeHelper.shouldUseGridLayout;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.InputType;
@@ -15,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentManager;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -169,6 +171,12 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
                 }
             }
         });
+    }
+
+    @Override
+    protected boolean forceUseListLayout() {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        return prefs.getBoolean(getString(R.string.always_list_mode_for_bookmark_key), false);
     }
 
     ///////////////////////////////////////////////////////////////////////////

@@ -1074,4 +1074,5 @@
 <string name="enable_max_rows_customization_summary">Enable to customize maximum rows for bullet comments</string>
 <string name="exit_app_title">Exit App</string>
 <string name="exit_app_message">Are you sure you want to exit?</string>
+<string name="always_list_mode_for_bookmark_title">Always use list mode for Bookmarks</string>
 </resources>

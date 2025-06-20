@@ -1025,4 +1025,5 @@
 <string name="enable_max_rows_customization_summary">啟用以自定義彈幕的最大行數</string>
 <string name="exit_app_title">退出應用程式</string>
 <string name="exit_app_message">您確定要退出嗎？</string>
+<string name="always_list_mode_for_bookmark_title">總是使用清單模式顯示書籤</string>
 </resources>

@@ -84,12 +84,16 @@ public abstract class BaseLocalListFragment<I, N> extends BaseStateFragment<I>
         }
     }
 
+    protected boolean forceUseListLayout() {
+        return false;
+    }
+
     /**
      * Updates the item view mode based on user preference.
      */
     private void refreshItemViewMode() {
         final ItemViewMode itemViewMode = getItemViewMode(requireContext());
-        itemsList.setLayoutManager((isGrid(itemViewMode))
+        itemsList.setLayoutManager((isGrid(itemViewMode) && !forceUseListLayout())
                 ? getGridLayoutManager() : getListLayoutManager());
         itemListAdapter.setItemViewMode(itemViewMode);
         itemListAdapter.notifyDataSetChanged();

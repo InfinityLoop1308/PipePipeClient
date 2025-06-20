@@ -891,4 +891,5 @@
 <string name="enable_max_rows_customization_summary">Abilita per personalizzare il numero massimo di righe per i commenti a pallini</string>
 <string name="exit_app_title">Esci dall\'app</string>
 <string name="exit_app_message">Sei sicuro di voler uscire?</string>
+<string name="always_list_mode_for_bookmark_title">Usa sempre la modalità elenco per i segnalibri</string>
 </resources>

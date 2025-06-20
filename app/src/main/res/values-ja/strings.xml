@@ -987,4 +987,5 @@
 <string name="enable_max_rows_customization_summary">弾丸コメントの最大行数をカスタマイズするために有効にする</string>
 <string name="exit_app_title">アプリを終了</string>
 <string name="exit_app_message">終了してもよろしいですか？</string>
+<string name="always_list_mode_for_bookmark_title">ブックマークには常にリストモードを使用</string>
 </resources>

@@ -971,4 +971,5 @@
 <string name="enable_max_rows_customization_summary">Aktivieren, um die maximale Anzahl der Zeilen für Bullet-Kommentare anzupassen</string>
 <string name="exit_app_title">App verlassen</string>
 <string name="exit_app_message">Sind Sie sicher, dass Sie die App verlassen möchten?</string>
+<string name="always_list_mode_for_bookmark_title">Immer Listenmodus für Lesezeichen verwenden</string>
 </resources>

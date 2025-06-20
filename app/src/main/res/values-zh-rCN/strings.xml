@@ -1033,4 +1033,5 @@
 <string name="enable_max_rows_customization_summary">启用以自定义弹幕的最大行数</string>
 <string name="exit_app_title">退出应用</string>
 <string name="exit_app_message">您确定要退出吗？</string>
+<string name="always_list_mode_for_bookmark_title">始终使用列表模式显示书签</string>
 </resources>

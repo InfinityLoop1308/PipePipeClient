@@ -1034,4 +1034,5 @@
 <string name="enable_max_rows_customization_summary">Habilitar para personalizar el máximo de filas para comentarios de viñetas</string>
 <string name="exit_app_title">Salir de la aplicación</string>
 <string name="exit_app_message">¿Estás seguro de que quieres salir?</string>
+<string name="always_list_mode_for_bookmark_title">Usar siempre el modo de lista para los marcadores</string>
 </resources>

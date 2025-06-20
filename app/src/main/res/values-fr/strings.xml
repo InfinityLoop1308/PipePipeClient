@@ -924,4 +924,5 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="enable_max_rows_customization_summary">Activer pour personnaliser le nombre maximal de lignes pour les commentaires</string>
 <string name="exit_app_title">Quitter l\'application</string>
 <string name="exit_app_message">Êtes-vous sûr de vouloir quitter ?</string>
+<string name="always_list_mode_for_bookmark_title">Toujours utiliser le mode liste pour les Favoris</string>
 </resources>
