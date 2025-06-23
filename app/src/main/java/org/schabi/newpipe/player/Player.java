@@ -4242,6 +4242,11 @@ public final class Player implements
         } else if (v.getId() == binding.screenRotationButton.getId()) {
             // Only if it's not a vertical video or vertical video but in landscape with locked
             // orientation a screen orientation can be changed automatically
+            try {
+                Thread.sleep(50); // don't know why we need this from 4.5.0, but without this it act strange when exiting
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             onScreenRotationButtonClicked();
         } else if (v.getId() == binding.switchMute.getId()) {
             onMuteUnmuteButtonClicked();
