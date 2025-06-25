@@ -897,4 +897,5 @@
 <string name="need_login_hint"> Questo contenuto richiede un account per essere visualizzato. Accedi tramite le impostazioni per continuare.</string>
 <string name="exit_app_confirmation_message">Mostra un toast "premi di nuovo indietro per uscire" per evitare uscite accidentali</string>
 <string name="exit_app_confirmation_title">Conferma uscita dall\'app</string>
+<string name="try_again">Per favore riprova</string>
 </resources>

@@ -3,6 +3,7 @@ package org.schabi.newpipe.settings;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Toast;
 import androidx.preference.Preference;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.util.ServiceHelper;
@@ -20,6 +21,16 @@ public class NicoNicoAccountSettingsFragment extends BasePreferenceFragment impl
         addPreferencesFromResource(R.xml.account_settings_niconico);
         Preference login = findPreference(getString(R.string.login_key));
         Preference logout = findPreference(getString(R.string.logout_key));
+        Preference override_switch = findPreference(getString(R.string.override_cookies_niconico_key));
+        Preference override_value = findPreference(getString(R.string.override_cookies_niconico_value_key));
+        override_value.setOnPreferenceClickListener(preference -> {
+            ServiceHelper.initServices(this.getContext());
+            return true;
+        });
+        override_switch.setOnPreferenceClickListener(preference -> {
+            ServiceHelper.initServices(this.getContext());
+            return true;
+        });
         login.setOnPreferenceClickListener(preference -> {
             // Open a webview to login and then get cookies
             // and save them to the shared preferences
@@ -31,6 +42,10 @@ public class NicoNicoAccountSettingsFragment extends BasePreferenceFragment impl
             // Clear cookies
             defaultPreferences.edit().putString(getString(R.string.niconico_cookies_key), "").apply();
             ServiceHelper.initServices(this.getContext());
+            Toast.makeText(requireContext(), R.string.success, Toast.LENGTH_SHORT)
+                    .show();
+            login.setEnabled(true);
+            logout.setEnabled(false);
             return true;
         });
         if (defaultPreferences.getString(getString(R.string.niconico_cookies_key), "").equals("")) {
@@ -55,6 +70,12 @@ public class NicoNicoAccountSettingsFragment extends BasePreferenceFragment impl
             // save cookies to shared preferences
             defaultPreferences.edit().putString(getString(R.string.niconico_cookies_key), cookies).apply();
             ServiceHelper.initServices(this.getContext());
+            Toast.makeText(requireContext(), R.string.success, Toast.LENGTH_SHORT)
+                    .show();
+            Preference login = findPreference(getString(R.string.login_key));
+            Preference logout = findPreference(getString(R.string.logout_key));
+            login.setEnabled(false);
+            logout.setEnabled(true);
         }
     }
 

@@ -11,7 +11,6 @@ import org.schabi.newpipe.R;
 
 public class YouTubeLoginWebViewActivity extends AppCompatActivity {
     WebView webView;
-    String cookies;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,11 +28,13 @@ public class YouTubeLoginWebViewActivity extends AppCompatActivity {
     }
 
     private class MyWebViewClient extends WebViewClient {
+        boolean hasLoaded = false;
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-            if (url.equals("https://m.youtube.com/?noapp=1") || url.equals("https://m.youtube.com/")) {
-                setCookies(CookieManager.getInstance().getCookie(url));
+            String cookies = CookieManager.getInstance().getCookie(url);
+            if (!hasLoaded && cookies != null && cookies.contains("SID=")) {
+                hasLoaded = true;
                 webView.loadUrl("https://music.youtube.com/watch?v=09839DpTctU");
             }
         }
@@ -46,10 +47,25 @@ public class YouTubeLoginWebViewActivity extends AppCompatActivity {
                 Uri uri = Uri.parse(url);
                 String pot = uri.getQueryParameter("pot");
                 Intent intent = new Intent();
+                String cookies = CookieManager.getInstance().getCookie("https://music.youtube.com/watch");
                 intent.putExtra("cookies", cookies);
                 intent.putExtra("pot", pot);
                 setResult(RESULT_OK, intent);
-                finish();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Now you are safely on the main UI thread
+                        if (!isFinishing()) {
+                            // It's also a good idea to tell the WebView to stop what it's doing
+                            view.stopLoading();
+                            view.loadUrl("about:blank");
+                            view.onPause();
+                            view.removeAllViews();
+                            view.destroy();
+                            finish();
+                        }
+                    }
+                });
             }
             // Return null to allow the WebView to load the request as usual
             return null;
@@ -71,12 +87,4 @@ public class YouTubeLoginWebViewActivity extends AppCompatActivity {
 //        dialog.setCanceledOnTouchOutside(false); // Prevents dismissal when touching outside
 //        dialog.show();
 //    }
-
-    public void setCookies(String cookies) {
-        this.cookies = cookies;
-    }
-
-    public String getCookies() {
-        return cookies;
-    }
 }

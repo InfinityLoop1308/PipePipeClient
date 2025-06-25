@@ -1039,4 +1039,5 @@
 <string name="need_login_hint"> 此内容需要账户才能查看。通过设置登录以继续。</string>
 <string name="exit_app_confirmation_message">显示“再次按返回键退出”提示以避免意外退出</string>
 <string name="exit_app_confirmation_title">退出应用确认</string>
+<string name="try_again">请再试一次</string>
 </resources>

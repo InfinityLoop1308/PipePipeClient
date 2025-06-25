@@ -930,4 +930,5 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="need_login_hint"> Ce contenu nécessite un compte pour être consulté. Connectez-vous via les paramètres pour continuer.</string>
 <string name="exit_app_confirmation_message">Afficher un toast "appuyez à nouveau sur retour pour quitter" pour éviter de quitter accidentellement</string>
 <string name="exit_app_confirmation_title">Confirmation de sortie de l\'application</string>
+<string name="try_again">Veuillez réessayer</string>
 </resources>

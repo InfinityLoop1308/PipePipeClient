@@ -993,4 +993,5 @@
 <string name="need_login_hint"> このコンテンツを表示するにはアカウントが必要です。設定からログインして続行してください。</string>
 <string name="exit_app_confirmation_message">「もう一度戻るボタンを押すと終了します」というトーストを表示して、誤って終了するのを防ぎます</string>
 <string name="exit_app_confirmation_title">アプリ終了の確認</string>
+<string name="try_again">もう一度お試しください</string>
 </resources>

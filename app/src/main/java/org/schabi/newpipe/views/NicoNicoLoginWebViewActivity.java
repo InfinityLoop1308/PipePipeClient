@@ -24,12 +24,26 @@ public class NicoNicoLoginWebViewActivity extends AppCompatActivity {
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-            if (url.equals("https://sp.nicovideo.jp/")) {
-                String cookies = CookieManager.getInstance().getCookie(url);
+            String cookies = CookieManager.getInstance().getCookie(url);
+            if (cookies != null && cookies.contains("user_session")) {
                 Intent intent = new Intent();
                 intent.putExtra("cookies", cookies);
                 setResult(RESULT_OK, intent);
-                finish();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Now you are safely on the main UI thread
+                        if (!isFinishing()) {
+                            // It's also a good idea to tell the WebView to stop what it's doing
+                            view.stopLoading();
+                            view.loadUrl("about:blank");
+                            view.onPause();
+                            view.removeAllViews();
+                            view.destroy();
+                            finish();
+                        }
+                    }
+                });
             }
         }
     }

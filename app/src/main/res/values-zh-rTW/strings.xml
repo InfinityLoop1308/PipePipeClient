@@ -1031,4 +1031,5 @@
 <string name="need_login_hint"> 此內容需要帳戶才能查看。通過設置登錄以繼續。</string>
 <string name="exit_app_confirmation_message">顯示“再次按返回退出”的提示，以避免意外退出</string>
 <string name="exit_app_confirmation_title">退出應用程式確認</string>
+<string name="try_again">請再試一次</string>
 </resources>

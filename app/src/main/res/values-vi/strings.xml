@@ -1083,4 +1083,5 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="need_login_hint"> Nội dung này yêu cầu tài khoản để xem. Đăng nhập qua cài đặt để tiếp tục.</string>
 <string name="exit_app_confirmation_message">Hiển thị thông báo "nhấn quay lại lần nữa để thoát" để tránh thoát nhầm</string>
 <string name="exit_app_confirmation_title">Xác nhận thoát ứng dụng</string>
+<string name="try_again">Vui lòng thử lại</string>
 </resources>

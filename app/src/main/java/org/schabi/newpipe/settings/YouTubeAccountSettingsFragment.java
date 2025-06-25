@@ -6,8 +6,11 @@ import android.os.Bundle;
 import android.widget.Toast;
 import androidx.preference.Preference;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.extractor.services.youtube.YoutubeParsingHelper;
 import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.views.YouTubeLoginWebViewActivity;
+
+import java.security.NoSuchAlgorithmException;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -31,6 +34,10 @@ public class YouTubeAccountSettingsFragment extends BasePreferenceFragment imple
             defaultPreferences.edit().putString(getString(R.string.youtube_cookies_key), "").apply();
             defaultPreferences.edit().putString(getString(R.string.youtube_po_token_key), "").apply();
             ServiceHelper.initServices(this.getContext());
+            Toast.makeText(requireContext(), R.string.success, Toast.LENGTH_SHORT)
+                    .show();
+            login.setEnabled(true);
+            logout.setEnabled(false);
             return true;
         });
         if (defaultPreferences.getString(getString(R.string.youtube_cookies_key), "").equals("")) {
@@ -70,8 +77,21 @@ public class YouTubeAccountSettingsFragment extends BasePreferenceFragment imple
             defaultPreferences.edit().putString(getString(R.string.youtube_cookies_key), cookies).apply();
             defaultPreferences.edit().putString(getString(R.string.youtube_po_token_key), pot).apply();
             ServiceHelper.initServices(this.getContext());
+
+            try {
+                YoutubeParsingHelper.getAuthorizationHeader(cookies);
+            } catch (Exception e) {
+                Toast.makeText(requireContext(), R.string.try_again, Toast.LENGTH_SHORT)
+                        .show();
+               return;
+            }
+
             Toast.makeText(requireContext(), R.string.success, Toast.LENGTH_SHORT)
                     .show();
+            Preference login = findPreference(getString(R.string.login_key));
+            Preference logout = findPreference(getString(R.string.logout_key));
+            login.setEnabled(false);
+            logout.setEnabled(true);
         }
     }
 
