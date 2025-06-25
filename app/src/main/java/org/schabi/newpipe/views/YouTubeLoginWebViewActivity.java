@@ -1,39 +1,51 @@
 package org.schabi.newpipe.views;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
-import android.webkit.*;
-import androidx.appcompat.app.AppCompatActivity;
-import org.schabi.newpipe.R;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.webkit.CookieManager;
 
-public class YouTubeLoginWebViewActivity extends AppCompatActivity {
-    WebView webView;
+public class YouTubeLoginWebViewActivity extends BaseLoginWebViewActivity {
+
+    private boolean hasLoaded = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_webview);
+    protected String getLoginUrl() {
+        return "https://www.youtube.com/signin";
+    }
 
-        WebView webView = findViewById(R.id.login_webview);
-        this.webView = webView;
+    @Override
+    protected String getSuccessCookieIndicator() {
+        return "SID=";
+    }
+
+    @Override
+    protected void configureWebView() {
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setUserAgentString("Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36");
-
-        webView.setWebViewClient(new MyWebViewClient());
-        webView.loadUrl("https://www.youtube.com/signin");
     }
 
-    private class MyWebViewClient extends WebViewClient {
-        boolean hasLoaded = false;
+    @Override
+    protected WebViewClient createWebViewClient() {
+        return new YouTubeWebViewClient();
+    }
+
+    @Override
+    protected void handleSuccessfulLogin(String cookies) {
+        // YouTube handles success differently - through shouldInterceptRequest
+    }
+
+    private class YouTubeWebViewClient extends WebViewClient {
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
             String cookies = CookieManager.getInstance().getCookie(url);
-            if (!hasLoaded && cookies != null && cookies.contains("SID=")) {
+            if (!hasLoaded && cookies != null && cookies.contains(getSuccessCookieIndicator())) {
                 hasLoaded = true;
                 webView.loadUrl("https://music.youtube.com/watch?v=09839DpTctU");
             }
@@ -42,7 +54,6 @@ public class YouTubeLoginWebViewActivity extends AppCompatActivity {
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
             String url = request.getUrl().toString();
-            // Filter specific requests
             if (url.contains("googlevideo.com/videoplayback")) {
                 Uri uri = Uri.parse(url);
                 String pot = uri.getQueryParameter("pot");
@@ -50,41 +61,9 @@ public class YouTubeLoginWebViewActivity extends AppCompatActivity {
                 String cookies = CookieManager.getInstance().getCookie("https://music.youtube.com/watch");
                 intent.putExtra("cookies", cookies);
                 intent.putExtra("pot", pot);
-                setResult(RESULT_OK, intent);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Now you are safely on the main UI thread
-                        if (!isFinishing()) {
-                            // It's also a good idea to tell the WebView to stop what it's doing
-                            view.stopLoading();
-                            view.loadUrl("about:blank");
-                            view.onPause();
-                            view.removeAllViews();
-                            view.destroy();
-                            finish();
-                        }
-                    }
-                });
+                finishWithResult(intent);
             }
-            // Return null to allow the WebView to load the request as usual
             return null;
         }
     }
-
-//    private void showNonDismissableDialog() {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setTitle(getString(R.string.continue_title));
-//        builder.setMessage(getString(R.string.youtube_login_instruction));
-//        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                webView.loadUrl("https://music.youtube.com/watch?v=09839DpTctU");
-//            }
-//        });
-//        AlertDialog dialog = builder.create();
-//        dialog.setCancelable(false); // This makes the dialog non-dismissable
-//        dialog.setCanceledOnTouchOutside(false); // Prevents dismissal when touching outside
-//        dialog.show();
-//    }
 }
