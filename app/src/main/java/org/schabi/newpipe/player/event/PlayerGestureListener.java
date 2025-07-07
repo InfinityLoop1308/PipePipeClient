@@ -39,6 +39,16 @@ public class PlayerGestureListener
 
     private final int maxVolume;
 
+    private boolean isSwipeSeeking = false;
+    private float accumulatedSeek = 0f;
+    private static final float SEEK_SWIPE_FACTOR = 100f; // ms per pixel
+    private static final float SEEK_SWIPE_FAST_MULTIPLIER = 10f;
+    private static final long SEEK_SWIPE_FAST_THRESHOLD_MS = 60_000L;
+    private long swipeSeekStartPosition = 0L;
+    private long swipeSeekTargetPosition = 0L;
+    private boolean isChangingVolume = false;
+    private boolean isChangingBrightness = false;
+
     public PlayerGestureListener(final Player player, final MainPlayer service) {
         super(player, service);
         maxVolume = player.getAudioReactor().getMaxVolume();
@@ -95,11 +105,36 @@ public class PlayerGestureListener
         if (playerType == MainPlayer.PlayerType.VIDEO) {
             final boolean isFullscreenGestureEnabled =
                     PlayerHelper.isFullscreenGestureEnabled(service);
-            if (isFullscreenGestureEnabled && ((player.isFullscreen() && distanceY < 0  && portion == DisplayPortion.MIDDLE) || (!player.isFullscreen() && distanceY > 0))) {
+            final boolean isSwipeSeekGestureEnabled =
+                    PlayerHelper.isSwipeSeekGestureEnabled(service);
+
+            if (isSwipeSeekGestureEnabled && isSwipeSeeking) {
+                onScrollMainSeek(distanceX);
+                return;
+            }
+
+            if (isChangingVolume) {
+                onScrollMainVolume(distanceX, distanceY);
+                return;
+            }
+
+            if (isChangingBrightness) {
+                onScrollMainBrightness(distanceX, distanceY);
+                return;
+            }
+
+            final boolean isHorizontal = Math.abs(distanceX) > Math.abs(distanceY);
+            if (!isHorizontal && isFullscreenGestureEnabled &&
+                    ((player.isFullscreen() && distanceY < 0 && portion == DisplayPortion.MIDDLE) ||
+                     (!player.isFullscreen() && distanceY > 0))) {
                 player.onScreenRotationButtonClicked();
-                return ;
+                return;
             }
             if(!player.isFullscreen()) {
+                return;
+            }
+            if (isSwipeSeekGestureEnabled && isHorizontal) {
+                onScrollMainSeek(distanceX);
                 return;
             }
             // -- Brightness and Volume control --
@@ -134,6 +169,9 @@ public class PlayerGestureListener
     }
 
     private void onScrollMainVolume(final float distanceX, final float distanceY) {
+        if (!isChangingVolume) {
+            isChangingVolume = true;
+        }
         // If we just started sliding, change the progress bar to match the system volume
         if (player.getVolumeRelativeLayout().getVisibility() != View.VISIBLE) {
             final float volumePercent = player
@@ -174,6 +212,10 @@ public class PlayerGestureListener
             return;
         }
 
+        if (!isChangingBrightness) {
+            isChangingBrightness = true;
+        }
+
         final Window window = parent.getWindow();
         final WindowManager.LayoutParams layoutParams = window.getAttributes();
         final ProgressBar bar = player.getBrightnessProgressBar();
@@ -210,6 +252,48 @@ public class PlayerGestureListener
         }
     }
 
+    private void onScrollMainSeek(final float distanceX) {
+        // The first swipe determines the active overlay; once seeking is engaged
+        // we hide volume and brightness controls so mixed movements do not trigger them.
+        if (!isSwipeSeeking) {
+            isSwipeSeeking = true;
+            accumulatedSeek = 0f;
+            swipeSeekStartPosition = player.getCurrentPosition();
+            swipeSeekTargetPosition = swipeSeekStartPosition;
+            animate(player.getSwipeSeekDisplay(), true, DEFAULT_CONTROLS_DURATION, SCALE_AND_ALPHA);
+            if (player.getVolumeRelativeLayout().getVisibility() == View.VISIBLE) {
+                animate(player.getVolumeRelativeLayout(), false, 200, SCALE_AND_ALPHA);
+                isChangingVolume = false;
+            }
+            if (player.getBrightnessRelativeLayout().getVisibility() == View.VISIBLE) {
+                animate(player.getBrightnessRelativeLayout(), false, 200, SCALE_AND_ALPHA);
+                isChangingBrightness = false;
+            }
+        }
+
+        accumulatedSeek -= distanceX;
+        float thresholdPx = SEEK_SWIPE_FAST_THRESHOLD_MS / SEEK_SWIPE_FACTOR;
+        long deltaMs;
+        if (Math.abs(accumulatedSeek) <= thresholdPx) {
+            deltaMs = (long) (accumulatedSeek * SEEK_SWIPE_FACTOR);
+        } else {
+            // Large scrubs should travel faster so long videos remain easy to navigate
+            float beyond = Math.abs(accumulatedSeek) - thresholdPx;
+            deltaMs = (long) (Math.signum(accumulatedSeek) *
+                    (SEEK_SWIPE_FAST_THRESHOLD_MS + beyond * SEEK_SWIPE_FACTOR * SEEK_SWIPE_FAST_MULTIPLIER));
+        }
+
+        swipeSeekTargetPosition = swipeSeekStartPosition + deltaMs;
+        long duration = player.getDuration();
+        if (duration > 0 && swipeSeekTargetPosition > duration) swipeSeekTargetPosition = duration;
+        if (swipeSeekTargetPosition < 0) swipeSeekTargetPosition = 0;
+        long delta = swipeSeekTargetPosition - swipeSeekStartPosition;
+        String deltaStr = (delta >= 0 ? "+" : "-")
+                + PlayerHelper.getTimeString((int) Math.abs(delta));
+        String posStr = PlayerHelper.getTimeString((int) swipeSeekTargetPosition);
+        player.getSwipeSeekDisplay().setText(deltaStr + " (" + posStr + ")");
+    }
+
     @Override
     public void onScrollEnd(@NonNull final MainPlayer.PlayerType playerType,
                             @NonNull final MotionEvent event) {
@@ -223,13 +307,21 @@ public class PlayerGestureListener
         }
 
         if (playerType == MainPlayer.PlayerType.VIDEO) {
+            if (isSwipeSeeking) {
+                // apply the buffered target only when the gesture ends to keep playback smooth
+                player.seekTo(swipeSeekTargetPosition);
+                animate(player.getSwipeSeekDisplay(), false, 200, SCALE_AND_ALPHA);
+                isSwipeSeeking = false;
+            }
             if (player.getVolumeRelativeLayout().getVisibility() == View.VISIBLE) {
                 animate(player.getVolumeRelativeLayout(), false, 200, SCALE_AND_ALPHA,
                         200);
+                isChangingVolume = false;
             }
             if (player.getBrightnessRelativeLayout().getVisibility() == View.VISIBLE) {
                 animate(player.getBrightnessRelativeLayout(), false, 200, SCALE_AND_ALPHA,
                         200);
+                isChangingBrightness = false;
             }
         } else /* Popup-Player */ {
             if (player.isInsideClosingRadius(event)) {
@@ -250,7 +342,11 @@ public class PlayerGestureListener
 
         player.hideControls(0, 0);
         animate(player.getFastSeekOverlay(), false, 0);
-        animate(player.getCurrentDisplaySeek(), false, 0, ALPHA, 0);
+        animate(player.getSwipeSeekDisplay(), false, 0, ALPHA, 0);
+        animate(player.getVolumeRelativeLayout(), false, 0, ALPHA, 0);
+        animate(player.getBrightnessRelativeLayout(), false, 0, ALPHA, 0);
+        isChangingVolume = false;
+        isChangingBrightness = false;
     }
 
     @Override

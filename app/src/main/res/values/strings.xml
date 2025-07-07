@@ -108,6 +108,8 @@
 <string name="volume_gesture_control_summary">Use gestures to control player volume</string>
 <string name="brightness_gesture_control_title">Brightness gesture control</string>
 <string name="brightness_gesture_control_summary">Use gestures to control player brightness</string>
+<string name="swipe_seek_gesture_control_title">Swipe to seek gesture</string>
+<string name="swipe_seek_gesture_control_summary">Swipe your finger across the screen to seek</string>
 <string name="show_search_suggestions_title">Search suggestions</string>
 <string name="show_search_suggestions_summary">Choose the suggestions to show when searching</string>
 <string name="local_search_suggestions">Local search suggestions</string>

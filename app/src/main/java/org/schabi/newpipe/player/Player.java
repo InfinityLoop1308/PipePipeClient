@@ -157,6 +157,7 @@ import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.views.ExpandableSurfaceView;
 import org.schabi.newpipe.views.player.PlayerFastSeekOverlay;
+import android.widget.TextView;
 
 import java.time.Duration;
 import java.util.*;
@@ -4994,6 +4995,10 @@ public final class Player implements
         return binding.currentDisplaySeek;
     }
 
+    public TextView getSwipeSeekDisplay() {
+        return binding.swipeSeekDisplay;
+    }
+
     public PlayerFastSeekOverlay getFastSeekOverlay() {
         return binding.fastSeekOverlay;
     }
@@ -5030,6 +5035,14 @@ public final class Player implements
 
     public PlayerBinding getBinding() {
         return binding;
+    }
+
+    public long getCurrentPosition() {
+        return exoPlayerIsNull() ? 0 : simpleExoPlayer.getCurrentPosition();
+    }
+
+    public long getDuration() {
+        return exoPlayerIsNull() ? 0 : simpleExoPlayer.getDuration();
     }
 
     //endregion

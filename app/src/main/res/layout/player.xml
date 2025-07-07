@@ -872,6 +872,20 @@
         android:alpha="0"
         android:visibility="invisible" /> <!-- Required for the first appearance fading correctly -->
 
+    <org.schabi.newpipe.views.NewPipeTextView
+        android:id="@+id/swipeSeekDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/background_rectangle_black_transparent"
+        android:padding="8dp"
+        android:textColor="@android:color/white"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        tools:ignore="RtlHardcoded"
+        tools:text="+0:00 (0:00)" />
+
     <org.schabi.newpipe.views.BulletCommentsView
         android:id="@+id/bulletCommentsView"
         android:layout_width="match_parent"
