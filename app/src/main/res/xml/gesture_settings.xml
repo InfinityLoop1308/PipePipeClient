@@ -26,4 +26,11 @@
             app:singleLineTitle="false"
             app:iconSpaceReserved="false" />
 
+       <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="@string/swipe_seek_gesture_control_key"
+            android:summary="@string/swipe_seek_gesture_control_summary"
+            android:title="@string/swipe_seek_gesture_control_title"
+            app:singleLineTitle="false"
+            app:iconSpaceReserved="false" />
 </PreferenceScreen>

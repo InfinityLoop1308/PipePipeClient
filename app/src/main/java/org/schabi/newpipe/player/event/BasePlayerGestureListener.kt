@@ -350,8 +350,9 @@ abstract class BasePlayerGestureListener(
             return false
         }
         val insideThreshold = abs(movingEvent.y - initialEvent.y) <= MOVEMENT_THRESHOLD
-        if (
-            !isMovingInMain && (insideThreshold || abs(distanceX) > abs(distanceY)) ||
+        val isHorizontal = abs(distanceX) > abs(distanceY)
+        // require a mostly vertical swipe so horizontal seeking is not hijacked
+        if (!isMovingInMain && !isHorizontal && insideThreshold ||
             player.currentState == Player.STATE_COMPLETED
         ) {
             return false
