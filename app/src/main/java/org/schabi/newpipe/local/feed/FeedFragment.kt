@@ -155,7 +155,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
             .registerOnSharedPreferenceChangeListener(onSettingsChangeListener)
 
         val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        autoBackgroundPlaying = prefs.getBoolean(getString(R.string.auto_background_play_key), false)
+        autoBackgroundPlaying = false
         randomBackgroundPlaying = prefs.getBoolean(getString(R.string.random_music_play_mode_key), false)
     }
 
