@@ -36,6 +36,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.IdRes
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
@@ -315,6 +316,9 @@ class FeedFragment : BaseStateFragment<FeedState>() {
     // Menu
     // /////////////////////////////////////////////////////////////////////////
 
+    private fun Menu.isItemVisible(@IdRes itemId: Int): Boolean =
+        findItem(itemId)?.let { it.isVisible } ?: false
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
 
@@ -324,6 +328,8 @@ class FeedFragment : BaseStateFragment<FeedState>() {
 
         inflater.inflate(R.menu.menu_feed_fragment, menu)
         updateTogglePlayedItemsButton(menu.findItem(R.id.menu_item_feed_toggle_played_items))
+        menu.findItem(R.id.action_search_feed)?.isVisible =
+            menu.isItemVisible(R.id.action_search).not()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
