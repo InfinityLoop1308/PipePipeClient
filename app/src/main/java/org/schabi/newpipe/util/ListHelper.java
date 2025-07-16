@@ -222,37 +222,64 @@ public final class ListHelper {
     }
 
     /**
-     * Return the index of the default stream in the list, based on the parameters
-     * defaultResolution and defaultFormat.
-     *
-     * @param defaultResolution the default resolution to look for
-     * @param bestResolutionKey key of the best resolution
-     * @param defaultFormat     the default format to look for
-     * @param videoStreams      list of the video streams to check
-     * @return index of the default resolution&format
+     * Convert any 720p60/HFR/HDR/… string into a pure numeric key so they compare equal:
+     * 1080p60 → 1080p, 1440p HDR → 1440p, etc.
      */
-    static int getDefaultResolutionIndex(final String defaultResolution,
-                                         final String bestResolutionKey,
-                                         final MediaFormat defaultFormat,
-                                         @Nullable final List<VideoStream> videoStreams) {
-        if (videoStreams == null || videoStreams.isEmpty()) {
+    private static String normalizeResolutionKey(@NonNull final String raw) {
+        return raw.replaceAll("(?i)p.*", "p");  // CASE-insensitive removal after the "p"
+    }
+
+
+    /**
+     * Core selection logic that groups by *effective* resolution (ignoring suffixes),
+     * then selects inside each bucket via bitrate / codec-rank.
+     */
+    static int getDefaultResolutionIndex(@NonNull final String targetRes,
+                                         @NonNull final String bestResolutionKey,
+                                         @Nullable final MediaFormat filterFormat,
+                                         @Nullable final List<VideoStream> streams) {
+
+        if (streams == null || streams.isEmpty()) {
             return -1;
         }
 
-        sortStreamList(videoStreams, false);
-        if (defaultResolution.equals(bestResolutionKey)) {
+        // 1. User picked the best resolution key → simply return the highest actual stream
+        if (bestResolutionKey.equals(targetRes)) {
+            return streams.indexOf(
+                    Collections.max(streams, ListHelper::compareVideoStreamResolution));
+        }
+
+        // 2. Strip suffixes to group variants together:   1080p HDR → 1080p
+        final String normalizedTarget = normalizeResolutionKey(targetRes);
+
+        // 3. Build the bucket of streams that share the same effective resolution
+        List<VideoStream> bucket = new ArrayList<>();
+        for (VideoStream s : streams) {
+            if (normalizedTarget.equals(normalizeResolutionKey(s.getResolution()))) {
+                if (filterFormat == null || s.getFormat() == filterFormat) {
+                    bucket.add(s);
+                }
+            }
+        }
+
+        // 4. No exact format match? Drop the format filter and use everything.
+        if (bucket.isEmpty() && filterFormat != null) {
+            for (VideoStream s : streams) {
+                if (normalizedTarget.equals(normalizeResolutionKey(s.getResolution()))) {
+                    bucket.add(s);
+                }
+            }
+        }
+
+        // 5. No candidates: fall back to highest available
+        if (bucket.isEmpty()) {
             return 0;
         }
 
-        final int defaultStreamIndex
-                = getVideoStreamIndex(defaultResolution, defaultFormat, videoStreams);
-
-        // this is actually an error,
-        // but maybe there is really no stream fitting to the default value.
-        if (defaultStreamIndex == -1) {
-            return 0;
-        }
-        return defaultStreamIndex;
+        // 6. Highest quality in the bucket
+        bucket.sort(ListHelper::compareVideoStreamResolution);
+        final VideoStream best = bucket.get(bucket.size() - 1);
+        return streams.indexOf(best);
     }
 
     /**
@@ -501,9 +528,9 @@ public final class ListHelper {
     private static int getDefaultResolutionWithDefaultFormat(@NonNull final Context context,
                                                              final String defaultResolution,
                                                              final List<VideoStream> videoStreams) {
-        final MediaFormat defaultFormat = MediaFormat.MPEG_4;
+//        final MediaFormat defaultFormat = MediaFormat.MPEG_4;
         return getDefaultResolutionIndex(defaultResolution,
-                context.getString(R.string.best_resolution_key), defaultFormat, videoStreams);
+                context.getString(R.string.best_resolution_key), null, videoStreams);
     }
 
     private static MediaFormat getDefaultFormat(@NonNull final Context context,
