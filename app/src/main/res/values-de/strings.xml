@@ -978,4 +978,6 @@
 <string name="exit_app_confirmation_message">Zeigen Sie einen "Drücken Sie erneut zurück, um zu beenden" Toast, um versehentliches Beenden zu vermeiden</string>
 <string name="exit_app_confirmation_title">Bestätigung zum Beenden der App</string>
 <string name="try_again">Bitte versuchen Sie es erneut</string>
+<string name="swipe_seek_gesture_control_title">Wischgeste zum Suchen</string>
+<string name="swipe_seek_gesture_control_summary">Wischen Sie nach rechts zum Vorspulen und nach links zum Zurückspulen</string>
 </resources>

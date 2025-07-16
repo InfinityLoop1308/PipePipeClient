@@ -931,4 +931,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="exit_app_confirmation_message">Afficher un toast "appuyez à nouveau sur retour pour quitter" pour éviter de quitter accidentellement</string>
 <string name="exit_app_confirmation_title">Confirmation de sortie de l\'application</string>
 <string name="try_again">Veuillez réessayer</string>
+<string name="swipe_seek_gesture_control_title">Geste de balayage pour la recherche</string>
+<string name="swipe_seek_gesture_control_summary">Balayez vers la droite pour avancer rapidement et vers la gauche pour rembobiner</string>
 </resources>

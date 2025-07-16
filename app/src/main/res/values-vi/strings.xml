@@ -1084,4 +1084,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="exit_app_confirmation_message">Hiển thị thông báo "nhấn quay lại lần nữa để thoát" để tránh thoát nhầm</string>
 <string name="exit_app_confirmation_title">Xác nhận thoát ứng dụng</string>
 <string name="try_again">Vui lòng thử lại</string>
+<string name="swipe_seek_gesture_control_title">Vuốt để tìm cử chỉ</string>
+<string name="swipe_seek_gesture_control_summary">Vuốt sang phải để tua nhanh, và sang trái để tua lại</string>
 </resources>

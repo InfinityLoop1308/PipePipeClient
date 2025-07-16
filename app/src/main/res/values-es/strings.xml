@@ -1041,4 +1041,6 @@
 <string name="exit_app_confirmation_message">Mostrar un toast de "presiona atrás de nuevo para salir" para evitar salir accidentalmente</string>
 <string name="exit_app_confirmation_title">Confirmación de salida de la aplicación</string>
 <string name="try_again">Por favor, inténtalo de nuevo</string>
+<string name="swipe_seek_gesture_control_title">Gesto de deslizar para buscar</string>
+<string name="swipe_seek_gesture_control_summary">Desliza a la derecha para avanzar rápido, y a la izquierda para rebobinar</string>
 </resources>

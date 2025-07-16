@@ -898,4 +898,6 @@
 <string name="exit_app_confirmation_message">Mostra un toast "premi di nuovo indietro per uscire" per evitare uscite accidentali</string>
 <string name="exit_app_confirmation_title">Conferma uscita dall\'app</string>
 <string name="try_again">Per favore riprova</string>
+<string name="swipe_seek_gesture_control_title">Scorri per cercare il gesto</string>
+<string name="swipe_seek_gesture_control_summary">Scorri verso destra per avanzare velocemente e verso sinistra per riavvolgere</string>
 </resources>

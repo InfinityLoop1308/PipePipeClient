@@ -1032,4 +1032,6 @@
 <string name="exit_app_confirmation_message">顯示“再次按返回退出”的提示，以避免意外退出</string>
 <string name="exit_app_confirmation_title">退出應用程式確認</string>
 <string name="try_again">請再試一次</string>
+<string name="swipe_seek_gesture_control_title">滑動搜尋手勢</string>
+<string name="swipe_seek_gesture_control_summary">向右滑動可快轉，向左滑動可倒轉</string>
 </resources>

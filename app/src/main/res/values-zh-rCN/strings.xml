@@ -1040,4 +1040,6 @@
 <string name="exit_app_confirmation_message">显示“再次按返回键退出”提示以避免意外退出</string>
 <string name="exit_app_confirmation_title">退出应用确认</string>
 <string name="try_again">请再试一次</string>
+<string name="swipe_seek_gesture_control_title">滑动以快进/快退手势</string>
+<string name="swipe_seek_gesture_control_summary">向右滑动快进，向左滑动快退</string>
 </resources>
