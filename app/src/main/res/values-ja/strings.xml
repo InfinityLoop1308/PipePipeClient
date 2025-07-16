@@ -535,7 +535,7 @@
 <string name="youtube_music_premium_content_new">この動画は YouTube ミュージック プレミアム会員のみが利用できるようになっているので、PipePipe でストリーミングやダウンロードを行うことはできません。</string>
 <string name="soundcloud_go_plus_content_new">これは SoundCloud Go+ トラックなので、少なくともあなたの国では、PipePipeではストリーミングやダウンロードができません。</string>
 <string name="georestricted_content">このコンテンツは、お住まいの国ではご利用いただけません。</string>
-<string name="crash_the_app">アプリのクラッシュ</string>
+<string name="crash_the_app">アプリをクラッシュ</string>
 <string name="restricted_video_no_stream_new">この動画は年齢制限があります。\n        設定からログインして視聴してください。</string>
 <string name="select_night_theme_toast">以下からお好みの夜間テーマを選択できます</string>
 <string name="auto_device_theme_title">自動 (デバイスのテーマ)</string>
@@ -613,7 +613,7 @@
 <string name="detail_pinned_comment_view_description">固定されたコメント</string>
 <string name="no_appropriate_file_manager_message_android_10">この動作に適切なファイルマネージャが見つかりませんでした。\n        Storage Access Frameworkと互換性のあるファイルマネージャをインストールしてください。</string>
 <string name="no_appropriate_file_manager_message">この動作に適切なファイルマネージャが見つかりませんでした。\n        ファイルマネージャをインストールするか、ダウンロード設定で\'%s\'を無効にすることをお試しください。</string>
-<string name="show_crash_the_player_summary">プレーヤー使用時にクラッシュオプションを表示</string>
+<string name="show_crash_the_player_summary">プレイヤー使用時にクラッシュオプションを表示</string>
 <string name="create_error_notification">エラー通知を作成</string>
 <string name="error_report_channel_description">エラーを報告する通知</string>
 <string name="leak_canary_not_available">LeakCanaryが利用不可能です</string>
@@ -650,21 +650,13 @@
 <string name="settings_category_sponsor_block_categories_reset_colors_title">色をリセット</string>
 <string name="settings_category_sponsor_block_category_enable_title">有効にする</string>
 <string name="settings_category_sponsor_block_category_color">シークバーの色</string>
-<string name="settings_category_sponsor_block_category_sponsor_title">スポンサー</string>
 <string name="settings_category_sponsor_block_category_sponsor_summary">有料のプロモーション、有料の紹介、直接の広告。自己宣伝や好きな事業/クリエイター/ウェブサイト/製品への無料のシャウトアウトには適用されません。</string>
-<string name="settings_category_sponsor_block_category_intro_title">インターミッション/イントロアニメーション</string>
 <string name="settings_category_sponsor_block_category_intro_summary">実際のコンテンツがない間隔。一時停止、静止画、繰り返しアニメーションが含まれることがあります。情報を含むトランジションや MV には使用しないでください。</string>
-<string name="settings_category_sponsor_block_category_outro_title">エンドカード/クレジット</string>
 <string name="settings_category_sponsor_block_category_outro_summary">クレジットまたは YouTube のエンドカードが表示されるとき。話された結論には適用されません。有用なコンテンツを含んではいけません。MV には使用しないでください。</string>
-<string name="settings_category_sponsor_block_category_interaction_title">インタラクションリマインダー（購読）</string>
 <string name="settings_category_sponsor_block_category_interaction_summary">コンテンツの途中でいいね、購読、フォローするように促す短いリマインダーがある場合。それが長い場合や特定のことについての場合は、自己宣伝のカテゴリに含めるべきです。</string>
-<string name="settings_category_sponsor_block_category_self_promo_title">無報酬/自己宣伝</string>
 <string name="settings_category_sponsor_block_category_self_promo_summary">有料のプロモーションと同様ですが、無報酬または自己宣伝の場合。これには商品、寄付に関するセクション、共同作業した相手に関する情報が含まれます。</string>
-<string name="settings_category_sponsor_block_category_non_music_title">音楽：非音楽部分</string>
 <string name="settings_category_sponsor_block_category_non_music_summary">MV にのみ適用されます。MV のイントロやアウトロが含まれます。</string>
-<string name="settings_category_sponsor_block_category_preview_title">プレビュー/振り返り</string>
 <string name="settings_category_sponsor_block_category_preview_summary">前のエピソードの簡単な振り返り、または現在の動画で今後起こることのプレビュー。話された要約には使用しないでください。</string>
-<string name="settings_category_sponsor_block_category_filler_title">フィラータンジェント/ジョーク</string>
 <string name="settings_category_sponsor_block_category_filler_summary">メインコンテンツを理解するために必要ない、フィラーやユーモアのために追加されたシーンに適用されます。</string>
 <string name="invalid_color_toast">無効な色</string>
 <string name="error_report_notification_title_new">PipePipeでエラーが発生しました、タップして報告</string>
@@ -719,7 +711,6 @@
 <string name="sponsor_block_uploader_removed_from_whitelist_toast">アップローダーがホワイトリストから削除されました</string>
 <string name="sponsor_block_confirm_clear_whitelist">ホワイトリストをクリアしてもよろしいですか？</string>
 <string name="sponsor_block_confirm_reset_colors">カテゴリの色をリセットしてもよろしいですか？</string>
-<string name="sponsor_block_reset_colors_toast">色がリセットされました。</string>
 <string name="content_not_supported_new">このコンテンツはまだPipePipeでサポートされていません。\n\n        将来のバージョンでサポートされることを期待しています。</string>
 <string name="private_content_new">このコンテンツは非公開なので、PipePipeでストリーミングやダウンロードすることはできません。</string>
 <string name="live_not_started">ライブはまだ開始されていません。</string>
@@ -996,4 +987,17 @@
 <string name="try_again">もう一度お試しください</string>
 <string name="swipe_seek_gesture_control_title">シークジェスチャーでスワイプ</string>
 <string name="swipe_seek_gesture_control_summary">右にスワイプすると早送り、左にスワイプすると巻き戻し</string>
+<string name="sponsor_block_category_sponsor">スポンサー</string>
+<string name="sponsor_block_category_intro">幕間/イントロアニメーション</string>
+<string name="sponsor_block_category_interaction">インタラクションリマインダー (購読)</string>
+<string name="large_grid">大きなグリッド</string>
+<string name="card">カード</string>
+<string name="feed_fetch_channel_tabs">チャンネルタブの取得</string>
+<string name="feed_fetch_channel_tabs_summary">フィードを更新する際に取得するタブ。このオプションは、チャンネルが高速モードで更新された場合には影響しません。</string>
+<string name="sponsor_block_category_outro">エンドカード/クレジット</string>
+<string name="channel_tab_tracks">トラック</string>
+<string name="settings_category_youtube_account_title">YouTubeアカウント</string>
+<string name="filter_by_channel_title">チャンネルでフィルタリング</string>
+<string name="filter_by_channel_summary">ブロックしたいチャンネル名をここにコンマで区切って追加してください</string>
+<string name="channel_group_tab_summary">チャンネルグループ</string>
 </resources>

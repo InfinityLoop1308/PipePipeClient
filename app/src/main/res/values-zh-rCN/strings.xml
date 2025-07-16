@@ -340,7 +340,6 @@
 <string name="contribution_title">贡献</string>
 <string name="contribution_encouragement">您是否有想法；翻译、更改设计、代码清理或繁重的代码更改——我们随时欢迎您提供帮助。做得越多越好！</string>
 <string name="view_on_codeberg">在 CodeBerg 上查看</string>
-<string name="donation_encouragement">NewPipe 由志愿者利用空闲时间开发，为您带来最佳的用户体验。回馈帮助开发人员在享用一杯咖啡的同时让 NewPipe 变得更好。</string>
 <string name="give_back">回赠</string>
 <string name="website_title_new">网站（上游）</string>
 <string name="read_privacy_policy">阅读隐私政策</string>
@@ -819,21 +818,13 @@
 <string name="settings_category_sponsor_block_categories_reset_colors_title">重置颜色</string>
 <string name="settings_category_sponsor_block_category_enable_title">启用</string>
 <string name="settings_category_sponsor_block_category_color">进度条颜色</string>
-<string name="settings_category_sponsor_block_category_sponsor_title">赞助者</string>
 <string name="settings_category_sponsor_block_category_sponsor_summary">付费推广、付费推荐和直接广告。不包括自我推广或免费宣传支持的事业/创作者/网站/产品。</string>
-<string name="settings_category_sponsor_block_category_intro_title">中场休息/开场动画</string>
 <string name="settings_category_sponsor_block_category_intro_summary">没有实际内容的间隔。可能是暂停、静态画面、重复动画。不应用于包含信息的过渡或音乐视频。</string>
-<string name="settings_category_sponsor_block_category_outro_title">片尾/字幕</string>
 <string name="settings_category_sponsor_block_category_outro_summary">字幕或YouTube片尾字幕出现时。不包括口头结论。不应包括有用的内容。不应用于音乐视频。</string>
-<string name="settings_category_sponsor_block_category_interaction_title">互动提醒（订阅）</string>
 <string name="settings_category_sponsor_block_category_interaction_summary">当内容中有短暂提醒点赞、订阅或关注他们时。如果提醒很长或涉及特定内容，应该属于自我推广类别。</string>
-<string name="settings_category_sponsor_block_category_self_promo_title">非付费/自我推广</string>
 <string name="settings_category_sponsor_block_category_self_promo_summary">类似于“赞助者”，但不包括付费或自我推广。这包括关于商品、捐赠或与谁合作的信息。</string>
-<string name="settings_category_sponsor_block_category_non_music_title">音乐：非音乐部分</string>
 <string name="settings_category_sponsor_block_category_non_music_summary">仅适用于音乐视频。包括音乐视频中的开场或片尾。</string>
-<string name="settings_category_sponsor_block_category_preview_title">预览/回顾</string>
 <string name="settings_category_sponsor_block_category_preview_summary">快速回顾以前的剧集，或者当前视频中即将发生的预告。适用于编辑的剪辑，不适用于口头总结。</string>
-<string name="settings_category_sponsor_block_category_filler_title">填充/笑话</string>
 <string name="settings_category_sponsor_block_category_filler_summary">这是为了填充或幽默而添加的与主要内容理解无关的旁支场景。</string>
 <string name="invalid_color_toast">无效颜色</string>
 <string name="donation_title">捐赠</string>
@@ -869,7 +860,6 @@
 <string name="sponsor_block_uploader_removed_from_whitelist_toast">上传者已从白名单中移除</string>
 <string name="sponsor_block_confirm_clear_whitelist">您确定要清除白名单吗？</string>
 <string name="sponsor_block_confirm_reset_colors">您确定要重置类别颜色吗？</string>
-<string name="sponsor_block_reset_colors_toast">颜色已重置。</string>
 <string name="download_all_message">请确保您已选择下载文件夹并授予访问权限，否则下载将失败。已存在的文件将不会被覆盖。如果音频无法单独下载，将会下载相应的视频。</string>
 <string name="feed_show_watched">已完全观看</string>
 <string name="feed_show_partially_watched">部分观看</string>
@@ -1042,4 +1032,17 @@
 <string name="try_again">请再试一次</string>
 <string name="swipe_seek_gesture_control_title">滑动以快进/快退手势</string>
 <string name="swipe_seek_gesture_control_summary">向右滑动快进，向左滑动快退</string>
+<string name="large_grid">大网格</string>
+<string name="card">卡片</string>
+<string name="feed_fetch_channel_tabs">获取频道标签页</string>
+<string name="feed_fetch_channel_tabs_summary">更新订阅源时获取的标签页。如果频道以快速模式更新，此选项无效。</string>
+<string name="sponsor_block_category_sponsor">赞助商</string>
+<string name="sponsor_block_category_intro">插曲/开场动画</string>
+<string name="sponsor_block_category_outro">片尾/演职员表</string>
+<string name="sponsor_block_category_interaction">互动提醒（订阅）</string>
+<string name="channel_tab_tracks">曲目</string>
+<string name="settings_category_youtube_account_title">YouTube 帐户</string>
+<string name="filter_by_channel_title">按频道过滤</string>
+<string name="filter_by_channel_summary">在此处添加您要屏蔽的频道名称，用逗号分隔</string>
+<string name="channel_group_tab_summary">频道分组</string>
 </resources>

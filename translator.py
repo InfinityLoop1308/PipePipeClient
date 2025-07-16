@@ -205,6 +205,35 @@ def get_user_input_from_vim(initial_content=""):
             pass
 
 
+
+def compare_xml_strings_with_values(xml_a_path, xml_b_path):
+    """
+    Compare two XML files and return entries that are in A but not in B,
+    or have different values.
+
+    Parameters:
+    xml_a_path (str): Path to the first XML file
+    xml_b_path (str): Path to the second XML file
+
+    Returns:
+    dict: Dictionary containing entries that are different
+    """
+    xml_a = XMLHandler(xml_a_path)
+    xml_b = XMLHandler(xml_b_path)
+
+    strings_a = xml_a.load_strings_to_dict()
+    strings_b = xml_b.load_strings_to_dict()
+
+    diff_entries = {}
+
+    for key, value in strings_a.items():
+        if key not in strings_b or strings_b[key] != value:
+            diff_entries[key] = value
+
+    return diff_entries
+
+
+
 class StringTranslator:
 
     def __init__(self):
@@ -382,6 +411,29 @@ class StringTranslator:
 
         print(f"Successfully updated and translated '{name}' to all target languages.")
 
+    def compare_xml_strings(self, xml_a_path=0, xml_b_path=1):
+        """
+        Compare two XML files and return entries that are in A but not in B.
+
+        Parameters:
+        xml_a_path (str): Path to the first XML file
+        xml_b_path (str): Path to the second XML file
+
+        Returns:
+        dict: Dictionary containing entries that are in A but not in B
+        """
+        xml_a = XMLHandler(self.base.file_path)
+        xml_b = XMLHandler(self.targets[xml_b_path].file_path)
+
+        strings_a = xml_a.load_strings_to_dict()
+        strings_b = xml_b.load_strings_to_dict()
+
+        # Find keys that are in A but not in B
+        diff_keys = set(strings_a.keys()) - set(strings_b.keys())
+
+        # Return the entries that are in A but not in B
+        return {key: strings_a[key] for key in diff_keys}
+
 def get_value_from_vim():
     # If new_value is not provided, get it from the user via editor
         # Try to get the current value to show as initial content
@@ -409,7 +461,8 @@ if __name__ == '__main__':
         else:
             translator.add_new_entry(args[2], args[3])
     elif args[1] == 'delete' or args[1] == 'remove':
-        translator.delete_entry(args[2])
+        for i in args[2:]:
+            translator.delete_entry(i)
     elif args[1] == 'update_multi':
         translator.translate_item_updates_to_all(args[2:])
     elif args[1] == 'add_multi':
@@ -425,4 +478,10 @@ if __name__ == '__main__':
             translator.update_with_replace(args[2], get_user_input_from_vim())
         elif len(args) == 4:
             translator.update_with_replace(args[2], args[3])
-
+    elif args[1] == 'compare':
+        if len(args) == 3:
+            diff = translator.compare_xml_strings(xml_b_path=int(args[2]))
+            with open("compare_temp.txt", "w") as f:
+                f.write("Entries in first file but not in second:\n")
+                for key, value in diff.items():
+                    f.write(f"  {key}: {value}\n")

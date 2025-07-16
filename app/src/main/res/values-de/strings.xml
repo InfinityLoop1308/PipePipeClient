@@ -156,21 +156,13 @@
 <string name="settings_category_sponsor_block_categories_reset_colors_title">Farben zurücksetzen</string>
 <string name="settings_category_sponsor_block_category_enable_title">Aktivieren</string>
 <string name="settings_category_sponsor_block_category_color">Farbe der Suchleiste</string>
-<string name="settings_category_sponsor_block_category_sponsor_title">Sponsor</string>
 <string name="settings_category_sponsor_block_category_sponsor_summary">Bezahlte Werbung, bezahlte Empfehlungen und direkte Werbung. Nicht für Eigenwerbung oder kostenlose Empfehlungen an Ursachen/Ersteller/Websites/Produkte, die sie mögen.</string>
-<string name="settings_category_sponsor_block_category_intro_title">Zwischensequenz/Intro-Animation</string>
 <string name="settings_category_sponsor_block_category_intro_summary">Ein Intervall ohne tatsächlichen Inhalt. Könnte eine Pause sein, statisches Bild oder sich wiederholende Animation. Soll nicht für Übergänge mit Informationen oder in Musikvideos verwendet werden.</string>
-<string name="settings_category_sponsor_block_category_outro_title">Endkarten/Credits</string>
 <string name="settings_category_sponsor_block_category_outro_summary">Credits oder wenn die YouTube-Endkarten erscheinen. Nicht für gesprochene Schlussfolgerungen. Soll keinen nützlichen Inhalt enthalten.</string>
-<string name="settings_category_sponsor_block_category_interaction_title">Interaktions-Erinnerungen (Abonnieren)</string>
 <string name="settings_category_sponsor_block_category_interaction_summary">Wenn es eine kurze Erinnerung gibt, ihnen in der Mitte des Inhalts zu gefallen, zu abonnieren oder ihnen zu folgen. Wenn es lang ist oder über etwas spezifisches, sollte es stattdessen unter Eigenwerbung sein.</string>
-<string name="settings_category_sponsor_block_category_self_promo_title">Unbezahlte/Eigenwerbung</string>
 <string name="settings_category_sponsor_block_category_self_promo_summary">Ähnlich wie \"Sponsor\", aber für unbezahlte oder Eigenwerbung. Dies umfasst Abschnitte über Merchandise, Spenden oder Informationen über Kooperationspartner.</string>
-<string name="settings_category_sponsor_block_category_non_music_title">Musik: Nicht-Musik-Abschnitt</string>
 <string name="settings_category_sponsor_block_category_non_music_summary">Nur für Musikvideos. Dies umfasst Einleitungen oder Outros in Musikvideos.</string>
-<string name="settings_category_sponsor_block_category_preview_title">Vorschau/Zusammenfassung</string>
 <string name="settings_category_sponsor_block_category_preview_summary">Kurzer Rückblick auf frühere Episoden oder eine Vorschau auf das, was später im aktuellen Video kommt. Gedacht für zusammengefügte Clips, nicht für gesprochene Zusammenfassungen.</string>
-<string name="settings_category_sponsor_block_category_filler_title">Füller-Tangent/Witze</string>
 <string name="settings_category_sponsor_block_category_filler_summary">Dies ist für tangentiale Szenen gedacht, die nur als Füllmaterial oder für Humor hinzugefügt wurden und nicht erforderlich sind, um den Hauptinhalt des Videos zu verstehen.</string>
 <string name="background_player_playing_toast">Im Hintergrund spielend</string>
 <string name="popup_playing_toast">Im Popup-Modus spielend</string>
@@ -449,9 +441,9 @@
 <string name="youtube_visitor_data_title">YouTube-Besucherdaten</string>
 <string name="youtube_visitor_data_summary">Senden Sie ein Besucherdaten-Cookie für alle YouTube-Desktop-Anfragen. Kann zur Reproduktion von A/B-Tests verwendet werden</string>
 <string name="show_crash_the_player_title">"Crash den Player" anzeigen</string>
-<string name="show_crash_the_player_summary">Zeigt eine Absturzoption beim Verwenden des Players an</string>
-<string name="check_new_streams">Prüfung für neue Streams durchführen</string>
-<string name="crash_the_app">App abstürzen lassen</string>
+<string name="show_crash_the_player_summary">Zeigt eine Absturzoption, wenn der Player verwendet wird</string>
+<string name="check_new_streams">Prüfung auf neue Streams ausführen</string>
+<string name="crash_the_app">App zum Absturz bringen</string>
 <string name="show_error_snackbar">Fehler-Snackbar anzeigen</string>
 <string name="create_error_notification">Fehlerbenachrichtigung erstellen</string>
 <string name="import_title">Importieren</string>
@@ -616,10 +608,8 @@
 \nDie Wahl hängt davon ab, was Sie bevorzugen: Geschwindigkeit oder präzise Informationen.</string>
 <string name="feed_toggle_show_played_items">Angesehene Elemente anzeigen</string>
 <string name="feed_toggle_hide_played_items">Angesehene Elemente ausblenden</string>
-<string name="feed_hide_streams_title">Die folgenden Streams anzeigen</string>
-<string name="feed_show_hide_streams">Streams anzeigen/ausblenden</string>
-<string name="feed_fetch_channel_tabs">Kanal-Tabs abrufen</string>
-<string name="feed_fetch_channel_tabs_summary">Registerkarten zum Abrufen beim Aktualisieren des Feeds. Diese Option hat keine Auswirkung, wenn ein Kanal im Schnellmodus aktualisiert wird.</string>
+<string name="feed_fetch_channel_tabs">Kanalregisterkarten abrufen</string>
+<string name="feed_fetch_channel_tabs_summary">Registerkarten, die beim Aktualisieren des Feeds abgerufen werden sollen. Diese Option hat keine Auswirkung, wenn ein Kanal im Schnellmodus aktualisiert wird.</string>
 <string name="sponsor_block">SponsorBlock</string>
 <string name="sponsor_block_home_page_title">Webseite anzeigen</string>
 <string name="sponsor_block_home_page_summary">Die offizielle SponsorBlock-Webseite anzeigen.</string>
@@ -651,7 +641,6 @@
 <string name="sponsor_block_uploader_removed_from_whitelist_toast">Uploader von der Whitelist entfernt</string>
 <string name="sponsor_block_confirm_clear_whitelist">Möchten Sie die Whitelist wirklich leeren?</string>
 <string name="sponsor_block_confirm_reset_colors">Möchten Sie die Kategoriefarben wirklich zurücksetzen?</string>
-<string name="sponsor_block_reset_colors_toast">Farben wurden zurückgesetzt.</string>
 <string name="content_not_supported_new">Dieser Inhalt wird von PipePipe noch nicht unterstützt.\n\nHoffentlich wird diese Funktion in einer zukünftigen Version unterstützt.</string>
 <string name="detail_sub_channel_thumbnail_view_description">Kanal\'s Avatar-Thumbnail</string>
 <string name="channel_created_by">Erstellt von %s</string>
@@ -726,7 +715,7 @@
 <string name="feed_toggle_show_future_items">Zukünftige Elemente anzeigen</string>
 <string name="feed_toggle_hide_future_items">Zukünftige Elemente ausblenden</string>
 <string name="channel_tab_videos">Videos</string>
-<string name="channel_tab_tracks">Tracks</string>
+<string name="channel_tab_tracks">Titel</string>
 <string name="channel_tab_livestreams">Live</string>
 <string name="channel_tab_shorts">Shorts</string>
 <string name="channel_tab_playlists">Wiedergabelisten</string>
@@ -758,7 +747,7 @@
 <string name="account">Konto</string>
 <string name="settings_category_niconico_account_title">NicoNico Konto</string>
 <string name="settings_category_bilibili_account_title">BiliBili Konto</string>
-<string name="settings_category_youtube_account_title">YouTube Konto</string>
+<string name="settings_category_youtube_account_title">YouTube-Konto</string>
 <string name="login_warning">Tokens werden nur bei Bedarf verwendet</string>
 <string name="login_title">Einloggen</string>
 <string name="logout_title">Ausloggen</string>
@@ -980,4 +969,13 @@
 <string name="try_again">Bitte versuchen Sie es erneut</string>
 <string name="swipe_seek_gesture_control_title">Wischgeste zum Suchen</string>
 <string name="swipe_seek_gesture_control_summary">Wischen Sie nach rechts zum Vorspulen und nach links zum Zurückspulen</string>
+<string name="large_grid">Großes Raster</string>
+<string name="card">Karte</string>
+<string name="sponsor_block_category_sponsor">Sponsor</string>
+<string name="sponsor_block_category_intro">Zwischenspiel/Intro-Animation</string>
+<string name="sponsor_block_category_outro">Abspann/Credits</string>
+<string name="sponsor_block_category_interaction">Interaktionserinnerungen (Abonnieren)</string>
+<string name="filter_by_channel_title">Nach Kanälen filtern</string>
+<string name="filter_by_channel_summary">Fügen Sie hier die Kanalnamen hinzu, die Sie blockieren möchten, durch Kommas getrennt</string>
+<string name="channel_group_tab_summary">Kanalgruppe</string>
 </resources>

@@ -160,21 +160,13 @@
 <string name="settings_category_sponsor_block_categories_reset_colors_title">Restablecer colores</string>
 <string name="settings_category_sponsor_block_category_enable_title">Habilitar</string>
 <string name="settings_category_sponsor_block_category_color">Color de la barra de progreso</string>
-<string name="settings_category_sponsor_block_category_sponsor_title">Patrocinador</string>
 <string name="settings_category_sponsor_block_category_sponsor_summary">Promoción pagada, referencias pagadas y anuncios directos. No para autopromoción o menciones gratuitas a causas/creadores/sitios web/productos que les gusten.</string>
-<string name="settings_category_sponsor_block_category_intro_title">Intermedio/Animación inicial</string>
 <string name="settings_category_sponsor_block_category_intro_summary">Un intervalo sin contenido real. Podría ser una pausa, marco estático, animación repetida. No se debe usar para transiciones que contengan información ni en vídeos musicales.</string>
-<string name="settings_category_sponsor_block_category_outro_title">Tarjetas finales/Créditos</string>
 <string name="settings_category_sponsor_block_category_outro_summary">Créditos o cuando aparecen las tarjetas finales de YouTube. No para conclusiones habladas. No debe incluir contenido útil. No debe usarse en vídeos musicales.</string>
-<string name="settings_category_sponsor_block_category_interaction_title">Recordatorios de interacción (Suscribirse)</string>
 <string name="settings_category_sponsor_block_category_interaction_summary">Cuando hay un recordatorio corto para darle me gusta, suscribirse o seguirlos en medio del contenido. Si es largo o sobre algo específico, debe estar bajo autopromoción.</string>
-<string name="settings_category_sponsor_block_category_self_promo_title">Promoción no pagada/Autopromoción</string>
 <string name="settings_category_sponsor_block_category_self_promo_summary">Similar a "patrocinador" excepto para promociones no pagadas o autopromoción. Esto incluye secciones sobre mercancía, donaciones o información sobre colaboraciones.</string>
-<string name="settings_category_sponsor_block_category_non_music_title">Música: Sección sin música</string>
 <string name="settings_category_sponsor_block_category_non_music_summary">Solo para usar en vídeos musicales. Incluye introducciones o finales en vídeos musicales.</string>
-<string name="settings_category_sponsor_block_category_preview_title">Vista previa/Resumen</string>
 <string name="settings_category_sponsor_block_category_preview_summary">Resumen rápido de episodios anteriores, o una vista previa de lo que\'s vendrá más adelante en el vídeo actual. Se refiere a clips editados juntos, no a resúmenes hablados.</string>
-<string name="settings_category_sponsor_block_category_filler_title">Relleno/Chistes tangenciales</string>
 <string name="settings_category_sponsor_block_category_filler_summary">Esto es para escenas tangenciales añadidas solo como relleno o humor que no son necesarias para entender el contenido principal del vídeo.</string>
 <string name="background_player_playing_toast">Reproduciendo en segundo plano</string>
 <string name="popup_playing_toast">Reproduciendo en una ventana emergente</string>
@@ -483,9 +475,9 @@
 <string name="youtube_visitor_data_title">Datos de visitante de YouTube</string>
 <string name="youtube_visitor_data_summary">Enviar una cookie de datos de visitante en todas las solicitudes de YouTube Desktop. Puede ser usado para reproducir pruebas A/B</string>
 <string name="show_crash_the_player_title">Mostrar "Crash the player"</string>
-<string name="show_crash_the_player_summary">Muestra una opción de crash al usar el reproductor</string>
-<string name="check_new_streams">Ejecutar verificación de nuevos flujos</string>
-<string name="crash_the_app">Fallar la aplicación</string>
+<string name="show_crash_the_player_summary">Muestra una opción de forzar cierre al usar el reproductor</string>
+<string name="check_new_streams">Buscar nuevas transmisiones</string>
+<string name="crash_the_app">Forzar cierre de la aplicación</string>
 <string name="show_error_snackbar">Mostrar una barra de error</string>
 <string name="create_error_notification">Crear una notificación de error</string>
 <string name="import_title">Importar</string>
@@ -676,10 +668,8 @@
     \nEntonces la elección se reduce a lo que prefieres: rapidez o información precisa.</string>
 <string name="feed_toggle_show_played_items">Mostrar elementos vistos</string>
 <string name="feed_toggle_hide_played_items">Ocultar elementos vistos</string>
-<string name="feed_hide_streams_title">Mostrar los siguientes streams</string>
-<string name="feed_show_hide_streams">Mostrar/Ocultar streams</string>
 <string name="feed_fetch_channel_tabs">Obtener pestañas del canal</string>
-<string name="feed_fetch_channel_tabs_summary">Pestañas para obtener al actualizar el feed. Esta opción no tiene efecto si un canal se actualiza usando el modo rápido.</string>
+<string name="feed_fetch_channel_tabs_summary">Pestañas a obtener al actualizar el feed. Esta opción no tiene efecto si un canal se actualiza usando el modo rápido.</string>
 <string name="sponsor_block">SponsorBlock</string>
 <string name="sponsor_block_home_page_title">Ver el sitio web</string>
 <string name="sponsor_block_home_page_summary">Ver el sitio web oficial de SponsorBlock.</string>
@@ -711,7 +701,6 @@
 <string name="sponsor_block_uploader_removed_from_whitelist_toast">Cargador eliminado de la lista blanca</string>
 <string name="sponsor_block_confirm_clear_whitelist">¿Estás seguro de que deseas limpiar la lista blanca?</string>
 <string name="sponsor_block_confirm_reset_colors">¿Estás seguro de que deseas restablecer los colores de categoría?</string>
-<string name="sponsor_block_reset_colors_toast">Colores restablecidos.</string>
 <string name="content_not_supported_new">Este contenido aún no es compatible con PipePipe.\n\nEsperamos que sea compatible en una versión futura.</string>
 <string name="detail_sub_channel_thumbnail_view_description">Miniatura de avatar del canal</string>
 <string name="channel_created_by">Creado por %s</string>
@@ -994,7 +983,7 @@
 <string name="sponsor_block_manual_skip_button">Omitir</string>
 <string name="sponsor_block_show_manual_skip_title">Mostrar botones manuales</string>
 <string name="sponsor_block_show_manual_skip_summary">Mostrar botones en pantalla para omitir/desomitir manualmente segmentos. Se recomienda habilitar esto al configurar las categorías de SponsorBlock para omitir manualmente.</string>
-<string name="filter_by_channel_summary">Agregue aquí los nombres de los canales que desea bloquear, separados por comas</string>
+<string name="filter_by_channel_summary">Agregue los nombres de los canales que desea bloquear aquí, separados por comas</string>
 <string name="settings_category_proxy_title">Proxy (Partidarios)</string>
 <string name="video_not_released">El directo aún no se ha publicado.</string>
 <string name="filter_by_channel_title">Filtrar por canales</string>
@@ -1043,4 +1032,11 @@
 <string name="try_again">Por favor, inténtalo de nuevo</string>
 <string name="swipe_seek_gesture_control_title">Gesto de deslizar para buscar</string>
 <string name="swipe_seek_gesture_control_summary">Desliza a la derecha para avanzar rápido, y a la izquierda para rebobinar</string>
+<string name="large_grid">Cuadrícula grande</string>
+<string name="card">Tarjeta</string>
+<string name="sponsor_block_category_sponsor">Patrocinador</string>
+<string name="sponsor_block_category_intro">Animación de intermedio/introducción</string>
+<string name="sponsor_block_category_outro">Pantallas finales/Créditos</string>
+<string name="sponsor_block_category_interaction">Recordatorios de interacción (Suscribirse)</string>
+<string name="channel_group_tab_summary">Grupo de canales</string>
 </resources>

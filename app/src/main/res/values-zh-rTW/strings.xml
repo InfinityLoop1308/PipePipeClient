@@ -194,7 +194,6 @@
 <string name="start_here_on_background">在背景開始播放</string>
 <string name="start_here_on_popup">在彈出式視窗中開始播放</string>
 <string name="hold_to_append">長按以新增至佇列</string>
-<string name="donation_encouragement">NewPipe 由志願者所開發，他們花費空閒時間務求為您帶來最佳的使用體驗。現在是時候回過頭來，讓我們的開發人員能夠在使 NewPipe 更臻完美的同時，享受一杯咖啡。</string>
 <string name="drawer_open">開啟側邊選單</string>
 <string name="drawer_close">關閉側邊選單</string>
 <string name="video_player">影片播放器</string>
@@ -475,7 +474,7 @@
 <string name="feed_use_dedicated_fetch_method_summary">其在某些服務中可用，且通常較快速，但可能只會回傳有限的項目，而且資訊通常不完整（例如：沒有持續時間、項目類型、沒有即時狀態）</string>
 <string name="feed_use_dedicated_fetch_method_enable_button">啟用快速模式</string>
 <string name="feed_use_dedicated_fetch_method_disable_button">停用快速模式</string>
-<string name="feed_use_dedicated_fetch_method_help_text">您覺得 feed 載入太慢了嗎？如果是的話，試著啟用快速載入（您可以在設定中變更或按下下方的按鈕）。
+<string name="feed_use_dedicated_fetch_method_help_text_new">您覺得 feed 載入太慢了嗎？如果是的話，試著啟用快速載入（您可以在設定中變更或按下下方的按鈕）。
 \n
 \nPipePipe 提供兩個 feed 載入策略：
 \n• 擷取整個訂閱頻道，慢但是完整。
@@ -560,7 +559,7 @@
 <string name="show_description_title">顯示說明</string>
 <string name="open_with">以……開啟</string>
 <string name="no_app_to_open_intent">您的裝置上沒有支援開啟的應用程式</string>
-<string name="crash_the_app">應用程式當機</string>
+<string name="crash_the_app">使應用程式崩潰</string>
 <string name="youtube_music_premium_content_new">這部影片僅供 YouTube Music Premium 會員使用，因此無法由 PipePipe 串流或下載。</string>
 <string name="soundcloud_go_plus_content_new">這是 SoundCloud Go+ 的曲目，因此至少在您的國家無法由 PipePipe 串流或下載。</string>
 <string name="georestricted_content">這個內容無法在您的國家使用。</string>
@@ -613,11 +612,8 @@
 <string name="on">開啟</string>
 <string name="tablet_mode_title">平板電腦模式</string>
 <string name="feed_toggle_show_played_items">顯示已檢視的項目</string>
-<string name="feed_hide_streams_title">顯示已追蹤的串流</string>
-<string name="feed_show_hide_streams">顯示 / 隱藏串流</string>
 <string name="feed_fetch_channel_tabs">擷取頻道分頁</string>
-<string name="feed_fetch_channel_tabs_summary">更新摘要時要擷取的類別。
-\n這個選項不適用於透過快速模式更新頻道。</string>
+<string name="feed_fetch_channel_tabs_summary">更新訂閱時要擷取的分頁。如果頻道以快速模式更新，此選項無效。</string>
 <string name="comments_are_disabled">留言已停用</string>
 <string name="dont_show">不要顯示</string>
 <string name="low_quality_smaller">低品質（較小）</string>
@@ -647,7 +643,7 @@
 <string name="feed_new_items">新 feed 項目</string>
 <string name="crash_the_player">使播放器當機</string>
 <string name="show_crash_the_player_title">顯示「播放器當機」</string>
-<string name="show_crash_the_player_summary">使用播放器時顯示當機選項</string>
+<string name="show_crash_the_player_summary">使用播放器時顯示崩潰選項</string>
 <string name="error_report_channel_name">錯誤回報通知</string>
 <string name="error_report_channel_description">回報錯誤的通知</string>
 <string name="show_error_snackbar">顯示錯誤 SnackBar</string>
@@ -680,7 +676,7 @@
 <string name="get_notified">取得通知</string>
 <string name="streams_notification_channel_name">新串流</string>
 <string name="streams_notification_channel_description">關於訂閱的新串流通知</string>
-<string name="check_new_streams">執行新串流檢查</string>
+<string name="check_new_streams">執行檢查新串流</string>
 <string name="enable_streams_notifications_summary">通知來自訂閱的新串流</string>
 <string name="streams_notifications_interval_title">檢查頻率</string>
 <string name="notifications_disabled">通知已停用</string>
@@ -716,21 +712,13 @@
 <string name="settings_category_sponsor_block_categories_reset_colors_title">重設顏色</string>
 <string name="settings_category_sponsor_block_category_enable_title">啟用</string>
 <string name="settings_category_sponsor_block_category_color">搜尋列顏色</string>
-<string name="settings_category_sponsor_block_category_sponsor_title">贊助</string>
 <string name="settings_category_sponsor_block_category_sponsor_summary">付費推廣、付費推薦和直接廣告。不包括自我推廣或免費宣傳支持事業 / 創作者 / 網站 / 產品。</string>
-<string name="settings_category_sponsor_block_category_intro_title">中場休息 / 開場動畫</string>
 <string name="settings_category_sponsor_block_category_intro_summary">沒有實際內容的間隔。可能是暫停、靜態畫面、重複動畫。不應用於包含資訊的過渡或音樂影片。</string>
-<string name="settings_category_sponsor_block_category_outro_title">片尾/字幕</string>
 <string name="settings_category_sponsor_block_category_outro_summary">字幕或當 YouTube 字幕出現時。不包括口頭結論。不應包含有用的內容。不應用於音樂影片。</string>
-<string name="settings_category_sponsor_block_category_interaction_title">互動提醒（訂閱）</string>
 <string name="settings_category_sponsor_block_category_interaction_summary">當內容中有簡短提醒要按讚、訂閱或追蹤他們時。如果提醒很長或涉及特定事項，應歸類為自我推廣。</string>
-<string name="settings_category_sponsor_block_category_self_promo_title">非付費 / 自我推廣</string>
 <string name="settings_category_sponsor_block_category_self_promo_summary">類似於「贊助」，但不包括付費或自我推廣。這包括有關商品、捐款或與誰合作的資訊。</string>
-<string name="settings_category_sponsor_block_category_non_music_title">音樂：非音樂部分</string>
 <string name="settings_category_sponsor_block_category_non_music_summary">僅適用於音樂影片。這包括音樂影片中的開場或片尾。</string>
-<string name="settings_category_sponsor_block_category_preview_title">預告 / 回顧</string>
 <string name="settings_category_sponsor_block_category_preview_summary">快速回顧前集內容，或者預告當前影片的內容。適用於編輯好的片段，不適用於口頭摘要。</string>
-<string name="settings_category_sponsor_block_category_filler_title">填充 / 笑話</string>
 <string name="settings_category_sponsor_block_category_filler_summary">僅用於填充或幽默的次要場景，不影響主要內容的理解。</string>
 <string name="invalid_color_toast">無效的顏色</string>
 <string name="error_report_notification_title_new">PipePipe 遇到錯誤，點擊報告</string>
@@ -784,7 +772,6 @@
 <string name="sponsor_block_uploader_removed_from_whitelist_toast">上傳者已從白名單移除</string>
 <string name="sponsor_block_confirm_clear_whitelist">您確定要清除白名單嗎？</string>
 <string name="sponsor_block_confirm_reset_colors">您確定要重設分類顏色嗎？</string>
-<string name="sponsor_block_reset_colors_toast">顏色已重設</string>
 <string name="content_not_supported_new">PipePipe 尚不支援此內容。\n\n希望未來版本能支援此內容。</string>
 <string name="private_content_new">此內容為私人內容，因此無法透過 PipePipe 進行串流或下載。</string>
 <string name="live_not_started">直播尚未開始。</string>
@@ -1034,4 +1021,15 @@
 <string name="try_again">請再試一次</string>
 <string name="swipe_seek_gesture_control_title">滑動搜尋手勢</string>
 <string name="swipe_seek_gesture_control_summary">向右滑動可快轉，向左滑動可倒轉</string>
+<string name="large_grid">大網格</string>
+<string name="card">卡片</string>
+<string name="sponsor_block_category_sponsor">贊助</string>
+<string name="sponsor_block_category_intro">間奏/開場動畫</string>
+<string name="sponsor_block_category_outro">片尾/製作人員名單</string>
+<string name="sponsor_block_category_interaction">互動提醒 (訂閱)</string>
+<string name="channel_tab_tracks">曲目</string>
+<string name="settings_category_youtube_account_title">YouTube 帳戶</string>
+<string name="filter_by_channel_title">依頻道篩選</string>
+<string name="filter_by_channel_summary">在此處新增您要封鎖的頻道名稱，以逗號分隔</string>
+<string name="channel_group_tab_summary">頻道群組</string>
 </resources>

@@ -160,21 +160,13 @@
 <string name="settings_category_sponsor_block_categories_reset_colors_title">Đặt lại màu sắc</string>
 <string name="settings_category_sponsor_block_category_enable_title">Bật</string>
 <string name="settings_category_sponsor_block_category_color">Màu thanh tua</string>
-<string name="settings_category_sponsor_block_category_sponsor_title">Nhà tài trợ</string>
 <string name="settings_category_sponsor_block_category_sponsor_summary">Quảng cáo trả phí, giới thiệu trả phí và quảng cáo trực tiếp. Không phải để tự quảng cáo hoặc gửi lời cảm ơn miễn phí tới các mục đích/người sáng tạo/trang web/sản phẩm mà họ thích.</string>
-<string name="settings_category_sponsor_block_category_intro_title">Hoạt ảnh tạm dừng/giới thiệu</string>
 <string name="settings_category_sponsor_block_category_intro_summary">Một khoảng thời gian không có nội dung thực tế. Có thể là tạm dừng, khung tĩnh, hoạt ảnh lặp lại. Không nên sử dụng điều này cho các phần chuyển tiếp có chứa thông tin hoặc được sử dụng trên các băng ca nhạc.</string>
-<string name="settings_category_sponsor_block_category_outro_title">Thẻ kết thúc/Tín dụng</string>
 <string name="settings_category_sponsor_block_category_outro_summary">Tín dụng hoặc khi thẻ kết thúc YouTube xuất hiện. Không phải để kết luận bằng lời nói. Điều này không nên bao gồm nội dung hữu ích. Điều này không nên được sử dụng trên băng ca nhạc.</string>
-<string name="settings_category_sponsor_block_category_interaction_title">Nhắc nhở tương tác (Đăng ký)</string>
 <string name="settings_category_sponsor_block_category_interaction_summary">Khi có lời nhắc ngắn để thích, đăng ký hoặc theo dõi họ ở giữa nội dung. Nếu nó dài hoặc về một cái gì đó cụ thể, thay vào đó nó nên được tự quảng cáo.</string>
-<string name="settings_category_sponsor_block_category_self_promo_title">Không trả phí/Tự quảng cáo</string>
 <string name="settings_category_sponsor_block_category_self_promo_summary">Tương tự như "nhà tài trợ" ngoại trừ việc không trả tiền hoặc tự quảng cáo. Điều này bao gồm các phần về hàng hóa, quyên góp hoặc thông tin về những người họ cộng tác.</string>
-<string name="settings_category_sponsor_block_category_non_music_title">Âm nhạc: Phần không có nhạc</string>
 <string name="settings_category_sponsor_block_category_non_music_summary">Chỉ sử dụng trong băng ca nhạc. Điều này bao gồm phần giới thiệu hoặc phần kết thúc trong băng ca nhạc.</string>
-<string name="settings_category_sponsor_block_category_preview_title">Xem trước/Tóm tắt</string>
 <string name="settings_category_sponsor_block_category_preview_summary">Tóm tắt nhanh các tập trước hoặc bản xem trước nội dung sắp ra mắt sau trong băng hình hiện tại. Dành cho các clip được chỉnh sửa cùng nhau, không dành cho tóm tắt bằng giọng nói.</string>
-<string name="settings_category_sponsor_block_category_filler_title">Tiếp tuyến phụ/Truyện cười</string>
 <string name="settings_category_sponsor_block_category_filler_summary">Điều này dành cho những cảnh tiếp tuyến chỉ được thêm vào để bổ sung hoặc hài hước không bắt buộc phải hiểu nội dung chính của băng hình.</string>
 <string name="background_player_playing_toast">Đang phát trong chế độ nền</string>
 <string name="popup_playing_toast">Phát trong chế độ bật lên</string>
@@ -376,7 +368,7 @@
 <string name="charset_most_special_characters">Hầu hết các ký tự đặc biệt</string>
 <string name="toast_no_player">Chưa cài đặt ứng dụng nào để phát tệp này</string>
 <!-- About -->
-<string name="title_activity_about_new">Giới thiệu về PipePipe</string>
+<string name="title_activity_about_new">Về PipePipe</string>
 <string name="title_licenses">Giấy phép của bên thứ ba</string>
 <string name="copyright">© %1$s bởi %2$s dưới %3$s</string>
 <string name="tab_about">Giới thiệu</string>
@@ -497,8 +489,8 @@
 <string name="youtube_visitor_data_summary">Gửi cookie dữ liệu của khách truy cập theo tất cả các yêu cầu trên YouTube Desktop. Có thể được sử dụng để tái tạo các thử nghiệm A/B</string>
 <string name="show_crash_the_player_title">Hiển thị \"Hỏng trình phát\"</string>
 <string name="show_crash_the_player_summary">Hiển thị tùy chọn sự cố khi sử dụng trình phát</string>
-<string name="check_new_streams">Chạy kiểm tra luồng mới</string>
-<string name="crash_the_app">Sự cố ứng dụng</string>
+<string name="check_new_streams">Chạy kiểm tra các luồng mới</string>
+<string name="crash_the_app">Gây lỗi ứng dụng</string>
 <string name="show_error_snackbar">Hiển thị thanh thông báo lỗi</string>
 <string name="create_error_notification">Tạo thông báo lỗi</string>
 <!-- Subscriptions import/export -->
@@ -750,7 +742,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sponsor_block_uploader_removed_from_whitelist_toast">Đã loại người tải lên khỏi danh sách trắng</string>
 <string name="sponsor_block_confirm_clear_whitelist">Bạn có chắc chắn muốn xóa danh sách trắng không?</string>
 <string name="sponsor_block_confirm_reset_colors">Bạn có chắc chắn muốn đặt lại màu danh mục không?</string>
-<string name="sponsor_block_reset_colors_toast">Đặt lại màu sắc.</string>
 <!--End -->
 <string name="content_not_supported_new">Nội dung này chưa được PipePipe hỗ trợ.\n\nHy vọng nó sẽ được hỗ trợ trong phiên bản tương lai.</string>
 <string name="detail_sub_channel_thumbnail_view_description">Hình thu nhỏ hình đại diện của kênh</string>
@@ -1086,4 +1077,17 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="try_again">Vui lòng thử lại</string>
 <string name="swipe_seek_gesture_control_title">Vuốt để tìm cử chỉ</string>
 <string name="swipe_seek_gesture_control_summary">Vuốt sang phải để tua nhanh, và sang trái để tua lại</string>
+<string name="large_grid">Lưới lớn</string>
+<string name="card">Thẻ</string>
+<string name="feed_fetch_channel_tabs">Tải tab kênh</string>
+<string name="feed_fetch_channel_tabs_summary">Các tab cần tải khi cập nhật nguồn cấp dữ liệu. Tùy chọn này không có tác dụng nếu kênh được cập nhật bằng chế độ nhanh.</string>
+<string name="sponsor_block_category_sponsor">Nhà tài trợ</string>
+<string name="sponsor_block_category_intro">Hoạt ảnh xen kẽ/giới thiệu</string>
+<string name="sponsor_block_category_outro">Thẻ kết thúc/Tín dụng</string>
+<string name="sponsor_block_category_interaction">Nhắc nhở tương tác (Đăng ký)</string>
+<string name="channel_tab_tracks">Bài hát</string>
+<string name="settings_category_youtube_account_title">Tài khoản YouTube</string>
+<string name="filter_by_channel_title">Lọc theo kênh</string>
+<string name="filter_by_channel_summary">Thêm tên kênh bạn muốn chặn vào đây, cách nhau bởi dấu phẩy</string>
+<string name="channel_group_tab_summary">Nhóm kênh</string>
 </resources>
