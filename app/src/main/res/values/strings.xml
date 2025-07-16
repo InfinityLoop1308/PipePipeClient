@@ -1082,4 +1082,6 @@
 <string name="exit_app_confirmation_message">Show a "press back again to quit" toast to avoid accidental quiting</string>
 <string name="exit_app_confirmation_title">Exit app confirmation</string>
 <string name="try_again">Please try again</string>
+<string name="pull_to_refresh_title">Pull to refresh</string>
+<string name="pull_to_refresh_summary">Enable pull-to-refresh gesture in feed</string>
 </resources>

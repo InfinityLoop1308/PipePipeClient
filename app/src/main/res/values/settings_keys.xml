@@ -1655,6 +1655,7 @@
     <string name="enable_max_rows_customization_key">enable_max_rows_customization_key</string>
     <string name="always_list_mode_for_bookmark_key">always_list_mode_for_bookmark_key</string>
     <string name="exit_app_confirmation_key">exit_app_confirmation_key</string>
+    <string name="pull_to_refresh_key">pull_to_refresh_key</string>
     <string-array name="filter_type_entries">
         <item>@string/search_result</item>
         <item>@string/recommended_videos</item>

@@ -1045,4 +1045,6 @@
 <string name="filter_by_channel_title">按频道过滤</string>
 <string name="filter_by_channel_summary">在此处添加您要屏蔽的频道名称，用逗号分隔</string>
 <string name="channel_group_tab_summary">频道分组</string>
+<string name="pull_to_refresh_title">下拉刷新</string>
+<string name="pull_to_refresh_summary">在动态中启用下拉刷新手势</string>
 </resources>

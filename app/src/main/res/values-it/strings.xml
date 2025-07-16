@@ -972,4 +972,6 @@
 <string name="show_crash_the_player_summary">Mostra un\'opzione di arresto anomalo quando si usa il lettore</string>
 <string name="check_new_streams">Esegui controllo per nuovi stream</string>
 <string name="crash_the_app">Arresta l\'app</string>
+<string name="pull_to_refresh_title">Trascina per aggiornare</string>
+<string name="pull_to_refresh_summary">Abilita il gesto di pull-to-refresh nel feed</string>
 </resources>

@@ -1000,4 +1000,6 @@
 <string name="filter_by_channel_title">チャンネルでフィルタリング</string>
 <string name="filter_by_channel_summary">ブロックしたいチャンネル名をここにコンマで区切って追加してください</string>
 <string name="channel_group_tab_summary">チャンネルグループ</string>
+<string name="pull_to_refresh_title">プルして更新</string>
+<string name="pull_to_refresh_summary">フィードでプルツーリフレッシュジェスチャーを有効にする</string>
 </resources>

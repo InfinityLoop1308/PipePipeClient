@@ -1090,4 +1090,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="filter_by_channel_title">Lọc theo kênh</string>
 <string name="filter_by_channel_summary">Thêm tên kênh bạn muốn chặn vào đây, cách nhau bởi dấu phẩy</string>
 <string name="channel_group_tab_summary">Nhóm kênh</string>
+<string name="pull_to_refresh_title">Kéo để làm mới</string>
+<string name="pull_to_refresh_summary">Bật cử chỉ kéo để làm mới trong nguồn cấp dữ liệu</string>
 </resources>

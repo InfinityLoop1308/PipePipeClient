@@ -1032,4 +1032,6 @@
 <string name="filter_by_channel_title">依頻道篩選</string>
 <string name="filter_by_channel_summary">在此處新增您要封鎖的頻道名稱，以逗號分隔</string>
 <string name="channel_group_tab_summary">頻道群組</string>
+<string name="pull_to_refresh_title">下拉重新整理</string>
+<string name="pull_to_refresh_summary">在資訊流中啟用下拉式重新整理手勢</string>
 </resources>

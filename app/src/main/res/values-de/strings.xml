@@ -978,4 +978,6 @@
 <string name="filter_by_channel_title">Nach Kanälen filtern</string>
 <string name="filter_by_channel_summary">Fügen Sie hier die Kanalnamen hinzu, die Sie blockieren möchten, durch Kommas getrennt</string>
 <string name="channel_group_tab_summary">Kanalgruppe</string>
+<string name="pull_to_refresh_title">Zum Aktualisieren ziehen</string>
+<string name="pull_to_refresh_summary">Pull-to-Refresh-Geste im Feed aktivieren</string>
 </resources>

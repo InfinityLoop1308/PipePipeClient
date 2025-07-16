@@ -1002,4 +1002,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="start_here_on_background">Commencer la lecture en arrière-plan</string>
 <string name="start_here_on_popup">Commencer la lecture dans une fenêtre pop-up</string>
 <string name="title_activity_about_new">À propos de PipePipe</string>
+<string name="pull_to_refresh_title">Tirer pour actualiser</string>
+<string name="pull_to_refresh_summary">Activer le geste de balayage vers le bas pour rafraîchir le fil d\'actualité</string>
 </resources>
