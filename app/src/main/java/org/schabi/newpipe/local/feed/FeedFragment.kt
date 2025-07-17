@@ -365,8 +365,13 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         super.onCreateOptionsMenu(menu, inflater)
 
         activity.supportActionBar?.setDisplayShowTitleEnabled(true)
-        activity.supportActionBar?.setTitle(R.string.fragment_feed_title)
-        activity.supportActionBar?.subtitle = groupName
+        if (groupName == ""){
+            activity.supportActionBar?.setTitle(R.string.fragment_feed_title)
+        } else {
+            activity.supportActionBar?.title = groupName
+        }
+
+//        activity.supportActionBar?.subtitle = groupName
 
         inflater.inflate(R.menu.menu_feed_fragment, menu)
         updateTogglePlayedItemsButton(menu.findItem(R.id.menu_item_feed_toggle_played_items))
