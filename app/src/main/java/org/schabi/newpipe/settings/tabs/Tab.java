@@ -28,6 +28,7 @@ import org.schabi.newpipe.local.feed.FeedFragment;
 import org.schabi.newpipe.local.history.StatisticsPlaylistFragment;
 import org.schabi.newpipe.local.playlist.LocalPlaylistFragment;
 import org.schabi.newpipe.local.subscription.SubscriptionFragment;
+import org.schabi.newpipe.local.subscription.item.FeedGroupCardItem;
 import org.schabi.newpipe.util.KioskTranslator;
 import org.schabi.newpipe.util.ServiceHelper;
 
@@ -657,8 +658,10 @@ public abstract class Tab {
         public static final int ID = 9;
         private static final String JSON_GROUP_ID_KEY = "group_id";
         private static final String JSON_GROUP_NAME_KEY = "group_name";
+        private static final String JSON_ICON_KEY = "icon";
         private long groupId;
         private String groupName;
+        private int icon;
 
         private ChannelGroupTab() {
             this(-1, NO_NAME);
@@ -667,6 +670,12 @@ public abstract class Tab {
         public ChannelGroupTab(final long groupId, final String groupName) {
             this.groupId = groupId;
             this.groupName = groupName;
+        }
+
+        public ChannelGroupTab(FeedGroupCardItem feedGroupCardItem) {
+            this.groupId = feedGroupCardItem.getGroupId();
+            this.groupName = feedGroupCardItem.getName();
+            this.icon = feedGroupCardItem.getIcon().getDrawableRes();
         }
 
         public ChannelGroupTab(final JsonObject jsonObject) {
@@ -686,7 +695,7 @@ public abstract class Tab {
         @DrawableRes
         @Override
         public int getTabIconRes(final Context context) {
-            return R.drawable.ic_rss_feed; // Same as FeedTab
+            return this.icon == 0? R.drawable.ic_rss_feed: this.icon;
         }
 
         @Override
@@ -697,13 +706,15 @@ public abstract class Tab {
         @Override
         protected void writeDataToJson(final JsonStringWriter writerSink) {
             writerSink.value(JSON_GROUP_ID_KEY, groupId)
-                    .value(JSON_GROUP_NAME_KEY, groupName);
+                    .value(JSON_GROUP_NAME_KEY, groupName)
+                    .value(JSON_ICON_KEY, icon);
         }
 
         @Override
         protected void readDataFromJson(final JsonObject jsonObject) {
             groupId = jsonObject.getLong(JSON_GROUP_ID_KEY, -1);
             groupName = jsonObject.getString(JSON_GROUP_NAME_KEY, NO_NAME);
+            icon = jsonObject.getInt(JSON_ICON_KEY, 0);
         }
 
         @Override

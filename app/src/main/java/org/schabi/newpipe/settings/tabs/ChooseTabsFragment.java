@@ -206,8 +206,8 @@ public class ChooseTabsFragment extends Fragment {
                 return;
             case CHANNEL_GROUP:  // Add this case
                 final SelectChannelGroupFragment selectChannelGroupFragment = new SelectChannelGroupFragment();
-                selectChannelGroupFragment.setOnSelectedListener((groupId, groupName) ->
-                        addTab(new Tab.ChannelGroupTab(groupId, groupName)));
+                selectChannelGroupFragment.setOnSelectedListener(item ->
+                        addTab(new Tab.ChannelGroupTab(item)));
                 selectChannelGroupFragment.show(getParentFragmentManager(), "select_channel_group");
                 return;
             default:

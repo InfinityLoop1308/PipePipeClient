@@ -36,7 +36,7 @@ public class SelectChannelGroupFragment extends DialogFragment {
     private static final int MARGIN_DP = 8; // Margin between items in dp
 
     public interface OnSelectedListener {
-        void onChannelGroupSelected(long groupId, String groupName);
+        void onChannelGroupSelected(FeedGroupCardItem feedGroupCardItem);
     }
 
     public void setOnSelectedListener(OnSelectedListener listener) {
@@ -70,7 +70,7 @@ public class SelectChannelGroupFragment extends DialogFragment {
             public void onItemClick(@NonNull Item item, @NonNull View view) {
                 if (item instanceof FeedGroupCardItem && onSelectedListener != null) {
                     FeedGroupCardItem groupItem = (FeedGroupCardItem) item;
-                    onSelectedListener.onChannelGroupSelected(groupItem.getGroupId(), groupItem.getName());
+                    onSelectedListener.onChannelGroupSelected(groupItem);
                     dismiss();
                 }
             }
