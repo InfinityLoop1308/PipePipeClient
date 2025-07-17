@@ -49,6 +49,9 @@ public class PlayerGestureListener
     private boolean isChangingVolume = false;
     private boolean isChangingBrightness = false;
 
+    private boolean isPendingScreenRotation = false;
+    private boolean isFullscreenRotationGesture = false;
+
     public PlayerGestureListener(final Player player, final MainPlayer service) {
         super(player, service);
         maxVolume = player.getAudioReactor().getMaxVolume();
@@ -100,7 +103,7 @@ public class PlayerGestureListener
                          final float distanceX, final float distanceY) {
         if (DEBUG) {
             Log.d(TAG, "onScroll called with playerType = ["
-                + player.getPlayerType() + "], portion = [" + portion + "]");
+                    + player.getPlayerType() + "], portion = [" + portion + "]");
         }
         if (playerType == MainPlayer.PlayerType.VIDEO) {
             final boolean isFullscreenGestureEnabled =
@@ -126,10 +129,12 @@ public class PlayerGestureListener
             final boolean isHorizontal = Math.abs(distanceX) > Math.abs(distanceY);
             if (!isHorizontal && isFullscreenGestureEnabled &&
                     ((player.isFullscreen() && distanceY < 0 && portion == DisplayPortion.MIDDLE) ||
-                     (!player.isFullscreen() && distanceY > 0))) {
-                player.onScreenRotationButtonClicked();
+                            (!player.isFullscreen() && distanceY > 0))) {
+                isPendingScreenRotation = true;
+                isFullscreenRotationGesture = true;
                 return;
             }
+
             if(!player.isFullscreen()) {
                 return;
             }
@@ -139,11 +144,11 @@ public class PlayerGestureListener
             }
             // -- Brightness and Volume control --
             final boolean isBrightnessGestureEnabled =
-                PlayerHelper.isBrightnessGestureEnabled(service);
+                    PlayerHelper.isBrightnessGestureEnabled(service);
             final boolean isVolumeGestureEnabled = PlayerHelper.isVolumeGestureEnabled(service);
 
             if (isBrightnessGestureEnabled && isVolumeGestureEnabled) {
-                 if (portion == DisplayPortion.LEFT) {
+                if (portion == DisplayPortion.LEFT) {
                     onScrollMainBrightness(distanceX, distanceY);
 
                 } else if (portion == DisplayPortion.RIGHT) {
@@ -299,7 +304,7 @@ public class PlayerGestureListener
                             @NonNull final MotionEvent event) {
         if (DEBUG) {
             Log.d(TAG, "onScrollEnd called with playerType = ["
-                + player.getPlayerType() + "]");
+                    + player.getPlayerType() + "]");
         }
 
         if (player.isControlsVisible() && player.getCurrentState() == STATE_PLAYING) {
@@ -307,6 +312,14 @@ public class PlayerGestureListener
         }
 
         if (playerType == MainPlayer.PlayerType.VIDEO) {
+            // Handle pending screen rotation gesture
+            if (isPendingScreenRotation && isFullscreenRotationGesture) {
+                player.onScreenRotationButtonClicked();
+                isPendingScreenRotation = false;
+                isFullscreenRotationGesture = false;
+                return; // Exit early to avoid other cleanup actions
+            }
+
             if (isSwipeSeeking) {
                 // apply the buffered target only when the gesture ends to keep playback smooth
                 player.seekTo(swipeSeekTargetPosition);
@@ -356,5 +369,3 @@ public class PlayerGestureListener
         }
     }
 }
-
-
