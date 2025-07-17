@@ -145,6 +145,9 @@ class SubscriptionListFragment : BaseStateFragment<FeedState>() {
     }
 
     private fun setupRecyclerView() {
+        // Clear any existing items first to avoid duplicate observer registration
+        groupAdapter.clear()
+
         // Set up placeholder for empty state
         subscriptionsSection.setPlaceholder(EmptyPlaceholderItem())
         subscriptionsSection.setHideWhenEmpty(true)
@@ -162,6 +165,7 @@ class SubscriptionListFragment : BaseStateFragment<FeedState>() {
 
         binding.recyclerView.adapter = groupAdapter
     }
+
 
     private fun loadSubscriptions() {
         disposables.clear()
