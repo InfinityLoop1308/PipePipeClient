@@ -39,6 +39,7 @@ import org.schabi.newpipe.fragments.list.BaseListInfoFragment;
 import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.local.feed.notifications.NotificationHelper;
 import org.schabi.newpipe.local.subscription.SubscriptionManager;
+import org.schabi.newpipe.local.subscription.dialog.FeedGroupSelectionDialog;
 import org.schabi.newpipe.player.MainPlayer.PlayerType;
 import org.schabi.newpipe.player.playqueue.ChannelPlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
@@ -63,6 +64,10 @@ import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.functions.Function;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
+import org.schabi.newpipe.database.feed.model.FeedGroupEntity;
+import org.schabi.newpipe.local.subscription.dialog.FeedGroupDialog;
+import android.widget.ImageButton;
+
 public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, ChannelInfo>
         implements View.OnClickListener {
 
@@ -83,6 +88,7 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
     private FragmentChannelVideosBinding channelBinding;
     private ChannelHeaderBinding headerBinding;
     private PlaylistControlBinding playlistControlBinding;
+    private ImageButton addToGroupButton;
 
     public static ChannelVideosFragment getInstance(@NonNull final ChannelInfo channelInfo) {
         final ChannelVideosFragment instance = new ChannelVideosFragment();
@@ -173,6 +179,9 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
 
         headerBinding.subChannelTitleView.setOnClickListener(this);
         headerBinding.subChannelAvatarView.setOnClickListener(this);
+
+        addToGroupButton = headerBinding.channelAddToGroupButton;
+        addToGroupButton.setOnClickListener(this);
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -338,6 +347,8 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
 
         animate(headerBinding.channelSubscribeButton, true, 100,
                 AnimationType.LIGHT_SCALE_AND_ALPHA);
+
+        updateAddToGroupButton(isSubscribed);
     }
 
     /**
@@ -401,6 +412,9 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
                 } else if (DEBUG) {
                     Log.i(TAG, "Can't open parent channel because we got no channel URL");
                 }
+                break;
+            case R.id.channel_add_to_group_button:
+                showAddToGroupDialog();
                 break;
         }
     }
@@ -524,4 +538,37 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
         super.setTitle(title);
         headerBinding.channelTitleView.setText(title);
     }
+
+    private void showAddToGroupDialog() {
+        // Check if user is subscribed first
+        disposables.add(subscriptionManager
+                .subscriptionTable()
+                .getSubscription(currentInfo.getServiceId(), currentInfo.getUrl())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        subscriptionEntity -> {
+                            FeedGroupSelectionDialog.newInstance(subscriptionEntity.getUid())
+                                    .show(getParentFragmentManager(), "GROUP_SELECTION");
+                        },
+                        throwable -> showSnackBarError(new ErrorInfo(throwable,
+                                UserAction.SUBSCRIPTION_GET,
+                                "Get subscription status", currentInfo))
+                ));
+    }
+
+
+    private void updateAddToGroupButton(final boolean isSubscribed) {
+        if (DEBUG) {
+            Log.d(TAG, "updateAddToGroupButton() called with: "
+                    + "isSubscribed = [" + isSubscribed + "]");
+        }
+
+        if (isSubscribed) {
+            animate(addToGroupButton, true, 100, AnimationType.LIGHT_SCALE_AND_ALPHA);
+        } else {
+            animate(addToGroupButton, false, 100);
+        }
+    }
+
 }

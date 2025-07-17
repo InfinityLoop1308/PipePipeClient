@@ -1084,4 +1084,5 @@
 <string name="try_again">Please try again</string>
 <string name="pull_to_refresh_title">Pull to refresh</string>
 <string name="pull_to_refresh_summary">Enable pull-to-refresh gesture in feed</string>
+<string name="select_groups">Select Groups</string>
 </resources>

@@ -1047,4 +1047,5 @@
 <string name="channel_group_tab_summary">频道分组</string>
 <string name="pull_to_refresh_title">下拉刷新</string>
 <string name="pull_to_refresh_summary">在动态中启用下拉刷新手势</string>
+<string name="select_groups">选择群组</string>
 </resources>

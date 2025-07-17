@@ -1092,4 +1092,5 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="channel_group_tab_summary">Nhóm kênh</string>
 <string name="pull_to_refresh_title">Kéo để làm mới</string>
 <string name="pull_to_refresh_summary">Bật cử chỉ kéo để làm mới trong nguồn cấp dữ liệu</string>
+<string name="select_groups">Chọn Nhóm</string>
 </resources>

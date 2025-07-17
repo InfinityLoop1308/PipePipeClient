@@ -974,4 +974,5 @@
 <string name="crash_the_app">Arresta l\'app</string>
 <string name="pull_to_refresh_title">Trascina per aggiornare</string>
 <string name="pull_to_refresh_summary">Abilita il gesto di pull-to-refresh nel feed</string>
+<string name="select_groups">Seleziona Gruppi</string>
 </resources>

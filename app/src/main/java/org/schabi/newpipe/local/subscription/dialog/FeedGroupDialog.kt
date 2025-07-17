@@ -510,7 +510,7 @@ class FeedGroupDialog : DialogFragment(), BackPressable {
     companion object {
         private const val KEY_GROUP_ID = "KEY_GROUP_ID"
         private const val NO_GROUP_SELECTED = -1L
-
+        @JvmStatic
         fun newInstance(groupId: Long = NO_GROUP_SELECTED): FeedGroupDialog {
             val dialog = FeedGroupDialog()
             dialog.arguments = bundleOf(KEY_GROUP_ID to groupId)

@@ -1002,4 +1002,5 @@
 <string name="channel_group_tab_summary">チャンネルグループ</string>
 <string name="pull_to_refresh_title">プルして更新</string>
 <string name="pull_to_refresh_summary">フィードでプルツーリフレッシュジェスチャーを有効にする</string>
+<string name="select_groups">グループを選択</string>
 </resources>

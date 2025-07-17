@@ -1041,4 +1041,5 @@
 <string name="channel_group_tab_summary">Grupo de canales</string>
 <string name="pull_to_refresh_title">Tirar para actualizar</string>
 <string name="pull_to_refresh_summary">Habilitar gesto de deslizar para actualizar en el feed</string>
+<string name="select_groups">Seleccionar Grupos</string>
 </resources>
