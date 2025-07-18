@@ -241,7 +241,7 @@ class FeedLoadManager(private val context: Context) {
                                     is FeedLoadService.RequestException -> throwable.cause
                                     else -> throwable
                                 }
-                                retryCount <= 2 && actualException is ContentNotAvailableException
+                                false
                             }
                             // Now wrap in Notification AFTER retry logic
                             .map { feedUpdateInfo ->

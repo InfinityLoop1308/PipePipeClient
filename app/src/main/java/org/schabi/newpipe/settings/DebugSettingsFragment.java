@@ -90,11 +90,6 @@ public class DebugSettingsFragment extends BasePreferenceFragment {
                     new ErrorInfo(new RuntimeException(DUMMY), UserAction.UI_ERROR, DUMMY));
             return true;
         });
-
-        visitorDataPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-            YoutubeParsingHelper.setVisitorData((String) newValue);
-            return true;
-        });
     }
 
     /**

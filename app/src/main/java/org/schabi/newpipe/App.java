@@ -111,11 +111,6 @@ public class App extends MultiDexApplication {
         PicassoHelper.setIndicatorsEnabled(DEBUG
                 && prefs.getBoolean(getString(R.string.show_image_indicators_key), false));
 
-        if (DEBUG) {
-            YoutubeParsingHelper.setVisitorData(
-                    prefs.getString(getString(R.string.youtube_visitor_data), null));
-        }
-
         configureRxJavaErrorHandler();
     }
 
