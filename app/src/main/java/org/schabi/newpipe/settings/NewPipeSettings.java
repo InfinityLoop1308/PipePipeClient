@@ -153,4 +153,16 @@ public final class NewPipeSettings {
         return showSearchSuggestions(context, sharedPreferences,
                 R.string.show_remote_search_suggestions_key);
     }
+
+    public static int getSearchSuggestionsCount(final Context context,
+                                               final SharedPreferences sharedPreferences) {
+        final String countString = sharedPreferences.getString(
+                context.getString(R.string.search_suggestions_count_key), "25");
+        try {
+            final int count = Integer.parseInt(countString);
+            return Math.max(1, Math.min(count, 1000));
+        } catch (final NumberFormatException e) {
+            return 25;
+        }
+    }
 }

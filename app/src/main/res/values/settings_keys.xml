@@ -283,6 +283,7 @@
     <string name="show_search_suggestions_key">show_search_suggestions</string>
     <string name="show_local_search_suggestions_key">show_local_search_suggestions</string>
     <string name="show_remote_search_suggestions_key">show_remote_search_suggestions</string>
+    <string name="search_suggestions_count_key">search_suggestions_count</string>
     <string-array name="show_search_suggestions_value_list">
         <item>@string/show_local_search_suggestions_key</item>
         <item>@string/show_remote_search_suggestions_key</item>

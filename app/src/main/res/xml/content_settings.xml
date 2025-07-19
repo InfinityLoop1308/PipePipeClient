@@ -79,6 +79,15 @@
         app:singleLineTitle="false"
         app:iconSpaceReserved="false" />
 
+    <EditTextPreference
+        android:key="@string/search_suggestions_count_key"
+        android:title="@string/search_suggestions_count_title"
+        android:summary="@string/search_suggestions_count_summary"
+        android:defaultValue="25"
+        android:inputType="number"
+        app:singleLineTitle="false"
+        app:iconSpaceReserved="false" />
+
     <SwitchPreferenceCompat
         android:defaultValue="true"
         android:key="@string/download_thumbnail_key"
