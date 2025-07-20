@@ -981,4 +981,9 @@
 <string name="pull_to_refresh_title">Zum Aktualisieren ziehen</string>
 <string name="pull_to_refresh_summary">Pull-to-Refresh-Geste im Feed aktivieren</string>
 <string name="select_groups">Gruppen auswählen</string>
+        <plurals name="replies">
+                <item quantity="one">%s Antwort</item>
+                <item quantity="other">%s Antworten</item>
+        </plurals>
+
 </resources>

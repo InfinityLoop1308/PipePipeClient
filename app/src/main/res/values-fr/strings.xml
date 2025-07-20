@@ -1005,4 +1005,9 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="pull_to_refresh_title">Tirer pour actualiser</string>
 <string name="pull_to_refresh_summary">Activer le geste de balayage vers le bas pour rafraîchir le fil d\'actualité</string>
 <string name="select_groups">Sélectionner des groupes</string>
+<plurals name="replies">
+        <item quantity="one">%s réponse</item>
+        <item quantity="other">%s réponses</item>
+</plurals>
+
 </resources>

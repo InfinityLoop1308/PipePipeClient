@@ -1003,4 +1003,9 @@
 <string name="pull_to_refresh_title">プルして更新</string>
 <string name="pull_to_refresh_summary">フィードでプルツーリフレッシュジェスチャーを有効にする</string>
 <string name="select_groups">グループを選択</string>
+<plurals name="replies">
+    <item quantity="one">%s 件の返信</item>
+    <item quantity="other">%s 件の返信</item>
+</plurals>
+
 </resources>

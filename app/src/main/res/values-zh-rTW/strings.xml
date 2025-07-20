@@ -1035,4 +1035,9 @@
 <string name="pull_to_refresh_title">下拉重新整理</string>
 <string name="pull_to_refresh_summary">在資訊流中啟用下拉式重新整理手勢</string>
 <string name="select_groups">選擇群組</string>
+<plurals name="replies">
+    <item quantity="one">%s 則回覆</item>
+    <item quantity="other">%s 則回覆</item>
+</plurals>
+
 </resources>

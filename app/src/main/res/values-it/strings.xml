@@ -975,4 +975,9 @@
 <string name="pull_to_refresh_title">Trascina per aggiornare</string>
 <string name="pull_to_refresh_summary">Abilita il gesto di pull-to-refresh nel feed</string>
 <string name="select_groups">Seleziona Gruppi</string>
+    <plurals name="replies">
+        <item quantity="one">%s risposta</item>
+        <item quantity="other">%s risposte</item>
+    </plurals>
+
 </resources>
