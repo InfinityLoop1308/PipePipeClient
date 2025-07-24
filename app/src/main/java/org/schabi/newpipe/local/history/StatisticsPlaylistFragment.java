@@ -131,12 +131,6 @@ public class StatisticsPlaylistFragment
                                     @NonNull final MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_history, menu);
-
-        MenuItem searchFeedItem = menu.findItem(R.id.action_search_local);
-        if (searchFeedItem != null) {
-            MenuItem searchItem = menu.findItem(R.id.action_search);
-            searchFeedItem.setVisible(searchItem == null || !searchItem.isVisible());
-        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
