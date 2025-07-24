@@ -84,6 +84,7 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
     private View footer = null;
     private ArrayList<LocalItem> filteredItems = new ArrayList<>();
     public boolean isFilterEnabled = false;
+    private String currentFilterText = "";
     public SortMode sortMode;
     private ItemViewMode itemViewMode = ItemViewMode.LIST;
 
@@ -117,6 +118,7 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
         final int offsetStart = sizeConsideringHeader();
         localItems.addAll(data);
         sort(sortMode);
+        reapplyFilter();
 
         if (DEBUG) {
             Log.d(TAG, "addItems() after > offsetStart = " + offsetStart + ", "
@@ -124,17 +126,8 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
                     + "header = " + header + ", footer = " + footer + ", "
                     + "showFooter = " + showFooter);
         }
-        notifyItemRangeInserted(offsetStart, data.size());
-
-        if (footer != null && showFooter) {
-            final int footerNow = sizeConsideringHeader();
-            notifyItemMoved(offsetStart, footerNow);
-
-            if (DEBUG) {
-                Log.d(TAG, "addItems() footer from " + offsetStart
-                        + " to " + footerNow);
-            }
-        }
+        
+        notifyDataSetChanged();
     }
 
     public void removeItem(final LocalItem data) {
@@ -194,6 +187,7 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
             return;
         }
         localItems.clear();
+        filteredItems.clear();
         notifyDataSetChanged();
     }
 
@@ -276,10 +270,11 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
         } else if (header != null) {
             position--;
         }
-        if (footer != null && position == localItems.size() && showFooter) {
+        final List<LocalItem> currentItems = isFilterEnabled ? filteredItems : localItems;
+        if (footer != null && position == currentItems.size() && showFooter) {
             return FOOTER_TYPE;
         }
-        final LocalItem item = localItems.get(position);
+        final LocalItem item = currentItems.get(position);
         switch (item.getLocalItemType()) {
             case PLAYLIST_LOCAL_ITEM:
                 if (useItemHandle) {
@@ -427,6 +422,7 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void filter(String text) {
+        currentFilterText = text;
         isFilterEnabled = !text.isEmpty();
         filteredItems.clear();
         if (text.isEmpty()) {
@@ -454,9 +450,19 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public void clearFilter() {
         isFilterEnabled = false;
+        currentFilterText = "";
         filteredItems.clear();
         filteredItems.addAll(localItems);
         notifyDataSetChanged();
+    }
+
+    private void reapplyFilter() {
+        if (isFilterEnabled && !currentFilterText.isEmpty()) {
+            filter(currentFilterText);
+        } else {
+            filteredItems.clear();
+            filteredItems.addAll(localItems);
+        }
     }
 
     public void sort(SortMode sortMode) {
