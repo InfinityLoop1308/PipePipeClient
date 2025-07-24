@@ -109,6 +109,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
 
     private var onSettingsChangeListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
     private var updateListViewModeOnResume = false
+    private var updatePullToRefreshOnResume = false
     private var isRefreshing = false
 
     private var lastNewItemsCount = 0
@@ -148,14 +149,6 @@ class FeedFragment : BaseStateFragment<FeedState>() {
             ?: FeedGroupEntity.GROUP_ALL_ID
         groupName = arguments?.getString(KEY_GROUP_NAME) ?: ""
 
-        onSettingsChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key != null && key.equals(getString(R.string.list_view_mode_key))) {
-                updateListViewModeOnResume = true
-            }
-        }
-        PreferenceManager.getDefaultSharedPreferences(activity)
-            .registerOnSharedPreferenceChangeListener(onSettingsChangeListener)
-
         val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
         autoBackgroundPlaying = false
         randomBackgroundPlaying = prefs.getBoolean(getString(R.string.random_music_play_mode_key), false)
@@ -166,10 +159,12 @@ class FeedFragment : BaseStateFragment<FeedState>() {
                     updateListViewModeOnResume = true
                 }
                 getString(R.string.pull_to_refresh_key) -> {
-                    updatePullToRefreshState()
+                    updatePullToRefreshOnResume = true
                 }
             }
         }
+        PreferenceManager.getDefaultSharedPreferences(activity)
+            .registerOnSharedPreferenceChangeListener(onSettingsChangeListener)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -239,6 +234,11 @@ class FeedFragment : BaseStateFragment<FeedState>() {
             if (viewModel.stateLiveData.value != null) {
                 handleResult(viewModel.stateLiveData.value!!)
             }
+        }
+
+        if (updatePullToRefreshOnResume) {
+            updatePullToRefreshOnResume = false
+            updatePullToRefreshState()
         }
     }
 
