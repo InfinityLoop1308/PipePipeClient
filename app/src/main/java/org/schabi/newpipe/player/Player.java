@@ -4238,6 +4238,10 @@ public final class Player implements
             onSleepTimerClicked();
         } else if (v.getId() == binding.fullScreenButton.getId()) {
             setRecovery();
+            if (popupPlayerSelected()) {
+                // Clean up popup properly before switching to main player
+                service.stopService();
+            }
             NavigationHelper.playOnMainPlayer(context, playQueue, true);
             return;
         } else if (v.getId() == binding.screenRotationButton.getId()) {
