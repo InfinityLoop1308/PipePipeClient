@@ -86,6 +86,15 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (itemsList != null) {
+            itemsList.setAdapter(null);
+        }
+        itemsList = null;
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         if (useDefaultStateSaving) {
@@ -93,6 +102,7 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         }
         PreferenceManager.getDefaultSharedPreferences(activity)
                 .unregisterOnSharedPreferenceChangeListener(this);
+        infoListAdapter = null;
     }
 
     @Override

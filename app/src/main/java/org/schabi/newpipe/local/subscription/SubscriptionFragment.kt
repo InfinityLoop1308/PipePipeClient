@@ -127,9 +127,25 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        
+        // Clear RecyclerView adapter to prevent memory leaks
+        binding.itemsList.adapter = null
+        
+        // Clear binding reference to prevent memory leaks
+        _binding = null
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         disposables.dispose()
+        
+        // Clear gesturesListener references from all ChannelItems to prevent memory leaks
+        clearChannelItemListeners(subscriptionsSection)
+        
+        // Clear groupAdapter to prevent memory leaks
+        groupAdapter.clear()
     }
 
     // ////////////////////////////////////////////////////////////////////////
@@ -459,6 +475,21 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
     override fun hideLoading() {
         super.hideLoading()
         binding.itemsList.animate(true, 200)
+    }
+
+    private fun clearChannelItemListeners(section: Section) {
+        // Recursively clear gesturesListener from all ChannelItems to prevent memory leaks
+        for (i in 0 until section.itemCount) {
+            val item = section.getItem(i)
+            when (item) {
+                is ChannelItem -> {
+                    item.gesturesListener = null
+                }
+                is Section -> {
+                    clearChannelItemListeners(item)
+                }
+            }
+        }
     }
 
     companion object {
