@@ -851,6 +851,12 @@ public class DownloadDialog extends DialogFragment
         }
 
         // get state of potential mission referring to the same file
+        if (downloadManager == null) {
+            ErrorUtil.createNotification(requireContext(),
+                    new ErrorInfo(new IllegalStateException("DownloadManager not initialized"), 
+                            UserAction.DOWNLOAD_FAILED, "DownloadManager is null"));
+            return;
+        }
         final MissionState state = downloadManager.checkForExistingMission(storage);
         @StringRes final int msgBtn;
         @StringRes final int msgBody;
