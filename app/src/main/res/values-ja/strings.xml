@@ -1004,8 +1004,11 @@
 <string name="pull_to_refresh_summary">フィードでプルツーリフレッシュジェスチャーを有効にする</string>
 <string name="select_groups">グループを選択</string>
 <plurals name="replies">
-    <item quantity="one">%s 件の返信</item>
-    <item quantity="other">%s 件の返信</item>
+<item quantity="one">%s 件の返信</item>
+<item quantity="other">%s 件の返信</item>
 </plurals>
-
+<string name="clear_webview_cookies">WebViewのCookieをクリア</string>
+<string name="clear_webview_cookies_summary">新しいアカウントを使用できるように、WebViewコンポーネントに保存されているすべてのCookieをクリアします</string>
+<string name="webview_cookies_cleared">WebViewのCookieはクリアされました</string>
+<string name="webview_cookies_clear_failed">WebViewのCookieのクリアに失敗しました</string>
 </resources>

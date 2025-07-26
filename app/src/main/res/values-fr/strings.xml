@@ -1006,8 +1006,11 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="pull_to_refresh_summary">Activer le geste de balayage vers le bas pour rafraîchir le fil d\'actualité</string>
 <string name="select_groups">Sélectionner des groupes</string>
 <plurals name="replies">
-        <item quantity="one">%s réponse</item>
-        <item quantity="other">%s réponses</item>
+<item quantity="one">%s réponse</item>
+<item quantity="other">%s réponses</item>
 </plurals>
-
+<string name="clear_webview_cookies">Effacer les cookies WebView</string>
+<string name="clear_webview_cookies_summary">Effacer tous les cookies stockés par les composants WebView afin de pouvoir utiliser un nouveau compte</string>
+<string name="webview_cookies_cleared">Les cookies WebView ont été effacés</string>
+<string name="webview_cookies_clear_failed">Échec de l\'effacement des cookies WebView</string>
 </resources>

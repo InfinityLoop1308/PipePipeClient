@@ -1042,4 +1042,8 @@
 <string name="pull_to_refresh_title">Tirar para actualizar</string>
 <string name="pull_to_refresh_summary">Habilitar gesto de deslizar para actualizar en el feed</string>
 <string name="select_groups">Seleccionar Grupos</string>
+<string name="clear_webview_cookies">Clear_WebView_cookies-es</string>
+<string name="clear_webview_cookies_summary">Clear_all_cookies_stored_by_WebView_components_so_you_can_use_a_new_account-es</string>
+<string name="webview_cookies_cleared">WebView_cookies_have_been_cleared-es</string>
+<string name="webview_cookies_clear_failed">Failed_to_clear_WebView_cookies-es</string>
 </resources>

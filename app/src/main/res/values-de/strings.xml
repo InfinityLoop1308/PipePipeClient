@@ -981,9 +981,12 @@
 <string name="pull_to_refresh_title">Zum Aktualisieren ziehen</string>
 <string name="pull_to_refresh_summary">Pull-to-Refresh-Geste im Feed aktivieren</string>
 <string name="select_groups">Gruppen auswählen</string>
-        <plurals name="replies">
-                <item quantity="one">%s Antwort</item>
-                <item quantity="other">%s Antworten</item>
-        </plurals>
-
+<plurals name="replies">
+<item quantity="one">%s Antwort</item>
+<item quantity="other">%s Antworten</item>
+</plurals>
+<string name="clear_webview_cookies">WebView-Cookies löschen</string>
+<string name="clear_webview_cookies_summary">Alle von WebView-Komponenten gespeicherten Cookies löschen, damit Sie ein neues Konto verwenden können</string>
+<string name="webview_cookies_cleared">WebView-Cookies wurden gelöscht</string>
+<string name="webview_cookies_clear_failed">Fehler beim Löschen der WebView-Cookies</string>
 </resources>

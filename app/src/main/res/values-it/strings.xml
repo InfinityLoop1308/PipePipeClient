@@ -975,9 +975,12 @@
 <string name="pull_to_refresh_title">Trascina per aggiornare</string>
 <string name="pull_to_refresh_summary">Abilita il gesto di pull-to-refresh nel feed</string>
 <string name="select_groups">Seleziona Gruppi</string>
-    <plurals name="replies">
-        <item quantity="one">%s risposta</item>
-        <item quantity="other">%s risposte</item>
-    </plurals>
-
+<plurals name="replies">
+<item quantity="one">%s risposta</item>
+<item quantity="other">%s risposte</item>
+</plurals>
+<string name="clear_webview_cookies">Cancella i cookie di WebView</string>
+<string name="clear_webview_cookies_summary">Cancella tutti i cookie memorizzati dai componenti WebView in modo da poter utilizzare un nuovo account</string>
+<string name="webview_cookies_cleared">I cookie di WebView sono stati cancellati</string>
+<string name="webview_cookies_clear_failed">Impossibile cancellare i cookie di WebView</string>
 </resources>

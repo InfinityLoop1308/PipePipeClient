@@ -1036,8 +1036,11 @@
 <string name="pull_to_refresh_summary">在資訊流中啟用下拉式重新整理手勢</string>
 <string name="select_groups">選擇群組</string>
 <plurals name="replies">
-    <item quantity="one">%s 則回覆</item>
-    <item quantity="other">%s 則回覆</item>
+<item quantity="one">%s 則回覆</item>
+<item quantity="other">%s 則回覆</item>
 </plurals>
-
+<string name="clear_webview_cookies">清除 WebView Cookie</string>
+<string name="clear_webview_cookies_summary">清除 WebView 元件儲存的所有 Cookie，以便您可以使用新帳戶</string>
+<string name="webview_cookies_cleared">已清除 WebView Cookie</string>
+<string name="webview_cookies_clear_failed">無法清除 WebView Cookie</string>
 </resources>

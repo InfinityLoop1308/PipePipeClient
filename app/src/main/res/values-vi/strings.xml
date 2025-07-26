@@ -1093,4 +1093,8 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="pull_to_refresh_title">Kéo để làm mới</string>
 <string name="pull_to_refresh_summary">Bật cử chỉ kéo để làm mới trong nguồn cấp dữ liệu</string>
 <string name="select_groups">Chọn Nhóm</string>
+<string name="clear_webview_cookies">Xóa cookie WebView</string>
+<string name="clear_webview_cookies_summary">Xóa tất cả cookie được lưu trữ bởi các thành phần WebView để bạn có thể sử dụng tài khoản mới</string>
+<string name="webview_cookies_cleared">Cookie WebView đã được xóa</string>
+<string name="webview_cookies_clear_failed">Không thể xóa cookie WebView</string>
 </resources>

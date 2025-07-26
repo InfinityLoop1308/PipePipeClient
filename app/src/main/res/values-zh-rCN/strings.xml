@@ -1048,4 +1048,8 @@
 <string name="pull_to_refresh_title">下拉刷新</string>
 <string name="pull_to_refresh_summary">在动态中启用下拉刷新手势</string>
 <string name="select_groups">选择群组</string>
+<string name="clear_webview_cookies">清除 WebView Cookie</string>
+<string name="clear_webview_cookies_summary">清除 WebView 组件存储的所有 Cookie，以便您可以使用新账户</string>
+<string name="webview_cookies_cleared">WebView Cookie 已清除</string>
+<string name="webview_cookies_clear_failed">清除 WebView Cookie 失败</string>
 </resources>
