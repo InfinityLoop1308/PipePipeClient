@@ -972,9 +972,17 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                                                     final long msSinceStartScroll) {
                 final int standardSpeed = super.interpolateOutOfBoundsScroll(recyclerView,
                         viewSize, viewSizeOutOfBounds, totalSize, msSinceStartScroll);
-                final int minimumAbsVelocity = Math.max(MINIMUM_INITIAL_DRAG_VELOCITY,
-                        Math.abs(standardSpeed));
-                return minimumAbsVelocity * (int) Math.signum(viewSizeOutOfBounds);
+                
+                // Allow slower speeds for precise positioning when dragging across pages
+                // Only apply minimum velocity for very slow drags to prevent stalling
+                final int absStandardSpeed = Math.abs(standardSpeed);
+                if (absStandardSpeed < 3) {
+                    // Use minimum velocity only for extremely slow drags to prevent stalling
+                    return 3 * (int) Math.signum(viewSizeOutOfBounds);
+                }
+                
+                // For normal speeds, use the standard speed to allow precise control
+                return standardSpeed;
             }
 
             @Override
