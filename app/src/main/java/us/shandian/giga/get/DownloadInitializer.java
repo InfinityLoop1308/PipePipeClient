@@ -11,12 +11,16 @@ import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.HttpURLConnection;
 import java.nio.channels.ClosedByInterruptException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 import us.shandian.giga.util.Utility;
 
 import static org.schabi.newpipe.BuildConfig.DEBUG;
 import static us.shandian.giga.get.DownloadMission.ERROR_HTTP_AUTH;
 import static us.shandian.giga.get.DownloadMission.ERROR_HTTP_FORBIDDEN;
+import org.schabi.newpipe.extractor.utils.SubtitleDeduplicator;
 
 public class DownloadInitializer extends Thread {
     private final static String TAG = "DownloadInitializer";
@@ -47,6 +51,27 @@ public class DownloadInitializer extends Thread {
         int retryCount = 0;
         int httpCode = 204;
 
+        //process local, for example: file://
+        for (int i = 0; i < mMission.urls.length && mMission.running; i++) {
+            String currentUrl = mMission.urls[i];
+
+            if (false == isLocalSubtitleUrl(currentUrl)) {
+                // do nothing
+            } else {
+                int result = handleLocalSubtitle(currentUrl);
+                if (0 == result) {
+                    printLocalSubtitleStoredOk();
+                } else {
+                    Log.e(TAG, "Fail to handle localSubtitle Url. error=" + result);
+                }
+
+                // There is only urls[0] for subtitle,
+                // so return directly after processing the urls[0].
+                return;
+            }
+        }
+
+        // process remote, for example: http:// or https://
         while (true) {
             try {
                 if (mMission.blocks == null && mMission.current == 0) {
@@ -55,6 +80,7 @@ public class DownloadInitializer extends Thread {
                     long lowestSize = Long.MAX_VALUE;
 
                     for (int i = 0; i < mMission.urls.length && mMission.running; i++) {
+
                         mConn = mMission.openConnection(mMission.urls[i], true, 0, 0);
                         mMission.establishConnection(mId, mConn);
                         dispose();
@@ -206,5 +232,125 @@ public class DownloadInitializer extends Thread {
     public void interrupt() {
         super.interrupt();
         if (mConn != null) dispose();
+    }
+
+    private boolean isLocalUrl(String url) {
+        String URL_PREFIX = SubtitleDeduplicator.LOCAL_SUBTITLE_URL_PREFIX;
+
+        if (url.startsWith(URL_PREFIX)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean isSubtitleUrl() {
+        char downloadKind = mMission.kind;
+        if ('s' != downloadKind) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean isLocalSubtitleUrl(String url) {
+        if (false == isLocalUrl(url)) {
+            return false;
+        }
+
+        if (false == isSubtitleUrl()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private String getAbsolutePathFromLocalUrl(String localSubtitleUrl) {
+        String URL_PREFIX = SubtitleDeduplicator.LOCAL_SUBTITLE_URL_PREFIX;
+        int prefixLength = URL_PREFIX.length();
+        // Remove URL_PREFIX
+        String absolutePath = localSubtitleUrl.substring(prefixLength);
+        return absolutePath;
+    }
+
+    private int handleLocalSubtitle(String localSubtitleUrl) {
+        if (false == isValidLocalUrlLength(localSubtitleUrl)) {
+            return 3;
+        }
+
+        String localSubtitlePath = getAbsolutePathFromLocalUrl(localSubtitleUrl);
+        File file = new File(localSubtitlePath);
+
+        int permissionResult = checkLocalFilePermissions(file);
+        if (permissionResult != 0) {
+            return permissionResult;
+        }
+
+        extractSubtitleToStorage(file);
+
+        return 0; // Successfully
+    }
+
+    private boolean isValidLocalUrlLength(String localUrl) {
+        String URL_PREFIX = SubtitleDeduplicator.LOCAL_SUBTITLE_URL_PREFIX;
+
+        if (localUrl.length() <= URL_PREFIX.length()) {
+             return false;
+        }
+
+        return true;
+    }
+
+    private int checkLocalFilePermissions(File file) {
+        if (!file.exists()) {
+            mMission.notifyError(DownloadMission.ERROR_FILE_CREATION, null);
+            return 1;
+        }
+
+        if (!mMission.storage.canWrite()) {
+            mMission.notifyError(DownloadMission.ERROR_PERMISSION_DENIED, null);
+            return 2;
+        }
+
+        return 0;
+    }
+
+    // Extracts subtitle paragraphs(content) from a given local file
+    // and writes them to storage.
+    private void extractSubtitleToStorage(File file) {
+        try (FileInputStream inputStream = new FileInputStream(file);
+             SharpStream outputStream = mMission.storage.getStream()) {
+
+            byte[] buffer = new byte[DownloadMission.BUFFER_SIZE];
+            int bytesRead;
+            long totalBytes = 0;
+
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+                totalBytes += bytesRead;
+                mMission.notifyProgress(bytesRead);
+            }
+
+            mMission.length = totalBytes;
+            mMission.unknownLength = false;
+            mMission.notifyFinished();
+
+        } catch (IOException e) {
+            String logMessage = "Error extracting subtitle paragraphs from " +
+                                    file.getAbsolutePath() + ", error:" +
+                                    e.getMessage();
+            Log.e(TAG, logMessage);
+            mMission.notifyError(DownloadMission.ERROR_FILE_CREATION, e);
+        }
+    }
+
+    private void printLocalSubtitleStoredOk() {
+        try {
+            String logMessage = "Local subtitle url is extracted to:" +
+                                mMission.storage.getName();
+            Log.i(TAG, logMessage);
+        } catch (NullPointerException e) {
+            Log.w(TAG, "Please check whether the subtitle file is downloaded.", e);
+        }
     }
 }
