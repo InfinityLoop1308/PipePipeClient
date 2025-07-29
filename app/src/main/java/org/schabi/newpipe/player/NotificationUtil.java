@@ -90,7 +90,7 @@ public final class NotificationUtil {
         if (DEBUG) {
             Log.d(TAG, "createNotification()");
         }
-        Context contextProvider = service != null ? service.getApplicationContext() : player.getContext().getApplicationContext(); // Use application context to prevent memory leaks
+        Context contextProvider = service != null ? service : player.getContext(); // for unknown reasons, sometime player's context is null
         notificationManager = NotificationManagerCompat.from(contextProvider);
         final NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(contextProvider,
@@ -153,7 +153,7 @@ public final class NotificationUtil {
         }
 
         // also update content intent, in case the user switched players
-        notificationBuilder.setContentIntent(PendingIntent.getActivity(player.getContext().getApplicationContext(),
+        notificationBuilder.setContentIntent(PendingIntent.getActivity(player.getContext(),
                 NOTIFICATION_ID, getIntentForNotification(player), Build.VERSION.SDK_INT >= Build.VERSION_CODES.M?
                         PendingIntent.FLAG_IMMUTABLE | FLAG_UPDATE_CURRENT : FLAG_UPDATE_CURRENT));
         notificationBuilder.setContentTitle(player.getVideoTitle());
@@ -164,7 +164,7 @@ public final class NotificationUtil {
             // MediaSessionPlayerUi
             updateActions(notificationBuilder, player);
             final boolean showThumbnail = player.getPrefs().getBoolean(
-                    player.getContext().getApplicationContext().getString(R.string.show_thumbnail_key), true);
+                    player.getContext().getString(R.string.show_thumbnail_key), true);
             if (showThumbnail) {
                 setLargeIcon(notificationBuilder, player);
             }
@@ -223,7 +223,7 @@ public final class NotificationUtil {
     private void initializeNotificationSlots(final Player player) {
         for (int i = 0; i < 5; ++i) {
             notificationSlots[i] = player.getPrefs().getInt(
-                    player.getContext().getApplicationContext().getString(NotificationConstants.SLOT_PREF_KEYS[i]),
+                    player.getContext().getString(NotificationConstants.SLOT_PREF_KEYS[i]),
                     NotificationConstants.SLOT_DEFAULTS[i]);
         }
     }
@@ -291,7 +291,7 @@ public final class NotificationUtil {
                         || player.getCurrentState() == Player.STATE_BUFFERING) {
                     // null intent -> show hourglass icon that does nothing when clicked
                     return new NotificationCompat.Action(R.drawable.ic_hourglass_top,
-                            player.getContext().getApplicationContext().getString(R.string.notification_action_buffering),
+                            player.getContext().getString(R.string.notification_action_buffering),
                             null);
                 }
 
@@ -346,22 +346,20 @@ public final class NotificationUtil {
                                                 @DrawableRes final int drawable,
                                                 @StringRes final int title,
                                                 final String intentAction) {
-        final Context appContext = player.getContext().getApplicationContext();
-        return new NotificationCompat.Action(drawable, appContext.getString(title),
-                PendingIntent.getBroadcast(appContext, NOTIFICATION_ID,
+        return new NotificationCompat.Action(drawable, player.getContext().getString(title),
+                PendingIntent.getBroadcast(player.getContext(), NOTIFICATION_ID,
                         new Intent(intentAction), Build.VERSION.SDK_INT >= Build.VERSION_CODES.M?
                                 PendingIntent.FLAG_IMMUTABLE | FLAG_UPDATE_CURRENT : FLAG_UPDATE_CURRENT));
     }
 
     private Intent getIntentForNotification(final Player player) {
-        final Context appContext = player.getContext().getApplicationContext();
         if (player.audioPlayerSelected() || player.popupPlayerSelected()) {
             // Means we play in popup or audio only. Let's show the play queue
-            return NavigationHelper.getPlayQueueActivityIntent(appContext);
+            return NavigationHelper.getPlayQueueActivityIntent(player.getContext());
         } else {
             // We are playing in fragment. Don't open another activity just show fragment. That's it
             final Intent intent = NavigationHelper.getPlayerIntent(
-                    appContext, MainActivity.class, null, true);
+                    player.getContext(), MainActivity.class, null, true);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setAction(Intent.ACTION_MAIN);
             intent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -379,7 +377,7 @@ public final class NotificationUtil {
             return;
         }
         final boolean scaleImageToSquareAspectRatio = player.getPrefs().getBoolean(
-                player.getContext().getApplicationContext().getString(R.string.scale_to_square_image_in_notifications_key),
+                player.getContext().getString(R.string.scale_to_square_image_in_notifications_key),
                 false);
         if (scaleImageToSquareAspectRatio) {
             builder.setLargeIcon(getBitmapWithSquareAspectRatio(player.getThumbnail()));
