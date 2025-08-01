@@ -899,7 +899,7 @@
 <string name="sponsor_promote">成为支持者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">在后台播放时自动随机播放您的本地播放列表</string>
-<string name="update_log">### 新功能\n- 支持在频道页面将频道添加到动态分组\n- 将动态分组图标用作添加到主屏幕时的标签图标（需要重新添加才能看到更改）\n- 支持禁用动态中的下拉刷新\n- 添加滑动快进/快退手势\n- 在频道、动态、趋势和远程播放列表中以内容语言而非英语显示视频标题\n- 支持登录用户观看敏感视频（NicoNico）\n\n### 错误修复\n- 没有相关项目（YouTube）\n- 高级格式未正确优先选择\n- 应用被终止后，未完成的下载从下载列表中消失\n- 垂直视频中全屏手势未按预期工作\n- 无法获取动态（NicoNico）\n- SoundCloud 服务无法使用（SoundCloud）\n- 一些UI错误\n\n### 行为\n- 使用偏好设置控制是否启用退出应用确认\n- 改进日志记录过程，使其更清晰\n- 禁用动态中的音乐播放器模式\n\n### 其他\n- 更新部分翻译</string>
+<string name="update_log">### 新功能\n\n- 支持清除 WebView Cookies 以使用不同账户\n\n### Bug 修复\n\n- 某些情况下播放器崩溃\n- 历史记录标签页中搜索按钮消失\n- 对筛选后的历史记录进行操作时应用崩溃\n- 本地播放列表中拖动速度过快\n- 某些情况下的内存泄漏\n- 无法提交新的 SponsorBlock 段落（YouTube）\n- 趋势页面上的筛选器不起作用（YouTube）</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 <string name="donation_dialog_title">支持该项目</string>

@@ -888,7 +888,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在背景播放時自動隨機播放您的本地播放列表</string>
-<string name="update_log">### 新功能\n- 支援在頻道頁面中將頻道新增至訂閱群組\n- 新增至主畫面時，使用訂閱群組圖示作為分頁圖示（需要重新新增才能看到變更）\n- 支援在訂閱中停用下拉重新整理\n- 新增滑動搜尋手勢\n- 在頻道、訂閱、趨勢和遠端播放清單中，以內容語言而非英文顯示影片標題\n- 支援登入使用者觀看敏感影片 (NicoNico)\n\n### 錯誤修正\n- 無相關項目 (YouTube)\n- 進階格式未正確優先顯示\n- 應用程式終止後，未完成的下載項目從下載清單中消失\n- 垂直影片中全螢幕手勢不如預期\n- 無法擷取訂閱 (NicoNico)\n- SoundCloud 服務無法運作 (SoundCloud)\n- 部分使用者介面錯誤\n\n### 行為\n- 使用偏好設定來控制是否啟用應用程式結束確認\n- 改進日誌記錄程序使其更清晰\n- 在訂閱中停用音樂播放器模式\n\n### 其他\n- 更新部分翻譯</string>
+<string name="update_log">### 新功能\n\n- 支援清除 WebView Cookies 以使用不同帳戶\n\n### 錯誤修正\n\n- 在某些情況下播放器崩潰\n- 歷史記錄標籤中的搜尋按鈕消失\n- 在篩選後的歷史記錄上執行操作時應用程式崩潰\n- 本地播放清單拖動速度過快\n- 在某些情況下記憶體洩漏\n- 無法提交新的 SponsorBlock 段落（YouTube）\n- 篩選器在趨勢頁面上無法正常運作（YouTube）</string>
 <string name="speeding_playback_title">按住以加速播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這項計畫</string>

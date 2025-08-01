@@ -60,8 +60,8 @@ class Translator:
     def translate(self, content, language):
         extra_note = ""
         response = self.client.chat.completions.create(
-            model="gemini-2.5-flash",
-            response_format={"type": "json_schema"},
+            model="gpt-4o-2024-11-20",
+            response_format={"type": "json_object"},
             messages=[
                 {
                     "role": "user",
@@ -189,7 +189,7 @@ def get_user_input_from_vim(initial_content=""):
         with open(tmp_file_path, 'r') as tmp_file:
             content = tmp_file.read().strip()
 
-        return content if content else None
+        return content.replace("\n", "\\n") if content else None
 
     except subprocess.CalledProcessError:
         print("Editor was cancelled or failed.")
