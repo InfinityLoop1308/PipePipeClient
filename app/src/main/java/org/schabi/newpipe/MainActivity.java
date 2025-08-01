@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
         if (prefs.getBoolean(app.getString(R.string.update_app_key), false)) {
             // Start the worker which is checking all conditions
             // and eventually searching for a new version.
-            NewVersionWorker.enqueueNewVersionCheckingWork(app, false);
+                NewVersionWorker.enqueueNewVersionCheckingWork(app, true);
         }
 
         int currentVersionCode = BuildConfig.VERSION_CODE;
@@ -273,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
                 prefs.edit().putBoolean(app.getString(R.string.update_app_key), true).apply();
                 // Start the worker which is checking all conditions
                 // and eventually searching for a new version.
-                NewVersionWorker.enqueueNewVersionCheckingWork(app, false);
+                NewVersionWorker.enqueueNewVersionCheckingWork(app, true);
             });
             builder.setNegativeButton(R.string.no, (dialog, which) -> prefs.edit().putBoolean(app.getString(R.string.update_app_key), false).apply());
             builder.show();
