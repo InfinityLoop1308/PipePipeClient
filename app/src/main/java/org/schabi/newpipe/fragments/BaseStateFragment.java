@@ -72,8 +72,6 @@ public abstract class BaseStateFragment<I> extends BaseFragment implements ViewC
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        emptyStateView = null;
-        loadingProgressBar = null;
         if (errorPanelHelper != null) {
             errorPanelHelper.dispose();
         }
