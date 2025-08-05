@@ -170,6 +170,7 @@ public final class PlayQueueActivity extends AppCompatActivity
 
     private void bind() {
         final Intent bindIntent = new Intent(this, MainPlayer.class);
+        bindIntent.setAction(MainPlayer.BIND_PLAYER_HOLDER_ACTION);
         final boolean success = bindService(bindIntent, serviceConnection, BIND_AUTO_CREATE);
         if (!success) {
             unbindService(serviceConnection);
@@ -212,7 +213,7 @@ public final class PlayQueueActivity extends AppCompatActivity
                 if (service instanceof PlayerServiceBinder) {
                     player = ((PlayerServiceBinder) service).getPlayerInstance();
                 } else if (service instanceof MainPlayer.LocalBinder) {
-                    player = ((MainPlayer.LocalBinder) service).getPlayer();
+                    player = ((MainPlayer.LocalBinder) service).getService().getPlayer();
                 }
 
                 if (player == null || player.getPlayQueue() == null

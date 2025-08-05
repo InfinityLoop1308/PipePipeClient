@@ -178,10 +178,18 @@ public final class PlayerHolder {
         }
 
         final Intent serviceIntent = new Intent(context, MainPlayer.class);
-        bound = context.bindService(serviceIntent, serviceConnection,
-                Context.BIND_AUTO_CREATE);
-        if (!bound) {
-            context.unbindService(serviceConnection);
+        serviceIntent.setAction(MainPlayer.BIND_PLAYER_HOLDER_ACTION);
+        try {
+            bound = context.bindService(serviceIntent, serviceConnection,
+                    Context.BIND_AUTO_CREATE);
+            if (!bound) {
+                Log.e(TAG, "bindService returned false for PlayerHolder connection.");
+                // 不要在这里调用 unbindService!
+                // 可以考虑做一些错误处理，比如通知 Listener 绑定失败
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Exception during bindService for PlayerHolder", e);
+            bound = false; // 确保在异常时 bound 状态正确
         }
     }
 
@@ -191,7 +199,11 @@ public final class PlayerHolder {
         }
 
         if (bound) {
-            context.unbindService(serviceConnection);
+            try {
+                context.unbindService(serviceConnection);
+            } catch (Exception ignore){
+
+            }
             bound = false;
             stopPlayerListener();
             playerService = null;

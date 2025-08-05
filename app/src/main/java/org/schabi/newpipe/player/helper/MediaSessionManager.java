@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -18,6 +20,7 @@ import androidx.media.session.MediaButtonReceiver;
 import com.google.android.exoplayer2.ForwardingPlayer;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector.PlaybackPreparer;
 
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
@@ -39,6 +42,7 @@ public class MediaSessionManager {
     private final MediaSessionCompat mediaSession;
     @NonNull
     private final MediaSessionConnector sessionConnector;
+    private final boolean isExternalSession;
 
     private int lastTitleHashCode;
     private int lastArtistHashCode;
@@ -50,9 +54,27 @@ public class MediaSessionManager {
     public MediaSessionManager(@NonNull final Context context,
                                @NonNull final Player player,
                                @NonNull final MediaSessionCallback callback) {
-        mediaSession = new MediaSessionCompat(context, TAG);
-        mediaSession.setActive(true);
+        this(context, player, callback, null);
+    }
 
+    public MediaSessionManager(@NonNull final Context context,
+                               @NonNull final Player player,
+                               @NonNull final MediaSessionCallback callback,
+                               @Nullable final MediaSessionCompat existingSession) {
+        this(context, player, callback, existingSession, null);
+    }
+
+    public MediaSessionManager(@NonNull final Context context,
+                               @NonNull final Player player,
+                               @NonNull final MediaSessionCallback callback,
+                               @Nullable final MediaSessionCompat existingSession,
+                               @Nullable final PlaybackPreparer playbackPreparer) {
+        if (DEBUG) {
+            Log.d(TAG, "MediaSessionManager called");
+        }
+        mediaSession = existingSession != null ? existingSession : new MediaSessionCompat(context, TAG);
+        isExternalSession = existingSession != null;
+        mediaSession.setActive(true);
         mediaSession.setPlaybackState(new PlaybackStateCompat.Builder()
                 .setState(PlaybackStateCompat.STATE_NONE, -1, 1)
                 .setActions(PlaybackStateCompat.ACTION_SEEK_TO
@@ -61,7 +83,8 @@ public class MediaSessionManager {
                         | PlaybackStateCompat.ACTION_SKIP_TO_NEXT
                         | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
                         | PlaybackStateCompat.ACTION_SET_REPEAT_MODE
-                        | PlaybackStateCompat.ACTION_STOP)
+                        | PlaybackStateCompat.ACTION_STOP
+                        | PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID)
                 .build());
 
         sessionConnector = new MediaSessionConnector(mediaSession);
@@ -125,6 +148,11 @@ public class MediaSessionManager {
         sessionConnector.setCustomActionProviders(providers);
         sessionConnector.setMetadataDeduplicationEnabled(true);
         sessionConnector.setMediaMetadataProvider(exoPlayer -> buildMediaMetadata());
+        
+        // Set PlaybackPreparer if provided (for Android Auto support)
+        if (playbackPreparer != null) {
+            sessionConnector.setPlaybackPreparer(playbackPreparer);
+        }
     }
 
     @Nullable
@@ -175,38 +203,7 @@ public class MediaSessionManager {
                     builder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap);
                     builder.putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, bitmap);
                 });
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            new Thread(() -> {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(player, false);
-            }).start();
-        }
-
         return builder.build();
-    }
-
-
-    @Nullable
-    private Bitmap getMetadataAlbumArt() {
-        return mediaSession.getController().getMetadata()
-                .getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART);
-    }
-
-    @Nullable
-    private String getMetadataTitle() {
-        return mediaSession.getController().getMetadata()
-                .getString(MediaMetadataCompat.METADATA_KEY_TITLE);
-    }
-
-    @Nullable
-    private String getMetadataArtist() {
-        return mediaSession.getController().getMetadata()
-                .getString(MediaMetadataCompat.METADATA_KEY_ARTIST);
     }
 
     /**
@@ -215,7 +212,9 @@ public class MediaSessionManager {
     public void dispose() {
         sessionConnector.setPlayer(null);
         sessionConnector.setQueueNavigator(null);
-        mediaSession.setActive(false);
-        mediaSession.release();
+        if (!isExternalSession) {
+            mediaSession.setActive(false);
+            mediaSession.release();
+        }
     }
 }

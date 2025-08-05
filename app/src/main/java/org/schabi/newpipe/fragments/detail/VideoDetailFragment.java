@@ -290,7 +290,9 @@ public final class VideoDetailFragment
     public void onServiceDisconnected() {
         playerService = null;
         player = null;
-        restoreDefaultBrightness();
+        if (binding != null) {
+            restoreDefaultBrightness();
+        }
     }
 
 
@@ -2176,11 +2178,13 @@ public final class VideoDetailFragment
 
     @Override
     public void onServiceStopped() {
-        setOverlayPlayPauseImage(false);
-        if (currentInfo != null) {
-            updateOverlayData(currentInfo.getName(),
-                    currentInfo.getUploaderName(),
-                    currentInfo.getThumbnailUrl());
+        if (binding != null) {
+            setOverlayPlayPauseImage(false);
+            if (currentInfo != null) {
+                updateOverlayData(currentInfo.getName(),
+                        currentInfo.getUploaderName(),
+                        currentInfo.getThumbnailUrl());
+            }
         }
     }
 

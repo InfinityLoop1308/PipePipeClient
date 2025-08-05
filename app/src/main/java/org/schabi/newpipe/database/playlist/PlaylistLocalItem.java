@@ -1,7 +1,10 @@
 package org.schabi.newpipe.database.playlist;
 
+import io.reactivex.rxjava3.core.Flowable;
 import org.schabi.newpipe.database.LocalItem;
 import org.schabi.newpipe.database.playlist.model.PlaylistRemoteEntity;
+import org.schabi.newpipe.local.playlist.LocalPlaylistManager;
+import org.schabi.newpipe.local.playlist.RemotePlaylistManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,6 +15,8 @@ public interface PlaylistLocalItem extends LocalItem {
     String getOrderingName();
 
     long getDisplayIndex();
+
+    String getThumbnailUrl();
 
     static List<PlaylistLocalItem> merge(
             final List<PlaylistMetadataEntry> localPlaylists,
@@ -74,5 +79,15 @@ public interface PlaylistLocalItem extends LocalItem {
                             Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
         }
         result.addAll(itemsWithSameIndex);
+    }
+
+    public static Flowable<List<PlaylistLocalItem>> getMergedOrderedPlaylists(
+            final LocalPlaylistManager localPlaylistManager,
+            final RemotePlaylistManager remotePlaylistManager) {
+        return Flowable.combineLatest(
+                localPlaylistManager.getPlaylists(),
+                remotePlaylistManager.getPlaylists(),
+                PlaylistLocalItem::merge
+        );
     }
 }

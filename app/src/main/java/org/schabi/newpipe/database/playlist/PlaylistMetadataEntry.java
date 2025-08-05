@@ -1,5 +1,6 @@
 package org.schabi.newpipe.database.playlist;
 
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 
 import static org.schabi.newpipe.database.playlist.model.PlaylistEntity.PLAYLIST_DISPLAY_INDEX;
@@ -43,5 +44,10 @@ public class PlaylistMetadataEntry implements PlaylistLocalItem {
     @Override
     public long getDisplayIndex() {
         return displayIndex;
+    }
+    @Nullable
+    @Override
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
     }
 }

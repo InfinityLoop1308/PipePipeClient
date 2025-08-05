@@ -27,6 +27,9 @@
             <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="http" />
         </intent>
+        <intent>
+            <action android:name="android.media.browse.MediaBrowserService" />
+        </intent>
     </queries>
 
     <application
@@ -62,10 +65,13 @@
 
         <service
             android:name=".player.MainPlayer"
-            android:exported="false"
+            android:exported="true"
             android:foregroundServiceType="mediaPlayback">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService"/>
             </intent-filter>
         </service>
 
@@ -504,5 +510,10 @@
         <meta-data android:name="com.samsung.android.keepalive.density" android:value="true"/>
         <!-- Version >= 3.0. DeX Dual Mode support -->
         <meta-data android:name="com.samsung.android.multidisplay.keep_process_alive" android:value="true"/>
+        <!-- Android Auto -->
+        <meta-data android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc" />
+        <meta-data android:name="com.google.android.gms.car.notification.SmallIcon"
+            android:resource="@mipmap/ic_launcher" />
     </application>
 </manifest>

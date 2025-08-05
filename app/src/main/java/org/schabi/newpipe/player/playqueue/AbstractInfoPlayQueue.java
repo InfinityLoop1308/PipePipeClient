@@ -30,6 +30,10 @@ abstract class AbstractInfoPlayQueue<T extends ListInfo<StreamInfoItem>>
         this(info.getServiceId(), info.getUrl(), info.getNextPage(), info.getRelatedItems(), 0);
     }
 
+    protected AbstractInfoPlayQueue(final T info, int index) {
+        this(info.getServiceId(), info.getUrl(), info.getNextPage(), info.getRelatedItems(), index);
+    }
+
     protected AbstractInfoPlayQueue(final int serviceId,
                                     final String url,
                                     final Page nextPage,

@@ -240,4 +240,9 @@ public final class DeviceUtils {
                 Settings.Global.ANIMATOR_DURATION_SCALE,
                 1F) != 0F;
     }
+
+    public static boolean isAutomotiveDevice(Context context) {
+        PackageManager packageManager = context.getPackageManager();
+        return packageManager.hasSystemFeature(PackageManager.FEATURE_AUTOMOTIVE);
+    }
 }

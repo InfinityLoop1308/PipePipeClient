@@ -534,7 +534,8 @@ public final class Player implements
 
         audioReactor = new AudioReactor(context, simpleExoPlayer);
         mediaSessionManager = new MediaSessionManager(context, simpleExoPlayer,
-                new PlayerMediaSession(this, simpleExoPlayer));
+                new PlayerMediaSession(this, simpleExoPlayer), service.getMediaSession(),
+                service.getMediaBrowserPlaybackPreparer());
 
         registerBroadcastReceiver();
 
@@ -925,7 +926,8 @@ public final class Player implements
         if (playQueue != null) {
             simpleExoPlayer.setShuffleModeEnabled(playQueue.isShuffled());
             mediaSessionManager = new MediaSessionManager(context, simpleExoPlayer,
-                    new PlayerMediaSession(this, simpleExoPlayer));
+                    new PlayerMediaSession(this, simpleExoPlayer), service.getMediaSession(),
+                    service.getMediaBrowserPlaybackPreparer());
         }
 
         setRepeatMode(repeatMode);
@@ -970,6 +972,7 @@ public final class Player implements
         }
         if (mediaSessionManager != null) {
             mediaSessionManager.dispose();
+            mediaSessionManager = null;
         }
 
         if (playQueueAdapter != null) {
@@ -3004,6 +3007,12 @@ public final class Player implements
     @Override
     public void onCues(@NonNull final CueGroup cueGroup) {
         binding.subtitleView.setCues(cueGroup.cues);
+    }
+
+    public void onPrepare() {
+        if (!exoPlayerIsNull()) {
+            simpleExoPlayer.prepare();
+        }
     }
     //endregion
 

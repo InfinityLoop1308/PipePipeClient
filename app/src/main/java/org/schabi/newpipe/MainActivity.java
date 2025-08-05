@@ -932,7 +932,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onReceive(final Context context, final Intent intent) {
                     if (Objects.equals(intent.getAction(),
-                            VideoDetailFragment.ACTION_PLAYER_STARTED)) {
+                            VideoDetailFragment.ACTION_PLAYER_STARTED)
+                            && PlayerHolder.getInstance().isPlayerOpen()) {
                         openMiniPlayerIfMissing();
                         // At this point the player is added 100%, we can unregister. Other actions
                         // are useless since the fragment will not be removed after that.

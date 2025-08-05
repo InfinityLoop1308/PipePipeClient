@@ -31,6 +31,11 @@ public class RemotePlaylistManager {
                 .subscribeOn(Schedulers.io());
     }
 
+    public Flowable<PlaylistRemoteEntity> getPlaylist(final long playlistId) {
+        return playlistRemoteTable.getPlaylist(playlistId).subscribeOn(Schedulers.io());
+    }
+
+
     public Single<Integer> deletePlaylist(final long playlistId) {
         return Single.fromCallable(() -> playlistRemoteTable.deletePlaylist(playlistId))
                 .subscribeOn(Schedulers.io());
