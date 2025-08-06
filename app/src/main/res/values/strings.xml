@@ -1092,4 +1092,5 @@
 <string name="clear_webview_cookies_summary">Clear all cookies stored by WebView components so you can use a new account</string>
 <string name="webview_cookies_cleared">WebView cookies have been cleared</string>
 <string name="webview_cookies_clear_failed">Failed to clear WebView cookies</string>
+<string name="remove_from_playlist_confirmation">Remove this item from playlist?</string>
 </resources>

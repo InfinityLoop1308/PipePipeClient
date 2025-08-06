@@ -1014,4 +1014,5 @@
 <string name="import_urls_from_file">ファイルからURLをインポート</string>
 <string name="import_urls_error">URLのインポート中にエラーが発生しました: %s</string>
 <string name="import_urls_no_valid_urls">選択したファイルに有効なURLが見つかりませんでした</string>
+<string name="remove_from_playlist_confirmation">このアイテムをプレイリストから削除しますか？</string>
 </resources>

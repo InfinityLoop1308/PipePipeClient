@@ -121,6 +121,8 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
     private boolean autoBackgroundPlaying = false;
     private boolean randomBackgroundPlaying = false;
 
+    private boolean isShowingAsTab = false;
+
     private Disposable disposable;
     private EditText editText;
     private View searchClear;
@@ -372,6 +374,8 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
         }
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_local_playlist, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        isShowingAsTab = !(searchItem == null || !searchItem.isVisible());
     }
 
     @Override
@@ -1030,6 +1034,27 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
         saveChanges();
     }
 
+    private void showDeleteConfirmationDialog(final PlaylistStreamEntry item, 
+                                            final RecyclerView.ViewHolder viewHolder) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.play_queue_remove)
+                .setMessage(R.string.remove_from_playlist_confirmation)
+                .setPositiveButton(R.string.play_queue_remove, (dialog, which) -> deleteItem(item))
+                .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                    // Reset the item position if user cancels
+                    if (itemListAdapter != null) {
+                        itemListAdapter.notifyItemChanged(viewHolder.getBindingAdapterPosition());
+                    }
+                })
+                .setOnCancelListener(dialog -> {
+                    // Reset the item position if dialog is cancelled
+                    if (itemListAdapter != null) {
+                        itemListAdapter.notifyItemChanged(viewHolder.getBindingAdapterPosition());
+                    }
+                })
+                .show();
+    }
+
     private void saveChanges() {
         if (isModified == null || debouncedSaveSignal == null) {
             return;
@@ -1103,11 +1128,16 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
 
     private ItemTouchHelper.SimpleCallback getItemTouchCallback() {
         int directions = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+        int swipeDirections;
         if (shouldUseGridLayout(requireContext())) {
             directions |= ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
+            // In grid layout, disable swipe to avoid conflict with drag
+            swipeDirections = ItemTouchHelper.ACTION_STATE_IDLE;
+        } else {
+            // In list layout, use RIGHT for swipe (like PlayQueue)
+            swipeDirections = ItemTouchHelper.RIGHT;
         }
-        return new ItemTouchHelper.SimpleCallback(directions,
-                ItemTouchHelper.ACTION_STATE_IDLE) {
+        return new ItemTouchHelper.SimpleCallback(directions, swipeDirections) {
             @Override
             public int interpolateOutOfBoundsScroll(@NonNull final RecyclerView recyclerView,
                                                     final int viewSize,
@@ -1154,12 +1184,33 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
 
             @Override
             public boolean isItemViewSwipeEnabled() {
-                return false;
+                return !isShowingAsTab;
+            }
+
+            @Override
+            public int getSwipeDirs(@NonNull RecyclerView recyclerView, 
+                                   @NonNull RecyclerView.ViewHolder viewHolder) {
+                // Disable swipe for header items (position 0)
+                if (itemListAdapter != null && viewHolder.getBindingAdapterPosition() == 0) {
+                    return 0; // No swipe directions allowed for header
+                }
+                return super.getSwipeDirs(recyclerView, viewHolder);
             }
 
             @Override
             public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder,
                                  final int swipeDir) {
+                if (itemListAdapter != null) {
+                    final int index = viewHolder.getBindingAdapterPosition() - 1;
+                    // Get the correct list based on whether filtering is enabled
+                    final List<LocalItem> currentItems = itemListAdapter.getCurrentItemsList();
+                    if (index != -1 && index < currentItems.size()) {
+                        final Object item = currentItems.get(index);
+                        if (item instanceof PlaylistStreamEntry) {
+                            showDeleteConfirmationDialog((PlaylistStreamEntry) item, viewHolder);
+                        }
+                    }
+                }
             }
         };
     }

@@ -1016,4 +1016,5 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="import_urls_from_file">Importer des URL depuis un fichier</string>
 <string name="import_urls_error">Erreur lors de l\'importation des URL : %s</string>
 <string name="import_urls_no_valid_urls">Aucune URL valide trouvée dans le fichier sélectionné</string>
+<string name="remove_from_playlist_confirmation">Supprimer cet élément de la playlist ?</string>
 </resources>

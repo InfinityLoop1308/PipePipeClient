@@ -1055,4 +1055,5 @@
 <string name="import_urls_from_file">从文件导入URL</string>
 <string name="import_urls_error">导入URL时出错：%s</string>
 <string name="import_urls_no_valid_urls">在所选文件中未找到有效的URL</string>
+<string name="remove_from_playlist_confirmation">从播放列表中移除此项目？</string>
 </resources>
