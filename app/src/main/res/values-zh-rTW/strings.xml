@@ -1043,4 +1043,7 @@
 <string name="clear_webview_cookies_summary">清除 WebView 元件儲存的所有 Cookie，以便您可以使用新帳戶</string>
 <string name="webview_cookies_cleared">已清除 WebView Cookie</string>
 <string name="webview_cookies_clear_failed">無法清除 WebView Cookie</string>
+<string name="import_urls_from_file">從檔案匯入網址</string>
+<string name="import_urls_error">匯入網址時發生錯誤：%s</string>
+<string name="import_urls_no_valid_urls">在選擇的檔案中未找到有效的網址</string>
 </resources>

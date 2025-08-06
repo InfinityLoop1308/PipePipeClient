@@ -23,6 +23,7 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.streams.io.StoredDirectoryHelper;
 import us.shandian.giga.get.DirectDownloader;
@@ -31,6 +32,10 @@ import static org.schabi.newpipe.util.FilenameUtils.createFilename;
 import static org.schabi.newpipe.util.SparseItemUtil.fetchStreamInfoAndSaveToDatabaseRx;
 
 public class StreamProcessor {
+
+    public interface ProcessingCallback {
+        void onProcessItem(StreamInfo streamInfo) throws Exception;
+    }
 
     private static final String NOTIFICATION_CHANNEL_ID = "stream_processing_channel";
     private static final int NOTIFICATION_ID = 1100;
@@ -45,6 +50,14 @@ public class StreamProcessor {
             @NonNull Context context,
             @NonNull List<StreamInfoItem> streams,
             DirectDownloader.DownloadType downloadType) {
+        processStreamsSequentiallyWithProgress(context, streams, downloadType, null);
+    }
+
+    public void processStreamsSequentiallyWithProgress(
+            @NonNull Context context,
+            @NonNull List<StreamInfoItem> streams,
+            @Nullable DirectDownloader.DownloadType downloadType,
+            @Nullable ProcessingCallback customCallback) {
 
         if (streams.isEmpty()) {
             return;
@@ -97,7 +110,11 @@ public class StreamProcessor {
                                 if (streamInfo == null || streamInfo.getServiceId() == -1) {
                                     throw new Exception("Fetched stream info is invalid for: " + infoItem.getUrl());
                                 }
-                                new DirectDownloader(appContext, streamInfo, downloadType);
+                                if (customCallback != null) {
+                                    customCallback.onProcessItem(streamInfo);
+                                } else if (downloadType != null) {
+                                    new DirectDownloader(appContext, streamInfo, downloadType);
+                                }
                             })
                             .doOnError(throwable -> {
                                 System.err.println("Error processing stream item: " + infoItem.getUrl() + " - " + throwable.getMessage());

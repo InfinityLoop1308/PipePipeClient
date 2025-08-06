@@ -983,4 +983,7 @@
 <string name="clear_webview_cookies_summary">Cancella tutti i cookie memorizzati dai componenti WebView in modo da poter utilizzare un nuovo account</string>
 <string name="webview_cookies_cleared">I cookie di WebView sono stati cancellati</string>
 <string name="webview_cookies_clear_failed">Impossibile cancellare i cookie di WebView</string>
+<string name="import_urls_from_file">Importa URL da file</string>
+<string name="import_urls_error">Errore durante l\'importazione delle URL: %s</string>
+<string name="import_urls_no_valid_urls">Nessuna URL valida trovata nel file selezionato</string>
 </resources>

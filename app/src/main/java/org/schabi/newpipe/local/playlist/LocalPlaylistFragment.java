@@ -1,6 +1,7 @@
 package org.schabi.newpipe.local.playlist;
 
 import android.content.*;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Editable;
@@ -12,6 +13,8 @@ import android.view.*;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -57,16 +60,29 @@ import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
 import org.schabi.newpipe.util.*;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
+import org.schabi.newpipe.util.StreamProcessor;
+import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.StreamingService;
+import org.schabi.newpipe.extractor.linkhandler.LinkHandlerFactory;
+import org.schabi.newpipe.extractor.stream.StreamType;
+import org.schabi.newpipe.extractor.stream.StreamInfo;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 
 import us.shandian.giga.get.DirectDownloader;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static org.schabi.newpipe.error.ErrorUtil.showUiErrorSnackbar;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
+import static org.schabi.newpipe.util.SparseItemUtil.fetchStreamInfoAndSaveToDatabaseRx;
 import static org.schabi.newpipe.util.ThemeHelper.shouldUseGridLayout;
 
 public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistStreamEntry>, Void> implements BackPressable {
@@ -90,6 +106,8 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
 
     private PublishSubject<Long> debouncedSaveSignal;
     private CompositeDisposable disposables;
+
+    private ActivityResultLauncher<String[]> filePickerLauncher;
 
     /* Has the playlist been fully loaded from db */
     private AtomicBoolean isLoadingComplete;
@@ -137,6 +155,11 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
         debouncedSaveSignal = PublishSubject.create();
 
         disposables = new CompositeDisposable();
+
+        filePickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.OpenDocument(),
+                this::handleFileSelection
+        );
 
         isLoadingComplete = new AtomicBoolean();
         isModified = new AtomicBoolean();
@@ -550,6 +573,8 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             });
             AlertDialog dialog = builder.create();
             dialog.show();
+        } else if (item.getItemId() == R.id.menu_item_import_urls) {
+            openFilePicker();
         } else if (item.getItemId() == R.id.menu_item_sort_origin) {
             itemListAdapter.sortMode = SortMode.ORIGIN;
             itemListAdapter.sort(SortMode.ORIGIN);
@@ -568,6 +593,105 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_sort_mode_key), SortMode.SORT_NAME_REVERSE.name()).apply();
         }
         return true;
+    }
+
+    private void openFilePicker() {
+        filePickerLauncher.launch(new String[]{"text/plain"});
+    }
+
+    private void handleFileSelection(@Nullable Uri uri) {
+        if (uri == null) {
+            return;
+        }
+
+        Single.fromCallable(() -> readUrlsFromFile(uri))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        this::processUrls,
+                        throwable -> showImportError(throwable.getMessage())
+                );
+    }
+
+    private List<String> readUrlsFromFile(Uri uri) throws Exception {
+        List<String> urls = new ArrayList<>();
+        try (InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (!line.isEmpty() && (line.startsWith("http://") || line.startsWith("https://"))) {
+                    urls.add(line);
+                }
+            }
+        }
+        return urls;
+    }
+
+    private void processUrls(List<String> urls) {
+        if (urls.isEmpty()) {
+            Toast.makeText(requireContext(), R.string.import_urls_no_valid_urls, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Convert URLs to StreamInfoItems
+        List<StreamInfoItem> streamItems = new ArrayList<>();
+        for (String url : urls) {
+            StreamInfoItem item = createStreamInfoItemFromUrl(url);
+            if (item != null) {
+                streamItems.add(item);
+            }
+        }
+
+        if (streamItems.isEmpty()) {
+            Toast.makeText(requireContext(), R.string.import_urls_no_valid_urls, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Use StreamProcessor with custom callback for playlist addition
+        StreamProcessor streamProcessor = new StreamProcessor();
+        streamProcessor.processStreamsSequentiallyWithProgress(requireContext(), streamItems, null, 
+            streamInfo -> {
+                // Convert StreamInfo to StreamEntity and add to playlist
+                StreamEntity streamEntity = new StreamEntity(streamInfo);
+                List<StreamEntity> entityList = Collections.singletonList(streamEntity);
+                playlistManager.appendToPlaylist(playlistId, entityList)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                        longs -> { /* Success handled by progress notification */ },
+                        throwable -> {
+                            throw new RuntimeException("Failed to add stream to playlist: " + streamInfo.getUrl(), throwable);
+                        }
+                    );
+            }
+        );
+    }
+
+    private StreamInfoItem createStreamInfoItemFromUrl(String url) {
+        try {
+            for (StreamingService service : NewPipe.getServices()) {
+                LinkHandlerFactory linkHandlerFactory = service.getStreamLHFactory();
+                if (linkHandlerFactory.acceptUrl(url)) {
+                    return new StreamInfoItem(
+                            service.getServiceId(),
+                            url,
+                            "Imported Video",
+                            StreamType.VIDEO_STREAM
+                    );
+                }
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "Error processing URL: " + url, e);
+        }
+        return null;
+    }
+
+    private void showImportError(String message) {
+        Toast.makeText(requireContext(), 
+                getString(R.string.import_urls_error, message), 
+                Toast.LENGTH_LONG).show();
     }
 
     public void removeDuplicateStreams() {

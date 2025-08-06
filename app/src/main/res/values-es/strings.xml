@@ -1046,4 +1046,7 @@
 <string name="clear_webview_cookies_summary">Clear_all_cookies_stored_by_WebView_components_so_you_can_use_a_new_account-es</string>
 <string name="webview_cookies_cleared">WebView_cookies_have_been_cleared-es</string>
 <string name="webview_cookies_clear_failed">Failed_to_clear_WebView_cookies-es</string>
+<string name="import_urls_from_file">Importar URLs desde archivo</string>
+<string name="import_urls_error">Error al importar URLs: %s</string>
+<string name="import_urls_no_valid_urls">No se encontraron URLs válidas en el archivo seleccionado</string>
 </resources>

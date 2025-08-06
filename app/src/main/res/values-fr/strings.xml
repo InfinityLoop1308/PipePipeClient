@@ -1013,4 +1013,7 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="clear_webview_cookies_summary">Effacer tous les cookies stockés par les composants WebView afin de pouvoir utiliser un nouveau compte</string>
 <string name="webview_cookies_cleared">Les cookies WebView ont été effacés</string>
 <string name="webview_cookies_clear_failed">Échec de l\'effacement des cookies WebView</string>
+<string name="import_urls_from_file">Importer des URL depuis un fichier</string>
+<string name="import_urls_error">Erreur lors de l\'importation des URL : %s</string>
+<string name="import_urls_no_valid_urls">Aucune URL valide trouvée dans le fichier sélectionné</string>
 </resources>

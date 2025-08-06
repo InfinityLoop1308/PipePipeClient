@@ -54,5 +54,9 @@
         android:id="@+id/menu_item_download_all"
         android:title="@string/download_all"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_item_import_urls"
+        android:title="@string/import_urls_from_file"
+        app:showAsAction="never" />
 
 </menu>

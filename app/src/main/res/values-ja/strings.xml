@@ -1011,4 +1011,7 @@
 <string name="clear_webview_cookies_summary">新しいアカウントを使用できるように、WebViewコンポーネントに保存されているすべてのCookieをクリアします</string>
 <string name="webview_cookies_cleared">WebViewのCookieはクリアされました</string>
 <string name="webview_cookies_clear_failed">WebViewのCookieのクリアに失敗しました</string>
+<string name="import_urls_from_file">ファイルからURLをインポート</string>
+<string name="import_urls_error">URLのインポート中にエラーが発生しました: %s</string>
+<string name="import_urls_no_valid_urls">選択したファイルに有効なURLが見つかりませんでした</string>
 </resources>
