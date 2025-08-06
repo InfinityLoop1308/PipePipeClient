@@ -300,7 +300,7 @@ public final class MainPlayer extends MediaBrowserServiceCompat {
 
     @Override
     public IBinder onBind(final Intent intent) {
-        if (DeviceUtils.isAutomotiveDevice(this)) {
+        if (DeviceUtils.isUsingFromAndroidAuto(this)) {
             // MediaBrowserService also uses its own binder, so for actions related to the media
             // browser service, pass the onBind to the superclass.
             return super.onBind(intent);

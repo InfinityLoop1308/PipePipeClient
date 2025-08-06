@@ -241,13 +241,12 @@ public final class DeviceUtils {
                 1F) != 0F;
     }
 
-    public static boolean isAutomotiveDevice(Context context) {
-        PackageManager packageManager = context.getPackageManager();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return packageManager.hasSystemFeature(PackageManager.FEATURE_AUTOMOTIVE);
-        } else {
-            return false; // no sdk 21/22 aaos devices
+    public static boolean isUsingFromAndroidAuto(Context context) {
+        try {
+            context.getPackageManager().getPackageInfo("com.google.android.projection.gearhead", 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
         }
     }
 }
