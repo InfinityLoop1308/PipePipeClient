@@ -56,6 +56,35 @@ class MediaBrowserImpl(
         disposables.add(
             getMergedPlaylists().subscribe { notifyChildrenChanged.accept(ID_BOOKMARKS) }
         )
+        
+        // listen to changes in history
+        disposables.add(
+            database.streamHistoryDAO().getHistory().subscribe {
+                notifyChildrenChanged.accept(ID_HISTORY) 
+            }
+        )
+        
+        // listen to changes in local playlist contents
+        disposables.add(
+            database.playlistStreamDAO().getAll().subscribe { playlistStreams ->
+                // group by playlist ID and notify each playlist's content has changed
+                playlistStreams.groupBy { it.playlistUid }.keys.forEach { playlistId ->
+                    val mediaId = buildLocalPlaylistItemMediaId(false, playlistId).build().toString()
+                    notifyChildrenChanged.accept(mediaId)
+                }
+            }
+        )
+        
+        // listen to changes in remote playlist metadata (content changes require re-fetching)
+        disposables.add(
+            database.playlistDAO().getAll().subscribe { remotePlaylists ->
+                // notify that remote playlist contents might have changed
+                remotePlaylists.forEach { playlist ->
+                    val mediaId = buildLocalPlaylistItemMediaId(true, playlist.uid).build().toString()
+                    notifyChildrenChanged.accept(mediaId)
+                }
+            }
+        )
     }
 
     //region Cleanup
