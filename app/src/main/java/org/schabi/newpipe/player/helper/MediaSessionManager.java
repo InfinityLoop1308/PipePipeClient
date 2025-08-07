@@ -15,6 +15,8 @@ import android.view.KeyEvent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.media.session.MediaButtonReceiver;
 
 import com.google.android.exoplayer2.ForwardingPlayer;
@@ -203,6 +205,11 @@ public class MediaSessionManager {
                     builder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap);
                     builder.putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, bitmap);
                 });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // fix incorrect thumbnail
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(player, false);
+            }, 100);
+        }
         return builder.build();
     }
 
