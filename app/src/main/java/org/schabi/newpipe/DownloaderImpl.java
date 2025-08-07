@@ -33,6 +33,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static org.schabi.newpipe.MainActivity.DEBUG;
+import static org.schabi.newpipe.extractor.services.bilibili.BilibiliService.WWW_REFERER;
 
 public final class DownloaderImpl extends Downloader {
     public static final String USER_AGENT
@@ -177,16 +178,12 @@ public final class DownloaderImpl extends Downloader {
      */
     public long getContentLength(final String url) throws IOException {
         try {
-            final Response response = head(url, BilibiliService.isBiliBiliDownloadUrl(url)?BilibiliService.getUpToDateHeaders():null);
+            final Response response = head(url, BilibiliService.isBiliBiliDownloadUrl(url)?BilibiliService.getUserAgentHeaders(WWW_REFERER):null);
             return Long.parseLong(response.getHeader("Content-Length"));
         } catch (final NumberFormatException e) {
             throw new IOException("Invalid content length", e);
         } catch (final ReCaptchaException e) {
             throw new IOException(e);
-        } catch (ParsingException e) {
-            throw new RuntimeException(e);
-        } catch (JsonParserException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -201,15 +198,18 @@ public final class DownloaderImpl extends Downloader {
         RequestBody requestBody = null;
         if (dataToSend != null) {
             requestBody = RequestBody.create(null, dataToSend);
+        } else if (httpMethod.equals("POST")) {
+            requestBody = RequestBody.create("", null);
         }
 
-        final okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder()
-                .method(httpMethod, requestBody).url(url)
-                .addHeader("User-Agent", USER_AGENT);
+        final okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder().method(httpMethod, requestBody).url(url);
+        if (requestBuilder.getHeaders$okhttp().get("User-Agent") == null) {
+            requestBuilder.header("User-Agent", USER_AGENT);
+        }
 
         final String cookies = getCookies(url);
-        if (!cookies.isEmpty()) {
-            requestBuilder.addHeader("Cookie", cookies);
+        if (!cookies.isEmpty() && requestBuilder.getHeaders$okhttp().get("Cookie") == null) {
+            requestBuilder.header("Cookie", cookies);
         }
 
         for (final Map.Entry<String, List<String>> pair : headers.entrySet()) {

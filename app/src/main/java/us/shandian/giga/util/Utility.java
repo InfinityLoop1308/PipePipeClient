@@ -42,6 +42,7 @@ import org.schabi.newpipe.streams.io.StoredDirectoryHelper;
 import us.shandian.giga.get.DownloadMission;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
 
+import static org.schabi.newpipe.extractor.services.bilibili.BilibiliService.WWW_REFERER;
 import static org.schabi.newpipe.streams.io.StoredDirectoryHelper.findFileSAFHelper;
 
 public class Utility {
@@ -327,7 +328,7 @@ public class Utility {
     public static void setRequestPropertyIfDownloadingBilibili(String url, HttpURLConnection conn) throws IOException {
         if(BilibiliService.isBiliBiliDownloadUrl(url)){
             // from header map set RequestProperty
-            Map<String, List<String>> headerMap = BilibiliService.getDownloadHeaders();
+            Map<String, List<String>> headerMap = BilibiliService.getUserAgentHeaders(WWW_REFERER);
             for (Map.Entry<String, List<String>> entry : headerMap.entrySet()) {
                 String key = entry.getKey();
                 List<String> value = entry.getValue();
