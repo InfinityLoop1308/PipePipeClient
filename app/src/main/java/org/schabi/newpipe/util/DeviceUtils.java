@@ -243,6 +243,11 @@ public final class DeviceUtils {
 
     public static boolean isAutomotiveDevice(Context context) {
         PackageManager packageManager = context.getPackageManager();
-        return packageManager.hasSystemFeature(PackageManager.FEATURE_AUTOMOTIVE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return packageManager.hasSystemFeature(PackageManager.FEATURE_AUTOMOTIVE);
+        } else {
+            return false; // no sdk 21/22 aaos devices
+        }
     }
 }
