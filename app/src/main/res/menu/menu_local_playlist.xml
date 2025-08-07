@@ -58,5 +58,9 @@
         android:id="@+id/menu_item_import_urls"
         android:title="@string/import_urls_from_file"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_item_append_playlist"
+        android:title="@string/add_to_playlist"
+        app:showAsAction="never" />
 
 </menu>

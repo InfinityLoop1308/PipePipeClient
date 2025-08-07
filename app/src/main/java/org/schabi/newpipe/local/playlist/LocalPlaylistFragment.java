@@ -53,6 +53,7 @@ import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.info_list.dialog.InfoItemDialog;
 import org.schabi.newpipe.info_list.dialog.StreamDialogDefaultEntry;
 import org.schabi.newpipe.local.BaseLocalListFragment;
+import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.MainPlayer.PlayerType;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
@@ -575,6 +576,8 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             dialog.show();
         } else if (item.getItemId() == R.id.menu_item_import_urls) {
             openFilePicker();
+        } else if (item.getItemId() == R.id.menu_item_append_playlist) {
+            appendAllToOtherPlaylist();
         } else if (item.getItemId() == R.id.menu_item_sort_origin) {
             itemListAdapter.sortMode = SortMode.ORIGIN;
             itemListAdapter.sort(SortMode.ORIGIN);
@@ -914,6 +917,23 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
     /*//////////////////////////////////////////////////////////////////////////
     // Playlist Metadata/Streams Manipulation
     //////////////////////////////////////////////////////////////////////////*/
+
+    private void appendAllToOtherPlaylist() {
+        disposables.add(playlistManager.getPlaylistStreams(playlistId)
+                .firstOrError()
+                .map(streams -> streams.stream()
+                        .map(PlaylistStreamEntry::getStreamEntity)
+                        .collect(Collectors.toList()))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(streamEntities -> {
+                    disposables.add(PlaylistDialog.createCorrespondingDialog(
+                            getContext(),
+                            streamEntities,
+                            dialog -> dialog.show(getParentFragmentManager(), TAG)
+                    ));
+                }, throwable -> showError(new ErrorInfo(throwable, UserAction.REQUESTED_BOOKMARK,
+                        "Loading local playlist for append to other playlist"))));
+    }
 
     private void createRenameDialog() {
         if (playlistId == null || name == null || getContext() == null) {
