@@ -244,21 +244,11 @@ public final class DeviceUtils {
                 1F) != 0F;
     }
 
-    public static boolean isUsingFromAndroidAuto(Context context) {
-        try {
-            context.getPackageManager().getPackageInfo("com.google.android.projection.gearhead", 0);
-            return true;
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
+    public static boolean isUsingFromAndroidAuto() {
+        return CarConnectionStateReceiver.isCarConnected();
     }
 
-    public static Class<? extends Service> getPlayerServiceClass(Context context) {
-        try {
-            context.getPackageManager().getPackageInfo("com.google.android.projection.gearhead", 0);
-            return PlayerServiceForAuto.class;
-        } catch (PackageManager.NameNotFoundException e) {
-            return PlayerService.class;
-        }
+    public static Class<? extends Service> getPlayerServiceClass() {
+        return isUsingFromAndroidAuto()? PlayerServiceForAuto.class: PlayerService.class;
     }
 }

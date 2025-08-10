@@ -271,7 +271,7 @@ public class PlayerService extends Service implements PlayerServiceInterface {
         return null;
     }
 
-    public class LocalBinder extends Binder {
+    public class LocalBinder extends Binder implements PlayerBinderInterface{
 
         public PlayerService getService() {
             return PlayerService.this;

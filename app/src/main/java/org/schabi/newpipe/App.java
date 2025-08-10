@@ -1,12 +1,12 @@
 package org.schabi.newpipe;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.pm.ResolveInfo;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.car.app.connection.CarConnection;
 import androidx.core.app.NotificationChannelCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.multidex.MultiDexApplication;
@@ -20,7 +20,6 @@ import org.acra.config.CoreConfigurationBuilder;
 import org.schabi.newpipe.error.ReCaptchaActivity;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.downloader.Downloader;
-import org.schabi.newpipe.extractor.services.youtube.YoutubeParsingHelper;
 import org.schabi.newpipe.ktx.ExceptionUtils;
 import org.schabi.newpipe.settings.NewPipeSettings;
 import org.schabi.newpipe.util.*;
@@ -64,6 +63,8 @@ public class App extends MultiDexApplication {
     private static final String TAG = App.class.toString();
     private static App app;
 
+    private CarConnectionStateReceiver carConnectionReceiver;
+
     @NonNull
     public static App getApp() {
         return app;
@@ -85,6 +86,20 @@ public class App extends MultiDexApplication {
             Log.i(TAG, "This is a phoenix process! "
                     + "Aborting initialization of App[onCreate]");
             return;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            registerCarConnectionReceiver();
+            CarConnection carConnection = new CarConnection(this);
+            carConnection.getType().observeForever(new androidx.lifecycle.Observer<Integer>() {
+                @Override
+                public void onChanged(Integer connectionState) {
+                    boolean isConnected = (connectionState != null && connectionState != CarConnection.CONNECTION_TYPE_NOT_CONNECTED);
+                    Log.d(TAG, "Initial check: Is car connected? " + isConnected);
+                    CarConnectionStateReceiver.setCarConnectionState(isConnected);
+                    carConnection.getType().removeObserver(this);
+                }
+            });
         }
 
         // Initialize settings first because others inits can use its values
@@ -118,7 +133,27 @@ public class App extends MultiDexApplication {
     public void onTerminate() {
         super.onTerminate();
         PicassoHelper.terminate();
+        if (carConnectionReceiver != null) {
+            unregisterReceiver(carConnectionReceiver);
+        }
     }
+
+    private void registerCarConnectionReceiver() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            carConnectionReceiver = new CarConnectionStateReceiver();
+            IntentFilter filter = new IntentFilter(
+                    "androidx.car.app.connection.action.CAR_CONNECTION_UPDATED"
+            );
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                // Android 13+ requires explicit export flag
+                registerReceiver(carConnectionReceiver, filter, Context.RECEIVER_EXPORTED);
+            } else {
+                registerReceiver(carConnectionReceiver, filter);
+            }
+            Log.d("CarConnectionReceiver", "Receiver registered dynamically");
+        }
+    }
+
 
     protected Downloader getDownloader() {
         final DownloaderImpl downloader = DownloaderImpl.init(null);

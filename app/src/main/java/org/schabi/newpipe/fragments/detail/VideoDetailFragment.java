@@ -85,7 +85,6 @@ import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.local.sponsorblock.SponsorBlockDataManager;
-import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.PlayerService.PlayerType;
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.event.OnKeyDownListener;
@@ -1437,7 +1436,7 @@ public final class VideoDetailFragment
         addVideoPlayerView();
         Context context = requireContext();
         final Intent playerIntent = NavigationHelper.getPlayerIntent(context,
-                DeviceUtils.getPlayerServiceClass(context), queue, true, autoPlayEnabled);
+                DeviceUtils.getPlayerServiceClass(), queue, true, autoPlayEnabled);
         ContextCompat.startForegroundService(activity, playerIntent);
     }
 

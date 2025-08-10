@@ -49,6 +49,7 @@ import org.schabi.newpipe.util.ThemeHelper;
 
 import java.util.List;
 
+import static org.schabi.newpipe.player.PlayerService.BIND_PLAYER_HOLDER_ACTION;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
 
@@ -244,15 +245,19 @@ public final class PlayerServiceForAuto extends MediaBrowserServiceCompat implem
 
     @Override
     public IBinder onBind(final Intent intent) {
-        if (DeviceUtils.isUsingFromAndroidAuto(this)) {
+        if (BIND_PLAYER_HOLDER_ACTION.equals(intent.getAction())) {
+            // Note that this binder might be reused multiple times while the service is alive, even
+            // after unbind() has been called: https://stackoverflow.com/a/8794930 .
+            return mBinder;
+
+        } else if (MediaBrowserServiceCompat.SERVICE_INTERFACE.equals(intent.getAction())) {
             // MediaBrowserService also uses its own binder, so for actions related to the media
             // browser service, pass the onBind to the superclass.
             return super.onBind(intent);
+
         } else {
-            if (DEBUG) {
-                Log.d(TAG, "MediaBrowser connection rejected - not from Android Auto");
-            }
-            return mBinder;
+            // This is an unknown request, avoid returning any binder to not leak objects.
+            return null;
         }
     }
 
@@ -340,7 +345,7 @@ public final class PlayerServiceForAuto extends MediaBrowserServiceCompat implem
     //endregion
 
 
-    public class LocalBinder extends Binder {
+    public class LocalBinder extends Binder implements PlayerBinderInterface {
 
         public PlayerServiceForAuto getService() {
             return PlayerServiceForAuto.this;

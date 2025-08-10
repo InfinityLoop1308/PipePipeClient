@@ -17,7 +17,7 @@ android {
         //noinspection ExpiredTargetSdkVersion
         targetSdk 33
         versionCode 1082
-        versionName "4.7.0-pre3"
+        versionName "4.7.0-pre4"
         archivesBaseName = 'PipePipe_' + versionName
 
         multiDexEnabled true
@@ -251,6 +251,7 @@ dependencies {
     implementation "androidx.work:work-runtime:${androidxWorkVersion}"
     implementation "androidx.work:work-runtime-ktx:${androidxWorkVersion}"
     implementation "androidx.work:work-rxjava3:${androidxWorkVersion}"
+    implementation "androidx.car.app:app:1.2.0"
 
 /** Third-party libraries **/
     // Instance state boilerplate elimination
@@ -311,6 +312,7 @@ dependencies {
 
     // Date and time formatting
     implementation "org.ocpsoft.prettytime:prettytime:5.0.2.Final"
+
 
 /** Debugging **/
     // Memory leak detection

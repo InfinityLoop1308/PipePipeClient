@@ -16,6 +16,7 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import org.schabi.newpipe.App;
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
+import org.schabi.newpipe.player.PlayerBinderInterface;
 import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.event.PlayerServiceEventListener;
@@ -129,7 +130,7 @@ public final class PlayerHolder {
         // and NullPointerExceptions inside the service because the service will be
         // bound twice. Prevent it with unbinding first
         unbind(context);
-        ContextCompat.startForegroundService(context, new Intent(context, DeviceUtils.getPlayerServiceClass(context)));
+        ContextCompat.startForegroundService(context, new Intent(context, DeviceUtils.getPlayerServiceClass()));
         serviceConnection.doPlayAfterConnect(playAfterConnect);
         bind(context);
     }
@@ -137,7 +138,7 @@ public final class PlayerHolder {
     public void stopService() {
         final Context context = getCommonContext();
         unbind(context);
-        context.stopService(new Intent(context, DeviceUtils.getPlayerServiceClass(context)));
+        context.stopService(new Intent(context, DeviceUtils.getPlayerServiceClass()));
     }
 
     class PlayerServiceConnection implements ServiceConnection {
@@ -163,7 +164,7 @@ public final class PlayerHolder {
             if (DEBUG) {
                 Log.d(TAG, "Player service is connected");
             }
-            final PlayerService.LocalBinder localBinder = (PlayerService.LocalBinder) service;
+            final PlayerBinderInterface localBinder = (PlayerBinderInterface) service;
 
             playerService = localBinder.getService();
             player = localBinder.getPlayer();
@@ -179,7 +180,7 @@ public final class PlayerHolder {
             Log.d(TAG, "bind() called");
         }
 
-        final Intent serviceIntent = new Intent(context, DeviceUtils.getPlayerServiceClass(context));
+        final Intent serviceIntent = new Intent(context, DeviceUtils.getPlayerServiceClass());
         serviceIntent.setAction(PlayerService.BIND_PLAYER_HOLDER_ACTION);
         try {
             bound = context.bindService(serviceIntent, serviceConnection,

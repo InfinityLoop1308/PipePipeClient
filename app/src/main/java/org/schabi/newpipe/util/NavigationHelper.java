@@ -162,7 +162,7 @@ public final class NavigationHelper {
 
         Toast.makeText(context, R.string.popup_playing_toast, Toast.LENGTH_SHORT).show();
 
-        final Intent intent = getPlayerIntent(context, DeviceUtils.getPlayerServiceClass(context), queue, resumePlayback);
+        final Intent intent = getPlayerIntent(context, DeviceUtils.getPlayerServiceClass(), queue, resumePlayback);
         intent.putExtra(Player.PLAYER_TYPE, PlayerService.PlayerType.POPUP.ordinal());
         ContextCompat.startForegroundService(context, intent);
     }
@@ -173,7 +173,7 @@ public final class NavigationHelper {
         Toast.makeText(context, R.string.background_player_playing_toast, Toast.LENGTH_SHORT)
                 .show();
 
-        final Intent intent = getPlayerIntent(context, DeviceUtils.getPlayerServiceClass(context), queue, resumePlayback);
+        final Intent intent = getPlayerIntent(context, DeviceUtils.getPlayerServiceClass(), queue, resumePlayback);
         intent.putExtra(Player.PLAYER_TYPE, PlayerService.PlayerType.AUDIO.ordinal());
         ContextCompat.startForegroundService(context, intent);
     }
@@ -186,7 +186,7 @@ public final class NavigationHelper {
         queue.setIndex(new Random().nextInt(queue.getStreams().size()));
         queue.shuffle();
 
-        final Intent intent = getPlayerIntent(context, DeviceUtils.getPlayerServiceClass(context), queue, resumePlayback);
+        final Intent intent = getPlayerIntent(context, DeviceUtils.getPlayerServiceClass(), queue, resumePlayback);
         intent.putExtra(Player.PLAYER_TYPE, PlayerService.PlayerType.AUDIO.ordinal());
         ContextCompat.startForegroundService(context, intent);
     }
@@ -201,7 +201,7 @@ public final class NavigationHelper {
         }
 
         Toast.makeText(context, R.string.enqueued, Toast.LENGTH_SHORT).show();
-        final Intent intent = getPlayerEnqueueIntent(context, DeviceUtils.getPlayerServiceClass(context), queue);
+        final Intent intent = getPlayerEnqueueIntent(context, DeviceUtils.getPlayerServiceClass(), queue);
 
         intent.putExtra(Player.PLAYER_TYPE, playerType.ordinal());
         ContextCompat.startForegroundService(context, intent);
@@ -225,7 +225,7 @@ public final class NavigationHelper {
             playerType = PlayerService.PlayerType.AUDIO;
         }
         Toast.makeText(context, R.string.enqueued_next, Toast.LENGTH_SHORT).show();
-        final Intent intent = getPlayerEnqueueNextIntent(context, DeviceUtils.getPlayerServiceClass(context), queue);
+        final Intent intent = getPlayerEnqueueNextIntent(context, DeviceUtils.getPlayerServiceClass(), queue);
 
         intent.putExtra(Player.PLAYER_TYPE, playerType.ordinal());
         ContextCompat.startForegroundService(context, intent);

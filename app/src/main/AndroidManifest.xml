@@ -16,6 +16,9 @@
         android:required="false" />
     <uses-feature android:name="android.software.leanback" android:required="false"/>
 
+    <uses-sdk tools:overrideLibrary="androidx.car.app" />
+
+
     <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />
@@ -59,6 +62,7 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
+
 
         <receiver android:name=".sleep.TimerStopReceiver"/>
         <service android:name=".sleep.SleepTimerService"/>
