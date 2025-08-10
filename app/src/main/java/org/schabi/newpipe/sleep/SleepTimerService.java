@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import org.schabi.newpipe.R;
 
-import static org.schabi.newpipe.player.MainPlayer.ACTION_CLOSE;
+import static org.schabi.newpipe.player.PlayerService.ACTION_CLOSE;
 
 public class SleepTimerService extends Service {
 

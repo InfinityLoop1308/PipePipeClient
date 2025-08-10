@@ -52,7 +52,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.ktx.ExceptionUtils;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
-import org.schabi.newpipe.player.MainPlayer;
+import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.helper.PlayerHolder;
 import org.schabi.newpipe.player.playqueue.ChannelPlayQueue;
@@ -461,10 +461,10 @@ public class RouterActivity extends AppCompatActivity {
                 returnList.add(showInfo);
                 returnList.add(videoPlayer);
             } else {
-                final MainPlayer.PlayerType playerType = PlayerHolder.getInstance().getType();
+                final PlayerService.PlayerType playerType = PlayerHolder.getInstance().getType();
                 if (capabilities.contains(VIDEO)
                         && PlayerHelper.isAutoplayAllowedByUser(context)
-                        && playerType == null || playerType == MainPlayer.PlayerType.VIDEO) {
+                        && playerType == null || playerType == PlayerService.PlayerType.VIDEO) {
                     // show only "video player" since the details activity will be opened and the
                     // video will be auto played there. Since "show info" would do the exact same
                     // thing, use that as a key to let VideoDetailFragment load the stream instead

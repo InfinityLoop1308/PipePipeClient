@@ -1,11 +1,12 @@
 package org.schabi.newpipe.player.event
 
+import android.app.Service
 import android.content.Context
 import android.os.Handler
 import android.util.Log
 import android.view.*
 import org.schabi.newpipe.ktx.animate
-import org.schabi.newpipe.player.MainPlayer
+import org.schabi.newpipe.player.PlayerService
 import org.schabi.newpipe.player.Player
 import org.schabi.newpipe.player.helper.PlayerHelper
 import org.schabi.newpipe.player.helper.PlayerHelper.savePopupPositionAndSizeToPrefs
@@ -24,7 +25,7 @@ abstract class BasePlayerGestureListener(
     @JvmField
     protected val player: Player,
     @JvmField
-    protected val service: MainPlayer
+    protected val service: Service
 ) : GestureDetector.SimpleOnGestureListener(), View.OnTouchListener {
 
     // ///////////////////////////////////////////////////////////////////
@@ -33,10 +34,10 @@ abstract class BasePlayerGestureListener(
 
     abstract fun onDoubleTap(event: MotionEvent, portion: DisplayPortion)
 
-    abstract fun onSingleTap(playerType: MainPlayer.PlayerType)
+    abstract fun onSingleTap(playerType: PlayerService.PlayerType)
 
     abstract fun onScroll(
-        playerType: MainPlayer.PlayerType,
+        playerType: PlayerService.PlayerType,
         portion: DisplayPortion,
         initialEvent: MotionEvent,
         movingEvent: MotionEvent,
@@ -44,7 +45,7 @@ abstract class BasePlayerGestureListener(
         distanceY: Float
     )
 
-    abstract fun onScrollEnd(playerType: MainPlayer.PlayerType, event: MotionEvent)
+    abstract fun onScrollEnd(playerType: PlayerService.PlayerType, event: MotionEvent)
 
     // ///////////////////////////////////////////////////////////////////
     // Abstract methods for POPUP (exclusive)
@@ -112,7 +113,7 @@ abstract class BasePlayerGestureListener(
 
                 if (isMovingInMain) {
                     isMovingInMain = false
-                    onScrollEnd(MainPlayer.PlayerType.VIDEO, event)
+                    onScrollEnd(PlayerService.PlayerType.VIDEO, event)
                 } else if (player.longPressSpeedingEnabled) {
                     player.playbackSpeed /= player.longPressSpeedingFactor
                     player.longPressSpeedingEnabled = false
@@ -164,7 +165,7 @@ abstract class BasePlayerGestureListener(
             }
             if (isMovingInPopup) {
                 isMovingInPopup = false
-                onScrollEnd(MainPlayer.PlayerType.POPUP, event)
+                onScrollEnd(PlayerService.PlayerType.POPUP, event)
             }
             if (isResizing) {
                 isResizing = false
@@ -274,14 +275,14 @@ abstract class BasePlayerGestureListener(
             if (player.exoPlayerIsNull())
                 return false
 
-            onSingleTap(MainPlayer.PlayerType.POPUP)
+            onSingleTap(PlayerService.PlayerType.POPUP)
             return true
         } else {
             super.onSingleTapConfirmed(e)
             if (player.currentState == Player.STATE_BLOCKED)
                 return true
 
-            onSingleTap(MainPlayer.PlayerType.VIDEO)
+            onSingleTap(PlayerService.PlayerType.VIDEO)
         }
         return true
     }
@@ -361,7 +362,7 @@ abstract class BasePlayerGestureListener(
         isMovingInMain = true
 
         onScroll(
-            MainPlayer.PlayerType.VIDEO,
+            PlayerService.PlayerType.VIDEO,
             getDisplayPortion(initialEvent),
             initialEvent,
             movingEvent,
@@ -410,7 +411,7 @@ abstract class BasePlayerGestureListener(
         player.popupLayoutParams!!.y = posY.toInt()
 
         onScroll(
-            MainPlayer.PlayerType.POPUP,
+            PlayerService.PlayerType.POPUP,
             getDisplayPortion(initialEvent),
             initialEvent,
             movingEvent,
@@ -482,7 +483,7 @@ abstract class BasePlayerGestureListener(
     // ///////////////////////////////////////////////////////////////////
 
     private fun getDisplayPortion(e: MotionEvent): DisplayPortion {
-        return if (player.playerType == MainPlayer.PlayerType.POPUP && player.popupLayoutParams != null) {
+        return if (player.playerType == PlayerService.PlayerType.POPUP && player.popupLayoutParams != null) {
             when {
                 e.x < player.popupLayoutParams!!.width / 3.0 -> DisplayPortion.LEFT
                 e.x > player.popupLayoutParams!!.width * 2.0 / 3.0 -> DisplayPortion.RIGHT
@@ -499,7 +500,7 @@ abstract class BasePlayerGestureListener(
 
     // Currently needed for scrolling since there is no action more the middle portion
     private fun getDisplayHalfPortion(e: MotionEvent): DisplayPortion {
-        return if (player.playerType == MainPlayer.PlayerType.POPUP) {
+        return if (player.playerType == PlayerService.PlayerType.POPUP) {
             when {
                 e.x < player.popupLayoutParams!!.width / 2.0 -> DisplayPortion.LEFT_HALF
                 else -> DisplayPortion.RIGHT_HALF

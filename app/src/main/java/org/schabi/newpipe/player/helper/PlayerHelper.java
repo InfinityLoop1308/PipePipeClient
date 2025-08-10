@@ -54,7 +54,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.extractor.stream.SubtitlesStream;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.extractor.utils.Utils;
-import org.schabi.newpipe.player.MainPlayer;
+import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
@@ -73,7 +73,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 public final class PlayerHelper {
     private static final StringBuilder STRING_BUILDER = new StringBuilder();
@@ -527,10 +526,10 @@ public final class PlayerHelper {
     // Utils used by player
     ////////////////////////////////////////////////////////////////////////////
 
-    public static MainPlayer.PlayerType retrievePlayerTypeFromIntent(final Intent intent) {
+    public static PlayerService.PlayerType retrievePlayerTypeFromIntent(final Intent intent) {
         // If you want to open popup from the app just include Constants.POPUP_ONLY into an extra
-        return MainPlayer.PlayerType.values()[
-                intent.getIntExtra(PLAYER_TYPE, MainPlayer.PlayerType.VIDEO.ordinal())];
+        return PlayerService.PlayerType.values()[
+                intent.getIntExtra(PLAYER_TYPE, PlayerService.PlayerType.VIDEO.ordinal())];
     }
 
     public static boolean isPlaybackResumeEnabled(final Player player) {

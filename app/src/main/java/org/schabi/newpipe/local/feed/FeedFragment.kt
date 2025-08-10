@@ -77,7 +77,7 @@ import org.schabi.newpipe.ktx.slideUp
 import org.schabi.newpipe.local.feed.item.StreamItem
 import org.schabi.newpipe.local.feed.service.FeedLoadService
 import org.schabi.newpipe.local.subscription.SubscriptionManager
-import org.schabi.newpipe.player.MainPlayer
+import org.schabi.newpipe.player.PlayerService
 import org.schabi.newpipe.player.playqueue.PlayQueue
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue
 import org.schabi.newpipe.util.DeviceUtils
@@ -322,7 +322,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
             binding.playlistCtrlPlayPopupButton.setOnLongClickListener {
                 val playQueue = getPlayQueue()
                 if (playQueue.streams.isNotEmpty()) {
-                    NavigationHelper.enqueueOnPlayer(activity, playQueue, MainPlayer.PlayerType.POPUP)
+                    NavigationHelper.enqueueOnPlayer(activity, playQueue, PlayerService.PlayerType.POPUP)
                 }
                 true
             }
@@ -330,7 +330,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
             binding.playlistCtrlPlayBgButton.setOnLongClickListener {
                 val playQueue = getPlayQueue()
                 if (playQueue.streams.isNotEmpty()) {
-                    NavigationHelper.enqueueOnPlayer(activity, playQueue, MainPlayer.PlayerType.AUDIO)
+                    NavigationHelper.enqueueOnPlayer(activity, playQueue, PlayerService.PlayerType.AUDIO)
                 }
                 true
             }

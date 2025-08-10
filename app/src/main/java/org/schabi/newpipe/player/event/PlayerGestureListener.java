@@ -20,9 +20,10 @@ import androidx.appcompat.content.res.AppCompatResources;
 
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
-import org.schabi.newpipe.player.MainPlayer;
+import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.helper.PlayerHelper;
+import org.schabi.newpipe.player.mediasession.PlayerServiceInterface;
 
 /**
  * GestureListener for the player
@@ -52,8 +53,8 @@ public class PlayerGestureListener
     private boolean isPendingScreenRotation = false;
     private boolean isFullscreenRotationGesture = false;
 
-    public PlayerGestureListener(final Player player, final MainPlayer service) {
-        super(player, service);
+    public PlayerGestureListener(final Player player, final PlayerServiceInterface service) {
+        super(player, service.getInstance());
         maxVolume = player.getAudioReactor().getMaxVolume();
     }
 
@@ -76,7 +77,7 @@ public class PlayerGestureListener
     }
 
     @Override
-    public void onSingleTap(@NonNull final MainPlayer.PlayerType playerType) {
+    public void onSingleTap(@NonNull final PlayerService.PlayerType playerType) {
         if (DEBUG) {
             Log.d(TAG, "onSingleTap called with playerType = [" + player.getPlayerType() + "]");
         }
@@ -96,7 +97,7 @@ public class PlayerGestureListener
     }
 
     @Override
-    public void onScroll(@NonNull final MainPlayer.PlayerType playerType,
+    public void onScroll(@NonNull final PlayerService.PlayerType playerType,
                          @NonNull final DisplayPortion portion,
                          @NonNull final MotionEvent initialEvent,
                          @NonNull final MotionEvent movingEvent,
@@ -105,7 +106,7 @@ public class PlayerGestureListener
             Log.d(TAG, "onScroll called with playerType = ["
                     + player.getPlayerType() + "], portion = [" + portion + "]");
         }
-        if (playerType == MainPlayer.PlayerType.VIDEO) {
+        if (playerType == PlayerService.PlayerType.VIDEO) {
             final boolean isFullscreenGestureEnabled =
                     PlayerHelper.isFullscreenGestureEnabled(service);
             final boolean isSwipeSeekGestureEnabled =
@@ -300,7 +301,7 @@ public class PlayerGestureListener
     }
 
     @Override
-    public void onScrollEnd(@NonNull final MainPlayer.PlayerType playerType,
+    public void onScrollEnd(@NonNull final PlayerService.PlayerType playerType,
                             @NonNull final MotionEvent event) {
         if (DEBUG) {
             Log.d(TAG, "onScrollEnd called with playerType = ["
@@ -311,7 +312,7 @@ public class PlayerGestureListener
             player.hideControls(DEFAULT_CONTROLS_DURATION, DEFAULT_CONTROLS_HIDE_TIME);
         }
 
-        if (playerType == MainPlayer.PlayerType.VIDEO) {
+        if (playerType == PlayerService.PlayerType.VIDEO) {
             // Handle pending screen rotation gesture
             if (isPendingScreenRotation && isFullscreenRotationGesture) {
                 player.onScreenRotationButtonClicked();

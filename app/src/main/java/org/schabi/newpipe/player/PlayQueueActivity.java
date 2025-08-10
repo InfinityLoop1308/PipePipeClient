@@ -17,7 +17,6 @@ import android.widget.SeekBar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,11 +35,7 @@ import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemBuilder;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemHolder;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemTouchCallback;
-import org.schabi.newpipe.util.Localization;
-import org.schabi.newpipe.util.NavigationHelper;
-import org.schabi.newpipe.util.PermissionHelper;
-import org.schabi.newpipe.util.ServiceHelper;
-import org.schabi.newpipe.util.ThemeHelper;
+import org.schabi.newpipe.util.*;
 
 public final class PlayQueueActivity extends AppCompatActivity
         implements PlayerEventListener, SeekBar.OnSeekBarChangeListener,
@@ -169,8 +164,8 @@ public final class PlayQueueActivity extends AppCompatActivity
     ////////////////////////////////////////////////////////////////////////////
 
     private void bind() {
-        final Intent bindIntent = new Intent(this, MainPlayer.class);
-        bindIntent.setAction(MainPlayer.BIND_PLAYER_HOLDER_ACTION);
+        final Intent bindIntent = new Intent(this, DeviceUtils.getPlayerServiceClass(this));
+        bindIntent.setAction(PlayerService.BIND_PLAYER_HOLDER_ACTION);
         final boolean success = bindService(bindIntent, serviceConnection, BIND_AUTO_CREATE);
         if (!success) {
             unbindService(serviceConnection);
@@ -212,8 +207,10 @@ public final class PlayQueueActivity extends AppCompatActivity
 
                 if (service instanceof PlayerServiceBinder) {
                     player = ((PlayerServiceBinder) service).getPlayerInstance();
-                } else if (service instanceof MainPlayer.LocalBinder) {
-                    player = ((MainPlayer.LocalBinder) service).getService().getPlayer();
+                } else if (service instanceof PlayerService.LocalBinder) {
+                    player = ((PlayerService.LocalBinder) service).getPlayer();
+                } else if (service instanceof PlayerServiceForAuto.LocalBinder) {
+                    player = ((PlayerServiceForAuto.LocalBinder) service).getService().getPlayer();
                 }
 
                 if (player == null || player.getPlayQueue() == null

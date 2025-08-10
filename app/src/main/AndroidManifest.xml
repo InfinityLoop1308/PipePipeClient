@@ -64,9 +64,18 @@
         <service android:name=".sleep.SleepTimerService"/>
 
         <service
-            android:name=".player.MainPlayer"
-            android:exported="true"
+            android:name=".player.PlayerService"
+            android:exported="false"
             android:foregroundServiceType="mediaPlayback">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </service>
+
+        <service
+                android:name=".player.PlayerServiceForAuto"
+                android:exported="true"
+                android:foregroundServiceType="mediaPlayback">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>

@@ -2,7 +2,6 @@ package org.schabi.newpipe.player.helper;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,8 +14,6 @@ import android.view.KeyEvent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentManager;
 import androidx.media.session.MediaButtonReceiver;
 
 import com.google.android.exoplayer2.ForwardingPlayer;
@@ -34,7 +31,7 @@ import org.schabi.newpipe.util.StreamTypeUtil;
 
 import java.util.Optional;
 
-import static org.schabi.newpipe.player.MainPlayer.*;
+import static org.schabi.newpipe.player.PlayerService.*;
 
 public class MediaSessionManager {
     private static final String TAG = MediaSessionManager.class.getSimpleName();

@@ -19,6 +19,7 @@
 
 package org.schabi.newpipe.player;
 
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
@@ -42,26 +43,23 @@ import org.schabi.newpipe.App;
 import org.schabi.newpipe.databinding.PlayerBinding;
 import org.schabi.newpipe.player.mediabrowser.MediaBrowserImpl;
 import org.schabi.newpipe.player.mediabrowser.MediaBrowserPlaybackPreparer;
+import org.schabi.newpipe.player.mediasession.PlayerServiceInterface;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ThemeHelper;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
 
 /**
- * One service for all players.
+ * One service for all players with Android Auto support.
  *
  * @author mauriciocolli
  */
-public final class MainPlayer extends MediaBrowserServiceCompat {
-    private static final String TAG = "MainPlayer";
+public final class PlayerServiceForAuto extends MediaBrowserServiceCompat implements PlayerServiceInterface {
+    private static final String TAG = "PlayerServiceForAuto";
     private static final boolean DEBUG = Player.DEBUG;
-
-    public static final String SHOULD_START_FOREGROUND_EXTRA = "should_start_foreground_extra";
-    public static final String BIND_PLAYER_HOLDER_ACTION = "bind_player_holder_action";
 
     // These objects are used to cleanly separate the Service implementation (in this file) and the
     // media browser and playback preparer implementations. At the moment the playback preparer is
@@ -77,43 +75,12 @@ public final class MainPlayer extends MediaBrowserServiceCompat {
     private Player player;
     private WindowManager windowManager;
 
-    private final IBinder mBinder = new MainPlayer.LocalBinder();
-    /**
-     * The parameter taken by this {@link Consumer} can be null to indicate the player is being
-     * stopped.
-     */
-    @Nullable
-    private Consumer<Player> onPlayerStartedOrStopped = null;
-    public enum PlayerType {
-        VIDEO,
-        AUDIO,
-        POPUP
+    private final IBinder mBinder = new PlayerServiceForAuto.LocalBinder();
+
+    @Override
+    public Service getInstance() {
+        return this;
     }
-
-    /*//////////////////////////////////////////////////////////////////////////
-    // Notification
-    //////////////////////////////////////////////////////////////////////////*/
-
-    public static final String ACTION_CLOSE
-            = App.PACKAGE_NAME + ".player.MainPlayer.CLOSE";
-    public static final String ACTION_PLAY_PAUSE
-            = App.PACKAGE_NAME + ".player.MainPlayer.PLAY_PAUSE";
-    static final String ACTION_REPEAT
-            = App.PACKAGE_NAME + ".player.MainPlayer.REPEAT";
-    static final String ACTION_PLAY_NEXT
-            = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_PLAY_NEXT";
-    static final String ACTION_PLAY_PREVIOUS
-            = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_PLAY_PREVIOUS";
-    static final String ACTION_FAST_REWIND
-            = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_FAST_REWIND";
-    static final String ACTION_FAST_FORWARD
-            = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_FAST_FORWARD";
-    public static final String ACTION_SHUFFLE
-            = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_SHUFFLE";
-    public static final String ACTION_CHANGE_PLAY_MODE
-            = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_CHANGE_PLAY_MODE";
-    public static final String ACTION_RECREATE_NOTIFICATION
-            = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_RECREATE_NOTIFICATION";
 
     /*//////////////////////////////////////////////////////////////////////////
     // Service's LifeCycle
@@ -149,14 +116,6 @@ public final class MainPlayer extends MediaBrowserServiceCompat {
                 }
         );
         sessionConnector.setPlaybackPreparer(mediaBrowserPlaybackPreparer);
-
-        // Note: you might be tempted to create the player instance and call startForeground here,
-        // but be aware that the Android system might start the service just to perform media
-        // queries. In those cases creating a player instance is a waste of resources, and calling
-        // startForeground means creating a useless empty notification. In case it's really needed
-        // the player instance can be created here, but startForeground() should definitely not be
-        // called here unless the service is actually starting in the foreground, to avoid the
-        // useless notification.
     }
 
     private void createView() {
@@ -275,24 +234,9 @@ public final class MainPlayer extends MediaBrowserServiceCompat {
     public void stopService() {
         NotificationUtil.getInstance().cancelNotificationAndStopForeground(this);
         cleanup();
-        destroyPlayerAndStopService();
+        stopSelf();
     }
 
-    public void destroyPlayerAndStopService() {
-        if (DEBUG) {
-            Log.d(TAG, "destroyPlayerAndStopService() called");
-        }
-
-        cleanup();
-
-        // This only really stops the service if there are no other service connections (see docs):
-        // for example the (Android Auto) media browser binder will block stopService().
-        // This is why we also stopForeground() above, to make sure the notification is removed.
-        // If we were to call stopSelf(), then the service would be surely stopped (regardless of
-        // other service connections), but this would be a waste of resources since the service
-        // would be immediately restarted by those same connections to perform the queries.
-        stopService(new Intent(this, MainPlayer.class));
-    }
     @Override
     protected void attachBaseContext(final Context base) {
         super.attachBaseContext(AudioServiceLeakFix.preventLeakOf(base));
@@ -316,7 +260,7 @@ public final class MainPlayer extends MediaBrowserServiceCompat {
     // Utils
     //////////////////////////////////////////////////////////////////////////*/
 
-    boolean isLandscape() {
+    public boolean isLandscape() {
         // DisplayMetrics from activity context knows about MultiWindow feature
         // while DisplayMetrics from app context doesn't
         return DeviceUtils.isLandscape(player != null && player.getParentActivity() != null
@@ -370,19 +314,6 @@ public final class MainPlayer extends MediaBrowserServiceCompat {
         return mediaBrowserPlaybackPreparer;
     }
 
-    /**
-     * Sets the listener that will be called when the player is started or stopped. If a
-     * {@code null} listener is passed, then the current listener will be unset. The parameter taken
-     * by the {@link Consumer} can be null to indicate that the player is stopping.
-     * @param listener the listener to set or unset
-     */
-    public void setPlayerListener(@Nullable final Consumer<Player> listener) {
-        this.onPlayerStartedOrStopped = listener;
-        if (listener != null) {
-            // if there is no player, then `null` will be sent here, to ensure the state is synced
-            listener.accept(player);
-        }
-    }
     //endregion
 
     //region Media browser
@@ -411,12 +342,12 @@ public final class MainPlayer extends MediaBrowserServiceCompat {
 
     public class LocalBinder extends Binder {
 
-        public MainPlayer getService() {
-            return MainPlayer.this;
+        public PlayerServiceForAuto getService() {
+            return PlayerServiceForAuto.this;
         }
 
         public Player getPlayer() {
-            return MainPlayer.this.player;
+            return PlayerServiceForAuto.this.player;
         }
     }
 }

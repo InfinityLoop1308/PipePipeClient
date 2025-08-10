@@ -1,5 +1,6 @@
 package org.schabi.newpipe.util;
 
+import android.app.Service;
 import android.app.UiModeManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -18,6 +19,8 @@ import androidx.preference.PreferenceManager;
 
 import org.schabi.newpipe.App;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.player.PlayerService;
+import org.schabi.newpipe.player.PlayerServiceForAuto;
 
 public final class DeviceUtils {
 
@@ -247,6 +250,15 @@ public final class DeviceUtils {
             return true;
         } catch (PackageManager.NameNotFoundException e) {
             return false;
+        }
+    }
+
+    public static Class<? extends Service> getPlayerServiceClass(Context context) {
+        try {
+            context.getPackageManager().getPackageInfo("com.google.android.projection.gearhead", 0);
+            return PlayerServiceForAuto.class;
+        } catch (PackageManager.NameNotFoundException e) {
+            return PlayerService.class;
         }
     }
 }

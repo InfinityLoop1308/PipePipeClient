@@ -28,14 +28,14 @@ import java.util.List;
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_ONE;
-import static org.schabi.newpipe.player.MainPlayer.ACTION_CLOSE;
-import static org.schabi.newpipe.player.MainPlayer.ACTION_FAST_FORWARD;
-import static org.schabi.newpipe.player.MainPlayer.ACTION_FAST_REWIND;
-import static org.schabi.newpipe.player.MainPlayer.ACTION_PLAY_NEXT;
-import static org.schabi.newpipe.player.MainPlayer.ACTION_PLAY_PAUSE;
-import static org.schabi.newpipe.player.MainPlayer.ACTION_PLAY_PREVIOUS;
-import static org.schabi.newpipe.player.MainPlayer.ACTION_REPEAT;
-import static org.schabi.newpipe.player.MainPlayer.ACTION_SHUFFLE;
+import static org.schabi.newpipe.player.PlayerService.ACTION_CLOSE;
+import static org.schabi.newpipe.player.PlayerService.ACTION_FAST_FORWARD;
+import static org.schabi.newpipe.player.PlayerService.ACTION_FAST_REWIND;
+import static org.schabi.newpipe.player.PlayerService.ACTION_PLAY_NEXT;
+import static org.schabi.newpipe.player.PlayerService.ACTION_PLAY_PAUSE;
+import static org.schabi.newpipe.player.PlayerService.ACTION_PLAY_PREVIOUS;
+import static org.schabi.newpipe.player.PlayerService.ACTION_REPEAT;
+import static org.schabi.newpipe.player.PlayerService.ACTION_SHUFFLE;
 
 /**
  * This is a utility class for player notifications.

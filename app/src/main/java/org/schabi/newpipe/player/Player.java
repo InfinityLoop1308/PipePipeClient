@@ -13,13 +13,12 @@ import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_ONE;
 import static com.google.android.exoplayer2.Player.RepeatMode;
-import static org.schabi.newpipe.MainActivity.DEBUG;
 import static org.schabi.newpipe.QueueItemMenuUtil.openPopupMenu;
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 import static org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.ktx.ViewUtils.animateRotation;
-import static org.schabi.newpipe.player.MainPlayer.*;
+import static org.schabi.newpipe.player.PlayerService.*;
 import static org.schabi.newpipe.player.helper.PlayerHelper.*;
 import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_BACKGROUND;
 import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_NONE;
@@ -31,6 +30,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Service;
 import android.content.*;
 import android.content.res.Resources;
 import android.database.ContentObserver;
@@ -80,7 +80,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.exoplayer2.*;
 import com.google.android.exoplayer2.Player.PositionInfo;
-import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.Tracks;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -91,7 +90,6 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.CaptionStyleCompat;
 import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoSize;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -104,13 +102,11 @@ import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.databinding.PlayerBinding;
 import org.schabi.newpipe.databinding.PlayerPopupCloseOverlayBinding;
-import org.schabi.newpipe.error.ErrorActivity;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.*;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
-import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockAction;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockSegment;
 import org.schabi.newpipe.extractor.stream.*;
@@ -120,7 +116,7 @@ import org.schabi.newpipe.info_list.StreamSegmentAdapter;
 import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
-import org.schabi.newpipe.player.MainPlayer.PlayerType;
+import org.schabi.newpipe.player.PlayerService.PlayerType;
 import org.schabi.newpipe.player.bulletComments.MovieBulletCommentsPlayer;
 import org.schabi.newpipe.player.event.DisplayPortion;
 import org.schabi.newpipe.player.event.PlayerEventListener;
@@ -135,6 +131,7 @@ import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.listeners.view.PlaybackSpeedClickListener;
 import org.schabi.newpipe.player.listeners.view.QualityClickListener;
 import org.schabi.newpipe.player.mediaitem.MediaItemTag;
+import org.schabi.newpipe.player.mediasession.PlayerServiceInterface;
 import org.schabi.newpipe.player.playback.MediaSourceManager;
 import org.schabi.newpipe.player.playback.PlaybackListener;
 import org.schabi.newpipe.player.playback.PlayerMediaSession;
@@ -265,7 +262,7 @@ public final class Player implements
     @NonNull private final VideoPlaybackResolver videoResolver;
     @NonNull private final AudioPlaybackResolver audioResolver;
 
-    public final MainPlayer service; //TODO try to remove and replace everything with context
+    public final PlayerServiceInterface service; //TODO try to remove and replace everything with context
 
     /*//////////////////////////////////////////////////////////////////////////
     // Player states
@@ -399,9 +396,9 @@ public final class Player implements
 
 
 
-    public Player(@NonNull final MainPlayer service) {
+    public Player(@NonNull final PlayerServiceInterface service) {
         this.service = service;
-        context = service;
+        context = service.getInstance();
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         final boolean isSponsorBlockEnabled = prefs.getBoolean(
@@ -894,10 +891,10 @@ public final class Player implements
      */
     private void directlyOpenFullscreenIfNeeded() {
         if (fragmentListener != null
-                && PlayerHelper.isStartMainPlayerFullscreenEnabled(service)
-                && DeviceUtils.isTablet(service)
+                && PlayerHelper.isStartMainPlayerFullscreenEnabled(service.getInstance())
+                && DeviceUtils.isTablet(service.getInstance())
                 && videoPlayerSelected()
-                && PlayerHelper.globalScreenOrientationLocked(service)) {
+                && PlayerHelper.globalScreenOrientationLocked(service.getInstance())) {
             fragmentListener.onScreenRotationButtonClicked();
         }
     }
@@ -1348,7 +1345,7 @@ public final class Player implements
                 onFragmentStopped();
                 break;
             case Intent.ACTION_CONFIGURATION_CHANGED:
-                assureCorrectAppLanguage(service);
+                assureCorrectAppLanguage(service.getInstance());
                 if (DEBUG) {
                     Log.d(TAG, "onConfigurationChanged() called");
                 }
@@ -2644,7 +2641,7 @@ public final class Player implements
         // Remove running notification when user does not want minimization to background or popup
         if (PlayerHelper.getMinimizeOnExitAction(context) == MINIMIZE_ON_EXIT_MODE_NONE
                 && videoPlayerSelected()) {
-            NotificationUtil.getInstance().cancelNotificationAndStopForeground(service);
+            NotificationUtil.getInstance().cancelNotificationAndStopForeground(service.getInstance());
         } else {
             NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, false);
         }
