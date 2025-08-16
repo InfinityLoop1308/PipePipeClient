@@ -888,7 +888,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在背景播放時自動隨機播放您的本地播放列表</string>
-<string name="update_log">### 新功能\n\n- 支援清除 WebView Cookies 以使用不同帳戶\n\n### 錯誤修正\n\n- 在某些情況下播放器崩潰\n- 歷史記錄標籤中的搜尋按鈕消失\n- 在篩選後的歷史記錄上執行操作時應用程式崩潰\n- 本地播放清單拖動速度過快\n- 在某些情況下記憶體洩漏\n- 無法提交新的 SponsorBlock 段落（YouTube）\n- 篩選器在趨勢頁面上無法正常運作（YouTube）</string>
+<string name="update_log">### 新功能\n\n- 支援 Android Auto\n- 支援自訂本地播放清單中右滑動的操作：刪除、加入佇列或停用\n- 支援從 txt 檔案匯入 URL 到播放清單\n- 支援將本地播放清單中的所有項目新增到另一個本地播放清單\n- 支援過濾付費影片\n- 新增偏好設定以控制是否啟用 YouTube 的自動翻譯\n- 支援故事板預覽（BiliBili）\n\n### 錯誤修正\n\n- 更新到 4.6.1 後在某些情況下應用程式崩潰\n- 更新檢查器有時需要 3 天才能通知更新\n- 在過濾的本地播放清單中刪除項目時，如果有重複項目，將無法刪除正確的項目\n- 字幕在某些情況下顯示/下載不正確（YouTube）\n- 從 NewPipe 匯入備份時播放清單封面丟失\n- 啟用 YouTube 快速模式時，內容過濾器在動態消息中無法正常運作\n\n### 其他\n\n- 提升穩定性</string>
 <string name="speeding_playback_title">按住以加速播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這項計畫</string>
@@ -1052,7 +1052,4 @@
 <string name="show_auto_translated_subtitles_title">顯示自動翻譯字幕</string>
 <string name="show_auto_translated_subtitles_summary">如果啟用，PipePipe 將嘗試以您的預設內容語言添加一個自動翻譯的字幕軌道。\n這可能會使影片加載速度稍微變慢。</string>
 <string name="local_playlist_swipe_action_title">本地播放清單中的右滑動操作</string>
-
-
-
 </resources>

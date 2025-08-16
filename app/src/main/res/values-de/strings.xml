@@ -836,7 +836,7 @@
 <string name="sponsor_promote">Unterstützer werden</string>
 <string name="random_play_order_title">Zufällige Reihenfolge</string>
 <string name="random_play_order_summary">Automatisch Ihre lokalen Wiedergabelisten mischen, wenn sie im Hintergrund abgespielt werden</string>
-<string name="update_log">### Neue Funktionen\n\n- Unterstützung für das Löschen von Webview-Cookies, um verschiedene Konten zu verwenden\n\n### Fehlerbehebungen\n\n- Absturz des Players unter bestimmten Bedingungen\n- Suchschaltfläche in der Verlauf-Registerkarte verschwindet\n- App-Absturz bei Operationen mit gefilterten Verläufen\n- Ziehgeschwindigkeit in lokalen Wiedergabelisten zu hoch\n- Speicherleck unter bestimmten Bedingungen\n- Neue SponsorBlock-Segmente können nicht eingereicht werden (YouTube)\n- Filter funktionieren nicht auf der Trending-Seite (YouTube)</string>
+<string name="update_log">### Neue Funktionen\n\n- Unterstützung für Android Auto\n- Unterstützung zum Anpassen der Aktion beim Rechtswischen in lokalen Playlists: löschen, in die Warteschlange einfügen oder deaktivieren\n- Unterstützung für das Importieren von URLs aus einer txt-Datei in eine Playlist\n- Unterstützung zum Hinzufügen aller Elemente in einer lokalen Playlist zu einer anderen lokalen Playlist\n- Unterstützung zum Herausfiltern von kostenpflichtigen Videos\n- Hinzufügen einer Einstellung zur Steuerung, ob die automatische Übersetzung in YouTube aktiviert werden soll\n- Unterstützung für Storyboard-Vorschau (BiliBili)\n\n### Fehlerbehebungen\n\n- App-Absturz unter bestimmten Bedingungen nach dem Update auf 4.6.1\n- Update-Benachrichtigung dauert manchmal 3 Tage\n- Löschen in gefilterten lokalen Playlists löscht nicht das richtige Element, wenn Duplikate vorhanden sind\n- Untertitel werden unter bestimmten Bedingungen falsch angezeigt/heruntergeladen (YouTube)\n- Playlist-Cover geht verloren, wenn ein Backup von NewPipe importiert wird\n- Inhaltsfilter funktionieren nicht richtig in Feeds mit aktiviertem YouTube-Schnellmodus\n\n### Sonstiges\n\n- Verbesserung der Stabilität</string>
 <string name="speeding_playback_title">Langes Drücken, um die Wiedergabe zu beschleunigen</string>
 <string name="view_on_github">Auf GitHub ansehen</string>
 <string name="donation_dialog_title">Projekt unterstützen</string>
@@ -998,7 +998,4 @@
 <string name="show_auto_translated_subtitles_title">Automatisch übersetzte Untertitel anzeigen</string>
 <string name="show_auto_translated_subtitles_summary">Wenn aktiviert, wird PipePipe versuchen, eine automatisch übersetzte Untertitelspur in Ihrer Standard-Content-Sprache hinzuzufügen. Dies macht das Laden von Videos etwas langsamer.</string>
 <string name="local_playlist_swipe_action_title">Rechtswischaktion in lokalen Wiedergabelisten</string>
-
-
-
 </resources>

@@ -854,7 +854,7 @@
 <string name="sponsor_promote">サポーターになる</string>
 <string name="random_play_order_title">ランダムな順序</string>
 <string name="random_play_order_summary">バックグラウンドで再生する際にローカルプレイリストを自動的にシャッフルします</string>
-<string name="update_log">### 新機能\n\n- 異なるアカウントを使用するためにWebViewのクッキーをクリアする機能をサポート\n\n### バグ修正\n\n- 特定の条件下でのプレイヤーのクラッシュ\n- 履歴タブで履歴検索ボタンが消える問題\n- フィルタリングされた履歴で操作を行うとアプリがクラッシュする問題\n- ローカルプレイリストでドラッグ速度が速すぎる問題\n- 特定の条件下でのメモリリーク\n- 新しいSponsorBlockセグメント（YouTube）を送信できない問題\n- トレンドページ（YouTube）でフィルターが機能しない問題</string>
+<string name="update_log">### 新機能\n\n- Android Autoをサポート\n- ローカルプレイリストで右スワイプのアクションをカスタマイズ可能に: 削除、キューに追加、または無効化\n- プレイリストにURLをtxtファイルからインポートする機能をサポート\n- ローカルプレイリスト内のすべてのアイテムを別のローカルプレイリストに追加する機能をサポート\n- 有料動画をフィルタリングする機能をサポート\n- YouTubeで自動翻訳を有効にするかどうかを制御する設定を追加\n- ストーリーボードプレビューをサポート (BiliBili)\n\n### バグ修正\n\n- バージョン4.6.1に更新後、特定の条件下でアプリがクラッシュする問題を修正\n- アップデートチェッカーが更新通知に3日かかる場合がある問題を修正\n- フィルタリングされたローカルプレイリストで、重複がある場合に正しいアイテムが削除されない問題を修正\n- 特定の条件下で字幕が正しく表示/ダウンロードされない問題を修正 (YouTube)\n- NewPipeからバックアップをインポートするとプレイリストカバーが失われる問題を修正\n- YouTube高速モードが有効なフィードでコンテンツフィルタが正しく機能しない問題を修正\n\n### その他\n\n- 安定性を向上</string>
 <string name="speeding_playback_title">長時間押は再生速度を速めることができます</string>
 <string name="view_on_github">GitHubで表示</string>
 <string name="donation_dialog_title">プロジェクトをサポートする</string>
@@ -1020,7 +1020,4 @@
 <string name="show_auto_translated_subtitles_title">自動翻訳された字幕を表示</string>
 <string name="show_auto_translated_subtitles_summary">有効にすると、PipePipeはデフォルトのコンテンツ言語で自動翻訳された字幕トラックを追加しようとします。\nこれにより、動画の読み込みが少し遅くなります。</string>
 <string name="local_playlist_swipe_action_title">ローカルプレイリストでの右スワイプアクション</string>
-
-
-
 </resources>

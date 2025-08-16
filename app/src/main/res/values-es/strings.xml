@@ -897,7 +897,7 @@
 <string name="sponsor_promote">Conviértete en un patrocinador</string>
 <string name="random_play_order_title">Orden aleatorio</string>
 <string name="random_play_order_summary">Baraja automáticamente tus listas de reproducción locales cuando se reproduzcan en segundo plano</string>
-<string name="update_log">### Nuevas Funciones\n\n- Soporte para borrar cookies de webview para usar diferentes cuentas\n\n### Correcciones de Errores\n\n- Fallo del reproductor en ciertas condiciones\n- El botón de búsqueda en el historial desaparece en la pestaña Historial\n- La aplicación se bloquea si se realiza una operación en historiales filtrados\n- Velocidad de arrastre demasiado alta en listas de reproducción locales\n- Fuga de memoria en ciertas condiciones\n- No se pueden enviar nuevos segmentos de SponsorBlock (YouTube)\n- Los filtros no funcionan en la página de Tendencias (YouTube)</string>
+<string name="update_log">### Nuevas características\n\n- Soporte para Android Auto\n- Soporte para personalizar la acción de deslizar hacia la derecha en listas de reproducción locales: eliminar, encolar o deshabilitar\n- Soporte para importar URLs desde un archivo txt a una lista de reproducción \n- Soporte para agregar todos los elementos de una lista de reproducción local a otra lista de reproducción local\n- Soporte para filtrar videos de pago\n- Agregar una preferencia para controlar si se habilita la traducción automática en YouTube \n- Soporte para vista previa de storyboard (BiliBili) \n\n### Corrección de errores\n\n- La aplicación se bloquea en ciertas condiciones después de actualizar a la versión 4.6.1\n- El verificador de actualizaciones a veces tarda 3 días en notificar la actualización\n- Eliminar en una lista de reproducción local filtrada no elimina el elemento correcto si hay duplicados\n- Los subtítulos se muestran/se descargan incorrectamente en ciertas condiciones (YouTube) \n- La portada de la lista de reproducción se pierde si se importa una copia de seguridad desde NewPipe\n- Los filtros de contenido no funcionan correctamente en los feeds con el Modo Rápido de YouTube habilitado\n\n### Otros\n\n- Mejorar la estabilidad</string>
 <string name="speeding_playback_title">Mantener presionado para acelerar la reproducción</string>
 <string name="view_on_github">Ver en GitHub</string>
 <string name="donation_dialog_title">Apoya el proyecto</string>
@@ -1055,7 +1055,4 @@
 <string name="show_auto_translated_subtitles_title">Mostrar subtítulos traducidos automáticamente</string>
 <string name="show_auto_translated_subtitles_summary">Si está habilitado, PipePipe intentará agregar una pista de subtítulos traducida automáticamente en el idioma predeterminado de tu contenido. Esto hace que la carga de videos sea un poco más lenta.</string>
 <string name="local_playlist_swipe_action_title">Acción de deslizamiento hacia la derecha en listas de reproducción locales</string>
-
-
-
 </resources>

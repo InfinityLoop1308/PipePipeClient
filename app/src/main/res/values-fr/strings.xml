@@ -789,7 +789,7 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="sponsor_promote">Devenez un supporter</string>
 <string name="random_play_order_title">Ordre aléatoire</string>
 <string name="random_play_order_summary">Mélangez automatiquement vos listes de lecture locales lorsque vous jouez en arrière-plan</string>
-<string name="update_log">### Nouvelles fonctionnalités\n\n- Prise en charge de la suppression des cookies de la vue web pour utiliser différents comptes\n\n### Corrections de bugs\n\n- Plantage du lecteur dans certaines conditions\n- Bouton de recherche dans l\'historique disparaît dans l\'onglet Historique\n- Plantage de l\'application lors d\'une opération sur des historiques filtrés\n- Vitesse de défilement trop élevée dans les playlists locales\n- Fuite de mémoire dans certaines conditions\n- Impossible de soumettre de nouveaux segments SponsorBlock (YouTube)\n- Les filtres ne fonctionnent pas sur la page Tendance (YouTube)</string>
+<string name="update_log">### Nouvelles fonctionnalités\n\n- Prise en charge d\'Android Auto\n- Prise en charge de la personnalisation de l\'action du balayage vers la droite dans les playlists locales : supprimer, ajouter à la file d\'attente ou désactiver\n- Prise en charge de l\'importation d\'URL à partir d\'un fichier txt dans une playlist\n- Prise en charge de l\'ajout de tous les éléments d\'une playlist locale à une autre playlist locale\n- Prise en charge du filtrage des vidéos payantes\n- Ajout d\'une préférence pour contrôler l\'activation ou non de la traduction automatique sur YouTube\n- Prise en charge de l\'aperçu des storyboards (BiliBili)\n\n### Corrections de bugs\n\n- Crash de l\'application dans certaines conditions après la mise à jour vers la version 4.6.1\n- Le vérificateur de mise à jour prend parfois 3 jours pour notifier la mise à jour\n- La suppression dans une playlist locale filtrée ne supprime pas le bon élément s\'il y a des doublons\n- Les sous-titres sont affichés/téléchargés de manière incorrecte dans certaines conditions (YouTube)\n- La couverture de la playlist est perdue si une sauvegarde est importée depuis NewPipe\n- Les filtres de contenu ne fonctionnent pas correctement dans les flux avec le mode rapide YouTube activé\n\n### Autres\n\n- Amélioration de la stabilité</string>
 <string name="speeding_playback_title">Appuyer longuement pour accélérer la lecture</string>
 <string name="view_on_github">Voir sur GitHub</string>
 <string name="donation_dialog_title">Soutenez le projet</string>
@@ -1022,7 +1022,4 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="show_auto_translated_subtitles_title">Afficher les sous-titres traduits automatiquement</string>
 <string name="show_auto_translated_subtitles_summary">Si activé, PipePipe essaiera d\'ajouter une piste de sous-titres traduits automatiquement dans votre langue de contenu par défaut. Cela rend le chargement des vidéos légèrement plus lent.</string>
 <string name="local_playlist_swipe_action_title">Action de balayage vers la droite dans les playlists locales</string>
-
-
-
 </resources>

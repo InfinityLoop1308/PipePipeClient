@@ -756,7 +756,7 @@
 <string name="sponsor_promote">Diventa un sostenitore</string>
 <string name="random_play_order_title">Ordine casuale</string>
 <string name="random_play_order_summary">Mescola automaticamente le tue playlist locali quando vengono riprodotte in background</string>
-<string name="update_log">### Nuove Funzionalità\n\n- Supporto per cancellare i cookie del webview per utilizzare account diversi\n\n### Correzioni di Bug\n\n- Crash del lettore in determinate condizioni\n- Il pulsante di ricerca nella cronologia scompare nella scheda Cronologia\n- Crash dell\'app durante operazioni su cronologie filtrate\n- Velocità di trascinamento troppo alta nelle playlist locali\n- Perdita di memoria in determinate condizioni\n- Impossibile inviare nuovi segmenti SponsorBlock (YouTube)\n- Filtri non funzionanti nella pagina di Tendenza (YouTube)</string>
+<string name="update_log">### Nuove Funzionalità\n\n- Supporto Android Auto\n- Supporto per personalizzare l\'azione dello swipe a destra nelle playlist locali: elimina, metti in coda o disabilitato\n- Supporto per importare URL da file txt nella playlist\n- Supporto per aggiungere tutti gli elementi di una playlist locale a un\'altra playlist locale\n- Supporto per filtrare i video a pagamento\n- Aggiunta di una preferenza per controllare se abilitare la traduzione automatica su YouTube\n- Supporto per l\'anteprima storyboard (BiliBili)\n\n### Correzioni di Bug\n\n- Crash dell\'app in determinate condizioni dopo l\'aggiornamento alla versione 4.6.1\n- Il controllo degli aggiornamenti a volte impiega 3 giorni per notificare l\'aggiornamento\n- L\'eliminazione in una playlist locale filtrata non elimina l\'elemento corretto se ci sono duplicati\n- I sottotitoli vengono visualizzati/scaricati in modo errato in determinate condizioni (YouTube)\n- La copertina della playlist viene persa se si importa un backup da NewPipe\n- I filtri dei contenuti non funzionano correttamente nei feed con la modalità veloce di YouTube abilitata\n\n### Altri\n\n- Miglioramento della stabilità</string>
 <string name="speeding_playback_title">Premi a lungo per aumentare la velocità di riproduzione</string>
 <string name="view_on_github">Visualizza su GitHub</string>
 <string name="donation_dialog_title">Supporta il progetto</string>
@@ -992,7 +992,4 @@
 <string name="show_auto_translated_subtitles_title">Mostra sottotitoli tradotti automaticamente</string>
 <string name="show_auto_translated_subtitles_summary">Se abilitato, PipePipe tenterà di aggiungere una traccia di sottotitoli tradotta automaticamente nella lingua predefinita dei tuoi contenuti. Questo rende il caricamento dei video leggermente più lento.</string>
 <string name="local_playlist_swipe_action_title">Azione di scorrimento a destra nelle playlist locali</string>
-
-
-
 </resources>
