@@ -17,7 +17,7 @@ android {
         //noinspection ExpiredTargetSdkVersion
         targetSdk 33
         versionCode 1082
-        versionName "4.7.0-pre4"
+        versionName "4.7.0-pre5"
         archivesBaseName = 'PipePipe_' + versionName
 
         multiDexEnabled true
