@@ -47,15 +47,18 @@ class NewVersionWorker(
     private fun compareAppVersionAndShowNotification(
         versionName: String,
         apkLocationUrl: String?,
+        isManual: Boolean
     ) {
         val currentVersion = parseVersion(BuildConfig.VERSION_NAME)
         val newVersion = parseVersion(versionName)
         if (compareVersions(currentVersion, newVersion) >= 0) {
-            ContextCompat.getMainExecutor(applicationContext).execute {
-                Toast.makeText(
-                    applicationContext, R.string.app_update_unavailable_toast,
-                    Toast.LENGTH_SHORT
-                ).show()
+            if (isManual) {
+                ContextCompat.getMainExecutor(applicationContext).execute {
+                    Toast.makeText(
+                        applicationContext, R.string.app_update_unavailable_toast,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
             return
         }
@@ -139,7 +142,7 @@ class NewVersionWorker(
             selectedRelease?.let { release ->
                 val versionName = release.getString("name").removePrefix("v")
                 val apkUrl = findCompatibleApkUrl(release, Build.SUPPORTED_ABIS)
-                compareAppVersionAndShowNotification(versionName, apkUrl)
+                compareAppVersionAndShowNotification(versionName, apkUrl, inputData.getBoolean(IS_MANUAL, false))
             }
         } catch (e: JsonParserException) {
             if (DEBUG) Log.w(TAG, "JSON解析错误", e)
