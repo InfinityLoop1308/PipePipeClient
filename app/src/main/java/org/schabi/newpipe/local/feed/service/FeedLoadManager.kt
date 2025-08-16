@@ -214,7 +214,7 @@ class FeedLoadManager(private val context: Context) {
                                         }
                                         .filterIsInstance<StreamInfoItem>()
                                 }
-                                streams = streams?.filterNot { it.isRoundPlayStream || it.requiresMembership() || (!showFutureItems && it.uploadDate != null && it.uploadDate!!.offsetDateTime().isAfter(OffsetDateTime.now())) }
+                                streams = streams?.filterNot { it.isRoundPlayStream  || (!showFutureItems && it.uploadDate != null && it.uploadDate!!.offsetDateTime().isAfter(OffsetDateTime.now())) }
 
                                 return@defer Flowable.just(
                                     FeedUpdateInfo(
