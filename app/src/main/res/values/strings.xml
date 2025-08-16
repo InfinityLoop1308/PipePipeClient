@@ -135,6 +135,8 @@
 <string name="unsupported_url_dialog_message">Could not recognize the URL. Open with another app?</string>
 <string name="default_content_country_title">Default content country</string>
 <string name="content_language_title">Default content language</string>
+<string name="show_auto_translated_subtitles_title">Show auto-translated subtitles</string>
+<string name="show_auto_translated_subtitles_summary">If enabled, PipePipe will try to add an auto-translated subtitle track in your default content language. This makes video loading slightly slower.</string>
 <plurals name="replies">
 <item quantity="one">%s reply</item>
 <item quantity="other">%s replies</item>
