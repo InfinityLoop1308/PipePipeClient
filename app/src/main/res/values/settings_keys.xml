@@ -1658,6 +1658,7 @@
     <string name="always_list_mode_for_bookmark_key">always_list_mode_for_bookmark_key</string>
     <string name="exit_app_confirmation_key">exit_app_confirmation_key</string>
     <string name="pull_to_refresh_key">pull_to_refresh_key</string>
+    <string name="local_playlist_swipe_action_key">local_playlist_swipe_action_key</string>
     <string-array name="filter_type_entries">
         <item>@string/search_result</item>
         <item>@string/recommended_videos</item>
@@ -1669,5 +1670,15 @@
         <item>recommendations</item>
         <item>related_item</item>
         <item>channels</item>
+    </string-array>
+    <string-array name="local_playlist_swipe_action_entries">
+        <item>@string/local_playlist_swipe_action_delete</item>
+        <item>@string/local_playlist_swipe_action_enqueue</item>
+        <item>@string/local_playlist_swipe_action_disable</item>
+    </string-array>
+    <string-array name="local_playlist_swipe_action_values">
+        <item>delete</item>
+        <item>enqueue</item>
+        <item>disable</item>
     </string-array>
 </resources>

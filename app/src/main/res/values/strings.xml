@@ -1091,6 +1091,11 @@
 <string name="try_again">Please try again</string>
 <string name="pull_to_refresh_title">Pull to refresh</string>
 <string name="pull_to_refresh_summary">Enable pull-to-refresh gesture in feed</string>
+<string name="local_playlist_swipe_action_title">Right swipe action in local playlists</string>
+<string name="local_playlist_swipe_action_summary">Choose what happens when you swipe right on items in local playlists</string>
+<string name="local_playlist_swipe_action_delete">Delete item</string>
+<string name="local_playlist_swipe_action_enqueue">Add to queue</string>
+<string name="local_playlist_swipe_action_disable">Disable swipe</string>
 <string name="select_groups">Select Groups</string>
 <string name="clear_webview_cookies">Clear WebView cookies</string>
 <string name="clear_webview_cookies_summary">Clear all cookies stored by WebView components so you can use a new account</string>

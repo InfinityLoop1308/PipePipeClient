@@ -1047,6 +1047,31 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                 .show();
     }
 
+    private void handleSwipeAction(final PlaylistStreamEntry item,
+                                 final RecyclerView.ViewHolder viewHolder) {
+        final String swipeAction = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getString(getString(R.string.local_playlist_swipe_action_key), "delete");
+        
+        switch (swipeAction) {
+            case "delete":
+                showDeleteConfirmationDialog(item, viewHolder);
+                break;
+            case "enqueue":
+                final SinglePlayQueue queue = new SinglePlayQueue(item.toStreamInfoItem());
+                NavigationHelper.enqueueOnPlayer(requireContext(), queue);
+                if (itemListAdapter != null) {
+                    itemListAdapter.notifyItemChanged(viewHolder.getBindingAdapterPosition());
+                }
+                break;
+            case "disable":
+            default:
+                if (itemListAdapter != null) {
+                    itemListAdapter.notifyItemChanged(viewHolder.getBindingAdapterPosition());
+                }
+                break;
+        }
+    }
+
     private void saveChanges() {
         if (isModified == null || debouncedSaveSignal == null) {
             return;
@@ -1186,6 +1211,14 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                 if (itemListAdapter != null && viewHolder.getBindingAdapterPosition() == 0) {
                     return 0; // No swipe directions allowed for header
                 }
+                
+                // Check if swipe is disabled in preferences
+                final String swipeAction = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                        .getString(getString(R.string.local_playlist_swipe_action_key), "delete");
+                if ("disable".equals(swipeAction)) {
+                    return 0; // No swipe directions allowed when disabled
+                }
+                
                 return super.getSwipeDirs(recyclerView, viewHolder);
             }
 
@@ -1199,7 +1232,7 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                     if (index != -1 && index < currentItems.size()) {
                         final Object item = currentItems.get(index);
                         if (item instanceof PlaylistStreamEntry) {
-                            showDeleteConfirmationDialog((PlaylistStreamEntry) item, viewHolder);
+                            handleSwipeAction((PlaylistStreamEntry) item, viewHolder);
                         }
                     }
                 }
