@@ -19,6 +19,7 @@ import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.services.peertube.PeertubeInstance;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockApiSettings;
+import org.schabi.newpipe.extractor.InfoItemsCollector.FilterConfig;
 import org.schabi.newpipe.extractor.utils.Utils;
 
 import java.util.ArrayList;
@@ -306,31 +307,25 @@ public final class ServiceHelper {
     public static void initServices(final Context context) {
         final SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(context);
+        
+        // Build configuration objects
+        FilterConfig filterConfig = new FilterConfig(
+            new ArrayList<>(sharedPreferences.getStringSet(context.getString(R.string.filter_by_keyword_key) + "_set", new HashSet<>())),
+            new ArrayList<>(sharedPreferences.getStringSet(context.getString(R.string.filter_by_channel_key) + "_set", new HashSet<>())),
+            sharedPreferences.getBoolean(context.getString(R.string.filter_shorts_key), false)
+        );
+        
+        SponsorBlockApiSettings sponsorBlockApiSettings = buildSponsorBlockApiSettings(context);
+        int loadingTimeoutInt = Integer.parseInt(sharedPreferences.getString("loading_timeout_key", "10"));
+        boolean fetchFullPlaylist = sharedPreferences.getBoolean(context.getString(R.string.fetch_full_playlist_key), false);
+        Set<String> blockingFields = sharedPreferences.getStringSet(context.getString(R.string.filter_type_key), new HashSet<>());
+        
         for (final StreamingService s : ServiceList.all()) {
             initService(context, s.getServiceId());
-            Set<String> blockingKeywords = sharedPreferences.getStringSet(context.getString(R.string.filter_by_keyword_key) + "_set", new HashSet<>());
-            Set<String> blockingChannels = sharedPreferences.getStringSet(context.getString(R.string.filter_by_channel_key) + "_set", new HashSet<>());
-            boolean blockShorts = sharedPreferences.getBoolean(context.getString(R.string.filter_shorts_key), false);
-            s.setFilterShorts(blockShorts);
-
-            if (!blockingKeywords.isEmpty()) {
-                s.setStreamKeywordFilter(new ArrayList<>(blockingKeywords));
-            }
-
-            if (!blockingChannels.isEmpty()) {
-                s.setStreamChannelFilter(new ArrayList<>(blockingChannels));
-            }
-
-            Set<String> blockingFields = sharedPreferences.getStringSet(context.getString(R.string.filter_type_key), new HashSet<>());
+            s.setFilterConfig(filterConfig);
             s.setFilterTypes(blockingFields);
-
-            SponsorBlockApiSettings sponsorBlockApiSettings = buildSponsorBlockApiSettings(context);
             s.setSponsorBlockApiSettings(sponsorBlockApiSettings);
-
-            String loadingTimeout = sharedPreferences.getString("loading_timeout_key", "10");
-            int loadingTimeoutInt = Integer.parseInt(loadingTimeout);
             s.setLoadingTimeout(loadingTimeoutInt);
-            boolean fetchFullPlaylist = sharedPreferences.getBoolean(context.getString(R.string.fetch_full_playlist_key), false);
             s.setFetchFullPlaylist(fetchFullPlaylist);
         }
     }

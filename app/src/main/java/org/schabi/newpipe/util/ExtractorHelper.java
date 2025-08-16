@@ -128,22 +128,22 @@ public final class ExtractorHelper {
     }
 
     public static StreamInfo getNewStreamInfo(final int serviceId, final String url) throws ExtractionException, IOException {
-        if (true) {
+//        if (true) {
             return StreamInfo.getInfo(NewPipe.getService(serviceId), url);
-        }
-        StreamInfo result = null;
-        if (!ServiceList.YouTube.isYtdlpEnabled()) {
-            result = StreamInfo.getInfo(NewPipe.getService(serviceId), url);
-            if (!result.getAudioStreams().isEmpty() || !result.getVideoStreams().isEmpty()) {
-                return result;
-            }
-        }
-
-        StreamInfo fallbackInfo = YtdlpHelper.getFallbackStreams(url);
-        if(fallbackInfo.getAudioStreams().isEmpty() && fallbackInfo.getVideoStreams().isEmpty()) {
-            throw new ExtractionException("Couldn't get fallback streams for " + url);
-        }
-        return fallbackInfo;
+//        }
+//        StreamInfo result = null;
+//        if (!ServiceList.YouTube.isYtdlpEnabled()) {
+//            result = StreamInfo.getInfo(NewPipe.getService(serviceId), url);
+//            if (!result.getAudioStreams().isEmpty() || !result.getVideoStreams().isEmpty()) {
+//                return result;
+//            }
+//        }
+//
+//        StreamInfo fallbackInfo = YtdlpHelper.getFallbackStreams(url);
+//        if(fallbackInfo.getAudioStreams().isEmpty() && fallbackInfo.getVideoStreams().isEmpty()) {
+//            throw new ExtractionException("Couldn't get fallback streams for " + url);
+//        }
+//        return fallbackInfo;
     }
 
     public static Single<StreamInfo> getStreamInfoWithoutException(final int serviceId, final String url,
