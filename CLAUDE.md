@@ -1,5 +1,6 @@
 This is PipePipe's repo.
 PipePipe is a hard fork of NewPipe, doesn't share same structure with NewPipe.
+if talking about extractor, the files are in ../PipePipeExtractor
 
 When modifying, always keep minimum changes.
 
