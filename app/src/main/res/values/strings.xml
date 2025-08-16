@@ -1044,6 +1044,8 @@
 <string name="video_not_released">The video has not released yet.</string>
 <string name="filter_shorts_title">Filter short videos</string>
 <string name="filter_shorts_summary">Remove short videos from results. Only work for YouTube.</string>
+<string name="filter_paid_contents_title">Filter paid contents</string>
+<string name="filter_paid_contents_summary">Remove paid contents from results</string>
 <string name="paid_video">Paid</string>
 <string name="share_playlist">Share Playlist</string>
 <string name="share_playlist_with_titles_message">Share playlist with details such as playlist name and video titles or as a simple list of video URLs</string>

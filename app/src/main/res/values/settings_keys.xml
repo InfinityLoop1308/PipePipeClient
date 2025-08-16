@@ -1647,6 +1647,7 @@
     <string name="show_prerelease_key">show_prerelease_key</string>
     <string name="show_dislike_key">show_dislike_key</string>
     <string name="filter_shorts_key">filter_shorts_key</string>
+    <string name="filter_paid_contents_key">filter_paid_contents_key</string>
     <string name="loading_timeout_key">loading_timeout_key</string>
     <string name="youtube_po_token_key">youtube_po_token_key</string>
     <string name="always_start_from_beginning_key">always_start_from_beginning_key</string>

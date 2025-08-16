@@ -1047,4 +1047,6 @@
 <string name="import_urls_error">匯入網址時發生錯誤：%s</string>
 <string name="import_urls_no_valid_urls">在選擇的檔案中未找到有效的網址</string>
 <string name="remove_from_playlist_confirmation">從播放清單中移除此項目？</string>
+<string name="filter_paid_contents_title">篩選付費內容</string>
+<string name="filter_paid_contents_summary">從結果中移除付費內容</string>
 </resources>

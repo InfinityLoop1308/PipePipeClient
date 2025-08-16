@@ -1101,4 +1101,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="import_urls_error">Lỗi nhập URL: %s</string>
 <string name="import_urls_no_valid_urls">Không tìm thấy URL hợp lệ trong tệp đã chọn</string>
 <string name="remove_from_playlist_confirmation">Xóa mục này khỏi danh sách phát?</string>
+<string name="filter_paid_contents_title">Lọc nội dung trả phí</string>
+<string name="filter_paid_contents_summary">Xóa nội dung trả phí khỏi kết quả</string>
 </resources>

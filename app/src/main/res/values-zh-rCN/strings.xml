@@ -1056,4 +1056,6 @@
 <string name="import_urls_error">导入URL时出错：%s</string>
 <string name="import_urls_no_valid_urls">在所选文件中未找到有效的URL</string>
 <string name="remove_from_playlist_confirmation">从播放列表中移除此项目？</string>
+<string name="filter_paid_contents_title">筛选付费内容</string>
+<string name="filter_paid_contents_summary">从结果中移除付费内容</string>
 </resources>

@@ -1017,4 +1017,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="import_urls_error">Erreur lors de l\'importation des URL : %s</string>
 <string name="import_urls_no_valid_urls">Aucune URL valide trouvée dans le fichier sélectionné</string>
 <string name="remove_from_playlist_confirmation">Supprimer cet élément de la playlist ?</string>
+<string name="filter_paid_contents_title">Filtrer les contenus payants</string>
+<string name="filter_paid_contents_summary">Supprimer les contenus payants des résultats</string>
 </resources>

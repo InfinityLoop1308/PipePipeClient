@@ -16,6 +16,7 @@ public class FilterSettingsFragment extends BasePreferenceFragment {
         Preference filter_by_keyword = findPreference(getString(R.string.filter_by_keyword_key));
         Preference filter_by_channel = findPreference(getString(R.string.filter_by_channel_key));
         Preference filter_shorts = findPreference(getString(R.string.filter_shorts_key));
+        Preference filter_paid_contents = findPreference(getString(R.string.filter_paid_contents_key));
         Preference filter_type = findPreference(getString(R.string.filter_type_key));
 
         filter_by_keyword.setOnPreferenceClickListener(preference -> {
@@ -31,6 +32,13 @@ public class FilterSettingsFragment extends BasePreferenceFragment {
         });
 
         filter_shorts.setOnPreferenceChangeListener((preference, newValue) -> {
+            new Handler().postDelayed(() -> {
+                ServiceHelper.initServices(getContext());
+            }, 100);
+            return true;
+        });
+
+        filter_paid_contents.setOnPreferenceChangeListener((preference, newValue) -> {
             new Handler().postDelayed(() -> {
                 ServiceHelper.initServices(getContext());
             }, 100);

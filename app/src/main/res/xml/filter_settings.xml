@@ -21,6 +21,13 @@
             android:title="@string/filter_shorts_title"
             app:singleLineTitle="false"
             app:iconSpaceReserved="false" />
+    <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/filter_paid_contents_key"
+            android:summary="@string/filter_paid_contents_summary"
+            android:title="@string/filter_paid_contents_title"
+            app:singleLineTitle="false"
+            app:iconSpaceReserved="false" />
     <MultiSelectListPreference
             android:key="@string/filter_type_key"
             android:title="@string/filter_field_summary"

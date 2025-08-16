@@ -312,7 +312,8 @@ public final class ServiceHelper {
         FilterConfig filterConfig = new FilterConfig(
             new ArrayList<>(sharedPreferences.getStringSet(context.getString(R.string.filter_by_keyword_key) + "_set", new HashSet<>())),
             new ArrayList<>(sharedPreferences.getStringSet(context.getString(R.string.filter_by_channel_key) + "_set", new HashSet<>())),
-            sharedPreferences.getBoolean(context.getString(R.string.filter_shorts_key), false)
+            sharedPreferences.getBoolean(context.getString(R.string.filter_shorts_key), false),
+            sharedPreferences.getBoolean(context.getString(R.string.filter_paid_contents_key), false)
         );
         
         SponsorBlockApiSettings sponsorBlockApiSettings = buildSponsorBlockApiSettings(context);

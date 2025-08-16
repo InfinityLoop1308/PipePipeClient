@@ -1050,4 +1050,6 @@
 <string name="import_urls_error">Error al importar URLs: %s</string>
 <string name="import_urls_no_valid_urls">No se encontraron URLs válidas en el archivo seleccionado</string>
 <string name="remove_from_playlist_confirmation">¿Eliminar este elemento de la lista de reproducción?</string>
+<string name="filter_paid_contents_title">Filtrar contenidos pagos</string>
+<string name="filter_paid_contents_summary">Eliminar contenidos de pago de los resultados</string>
 </resources>
