@@ -37,6 +37,22 @@ public class SrtFromTtmlWriter {
                 .replace('.', ','); // SRT subtitles uses comma as decimal separator
     }
 
+    private static void extractTextFromNode(final Node node, final StringBuilder text) {
+        if (node instanceof TextNode) {
+            text.append(((TextNode) node).text());
+        } else if (node instanceof Element) {
+            final Element element = (Element) node;
+            if (element.tagName().equalsIgnoreCase("br")) {
+                text.append(NEW_LINE);
+            } else {
+                // Recursively process child nodes (handles nested span elements)
+                for (final Node child : element.childNodes()) {
+                    extractTextFromNode(child, text);
+                }
+            }
+        }
+    }
+
     private void writeFrame(final String begin, final String end, final StringBuilder text)
             throws IOException {
         writeString(String.valueOf(frameIndex++));
@@ -52,6 +68,50 @@ public class SrtFromTtmlWriter {
 
     private void writeString(final String text) throws IOException {
         out.write(text.getBytes(charset));
+    }
+
+    public static String convertTtmlToSrt(final String ttmlContent) {
+        final StringBuilder srtOutput = new StringBuilder();
+        int frameIndex = 0;
+
+        try {
+            final Document doc = Jsoup.parse(ttmlContent, "", Parser.xmlParser());
+            final StringBuilder text = new StringBuilder(128);
+            final Elements paragraphList = doc.select("body > div > p");
+
+            if (paragraphList.size() < 1) {
+                return "";
+            }
+
+            for (final Element paragraph : paragraphList) {
+                text.setLength(0);
+
+                for (final Node children : paragraph.childNodes()) {
+                    extractTextFromNode(children, text);
+                }
+
+                if (text.length() < 1) {
+                    continue;
+                }
+
+                final String begin = getTimestamp(paragraph, "begin");
+                final String end = getTimestamp(paragraph, "end");
+
+                srtOutput.append(++frameIndex);
+                srtOutput.append(NEW_LINE);
+                srtOutput.append(begin);
+                srtOutput.append(" --> ");
+                srtOutput.append(end);
+                srtOutput.append(NEW_LINE);
+                srtOutput.append(text.toString());
+                srtOutput.append(NEW_LINE);
+                srtOutput.append(NEW_LINE);
+            }
+        } catch (Exception e) {
+            return "";
+        }
+
+        return srtOutput.toString();
     }
 
     public void build(final SharpStream ttml) throws IOException {
@@ -82,12 +142,7 @@ public class SrtFromTtmlWriter {
             text.setLength(0);
 
             for (final Node children : paragraph.childNodes()) {
-                if (children instanceof TextNode) {
-                    text.append(((TextNode) children).text());
-                } else if (children instanceof Element
-                        && ((Element) children).tagName().equalsIgnoreCase("br")) {
-                    text.append(NEW_LINE);
-                }
+                extractTextFromNode(children, text);
             }
 
             if (ignoreEmptyFrames && text.length() < 1) {

@@ -58,6 +58,7 @@ import org.schabi.newpipe.extractor.stream.SubtitlesStream;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.settings.NewPipeSettings;
+import org.schabi.newpipe.streams.SrtFromTtmlWriter;
 import org.schabi.newpipe.streams.io.NoFileManagerSafeGuard;
 import org.schabi.newpipe.streams.io.StoredDirectoryHelper;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
@@ -1067,10 +1068,14 @@ public class DownloadDialog extends DialogFragment
                 threads = 1; // use unique thread for subtitles due small file size
                 kind = 's';
                 selectedStream = subtitleStreamsAdapter.getItem(selectedSubtitleIndex);
-                if(currentInfo.getService() == ServiceList.BiliBili){
+                if(!selectedStream.isUrl()){
                     try {
+                        String content = selectedStream.getContent();
+                        if (selectedStream.getFormat() == MediaFormat.TTML) {
+                            content = SrtFromTtmlWriter.convertTtmlToSrt(content);
+                        }
                         OutputStream outputStream = storage.context.getContentResolver().openOutputStream(storage.getUri());
-                        outputStream.write(selectedStream.getContent().getBytes());
+                        outputStream.write(content.getBytes());
                         outputStream.close();
                         Toast.makeText(context, getString(R.string.recaptcha_done_button),
                                 Toast.LENGTH_SHORT).show();
