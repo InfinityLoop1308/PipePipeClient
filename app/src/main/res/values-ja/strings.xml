@@ -1017,4 +1017,10 @@
 <string name="remove_from_playlist_confirmation">このアイテムをプレイリストから削除しますか？</string>
 <string name="filter_paid_contents_title">有料コンテンツをフィルタリング</string>
 <string name="filter_paid_contents_summary">有料コンテンツを結果から除外する</string>
+<string name="show_auto_translated_subtitles_title">自動翻訳された字幕を表示</string>
+<string name="show_auto_translated_subtitles_summary">有効にすると、PipePipeはデフォルトのコンテンツ言語で自動翻訳された字幕トラックを追加しようとします。\nこれにより、動画の読み込みが少し遅くなります。</string>
+<string name="local_playlist_swipe_action_title">ローカルプレイリストでの右スワイプアクション</string>
+
+
+
 </resources>

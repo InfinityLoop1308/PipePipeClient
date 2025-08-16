@@ -1052,4 +1052,10 @@
 <string name="remove_from_playlist_confirmation">¿Eliminar este elemento de la lista de reproducción?</string>
 <string name="filter_paid_contents_title">Filtrar contenidos pagos</string>
 <string name="filter_paid_contents_summary">Eliminar contenidos de pago de los resultados</string>
+<string name="show_auto_translated_subtitles_title">Mostrar subtítulos traducidos automáticamente</string>
+<string name="show_auto_translated_subtitles_summary">Si está habilitado, PipePipe intentará agregar una pista de subtítulos traducida automáticamente en el idioma predeterminado de tu contenido. Esto hace que la carga de videos sea un poco más lenta.</string>
+<string name="local_playlist_swipe_action_title">Acción de deslizamiento hacia la derecha en listas de reproducción locales</string>
+
+
+
 </resources>

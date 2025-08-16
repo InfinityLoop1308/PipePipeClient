@@ -1019,4 +1019,10 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="remove_from_playlist_confirmation">Supprimer cet élément de la playlist ?</string>
 <string name="filter_paid_contents_title">Filtrer les contenus payants</string>
 <string name="filter_paid_contents_summary">Supprimer les contenus payants des résultats</string>
+<string name="show_auto_translated_subtitles_title">Afficher les sous-titres traduits automatiquement</string>
+<string name="show_auto_translated_subtitles_summary">Si activé, PipePipe essaiera d\'ajouter une piste de sous-titres traduits automatiquement dans votre langue de contenu par défaut. Cela rend le chargement des vidéos légèrement plus lent.</string>
+<string name="local_playlist_swipe_action_title">Action de balayage vers la droite dans les playlists locales</string>
+
+
+
 </resources>

@@ -1058,4 +1058,10 @@
 <string name="remove_from_playlist_confirmation">从播放列表中移除此项目？</string>
 <string name="filter_paid_contents_title">筛选付费内容</string>
 <string name="filter_paid_contents_summary">从结果中移除付费内容</string>
+<string name="show_auto_translated_subtitles_title">显示自动翻译的字幕</string>
+<string name="show_auto_translated_subtitles_summary">如果启用，PipePipe 将尝试在您的默认内容语言中添加一个自动翻译的字幕轨道。\n这会使视频加载速度稍微变慢。</string>
+<string name="local_playlist_swipe_action_title">本地播放列表中的右滑操作</string>
+
+
+
 </resources>

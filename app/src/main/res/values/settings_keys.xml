@@ -1672,9 +1672,9 @@
         <item>channels</item>
     </string-array>
     <string-array name="local_playlist_swipe_action_entries">
-        <item>@string/local_playlist_swipe_action_delete</item>
-        <item>@string/local_playlist_swipe_action_enqueue</item>
-        <item>@string/local_playlist_swipe_action_disable</item>
+        <item>@string/delete</item>
+        <item>@string/enqueue</item>
+        <item>@string/disabled</item>
     </string-array>
     <string-array name="local_playlist_swipe_action_values">
         <item>delete</item>

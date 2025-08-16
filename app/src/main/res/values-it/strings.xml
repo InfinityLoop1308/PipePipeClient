@@ -989,4 +989,10 @@
 <string name="remove_from_playlist_confirmation">Rimuovere questo elemento dalla playlist?</string>
 <string name="filter_paid_contents_title">Filtra contenuti a pagamento</string>
 <string name="filter_paid_contents_summary">Rimuovi i contenuti a pagamento dai risultati</string>
+<string name="show_auto_translated_subtitles_title">Mostra sottotitoli tradotti automaticamente</string>
+<string name="show_auto_translated_subtitles_summary">Se abilitato, PipePipe tenterà di aggiungere una traccia di sottotitoli tradotta automaticamente nella lingua predefinita dei tuoi contenuti. Questo rende il caricamento dei video leggermente più lento.</string>
+<string name="local_playlist_swipe_action_title">Azione di scorrimento a destra nelle playlist locali</string>
+
+
+
 </resources>
