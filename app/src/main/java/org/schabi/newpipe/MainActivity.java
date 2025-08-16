@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
         if (prefs.getBoolean(app.getString(R.string.update_app_key), false)) {
             // Start the worker which is checking all conditions
             // and eventually searching for a new version.
-                NewVersionWorker.enqueueNewVersionCheckingWork(app, true);
+                NewVersionWorker.enqueueNewVersionCheckingWork(app, false);
         }
 
         int currentVersionCode = BuildConfig.VERSION_CODE;
