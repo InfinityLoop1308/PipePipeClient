@@ -390,8 +390,9 @@ public final class Migrations {
                     + "thumbnail_url TEXT)");
 
             database.execSQL("INSERT INTO playlists_new"
-                    + " SELECT uid, name, 0, thumbnail_stream_id "
-                    + " FROM playlists");
+                    + " SELECT p.uid, p.name, p.display_index, s.thumbnail_url "
+                    + " FROM playlists p "
+                    + " LEFT JOIN streams s ON p.thumbnail_stream_id = s.uid");
 
             database.execSQL("DROP TABLE playlists");
             database.execSQL("ALTER TABLE playlists_new RENAME TO playlists");
@@ -409,10 +410,8 @@ public final class Migrations {
                     + "SELECT `uid`, `service_id`, `name`, `url`, `thumbnail_url`, `uploader`, "
                     + "`stream_count` FROM `remote_playlists`");
 
-            // Replace the old table.
             database.execSQL("DROP TABLE `remote_playlists`");
             database.execSQL("ALTER TABLE `remote_playlists_tmp` RENAME TO `remote_playlists`");
-            // Create index on the new table.
             database.execSQL("CREATE INDEX `index_remote_playlists_name` "
                     + "ON `remote_playlists` (`name`)");
             database.execSQL("CREATE UNIQUE INDEX `index_remote_playlists_service_id_url` "
