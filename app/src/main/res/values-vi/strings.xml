@@ -1106,4 +1106,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="show_auto_translated_subtitles_title">Hiển thị phụ đề được dịch tự động</string>
 <string name="show_auto_translated_subtitles_summary">Nếu được bật, PipePipe sẽ cố gắng thêm một bản phụ đề được dịch tự động bằng ngôn ngữ nội dung mặc định của bạn. Điều này làm cho việc tải video chậm hơn một chút.</string>
 <string name="local_playlist_swipe_action_title">Hành động vuốt sang phải trong danh sách phát cục bộ</string>
+<string name="search_suggestions_count_title">Số lượng gợi ý tìm kiếm</string>
+<string name="search_suggestions_count_summary">Số lượng gợi ý tìm kiếm trước đây để hiển thị</string>
 </resources>

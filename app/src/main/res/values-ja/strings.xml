@@ -1020,4 +1020,6 @@
 <string name="show_auto_translated_subtitles_title">自動翻訳された字幕を表示</string>
 <string name="show_auto_translated_subtitles_summary">有効にすると、PipePipeはデフォルトのコンテンツ言語で自動翻訳された字幕トラックを追加しようとします。\nこれにより、動画の読み込みが少し遅くなります。</string>
 <string name="local_playlist_swipe_action_title">ローカルプレイリストでの右スワイプアクション</string>
+<string name="search_suggestions_count_title">検索候補の数</string>
+<string name="search_suggestions_count_summary">表示する過去の検索候補の数</string>
 </resources>

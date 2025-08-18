@@ -998,4 +998,6 @@
 <string name="show_auto_translated_subtitles_title">Automatisch übersetzte Untertitel anzeigen</string>
 <string name="show_auto_translated_subtitles_summary">Wenn aktiviert, wird PipePipe versuchen, eine automatisch übersetzte Untertitelspur in Ihrer Standard-Content-Sprache hinzuzufügen. Dies macht das Laden von Videos etwas langsamer.</string>
 <string name="local_playlist_swipe_action_title">Rechtswischaktion in lokalen Wiedergabelisten</string>
+<string name="search_suggestions_count_title">Suchvorschläge Anzahl</string>
+<string name="search_suggestions_count_summary">Anzahl der anzuzeigenden vergangenen Suchvorschläge</string>
 </resources>

@@ -1061,4 +1061,6 @@
 <string name="show_auto_translated_subtitles_title">显示自动翻译的字幕</string>
 <string name="show_auto_translated_subtitles_summary">如果启用，PipePipe 将尝试在您的默认内容语言中添加一个自动翻译的字幕轨道。\n这会使视频加载速度稍微变慢。</string>
 <string name="local_playlist_swipe_action_title">本地播放列表中的右滑操作</string>
+<string name="search_suggestions_count_title">搜索建议计数</string>
+<string name="search_suggestions_count_summary">显示的过去搜索建议数量</string>
 </resources>

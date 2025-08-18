@@ -992,4 +992,6 @@
 <string name="show_auto_translated_subtitles_title">Mostra sottotitoli tradotti automaticamente</string>
 <string name="show_auto_translated_subtitles_summary">Se abilitato, PipePipe tenterà di aggiungere una traccia di sottotitoli tradotta automaticamente nella lingua predefinita dei tuoi contenuti. Questo rende il caricamento dei video leggermente più lento.</string>
 <string name="local_playlist_swipe_action_title">Azione di scorrimento a destra nelle playlist locali</string>
+<string name="search_suggestions_count_title">Conteggio dei suggerimenti di ricerca</string>
+<string name="search_suggestions_count_summary">Numero di suggerimenti di ricerca passati da visualizzare</string>
 </resources>

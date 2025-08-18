@@ -1022,4 +1022,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="show_auto_translated_subtitles_title">Afficher les sous-titres traduits automatiquement</string>
 <string name="show_auto_translated_subtitles_summary">Si activé, PipePipe essaiera d\'ajouter une piste de sous-titres traduits automatiquement dans votre langue de contenu par défaut. Cela rend le chargement des vidéos légèrement plus lent.</string>
 <string name="local_playlist_swipe_action_title">Action de balayage vers la droite dans les playlists locales</string>
+<string name="search_suggestions_count_title">Nombre de suggestions de recherche</string>
+<string name="search_suggestions_count_summary">Nombre de suggestions de recherche passées à afficher</string>
 </resources>
