@@ -21,13 +21,6 @@
         app:singleLineTitle="false"
         app:iconSpaceReserved="false" />
 
-    <SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:key="@string/enable_playback_state_lists_key"
-        android:summary="@string/enable_playback_state_lists_summary"
-        android:title="@string/enable_playback_state_lists_title"
-        app:singleLineTitle="false"
-        app:iconSpaceReserved="false" />
 
     <SwitchPreferenceCompat
         android:defaultValue="true"

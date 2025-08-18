@@ -1963,12 +1963,9 @@ public final class VideoDetailFragment
         final boolean playbackResumeEnabled = prefs
                 .getBoolean(activity.getString(R.string.enable_watch_history_key), true)
                 && prefs.getBoolean(activity.getString(R.string.enable_playback_resume_key), true);
-        final boolean showPlaybackPosition = prefs.getBoolean(
-                activity.getString(R.string.enable_playback_state_lists_key), true);
         if (!playbackResumeEnabled) {
             if (playQueue == null || playQueue.getStreams().isEmpty()
-                    || playQueue.getItem().getRecoveryPosition() == RECOVERY_UNSET
-                    || !showPlaybackPosition) {
+                    || playQueue.getItem().getRecoveryPosition() == RECOVERY_UNSET) {
                 binding.positionView.setVisibility(View.INVISIBLE);
                 binding.detailPositionView.setVisibility(View.GONE);
                 // TODO: Remove this check when separation of concerns is done.
