@@ -253,6 +253,7 @@ public final class Player implements
     private ExoPlayer simpleExoPlayer;
     private AudioReactor audioReactor;
     private MediaSessionManager mediaSessionManager;
+    private PlayerMediaSession playerMediaSession;
     @Nullable private SurfaceHolderCallback surfaceHolderCallback;
 
     @NonNull private final DefaultTrackSelector trackSelector;
@@ -530,8 +531,9 @@ public final class Player implements
 
 
         audioReactor = new AudioReactor(context, simpleExoPlayer);
+        playerMediaSession = new PlayerMediaSession(this, simpleExoPlayer);
         mediaSessionManager = new MediaSessionManager(context, simpleExoPlayer,
-                new PlayerMediaSession(this, simpleExoPlayer), service.getMediaSession(),
+                playerMediaSession, service.getMediaSession(),
                 service.getMediaBrowserPlaybackPreparer());
 
         registerBroadcastReceiver();
@@ -922,8 +924,9 @@ public final class Player implements
         simpleExoPlayer.setVolume(isMuted ? 0 : 1);
         if (playQueue != null) {
             simpleExoPlayer.setShuffleModeEnabled(playQueue.isShuffled());
+            playerMediaSession = new PlayerMediaSession(this, simpleExoPlayer);
             mediaSessionManager = new MediaSessionManager(context, simpleExoPlayer,
-                    new PlayerMediaSession(this, simpleExoPlayer), service.getMediaSession(),
+                    playerMediaSession, service.getMediaSession(),
                     service.getMediaBrowserPlaybackPreparer());
         }
 
@@ -2786,6 +2789,9 @@ public final class Player implements
     }
 
     private void onShuffleOrRepeatModeChanged() {
+        if (playerMediaSession != null) {
+            playerMediaSession.refresh();
+        }
         notifyPlaybackUpdateToListeners();
         NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, false);
     }
