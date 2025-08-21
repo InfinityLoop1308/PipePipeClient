@@ -44,7 +44,7 @@
         app:iconSpaceReserved="false" />
 
     <SwitchPreferenceCompat
-        android:defaultValue="false"
+        android:defaultValue="true"
         android:key="@string/show_auto_translated_subtitles_key"
         android:summary="@string/show_auto_translated_subtitles_summary"
         android:title="@string/show_auto_translated_subtitles_title"
