@@ -1660,6 +1660,7 @@
     <string name="exit_app_confirmation_key">exit_app_confirmation_key</string>
     <string name="pull_to_refresh_key">pull_to_refresh_key</string>
     <string name="local_playlist_swipe_action_key">local_playlist_swipe_action_key</string>
+    <string name="disable_android_auto_key">disable_android_auto_key</string>
     <string-array name="filter_type_entries">
         <item>@string/search_result</item>
         <item>@string/recommended_videos</item>

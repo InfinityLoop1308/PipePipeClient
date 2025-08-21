@@ -1000,4 +1000,6 @@
 <string name="local_playlist_swipe_action_title">Rechtswischaktion in lokalen Wiedergabelisten</string>
 <string name="search_suggestions_count_title">Suchvorschläge Anzahl</string>
 <string name="search_suggestions_count_summary">Anzahl der anzuzeigenden vergangenen Suchvorschläge</string>
+<string name="disable_android_auto_title">Android Auto deaktivieren</string>
+<string name="disable_android_auto_summary">Deaktivieren Sie die Android Auto-Verbindung, um Benachrichtigungsprobleme auf Android 12 und älteren Versionen zu vermeiden.\n\nNach dem erneuten Aktivieren dieser Option müssen Sie die App neu starten und die Verbindung zum Auto wiederherstellen, damit die Änderung wirksam wird.</string>
 </resources>

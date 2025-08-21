@@ -2,6 +2,7 @@ package org.schabi.newpipe.util;
 
 import android.app.Service;
 import android.app.UiModeManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -250,5 +251,19 @@ public final class DeviceUtils {
 
     public static Class<? extends Service> getPlayerServiceClass() {
         return isUsingFromAndroidAuto()? PlayerServiceForAuto.class: PlayerService.class;
+    }
+
+    public static void updateAndroidAutoComponentState(final Context context) {
+        final boolean defaultValue = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU;
+        final boolean isDisabled = PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.disable_android_auto_key), defaultValue);
+        final PackageManager pm = context.getPackageManager();
+        final ComponentName component = new ComponentName(context, PlayerServiceForAuto.class);
+        
+        final int newState = isDisabled 
+            ? PackageManager.COMPONENT_ENABLED_STATE_DISABLED 
+            : PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
+            
+        pm.setComponentEnabledSetting(component, newState, PackageManager.DONT_KILL_APP);
     }
 }

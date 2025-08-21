@@ -1024,4 +1024,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="local_playlist_swipe_action_title">Action de balayage vers la droite dans les playlists locales</string>
 <string name="search_suggestions_count_title">Nombre de suggestions de recherche</string>
 <string name="search_suggestions_count_summary">Nombre de suggestions de recherche passées à afficher</string>
+<string name="disable_android_auto_title">Désactiver Android Auto</string>
+<string name="disable_android_auto_summary">Désactiver la connexion Android Auto pour éviter les problèmes de notifications sur Android 12 et les versions antérieures.\n\nAprès avoir réactivé cette option, vous devez redémarrer l\'application et reconnecter la voiture pour que le changement prenne effet.</string>
 </resources>

@@ -1108,4 +1108,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="local_playlist_swipe_action_title">Hành động vuốt sang phải trong danh sách phát cục bộ</string>
 <string name="search_suggestions_count_title">Số lượng gợi ý tìm kiếm</string>
 <string name="search_suggestions_count_summary">Số lượng gợi ý tìm kiếm trước đây để hiển thị</string>
+<string name="disable_android_auto_title">Tắt Android Auto</string>
+<string name="disable_android_auto_summary">Tắt kết nối Android Auto để tránh các vấn đề thông báo trên Android 12 và các phiên bản cũ hơn.\n\nSau khi bật lại tùy chọn này, bạn cần khởi động lại ứng dụng và kết nối lại với xe để thay đổi có hiệu lực.</string>
 </resources>

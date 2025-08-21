@@ -1057,4 +1057,6 @@
 <string name="local_playlist_swipe_action_title">Acción de deslizamiento hacia la derecha en listas de reproducción locales</string>
 <string name="search_suggestions_count_title">Cuenta de sugerencias de búsqueda</string>
 <string name="search_suggestions_count_summary">Número de sugerencias de búsqueda pasadas para mostrar</string>
+<string name="disable_android_auto_title">Desactivar Android Auto</string>
+<string name="disable_android_auto_summary">Desactivar la conexión de Android Auto para evitar problemas de notificaciones en Android 12 y versiones anteriores.\n\nDespués de volver a habilitar esta opción, debe reiniciar la aplicación y volver a conectarse al coche para que el cambio surta efecto.</string>
 </resources>

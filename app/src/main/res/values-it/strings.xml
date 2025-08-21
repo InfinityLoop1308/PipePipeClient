@@ -994,4 +994,6 @@
 <string name="local_playlist_swipe_action_title">Azione di scorrimento a destra nelle playlist locali</string>
 <string name="search_suggestions_count_title">Conteggio dei suggerimenti di ricerca</string>
 <string name="search_suggestions_count_summary">Numero di suggerimenti di ricerca passati da visualizzare</string>
+<string name="disable_android_auto_title">Disabilita Android Auto</string>
+<string name="disable_android_auto_summary">Disabilita la connessione ad Android Auto per evitare problemi di notifica su Android 12 e versioni precedenti.\n\nDopo aver riattivato questa opzione, è necessario riavviare l\'app e riconnettersi all\'auto affinché la modifica abbia effetto.</string>
 </resources>

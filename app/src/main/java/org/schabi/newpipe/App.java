@@ -105,6 +105,9 @@ public class App extends MultiDexApplication {
         // Initialize settings first because others inits can use its values
         NewPipeSettings.initSettings(this);
 
+        // Initialize Android Auto component state based on preference
+        DeviceUtils.updateAndroidAutoComponentState(this);
+
         NewPipe.init(getDownloader(),
             Localization.getPreferredLocalization(this),
             Localization.getPreferredContentCountry(this));

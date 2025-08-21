@@ -1063,4 +1063,6 @@
 <string name="local_playlist_swipe_action_title">本地播放列表中的右滑操作</string>
 <string name="search_suggestions_count_title">搜索建议计数</string>
 <string name="search_suggestions_count_summary">显示的过去搜索建议数量</string>
+<string name="disable_android_auto_title">禁用 Android Auto</string>
+<string name="disable_android_auto_summary">禁用 Android Auto 连接以避免在 Android 12 及更早版本上出现通知问题。\n\n重新启用此选项后，您必须重新启动应用程序并重新连接到汽车以使更改生效。</string>
 </resources>

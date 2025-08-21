@@ -82,6 +82,8 @@
 <string name="popup_remember_size_pos_summary">Remember last size and position of popup</string>
 <string name="use_inexact_seek_title">Use fast inexact seek</string>
 <string name="use_inexact_seek_summary">Inexact seek allows the player to seek to positions faster with reduced precision. Seeking for 5, 15 or 25 seconds doesn\'t work with this</string>
+<string name="disable_android_auto_title">Disable Android Auto</string>
+<string name="disable_android_auto_summary">Disable Android Auto connection to avoid notification issues on on Android 12 and older.\n\nAfter re-enabling this option, you must restart the app and reconnect to the car for the change to take effect.</string>
 <string name="seek_duration_title">Fast-forward/-rewind seek duration</string>
 <string name="progressive_load_interval_title">Playback load interval size</string>
 <string name="progressive_load_interval_summary">Change the load interval size (currently %s). A lower value may speed up initial video loading. Changes require a player restart</string>
