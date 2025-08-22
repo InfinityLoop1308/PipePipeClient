@@ -496,13 +496,13 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
                 }
             }
 
-            if (responseCode == 403) {
-                if (retryCount >= 1) {
-                    throw new RuntimeException("403 error. You IP is temporarily blocked from accessing this video.");
-                }
-                retryCount ++;
-                retryCounts.put(new AbstractMap.SimpleEntry<>(streamId, itag), retryCount);
-            }
+//            if (responseCode == 403) {
+//                if (retryCount >= 1) {
+//                    throw new RuntimeException("403 error. You IP is temporarily blocked from accessing this video.");
+//                }
+//                retryCount ++;
+//                retryCounts.put(new AbstractMap.SimpleEntry<>(streamId, itag), retryCount);
+//            }
 
             final InputStream errorStream = httpURLConnection.getErrorStream();
             byte[] errorResponseBody;
