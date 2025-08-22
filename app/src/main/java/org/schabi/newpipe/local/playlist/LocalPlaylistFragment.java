@@ -1291,7 +1291,12 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                             StreamDialogDefaultEntry.NAVIGATE_TO,
                             (f, i) -> {
                                 destroyCustomViewInActionBar();
-                                itemsList.smoothScrollToPosition(utils.getIndexInQueue(item, getPlayQueue(), itemListAdapter.sortMode) + 1);
+                                int targetIndex = utils.getIndexInQueue(item, getPlayQueue(), itemListAdapter.sortMode) + 1;
+                                if (targetIndex <= 100) {
+                                    itemsList.smoothScrollToPosition(targetIndex);
+                                } else {
+                                    itemsList.scrollToPosition(targetIndex);
+                                }
                             })
                     .setAction(
                             StreamDialogDefaultEntry.SHOW_STREAM_DETAILS,
