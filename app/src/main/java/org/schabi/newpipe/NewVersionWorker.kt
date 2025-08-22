@@ -48,8 +48,8 @@ class NewVersionWorker(
         versionName: String,
         apkLocationUrl: String?,
         isManual: Boolean
-    ) {
-        val currentVersion = parseVersion(BuildConfig.VERSION_NAME)
+    ): Boolean {
+        val currentVersion = parseVersion(BuildConfig.VERSION_NAME.split("-")[0])
         val newVersion = parseVersion(versionName)
         if (compareVersions(currentVersion, newVersion) >= 0) {
             if (isManual) {
@@ -60,7 +60,7 @@ class NewVersionWorker(
                     ).show()
                 }
             }
-            return
+            return false
         }
 
         // A pending intent to open the apk location url in the browser.
@@ -85,6 +85,7 @@ class NewVersionWorker(
             )
         val notificationManager = NotificationManagerCompat.from(applicationContext)
         notificationManager.notify(2000, notificationBuilder.build())
+        return true
     }
 
     @Throws(IOException::class, ReCaptchaException::class)
@@ -104,12 +105,22 @@ class NewVersionWorker(
             }
         }
 
-        // Make a network request to get latest NewPipe data.
+        // Always check regular releases first
         val response = DownloaderImpl.getInstance().get(NEWPIPE_API_URL)
-        handleResponse(response)
+        val foundUpdate = handleResponse(response)
+        
+        // Only check pre-releases if no regular update was found and setting is enabled
+        if (!foundUpdate) {
+            val prefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+            val includePreRelease = prefs.getBoolean(applicationContext.getString(R.string.show_prerelease_key), false)
+            if (includePreRelease) {
+                val nightlyResponse = DownloaderImpl.getInstance().get(NIGHTLY_API_URL)
+                handleNightlyResponse(nightlyResponse)
+            }
+        }
     }
 
-    private fun handleResponse(response: Response) {
+    private fun handleResponse(response: Response): Boolean {
         val prefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         try {
             // Store a timestamp which needs to be exceeded,
@@ -127,13 +138,12 @@ class NewVersionWorker(
         // Parse the json from the response.
         try {
             val githubReleases = JsonParser.`array`().from(response.responseBody())
-            val includePreRelease = prefs.getBoolean(applicationContext.getString(R.string.show_prerelease_key), false)
             var selectedRelease: JsonObject? = null
 
-            // 选择最新符合要求的版本（稳定版或包括预发布）
+            // 选择最新符合要求的版本（稳定版）
             for (i in 0 until githubReleases.size) {
                 val release = githubReleases.getObject(i)
-                if (!includePreRelease && release.getBoolean("prerelease")) continue
+                if (release.getBoolean("prerelease")) continue
                 if (selectedRelease == null || isNewerRelease(release, selectedRelease)) {
                     selectedRelease = release
                 }
@@ -142,10 +152,57 @@ class NewVersionWorker(
             selectedRelease?.let { release ->
                 val versionName = release.getString("name").removePrefix("v")
                 val apkUrl = findCompatibleApkUrl(release, Build.SUPPORTED_ABIS)
-                compareAppVersionAndShowNotification(versionName, apkUrl, inputData.getBoolean(IS_MANUAL, false))
+                return compareAppVersionAndShowNotification(versionName, apkUrl, inputData.getBoolean(IS_MANUAL, false))
             }
         } catch (e: JsonParserException) {
             if (DEBUG) Log.w(TAG, "JSON解析错误", e)
+        }
+        return false
+    }
+
+    private fun handleNightlyResponse(response: Response) {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        try {
+            val newExpiry = coerceUpdateCheckExpiry(response.getHeader("expires"))
+            prefs.edit {
+                putLong(applicationContext.getString(R.string.update_expiry_key), newExpiry)
+            }
+        } catch (e: Exception) {
+            if (DEBUG) {
+                Log.w(TAG, "Could not extract and save new expiry date", e)
+            }
+        }
+
+        try {
+            val htmlContent = response.responseBody()
+            val firstVersionPattern = "<div class=\"workflow-title\">([^<]+)</div>".toRegex()
+            val firstMatch = firstVersionPattern.find(htmlContent)
+            
+            if (firstMatch != null) {
+                val versionName = firstMatch.groupValues[1].removePrefix("v")
+                val currentVersionStr = BuildConfig.VERSION_NAME.split("-")[0]
+                
+                // Check if first item is not a release (no "-" in version) and not equal to current version
+                if (!versionName.contains("-") && versionName != currentVersionStr) {
+                    // This is considered a pre-release, get the run page to find compatible APK
+                    val runIdPattern = "onclick=\"location\\.href='/run/(\\d+)'\"".toRegex()
+                    val runMatch = runIdPattern.find(htmlContent)
+                    if (runMatch != null) {
+                        val runId = runMatch.groupValues[1]
+                        try {
+                            val runPageResponse = DownloaderImpl.getInstance().get("https://nightly.pipepipe.dev/run/$runId")
+                            val apkUrl = findCompatibleNightlyApkUrl(runPageResponse.responseBody(), Build.SUPPORTED_ABIS)
+                            if (apkUrl != null) {
+                                compareAppVersionAndShowNotification(versionName, apkUrl, inputData.getBoolean(IS_MANUAL, false))
+                            }
+                        } catch (e: Exception) {
+                            if (DEBUG) Log.w(TAG, "Failed to fetch run page", e)
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            if (DEBUG) Log.w(TAG, "HTML解析错误", e)
         }
     }
 
@@ -170,6 +227,22 @@ class NewVersionWorker(
         }
         return universalUrl
     }
+    
+    private fun findCompatibleNightlyApkUrl(runPageHtml: String, abis: Array<String>): String? {
+        var universalUrl: String? = null
+        val downloadLinkPattern = "href=\"(/download/[^\"]*([^/\"]*-debug\\.apk))\"".toRegex()
+        val matches = downloadLinkPattern.findAll(runPageHtml)
+        
+        for (match in matches) {
+            val relativePath = match.groupValues[1]
+            val fileName = match.groupValues[2]
+            when {
+                fileName.contains("universal") -> universalUrl = "https://nightly.pipepipe.dev$relativePath"
+                abis.any { fileName.contains(it) } -> return "https://nightly.pipepipe.dev$relativePath"
+            }
+        }
+        return universalUrl
+    }
 
 
 
@@ -190,6 +263,7 @@ class NewVersionWorker(
         private val DEBUG = MainActivity.DEBUG
         private val TAG = NewVersionWorker::class.java.simpleName
         private const val NEWPIPE_API_URL = "https://api.github.com/repositories/490984887/releases"
+        private const val NIGHTLY_API_URL = "https://nightly.pipepipe.dev/"
         private const val IS_MANUAL = "isManual"
         /**
          * Start a new worker which checks if all conditions for performing a version check are met,
