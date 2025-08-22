@@ -9,6 +9,7 @@ import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.mediasession.MediaSessionCallback;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 
+import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
 import static org.schabi.newpipe.player.helper.PlayerHelper.nextRepeatMode;
 
 public class PlayerMediaSession implements MediaSessionCallback {
@@ -105,22 +106,24 @@ public class PlayerMediaSession implements MediaSessionCallback {
         player.pause();
     }
     public void changePlayMode() {
-        refresh();
-        switch (this.mode) {
+        int correctMode = this.mode; // this.mode change after the following calls
+        player.simpleExoPlayer.setShuffleModeEnabled(false);
+        player.setRepeatMode(REPEAT_MODE_OFF);
+        switch (correctMode) {
             case 0: // shuffle
                 player.onShuffleClicked();
                 break;
             case 1: // repeat_one
-                player.onShuffleClicked();
-                player.setRepeatMode(nextRepeatMode(player.getRepeatMode()));
+                player.setRepeatMode(com.google.android.exoplayer2.Player.REPEAT_MODE_ONE);
                 break;
             case 2: // repeat_all
+                player.setRepeatMode(com.google.android.exoplayer2.Player.REPEAT_MODE_ALL);
+                break;
             case 3: // repeat_none
             default:
-                player.setRepeatMode(nextRepeatMode(player.getRepeatMode()));
                 break;
         }
-        this.mode = (this.mode + 1) % 4;
+        this.mode = (correctMode + 1) % 4;
     }
     public void close(){
         player.service.stopService();

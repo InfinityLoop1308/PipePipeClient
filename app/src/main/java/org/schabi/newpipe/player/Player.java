@@ -250,7 +250,7 @@ public final class Player implements
     // Player
     //////////////////////////////////////////////////////////////////////////*/
 
-    private ExoPlayer simpleExoPlayer;
+    public ExoPlayer simpleExoPlayer;
     private AudioReactor audioReactor;
     private MediaSessionManager mediaSessionManager;
     private PlayerMediaSession playerMediaSession;
