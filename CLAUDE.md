@@ -2,7 +2,7 @@ This is PipePipe's repo.
 PipePipe is a hard fork of NewPipe, doesn't share same structure with NewPipe.
 if talking about extractor, the files are in ../PipePipeExtractor
 
-When modifying, always keep minimum changes. Do not add comments, except when the code is VERY hard to understand
+When modifying, always keep minimum changes. NEVER add comments.
 
 Never read the following files fully, as they contain 3000-5000+ lines. only read needed lines.
 ./app/src/main/java/org/schabi/newpipe/download/DownloadDialog.java
