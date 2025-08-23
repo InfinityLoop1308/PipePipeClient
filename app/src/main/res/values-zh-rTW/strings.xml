@@ -888,7 +888,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在背景播放時自動隨機播放您的本地播放列表</string>
-<string name="update_log">### 新功能\n\n- 支援 Android Auto\n- 支援自訂本地播放清單中右滑動的操作：刪除、加入佇列或停用\n- 支援從 txt 檔案匯入 URL 到播放清單\n- 支援將本地播放清單中的所有項目新增到另一個本地播放清單\n- 支援過濾付費影片\n- 新增偏好設定以控制是否啟用 YouTube 的自動翻譯\n- 支援故事板預覽（BiliBili）\n\n### 錯誤修正\n\n- 更新到 4.6.1 後在某些情況下應用程式崩潰\n- 更新檢查器有時需要 3 天才能通知更新\n- 在過濾的本地播放清單中刪除項目時，如果有重複項目，將無法刪除正確的項目\n- 字幕在某些情況下顯示/下載不正確（YouTube）\n- 從 NewPipe 匯入備份時播放清單封面丟失\n- 啟用 YouTube 快速模式時，內容過濾器在動態消息中無法正常運作\n\n### 其他\n\n- 提升穩定性</string>
+<string name="update_log">### 錯誤修正\n\n- 當在背景/彈出視窗中開始播放時，迷你播放器沒有顯示\n- 在某些情況下，關閉影片時播放沒有停止\n- 在某些情況下，通知中的隨機播放/重複模式無法正常運作\n- 頻道播放清單只載入 1 頁 (YouTube)\n- 搜尋功能無法運作 (NicoNico)\n- 在某些情況下發生意外崩潰\n\n### 行為\n\n- 使影片播放能夠從 403 錯誤中恢復 (YouTube)\n- 增加一個開關來控制 Android Auto，並在 Android 12 及更早版本上預設禁用 Android Auto\n- 預設顯示自動翻譯字幕\n- 改善在大型本地播放清單中導航時的速度\n- 如果目前搜尋頁面中的所有項目都被篩選掉，則嘗試額外載入 3 頁</string>
 <string name="speeding_playback_title">按住以加速播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這項計畫</string>
