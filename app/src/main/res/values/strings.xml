@@ -1001,7 +1001,7 @@
 <string name="sponsor_promote">Become a supporter</string>
 <string name="random_play_order_title">Random Order</string>
 <string name="random_play_order_summary">Automatically shuffle your local playlists when playing in the background</string>
-<string name="update_log">### Bug Fixes\n\n- Mini player is not shown if start playback in background/popup\n- Playback not stopping when closing out video under certain conditions\n- Shuffle/Repeat mode in notification is not correctly working under certain conditions\n- Channel playlists only load 1 page (YouTube)\n- Search not working (NicoNico) \n- Unexpected crasg under certain conditions\n\n### Behavior\n\n- Make the video playback able to recover from 403 error (YouTube) \n- Add a switch to control android auto, and disable android auto on android 12 and earlier versions by default\n- Show auto translated subtitles by default\n- Improve the speed when navigating in a large local playlist\n- Try additional 3 page if all the items in current search page is filtered</string>
+    <string name="update_log">### Bug Fixes\n\n- Can not play any streams if logged in (YouTube)\n- Frequent &quot;Something went wrong&quot; in trending page (YouTube)\n- Comments only 1 page (BiliBili)</string>
 <string name="speeding_playback_title">Long-press to speeding the playback</string>
 <string name="view_on_github">View on GitHub</string>
 <string name="donation_dialog_title">Support the Project</string>
@@ -1045,7 +1045,7 @@
 <string name="show_stream_details">Show stream details</string>
 <string name="show_prerelease_description">Pre-releases update faster, but may contain some bugs</string>
 <string name="show_prerelease_title">Show pre-releases</string>
-<string name="temp">YouTube keeps changing its encryption recently, which can mess up extraction and playback. When we spot these issues, we’ll jump on fixing them and roll out a new version as fast as we can. To stay up to date, we suggest turning on the ‘Check for Updates’ option so you get the fix as soon as it’s ready. (Updates via F-Droid takes 3-10 days longer due to the build process.)</string>
+<string name="temp">YouTube has recently implemented complex encryption in its logged-in state extractor, causing PipePipe to malfunction under logged-in conditions. Fortunately, we\'ve discovered a workaround that keeps the login feature operational for the time being. We\'re collaborating with other open-source YouTube tool communities to develop a more stable decryption solution.</string>
 <string name="show_dislike_title">Show dislike count</string>
 <string name="video_not_released">The video has not released yet.</string>
 <string name="filter_shorts_title">Filter short videos</string>

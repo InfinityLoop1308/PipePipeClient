@@ -897,7 +897,7 @@
 <string name="sponsor_promote">Conviértete en un patrocinador</string>
 <string name="random_play_order_title">Orden aleatorio</string>
 <string name="random_play_order_summary">Baraja automáticamente tus listas de reproducción locales cuando se reproduzcan en segundo plano</string>
-<string name="update_log">### Correcciones de errores\n\n- El mini reproductor no se muestra si se inicia la reproducción en segundo plano/ventana emergente\n- La reproducción no se detiene al cerrar el video bajo ciertas condiciones\n- El modo Aleatorio/Repetir en la notificación no funciona correctamente bajo ciertas condiciones\n- Las listas de reproducción de canales solo cargan 1 página (YouTube)\n- La búsqueda no funciona (NicoNico) \n- Fallo inesperado bajo ciertas condiciones\n\n### Comportamiento\n\n- Hacer que la reproducción de video pueda recuperarse de un error 403 (YouTube) \n- Agregar un interruptor para controlar Android Auto y deshabilitar Android Auto en Android 12 y versiones anteriores por defecto\n- Mostrar subtítulos traducidos automáticamente por defecto\n- Mejorar la velocidad al navegar en una lista de reproducción local grande\n- Intentar 3 páginas adicionales si todos los elementos en la página de búsqueda actual están filtrados</string>
+<string name="update_log">### Corrección de errores\n\n- No se pueden reproducir transmisiones si se ha iniciado sesión (YouTube)\n- Frecuente "Algo salió mal" en la página de tendencias (YouTube)\n- Comentarios solo 1 página (BiliBili)</string>
 <string name="speeding_playback_title">Mantener presionado para acelerar la reproducción</string>
 <string name="view_on_github">Ver en GitHub</string>
 <string name="donation_dialog_title">Apoya el proyecto</string>
@@ -1001,7 +1001,7 @@
 <string name="always_start_from_beginning_title">Siempre empieza a reproducir desde el principio</string>
 <string name="fetch_full_playlist_title">Cargar lista de reproducción completa</string>
 <string name="fetch_full_playlist_summary">Carga todo el contenido de una vez al abrir las listas de reproducción</string>
-<string name="temp">YouTube sigue cambiando su cifrado recientemente, lo que puede estropear la extracción y reproducción. Cuando detectamos estos problemas, nos apresuramos a solucionarlos y lanzamos una nueva versión lo más rápido posible. Para mantenerse actualizado, sugerimos activar la opción \'Buscar actualizaciones\' para que obtenga la solución tan pronto como esté lista. (Las actualizaciones a través de F-Droid tardan de 3 a 10 días más debido al proceso de compilación.)</string>
+<string name="temp">YouTube ha implementado recientemente un cifrado complejo en su extractor de estado de sesión iniciada, lo que provoca que PipePipe funcione mal en condiciones de sesión iniciada. Afortunadamente, hemos descubierto una solución provisional que mantiene la función de inicio de sesión operativa por el momento. Estamos colaborando con otras comunidades de herramientas de código abierto de YouTube para desarrollar una solución de descifrado más estable.</string>
 <string name="add_filter">Agregar filtro</string>
 <string name="no_filters">Sin filtros</string>
 <string name="stream_processing_notification_title">Procesando flujos</string>

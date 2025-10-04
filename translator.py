@@ -60,8 +60,8 @@ class Translator:
     def translate(self, content, language):
         extra_note = ""
         response = self.client.chat.completions.create(
-            model="gemini-2.5-flash",
-            response_format={"type": "json_schema"},
+            model="gpt-5",
+            response_format={"type": "json_object"},
             messages=[
                 {
                     "role": "user",
@@ -70,6 +70,7 @@ class Translator:
             ],
             temperature=0,
         )
+        print(response.choices[0].message.content.strip())
         translated_text = response.choices[0].message.content.strip()
         # print(translated_text)
         return translated_text
@@ -239,14 +240,14 @@ class StringTranslator:
     def __init__(self):
         self.base = XMLHandler('app/src/main/res/values/strings.xml')
         self.targets = [
-            XMLHandler('app/src/main/res/values-zh-rCN/strings.xml'),
-            XMLHandler('app/src/main/res/values-zh-rTW/strings.xml'),
-            XMLHandler('app/src/main/res/values-ja/strings.xml'),
-            XMLHandler('app/src/main/res/values-vi/strings.xml'),
-            XMLHandler('app/src/main/res/values-fr/strings.xml'),
-            XMLHandler('app/src/main/res/values-de/strings.xml'),
+            # XMLHandler('app/src/main/res/values-zh-rCN/strings.xml'),
+            # XMLHandler('app/src/main/res/values-zh-rTW/strings.xml'),
+            # XMLHandler('app/src/main/res/values-ja/strings.xml'),
+            # XMLHandler('app/src/main/res/values-vi/strings.xml'),
+            # XMLHandler('app/src/main/res/values-fr/strings.xml'),
+            # XMLHandler('app/src/main/res/values-de/strings.xml'),
             XMLHandler('app/src/main/res/values-it/strings.xml'),
-            XMLHandler('app/src/main/res/values-es/strings.xml'),
+            # XMLHandler('app/src/main/res/values-es/strings.xml'),
         ]
         self.translator = Translator()
 

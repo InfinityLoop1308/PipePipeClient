@@ -854,7 +854,7 @@
 <string name="sponsor_promote">サポーターになる</string>
 <string name="random_play_order_title">ランダムな順序</string>
 <string name="random_play_order_summary">バックグラウンドで再生する際にローカルプレイリストを自動的にシャッフルします</string>
-<string name="update_log">### バグ修正\n\n- バックグラウンド/ポップアップで再生を開始した場合、ミニプレーヤーが表示されない\n- 特定の条件下でビデオを閉じるときに再生が停止しない\n- 通知のシャッフル/リピートモードが特定の条件下で正しく機能しない\n- チャンネルプレイリストが1ページしか読み込まれない (YouTube)\n- 検索が機能しない (ニコニコ) \n- 特定の条件下で予期しないクラッシュが発生する\n\n### 動作\n\n- 403エラーからビデオ再生を回復できるようにする (YouTube) \n- Android Autoを制御するスイッチを追加し、Android 12以前のバージョンではAndroid Autoをデフォルトで無効にする\n- 自動翻訳された字幕をデフォルトで表示する\n- 大規模なローカルプレイリストをナビゲートする際の速度を向上させる\n- 現在の検索ページ内のすべてのアイテムがフィルタリングされた場合、追加で3ページ試行する</string>
+<string name="update_log">### バグ修正\n\n- ログイン時にストリームを再生できない (YouTube)\n- トレンドページで頻繁に「問題が発生しました」と表示される (YouTube)\n- コメントが1ページのみ (BiliBili)</string>
 <string name="speeding_playback_title">長時間押は再生速度を速めることができます</string>
 <string name="view_on_github">GitHubで表示</string>
 <string name="donation_dialog_title">プロジェクトをサポートする</string>
@@ -896,7 +896,7 @@
 <string name="show_stream_details">ストリームの詳細を表示</string>
 <string name="show_prerelease_description">プレリリースはより速く更新されますが、いくつかのバグが含まれている可能性があります</string>
 <string name="show_prerelease_title">プレリリースを表示</string>
-<string name="temp">YouTubeは最近暗号化を変更しており、これが抽出や再生に影響を与えることがあります。これらの問題を発見した場合、すぐに修正に取り組み、できるだけ早く新しいバージョンをリリースします。最新の状態を保つために、「更新を確認する」オプションをオンにすることをお勧めします。これにより、修正が準備でき次第すぐに受け取ることができます。（F-Droid経由の更新はビルドプロセスのために3〜10日遅れます。）</string>
+<string name="temp">YouTubeは最近、ログイン状態の抽出器に複雑な暗号化を実装したため、PipePipeがログイン状態で誤動作する原因となっています。幸いなことに、ログイン機能を当面の間動作させ続ける回避策を発見しました。より安定した復号化ソリューションを開発するために、他のオープンソースYouTubeツールコミュニティと協力しています。</string>
 <string name="show_dislike_title">嫌いの数を表示</string>
 <string name="sponsor_block_category_highlight">見どころ</string>
 <string name="sponsor_block_category_self_promo">未払い/セルフプロモーション</string>

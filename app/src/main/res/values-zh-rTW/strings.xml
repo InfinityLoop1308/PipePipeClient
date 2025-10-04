@@ -888,7 +888,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在背景播放時自動隨機播放您的本地播放列表</string>
-<string name="update_log">### 錯誤修正\n\n- 當在背景/彈出視窗中開始播放時，迷你播放器沒有顯示\n- 在某些情況下，關閉影片時播放沒有停止\n- 在某些情況下，通知中的隨機播放/重複模式無法正常運作\n- 頻道播放清單只載入 1 頁 (YouTube)\n- 搜尋功能無法運作 (NicoNico)\n- 在某些情況下發生意外崩潰\n\n### 行為\n\n- 使影片播放能夠從 403 錯誤中恢復 (YouTube)\n- 增加一個開關來控制 Android Auto，並在 Android 12 及更早版本上預設禁用 Android Auto\n- 預設顯示自動翻譯字幕\n- 改善在大型本地播放清單中導航時的速度\n- 如果目前搜尋頁面中的所有項目都被篩選掉，則嘗試額外載入 3 頁</string>
+<string name="update_log">### 錯誤修正\n\n- 登入後無法播放任何串流 (YouTube)\n- 熱門頁面頻繁出現「發生錯誤」 (YouTube)\n- 評論只顯示1頁 (BiliBili)</string>
 <string name="speeding_playback_title">按住以加速播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這項計畫</string>
@@ -930,7 +930,7 @@
 <string name="show_stream_details">顯示串流詳細資訊</string>
 <string name="show_prerelease_description">先行版更新較快，但可能存在一些錯誤</string>
 <string name="show_prerelease_title">顯示先行版</string>
-<string name="temp">YouTube 近期頻繁變更加密方式，這可能會影響資料擷取與播放體驗。當我們發現問題時會立即著手修復，並盡快推出新版本。為保持最新狀態，建議啟用「檢查更新」以立即取得修正完成版本。（礙於建構時程，需要延後 3-10 天才能透過 F-Droid 更新。）</string>
+<string name="temp">YouTube 最近在其登入狀態提取器中實施了複雜的加密，導致 PipePipe 在登入狀態下無法正常運作。幸運的是，我們發現了一個權宜之計，可以暫時保持登入功能正常。我們正在與其他開源 YouTube 工具社群合作，以開發更穩定的解密方案。</string>
 <string name="show_dislike_title">顯示不喜歡數</string>
 <string name="sponsor_block_category_highlight">重點</string>
 <string name="sponsor_block_category_self_promo">未支付/自我推廣</string>

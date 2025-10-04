@@ -836,7 +836,7 @@
 <string name="sponsor_promote">Unterstützer werden</string>
 <string name="random_play_order_title">Zufällige Reihenfolge</string>
 <string name="random_play_order_summary">Automatisch Ihre lokalen Wiedergabelisten mischen, wenn sie im Hintergrund abgespielt werden</string>
-<string name="update_log">### Fehlerbehebungen\n\n- Mini-Player wird nicht angezeigt, wenn die Wiedergabe im Hintergrund/Popup gestartet wird\n- Wiedergabe stoppt nicht, wenn das Video unter bestimmten Bedingungen geschlossen wird\n- Zufalls-/Wiederholungsmodus in der Benachrichtigung funktioniert unter bestimmten Bedingungen nicht korrekt\n- Kanal-Wiedergabelisten laden nur 1 Seite (YouTube)\n- Suche funktioniert nicht (NicoNico) \n- Unerwarteter Absturz unter bestimmten Bedingungen\n\n### Verhalten\n\n- Video-Wiedergabe kann sich von 403-Fehlern erholen (YouTube) \n- Schalter zur Steuerung von Android Auto hinzugefügt und Android Auto auf Android 12 und früheren Versionen standardmäßig deaktiviert\n- Automatisch übersetzte Untertitel standardmäßig anzeigen\n- Verbesserung der Geschwindigkeit beim Navigieren in einer großen lokalen Wiedergabeliste\n- Versuche 3 weitere Seiten, wenn alle Elemente auf der aktuellen Suchseite gefiltert sind</string>
+<string name="update_log">### Fehlerbehebungen\n\n- Kann keine Streams abspielen, wenn angemeldet (YouTube)\n- Häufiges "Etwas ist schiefgelaufen" auf der Trendseite (YouTube)\n- Kommentare nur 1 Seite (BiliBili)</string>
 <string name="speeding_playback_title">Langes Drücken, um die Wiedergabe zu beschleunigen</string>
 <string name="view_on_github">Auf GitHub ansehen</string>
 <string name="donation_dialog_title">Projekt unterstützen</string>
@@ -878,7 +878,7 @@
 <string name="show_stream_details">Streamdetails anzeigen</string>
 <string name="show_prerelease_description">Vorabversionen werden schneller aktualisiert, können jedoch einige Fehler enthalten</string>
 <string name="show_prerelease_title">Vorabversionen anzeigen</string>
-<string name="temp">YouTube ändert kürzlich ständig seine Verschlüsselung, was die Extraktion und Wiedergabe stören kann. Wenn wir diese Probleme bemerken, werden wir uns sofort darum kümmern, sie zu beheben und so schnell wie möglich eine neue Version herausbringen. Um auf dem neuesten Stand zu bleiben, empfehlen wir, die Option \'Auf Updates prüfen\' zu aktivieren, damit Sie die Lösung erhalten, sobald sie verfügbar ist. (Updates über F-Droid dauern aufgrund des Build-Prozesses 3-10 Tage länger.)</string>
+<string name="temp">YouTube hat kürzlich eine komplexe Verschlüsselung in seinem Extraktor für den angemeldeten Zustand implementiert, was dazu führt, dass PipePipe unter angemeldeten Bedingungen nicht mehr funktioniert. Glücklicherweise haben wir eine Problemumgehung entdeckt, die die Anmeldefunktion vorerst betriebsbereit hält. Wir arbeiten mit anderen Open-Source-YouTube-Tool-Communities zusammen, um eine stabilere Entschlüsselungslösung zu entwickeln.</string>
 <string name="show_dislike_title">Anzahl der Dislikes anzeigen</string>
 <string name="sponsor_block_category_highlight">Hervorheben</string>
 <string name="sponsor_block_category_self_promo">Unbezahlt/Selbstpromotion</string>

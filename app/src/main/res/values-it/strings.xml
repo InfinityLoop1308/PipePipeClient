@@ -756,7 +756,7 @@
 <string name="sponsor_promote">Diventa un sostenitore</string>
 <string name="random_play_order_title">Ordine casuale</string>
 <string name="random_play_order_summary">Mescola automaticamente le tue playlist locali quando vengono riprodotte in background</string>
-<string name="update_log">### Correzioni di Bug\n\n- Il mini-lettore non viene mostrato se si avvia la riproduzione in background/popup\n- La riproduzione non si ferma alla chiusura del video in determinate condizioni\n- La modalità Casuale/Ripeti nella notifica non funziona correttamente in determinate condizioni\n- Le playlist dei canali caricano solo 1 pagina (YouTube)\n- Ricerca non funzionante (NicoNico)\n- Arresto anomalo imprevisto in determinate condizioni\n\n### Comportamento\n\n- Rendi la riproduzione video in grado di recuperare da errori 403 (YouTube)\n- Aggiungi un interruttore per controllare Android Auto e disabilita Android Auto su Android 12 e versioni precedenti per impostazione predefinita\n- Mostra i sottotitoli tradotti automaticamente per impostazione predefinita\n- Migliora la velocità durante la navigazione in una playlist locale di grandi dimensioni\n- Prova 3 pagine aggiuntive se tutti gli elementi nella pagina di ricerca corrente sono filtrati</string>
+<string name="update_log">### Correzioni di bug\n\n- Impossibile riprodurre qualsiasi streaming se si è loggati (YouTube)\n- Frequente "Qualcosa è andato storto" nella pagina delle tendenze (YouTube)\n- Commenti limitati a una pagina (BiliBili)</string>
 <string name="speeding_playback_title">Premi a lungo per aumentare la velocità di riproduzione</string>
 <string name="view_on_github">Visualizza su GitHub</string>
 <string name="donation_dialog_title">Supporta il progetto</string>
@@ -798,7 +798,7 @@
 <string name="show_stream_details">Mostra i dettagli del flusso</string>
 <string name="show_prerelease_description">Gli aggiornamenti delle versioni pre-rilasciate sono più veloci, ma possono contenere alcuni bug</string>
 <string name="show_prerelease_title">Mostra le versioni pre-release</string>
-<string name="temp">YouTube continua a cambiare la sua crittografia di recente, il che può interferire con l\'estrazione e la riproduzione. Quando individuiamo questi problemi, ci impegniamo a risolverli e a distribuire una nuova versione il più rapidamente possibile. Per rimanere aggiornati, suggeriamo di attivare l\'opzione \'Controlla aggiornamenti\' in modo da ricevere la correzione non appena è pronta. (Gli aggiornamenti tramite F-Droid richiedono 3-10 giorni in più a causa del processo di build.)</string>
+<string name="temp">YouTube ha recentemente implementato una crittografia complessa nel suo estrattore di stato di accesso, causando il malfunzionamento di PipePipe in condizioni di accesso. Fortunatamente, abbiamo scoperto una soluzione temporanea che mantiene la funzione di accesso operativa per il momento. Stiamo collaborando con altre comunità di strumenti YouTube open source per sviluppare una soluzione di decrittografia più stabile.</string>
 <string name="show_dislike_title">Mostra il conteggio dei non mi piace</string>
 <string name="sponsor_block_category_highlight">Evidenziare</string>
 <string name="sponsor_block_category_self_promo">Promozione non pagata/Auto-promozione</string>

@@ -789,7 +789,7 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="sponsor_promote">Devenez un supporter</string>
 <string name="random_play_order_title">Ordre aléatoire</string>
 <string name="random_play_order_summary">Mélangez automatiquement vos listes de lecture locales lorsque vous jouez en arrière-plan</string>
-<string name="update_log">### Corrections de bugs\n\n- Le mini-lecteur n\'est pas affiché si la lecture démarre en arrière-plan/fenêtre contextuelle\n- La lecture ne s\'arrête pas lors de la fermeture de la vidéo dans certaines conditions\n- Le mode Lecture aléatoire/Répétition dans la notification ne fonctionne pas correctement dans certaines conditions\n- Les listes de lecture de chaînes ne chargent qu\'une seule page (YouTube)\n- La recherche ne fonctionne pas (NicoNico)\n- Plantage inattendu dans certaines conditions\n\n### Comportement\n\n- Permet la récupération de la lecture vidéo après une erreur 403 (YouTube)\n- Ajout d\'un interrupteur pour contrôler Android Auto et désactiver Android Auto par défaut sur Android 12 et les versions antérieures\n- Afficher les sous-titres traduits automatiquement par défaut\n- Améliorer la vitesse de navigation dans une grande liste de lecture locale\n- Essayer 3 pages supplémentaires si tous les éléments de la page de recherche actuelle sont filtrés</string>
+<string name="update_log">### Corrections de bugs\n\n- Impossible de lire les flux si connecté (YouTube)\n- Fréquent "Quelque chose s\'est mal passé" sur la page des tendances (YouTube)\n- Commentaires sur 1 seule page (BiliBili)</string>
 <string name="speeding_playback_title">Appuyer longuement pour accélérer la lecture</string>
 <string name="view_on_github">Voir sur GitHub</string>
 <string name="donation_dialog_title">Soutenez le projet</string>
@@ -831,7 +831,7 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="show_stream_details">Afficher les détails du flux</string>
 <string name="show_prerelease_description">Les pré-versions se mettent à jour plus rapidement, mais peuvent contenir des bugs</string>
 <string name="show_prerelease_title">Afficher les pré-versions</string>
-<string name="temp">YouTube continue de modifier son chiffrement récemment, ce qui peut perturber l\'extraction et la lecture. Lorsque nous repérons ces problèmes, nous nous empressons de les corriger et de déployer une nouvelle version aussi rapidement que possible. Pour rester à jour, nous vous suggérons d\'activer l\'option \'Vérifier les mises à jour\' afin de recevoir la correction dès qu\'elle est prête. (Les mises à jour via F-Droid prennent 3 à 10 jours de plus en raison du processus de construction.)</string>
+<string name="temp">YouTube a récemment mis en œuvre un chiffrement complexe dans son extracteur d\'état connecté, ce qui a entraîné un dysfonctionnement de PipePipe en mode connecté. Heureusement, nous avons découvert une solution de contournement qui maintient la fonction de connexion opérationnelle pour le moment. Nous collaborons avec d\'autres communautés d\'outils YouTube open-source pour développer une solution de déchiffrement plus stable.</string>
 <string name="show_dislike_title">Afficher le nombre de désapprobations</string>
 <string name="sponsor_block_category_highlight">Surligner</string>
 <string name="sponsor_block_category_self_promo">Promotion non rémunérée / auto-promotion</string>
