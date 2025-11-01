@@ -897,7 +897,7 @@
 <string name="sponsor_promote">Conviértete en un patrocinador</string>
 <string name="random_play_order_title">Orden aleatorio</string>
 <string name="random_play_order_summary">Baraja automáticamente tus listas de reproducción locales cuando se reproduzcan en segundo plano</string>
-<string name="update_log">### Corrección de errores\n\n- No se pueden reproducir transmisiones si se ha iniciado sesión (YouTube)\n- Frecuente "Algo salió mal" en la página de tendencias (YouTube)\n- Comentarios solo 1 página (BiliBili)</string>
+<string name="update_log">### Correcciones de errores\n- El verificador de actualizaciones obtiene incorrectamente versiones de prueba de 5.0.0\n- A veces fallaba la carga de Tendencias (YouTube)\n- No se podían analizar videos en ciertos escenarios (YouTube)\n\n### Comportamiento\n- Deshabilitar temporalmente las cuentas de YouTube y cerrar la sesión de los usuarios, ya que la extracción de videos para cuentas con sesión iniciada está fallando actualmente</string>
 <string name="speeding_playback_title">Mantener presionado para acelerar la reproducción</string>
 <string name="view_on_github">Ver en GitHub</string>
 <string name="donation_dialog_title">Apoya el proyecto</string>

@@ -789,7 +789,7 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="sponsor_promote">Devenez un supporter</string>
 <string name="random_play_order_title">Ordre aléatoire</string>
 <string name="random_play_order_summary">Mélangez automatiquement vos listes de lecture locales lorsque vous jouez en arrière-plan</string>
-<string name="update_log">### Corrections de bugs\n\n- Impossible de lire les flux si connecté (YouTube)\n- Fréquent "Quelque chose s\'est mal passé" sur la page des tendances (YouTube)\n- Commentaires sur 1 seule page (BiliBili)</string>
+<string name="update_log">### Corrections de bugs\n- Le vérificateur de mises à jour récupère incorrectement des versions de test de la 5.0.0\n- Échec du chargement des tendances par moments (YouTube)\n- Échec de l\'analyse des vidéos dans certains scénarios (YouTube)\n\n### Comportement\n- Désactiver temporairement les comptes YouTube et déconnecter les utilisateurs, car l\'extraction des vidéos pour les comptes connectés est actuellement défaillante</string>
 <string name="speeding_playback_title">Appuyer longuement pour accélérer la lecture</string>
 <string name="view_on_github">Voir sur GitHub</string>
 <string name="donation_dialog_title">Soutenez le projet</string>

@@ -240,14 +240,14 @@ class StringTranslator:
     def __init__(self):
         self.base = XMLHandler('app/src/main/res/values/strings.xml')
         self.targets = [
-            # XMLHandler('app/src/main/res/values-zh-rCN/strings.xml'),
-            # XMLHandler('app/src/main/res/values-zh-rTW/strings.xml'),
-            # XMLHandler('app/src/main/res/values-ja/strings.xml'),
-            # XMLHandler('app/src/main/res/values-vi/strings.xml'),
-            # XMLHandler('app/src/main/res/values-fr/strings.xml'),
-            # XMLHandler('app/src/main/res/values-de/strings.xml'),
+            XMLHandler('app/src/main/res/values-zh-rCN/strings.xml'),
+            XMLHandler('app/src/main/res/values-zh-rTW/strings.xml'),
+            XMLHandler('app/src/main/res/values-ja/strings.xml'),
+            XMLHandler('app/src/main/res/values-vi/strings.xml'),
+            XMLHandler('app/src/main/res/values-fr/strings.xml'),
+            XMLHandler('app/src/main/res/values-de/strings.xml'),
             XMLHandler('app/src/main/res/values-it/strings.xml'),
-            # XMLHandler('app/src/main/res/values-es/strings.xml'),
+            XMLHandler('app/src/main/res/values-es/strings.xml'),
         ]
         self.translator = Translator()
 

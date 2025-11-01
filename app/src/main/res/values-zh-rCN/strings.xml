@@ -899,7 +899,7 @@
 <string name="sponsor_promote">成为支持者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">在后台播放时自动随机播放您的本地播放列表</string>
-<string name="update_log">### 错误修复\n\n- 登录后无法播放任何流（YouTube）\n- 趋势页面频繁出现“出错了”（YouTube）\n- 评论仅一页（BiliBili）</string>
+<string name="update_log">### Bug 修复\n- 更新检查器错误地获取了 5.0.0 的测试版本\n- 有时无法加载趋势（YouTube）\n- 在某些情况下无法解析视频（YouTube）\n\n### 行为\n- 由于当前登录账户的视频提取功能出现故障，暂时禁用 YouTube 账户并将用户登出</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 <string name="donation_dialog_title">支持该项目</string>

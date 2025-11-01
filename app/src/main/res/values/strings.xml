@@ -1001,7 +1001,7 @@
 <string name="sponsor_promote">Become a supporter</string>
 <string name="random_play_order_title">Random Order</string>
 <string name="random_play_order_summary">Automatically shuffle your local playlists when playing in the background</string>
-    <string name="update_log">### Bug Fixes\n\n- Can not play any streams if logged in (YouTube)\n- Frequent &quot;Something went wrong&quot; in trending page (YouTube)\n- Comments only 1 page (BiliBili)</string>
+<string name="update_log">### Bug Fixes\n- Update checker incorrectly fetches test versions of 5.0.0\n- Failed to load trending sometimes (YouTube)\n- Failed to parse videos under certain scenarios (YouTube)\n\n### Behavior\n- Temporarily disable YouTube accounts and log users out since video extraction for logged-in accounts is broken now</string>
 <string name="speeding_playback_title">Long-press to speeding the playback</string>
 <string name="view_on_github">View on GitHub</string>
 <string name="donation_dialog_title">Support the Project</string>
@@ -1102,4 +1102,7 @@
 <string name="webview_cookies_clear_failed">Failed to clear WebView cookies</string>
 <string name="remove_from_playlist_confirmation">Remove this item from playlist?</string>
 <string name="local_playlist_swipe_action_title">Right swipe action in local playlists</string>
+<string name="youtube_account_temporarily_disabled">Temporarily disabled</string>
+<string name="beta_test_dialog_title">Join the PipePipe 5.0.0 Beta-2 Test!</string>
+<string name="beta_test_dialog_message">Thank you for your continued support! We\'re excited to release PipePipe 5.0.0 Beta-2, a major step forward in our ground-up rebuild of the app.\n\nThis version focuses on significant improvements in stability and feature completeness, based on early feedback. While we\'re getting much closer to a final release, it\'s still a beta, and your feedback is invaluable.\n\nReminder: This will be installed as \"PipePipe Beta\" and won\'t affect your current app or data.\n\nIf you encounter any bugs or have suggestions, please let us know by opening an issue on our GitHub repository!</string>
 </resources>

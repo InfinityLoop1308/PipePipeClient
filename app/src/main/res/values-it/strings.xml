@@ -756,7 +756,7 @@
 <string name="sponsor_promote">Diventa un sostenitore</string>
 <string name="random_play_order_title">Ordine casuale</string>
 <string name="random_play_order_summary">Mescola automaticamente le tue playlist locali quando vengono riprodotte in background</string>
-<string name="update_log">### Correzioni di bug\n\n- Impossibile riprodurre qualsiasi streaming se si è loggati (YouTube)\n- Frequente "Qualcosa è andato storto" nella pagina delle tendenze (YouTube)\n- Commenti limitati a una pagina (BiliBili)</string>
+<string name="update_log">### Correzioni di bug\n- La verifica degli aggiornamenti recupera erroneamente le versioni di test della 5.0.0\n- A volte impossibile caricare Tendenze (YouTube)\n- Impossibile analizzare i video in alcuni scenari (YouTube)\n\n### Comportamento\n- Disattiva temporaneamente gli account YouTube e disconnette gli utenti poiché l\'estrazione dei video per gli account connessi al momento non funziona</string>
 <string name="speeding_playback_title">Premi a lungo per aumentare la velocità di riproduzione</string>
 <string name="view_on_github">Visualizza su GitHub</string>
 <string name="donation_dialog_title">Supporta il progetto</string>
