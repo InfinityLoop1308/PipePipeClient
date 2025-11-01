@@ -287,14 +287,7 @@ public final class ServiceHelper {
                     R.string.preferred_audio_language_key),"original");
             final boolean showAutoTranslatedSubtitles = sharedPreferences.getBoolean(context.getString(
                     R.string.show_auto_translated_subtitles_key), true);
-            final String proxyToken = sharedPreferences.getString(context.getString(R.string.proxy_token_key), "");
-            final Boolean proxyEnabled = sharedPreferences.getBoolean(context.getString(R.string.enable_proxy_key), false);
             ServiceList.YouTube.setTokens(tokens);
-            if (proxyEnabled) {
-                ServiceList.YouTube.setTokens(null);
-                ServiceList.YouTube.setProxyToken(proxyToken);
-                ServiceList.YouTube.setProxyEnabled(true);
-            }
             ServiceList.YouTube.setContentLanguage(getPreferredLocalization(context));
             ServiceList.YouTube.setAudioLanguage(audioLanguage);
             ServiceList.YouTube.setShowAutoTranslatedSubtitles(showAutoTranslatedSubtitles);
