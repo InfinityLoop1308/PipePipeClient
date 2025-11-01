@@ -22,7 +22,7 @@
     <string name="play_audio">Hang</string>
     <string name="default_audio_format_title">Alapértelmezett hangformátum</string>
     <string name="download_dialog_title">Letöltés</string>
-    <string name="unsupported_url">Nem támogatott URL</string>
+    <string name="unsupported_url">Nem támogatott webcím</string>
     <string name="use_external_video_player_title">Külső videólejátszó használata</string>
     <string name="use_external_audio_player_title">Külső hanglejátszó használata</string>
     <string name="download_path_audio_dialog_title">Válassza ki a hangfájlok letöltési helyét</string>
@@ -40,7 +40,7 @@
     <string name="detail_likes_img_view_description">Tetszik</string>
     <string name="detail_dislikes_img_view_description">Nem tetszik</string>
     <string name="detail_thumbnail_view_description">Videó lejátszása, hossz:</string>
-    <string name="detail_uploader_thumbnail_view_description">Fetöltő profilképének bélyegképe</string>
+    <string name="detail_uploader_thumbnail_view_description">Feltöltő profilképének bélyegképe</string>
     <string name="content">Tartalom</string>
     <string name="show_age_restricted_content_title">Korhatáros tartalom megjelenítése</string>
     <string name="general_error">Hiba</string>
@@ -51,17 +51,17 @@
     <string name="what_happened_headline">Ez történt:</string>
     <string name="your_comment">Az Ön megjegyzése (angolul):</string>
     <string name="error_details_headline">Részletek:</string>
-    <string name="error_snackbar_message">Elnézet, valami balul sült el.</string>
-    <string name="sorry_string">Elnézést, ennek nem kellett volna megtörténnie.</string>
+    <string name="error_snackbar_message">Bocsánat, valami balul sült el.</string>
+    <string name="sorry_string">Bocsánat, ennek nem kellett volna megtörténnie.</string>
     <string name="error_report_button_text">Hiba bejelentése e-mailben</string>
     <string name="could_not_setup_download_menu">Nem sikerült a letöltési menü beállítása</string>
-    <string name="youtube_signature_deobfuscation_error">Nem sikerült a videó URL aláírásának feloldása</string>
+    <string name="youtube_signature_deobfuscation_error">Nem sikerült a videó webcímaláírásának feloldása</string>
     <string name="retry">Újra</string>
     <string name="video">Videó</string>
     <string name="audio">Hang</string>
     <string name="main_bg_subtitle">A kezdéshez koppintson a nagyítóra.</string>
-    <string name="could_not_load_thumbnails">Nem sikerült az összes bélyegkép betöltése</string>
-    <string name="parsing_error">Nem sikerült a weblap feldolgozása</string>
+    <string name="could_not_load_thumbnails">Nem sikerült betölteni az összes bélyegképet</string>
+    <string name="parsing_error">Nem sikerült feldolgozni a weblapot</string>
     <string name="downloads">Letöltések</string>
     <string name="downloads_title">Letöltések</string>
     <string name="error_report_title">Hibajelentés</string>
@@ -73,7 +73,7 @@
     <string name="msg_name">Fájlnév</string>
     <string name="msg_threads">Szálak</string>
     <string name="msg_error">Hiba</string>
-    <string name="msg_running">NewPipe letöltés folyamatban</string>
+    <string name="msg_running">PipePipe letöltés folyamatban</string>
     <string name="msg_running_detail">Koppintson a részletekért</string>
     <string name="msg_wait">Kis türelmet…</string>
     <string name="msg_copied">Vágólapra másolva</string>
@@ -86,19 +86,19 @@
     <string name="fragment_feed_title">Újdonságok</string>
     <string name="controls_background_title">Háttér</string>
     <string name="controls_popup_title">Felugró ablak</string>
-    <string name="no_player_found_toast">Nem található lejátszó a közvetítéshez (feltelepítheti a VLC-t a lejátszáshoz).</string>
+    <string name="no_player_found_toast">Nem található lejátszó a közvetítéshez (telepítse a VLC alkalmazást a lejátszáshoz).</string>
     <string name="open_in_popup_mode">Megnyitás felugró módban</string>
     <string name="use_external_video_player_summary">Néhány felbontásnál eltávolítja a hangot</string>
     <string name="subscribe_button_title">Feliratkozás</string>
     <string name="subscribed_button_title">Feliratkozva</string>
-    <string name="show_info">További infó</string>
+    <string name="show_info">További információ</string>
     <string name="default_popup_resolution_title">Felugró ablak alapértelmezett felbontása</string>
     <string name="show_higher_resolutions_title">Magasabb felbontások megjelenítése</string>
     <string name="show_higher_resolutions_summary">Csak bizonyos eszközök tudnak 2K/4K-s videókat lejátszani</string>
-    <string name="default_video_format_title">Alapértelmezett videoformátum</string>
+    <string name="default_video_format_title">Alapértelmezett videóformátum</string>
     <string name="black_theme_title">Fekete</string>
     <string name="popup_remember_size_pos_title">Felugró ablak tulajdonságainak megjegyzése</string>
-    <string name="popup_remember_size_pos_summary">A felugró ablak előző helyének és méretének megjegyzése</string>
+    <string name="popup_remember_size_pos_summary">Felugró ablak előző helyének és méretének megjegyzése</string>
     <string name="show_search_suggestions_title">Keresési javaslatok</string>
     <string name="show_search_suggestions_summary">Válassza ki a keresési javaslatokat keresés közben</string>
     <string name="enable_search_history_title">Keresési előzmények</string>
@@ -118,30 +118,30 @@
     <string name="play_all">Összes lejátszása</string>
     <string name="always">Mindig</string>
     <string name="just_once">Csak egyszer</string>
-    <string name="notification_channel_name">NewPipe értesítés</string>
-    <string name="notification_channel_description">Értesítések a NewPipe lejátszójához</string>
+    <string name="notification_channel_name">PipePipe értesítés</string>
+    <string name="notification_channel_description">Értesítések a PipePipe lejátszójához</string>
     <string name="unknown_content">[Ismeretlen]</string>
     <string name="import_data_title">Adatbázis importálása</string>
     <string name="export_data_title">Adatbázis exportálása</string>
     <string name="import_data_summary">Felülírja a jelenlegi előzményeket, feliratkozásokat, lejátszási listákat és (választhatóan) a beállításokat</string>
     <string name="export_data_summary">Előzmények, feliratkozások, lejátszási listák és beállítások exportálása</string>
     <string name="app_ui_crash">Az alkalmazás/kezelőfelület összeomlott</string>
-    <string name="player_stream_failure">Nem sikerült a videó lejátszása</string>
+    <string name="player_stream_failure">Nem sikerült lejátszani a videót</string>
     <string name="external_player_unsupported_link_type">A külső lejátszó nem támogatja az ilyen típusú hivatkozásokat</string>
-    <string name="video_streams_empty">Nem található videó adatfolyam</string>
-    <string name="audio_streams_empty">Nem található hang adatfolyam</string>
-    <string name="info_labels">Mi:\\nKérés:\\nTartalom nyelve:\\nTartalom származási országa:\\nAlkalmazás nyelve:\\nSzolgáltatás:\\nGMT idő:\\nCsomag:\\nVerzió:\\nOperációs rendszer verzió:</string>
-    <string name="search_no_results">Nincs találat</string>
+    <string name="video_streams_empty">Nem található videóadatfolyam</string>
+    <string name="audio_streams_empty">Nem található hangadatfolyam</string>
+    <string name="info_labels">Mi:\\nKérés:\\nTartalom nyelve:\\nTartalom származási országa:\\nAlkalmazás nyelve:\\nSzolgáltatás:\\nGMT idő:\\nCsomag:\\nVerzió:\\nOperációs rendszer verziója:</string>
+    <string name="search_no_results">Nincs megfelelő találat</string>
     <string name="controls_download_desc">Közvetítési fájl letöltése</string>
     <string name="controls_add_to_playlist_title">Hozzáadás ehhez</string>
     <string name="use_inexact_seek_title">Gyorsabb, de pontatlan tekerés használata</string>
     <string name="use_inexact_seek_summary">A pontatlan tekerés lehetővé teszi, hogy gyorsabban ugorjon a pozíciókra, de kisebb pontossággal. Az 5, 15, vagy 25 másodperces tekerés nem működik ebben a módban.</string>
     <string name="download_thumbnail_title">Bélyegképek betöltése</string>
-    <string name="download_thumbnail_summary">Kapcsolja ki, hogy a megelőzze a bélyegképek betöltését, így csökkentve az adat- és memóriahasználatot. A megváltoztatása törli a memóriában és a meghajtón lévő képgyorsítótárat.</string>
-    <string name="thumbnail_cache_wipe_complete_notice">A bélyegkép gyorsítótár törölve</string>
+    <string name="download_thumbnail_summary">Kapcsolja ki, hogy megelőzze a bélyegképek betöltését, így csökkentve az adat- és memóriahasználatot. A módosítással törli a memóriában és a meghajtón lévő képgyorsítótárat.</string>
+    <string name="thumbnail_cache_wipe_complete_notice">Bélyegképek gyorsítótára törölve</string>
     <string name="metadata_cache_wipe_title">Gyorsítótárazott metaadatok törlése</string>
     <string name="metadata_cache_wipe_summary">Minden gyorsítótárazott weboldaladat törlése</string>
-    <string name="metadata_cache_wipe_complete_notice">A metaadatok gyorsítótára törölve lett</string>
+    <string name="metadata_cache_wipe_complete_notice">Metaadatok gyorsítótára törölve</string>
     <string name="auto_queue_title">Következő videó automatikus sorba állítása</string>
     <string name="enable_search_history_summary">Keresési előzmények helyi tárolása</string>
     <string name="channels">Csatornák</string>
@@ -165,7 +165,7 @@
     <string name="invalid_source">Nincs ilyen fájl- vagy tartalomforrás</string>
     <string name="invalid_file">A fájl nem létezik, vagy hiányzik az olvasási vagy írási jogosultság</string>
     <string name="file_name_empty_error">A fájlnév nem lehet üres</string>
-    <string name="error_occurred_detail">Hiba történt: %1$s</string>
+    <string name="error_occurred_detail">Hiba: %1$s</string>
     <string name="no_streams_available_download">Nincs letölthető adatfolyam</string>
     <string name="empty_subscription_feed_subtitle">Nincs itt semmi pár tücskön kívül</string>
     <string name="detail_drag_description">Húzza az átrendezéshez</string>
@@ -201,7 +201,7 @@
     <string name="charset_letters_and_digits">Betűk és számok</string>
     <string name="charset_most_special_characters">Legtöbb speciális karakter</string>
     <string name="toast_no_player">Nincs a fájl lejátszásához szükséges alkalmazás telepítve</string>
-    <string name="title_activity_about">A NewPipe névjegye</string>
+    <string name="title_activity_about">A PipePipe névjegye</string>
     <string name="tab_about">Névjegy</string>
     <string name="tab_licenses">Licencek</string>
     <string name="app_description">Szabad, egyszerű közvetítésnézés Androidon.</string>
@@ -209,21 +209,21 @@
     <string name="contribution_encouragement">Legyen ötleted a fordítással, a dizájnnal, a forráskód tisztításával vagy egy komolyabb átszervezésével kapcsolatban, bármilyen segítséget szívesen fogadunk. Minél több minden készül el, annál jobb lesz!</string>
     <string name="view_on_github">Megtekintés a GitHubon</string>
     <string name="donation_title">Adományozás</string>
-    <string name="donation_encouragement">A NewPipe alkalmazást önkéntesek fejlesztik a szabadidejükben, hogy a lehető legjobb felhasználói élményt nyújtsák. Járuljon hozzá, hogy a fejlesztők még jobbá tegyék alkalmazást, miközben egy csésze kávét szürcsölnek.</string>
+    <string name="donation_encouragement">A PipePipe alkalmazást önkéntesek fejlesztik a szabadidejükben, hogy a lehető legjobb felhasználói élményt nyújtsák. Járuljon hozzá, hogy a fejlesztők még jobbá tegyék alkalmazást, miközben egy csésze kávét szürcsölnek.</string>
     <string name="give_back">Hozzájárulás</string>
     <string name="website_title">Honlap</string>
-    <string name="website_encouragement">Látogassa meg a NewPipe honlapját további információkért és hírekért.</string>
-    <string name="privacy_policy_title">A NewPipe adatvédelmi irányelvei</string>
-    <string name="privacy_policy_encouragement">A NewPipe projekt komolyan veszi az adatvédelmét. Az alkalmazás nem gyűjt semmilyen adatot a beleegyezése nélkül.
-\nA NewPipe adatvédelmi irányelve részletesen elmagyarázza, mely adatok kerülnek elküldésre és tárolásra az alkalmazás összeomlásának jelentésekor.</string>
+    <string name="website_encouragement">Látogassa meg a PipePipe honlapját a további információkért és hírekért.</string>
+    <string name="privacy_policy_title">A PipePipe adatvédelmi irányelvei</string>
+    <string name="privacy_policy_encouragement">A PipePipe projekt komolyan veszi az adatvédelmét. Az alkalmazás nem gyűjt semmilyen adatot a beleegyezése nélkül.
+\nA PipePipe adatvédelmi irányelve részletesen elmagyarázza, mely adatok kerülnek elküldésre és tárolásra az alkalmazás összeomlásának jelentésekor.</string>
     <string name="read_privacy_policy">Adatvédelmi irányelvek elolvasása</string>
-    <string name="app_license_title">A NewPipe licence</string>
+    <string name="app_license_title">A PipePipe licence</string>
     <string name="read_full_license">Licenc elolvasása</string>
     <string name="title_activity_history">Előzmények</string>
     <string name="action_history">Előzmények</string>
     <string name="delete_item_search_history">Törli ezt az elemet a keresési előzmények közül\?</string>
     <string name="title_last_played">Utoljára lejátszott</string>
-    <string name="title_most_played">Legtöbbet lejátszott</string>
+    <string name="title_most_played">Legtöbbször lejátszott</string>
     <string name="main_page_content">Főoldal tartalma</string>
     <string name="blank_page_summary">Üres oldal</string>
     <string name="kiosk_page_summary">Újságárus oldal</string>
@@ -245,9 +245,9 @@
     <string name="play_queue_audio_settings">Hangbeállítások</string>
     <string name="preferred_open_action_settings_summary">Alapértelmezett tevékenység „%s” típusú tartalom megnyitásakor</string>
     <string name="video_player">Videólejátszó</string>
-    <string name="background_player">Lejátszás háttérben</string>
+    <string name="background_player">Lejátszás a háttérben</string>
     <string name="popup_player">Felugró ablakos lejátszás</string>
-    <string name="always_ask_open_action">Mindig kérdezzen</string>
+    <string name="always_ask_open_action">Mindig kérdezzen rá</string>
     <string name="preferred_player_fetcher_notification_title">Információk gyűjtése…</string>
     <string name="preferred_player_fetcher_notification_message">Kért tartalom betöltése</string>
     <string name="create_playlist">Új lejátszási lista</string>
@@ -266,7 +266,7 @@
     <string name="resize_zoom">Nagyítás</string>
     <string name="caption_auto_generated">Automatikusan létrehozott</string>
     <string name="caption_setting_title">Feliratok</string>
-    <string name="caption_setting_description">Feliratok méretének és hátterének stílusbeli módosítása. A módosítások életbe lépésehez az alkalmazás újraindítása szükséges.</string>
+    <string name="caption_setting_description">Feliratok méretének és hátterének stílusbeli módosítása. A módosítások életbe lépéséhez az alkalmazás újraindítása szükséges.</string>
     <string name="import_title">Importálás</string>
     <string name="import_from">Importálás a következőből</string>
     <string name="export_to">Exportálás a következőbe</string>
@@ -274,8 +274,8 @@
     <string name="export_ongoing">Exportálás…</string>
     <string name="import_file_title">Fájl importálása</string>
     <string name="previous_export">Előző exportálás</string>
-    <string name="subscriptions_import_unsuccessful">A feliratkozások importálása nem sikerült</string>
-    <string name="subscriptions_export_unsuccessful">A feliratkozások exportálása nem sikerült</string>
+    <string name="subscriptions_import_unsuccessful">Nem sikerült importálni a feliratkozásokat</string>
+    <string name="subscriptions_export_unsuccessful">Nem sikerült exportálni a feliratkozásokat</string>
     <string name="import_youtube_instructions">YouTube feliratkozások importálása a Google Takeoutból:
 \n
 \n1. Navigáljon erre az oldalra: %1$s
@@ -285,16 +285,16 @@
 \n5. Kattintson a „Letöltés” gombra, amikor megjelenik,
 \n6. Kattintson a lenti FÁJL IMPORTÁLÁSA gombra, és válassza ki a letöltött ZIP-fájlt
 \n7. [Ha a ZIP-fájl importálása nem sikerül] Bontsa ki a .csv fájlt (általában: „YouTube és YouTube Music/feliratkozások/feliratkozások.csv\"), majd kattintson lent a FÁJL IMPORTÁLÁSA gombra, és válassza az exportált CSV-fájlt</string>
-    <string name="import_soundcloud_instructions">SoundCloud-profil importálása az URL vagy az azonosítójának begépelésével:
+    <string name="import_soundcloud_instructions">SoundCloud profil importálása a webcím vagy az azonosítójának begépelésével:
 \n
 \n1. A webböngészőben engedélyezze az „asztali módot” (az oldal nem érhető el mobileszközökön)
-\n2. Navigáljon erre az URL-re: %1$s
+\n2. Navigáljon erre a webcímre: %1$s
 \n3. Jelentkezzen be, ha kéri
-\n4. Másolja ki a profil URL-t, ahova át lett irányítva.</string>
+\n4. Másolja ki a profil webcímét, ahova át lett irányítva.</string>
     <string name="import_soundcloud_instructions_hint">saját azonosítója, soundcloud.com/azonosító</string>
     <string name="import_network_expensive_warning">Ez a művelet adatforgalom-igényes lehet.
 \n
-\nBiztos, hogy folytatja\?</string>
+\nBiztosan folytatja\?</string>
     <string name="playback_tempo">Ütem</string>
     <string name="playback_pitch">Hangmagasság</string>
     <string name="skip_silence_checkbox">Előrepörgetés csend alatt</string>
@@ -303,7 +303,7 @@
     <string name="accept">Elfogadás</string>
     <string name="decline">Elutasítás</string>
     <string name="limit_data_usage_none_description">Nincs korlát</string>
-    <string name="limit_mobile_data_usage_title">Felbontás korlátozása mobil adatkapcsolat használata esetén</string>
+    <string name="limit_mobile_data_usage_title">Felbontás korlátozása mobiladatforgalom használata esetén</string>
     <string name="minimize_on_exit_summary">A fő videólejátszóról más alkalmazásra történő váltáskor teendő művelet — %s</string>
     <string name="minimize_on_exit_none_description">Ne tegyen semmit</string>
     <string name="minimize_on_exit_background_description">Lejátszás folytatása a háttérben</string>
@@ -324,7 +324,7 @@
     <string name="seek_duration_title">Az előre- és visszatekerés időtartama</string>
     <string name="enable_playback_resume_summary">Utolsó lejátszási pozíció visszaállítása</string>
     <string name="enable_playback_resume_title">Lejátszás folytatása</string>
-    <string name="app_update_notification_channel_description">Értesítések az új NewPipe verziókról</string>
+    <string name="app_update_notification_channel_description">Értesítések az új PipePipe verziókról</string>
     <string name="app_update_notification_channel_name">Alkalmazásfrissítés értesítése</string>
     <string name="file_deleted">Fájl törölve</string>
     <string name="settings_category_updates_title">Frissítések</string>
@@ -339,25 +339,25 @@
     <string name="volume_gesture_control_title">Hangerő gesztus</string>
     <string name="downloads_storage_ask_summary">Meg fogja kérdezni, hogy hova mentse el az egyes letöltéseket.
 \nEngedélyezze a rendszermappa-választót (SAF), ha külső SD-kártyára akar letölteni</string>
-    <string name="downloads_storage_ask_title">Kérdezze meg, hova töltse le</string>
+    <string name="downloads_storage_ask_title">Kérdezzen rá a letöltési helyre</string>
     <string name="pause_downloads">Letöltések szüneteltetése</string>
     <string name="start_downloads">Letöltések indítása</string>
     <string name="enable_queue_limit_desc">Egyszerre csak egy letöltés fog futni</string>
     <string name="enable_queue_limit">Letöltési sor korlátozása</string>
     <string name="close">Bezárás</string>
-    <string name="pause_downloads_on_mobile_desc">Hasznos, ha mobil adatkapcsolatra vált, bár néhány letöltést nem lehet felfüggeszteni</string>
+    <string name="pause_downloads_on_mobile_desc">Hasznos, ha mobiladat-forgalomra vált, bár néhány letöltést nem lehet felfüggeszteni</string>
     <string name="pause_downloads_on_mobile">Félbehagyás a forgalomkorlátos hálózatokon</string>
     <string name="max_retry_desc">A letöltés megszakítása előtti kísérletek legnagyobb száma</string>
     <string name="max_retry_msg">Próbálkozások legnagyobb száma</string>
     <string name="stop">Leállítás</string>
     <string name="delete_downloaded_files">Letöltött fájlok törlése</string>
-    <string name="confirm_prompt">Törli a letöltési előzményeket, vagy törli az összes letöltött fájlt\?</string>
+    <string name="confirm_prompt">Törli a letöltési előzményeket vagy az összes letöltött fájlt\?</string>
     <string name="clear_download_history">Letöltési előzmények törlése</string>
     <string name="error_download_resource_gone">A letöltést nem lehet helyrehozni</string>
     <string name="error_timeout">Kapcsolati időtúllépés</string>
     <string name="error_progress_lost">Az előrehaladás elveszett, mert a fájlt törölték</string>
-    <string name="error_insufficient_storage">Nincs hely az eszközön</string>
-    <string name="error_postprocessing_stopped">A NewPipe leállt a fájl feldolgozása közben</string>
+    <string name="error_insufficient_storage">Nincs elegendő tárhely az eszközön</string>
+    <string name="error_postprocessing_stopped">A PipePipe leállt a fájl feldolgozása közben</string>
     <string name="error_postprocessing_failed">Utófeldolgozás sikertelen</string>
     <string name="error_http_not_found">Nincs talalat</string>
     <string name="error_http_unsupported_range">A kiszolgáló nem fogad többszálú letöltést, próbálkozzon újra ezzel: @string/msg_threads = 1</string>
@@ -370,8 +370,8 @@
     <string name="show_error">Hiba megjelenítése</string>
     <string name="download_already_pending">Ezzel a névvel egy letöltés már várakozik</string>
     <string name="download_already_running">Ezzel a névvel egy letöltés már folyamatban van</string>
-    <string name="overwrite_finished_warning">Ilyen névű letöltött fájl már létezik</string>
-    <string name="overwrite_unrelated_warning">Ilyen névű fájl már létezik</string>
+    <string name="overwrite_finished_warning">Már létezik ilyen nevű letöltött fájl</string>
+    <string name="overwrite_unrelated_warning">Már létezik Ilyen nevű fájl</string>
     <string name="overwrite">Felülírás</string>
     <string name="generate_unique_name">Egyedi név előállítása</string>
     <string name="download_failed">Letöltés sikertelen</string>
@@ -379,15 +379,15 @@
     <string name="post_processing">utófeldolgozás</string>
     <string name="queued">sorba állítva</string>
     <string name="paused">szüneteltetve</string>
-    <string name="missions_header_pending">Függőben lévő</string>
+    <string name="missions_header_pending">Függőben</string>
     <string name="missions_header_finished">Befejezett</string>
     <string name="app_update_notification_content_text">Kattintson a letöltéshez</string>
-    <string name="app_update_notification_content_title">NewPipe frissítés érhető el!</string>
+    <string name="app_update_notification_content_title">PipePipe frissítés érhető el!</string>
     <string name="auto">Automatikus</string>
     <string name="grid">Rács</string>
     <string name="list">Lista</string>
-    <string name="list_view_mode">Lista nézet</string>
-    <string name="missing_file">A fájl áthelyezve vagy törölve</string>
+    <string name="list_view_mode">Listanézet</string>
+    <string name="missing_file">A fájl át lett helyezve vagy törölve lett</string>
     <string name="download_to_sdcard_error_message">A külső SD-kártyára történő mentés nem lehetséges. Visszaállítja a letöltési mappa helyét\?</string>
     <string name="download_to_sdcard_error_title">A külső tárhely nem érhető el</string>
     <string name="watch_history_states_deleted">Lejátszási pozíciók törölve</string>
@@ -403,17 +403,17 @@
     <string name="show_description_title">Leírás megjelenítése</string>
     <string name="notification_action_buffering">Pufferelés</string>
     <string name="open_with">Megnyitás ezzel</string>
-    <string name="unsupported_url_dialog_message">Az URL-t nem lehetett felismerni. Megnyitja másik alkalmazással\?</string>
+    <string name="unsupported_url_dialog_message">Az webcímet nem lehetett felismerni. Megnyitja másik alkalmazással\?</string>
     <string name="auto_queue_toggle">Automatikus sorba állítás</string>
     <string name="show_description_summary">Kapcsolja ki, hogy elrejtse a videó leírását és a további információkat</string>
     <string name="restore_defaults_confirmation">Visszaállítja az alapértelmezéseket\?</string>
     <string name="restricted_video_no_stream">Ez a videó korhatáros.
-\nAz új, korhatáros videókkal kapcsolatos YouTube irányelvek miatt a NewPipe nem férhet hozzá a videóhoz, így nem tudja lejátszani.</string>
+\nAz új, korhatáros videókkal kapcsolatos YouTube irányelvek miatt a PipePipe nem férhet hozzá a videóhoz, így nem tudja lejátszani.</string>
     <string name="description_tab_description">Leírás</string>
     <string name="comments_tab_description">Megjegyzések</string>
     <string name="copy_for_github">Formázott jelentés másolása</string>
     <string name="permission_display_over_apps">Adjon engedélyt a más alkalmazások feletti megjelenéshez</string>
-    <string name="no_playlist_bookmarked_yet">Még nincs könyvjelző lejátszási listához</string>
+    <string name="no_playlist_bookmarked_yet">Még nincs könyvjelző a lejátszási listához</string>
     <string name="unmute">Némítás megszüntetése</string>
     <string name="mute">Némítás</string>
     <string name="feed_subscription_not_loaded_count">Nincs betöltve: %d</string>
@@ -430,7 +430,7 @@
     <string name="new_seek_duration_toast">Az ExoPlayer korlátai miatt az előre- és visszatekerés időtartama %d másodpercre lett állítva</string>
     <string name="feed_groups_header_title">Csatornacsoportok</string>
     <string name="systems_language">Rendszer alapértelmezése</string>
-    <string name="start_accept_privacy_policy">Az Általános adatvédelmi rendeletnek (GDPR) való megfelelés érdekében felhívjuk figyelmét a NewPipe adatvédelmi nyilatkozatára. Olvassa el figyelmesen.
+    <string name="start_accept_privacy_policy">Az Általános adatvédelmi rendeletnek (GDPR) való megfelelés érdekében felhívjuk figyelmét a PipePipe adatvédelmi nyilatkozatára. Olvassa el figyelmesen.
 \nEl kell fogadnia, ha hibajelentést szeretne küldeni.</string>
     <string name="crash_the_app">Alkalmazás összeomlasztása</string>
     <string name="show_memory_leaks">Memóriaszivárgások megjelenítése</string>
@@ -453,7 +453,7 @@
     <string name="subscribers_count_not_available">A feliratkozók száma nem érhető el</string>
     <string name="local">Helyi</string>
     <string name="localization_changes_requires_app_restart">A nyelv az alkalmazás újraindításakor fog megváltozni</string>
-    <string name="error_unable_to_load_comments">Megjegyzések betöltése sikertelen</string>
+    <string name="error_unable_to_load_comments">Nem sikerült betölteni a bejegyzéseket</string>
     <string name="select_a_playlist">Válasszon egy lejátszási listát</string>
     <string name="autoplay_summary">Lejátszás automatikus indítása — %s</string>
     <string name="playback_speed_control">Lejátszás sebességének beállítása</string>
@@ -473,7 +473,7 @@
     <string name="error_report_open_issue_button_text">Jelentés a GitHubon</string>
     <string name="restore_defaults">Alapértelmezések visszaállítása</string>
     <string name="help">Súgó</string>
-    <string name="clear_cookie_summary">Sütik törlése, amelyeket a NewPipe akkor ment, amikor megold egy reCAPTCHA-t</string>
+    <string name="clear_cookie_summary">Sütik törlése, amelyeket a PipePipe akkor ment, amikor megold egy reCAPTCHAt</string>
     <string name="recaptcha_cookies_cleared">reCAPTCHA sütik törölve</string>
     <string name="clear_cookie_title">reCAPTCHA sütik törlése</string>
     <string name="artists">Előadók</string>
@@ -485,7 +485,7 @@
 \n
 \nEngedélyezze a(z) „%1$s” beállítást, ha meg szeretné tekinteni.</string>
     <string name="show_age_restricted_content_summary">Gyermekek számára esetlegesen nem megfelelő, korhatáros tartalom megjelenítése (például 18+)</string>
-    <string name="peertube_instance_add_https_only">Csak a HTTPS URL-ek támogatottak</string>
+    <string name="peertube_instance_add_https_only">Csak a HTTPS webcímek támogatottak</string>
     <string name="show_meta_info_title">Metainformációk megjelenítése</string>
     <string name="clear_queue_confirmation_description">A jelenleg aktív lejátszási sor le lesz cserélve</string>
     <string name="clear_queue_confirmation_title">Megerősítés kérése a lejátszási sor törlése előtt</string>
@@ -523,15 +523,15 @@
         <item quantity="other">%d kiválasztva</item>
     </plurals>
     <string name="feed_create_new_group_button_title">Új</string>
-    <string name="content_not_supported">Ezt a tartalmat még nem támogatja a NewPipe.
+    <string name="content_not_supported">Ezt a tartalmat még nem támogatja a PipePipe.
 \n
 \nRemélhetőleg egy következő verzióban már támogatott lesz.</string>
     <string name="no_app_to_open_intent">Nincs a készülékén olyan alkalmazás, amely meg tudja ezt nyitni</string>
-    <string name="youtube_music_premium_content">Ez a videó csak YouTube Music Prémium előfizetők számára érhető el, így nem tekinthető meg és nem tölthető le a NewPipe-pal.</string>
+    <string name="youtube_music_premium_content">Ez a videó csak YouTube Music Prémium előfizetők számára érhető el, így nem tekinthető meg és nem tölthető le a PipePipe-pal.</string>
     <string name="auto_device_theme_title">Automatikus (rendszertéma)</string>
-    <string name="paid_content">Ez a tartalom csak előfizetőknek érhető el, nem tekinthető meg és nem tölthető le a NewPipe-pal.</string>
+    <string name="paid_content">Ez a tartalom csak előfizetőknek érhető el, nem tekinthető meg és nem tölthető le a PipePipe-pal.</string>
     <string name="georestricted_content">Ez a tartalom nem érhető el az országában.</string>
-    <string name="private_content">Ez a tartalom privát, így nem tekinthető meg és nem tölthető le a NewPipe-pal.</string>
+    <string name="private_content">Ez a tartalom privát, így nem tekinthető meg és nem tölthető le a PipePipe-pal.</string>
     <string name="download_has_started">A letöltés elkezdődött</string>
     <string name="notification_scale_to_square_image_summary">Értesítésben megjelenő bélyegkép átméretezése 16:9-es helyett 1:1-es arányra (torzítással járhat)</string>
     <string name="chapters">Fejezetek</string>
@@ -541,13 +541,13 @@
     <string name="enqueued">Sorba állítva</string>
     <string name="enqueue_stream">Sorba állítás</string>
     <string name="saved_tabs_invalid_json">Nem sikerült a mentett lapok olvasása, alapértelmezettek használata</string>
-    <string name="hash_channel_description">Értesítések a videók ujjlenyomatkészítési folyamatához</string>
+    <string name="hash_channel_description">Értesítések a videók ujjlenyomat-készítési folyamatához</string>
     <string name="hash_channel_name">Videó ujjlenyomat-készítési értesítése</string>
     <string name="youtube_restricted_mode_enabled_summary">A YouTube biztosít egy „Korlátozott módot”, amely elrejti a lehetséges felnőtteknek szóló tartalmat</string>
     <string name="youtube_restricted_mode_enabled_title">A YouTube „Korlátozott módjának” bekapcsolása</string>
     <string name="peertube_instance_add_exists">A példány már létezik</string>
     <string name="peertube_instance_add_fail">A példány érvényesítése nem sikerült</string>
-    <string name="peertube_instance_add_help">Adja meg a példány URL-ét</string>
+    <string name="peertube_instance_add_help">Adja meg a példány webcímét</string>
     <string name="peertube_instance_add_title">Példány hozzáadása</string>
     <string name="peertube_instance_url_help">Találjon önnek tetsző példányokat itt: %s</string>
     <string name="peertube_instance_url_summary">Válassza ki a kedvenc PeerTube példányait</string>
@@ -557,14 +557,14 @@
     <string name="drawer_close">Fiók bezárása</string>
     <string name="drawer_open">Fiók megnyitása</string>
     <string name="show_channel_details">Csatorna részleteinek megjelenítése</string>
-    <string name="hold_to_append">Tartsa a sorba állításhoz</string>
+    <string name="hold_to_append">Tartsa nyomva a sorba állításhoz</string>
     <string name="default_kiosk_page_summary">Alapértelmezett újságárus</string>
-    <string name="app_license">A NewPipe egy copyleft szabad szoftver: tetszése szerint felhasználhatja, tanulmányozhatja, megoszthatja és fejlesztheti. Egész pontosan a Free Software Foundation által kiadott GNU General Public License 3-as, vagy (választható módon) újabb verziójának feltételei szerint módosíthatja vagy adhatja tovább.</string>
+    <string name="app_license">A PipePipe egy szabad szoftver: tetszése szerint felhasználhatja, tanulmányozhatja, megoszthatja és fejlesztheti. Egész pontosan a Free Software Foundation által kiadott GNU General Public License 3-as, vagy (választható módon) újabb verziójának feltételei szerint módosíthatja vagy adhatja tovább.</string>
     <string name="recaptcha_solve">Megoldás</string>
     <string name="subtitle_activity_recaptcha">Nyomja meg a „Kész” gombot, ha megoldotta</string>
     <string name="msg_calculating_hash">Ujjlenyomat számítása</string>
     <string name="related_items_tab_description">Kapcsolódó elemek</string>
-    <string name="error_report_open_github_notice">Ellenőrizze, hogy létezik-e már olyan jegy, amely az összeomlásával foglalkozik. Ha duplikált jegyet ad fel, akkor olyan időt vesz el tőlünk, amelyet a hiba javítására tudnánk fordítani.</string>
+    <string name="error_report_open_github_notice">Ellenőrizze, hogy létezik-e már olyan hibajegy, amely az Ön alkalmazásának összeomlásával foglalkozik. Ha duplikált hibajegyet küld be, akkor olyan időt vesz el tőlünk, amelyet a hiba javítására tudnánk fordítani.</string>
     <string name="minimize_on_exit_title">Minimalizálás alkalmazásváltáskor</string>
     <string name="service_provides_reason">A(z) %s ezt az okot adta meg:</string>
     <string name="local_search_suggestions">Helyi keresési javaslatok</string>
@@ -584,27 +584,27 @@
     <string name="downloads_storage_ask_summary_no_saf_notice">Minden letöltésnél meg fogja kérdezni, hogy hova mentse el</string>
     <string name="downloads_storage_use_saf_summary_api_19">A „Storage Access Framework” nem támogatott Android KitKaten vagy régebbin</string>
     <string name="choose_instance_prompt">Válasszon egy példányt</string>
-    <string name="feed_oldest_subscription_update">Lista legutóbbi frissítése: %s</string>
+    <string name="feed_oldest_subscription_update">Lista legutóbb frissítve: %s</string>
     <string name="feed_notification_loading">Lista betöltése…</string>
     <string name="feed_group_show_only_ungrouped_subscriptions">Csak a nem csoportosított feliratkozások megjelenítése</string>
     <string name="settings_category_feed_title">Lista</string>
     <string name="feed_update_threshold_title">Lista frissítési küszöb</string>
     <string name="feed_update_threshold_summary">A legutóbbi frissítés óta eltelt idő, ami után a feliratkozás elavultnak számít – %s</string>
     <string name="feed_load_error_terminated">A szerző fiókját eltávolították.
-\nA NewPipe nem fogja tudni betölteni ezt a listát a jövőben.
+\nA PipePipe nem fogja tudni betölteni ezt a listát a jövőben.
 \nLeiratkozik erről a csatornáról\?</string>
     <string name="feed_load_error_fast_unknown">A gyors listamód nem ad ennél több információt.</string>
     <string name="feed_use_dedicated_fetch_method_title">Lekérés egy dedikált listából, ha lehetséges</string>
     <string name="feed_use_dedicated_fetch_method_enable_button">Gyors mód engedélyezése</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Úgy gondolja, hogy a lista betöltése lassú\? Ha így van, akkor próbálja engedélyezni a gyors betöltést (ezt a beállításokban változtathatja meg, vagy a lenti gomb megnyomásával).
 \n
-\nA NewPipe két listabetöltési stratégiát kínál:
+\nA PipePipe két listabetöltési stratégiát kínál:
 \n• A teljes feliratkozott csatorna lekérése, amely lassú, de teljes.
 \n• Egy dedikált szolgáltatási végpont, amely gyors, de általában nem teljes.
 \n
 \nA különbség a kettő között az, hogy a gyorsból általában hiányoznak egyes információk, mint az elem hossza vagy a típusa (nem lehet megkülönböztetni az élő videókat a normálaktól), valamint kevesebb elemet adhat vissza.
 \n
-\nA YouTube például egy olyan szolgáltatás, amely ezt a gyors módot RSS hírcsatornával kínálja.
+\nA YouTube például egy olyan szolgáltatás, amely ezt a gyors módot RSS-hírcsatornával kínálja.
 \n
 \nÍgy a választása azon múlik, hogy melyiket tartja fontosabbnak: a sebességet vagy a pontos információkat.</string>
     <string name="detail_sub_channel_thumbnail_view_description">Csatorna profilképének bélyegképe</string>
@@ -615,7 +615,7 @@
     <string name="metadata_licence">Licenc</string>
     <string name="metadata_age_limit">Korhatár</string>
     <string name="metadata_host">Kiszolgáló</string>
-    <string name="metadata_thumbnail_url">Bélyegkép URL</string>
+    <string name="metadata_thumbnail_url">Bélyegkép webcíme</string>
     <string name="metadata_privacy_public">Nyilvános</string>
     <string name="metadata_privacy_unlisted">Nem listázott</string>
     <string name="off">Ki</string>
@@ -645,12 +645,12 @@
     <string name="detail_heart_img_view_description">Készítő által szívecskézve</string>
     <string name="on">Be</string>
     <string name="feed_load_error_account_info">A(z) „%s” listája nem tölthető be.</string>
-    <string name="soundcloud_go_plus_content">Ez egy SoundCloud Go+ szám, legalábbis az Ön országában, így nem játszható le vagy tölthető le a NewPipe-pal.</string>
+    <string name="soundcloud_go_plus_content">Ez egy SoundCloud Go+ szám, legalábbis az Ön országában, így nem játszható le vagy tölthető le a PipePipe-pal.</string>
     <string name="show_meta_info_summary">Kapcsolja ki, hogy elrejtse a metainformációs dobozokat, melyek további információkat tartalmaznak a közvetítés létrehozójáról, annak tartalmáról vagy egy keresési kérésről</string>
     <string name="error_report_channel_name">Hibajelentési értesítés</string>
     <string name="error_report_channel_description">Értesítések a hibák jelentéséhez</string>
-    <string name="error_report_notification_title">A NewPipe hibát észlelt, koppintson a jelentéséhez</string>
-    <string name="error_report_notification_toast">Hiba történt, lásd az értesítést</string>
+    <string name="error_report_notification_title">A PipePipe hibát észlelt, koppintson a jelentéséhez</string>
+    <string name="error_report_notification_toast">Hiba történt, tekintse meg az értesítést</string>
     <string name="disable_media_tunneling_title">Médiacsatornázás letiltása</string>
     <string name="show_error_snackbar">Hiba üzenetsávjának megjelenítése</string>
     <string name="create_error_notification">Hibaértesítés létrehozása</string>
@@ -667,7 +667,7 @@
     <string name="feed_use_dedicated_fetch_method_disable_button">Gyors mód letiltása</string>
     <string name="remove_watched_popup_yes_and_partially_watched_videos">Igen, és távolítsa el a részben megnézett videókat is</string>
     <string name="remove_watched_popup_warning">A videók, melyeket már megnézett miután a lejátszási listához adta őket, el lesznek távolítva.
-\nBiztos benne\? Ez nem vonható vissza.</string>
+\nBiztos benne\? Ez a művelet nem vonható vissza.</string>
     <string name="show_original_time_ago_summary">A szolgáltatásokból származó eredeti szövegek láthatók lesznek a közvetítési elemeken</string>
     <string name="crash_the_player">Lejátszó összeomlasztása</string>
     <string name="show_image_indicators_title">Képjelölők megjelenítése</string>
@@ -683,5 +683,5 @@
         <item quantity="other">%1$s letöltés törölve</item>
     </plurals>
     <string name="detail_pinned_comment_view_description">Rögzített megjegyzés</string>
-    <string name="leak_canary_not_available">LeakCanary nem elérhető</string>
+    <string name="leak_canary_not_available">Nem érhető el a LeakCanary</string>
 </resources>
