@@ -188,10 +188,9 @@ public class MainActivity extends AppCompatActivity {
         int storedVersionCode = prefs.getInt("version_code", 0);
         long lastShowDonationTime = prefs.getLong("last_show_donation_time", 0);
         long currentTime = System.currentTimeMillis();
+        boolean betaDialogShown = prefs.getBoolean("beta_test_dialog_shown", false);
 
-// Check if the stored version code is different from the current version code
         if (currentVersionCode > storedVersionCode) {
-            // Show the "What's New" dialog
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.fragment_feed_title);
             builder.setMessage(R.string.update_log);
@@ -200,7 +199,6 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
             builder2.setTitle(R.string.donation_dialog_title);
             builder2.setMessage(R.string.donation_dialog_message);
-            // another button to copy to clipboard
 
             builder2.setPositiveButton(R.string.sponsor_promote, (dialog, which) -> {
                 ShareUtils.openUrlInBrowser(this, getString(R.string.donation_url));
@@ -208,23 +206,46 @@ public class MainActivity extends AppCompatActivity {
             builder2.setNegativeButton(R.string.no, null);
 
             final AlertDialog dialog2 = builder2.create();
+            if (!betaDialogShown) {
+                dialog2.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        AlertDialog.Builder betaBuilder = new AlertDialog.Builder(MainActivity.this);
+                        betaBuilder.setTitle(R.string.beta_test_dialog_title);
+                        betaBuilder.setMessage(R.string.beta_test_dialog_message);
+                        betaBuilder.setPositiveButton(R.string.view_on_github, (dialog2, which) -> {
+                            ShareUtils.openUrlInBrowser(MainActivity.this, "https://github.com/InfinityLoop1308/PipePipe/releases");
+                        });
+                        betaBuilder.setNegativeButton(R.string.cancel, null);
+                        betaBuilder.show();
+                        prefs.edit().putBoolean("beta_test_dialog_shown", true).apply();
+                    }
+                });
+            }
 
             final AlertDialog dialog1 = builder.create();
             dialog1.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
-                    // Show the second dialog when the first dialog is dismissed
                     if((storedVersionCode / 100 < 1086 && currentTime - lastShowDonationTime > 14 * 24 * 60 * 60 * 1000)
                             || currentTime - lastShowDonationTime > 30L * 24 * 60 * 60 * 1000) {
                         prefs.edit().putLong("last_show_donation_time", currentTime).apply();
                         dialog2.show();
+                    } else if (!betaDialogShown) {
+                        AlertDialog.Builder betaBuilder = new AlertDialog.Builder(MainActivity.this);
+                        betaBuilder.setTitle(R.string.beta_test_dialog_title);
+                        betaBuilder.setMessage(R.string.beta_test_dialog_message);
+                        betaBuilder.setPositiveButton(R.string.view_on_github, (dialog2, which) -> {
+                            ShareUtils.openUrlInBrowser(MainActivity.this, "https://github.com/InfinityLoop1308/PipePipe/releases");
+                        });
+                        betaBuilder.setNegativeButton(R.string.cancel, null);
+                        betaBuilder.show();
+                        prefs.edit().putBoolean("beta_test_dialog_shown", true).apply();
                     }
                 }
             });
 
-            // Show the first dialog
             dialog1.show();
-            // Update the stored version code
             prefs.edit().putInt("version_code", currentVersionCode).apply();
 
 
@@ -240,8 +261,17 @@ public class MainActivity extends AppCompatActivity {
                 prefs.edit().putString(getString(R.string.youtube_cookies_key), "").apply();
                 prefs.edit().putString(getString(R.string.youtube_po_token_key), "").apply();
             }
+        } else if (!betaDialogShown) {
+            AlertDialog.Builder betaBuilder = new AlertDialog.Builder(this);
+            betaBuilder.setTitle(R.string.beta_test_dialog_title);
+            betaBuilder.setMessage(R.string.beta_test_dialog_message);
+            betaBuilder.setPositiveButton(R.string.view_on_github, (dialog, which) -> {
+                ShareUtils.openUrlInBrowser(this, "https://github.com/InfinityLoop1308/PipePipe/releases");
+            });
+            betaBuilder.setNegativeButton(R.string.cancel, null);
+            betaBuilder.show();
+            prefs.edit().putBoolean("beta_test_dialog_shown", true).apply();
         }
-
         String lastAnnouncementId = prefs.getString("last_announcement_id", null);
         try {
             NewPipe.getDownloader().getAsync("https://github.com/InfinityLoop1308/PipePipe/wiki/Announcement", resp -> {
@@ -264,15 +294,12 @@ public class MainActivity extends AppCompatActivity {
 
 
         int isFirstRun = prefs.getInt("isFirstRun", 0);
-        // if is First run and update checker is not enabled, show a dialog to ask if user want to enable update checker
         if (isFirstRun == 0) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.dialog_title_enable_update_checker);
             builder.setMessage(R.string.dialog_message_enable_update_checker);
             builder.setPositiveButton(R.string.ok, (dialog, which) -> {
                 prefs.edit().putBoolean(app.getString(R.string.update_app_key), true).apply();
-                // Start the worker which is checking all conditions
-                // and eventually searching for a new version.
                 NewVersionWorker.enqueueNewVersionCheckingWork(app, true);
             });
             builder.setNegativeButton(R.string.no, (dialog, which) -> prefs.edit().putBoolean(app.getString(R.string.update_app_key), false).apply());

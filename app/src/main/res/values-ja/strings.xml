@@ -1024,4 +1024,7 @@
 <string name="search_suggestions_count_summary">表示する過去の検索候補の数</string>
 <string name="disable_android_auto_title">Android Autoを無効化</string>
 <string name="disable_android_auto_summary">Android 12以前の通知問題を回避するためにAndroid Auto接続を無効化します。\n\nこのオプションを再度有効化した後、変更を反映させるにはアプリを再起動し、車と再接続する必要があります。</string>
+<string name="youtube_account_temporarily_disabled">一時的に無効化されています</string>
+<string name="beta_test_dialog_title">PipePipe 5.0.0 Beta-2 テストに参加しよう！</string>
+<string name="beta_test_dialog_message">いつもご支援いただきありがとうございます！ アプリをゼロから再構築する取り組みの大きな前進となる PipePipe 5.0.0 Beta-2 をリリースできることを大変嬉しく思います。\n\nこのバージョンは、初期のフィードバックに基づき、安定性と機能の完成度の大幅な改善に注力しています。正式リリースにかなり近づいていますが、まだベータ版であり、皆さまからのフィードバックが非常に重要です。\n\nご注意: これは \"PipePipe Beta\" としてインストールされ、現在のアプリやデータには影響しません。\n\n不具合を見つけたりご提案がある場合は、GitHubリポジトリでIssueを作成してぜひお知らせください！</string>
 </resources>

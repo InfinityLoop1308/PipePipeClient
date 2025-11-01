@@ -1002,4 +1002,7 @@
 <string name="search_suggestions_count_summary">Anzahl der anzuzeigenden vergangenen Suchvorschläge</string>
 <string name="disable_android_auto_title">Android Auto deaktivieren</string>
 <string name="disable_android_auto_summary">Deaktivieren Sie die Android Auto-Verbindung, um Benachrichtigungsprobleme auf Android 12 und älteren Versionen zu vermeiden.\n\nNach dem erneuten Aktivieren dieser Option müssen Sie die App neu starten und die Verbindung zum Auto wiederherstellen, damit die Änderung wirksam wird.</string>
+<string name="youtube_account_temporarily_disabled">Vorübergehend deaktiviert</string>
+<string name="beta_test_dialog_title">Nimm am PipePipe 5.0.0 Beta-2-Test teil!</string>
+<string name="beta_test_dialog_message">Vielen Dank für Ihre fortwährende Unterstützung! Wir freuen uns, PipePipe 5.0.0 Beta-2 zu veröffentlichen – ein großer Schritt nach vorn in der grundlegenden Neuentwicklung der App.\n\nDiese Version konzentriert sich auf deutliche Verbesserungen bei Stabilität und Funktionsumfang, basierend auf frühem Feedback. Auch wenn wir der finalen Veröffentlichung deutlich näher kommen, handelt es sich weiterhin um eine Beta – Ihr Feedback ist von unschätzbarem Wert.\n\nHinweis: Dies wird als \"PipePipe Beta\" installiert und hat keine Auswirkungen auf Ihre aktuelle App oder Ihre Daten.\n\nWenn Sie Fehler finden oder Vorschläge haben, lassen Sie es uns bitte wissen, indem Sie ein Issue in unserem GitHub-Repository eröffnen!</string>
 </resources>

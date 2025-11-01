@@ -1065,4 +1065,7 @@
 <string name="search_suggestions_count_summary">显示的过去搜索建议数量</string>
 <string name="disable_android_auto_title">禁用 Android Auto</string>
 <string name="disable_android_auto_summary">禁用 Android Auto 连接以避免在 Android 12 及更早版本上出现通知问题。\n\n重新启用此选项后，您必须重新启动应用程序并重新连接到汽车以使更改生效。</string>
+<string name="youtube_account_temporarily_disabled">暂时停用</string>
+<string name="beta_test_dialog_title">加入 PipePipe 5.0.0 Beta-2 测试！</string>
+<string name="beta_test_dialog_message">感谢您一直以来的支持！我们很高兴发布 PipePipe 5.0.0 Beta-2，这是我们对应用从零重构的一次重大进展。\n\n此版本根据早期反馈，着重提升稳定性并完善功能。虽然我们离正式版更近了，但它仍然是测试版，您的反馈非常宝贵。\n\n提醒：它将以 \"PipePipe Beta\" 的形式安装，不会影响您当前的应用或数据。\n\n如果您遇到任何问题或有建议，请在我们的 GitHub 仓库提交 issue 告诉我们！</string>
 </resources>

@@ -1110,4 +1110,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="search_suggestions_count_summary">Số lượng gợi ý tìm kiếm trước đây để hiển thị</string>
 <string name="disable_android_auto_title">Tắt Android Auto</string>
 <string name="disable_android_auto_summary">Tắt kết nối Android Auto để tránh các vấn đề thông báo trên Android 12 và các phiên bản cũ hơn.\n\nSau khi bật lại tùy chọn này, bạn cần khởi động lại ứng dụng và kết nối lại với xe để thay đổi có hiệu lực.</string>
+<string name="youtube_account_temporarily_disabled">Tạm thời bị vô hiệu hóa</string>
+<string name="beta_test_dialog_title">Tham gia thử nghiệm PipePipe 5.0.0 Beta-2!</string>
+<string name="beta_test_dialog_message">Cảm ơn bạn đã luôn ủng hộ chúng tôi! Chúng tôi rất háo hức ra mắt PipePipe 5.0.0 Beta-2, một bước tiến lớn trong quá trình xây dựng lại ứng dụng từ đầu.\n\nPhiên bản này tập trung vào những cải tiến đáng kể về độ ổn định và mức độ hoàn thiện tính năng, dựa trên phản hồi sớm. Dù chúng tôi đã tiến rất gần đến bản phát hành chính thức, đây vẫn là bản beta và phản hồi của bạn vô cùng quý giá.\n\nLưu ý: Phiên bản này sẽ được cài đặt với tên \"PipePipe Beta\" và sẽ không ảnh hưởng đến ứng dụng hoặc dữ liệu hiện tại của bạn.\n\nNếu bạn gặp lỗi hoặc có đề xuất, vui lòng cho chúng tôi biết bằng cách tạo một issue trên kho GitHub của chúng tôi!</string>
 </resources>
