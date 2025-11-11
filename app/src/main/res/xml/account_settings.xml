@@ -6,8 +6,6 @@
     <PreferenceScreen
             android:fragment="org.schabi.newpipe.settings.YouTubeAccountSettingsFragment"
             android:title="YouTube"
-            android:summary="@string/youtube_account_temporarily_disabled"
-            android:enabled="false"
             app:iconSpaceReserved="false" />
     <PreferenceScreen
             android:fragment="org.schabi.newpipe.settings.BiliBiliAccountSettingsFragment"
