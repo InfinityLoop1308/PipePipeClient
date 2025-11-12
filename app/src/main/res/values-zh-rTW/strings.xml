@@ -888,7 +888,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在背景播放時自動隨機播放您的本地播放列表</string>
-<string name="update_log">### 錯誤修正\n- 更新檢查器誤抓取 5.0.0 的測試版\n- 有時無法載入發燒影片（YouTube）\n- 在某些情況下無法解析影片（YouTube）\n\n### 行為變更\n- 由於目前已登入帳號的影片擷取功能無法正常運作，暫時停用 YouTube 帳號並讓使用者登出</string>
+<string name="update_log">### 新功能\n\n- 重新支援 YouTube 登入\n\n### 錯誤修正\n\n- 有時無法解析留言回覆（YouTube）\n\n### 行為\n\n- 由於 YouTube 已移除趨勢頁面，將預設的 YouTube 趨勢頁面改為 "推薦直播"</string>
 <string name="speeding_playback_title">按住以加速播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這項計畫</string>
@@ -930,7 +930,7 @@
 <string name="show_stream_details">顯示串流詳細資訊</string>
 <string name="show_prerelease_description">先行版更新較快，但可能存在一些錯誤</string>
 <string name="show_prerelease_title">顯示先行版</string>
-<string name="temp">YouTube 最近在其登入狀態提取器中實施了複雜的加密，導致 PipePipe 在登入狀態下無法正常運作。幸運的是，我們發現了一個權宜之計，可以暫時保持登入功能正常。我們正在與其他開源 YouTube 工具社群合作，以開發更穩定的解密方案。</string>
+<string name="temp">我們已找到穩定的方法來解密 YouTube 針對已登入使用者的新加密機制，因此已重新開放 YouTube 的登入功能。若有需要，請透過 設定 &gt; 帳戶 &gt; YouTube 重新登入。</string>
 <string name="show_dislike_title">顯示不喜歡數</string>
 <string name="sponsor_block_category_highlight">重點</string>
 <string name="sponsor_block_category_self_promo">未支付/自我推廣</string>
@@ -1059,4 +1059,5 @@
 <string name="youtube_account_temporarily_disabled">暫時停用</string>
 <string name="beta_test_dialog_title">參與 PipePipe 5.0.0 Beta-2 測試！</string>
 <string name="beta_test_dialog_message">感謝您一直以來的支持！我們很興奮地釋出 PipePipe 5.0.0 Beta-2，這是我們從零重建應用程式的一大步。\n\n本版本根據早期回饋，著重提升穩定性與功能完整度。雖然我們已更接近正式版，但目前仍是測試版，您的回饋非常寶貴。\n\n提醒：此版本將以 "PipePipe Beta" 安裝，不會影響您目前的應用程式或資料。\n\n如果您遇到任何錯誤或有建議，請在我們的 GitHub 儲存庫建立 issue 告訴我們！</string>
+<string name="trending_replaced">YouTube 最近移除了「發燒影片」功能，因此我們已將預設的 YouTube 發燒分頁改為顯示「推薦直播」。如果你不想看到這個分頁，可以在「設定」中將其移除，並將其他分頁設為你的首頁。</string>
 </resources>

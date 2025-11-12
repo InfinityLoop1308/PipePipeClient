@@ -1001,7 +1001,7 @@
 <string name="sponsor_promote">Become a supporter</string>
 <string name="random_play_order_title">Random Order</string>
 <string name="random_play_order_summary">Automatically shuffle your local playlists when playing in the background</string>
-<string name="update_log">### Bug Fixes\n- Update checker incorrectly fetches test versions of 5.0.0\n- Failed to load trending sometimes (YouTube)\n- Failed to parse videos under certain scenarios (YouTube)\n\n### Behavior\n- Temporarily disable YouTube accounts and log users out since video extraction for logged-in accounts is broken now</string>
+<string name="update_log">### New Features\n\n- Re-support YouTube login\n\n### Bug Fixes\n\n- Failed to parse comment replies sometimes (YouTube)\n\n### Behavior\n\n- Replace the default YouTube trending page to "Recommended Lives" as YouTube removed the trending page</string>
 <string name="speeding_playback_title">Long-press to speeding the playback</string>
 <string name="view_on_github">View on GitHub</string>
 <string name="donation_dialog_title">Support the Project</string>
@@ -1045,7 +1045,7 @@
 <string name="show_stream_details">Show stream details</string>
 <string name="show_prerelease_description">Pre-releases update faster, but may contain some bugs</string>
 <string name="show_prerelease_title">Show pre-releases</string>
-<string name="temp">YouTube has recently implemented complex encryption in its logged-in state extractor, causing PipePipe to malfunction under logged-in conditions. Fortunately, we\'ve discovered a workaround that keeps the login feature operational for the time being. We\'re collaborating with other open-source YouTube tool communities to develop a more stable decryption solution.</string>
+<string name="temp">We have found a stable method to decrypt YouTube\'s new encryption for logged-in users, so the login feature for YouTube is reopened. If you need it, please re-login via Settings &gt; Accounts &gt; YouTube.</string>
 <string name="show_dislike_title">Show dislike count</string>
 <string name="video_not_released">The video has not released yet.</string>
 <string name="filter_shorts_title">Filter short videos</string>
@@ -1105,4 +1105,5 @@
 <string name="youtube_account_temporarily_disabled">Temporarily disabled</string>
 <string name="beta_test_dialog_title">Join the PipePipe 5.0.0 Beta-2 Test!</string>
 <string name="beta_test_dialog_message">Thank you for your continued support! We\'re excited to release PipePipe 5.0.0 Beta-2, a major step forward in our ground-up rebuild of the app.\n\nThis version focuses on significant improvements in stability and feature completeness, based on early feedback. While we\'re getting much closer to a final release, it\'s still a beta, and your feedback is invaluable.\n\nReminder: This will be installed as \"PipePipe Beta\" and won\'t affect your current app or data.\n\nIf you encounter any bugs or have suggestions, please let us know by opening an issue on our GitHub repository!</string>
+<string name="trending_replaced">YouTube has recently removed the Trending Videos feature, so we\'ve updated our default YouTube trending tab to show Recommended Lives instead. If you don\'t want to see this, you can remove the tab in Settings and set another one as your homepage.</string>
 </resources>

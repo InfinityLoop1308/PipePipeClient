@@ -1001,7 +1001,7 @@
 <string name="always_start_from_beginning_title">Siempre empieza a reproducir desde el principio</string>
 <string name="fetch_full_playlist_title">Cargar lista de reproducción completa</string>
 <string name="fetch_full_playlist_summary">Carga todo el contenido de una vez al abrir las listas de reproducción</string>
-<string name="temp">YouTube ha implementado recientemente un cifrado complejo en su extractor de estado de sesión iniciada, lo que provoca que PipePipe funcione mal en condiciones de sesión iniciada. Afortunadamente, hemos descubierto una solución provisional que mantiene la función de inicio de sesión operativa por el momento. Estamos colaborando con otras comunidades de herramientas de código abierto de YouTube para desarrollar una solución de descifrado más estable.</string>
+<string name="temp">Hemos encontrado un método estable para descifrar el nuevo cifrado de YouTube para usuarios con sesión iniciada, por lo que se ha reabierto la función de inicio de sesión de YouTube. Si lo necesitas, vuelve a iniciar sesión a través de Ajustes &gt; Cuentas &gt; YouTube.</string>
 <string name="add_filter">Agregar filtro</string>
 <string name="no_filters">Sin filtros</string>
 <string name="stream_processing_notification_title">Procesando flujos</string>
@@ -1062,4 +1062,5 @@
 <string name="youtube_account_temporarily_disabled">Desactivado temporalmente</string>
 <string name="beta_test_dialog_title">¡Únete a la prueba Beta-2 de PipePipe 5.0.0!</string>
 <string name="beta_test_dialog_message">¡Gracias por tu apoyo continuo! Estamos muy emocionados de lanzar PipePipe 5.0.0 Beta-2, un gran paso adelante en la reconstrucción desde cero de la aplicación.\n\nEsta versión se centra en mejoras significativas de la estabilidad y en completar funcionalidades, basadas en los comentarios tempranos. Aunque nos estamos acercando mucho a la versión final, sigue siendo una beta, y tus comentarios son invaluables.\n\nRecordatorio: Esto se instalará como "PipePipe Beta" y no afectará tu aplicación ni tus datos actuales.\n\nSi encuentras algún error o tienes sugerencias, háznoslo saber abriendo un problema en nuestro repositorio de GitHub.</string>
+<string name="trending_replaced">YouTube ha eliminado recientemente la función de Videos en Tendencias, así que hemos actualizado nuestra pestaña de Tendencias predeterminada de YouTube para mostrar transmisiones en vivo recomendadas en su lugar. Si no quieres ver esto, puedes eliminar la pestaña en Configuración y establecer otra como tu página de inicio.</string>
 </resources>

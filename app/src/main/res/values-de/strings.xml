@@ -836,7 +836,7 @@
 <string name="sponsor_promote">Unterstützer werden</string>
 <string name="random_play_order_title">Zufällige Reihenfolge</string>
 <string name="random_play_order_summary">Automatisch Ihre lokalen Wiedergabelisten mischen, wenn sie im Hintergrund abgespielt werden</string>
-<string name="update_log">### Fehlerbehebungen\n- Der Update-Checker ruft fälschlicherweise Testversionen von 5.0.0 ab\n- Das Laden von Trends schlug manchmal fehl (YouTube)\n- Fehler beim Parsen von Videos in bestimmten Szenarien (YouTube)\n\n### Verhalten\n- YouTube-Konten vorübergehend deaktivieren und Benutzer abmelden, da die Videoextraktion für angemeldete Konten derzeit nicht funktioniert</string>
+<string name="update_log">### Neue Funktionen\n\n- YouTube-Anmeldung wieder unterstützt\n\n### Fehlerbehebungen\n\n- Antworten auf Kommentare konnten manchmal nicht geparst werden (YouTube)\n\n### Verhalten\n\n- Standard-YouTube-Seite \"Trending\" durch \"Empfohlene Livestreams\" ersetzt, da YouTube die Trending-Seite entfernt hat</string>
 <string name="speeding_playback_title">Langes Drücken, um die Wiedergabe zu beschleunigen</string>
 <string name="view_on_github">Auf GitHub ansehen</string>
 <string name="donation_dialog_title">Projekt unterstützen</string>
@@ -878,7 +878,7 @@
 <string name="show_stream_details">Streamdetails anzeigen</string>
 <string name="show_prerelease_description">Vorabversionen werden schneller aktualisiert, können jedoch einige Fehler enthalten</string>
 <string name="show_prerelease_title">Vorabversionen anzeigen</string>
-<string name="temp">YouTube hat kürzlich eine komplexe Verschlüsselung in seinem Extraktor für den angemeldeten Zustand implementiert, was dazu führt, dass PipePipe unter angemeldeten Bedingungen nicht mehr funktioniert. Glücklicherweise haben wir eine Problemumgehung entdeckt, die die Anmeldefunktion vorerst betriebsbereit hält. Wir arbeiten mit anderen Open-Source-YouTube-Tool-Communities zusammen, um eine stabilere Entschlüsselungslösung zu entwickeln.</string>
+<string name="temp">Wir haben eine stabile Methode gefunden, YouTubes neue Verschlüsselung für angemeldete Nutzer zu entschlüsseln, daher ist die Login-Funktion für YouTube wieder verfügbar. Wenn Sie sie benötigen, melden Sie sich bitte über Einstellungen &gt; Konten &gt; YouTube erneut an.</string>
 <string name="show_dislike_title">Anzahl der Dislikes anzeigen</string>
 <string name="sponsor_block_category_highlight">Hervorheben</string>
 <string name="sponsor_block_category_self_promo">Unbezahlt/Selbstpromotion</string>
@@ -1005,4 +1005,5 @@
 <string name="youtube_account_temporarily_disabled">Vorübergehend deaktiviert</string>
 <string name="beta_test_dialog_title">Nimm am PipePipe 5.0.0 Beta-2-Test teil!</string>
 <string name="beta_test_dialog_message">Vielen Dank für Ihre fortwährende Unterstützung! Wir freuen uns, PipePipe 5.0.0 Beta-2 zu veröffentlichen – ein großer Schritt nach vorn in der grundlegenden Neuentwicklung der App.\n\nDiese Version konzentriert sich auf deutliche Verbesserungen bei Stabilität und Funktionsumfang, basierend auf frühem Feedback. Auch wenn wir der finalen Veröffentlichung deutlich näher kommen, handelt es sich weiterhin um eine Beta – Ihr Feedback ist von unschätzbarem Wert.\n\nHinweis: Dies wird als \"PipePipe Beta\" installiert und hat keine Auswirkungen auf Ihre aktuelle App oder Ihre Daten.\n\nWenn Sie Fehler finden oder Vorschläge haben, lassen Sie es uns bitte wissen, indem Sie ein Issue in unserem GitHub-Repository eröffnen!</string>
+<string name="trending_replaced">YouTube hat die Funktion „Trendvideos“ kürzlich entfernt, daher haben wir unseren standardmäßigen YouTube-Trends-Tab aktualisiert, damit stattdessen empfohlene Livestreams angezeigt werden. Wenn du das nicht sehen möchtest, kannst du den Tab in den Einstellungen entfernen und einen anderen als deine Startseite festlegen.</string>
 </resources>

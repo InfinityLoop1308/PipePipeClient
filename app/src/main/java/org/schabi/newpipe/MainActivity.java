@@ -227,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
             dialog1.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
-                    if((storedVersionCode / 100 < 1086 && currentTime - lastShowDonationTime > 14 * 24 * 60 * 60 * 1000)
+                    if((storedVersionCode / 100 < 1088 && currentTime - lastShowDonationTime > 14 * 24 * 60 * 60 * 1000)
                             || currentTime - lastShowDonationTime > 30L * 24 * 60 * 60 * 1000) {
                         prefs.edit().putLong("last_show_donation_time", currentTime).apply();
                         dialog2.show();
@@ -247,16 +247,13 @@ public class MainActivity extends AppCompatActivity {
 
             dialog1.show();
             prefs.edit().putInt("version_code", currentVersionCode).apply();
-
-
-            if (currentVersionCode / 100 == 1086) {
+            if (storedVersionCode / 100 < 1088 && storedVersionCode / 100 > 1084) {
                 AlertDialog.Builder builder3 = new AlertDialog.Builder(this);
                 builder3.setMessage(R.string.temp);
-                builder3.setPositiveButton(R.string.ok, (dialog, which) -> {
-                });
-                builder3.show();
+                builder3.setPositiveButton(R.string.ok, (dialog, which) -> {});
+                AlertDialog dialog3 = builder3.create();
+                dialog3.show();
             }
-
             if (storedVersionCode / 100 < 1072 && prefs.getString(getString(R.string.youtube_po_token_key), "").equals("")) {
                 prefs.edit().putString(getString(R.string.youtube_cookies_key), "").apply();
                 prefs.edit().putString(getString(R.string.youtube_po_token_key), "").apply();

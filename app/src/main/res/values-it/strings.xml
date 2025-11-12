@@ -756,7 +756,7 @@
 <string name="sponsor_promote">Diventa un sostenitore</string>
 <string name="random_play_order_title">Ordine casuale</string>
 <string name="random_play_order_summary">Mescola automaticamente le tue playlist locali quando vengono riprodotte in background</string>
-<string name="update_log">### Correzioni di bug\n- La verifica degli aggiornamenti recupera erroneamente le versioni di test della 5.0.0\n- A volte impossibile caricare Tendenze (YouTube)\n- Impossibile analizzare i video in alcuni scenari (YouTube)\n\n### Comportamento\n- Disattiva temporaneamente gli account YouTube e disconnette gli utenti poiché l\'estrazione dei video per gli account connessi al momento non funziona</string>
+<string name="update_log">### Nuove funzionalità\n\n- Ripristinato il supporto per l\'accesso a YouTube\n\n### Correzioni di bug\n\n- A volte non riusciva ad analizzare le risposte ai commenti (YouTube)\n\n### Comportamento\n\n- Sostituita la pagina delle tendenze predefinita di YouTube con "Live consigliate", poiché YouTube ha rimosso la pagina delle tendenze</string>
 <string name="speeding_playback_title">Premi a lungo per aumentare la velocità di riproduzione</string>
 <string name="view_on_github">Visualizza su GitHub</string>
 <string name="donation_dialog_title">Supporta il progetto</string>
@@ -798,7 +798,7 @@
 <string name="show_stream_details">Mostra i dettagli del flusso</string>
 <string name="show_prerelease_description">Gli aggiornamenti delle versioni pre-rilasciate sono più veloci, ma possono contenere alcuni bug</string>
 <string name="show_prerelease_title">Mostra le versioni pre-release</string>
-<string name="temp">YouTube ha recentemente implementato una crittografia complessa nel suo estrattore di stato di accesso, causando il malfunzionamento di PipePipe in condizioni di accesso. Fortunatamente, abbiamo scoperto una soluzione temporanea che mantiene la funzione di accesso operativa per il momento. Stiamo collaborando con altre comunità di strumenti YouTube open source per sviluppare una soluzione di decrittografia più stabile.</string>
+<string name="temp">Abbiamo trovato un metodo stabile per decifrare la nuova crittografia di YouTube per gli utenti che hanno effettuato l\'accesso, quindi la funzionalità di accesso a YouTube è nuovamente attiva. Se ne hai bisogno, effettua di nuovo l\'accesso tramite Impostazioni &gt; Account &gt; YouTube.</string>
 <string name="show_dislike_title">Mostra il conteggio dei non mi piace</string>
 <string name="sponsor_block_category_highlight">Evidenziare</string>
 <string name="sponsor_block_category_self_promo">Promozione non pagata/Auto-promozione</string>
@@ -999,4 +999,5 @@
 <string name="youtube_account_temporarily_disabled">Temporaneamente disattivato</string>
 <string name="beta_test_dialog_title">Unisciti al test di PipePipe 5.0.0 Beta-2!</string>
 <string name="beta_test_dialog_message">Grazie per il tuo continuo supporto! Siamo entusiasti di rilasciare PipePipe 5.0.0 Beta-2, un importante passo avanti nella ricostruzione completa da zero dell\'app.\n\nQuesta versione punta a miglioramenti significativi di stabilità e completezza delle funzionalità, basati sui feedback iniziali. Anche se ci stiamo avvicinando molto alla release finale, è ancora una beta e il tuo feedback è preziosissimo.\n\nPromemoria: verrà installata come "PipePipe Beta" e non influirà sulla tua app o sui tuoi dati attuali.\n\nSe riscontri bug o hai suggerimenti, faccelo sapere aprendo una segnalazione sul nostro repository GitHub!</string>
+<string name="trending_replaced">YouTube ha rimosso di recente la funzione Video di tendenza, quindi abbiamo aggiornato la nostra scheda Tendenze predefinita di YouTube per mostrare invece le Dirette consigliate. Se non vuoi vederla, puoi rimuovere la scheda in Impostazioni e impostarne un\'altra come home page.</string>
 </resources>

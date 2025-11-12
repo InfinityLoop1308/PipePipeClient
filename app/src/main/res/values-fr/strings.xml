@@ -789,7 +789,7 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="sponsor_promote">Devenez un supporter</string>
 <string name="random_play_order_title">Ordre aléatoire</string>
 <string name="random_play_order_summary">Mélangez automatiquement vos listes de lecture locales lorsque vous jouez en arrière-plan</string>
-<string name="update_log">### Corrections de bugs\n- Le vérificateur de mises à jour récupère incorrectement des versions de test de la 5.0.0\n- Échec du chargement des tendances par moments (YouTube)\n- Échec de l\'analyse des vidéos dans certains scénarios (YouTube)\n\n### Comportement\n- Désactiver temporairement les comptes YouTube et déconnecter les utilisateurs, car l\'extraction des vidéos pour les comptes connectés est actuellement défaillante</string>
+<string name="update_log">### Nouvelles fonctionnalités\n\n- Prise en charge à nouveau de la connexion à YouTube\n\n### Corrections de bugs\n\n- Échec de l\'analyse des réponses aux commentaires parfois (YouTube)\n\n### Comportement\n\n- Remplacer la page de tendances YouTube par défaut par "Lives recommandés" car YouTube a supprimé la page de tendances</string>
 <string name="speeding_playback_title">Appuyer longuement pour accélérer la lecture</string>
 <string name="view_on_github">Voir sur GitHub</string>
 <string name="donation_dialog_title">Soutenez le projet</string>
@@ -831,7 +831,7 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="show_stream_details">Afficher les détails du flux</string>
 <string name="show_prerelease_description">Les pré-versions se mettent à jour plus rapidement, mais peuvent contenir des bugs</string>
 <string name="show_prerelease_title">Afficher les pré-versions</string>
-<string name="temp">YouTube a récemment mis en œuvre un chiffrement complexe dans son extracteur d\'état connecté, ce qui a entraîné un dysfonctionnement de PipePipe en mode connecté. Heureusement, nous avons découvert une solution de contournement qui maintient la fonction de connexion opérationnelle pour le moment. Nous collaborons avec d\'autres communautés d\'outils YouTube open-source pour développer une solution de déchiffrement plus stable.</string>
+<string name="temp">Nous avons trouvé une méthode stable pour déchiffrer le nouveau chiffrement de YouTube pour les utilisateurs connectés, de sorte que la fonctionnalité de connexion à YouTube est rouverte. Si vous en avez besoin, veuillez vous reconnecter via Paramètres &gt; Comptes &gt; YouTube.</string>
 <string name="show_dislike_title">Afficher le nombre de désapprobations</string>
 <string name="sponsor_block_category_highlight">Surligner</string>
 <string name="sponsor_block_category_self_promo">Promotion non rémunérée / auto-promotion</string>
@@ -1029,4 +1029,5 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="youtube_account_temporarily_disabled">Temporairement désactivé</string>
 <string name="beta_test_dialog_title">Participez au test Beta-2 de PipePipe 5.0.0 !</string>
 <string name="beta_test_dialog_message">Merci pour votre soutien continu ! Nous sommes ravis de publier PipePipe 5.0.0 Beta-2, une étape majeure dans la refonte complète de l\'application.\n\nCette version se concentre sur des améliorations significatives de la stabilité et de la complétude des fonctionnalités, basées sur les premiers retours. Même si nous nous rapprochons beaucoup de la version finale, il s\'agit toujours d\'une bêta, et vos retours sont précieux.\n\nRappel : ceci sera installé sous le nom "PipePipe Beta" et n\'affectera pas votre application ou vos données actuelles.\n\nSi vous rencontrez des bugs ou avez des suggestions, merci de nous en informer en ouvrant une issue sur notre dépôt GitHub !</string>
+<string name="trending_replaced">YouTube a récemment supprimé la fonctionnalité Tendances, nous avons donc mis à jour notre onglet YouTube Tendances par défaut pour afficher à la place des diffusions en direct recommandées. Si vous ne souhaitez pas voir cela, vous pouvez supprimer l\'onglet dans Paramètres et en définir un autre comme page d\'accueil.</string>
 </resources>
