@@ -789,7 +789,7 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="sponsor_promote">Devenez un supporter</string>
 <string name="random_play_order_title">Ordre aléatoire</string>
 <string name="random_play_order_summary">Mélangez automatiquement vos listes de lecture locales lorsque vous jouez en arrière-plan</string>
-<string name="update_log">### Nouvelles fonctionnalités\n\n- Prise en charge à nouveau de la connexion à YouTube\n\n### Corrections de bugs\n\n- Échec de l\'analyse des réponses aux commentaires parfois (YouTube)\n\n### Comportement\n\n- Remplacer la page de tendances YouTube par défaut par "Lives recommandés" car YouTube a supprimé la page de tendances</string>
+<string name="update_log">### Corrections de bugs\n\n- Les titres des vidéos sont parfois traduits en anglais (YouTube)\n\n### Autres\n\n- Amélioration de la stabilité</string>
 <string name="speeding_playback_title">Appuyer longuement pour accélérer la lecture</string>
 <string name="view_on_github">Voir sur GitHub</string>
 <string name="donation_dialog_title">Soutenez le projet</string>

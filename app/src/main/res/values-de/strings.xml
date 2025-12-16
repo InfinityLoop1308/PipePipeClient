@@ -836,7 +836,7 @@
 <string name="sponsor_promote">Unterstützer werden</string>
 <string name="random_play_order_title">Zufällige Reihenfolge</string>
 <string name="random_play_order_summary">Automatisch Ihre lokalen Wiedergabelisten mischen, wenn sie im Hintergrund abgespielt werden</string>
-<string name="update_log">### Neue Funktionen\n\n- YouTube-Anmeldung wieder unterstützt\n\n### Fehlerbehebungen\n\n- Antworten auf Kommentare konnten manchmal nicht geparst werden (YouTube)\n\n### Verhalten\n\n- Standard-YouTube-Seite \"Trending\" durch \"Empfohlene Livestreams\" ersetzt, da YouTube die Trending-Seite entfernt hat</string>
+<string name="update_log">### Fehlerbehebungen\n\n- Videotitel werden manchmal ins Englische übersetzt (YouTube)\n\n### Sonstiges\n\n- Stabilität verbessern</string>
 <string name="speeding_playback_title">Langes Drücken, um die Wiedergabe zu beschleunigen</string>
 <string name="view_on_github">Auf GitHub ansehen</string>
 <string name="donation_dialog_title">Projekt unterstützen</string>

@@ -188,7 +188,6 @@ public class MainActivity extends AppCompatActivity {
         int storedVersionCode = prefs.getInt("version_code", 0);
         long lastShowDonationTime = prefs.getLong("last_show_donation_time", 0);
         long currentTime = System.currentTimeMillis();
-        boolean betaDialogShown = prefs.getBoolean("beta_test_dialog_shown", false);
 
         if (currentVersionCode > storedVersionCode) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -206,22 +205,6 @@ public class MainActivity extends AppCompatActivity {
             builder2.setNegativeButton(R.string.no, null);
 
             final AlertDialog dialog2 = builder2.create();
-            if (!betaDialogShown) {
-                dialog2.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        AlertDialog.Builder betaBuilder = new AlertDialog.Builder(MainActivity.this);
-                        betaBuilder.setTitle(R.string.beta_test_dialog_title);
-                        betaBuilder.setMessage(R.string.beta_test_dialog_message);
-                        betaBuilder.setPositiveButton(R.string.view_on_github, (dialog2, which) -> {
-                            ShareUtils.openUrlInBrowser(MainActivity.this, "https://github.com/InfinityLoop1308/PipePipe/releases");
-                        });
-                        betaBuilder.setNegativeButton(R.string.cancel, null);
-                        betaBuilder.show();
-                        prefs.edit().putBoolean("beta_test_dialog_shown", true).apply();
-                    }
-                });
-            }
 
             final AlertDialog dialog1 = builder.create();
             dialog1.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -231,16 +214,6 @@ public class MainActivity extends AppCompatActivity {
                             || currentTime - lastShowDonationTime > 30L * 24 * 60 * 60 * 1000) {
                         prefs.edit().putLong("last_show_donation_time", currentTime).apply();
                         dialog2.show();
-                    } else if (!betaDialogShown) {
-                        AlertDialog.Builder betaBuilder = new AlertDialog.Builder(MainActivity.this);
-                        betaBuilder.setTitle(R.string.beta_test_dialog_title);
-                        betaBuilder.setMessage(R.string.beta_test_dialog_message);
-                        betaBuilder.setPositiveButton(R.string.view_on_github, (dialog2, which) -> {
-                            ShareUtils.openUrlInBrowser(MainActivity.this, "https://github.com/InfinityLoop1308/PipePipe/releases");
-                        });
-                        betaBuilder.setNegativeButton(R.string.cancel, null);
-                        betaBuilder.show();
-                        prefs.edit().putBoolean("beta_test_dialog_shown", true).apply();
                     }
                 }
             });
@@ -258,16 +231,6 @@ public class MainActivity extends AppCompatActivity {
                 prefs.edit().putString(getString(R.string.youtube_cookies_key), "").apply();
                 prefs.edit().putString(getString(R.string.youtube_po_token_key), "").apply();
             }
-        } else if (!betaDialogShown) {
-            AlertDialog.Builder betaBuilder = new AlertDialog.Builder(this);
-            betaBuilder.setTitle(R.string.beta_test_dialog_title);
-            betaBuilder.setMessage(R.string.beta_test_dialog_message);
-            betaBuilder.setPositiveButton(R.string.view_on_github, (dialog, which) -> {
-                ShareUtils.openUrlInBrowser(this, "https://github.com/InfinityLoop1308/PipePipe/releases");
-            });
-            betaBuilder.setNegativeButton(R.string.cancel, null);
-            betaBuilder.show();
-            prefs.edit().putBoolean("beta_test_dialog_shown", true).apply();
         }
         String lastAnnouncementId = prefs.getString("last_announcement_id", null);
         try {
