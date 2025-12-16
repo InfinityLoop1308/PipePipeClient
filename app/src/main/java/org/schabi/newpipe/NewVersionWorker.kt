@@ -134,9 +134,6 @@ class NewVersionWorker(
             for (i in 0 until githubReleases.size) {
                 val release = githubReleases.getObject(i)
                 if (!includePreRelease && release.getBoolean("prerelease")) continue
-                val versionName = release.getString("name").removePrefix("v")
-                val version = parseVersion(versionName)
-                if (version.major != 4) continue
                 if (selectedRelease == null || isNewerRelease(release, selectedRelease)) {
                     selectedRelease = release
                 }
