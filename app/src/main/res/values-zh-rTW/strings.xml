@@ -888,7 +888,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在背景播放時自動隨機播放您的本地播放列表</string>
-<string name="update_log">### 錯誤修正\n\n- 影片標題有時會被翻譯成英文（YouTube）\n\n### 其他\n\n- 提升穩定性</string>
+<string name="update_log">### 錯誤修正\n\n- 搜尋結果有時會出現錯誤的標題與縮圖（YouTube）\n\n### 行為\n\n- 暫時停用 YouTube 登入，因為目前登入帳戶的影片擷取功能無法正常運作</string>
 <string name="speeding_playback_title">按住以加速播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這項計畫</string>

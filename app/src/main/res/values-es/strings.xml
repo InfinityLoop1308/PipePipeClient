@@ -897,7 +897,7 @@
 <string name="sponsor_promote">Conviértete en un patrocinador</string>
 <string name="random_play_order_title">Orden aleatorio</string>
 <string name="random_play_order_summary">Baraja automáticamente tus listas de reproducción locales cuando se reproduzcan en segundo plano</string>
-<string name="update_log">### Correcciones de errores\n\n- Los títulos de los videos a veces se traducen al inglés (YouTube)\n\n### Otros\n\n- Mejorar la estabilidad</string>
+<string name="update_log">### Correcciones de errores\n\n- Los resultados de búsqueda a veces tienen títulos y miniaturas incorrectos (YouTube)\n\n### Comportamiento\n\n- Deshabilitar temporalmente el inicio de sesión de YouTube ya que la extracción de videos para cuentas con sesión iniciada actualmente está rota</string>
 <string name="speeding_playback_title">Mantener presionado para acelerar la reproducción</string>
 <string name="view_on_github">Ver en GitHub</string>
 <string name="donation_dialog_title">Apoya el proyecto</string>

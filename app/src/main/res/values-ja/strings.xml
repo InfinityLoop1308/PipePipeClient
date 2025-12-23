@@ -854,7 +854,7 @@
 <string name="sponsor_promote">サポーターになる</string>
 <string name="random_play_order_title">ランダムな順序</string>
 <string name="random_play_order_summary">バックグラウンドで再生する際にローカルプレイリストを自動的にシャッフルします</string>
-<string name="update_log">### バグ修正\n\n- 動画タイトルが英語に翻訳されてしまうことがある（YouTube）\n\n### その他\n\n- 安定性の向上</string>
+<string name="update_log">### バグ修正\n\n- 検索結果で、タイトルやサムネイルが誤っている場合がある (YouTube)\n\n### 動作\n\n- ログイン済みアカウントでの動画抽出に現在不具合があるため、YouTubeのログインを一時的に無効化</string>
 <string name="speeding_playback_title">長時間押は再生速度を速めることができます</string>
 <string name="view_on_github">GitHubで表示</string>
 <string name="donation_dialog_title">プロジェクトをサポートする</string>

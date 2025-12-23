@@ -944,7 +944,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sponsor_promote">Trở thành người ủng hộ</string>
 <string name="random_play_order_title">Trình tự ngẫu nhiên</string>
 <string name="random_play_order_summary">Tự động xáo trộn danh sách phát cục bộ của bạn khi phát trong nền</string>
-<string name="update_log">### Sửa lỗi\n\n- Tiêu đề video đôi khi bị dịch sang tiếng Anh (YouTube)\n\n### Khác\n\n- Cải thiện độ ổn định</string>
+<string name="update_log">### Sửa lỗi\n\n- Kết quả tìm kiếm đôi khi có tiêu đề và hình thu nhỏ không đúng (YouTube)\n\n### Hành vi\n\n- Tạm thời vô hiệu hóa đăng nhập YouTube vì tính năng trích xuất video cho các tài khoản đã đăng nhập đang bị lỗi</string>
 <string name="speeding_playback_title">Nhấn và giữ để tăng tốc độ phát lại</string>
 <string name="view_on_github">Xem trên GitHub</string>
 <string name="donation_dialog_title">Hỗ trợ Dự án</string>
