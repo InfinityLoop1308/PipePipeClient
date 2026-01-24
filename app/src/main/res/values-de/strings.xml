@@ -836,7 +836,7 @@
 <string name="sponsor_promote">Unterstützer werden</string>
 <string name="random_play_order_title">Zufällige Reihenfolge</string>
 <string name="random_play_order_summary">Automatisch Ihre lokalen Wiedergabelisten mischen, wenn sie im Hintergrund abgespielt werden</string>
-<string name="update_log">### Fehlerbehebungen\n\n- Suchergebnisse haben manchmal falsche Titel und Vorschaubilder (YouTube)\n\n### Verhalten\n\n- YouTube-Anmeldung vorübergehend deaktiviert, da die Videoextraktion für angemeldete Konten derzeit nicht funktioniert</string>
+<string name="update_log">### Fehlerbehebungen\n\n- Einige Videos lassen sich nicht laden mit der Fehlermeldung \"Die Seite muss neu geladen werden\" (YouTube)\n- Videos können nicht geöffnet werden (NicoNico)</string>
 <string name="speeding_playback_title">Langes Drücken, um die Wiedergabe zu beschleunigen</string>
 <string name="view_on_github">Auf GitHub ansehen</string>
 <string name="donation_dialog_title">Projekt unterstützen</string>

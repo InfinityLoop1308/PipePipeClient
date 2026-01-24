@@ -756,7 +756,7 @@
 <string name="sponsor_promote">Diventa un sostenitore</string>
 <string name="random_play_order_title">Ordine casuale</string>
 <string name="random_play_order_summary">Mescola automaticamente le tue playlist locali quando vengono riprodotte in background</string>
-<string name="update_log">### Correzioni di bug\n\n- I risultati di ricerca a volte hanno titoli e miniature errati (YouTube)\n\n### Comportamento\n\n- Disattivare temporaneamente l\'accesso a YouTube poiché l\'estrazione dei video per gli account autenticati al momento non funziona</string>
+<string name="update_log">### Correzioni di bug\n\n- Alcuni video non si caricano con l\'errore \"La pagina deve essere ricaricata\" (YouTube)\n- Impossibile aprire i video (NicoNico)</string>
 <string name="speeding_playback_title">Premi a lungo per aumentare la velocità di riproduzione</string>
 <string name="view_on_github">Visualizza su GitHub</string>
 <string name="donation_dialog_title">Supporta il progetto</string>
