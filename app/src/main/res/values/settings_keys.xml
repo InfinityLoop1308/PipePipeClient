@@ -1684,4 +1684,21 @@
         <item>enqueue</item>
         <item>disable</item>
     </string-array>
+
+    <!-- Feed age filter -->
+    <string name="feed_age_filter_key">feed_age_filter</string>
+    <string name="feed_age_filter_default_value">0</string>
+    <string-array name="feed_age_filter_values">
+        <item>0</item>
+        <item>1</item>
+        <item>7</item>
+        <item>30</item>
+    </string-array>
+    <string-array name="feed_age_filter_descriptions">
+        <item>@string/feed_age_filter_all</item>
+        <item>@string/feed_age_filter_1day</item>
+        <item>@string/feed_age_filter_7days</item>
+        <item>@string/feed_age_filter_30days</item>
+    </string-array>
 </resources>
+

@@ -161,6 +161,9 @@ class FeedFragment : BaseStateFragment<FeedState>() {
                 getString(R.string.pull_to_refresh_key) -> {
                     updatePullToRefreshOnResume = true
                 }
+                getString(R.string.feed_age_filter_key) -> {
+                    viewModel.stateLiveData.value?.let { handleResult(it) }
+                }
             }
         }
         PreferenceManager.getDefaultSharedPreferences(activity)
@@ -751,18 +754,32 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         }
         loadedState.items.forEach { it.itemVersion = itemVersion }
 
+        // Apply feed age filter from settings
+        val ageDays = PreferenceManager.getDefaultSharedPreferences(requireContext())
+            .getString(getString(R.string.feed_age_filter_key), "0")
+            ?.toIntOrNull() ?: 0
+        val itemsToShow = if (ageDays > 0) {
+            val cutoff = OffsetDateTime.now().minusDays(ageDays.toLong())
+            loadedState.items.filter { item ->
+                val uploadDate = item.streamWithState.stream.uploadDate
+                uploadDate == null || uploadDate >= cutoff
+            }
+        } else {
+            loadedState.items
+        }
+
         // Store original items for filtering
         originalItems.clear()
-        originalItems.addAll(loadedState.items)
+        originalItems.addAll(itemsToShow)
         filteredItems.clear()
         filteredItems.addAll(originalItems)
 
-        playlistControlBinding?.root?.isVisible = loadedState.items.isNotEmpty()
+        playlistControlBinding?.root?.isVisible = itemsToShow.isNotEmpty()
 
         // This need to be saved in a variable as the update occurs async
         val oldOldestSubscriptionUpdate = oldestSubscriptionUpdate
 
-        groupAdapter.updateAsync(loadedState.items, false) {
+        groupAdapter.updateAsync(itemsToShow, false) {
             oldOldestSubscriptionUpdate?.run {
                 highlightNewItemsAfter(oldOldestSubscriptionUpdate)
             }

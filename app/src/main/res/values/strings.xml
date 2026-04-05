@@ -1106,4 +1106,10 @@
 <string name="beta_test_dialog_title">Join the PipePipe 5.0.0 Beta-2 Test!</string>
 <string name="beta_test_dialog_message">Thank you for your continued support! We\'re excited to release PipePipe 5.0.0 Beta-2, a major step forward in our ground-up rebuild of the app.\n\nThis version focuses on significant improvements in stability and feature completeness, based on early feedback. While we\'re getting much closer to a final release, it\'s still a beta, and your feedback is invaluable.\n\nReminder: This will be installed as \"PipePipe Beta\" and won\'t affect your current app or data.\n\nIf you encounter any bugs or have suggestions, please let us know by opening an issue on our GitHub repository!</string>
 <string name="trending_replaced">YouTube has recently removed the Trending Videos feature, so we\'ve updated our default YouTube trending tab to show Recommended Lives instead. If you don\'t want to see this, you can remove the tab in Settings and set another one as your homepage.</string>
+    <string name="feed_age_filter_title">Feed age filter</string>
+    <string name="feed_age_filter_summary">Only show videos published within the selected period</string>
+    <string name="feed_age_filter_all">All videos</string>
+    <string name="feed_age_filter_1day">Last 24 hours</string>
+    <string name="feed_age_filter_7days">Last 7 days</string>
+    <string name="feed_age_filter_30days">Last 30 days</string>
 </resources>
