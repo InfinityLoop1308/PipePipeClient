@@ -36,15 +36,9 @@ class FeedDatabaseManager(context: Context) {
         const val FEED_AGE_FILTER_DEFAULT_DAYS: Int = 91
 
         /**
-         * Only items that are newer than this will be saved.
-         * Use [getOldestAllowedDate] to get a context-aware value based on user preferences.
-         */
-        val FEED_OLDEST_ALLOWED_DATE: OffsetDateTime = LocalDate.now().minusDays(FEED_AGE_FILTER_DEFAULT_DAYS.toLong())
-            .atStartOfDay().atOffset(ZoneOffset.UTC)
-
-        /**
-         * Returns the oldest allowed date based on the user's feed age filter preference.
-         * Falls back to [FEED_OLDEST_ALLOWED_DATE] (13 weeks) if the preference is not set.
+         * Returns the oldest allowed date for feed items, based on the user's preference.
+         * Streams older than this date will not be saved or displayed in the feed.
+         * Falls back to [FEED_AGE_FILTER_DEFAULT_DAYS] (13 weeks) if the preference is not set.
          */
         fun getOldestAllowedDate(context: Context): OffsetDateTime {
             val prefs = PreferenceManager.getDefaultSharedPreferences(context)
