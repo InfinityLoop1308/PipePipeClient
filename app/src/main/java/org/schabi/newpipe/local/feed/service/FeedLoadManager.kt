@@ -282,12 +282,12 @@ class FeedLoadManager(private val context: Context) {
      * Keep the feed and the stream tables small
      * to reduce loading times when trying to display the feed.
      * <br>
-     * Remove streams from the feed which are older than [FeedDatabaseManager.FEED_OLDEST_ALLOWED_DATE].
+     * Remove streams from the feed which are older than the user-configured feed age filter.
      * Remove streams from the database which are not linked / used by any table.
      */
     private fun postProcessFeed() = Completable.fromRunnable {
         FeedEventManager.postEvent(FeedEventManager.Event.ProgressEvent(R.string.feed_processing_message))
-        feedDatabaseManager.removeOrphansOrOlderStreams()
+        feedDatabaseManager.removeOrphansOrOlderStreams(FeedDatabaseManager.getOldestAllowedDate(context))
 
         FeedEventManager.postEvent(FeedEventManager.Event.SuccessResultEvent(feedResultsHolder.itemsErrors))
     }.doOnSubscribe {
@@ -318,7 +318,11 @@ class FeedLoadManager(private val context: Context) {
 
                             notification.value!!.newStreams = filterNewStreams(info.streams)
 
-                            feedDatabaseManager.upsertAll(info.uid, info.streams)
+                            feedDatabaseManager.upsertAll(
+                                info.uid,
+                                info.streams,
+                                FeedDatabaseManager.getOldestAllowedDate(context)
+                            )
                             subscriptionManager.updateFromInfo(info)
 
                             if (info.errors.isNotEmpty()) {
@@ -359,15 +363,14 @@ class FeedLoadManager(private val context: Context) {
         }
 
         private fun filterNewStreams(list: List<StreamInfoItem>): List<StreamInfoItem> {
+            val oldestAllowedDate = FeedDatabaseManager.getOldestAllowedDate(context)
             return list.filter {
                 !feedDatabaseManager.doesStreamExist(it) &&
                         it.uploadDate != null &&
                         // Streams older than this date are automatically removed from the feed.
                         // Therefore, streams which are not in the database,
                         // but older than this date, are considered old.
-                        it.uploadDate!!.offsetDateTime().isAfter(
-                            FeedDatabaseManager.FEED_OLDEST_ALLOWED_DATE
-                        )
+                        it.uploadDate!!.offsetDateTime().isAfter(oldestAllowedDate)
             }
         }
     }

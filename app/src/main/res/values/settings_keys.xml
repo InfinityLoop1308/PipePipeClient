@@ -1447,6 +1447,19 @@
     <string name="bullet_comments_font_key">bullet_comments_font_key</string>
     <string name="bullet_comments_opacity_key">bullet_comments_opacity_key</string>
     <string name="toggle_show_future_items_key">toggle_show_future_items_key</string>
+    <string name="feed_age_filter_key">feed_age_filter_key</string>
+    <string-array name="feed_age_filter_descriptions">
+        <item>Last 24 hours</item>
+        <item>Last 7 days</item>
+        <item>Last 30 days</item>
+        <item>Last 13 weeks (default)</item>
+    </string-array>
+    <string-array name="feed_age_filter_values">
+        <item>1</item>
+        <item>7</item>
+        <item>30</item>
+        <item>91</item>
+    </string-array>
     <string name="auto_background_play_key">auto_background_play_key</string>
     <string name="override_cookies_bilibili_key">override_cookies_bilibili_key</string>
     <string name="override_cookies_niconico_key">override_cookies_niconico_key</string>
