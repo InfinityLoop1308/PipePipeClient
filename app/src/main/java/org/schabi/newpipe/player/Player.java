@@ -3416,7 +3416,12 @@ public final class Player implements
         if (playQueue == null) {
             return;
         }
-
+        
+        if (playQueue.size() == 1)
+        {
+            fastForward();
+            return;
+        }
         saveStreamProgressState();
         playQueue.offsetIndex(+1);
         triggerProgressUpdate();
