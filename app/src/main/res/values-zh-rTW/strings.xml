@@ -1060,4 +1060,10 @@
 <string name="beta_test_dialog_title">參與 PipePipe 5.0.0 Beta-2 測試！</string>
 <string name="beta_test_dialog_message">感謝您一直以來的支持！我們很興奮地釋出 PipePipe 5.0.0 Beta-2，這是我們從零重建應用程式的一大步。\n\n本版本根據早期回饋，著重提升穩定性與功能完整度。雖然我們已更接近正式版，但目前仍是測試版，您的回饋非常寶貴。\n\n提醒：此版本將以 "PipePipe Beta" 安裝，不會影響您目前的應用程式或資料。\n\n如果您遇到任何錯誤或有建議，請在我們的 GitHub 儲存庫建立 issue 告訴我們！</string>
 <string name="trending_replaced">YouTube 最近移除了「發燒影片」功能，因此我們已將預設的 YouTube 發燒分頁改為顯示「推薦直播」。如果你不想看到這個分頁，可以在「設定」中將其移除，並將其他分頁設為你的首頁。</string>
+<string name="feed_age_filter_title">訂閱動態時間過濾</string>
+<string name="feed_age_filter_summary">只顯示比此時間段更新的影片</string>
+<string name="feed_age_filter_1_day">最近24小時</string>
+<string name="feed_age_filter_7_days">最近7天</string>
+<string name="feed_age_filter_30_days">最近30天</string>
+<string name="feed_age_filter_13_weeks">最近13週（預設）</string>
 </resources>

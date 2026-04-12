@@ -1028,4 +1028,10 @@
 <string name="beta_test_dialog_title">PipePipe 5.0.0 Beta-2 テストに参加しよう！</string>
 <string name="beta_test_dialog_message">いつもご支援いただきありがとうございます！ アプリをゼロから再構築する取り組みの大きな前進となる PipePipe 5.0.0 Beta-2 をリリースできることを大変嬉しく思います。\n\nこのバージョンは、初期のフィードバックに基づき、安定性と機能の完成度の大幅な改善に注力しています。正式リリースにかなり近づいていますが、まだベータ版であり、皆さまからのフィードバックが非常に重要です。\n\nご注意: これは \"PipePipe Beta\" としてインストールされ、現在のアプリやデータには影響しません。\n\n不具合を見つけたりご提案がある場合は、GitHubリポジトリでIssueを作成してぜひお知らせください！</string>
 <string name="trending_replaced">YouTubeは最近「急上昇動画」機能を廃止したため、既定のYouTubeの急上昇タブは、代わりに「おすすめのライブ配信」を表示するように更新しました。これを表示したくない場合は、設定でそのタブを削除し、別のタブをホームページとして設定できます。</string>
+<string name="feed_age_filter_title">フィードの期間フィルター</string>
+<string name="feed_age_filter_summary">この期間より新しい動画のみ表示</string>
+<string name="feed_age_filter_1_day">過去24時間</string>
+<string name="feed_age_filter_7_days">過去7日間</string>
+<string name="feed_age_filter_30_days">過去30日間</string>
+<string name="feed_age_filter_13_weeks">過去13週間（デフォルト）</string>
 </resources>

@@ -110,6 +110,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
     private var onSettingsChangeListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
     private var updateListViewModeOnResume = false
     private var updatePullToRefreshOnResume = false
+    private var updateFeedAgeFilterOnResume = false
     private var isRefreshing = false
 
     private var lastNewItemsCount = 0
@@ -160,6 +161,10 @@ class FeedFragment : BaseStateFragment<FeedState>() {
                 }
                 getString(R.string.pull_to_refresh_key) -> {
                     updatePullToRefreshOnResume = true
+                }
+                getString(R.string.feed_age_filter_key) -> {
+                    // Will re-apply date filter on resume (fragment may not be visible)
+                    updateFeedAgeFilterOnResume = true
                 }
             }
         }
@@ -239,6 +244,11 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         if (updatePullToRefreshOnResume) {
             updatePullToRefreshOnResume = false
             updatePullToRefreshState()
+        }
+
+        if (updateFeedAgeFilterOnResume) {
+            updateFeedAgeFilterOnResume = false
+            viewModel.stateLiveData.value?.let { handleResult(it) }
         }
     }
 
@@ -749,20 +759,26 @@ class FeedFragment : BaseStateFragment<FeedState>() {
             ItemViewMode.CARD -> StreamItem.ItemVersion.CARD
             else -> StreamItem.ItemVersion.NORMAL
         }
-        loadedState.items.forEach { it.itemVersion = itemVersion }
+        // Filter items by the feed age preference (24h, 7d, 30d, 91d)
+        val oldestAllowedDate = FeedDatabaseManager.getOldestAllowedDate(requireContext())
+        val dateFilteredItems = loadedState.items.filter { item ->
+            val uploadDate = item.streamWithState.stream.uploadDate
+            uploadDate == null || !uploadDate.isBefore(oldestAllowedDate)
+        }
+        dateFilteredItems.forEach { it.itemVersion = itemVersion }
 
-        // Store original items for filtering
+        // Store original items for text filtering (already date-filtered)
         originalItems.clear()
-        originalItems.addAll(loadedState.items)
+        originalItems.addAll(dateFilteredItems)
         filteredItems.clear()
         filteredItems.addAll(originalItems)
 
-        playlistControlBinding?.root?.isVisible = loadedState.items.isNotEmpty()
+        playlistControlBinding?.root?.isVisible = dateFilteredItems.isNotEmpty()
 
         // This need to be saved in a variable as the update occurs async
         val oldOldestSubscriptionUpdate = oldestSubscriptionUpdate
 
-        groupAdapter.updateAsync(loadedState.items, false) {
+        groupAdapter.updateAsync(dateFilteredItems, false) {
             oldOldestSubscriptionUpdate?.run {
                 highlightNewItemsAfter(oldOldestSubscriptionUpdate)
             }
@@ -789,7 +805,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         }
         oldestSubscriptionUpdate = loadedState.oldestUpdate
 
-        if (loadedState.items.isEmpty()) {
+        if (dateFilteredItems.isEmpty()) {
             showEmptyState()
         } else {
             hideLoading()
