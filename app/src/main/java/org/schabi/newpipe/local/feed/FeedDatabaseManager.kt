@@ -99,7 +99,8 @@ class FeedDatabaseManager(context: Context) {
     fun upsertAll(
         subscriptionId: Long,
         items: List<StreamInfoItem>,
-        oldestAllowedDate: OffsetDateTime = FEED_OLDEST_ALLOWED_DATE
+        oldestAllowedDate: OffsetDateTime = LocalDate.now().minusDays(FEED_AGE_FILTER_DEFAULT_DAYS.toLong())
+            .atStartOfDay().atOffset(ZoneOffset.UTC)
     ) {
         val itemsToInsert = ArrayList<StreamInfoItem>()
         loop@ for (streamItem in items) {
@@ -132,7 +133,10 @@ class FeedDatabaseManager(context: Context) {
         )
     }
 
-    fun removeOrphansOrOlderStreams(oldestAllowedDate: OffsetDateTime = FEED_OLDEST_ALLOWED_DATE) {
+    fun removeOrphansOrOlderStreams(
+        oldestAllowedDate: OffsetDateTime = LocalDate.now().minusDays(FEED_AGE_FILTER_DEFAULT_DAYS.toLong())
+            .atStartOfDay().atOffset(ZoneOffset.UTC)
+    ) {
         feedTable.unlinkStreamsOlderThan(oldestAllowedDate)
         streamTable.deleteOrphans()
     }
