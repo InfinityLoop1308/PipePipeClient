@@ -23,7 +23,6 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
-import java.lang.ref.SoftReference;
 
 public class SeekbarPreviewThumbnailHolder {
 
@@ -160,14 +159,12 @@ public class SeekbarPreviewThumbnailHolder {
     private Supplier<Bitmap> createBitmapSupplier(final Bitmap srcBitMap,
                                                   final int[] bounds,
                                                   final Frameset frameset) {
-        final SoftReference<Bitmap> srcBitMapRef = new SoftReference<>(srcBitMap);
         return () -> {
-            final Bitmap bitmap = srcBitMapRef.get();
             // It can happen, that the original bitmap could not be downloaded
             // (or it was recycled though that should not happen)
             // In such a case - we don't want a NullPointer/
             // "cannot use a recycled source in createBitmap" Exception -> simply return null
-            if (bitmap == null || bitmap.isRecycled()) {
+            if (srcBitMap == null || srcBitMap.isRecycled()) {
                 return null;
             }
 
@@ -175,16 +172,16 @@ public class SeekbarPreviewThumbnailHolder {
             // (or not the matching frame width/height)
             // This would lead to createBitmap cutting out a bitmap that is out of bounds,
             // so we need to adjust the bounds accordingly
-            if (bitmap.getWidth() < bounds[1] + frameset.getFrameWidth()) {
-                bounds[1] = bitmap.getWidth() - frameset.getFrameWidth();
+            if (srcBitMap.getWidth() < bounds[1] + frameset.getFrameWidth()) {
+                bounds[1] = srcBitMap.getWidth() - frameset.getFrameWidth();
             }
 
-            if (bitmap.getHeight() < bounds[2] + frameset.getFrameHeight()) {
-                bounds[2] = bitmap.getHeight() - frameset.getFrameHeight();
+            if (srcBitMap.getHeight() < bounds[2] + frameset.getFrameHeight()) {
+                bounds[2] = srcBitMap.getHeight() - frameset.getFrameHeight();
             }
 
             // Cut out the corresponding bitmap form the "srcBitMap"
-            final Bitmap cutOutBitmap = Bitmap.createBitmap(bitmap, bounds[1], bounds[2],
+            final Bitmap cutOutBitmap = Bitmap.createBitmap(srcBitMap, bounds[1], bounds[2],
                     frameset.getFrameWidth(), frameset.getFrameHeight());
 
             // If the cut out bitmap is identical to its source,

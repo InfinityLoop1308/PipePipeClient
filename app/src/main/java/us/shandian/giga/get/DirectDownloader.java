@@ -53,11 +53,15 @@ public class DirectDownloader {
         final ArrayList<VideoStream> streamsList = new ArrayList<>(ListHelper
                 .getSortedStreamVideosList(context, info.getVideoStreams(),
                         info.getVideoOnlyStreams(), false, false));
-        final int selectedStreamIndex = ListHelper.getDefaultResolutionIndex(context, streamsList);
+        final List<VideoStream> filteredVideoStreams = ListHelper
+                .filterVideoStreamsByPreferredLanguage(context, streamsList,
+                        info.getAudioStreams());
+        final int selectedStreamIndex = ListHelper.getDefaultResolutionIndex(
+                context, filteredVideoStreams);
 
-        this.setVideoStreams(streamsList);
+        this.setVideoStreams(filteredVideoStreams);
         this.setSelectedVideoStream(selectedStreamIndex);
-        this.setAudioStreams(info.getAudioStreams());
+        this.setAudioStreams(ListHelper.filterDownloadableAudioStreams(info.getAudioStreams()));
         this.setInfo(info);
         this.type = type;
         this.context = context;

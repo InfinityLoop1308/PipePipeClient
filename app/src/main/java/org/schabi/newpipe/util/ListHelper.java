@@ -493,9 +493,11 @@ public final class ListHelper {
 
         // Return the sorted list
         final HashMap<String, VideoStream> hashMap = new HashMap<>();
-        // Add all to the hashmap
         for (final VideoStream videoStream : allInitialStreams) {
-            hashMap.put(videoStream.getCodec().split("\\.")[0] + videoStream.getResolution(), videoStream);
+            final String trackSuffix = videoStream.getAudioTrackId() != null
+                    ? "|" + videoStream.getAudioTrackId() : "";
+            hashMap.put(videoStream.getCodec().split("\\.")[0]
+                    + videoStream.getResolution() + trackSuffix, videoStream);
         }
 
         return sortStreamList(new ArrayList<>(hashMap.values()), ascendingOrder);
@@ -861,5 +863,44 @@ public final class ListHelper {
         }
 
         return manager.isActiveNetworkMetered();
+    }
+
+    public static List<VideoStream> filterVideoStreamsByPreferredLanguage(
+            final Context context,
+            final List<VideoStream> videoStreams,
+            final List<AudioStream> audioStreams) {
+        final boolean hasAudioTracks = videoStreams.stream()
+                .anyMatch(s -> s.getAudioTrackId() != null);
+        if (!hasAudioTracks) {
+            return videoStreams;
+        }
+        final List<AudioStream> filtered = getFilteredAudioStreams(context, audioStreams);
+        final int defaultIdx = getDefaultAudioFormat(context, filtered);
+        String defaultTrackId = null;
+        if (defaultIdx >= 0 && defaultIdx < filtered.size()) {
+            defaultTrackId = filtered.get(defaultIdx).getAudioTrackId();
+        }
+        if (defaultTrackId == null) {
+            return videoStreams;
+        }
+        final String trackId = defaultTrackId;
+        final List<VideoStream> result = new ArrayList<>();
+        for (final VideoStream s : videoStreams) {
+            if (trackId.equals(s.getAudioTrackId()) || s.getAudioTrackId() == null) {
+                result.add(s);
+            }
+        }
+        return result.isEmpty() ? videoStreams : result;
+    }
+
+    public static List<AudioStream> filterDownloadableAudioStreams(
+            final List<AudioStream> audioStreams) {
+        final List<AudioStream> result = new ArrayList<>();
+        for (final AudioStream a : audioStreams) {
+            if (a.getDeliveryMethod() != DeliveryMethod.HLS || a.getAudioTrackId() == null) {
+                result.add(a);
+            }
+        }
+        return result;
     }
 }

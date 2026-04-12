@@ -906,12 +906,16 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         if (DEBUG) {
             Log.d(TAG, "handleSuggestions() called with: suggestions = [" + suggestions + "]");
         }
-        searchBinding.suggestionsList.smoothScrollToPosition(0);
-        searchBinding.suggestionsList.post(() -> suggestionListAdapter.setItems(suggestions));
+        try {
+            searchBinding.suggestionsList.smoothScrollToPosition(0);
+            searchBinding.suggestionsList.post(() -> suggestionListAdapter.setItems(suggestions));
 
-        if (suggestionsPanelVisible && isErrorPanelVisible()) {
-            hideLoading();
+            if (suggestionsPanelVisible && isErrorPanelVisible()) {
+                hideLoading();
+            }
+        } catch (Exception ignore) {
         }
+
     }
 
     /*//////////////////////////////////////////////////////////////////////////

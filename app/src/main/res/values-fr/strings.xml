@@ -789,7 +789,7 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="sponsor_promote">Devenez un supporter</string>
 <string name="random_play_order_title">Ordre aléatoire</string>
 <string name="random_play_order_summary">Mélangez automatiquement vos listes de lecture locales lorsque vous jouez en arrière-plan</string>
-<string name="update_log">### Corrections de bugs\n\n- La langue audio préférée n’est pas définie par défaut sur Original comme prévu\n- Les formats avancés ne sont pas préférés par le lecteur\n- Certains flux en direct ne peuvent pas être lus (YouTube)\n- Certaines vidéos avec restriction d’âge sont incorrectement marquées comme bloquées par IP (YouTube)\n- Le passage à la lecture en arrière-plan change parfois la piste audio pour une mauvaise (YouTube)\n- Le téléchargement n’utilise parfois pas la langue audio préférée (YouTube)</string>
+<string name="update_log">Après quelques travaux, nous avons trouvé une nouvelle méthode fiable pour faire fonctionner à nouveau la connexion YouTube.\n\n### Nouvelles fonctionnalités\n\n- Rétablissement de la connexion (YouTube)\n- Utilisation d\'une nouvelle méthode pour s\'assurer que les titres ne soient jamais traduits automatiquement (YouTube)\n\n### Corrections de bugs\n\n- Erreur aléatoire \"Contenu indisponible\" due au chiffrement SABR (YouTube)\n- Les éléments associés n\'ont pas de nombre de vues ni de durée (YouTube)\n- Augmentation de l\'intervalle de récupération du flux pour éviter le bannissement IP (BiliBili)\n- Certains liens sont incorrectement reconnus comme des URL PeerTube\n\n### Autres\n\n- Mise à jour des traductions (français)\n- Amélioration de la stabilité</string>
 <string name="speeding_playback_title">Appuyer longuement pour accélérer la lecture</string>
 <string name="view_on_github">Voir sur GitHub</string>
 <string name="donation_dialog_title">Soutenez le projet</string>
@@ -880,7 +880,7 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="video_not_released">La vidéo n\'a pas encore été publiée.</string>
 <string name="filter_shorts_title">Filtrer les vidéos courtes</string>
 <string name="filter_shorts_summary">Supprimer les vidéos courtes des résultats. Fonctionne uniquement pour YouTube.</string>
-<string name="paid_video">Payé</string>
+<string name="paid_video">Payant</string>
 <string name="share_playlist">Partager la liste de lecture</string>
 <string name="share_playlist_with_titles_message">Partagez la liste de lecture avec des détails tels que le nom de la liste et les titres des vidéos ou comme une simple liste d\'URLs de vidéos</string>
 <string name="share_playlist_with_titles">Partager avec les titres</string>

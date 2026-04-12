@@ -9,9 +9,11 @@ import com.google.android.exoplayer2.source.SingleSampleMediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
+import com.google.android.exoplayer2.source.hls.DefaultHlsExtractorFactory;
 import com.google.android.exoplayer2.source.hls.playlist.DefaultHlsPlaylistTracker;
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
+import com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
@@ -183,7 +185,9 @@ public class PlayerDataSource {
     public HlsMediaSource.Factory getYoutubeHlsMediaSourceFactory() {
         cacheDataSourceFactoryBuilder.setUpstreamDataSourceFactory(
                 getYoutubeHttpDataSourceFactory(false, false));
-        return new HlsMediaSource.Factory(cacheDataSourceFactoryBuilder.build());
+        final int payloadReaderFlags = DefaultTsPayloadReaderFactory.FLAG_DETECT_ACCESS_UNITS;
+        return new HlsMediaSource.Factory(cacheDataSourceFactoryBuilder.build())
+                .setExtractorFactory(new DefaultHlsExtractorFactory(payloadReaderFlags, true));
     }
 
     public ProgressiveMediaSource.Factory getYoutubeProgressiveMediaSourceFactory() {

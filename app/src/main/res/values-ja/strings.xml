@@ -854,7 +854,7 @@
 <string name="sponsor_promote">サポーターになる</string>
 <string name="random_play_order_title">ランダムな順序</string>
 <string name="random_play_order_summary">バックグラウンドで再生する際にローカルプレイリストを自動的にシャッフルします</string>
-<string name="update_log">### バグ修正\n\n- 既定では元の音声言語が設定されていない問題を修正\n- プレイヤーが高度なフォーマットを優先しない問題を修正\n- 一部のライブ配信が再生できない問題を修正（YouTube）\n- 一部の年齢制限動画が誤ってIPブロックと判定される問題を修正（YouTube）\n- バックグラウンド再生に切り替えると誤った音声トラックが再生される場合がある問題を修正（YouTube）\n- ダウンロード時に希望の音声言語が使用されないことがある問題を修正（YouTube）</string>
+<string name="update_log">いくつかの作業を経て、YouTubeのログインを再び機能させるための新しい信頼性の高い方法を見つけました。\n\n### 新機能\n\n- ログインの再サポート (YouTube)\n- 新しい手法を使用して、タイトルが自動翻訳されないように修正 (YouTube)\n\n### バグ修正\n\n- SABR暗号化によるランダムな「コンテンツを利用できません」エラー (YouTube)\n- 関連アイテムの再生数と時間が表示されない問題 (YouTube)\n- IPブロックを回避するためにフィード取得間隔を延長 (BiliBili)\n- 一部のリンクが誤ってPeerTubeのURLとして認識される問題\n\n### その他\n\n- 翻訳の更新 (フランス語)\n- 安定性の向上</string>
 <string name="speeding_playback_title">長時間押は再生速度を速めることができます</string>
 <string name="view_on_github">GitHubで表示</string>
 <string name="donation_dialog_title">プロジェクトをサポートする</string>

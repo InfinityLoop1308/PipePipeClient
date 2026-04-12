@@ -162,12 +162,21 @@ public class DownloadDialog extends DialogFragment
         final ArrayList<VideoStream> streamsList = new ArrayList<>(ListHelper
                 .getSortedStreamVideosList(context, info.getVideoStreams(),
                         info.getVideoOnlyStreams(), false, false));
-        final int selectedStreamIndex = ListHelper.getDefaultResolutionIndex(context, streamsList);
+
+        final List<VideoStream> filteredVideoStreams = ListHelper
+                .filterVideoStreamsByPreferredLanguage(context, streamsList,
+                        info.getAudioStreams());
+
+        final int selectedStreamIndex = ListHelper.getDefaultResolutionIndex(
+                context, filteredVideoStreams);
+
+        final List<AudioStream> downloadableAudio = ListHelper
+                .filterDownloadableAudioStreams(info.getAudioStreams());
 
         final DownloadDialog instance = newInstance(info);
-        instance.setVideoStreams(streamsList);
+        instance.setVideoStreams(filteredVideoStreams);
         instance.setSelectedVideoStream(selectedStreamIndex);
-        instance.setAudioStreams(info.getAudioStreams());
+        instance.setAudioStreams(downloadableAudio);
         instance.setSubtitleStreams(info.getSubtitles());
 
         return instance;

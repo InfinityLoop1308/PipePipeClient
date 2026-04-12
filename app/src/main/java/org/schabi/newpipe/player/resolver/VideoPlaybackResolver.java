@@ -81,9 +81,37 @@ public class VideoPlaybackResolver implements PlaybackResolver {
         removeTorrentStreams(videoOnlyStreams);
 
         // Create video stream source
-        final List<VideoStream> videos = ListHelper.getSortedStreamVideosList(context,
+        List<VideoStream> videos = ListHelper.getSortedStreamVideosList(context,
                 videoStreams, videoOnlyStreams, false, true)
                 .stream().filter(s -> !blacklistUrls.contains(s.getContent())).collect(Collectors.toList());
+
+        if (audioTrack != null) {
+            final List<VideoStream> filtered = videos.stream()
+                    .filter(s -> audioTrack.equals(s.getAudioTrackId()))
+                    .collect(Collectors.toList());
+            if (!filtered.isEmpty()) {
+                videos = filtered;
+            }
+        } else {
+            final boolean hasVideoAudioTracks = videos.stream()
+                    .anyMatch(s -> s.getAudioTrackId() != null);
+            if (hasVideoAudioTracks) {
+                final List<AudioStream> allAudioStreams = ListHelper.getFilteredAudioStreams(
+                        context, info.getAudioStreams());
+                final int defaultIdx = ListHelper.getDefaultAudioFormat(context, allAudioStreams);
+                if (defaultIdx >= 0 && defaultIdx < allAudioStreams.size()) {
+                    final String defaultTrackId = allAudioStreams.get(defaultIdx).getAudioTrackId();
+                    if (defaultTrackId != null) {
+                        final List<VideoStream> filtered = videos.stream()
+                                .filter(s -> defaultTrackId.equals(s.getAudioTrackId()))
+                                .collect(Collectors.toList());
+                        if (!filtered.isEmpty()) {
+                            videos = filtered;
+                        }
+                    }
+                }
+            }
+        }
         final int index;
         if (videos.isEmpty()) {
             index = -1;
@@ -119,7 +147,10 @@ public class VideoPlaybackResolver implements PlaybackResolver {
 
         // Use the audio stream if there is no video stream, or
         // merge with audio stream in case if video does not contain audio
-        if (audio != null && (video == null || video.isVideoOnly() || audioTrack != null)) {
+        final boolean videoHasMatchingAudio = video != null && !video.isVideoOnly()
+                && audioTrack != null && audioTrack.equals(video.getAudioTrackId());
+        if (audio != null && !videoHasMatchingAudio
+                && (video == null || video.isVideoOnly() || audioTrack != null)) {
             try {
                 final MediaSource audioSource = PlaybackResolver.buildMediaSource(
                         dataSource, audio, info, PlayerHelper.cacheKeyOf(info, audio), tag);

@@ -899,7 +899,7 @@
 <string name="sponsor_promote">成为支持者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">在后台播放时自动随机播放您的本地播放列表</string>
-<string name="update_log">### 错误修复\n\n- 默认情况下，首选音频语言未设置为原始语言\n- 播放器未优先选择高级格式\n- 某些直播流无法播放（YouTube）\n- 某些受年龄限制的视频被错误地标记为 IP 被封锁（YouTube）\n- 切换到后台播放时有时会更改为错误的音轨（YouTube）\n- 下载时有时未使用首选的音频语言（YouTube）</string>
+<string name="update_log">经过一番努力，我们找到了重新让 YouTube 登录功能恢复正常的新方法。\n\n### 新功能\n\n- 重新支持登录 (YouTube)\n- 使用新方法确保标题不会被自动翻译 (YouTube)\n\n### 问题修复\n\n- 修复了因 SABR 加密导致的随机“内容不可用”错误 (YouTube)\n- 修复了相关项目没有观看次数和时长的问题 (YouTube)\n- 增加订阅源获取间隔以避免 IP 被封 (Bilibili)\n- 修复了部分链接被错误识别为 PeerTube URL 的问题\n\n### 其他\n\n- 更新翻译 (法语)\n- 提高稳定性</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 <string name="donation_dialog_title">支持该项目</string>
