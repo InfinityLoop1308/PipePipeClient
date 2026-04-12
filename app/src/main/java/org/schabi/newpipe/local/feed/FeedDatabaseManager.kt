@@ -2,6 +2,7 @@ package org.schabi.newpipe.local.feed
 
 import android.content.Context
 import android.util.Log
+import androidx.preference.PreferenceManager
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Flowable
@@ -30,10 +31,23 @@ class FeedDatabaseManager(context: Context) {
 
     companion object {
         /**
-         * Only items that are newer than this will be saved.
+         * Default retention period in days (13 weeks = 91 days).
          */
-        val FEED_OLDEST_ALLOWED_DATE: OffsetDateTime = LocalDate.now().minusWeeks(13)
-            .atStartOfDay().atOffset(ZoneOffset.UTC)
+        const val FEED_AGE_FILTER_DEFAULT_DAYS: Int = 91
+
+        /**
+         * Returns the oldest allowed date for feed items, based on the user's preference.
+         * Streams older than this date will not be saved or displayed in the feed.
+         * Falls back to [FEED_AGE_FILTER_DEFAULT_DAYS] (13 weeks) if the preference is not set.
+         */
+        fun getOldestAllowedDate(context: Context): OffsetDateTime {
+            val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+            val key = context.getString(org.schabi.newpipe.R.string.feed_age_filter_key)
+            val days = prefs.getString(key, FEED_AGE_FILTER_DEFAULT_DAYS.toString())
+                ?.toIntOrNull() ?: FEED_AGE_FILTER_DEFAULT_DAYS
+            return LocalDate.now().minusDays(days.toLong())
+                .atStartOfDay().atOffset(ZoneOffset.UTC)
+        }
     }
 
     fun groups() = feedGroupTable.getAll()
@@ -85,7 +99,8 @@ class FeedDatabaseManager(context: Context) {
     fun upsertAll(
         subscriptionId: Long,
         items: List<StreamInfoItem>,
-        oldestAllowedDate: OffsetDateTime = FEED_OLDEST_ALLOWED_DATE
+        oldestAllowedDate: OffsetDateTime = LocalDate.now().minusDays(FEED_AGE_FILTER_DEFAULT_DAYS.toLong())
+            .atStartOfDay().atOffset(ZoneOffset.UTC)
     ) {
         val itemsToInsert = ArrayList<StreamInfoItem>()
         loop@ for (streamItem in items) {
@@ -118,7 +133,10 @@ class FeedDatabaseManager(context: Context) {
         )
     }
 
-    fun removeOrphansOrOlderStreams(oldestAllowedDate: OffsetDateTime = FEED_OLDEST_ALLOWED_DATE) {
+    fun removeOrphansOrOlderStreams(
+        oldestAllowedDate: OffsetDateTime = LocalDate.now().minusDays(FEED_AGE_FILTER_DEFAULT_DAYS.toLong())
+            .atStartOfDay().atOffset(ZoneOffset.UTC)
+    ) {
         feedTable.unlinkStreamsOlderThan(oldestAllowedDate)
         streamTable.deleteOrphans()
     }

@@ -1063,4 +1063,10 @@
 <string name="beta_test_dialog_title">¡Únete a la prueba Beta-2 de PipePipe 5.0.0!</string>
 <string name="beta_test_dialog_message">¡Gracias por tu apoyo continuo! Estamos muy emocionados de lanzar PipePipe 5.0.0 Beta-2, un gran paso adelante en la reconstrucción desde cero de la aplicación.\n\nEsta versión se centra en mejoras significativas de la estabilidad y en completar funcionalidades, basadas en los comentarios tempranos. Aunque nos estamos acercando mucho a la versión final, sigue siendo una beta, y tus comentarios son invaluables.\n\nRecordatorio: Esto se instalará como "PipePipe Beta" y no afectará tu aplicación ni tus datos actuales.\n\nSi encuentras algún error o tienes sugerencias, háznoslo saber abriendo un problema en nuestro repositorio de GitHub.</string>
 <string name="trending_replaced">YouTube ha eliminado recientemente la función de Videos en Tendencias, así que hemos actualizado nuestra pestaña de Tendencias predeterminada de YouTube para mostrar transmisiones en vivo recomendadas en su lugar. Si no quieres ver esto, puedes eliminar la pestaña en Configuración y establecer otra como tu página de inicio.</string>
+<string name="feed_age_filter_title">Filtro de antigüedad del feed</string>
+<string name="feed_age_filter_summary">Mostrar solo streams más recientes que este período (se aplica al feed de suscripciones y Novedades)</string>
+<string name="feed_age_filter_1_day">Últimas 24 horas</string>
+<string name="feed_age_filter_7_days">Últimos 7 días</string>
+<string name="feed_age_filter_30_days">Últimos 30 días</string>
+<string name="feed_age_filter_13_weeks">Últimas 13 semanas (predeterminado)</string>
 </resources>
