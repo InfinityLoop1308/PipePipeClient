@@ -1031,7 +1031,7 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="beta_test_dialog_message">Merci pour votre soutien continu ! Nous sommes ravis de publier PipePipe 5.0.0 Beta-2, une étape majeure dans la refonte complète de l\'application.\n\nCette version se concentre sur des améliorations significatives de la stabilité et de la complétude des fonctionnalités, basées sur les premiers retours. Même si nous nous rapprochons beaucoup de la version finale, il s\'agit toujours d\'une bêta, et vos retours sont précieux.\n\nRappel : ceci sera installé sous le nom "PipePipe Beta" et n\'affectera pas votre application ou vos données actuelles.\n\nSi vous rencontrez des bugs ou avez des suggestions, merci de nous en informer en ouvrant une issue sur notre dépôt GitHub !</string>
 <string name="trending_replaced">YouTube a récemment supprimé la fonctionnalité Tendances, nous avons donc mis à jour notre onglet YouTube Tendances par défaut pour afficher à la place des diffusions en direct recommandées. Si vous ne souhaitez pas voir cela, vous pouvez supprimer l\'onglet dans Paramètres et en définir un autre comme page d\'accueil.</string>
 <string name="feed_age_filter_title">Filtre d\'ancienneté du fil</string>
-<string name="feed_age_filter_summary">N'afficher que les vidéos plus récentes que cette période (s'applique au fil et au kiosque)</string>
+<string name="feed_age_filter_summary">N\'afficher que les vidéos plus récentes que cette période (s\'applique au fil d\'abonnements et à Quoi de neuf)</string>
 <string name="feed_age_filter_1_day">Dernières 24 heures</string>
 <string name="feed_age_filter_7_days">7 derniers jours</string>
 <string name="feed_age_filter_30_days">30 derniers jours</string>
