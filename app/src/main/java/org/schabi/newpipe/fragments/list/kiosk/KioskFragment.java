@@ -23,6 +23,7 @@ import org.schabi.newpipe.extractor.linkhandler.ListLinkHandlerFactory;
 import org.schabi.newpipe.extractor.localization.ContentCountry;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.fragments.list.BaseListInfoFragment;
+import org.schabi.newpipe.local.feed.FeedDatabaseManager;
 import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.util.KioskTranslator;
 import org.schabi.newpipe.util.Localization;
@@ -60,6 +61,8 @@ public class KioskFragment extends BaseListInfoFragment<StreamInfoItem, KioskInf
     String kioskTranslatedName;
     @State
     ContentCountry contentCountry;
+    @State
+    String lastFeedAgeFilter = "";
 
     /*//////////////////////////////////////////////////////////////////////////
     // Views
@@ -97,12 +100,20 @@ public class KioskFragment extends BaseListInfoFragment<StreamInfoItem, KioskInf
         kioskTranslatedName = KioskTranslator.getTranslatedKioskName(kioskId, activity);
         name = kioskTranslatedName;
         contentCountry = Localization.getPreferredContentCountry(requireContext());
+        lastFeedAgeFilter = androidx.preference.PreferenceManager
+                .getDefaultSharedPreferences(requireContext())
+                .getString(getString(R.string.feed_age_filter_key), "91");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (!Localization.getPreferredContentCountry(requireContext()).equals(contentCountry)) {
+        final String currentFeedAgeFilter = androidx.preference.PreferenceManager
+                .getDefaultSharedPreferences(requireContext())
+                .getString(getString(R.string.feed_age_filter_key), "91");
+        if (!Localization.getPreferredContentCountry(requireContext()).equals(contentCountry)
+                || !currentFeedAgeFilter.equals(lastFeedAgeFilter)) {
+            lastFeedAgeFilter = currentFeedAgeFilter;
             reloadContent();
         }
         if (useAsFrontPage && activity != null) {
@@ -156,6 +167,21 @@ public class KioskFragment extends BaseListInfoFragment<StreamInfoItem, KioskInf
 
     @Override
     public void handleResult(@NonNull final KioskInfo result) {
+        // Apply feed age filter
+        try {
+            final java.time.OffsetDateTime oldestAllowedDate =
+                    FeedDatabaseManager.Companion.getOldestAllowedDate(requireContext());
+            final java.util.List<StreamInfoItem> filtered =
+                    new java.util.ArrayList<>(result.getRelatedItems());
+            filtered.removeIf(item ->
+                    item.getUploadDate() != null
+                    && item.getUploadDate().offsetDateTime().isBefore(oldestAllowedDate)
+            );
+            result.setRelatedItems(filtered);
+        } catch (final Exception e) {
+            // If filtering fails for any reason, proceed with unfiltered results
+        }
+
         super.handleResult(result);
 
         name = kioskTranslatedName;

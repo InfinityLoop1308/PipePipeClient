@@ -1449,10 +1449,10 @@
     <string name="toggle_show_future_items_key">toggle_show_future_items_key</string>
     <string name="feed_age_filter_key">feed_age_filter_key</string>
     <string-array name="feed_age_filter_descriptions">
-        <item>Last 24 hours</item>
-        <item>Last 7 days</item>
-        <item>Last 30 days</item>
-        <item>Last 13 weeks (default)</item>
+        <item>@string/feed_age_filter_1_day</item>
+        <item>@string/feed_age_filter_7_days</item>
+        <item>@string/feed_age_filter_30_days</item>
+        <item>@string/feed_age_filter_13_weeks</item>
     </string-array>
     <string-array name="feed_age_filter_values">
         <item>1</item>

@@ -878,7 +878,7 @@
 <string name="feed_toggle_show_future_items">Show future items</string>
 <string name="feed_toggle_hide_future_items">Hide future items</string>
 <string name="feed_age_filter_title">Feed age filter</string>
-<string name="feed_age_filter_summary">Only show streams newer than this period</string>
+<string name="feed_age_filter_summary">Only show streams newer than this period (applies to feed and kiosk)</string>
 <string name="feed_age_filter_1_day">Last 24 hours</string>
 <string name="feed_age_filter_7_days">Last 7 days</string>
 <string name="feed_age_filter_30_days">Last 30 days</string>
