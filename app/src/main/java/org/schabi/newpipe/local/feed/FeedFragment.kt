@@ -67,6 +67,7 @@ import org.schabi.newpipe.error.UserAction
 import org.schabi.newpipe.extractor.exceptions.AccountTerminatedException
 import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
+import org.schabi.newpipe.extractor.stream.StreamType
 import org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty
 import org.schabi.newpipe.fragments.BaseStateFragment
 import org.schabi.newpipe.info_list.ItemViewMode
@@ -110,6 +111,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
     private var onSettingsChangeListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
     private var updateListViewModeOnResume = false
     private var updatePullToRefreshOnResume = false
+    private var updateHideLiveStreamsOnResume = false
     private var isRefreshing = false
 
     private var lastNewItemsCount = 0
@@ -160,6 +162,9 @@ class FeedFragment : BaseStateFragment<FeedState>() {
                 }
                 getString(R.string.pull_to_refresh_key) -> {
                     updatePullToRefreshOnResume = true
+                }
+                getString(R.string.hide_live_streams_key) -> {
+                    updateHideLiveStreamsOnResume = true
                 }
             }
         }
@@ -239,6 +244,11 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         if (updatePullToRefreshOnResume) {
             updatePullToRefreshOnResume = false
             updatePullToRefreshState()
+        }
+
+        if (updateHideLiveStreamsOnResume) {
+            updateHideLiveStreamsOnResume = false
+            viewModel.stateLiveData.value?.let { handleResult(it) }
         }
     }
 

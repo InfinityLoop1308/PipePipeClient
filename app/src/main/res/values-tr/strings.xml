@@ -1106,4 +1106,6 @@
 <string name="beta_test_dialog_title">PipePipe 5.0.0 Beta-2 Testine Katılın!</string>
 <string name="beta_test_dialog_message">Devam eden desteğiniz için teşekkür ederiz! Uygulamayı baştan aşağı yeniden oluşturma sürecimizde büyük bir adım olan PipePipe 5.0.0 Beta-2\'yi yayınlamaktan heyecan duyuyoruz.\n\nBu sürüm, erken geri bildirimlere dayanarak kararlılık ve özellik tamamlama konusunda önemli iyileştirmelere odaklanmaktadır. Son sürüme çok yaklaşmış olsak da, bu hala bir betadır ve geri bildiriminiz paha biçilemez.\n\nHatırlatma: Bu, \"PipePipe Beta\" olarak yüklenecek ve mevcut uygulamanızı veya verilerinizi etkilemeyecektir.\n\nHerhangi bir hatayla karşılaşırsanız veya önerileriniz varsa, lütfen GitHub depomuzda bir sorun açarak bize bildirin!</string>
 <string name="trending_replaced">YouTube kısa süre önce Trend Videolar özelliğini kaldırdı, bu nedenle varsayılan YouTube trend sekmemizi bunun yerine Önerilen Canlı Yayınları gösterecek şekilde güncelledik. Bunu görmek istemiyorsanız, Ayarlar\'dan sekmeyi kaldırabilir ve başka birini ana sayfanız olarak ayarlayabilirsiniz.</string>
+<string name="hide_live_streams_title">Canlı yayınları gizle</string>
+<string name="hide_live_streams_summary">Canlı yayınları feedden kaldır</string>
 </resources>

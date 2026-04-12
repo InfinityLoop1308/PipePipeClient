@@ -1651,6 +1651,7 @@
     <string name="show_dislike_key">show_dislike_key</string>
     <string name="filter_shorts_key">filter_shorts_key</string>
     <string name="filter_paid_contents_key">filter_paid_contents_key</string>
+    <string name="hide_live_streams_key">hide_live_streams_key</string>
     <string name="loading_timeout_key">loading_timeout_key</string>
     <string name="youtube_po_token_key">youtube_po_token_key</string>
     <string name="always_start_from_beginning_key">always_start_from_beginning_key</string>
