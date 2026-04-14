@@ -503,6 +503,13 @@ public class RouterActivity extends AppCompatActivity {
             }
         }
 
+        if (PlayerHolder.getInstance().getQueueSize() > 0) {
+            returnList.add(new AdapterChoiceItem(
+                    getString(R.string.enqueue_key),
+                    getString(R.string.enqueue_stream),
+                    R.drawable.ic_add));
+        }
+
         return returnList;
     }
 
@@ -791,6 +798,9 @@ public class RouterActivity extends AppCompatActivity {
                     NavigationHelper.playOnBackgroundPlayer(this, playQueue, true);
                 } else if (choice.playerChoice.equals(popupPlayerKey)) {
                     NavigationHelper.playOnPopupPlayer(this, playQueue, true);
+                } else if (choice.playerChoice.equals(
+                        getString(R.string.enqueue_key))) {
+                    NavigationHelper.enqueueOnPlayer(this, playQueue);
                 }
             };
         }

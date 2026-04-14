@@ -1684,4 +1684,5 @@
         <item>enqueue</item>
         <item>disable</item>
     </string-array>
+    <string name="enqueue_key">enqueue</string>
 </resources>
