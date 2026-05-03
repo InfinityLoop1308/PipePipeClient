@@ -1120,4 +1120,5 @@
 <string name="grid_layout_summary">Show supported lists in a grid instead of a single-column list</string>
 <string name="grid_columns_title">Grid columns</string>
 <string name="grid_columns_landscape_title">Grid columns (landscape)</string>
+<string name="channel_tab_podcasts">Podcasts</string>
 </resources>

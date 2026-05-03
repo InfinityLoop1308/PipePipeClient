@@ -271,6 +271,7 @@
         <item>@string/show_channel_tabs_shorts</item>
         <item>@string/show_channel_tabs_channels</item>
         <item>@string/show_channel_tabs_albums</item>
+        <item>@string/show_channel_tabs_podcasts</item>
         <item>@string/show_channel_tabs_info</item>
     </string-array>
     <string-array name="show_channel_tabs_description_list">
@@ -279,6 +280,7 @@
         <item>@string/channel_tab_shorts</item>
         <item>@string/channel_tab_channels</item>
         <item>@string/channel_tab_albums</item>
+        <item>@string/channel_tab_podcasts</item>
         <item>@string/channel_tab_info</item>
     </string-array>
     <string name="show_search_suggestions_key">show_search_suggestions</string>
@@ -1684,7 +1686,6 @@
         <item>enqueue</item>
         <item>disable</item>
     </string-array>
-
     <string name="grid_layout_enabled_key">grid_layout_enabled_key</string>
     <string name="grid_columns_key">grid_columns_key</string>
     <string name="grid_columns_landscape_key">grid_columns_landscape_key</string>
@@ -1710,4 +1711,6 @@
         <item>7</item>
         <item>8</item>
     </string-array>
+
+    <string name="show_channel_tabs_podcasts">show_channel_tabs_podcasts</string>
 </resources>

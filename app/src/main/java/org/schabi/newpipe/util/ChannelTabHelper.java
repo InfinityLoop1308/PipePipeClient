@@ -30,6 +30,8 @@ public final class ChannelTabHelper {
                 return R.string.show_channel_tabs_channels;
             case ChannelTabs.ALBUMS:
                 return R.string.show_channel_tabs_albums;
+            case ChannelTabs.PODCASTS:
+                return R.string.show_channel_tabs_podcasts;
         }
         return -1;
     }
@@ -63,6 +65,8 @@ public final class ChannelTabHelper {
                 return R.string.channel_tab_channels;
             case ChannelTabs.ALBUMS:
                 return R.string.channel_tab_albums;
+            case ChannelTabs.PODCASTS:
+                return R.string.channel_tab_podcasts;
         }
         return R.string.unknown_content;
     }
