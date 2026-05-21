@@ -97,6 +97,12 @@ public final class ServiceHelper {
                 return c.getString(R.string.sortorder);
             case "features":
                 return c.getString(R.string.features);
+            case "latest":
+                return c.getString(R.string.newest_first);
+            case "popular":
+                return c.getString(R.string.sort_popular);
+            case "oldest":
+                return c.getString(R.string.oldest_first);
             case "sort_popular":
                 return c.getString(R.string.sort_popular);
             case "sort_view":
