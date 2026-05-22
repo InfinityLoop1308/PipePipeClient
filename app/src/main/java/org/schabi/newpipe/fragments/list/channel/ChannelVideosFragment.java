@@ -548,16 +548,27 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
                 .setTitle(R.string.sort)
                 .setSingleChoiceItems(sortFilterLabels, getSelectedSortFilterIndex(sortFilterItems),
                         (dialog, which) -> {
-                            selectedSortFilterId = sortFilterItems.get(which).getIdentifier();
+                            final int selectedFilterId = getNormalizedSortFilterId(
+                                    sortFilterItems.get(which));
                             dialog.dismiss();
+                            if (selectedFilterId == selectedSortFilterId) {
+                                return;
+                            }
+                            selectedSortFilterId = selectedFilterId;
                             startLoading(true);
                         })
                 .show();
     }
 
+    private int getNormalizedSortFilterId(final FilterItem sortFilterItem) {
+        return "latest".equals(sortFilterItem.getName())
+                ? Filter.ITEM_IDENTIFIER_UNKNOWN
+                : sortFilterItem.getIdentifier();
+    }
+
     private int getSelectedSortFilterIndex(final List<FilterItem> sortFilterItems) {
         for (int i = 0; i < sortFilterItems.size(); i++) {
-            if (sortFilterItems.get(i).getIdentifier() == selectedSortFilterId) {
+            if (getNormalizedSortFilterId(sortFilterItems.get(i)) == selectedSortFilterId) {
                 return i;
             }
         }
