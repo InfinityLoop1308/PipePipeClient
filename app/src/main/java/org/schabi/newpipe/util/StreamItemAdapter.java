@@ -14,6 +14,7 @@ import org.schabi.newpipe.DownloaderImpl;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.stream.AudioStream;
+import org.schabi.newpipe.extractor.stream.DeliveryMethod;
 import org.schabi.newpipe.extractor.stream.Stream;
 import org.schabi.newpipe.extractor.stream.SubtitlesStream;
 import org.schabi.newpipe.extractor.stream.VideoStream;
@@ -256,6 +257,11 @@ public class StreamItemAdapter<T extends Stream, U extends Stream> extends BaseA
                 boolean hasChanged = false;
                 for (final X stream : streamsWrapper.getStreamsList()) {
                     if (streamsWrapper.getSizeInBytes(stream) > -2) {
+                        continue;
+                    }
+                    if (stream.getDeliveryMethod() == DeliveryMethod.HLS) {
+                        streamsWrapper.setSize(stream, -1);
+                        hasChanged = true;
                         continue;
                     }
 

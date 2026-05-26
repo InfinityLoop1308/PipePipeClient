@@ -47,6 +47,12 @@ internal class HlsDownloader(
                 throw IOException("Cannot create HLS work directory: $workDir")
             }
 
+            remuxedOutputFromCheckpoint(workDir)?.let { output ->
+                copyOutputToStorage(output)
+                completeMission()
+                return
+            }
+
             val inputs = mission.urls.indices.map { index -> File(workDir, "input-$index.media") }
             for (index in mission.urls.indices) {
                 ensureRunning()
@@ -61,19 +67,13 @@ internal class HlsDownloader(
             ensureRunning()
             val output = File(workDir, "output.${outputExtension()}")
             remuxWithFfmpeg(inputs, output)
+            markRemuxOutput(output)
             copyOutputToStorage(output)
-            mission.current = mission.urls.size
-            mission.psState = 2
-            mission.hlsCheckpoint = null
-            cleanup(mission)
-            mission.unknownLength = false
-            mission.notifyFinished()
+            completeMission()
         } catch (error: TransferInterruptedException) {
             // Pause/stop requested. The mission state has already been persisted by checkpoints.
         } catch (error: TransferHttpException) {
-            if (error.statusCode == DownloadMission.ERROR_HTTP_FORBIDDEN ||
-                error.statusCode == DownloadMission.ERROR_HTTP_AUTH
-            ) {
+            if (shouldRecover(error.statusCode)) {
                 mission.doRecover(error.statusCode)
             } else {
                 mission.notifyError(error)
@@ -119,10 +119,26 @@ internal class HlsDownloader(
 
     @Throws(IOException::class)
     private fun transferDirectCompanionResource(index: Int, targetFile: File) {
+        val previous = mission.hlsCheckpoint?.resources?.firstOrNull { it.resourceIndex == index }
+        val previousFile = previous?.tempFilePath?.let { File(it) }
+        if (previous != null && previousFile?.exists() == true && previous.bytesWritten > 0) {
+            if (previousFile.absolutePath == targetFile.absolutePath &&
+                previousFile.length() == previous.bytesWritten &&
+                previous.nextSegmentIndex == 1
+            ) {
+                return
+            }
+            mission.notifyProgress(-previous.bytesWritten)
+        }
+
         val parent = targetFile.parentFile ?: throw IOException("HLS companion target has no parent")
         if (!parent.exists() && !parent.mkdirs()) {
             throw IOException("Cannot create HLS companion parent: $parent")
         }
+        if (targetFile.exists() && !targetFile.delete()) {
+            throw IOException("Cannot reset HLS companion target: $targetFile")
+        }
+
         var written = 0L
         targetFile.outputStream().use { output ->
             connectionFactory.open(mission.urls[index], "GET", null, null).useTransferConnection { connection ->
@@ -218,6 +234,33 @@ internal class HlsDownloader(
         }
     }
 
+    private fun remuxedOutputFromCheckpoint(workDir: File): File? {
+        val checkpoint = mission.hlsCheckpoint ?: return null
+        if (!checkpoint.remuxStarted) {
+            return null
+        }
+        val output = checkpoint.remuxOutputPath?.let { File(it) }?.absoluteFile ?: return null
+        if (!output.absolutePath.startsWith(workDir.absolutePath) || !output.exists() || output.length() <= 0) {
+            return null
+        }
+        return output
+    }
+
+    private fun markRemuxOutput(output: File) {
+        val current = mission.hlsCheckpoint ?: HlsDownloadCheckpoint()
+        mission.hlsCheckpoint = current.copy(remuxStarted = true, remuxOutputPath = output.absolutePath)
+        mission.writeThisToFile()
+    }
+
+    private fun completeMission() {
+        mission.current = mission.urls.size
+        mission.psState = 2
+        mission.hlsCheckpoint = null
+        cleanup(mission)
+        mission.unknownLength = false
+        mission.notifyFinished()
+    }
+
     private fun hlsManifestUrl(index: Int): String {
         val isUrl = mission.resourceIsUrls?.getOrNull(index) ?: true
         val manifestUrl = mission.resourceManifestUrls?.getOrNull(index)
@@ -275,9 +318,18 @@ internal class HlsDownloader(
         return extension.takeIf { it.isNotBlank() && it.all { char -> char.isLetterOrDigit() } } ?: "mp4"
     }
 
+    private fun shouldRecover(statusCode: Int): Boolean {
+        return statusCode == DownloadMission.ERROR_HTTP_AUTH ||
+            statusCode == DownloadMission.ERROR_HTTP_FORBIDDEN ||
+            statusCode == HTTP_NOT_FOUND ||
+            statusCode == HTTP_GONE
+    }
+
     companion object {
         private const val TAG = "HlsDownloader"
-        private const val MAX_PARALLELISM = 12
+        private const val MAX_PARALLELISM = 6
+        private const val HTTP_NOT_FOUND = 404
+        private const val HTTP_GONE = 410
 
         @JvmStatic
         fun cleanup(mission: DownloadMission) {

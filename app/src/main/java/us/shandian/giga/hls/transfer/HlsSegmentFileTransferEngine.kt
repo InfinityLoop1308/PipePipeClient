@@ -16,6 +16,7 @@ import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.io.RandomAccessFile
+import java.net.URI
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.ExecutorCompletionService
@@ -326,13 +327,13 @@ class HlsSegmentFileTransferEngine(
 
     @Throws(IOException::class)
     private fun resolveMediaPlaylist(manifestUrl: String): ResolvedMediaPlaylist {
-        return when (val playlist = manifestResolver.resolve(manifestUrl)) {
+        return when (val playlist = resolvePlaylistWithRetries(manifestUrl)) {
             is HlsMediaPlaylist -> ResolvedMediaPlaylist(playlist, manifestUrl)
             is HlsMasterPlaylist -> {
                 val variant = HlsPlaylistSelector.selectVariant(playlist)
                     ?: throw UnsupportedHlsPlaylistException("HLS master playlist has no variants")
                 val variantUrl = withManifestCookie(variant.url, manifestUrl)
-                when (val selected: HlsPlaylist = manifestResolver.resolve(variantUrl)) {
+                when (val selected: HlsPlaylist = resolvePlaylistWithRetries(variantUrl)) {
                     is HlsMediaPlaylist -> ResolvedMediaPlaylist(selected, variantUrl)
                     is HlsMasterPlaylist -> throw UnsupportedHlsPlaylistException(
                         "Nested HLS master playlists are not supported yet"
@@ -340,6 +341,11 @@ class HlsSegmentFileTransferEngine(
                 }
             }
         }
+    }
+
+    @Throws(IOException::class)
+    private fun resolvePlaylistWithRetries(url: String): HlsPlaylist {
+        return retryPolicy.withRetries { manifestResolver.resolve(url) }
     }
 
     @Throws(IOException::class)
@@ -563,16 +569,18 @@ class HlsSegmentFileTransferEngine(
 
     @Throws(IOException::class)
     private fun downloadEncryptionKey(rawKeyUrl: String): ByteArray {
-        connectionFactory.open(rawKeyUrl, "GET", null, null).useTransferConnection { connection ->
-            val statusCode = connection.responseCode
-            if (statusCode < 200 || statusCode > 299) {
-                throw TransferHttpException(statusCode)
+        return retryPolicy.withRetries {
+            connectionFactory.open(rawKeyUrl, "GET", null, null).useTransferConnection { connection ->
+                val statusCode = connection.responseCode
+                if (statusCode < 200 || statusCode > 299) {
+                    throw TransferHttpException(statusCode)
+                }
+                val key = connection.inputStream.use { input -> copyPartToMemory(input, AES_128_KEY_BYTES) }
+                if (key.size != AES_128_KEY_BYTES) {
+                    throw IOException("Invalid HLS AES-128 key size: ${key.size}")
+                }
+                key
             }
-            val key = connection.inputStream.use { input -> copyPartToMemory(input, AES_128_KEY_BYTES) }
-            if (key.size != AES_128_KEY_BYTES) {
-                throw IOException("Invalid HLS AES-128 key size: ${key.size}")
-            }
-            return key
         }
     }
 
@@ -683,10 +691,12 @@ class HlsSegmentFileTransferEngine(
             append(playlist.mediaSequence)
             append('|').append(playlist.segments.size)
             append('|').append(playlist.initSegment != null)
+            append('@').append(stableUrlIdentity(playlist.initSegment?.url))
             append('@').append(playlist.initSegment?.byteRange)
             appendKey(playlist.initSegment?.encryptionKey)
             for (segment in playlist.segments) {
-                append('|').append(segment.byteRange)
+                append('|').append(stableUrlIdentity(segment.url))
+                append('@').append(segment.byteRange)
                 append('@').append(segment.durationSeconds)
                 appendKey(segment.encryptionKey)
             }
@@ -695,7 +705,39 @@ class HlsSegmentFileTransferEngine(
 
     private fun StringBuilder.appendKey(encryptionKey: HlsEncryptionKey?) {
         append('@').append(encryptionKey?.method)
+        append('@').append(stableUrlIdentity(encryptionKey?.url))
         append('@').append(encryptionKey?.iv)
+    }
+
+    private fun stableUrlIdentity(url: String?): String {
+        if (url.isNullOrBlank()) {
+            return ""
+        }
+
+        val withoutCookie = url.substringBefore("#cookie=")
+        return try {
+            val uri = URI(withoutCookie)
+            buildString {
+                append(uri.rawPath ?: "")
+                stableQuery(uri.rawQuery)?.let { append('?').append(it) }
+            }
+        } catch (error: Exception) {
+            withoutCookie.substringBefore('#').substringBefore('?')
+        }
+    }
+
+    private fun stableQuery(rawQuery: String?): String? {
+        if (rawQuery.isNullOrBlank()) {
+            return null
+        }
+
+        return rawQuery.split('&')
+            .mapNotNull { part ->
+                val key = part.substringBefore('=').lowercase()
+                part.takeIf { key in STABLE_URL_QUERY_KEYS }
+            }
+            .takeIf { it.isNotEmpty() }
+            ?.joinToString("&")
     }
 
     private fun withManifestCookie(url: String, manifestUrl: String): String {
@@ -752,6 +794,7 @@ class HlsSegmentFileTransferEngine(
         const val AES_128_KEY_BYTES = 16
         const val AES_128_IV_BYTES = 16
         const val LONG_BYTES = 8
+        val STABLE_URL_QUERY_KEYS = setOf("clen", "dur", "gir", "itag", "lmt", "mime", "sq")
 
         val AlwaysRunningTransferController = object : TransferController {
             override fun isRunning(): Boolean = true
