@@ -158,6 +158,13 @@ public class DownloadMissionRecover extends Thread {
                         resolvedStream = video;
                     }
                 }
+                if (resolvedStream == null
+                        && HlsDownloadStreamHelper.isManifestFallbackRecovery(mRecovery)) {
+                    final String hlsUrl = mExtractor.getHlsUrl();
+                    if (hlsUrl != null && !hlsUrl.isEmpty()) {
+                        resolvedStream = HlsDownloadStreamHelper.createManifestFallback(hlsUrl);
+                    }
+                }
                 break;
             case 's':
                 for (SubtitlesStream subtitles : mExtractor.getSubtitles(mRecovery.getFormat())) {

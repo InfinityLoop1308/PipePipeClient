@@ -59,9 +59,10 @@ public class DirectDownloader {
                         info.getAudioStreams());
         final int selectedStreamIndex = ListHelper.getDefaultResolutionIndex(
                 context, filteredVideoStreams);
+        HlsDownloadStreamHelper.addManifestFallbackIfNeeded(filteredVideoStreams, info);
 
         this.setVideoStreams(filteredVideoStreams);
-        this.setSelectedVideoStream(selectedStreamIndex);
+        this.setSelectedVideoStream(selectedStreamIndex >= 0 ? selectedStreamIndex : 0);
         this.setAudioStreams(ListHelper.filterDownloadableAudioStreams(info.getAudioStreams()));
         this.setInfo(info);
         this.type = type;

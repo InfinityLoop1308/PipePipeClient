@@ -1,9 +1,7 @@
 package us.shandian.giga.get
 
-import android.net.Uri
 import android.util.Log
 import com.arthenica.ffmpegkit.FFmpegKit
-import com.arthenica.ffmpegkit.FFmpegKitConfig
 import com.arthenica.ffmpegkit.ReturnCode
 import us.shandian.giga.hls.state.HlsDownloadCheckpoint
 import us.shandian.giga.hls.state.HlsResourceCheckpoint
@@ -61,7 +59,9 @@ internal class HlsDownloader(
             }
 
             ensureRunning()
-            remuxWithFfmpeg(inputs)
+            val output = File(workDir, "output.${outputExtension()}")
+            remuxWithFfmpeg(inputs, output)
+            copyOutputToStorage(output)
             mission.current = mission.urls.size
             mission.psState = 2
             mission.hlsCheckpoint = null
@@ -172,11 +172,10 @@ internal class HlsDownloader(
     }
 
     @Throws(IOException::class)
-    private fun remuxWithFfmpeg(inputs: List<File>) {
+    private fun remuxWithFfmpeg(inputs: List<File>, output: File) {
         mission.psState = 1
         mission.writeThisToFile()
 
-        val output = FFmpegKitConfig.getSafParameter(mission.context, Uri.parse(mission.storage.source), "w")
         val command = buildString {
             append("-y ")
             inputs.forEach { input ->
@@ -188,7 +187,7 @@ internal class HlsDownloader(
                     append("-map ").append(index).append(":a? ")
                 }
             }
-            append("-c copy -movflags +faststart ").append(output)
+            append("-c copy -movflags +faststart ").append(quote(output.absolutePath))
         }
 
         Log.d(TAG, "remuxWithFfmpeg inputs=${inputs.size}")
@@ -196,6 +195,26 @@ internal class HlsDownloader(
         if (!ReturnCode.isSuccess(session.returnCode)) {
             mission.psState = 0
             throw IOException("HLS ffmpeg remux failed: ${session.returnCode}")
+        }
+    }
+
+    @Throws(IOException::class)
+    private fun copyOutputToStorage(output: File) {
+        output.inputStream().use { input ->
+            mission.storage.getStream().use { storage ->
+                storage.setLength(0)
+                storage.seek(0)
+
+                val buffer = ByteArray(transferConfig.bufferSize)
+                while (true) {
+                    ensureRunning()
+                    val read = input.read(buffer)
+                    if (read == -1) {
+                        break
+                    }
+                    storage.write(buffer, 0, read)
+                }
+            }
         }
     }
 
@@ -248,6 +267,12 @@ internal class HlsDownloader(
 
     private fun looksLikeHls(value: String?): Boolean {
         return value?.contains(".m3u8", ignoreCase = true) == true
+    }
+
+    private fun outputExtension(): String {
+        val name = mission.storage.name ?: return "mp4"
+        val extension = name.substringAfterLast('.', missingDelimiterValue = "")
+        return extension.takeIf { it.isNotBlank() && it.all { char -> char.isLetterOrDigit() } } ?: "mp4"
     }
 
     companion object {

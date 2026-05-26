@@ -680,15 +680,13 @@ class HlsSegmentFileTransferEngine(
 
     private fun fingerprint(playlist: HlsMediaPlaylist): String {
         return buildString {
-            append(playlist.sourceUrl)
-            append('|').append(playlist.mediaSequence)
+            append(playlist.mediaSequence)
             append('|').append(playlist.segments.size)
-            append('|').append(playlist.initSegment?.url)
-            append('|').append(playlist.initSegment?.byteRange)
+            append('|').append(playlist.initSegment != null)
+            append('@').append(playlist.initSegment?.byteRange)
             appendKey(playlist.initSegment?.encryptionKey)
             for (segment in playlist.segments) {
-                append('|').append(segment.url)
-                append('@').append(segment.byteRange)
+                append('|').append(segment.byteRange)
                 append('@').append(segment.durationSeconds)
                 appendKey(segment.encryptionKey)
             }
@@ -697,7 +695,6 @@ class HlsSegmentFileTransferEngine(
 
     private fun StringBuilder.appendKey(encryptionKey: HlsEncryptionKey?) {
         append('@').append(encryptionKey?.method)
-        append('@').append(encryptionKey?.url)
         append('@').append(encryptionKey?.iv)
     }
 

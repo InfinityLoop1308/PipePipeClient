@@ -84,6 +84,7 @@ import java.util.Optional;
 import icepick.Icepick;
 import icepick.State;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import us.shandian.giga.get.HlsDownloadStreamHelper;
 import us.shandian.giga.get.MissionRecoveryInfo;
 import us.shandian.giga.postprocessing.Postprocessing;
 import us.shandian.giga.service.DownloadManager;
@@ -169,13 +170,14 @@ public class DownloadDialog extends DialogFragment
 
         final int selectedStreamIndex = ListHelper.getDefaultResolutionIndex(
                 context, filteredVideoStreams);
+        HlsDownloadStreamHelper.addManifestFallbackIfNeeded(filteredVideoStreams, info);
 
         final List<AudioStream> downloadableAudio = ListHelper
                 .filterDownloadableAudioStreams(info.getAudioStreams());
 
         final DownloadDialog instance = newInstance(info);
         instance.setVideoStreams(filteredVideoStreams);
-        instance.setSelectedVideoStream(selectedStreamIndex);
+        instance.setSelectedVideoStream(selectedStreamIndex >= 0 ? selectedStreamIndex : 0);
         instance.setAudioStreams(downloadableAudio);
         instance.setSubtitleStreams(info.getSubtitles());
 
