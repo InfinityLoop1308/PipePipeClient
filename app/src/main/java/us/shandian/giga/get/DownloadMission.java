@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import org.schabi.newpipe.DownloaderImpl;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
+import us.shandian.giga.hls.state.HlsDownloadCheckpoint;
 import us.shandian.giga.postprocessing.Postprocessing;
 import us.shandian.giga.service.DownloadManagerService;
 import us.shandian.giga.util.Utility;
@@ -125,6 +126,14 @@ public class DownloadMission extends Mission {
      * information required to recover a download
      */
     public MissionRecoveryInfo[] recoveryInfo;
+
+    /**
+     * Optional typed metadata for resources. Used only to route HLS resources to the HLS downloader.
+     */
+    public String[] resourceDeliveryMethods;
+    public String[] resourceManifestUrls;
+    public boolean[] resourceIsUrls;
+    public HlsDownloadCheckpoint hlsCheckpoint;
 
     private transient int finishCount;
     public transient volatile boolean running;
@@ -455,6 +464,11 @@ public class DownloadMission extends Mission {
             return;
         }
 
+        if (hasHlsResource()) {
+            init = runAsync(DownloadInitializer.mId, new HlsDownloader(this));
+            return;
+        }
+
         if (blocks == null) {
             initializer();
             return;
@@ -528,6 +542,7 @@ public class DownloadMission extends Mission {
     @Override
     public boolean delete() {
         if (psAlgorithm != null) psAlgorithm.cleanupTemporalDir();
+        HlsDownloader.cleanup(this);
 
         notify(DownloadManagerService.MESSAGE_DELETED);
 
@@ -553,6 +568,7 @@ public class DownloadMission extends Mission {
         fallbackResumeOffset = 0;
         blocks = null;
         blockAcquired = null;
+        if (rollback) hlsCheckpoint = null;
 
         if (rollback) current = 0;
         if (persistChanges) writeThisToFile();
@@ -617,7 +633,39 @@ public class DownloadMission extends Mission {
      * @return true, otherwise, false
      */
     public boolean isInitialized() {
-        return blocks != null; // DownloadMissionInitializer was executed
+        return blocks != null || hlsCheckpoint != null; // DownloadMissionInitializer or HLS downloader was executed
+    }
+
+    boolean hasHlsResource() {
+        if (resourceDeliveryMethods != null) {
+            for (String method : resourceDeliveryMethods) {
+                if ("HLS".equals(method)) {
+                    return true;
+                }
+            }
+        }
+
+        if (urls != null) {
+            for (String url : urls) {
+                if (looksLikeHls(url)) {
+                    return true;
+                }
+            }
+        }
+
+        if (resourceManifestUrls != null) {
+            for (String url : resourceManifestUrls) {
+                if (looksLikeHls(url)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean looksLikeHls(String url) {
+        return url != null && url.toLowerCase().contains(".m3u8");
     }
 
     /**
