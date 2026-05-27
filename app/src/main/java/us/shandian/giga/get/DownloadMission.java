@@ -168,9 +168,6 @@ public class DownloadMission extends Mission {
         this.psAlgorithm = psInstance;
         this.context = context;
 
-        if (DEBUG && psInstance == null && urls.length > 1) {
-            Log.w(TAG, "mission created with multiple urls ¿missing post-processing algorithm?");
-        }
     }
 
     /**

@@ -48,8 +48,8 @@ internal class HlsDownloader(
             }
 
             remuxedOutputFromCheckpoint(workDir)?.let { output ->
-                copyOutputToStorage(output)
-                completeMission()
+                val finalBytes = copyOutputToStorage(output)
+                completeMission(finalBytes)
                 return
             }
 
@@ -68,8 +68,8 @@ internal class HlsDownloader(
             val output = File(workDir, "output.${outputExtension()}")
             remuxWithFfmpeg(inputs, output)
             markRemuxOutput(output)
-            copyOutputToStorage(output)
-            completeMission()
+            val finalBytes = copyOutputToStorage(output)
+            completeMission(finalBytes)
         } catch (error: TransferInterruptedException) {
             // Pause/stop requested. The mission state has already been persisted by checkpoints.
         } catch (error: TransferHttpException) {
@@ -236,7 +236,8 @@ internal class HlsDownloader(
     }
 
     @Throws(IOException::class)
-    private fun copyOutputToStorage(output: File) {
+    private fun copyOutputToStorage(output: File): Long {
+        var copied = 0L
         output.inputStream().use { input ->
             mission.storage.getStream().use { storage ->
                 storage.setLength(0)
@@ -250,9 +251,11 @@ internal class HlsDownloader(
                         break
                     }
                     storage.write(buffer, 0, read)
+                    copied += read.toLong()
                 }
             }
         }
+        return copied
     }
 
     private fun remuxedOutputFromCheckpoint(workDir: File): File? {
@@ -273,7 +276,11 @@ internal class HlsDownloader(
         mission.writeThisToFile()
     }
 
-    private fun completeMission() {
+    private fun completeMission(finalBytes: Long) {
+        if (finalBytes > 0) {
+            mission.done = finalBytes
+            mission.length = finalBytes
+        }
         mission.current = mission.urls.size
         mission.psState = 2
         mission.hlsCheckpoint = null
