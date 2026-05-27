@@ -123,10 +123,11 @@ class HlsSegmentFileTransferEngine(
                             bytes = decrypted,
                             output = output,
                             outputPosition = outputPosition,
+                            expectedOutputBytes = outputPosition + decrypted.size,
                             listener = listener,
                             resourceUrl = memory.finalUrl,
                         )
-                        TransferResult(decrypted.size.toLong(), -1, memory.statusCode, memory.finalUrl)
+                        TransferResult(decrypted.size.toLong(), decrypted.size.toLong(), memory.statusCode, memory.finalUrl)
                     }
                 }
                 outputPosition += result.bytesWritten
@@ -200,6 +201,10 @@ class HlsSegmentFileTransferEngine(
         }
 
         val byteRangeStarts = byteRangeStarts(playlist.segments)
+        val expectedSegmentBytes = LongArray(playlist.segments.size) { -1L }
+        playlist.segments.forEachIndexed { index, segment ->
+            expectedSegmentBytes[index] = segment.byteRange?.length ?: -1L
+        }
         val parallelism = config.parallelism.coerceIn(1, remainingSegments)
         val executor = Executors.newFixedThreadPool(parallelism)
         val completion = ExecutorCompletionService<DownloadedSegment>(executor)
@@ -228,6 +233,25 @@ class HlsSegmentFileTransferEngine(
             submitted++
         }
 
+        fun estimatedOutputBytes(): Long {
+            var knownBytes = 0L
+            var knownCount = 0
+            var unknownCount = 0
+            for (index in startSegmentIndex until playlist.segments.size) {
+                val expectedBytes = expectedSegmentBytes[index]
+                if (expectedBytes > 0) {
+                    knownBytes += expectedBytes
+                    knownCount++
+                } else {
+                    unknownCount++
+                }
+            }
+            if (knownCount == 0) {
+                return -1
+            }
+            return outputPosition + knownBytes + (knownBytes / knownCount) * unknownCount
+        }
+
         try {
             repeat(parallelism) { submitNextSegment() }
 
@@ -250,14 +274,17 @@ class HlsSegmentFileTransferEngine(
                 }
 
                 completed++
+                expectedSegmentBytes[downloaded.segmentIndex] = downloaded.expectedBytes
                 downloadedSegments[downloaded.segmentIndex] = downloaded
 
                 while (true) {
                     val next = downloadedSegments.remove(nextToAppend) ?: break
+                    val expectedOutputBytes = estimatedOutputBytes()
                     currentOutputPosition += appendDownloadedSegment(
                         downloaded = next,
                         output = output,
                         outputPosition = currentOutputPosition,
+                        expectedOutputBytes = expectedOutputBytes,
                         listener = listener,
                     )
                     lastStatusCode = next.statusCode
@@ -320,6 +347,7 @@ class HlsSegmentFileTransferEngine(
         return DownloadedSegment(
             segmentIndex = segmentIndex,
             bytes = bytes,
+            expectedBytes = result.expectedBytes.takeIf { it > 0 } ?: bytes.size.toLong(),
             statusCode = result.statusCode,
             finalUrl = result.finalUrl,
         )
@@ -400,11 +428,13 @@ class HlsSegmentFileTransferEngine(
                     throw TransferHttpException(statusCode)
                 }
 
+                val expectedBytes = expectedBytes(byteRange, connection.contentLengthLong)
                 val bytesWritten = connection.inputStream.use { input ->
                     copyPart(
                         input = input,
                         output = output,
                         outputPosition = outputPosition,
+                        expectedOutputBytes = expectedBytes.takeIf { it > 0 }?.let { outputPosition + it } ?: -1,
                         listener = listener,
                         resourceUrl = url,
                     )
@@ -412,7 +442,7 @@ class HlsSegmentFileTransferEngine(
 
                 return TransferResult(
                     bytesWritten = bytesWritten,
-                    expectedBytes = byteRange?.length ?: -1,
+                    expectedBytes = expectedBytes,
                     statusCode = statusCode,
                     finalUrl = connection.url.toString(),
                 )
@@ -443,7 +473,7 @@ class HlsSegmentFileTransferEngine(
 
                 return MemoryTransferResult(
                     bytes = bytes,
-                    expectedBytes = byteRange?.length ?: -1,
+                    expectedBytes = expectedBytes(byteRange, connection.contentLengthLong),
                     statusCode = statusCode,
                     finalUrl = connection.url.toString(),
                 )
@@ -455,6 +485,7 @@ class HlsSegmentFileTransferEngine(
         input: InputStream,
         output: RandomAccessFile,
         outputPosition: Long,
+        expectedOutputBytes: Long,
         listener: TransferProgressListener?,
         resourceUrl: String,
     ): Long {
@@ -472,12 +503,12 @@ class HlsSegmentFileTransferEngine(
             output.write(buffer, 0, read)
             total += read
             listener?.onProgress(
-                TransferProgress(
-                    bytesWritten = outputPosition + total,
-                    expectedBytes = -1,
-                    resourceUrl = resourceUrl,
+                    TransferProgress(
+                        bytesWritten = outputPosition + total,
+                        expectedBytes = expectedOutputBytes,
+                        resourceUrl = resourceUrl,
+                    )
                 )
-            )
         }
     }
 
@@ -510,10 +541,11 @@ class HlsSegmentFileTransferEngine(
         downloaded: DownloadedSegment,
         output: RandomAccessFile,
         outputPosition: Long,
+        expectedOutputBytes: Long,
         listener: TransferProgressListener?,
     ): Long {
         ensureRunning()
-        appendBytesToOutput(downloaded.bytes, output, outputPosition, listener, downloaded.finalUrl)
+        appendBytesToOutput(downloaded.bytes, output, outputPosition, expectedOutputBytes, listener, downloaded.finalUrl)
         return downloaded.bytes.size.toLong()
     }
 
@@ -522,6 +554,7 @@ class HlsSegmentFileTransferEngine(
         bytes: ByteArray,
         output: RandomAccessFile,
         outputPosition: Long,
+        expectedOutputBytes: Long,
         listener: TransferProgressListener?,
         resourceUrl: String,
     ) {
@@ -530,10 +563,14 @@ class HlsSegmentFileTransferEngine(
         listener?.onProgress(
             TransferProgress(
                 bytesWritten = outputPosition + bytes.size,
-                expectedBytes = -1,
+                expectedBytes = expectedOutputBytes,
                 resourceUrl = resourceUrl,
             )
         )
+    }
+
+    private fun expectedBytes(byteRange: HlsByteRange?, contentLength: Long): Long {
+        return byteRange?.length ?: contentLength.takeIf { it > 0 } ?: -1
     }
 
     @Throws(IOException::class)
@@ -763,6 +800,7 @@ class HlsSegmentFileTransferEngine(
     private data class DownloadedSegment(
         val segmentIndex: Int,
         val bytes: ByteArray,
+        val expectedBytes: Long,
         val statusCode: Int,
         val finalUrl: String,
     ) {
@@ -775,6 +813,7 @@ class HlsSegmentFileTransferEngine(
             }
             return segmentIndex == other.segmentIndex &&
                 bytes.contentEquals(other.bytes) &&
+                expectedBytes == other.expectedBytes &&
                 statusCode == other.statusCode &&
                 finalUrl == other.finalUrl
         }
@@ -782,6 +821,7 @@ class HlsSegmentFileTransferEngine(
         override fun hashCode(): Int {
             var result = segmentIndex
             result = 31 * result + bytes.contentHashCode()
+            result = 31 * result + expectedBytes.hashCode()
             result = 31 * result + statusCode
             result = 31 * result + finalUrl.hashCode()
             return result

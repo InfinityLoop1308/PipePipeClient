@@ -102,6 +102,9 @@ internal class HlsDownloader(
                 override fun onProgress(progress: TransferProgress) {
                     val delta = progress.bytesWritten - lastProgress
                     if (delta > 0) {
+                        if (progress.expectedBytes > 0) {
+                            updateEstimatedLength(index, progress.expectedBytes, delta)
+                        }
                         lastProgress = progress.bytesWritten
                         mission.notifyProgress(delta)
                     }
@@ -146,6 +149,10 @@ internal class HlsDownloader(
                 if (statusCode < 200 || statusCode > 299) {
                     throw TransferHttpException(statusCode)
                 }
+                val contentLength = connection.contentLengthLong
+                if (contentLength > 0) {
+                    updateEstimatedLength(index, contentLength, 0)
+                }
                 connection.inputStream.use { input ->
                     copyDirectCompanion(input, output) { delta ->
                         written += delta
@@ -167,6 +174,20 @@ internal class HlsDownloader(
                 playlistFingerprint = "direct-companion",
             )
         )
+    }
+
+    private fun updateEstimatedLength(resourceIndex: Int, resourceExpectedBytes: Long, nextDelta: Long) {
+        val otherResourcesBytes = mission.hlsCheckpoint?.resources
+            ?.filter { it.resourceIndex != resourceIndex }
+            ?.sumOf { it.bytesWritten }
+            ?: 0L
+        val estimatedLength = (otherResourcesBytes + resourceExpectedBytes)
+            .coerceAtLeast(mission.done + nextDelta)
+            .coerceAtLeast(mission.nearLength)
+        if (estimatedLength > mission.length || mission.unknownLength) {
+            mission.length = estimatedLength
+            mission.unknownLength = false
+        }
     }
 
     @Throws(IOException::class)
