@@ -676,7 +676,7 @@ public class DownloadMission extends Mission {
     public long getLength() {
         long calculated;
         if (psState == 1 || psState == 3) {
-            if(psAlgorithm.name == NICONICO_MUXER) {
+            if(psAlgorithm != null && psAlgorithm.name == NICONICO_MUXER) {
                 long result = (long) Math.ceil(Long.parseLong(URLDecoder.decode(urls[0].split("&length=")[1]))/6.0);
                 return result * (kind == 'v'? 2 :1);
             }

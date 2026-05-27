@@ -881,7 +881,7 @@ public final class ListHelper {
             defaultTrackId = filtered.get(defaultIdx).getAudioTrackId();
         }
         if (defaultTrackId == null) {
-            return videoStreams;
+            return collapseAudioTrackVariants(videoStreams);
         }
         final String trackId = defaultTrackId;
         final List<VideoStream> result = new ArrayList<>();
@@ -891,6 +891,25 @@ public final class ListHelper {
             }
         }
         return result.isEmpty() ? videoStreams : result;
+    }
+
+    private static List<VideoStream> collapseAudioTrackVariants(final List<VideoStream> videoStreams) {
+        final Map<String, VideoStream> result = new LinkedHashMap<>();
+        for (final VideoStream stream : videoStreams) {
+            final String key = stream.getDeliveryMethod() + "|" + stream.getFormat() + "|"
+                    + stream.getCodec().split("\\.")[0] + "|" + stream.getResolution() + "|"
+                    + stream.isVideoOnly();
+            final VideoStream existing = result.get(key);
+            if (existing == null || isOriginalAudioTrack(stream)) {
+                result.put(key, stream);
+            }
+        }
+        return new ArrayList<>(result.values());
+    }
+
+    private static boolean isOriginalAudioTrack(final VideoStream stream) {
+        final String trackName = stream.getAudioTrackName();
+        return trackName != null && trackName.toLowerCase(Locale.ROOT).contains("original");
     }
 
     public static List<AudioStream> filterDownloadableAudioStreams(
