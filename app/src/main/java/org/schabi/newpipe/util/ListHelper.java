@@ -890,21 +890,40 @@ public final class ListHelper {
                 result.add(s);
             }
         }
-        return result.isEmpty() ? videoStreams : result;
+        return result.isEmpty()
+                ? collapseAudioTrackVariants(videoStreams)
+                : collapseAudioTrackVariants(result);
     }
 
     private static List<VideoStream> collapseAudioTrackVariants(final List<VideoStream> videoStreams) {
         final Map<String, VideoStream> result = new LinkedHashMap<>();
         for (final VideoStream stream : videoStreams) {
-            final String key = stream.getDeliveryMethod() + "|" + stream.getFormat() + "|"
-                    + stream.getCodec().split("\\.")[0] + "|" + stream.getResolution() + "|"
+            final String key = stream.getFormat() + "|"
+                    + getCodecFamily(stream) + "|" + stream.getResolution() + "|"
                     + stream.isVideoOnly();
             final VideoStream existing = result.get(key);
-            if (existing == null || isOriginalAudioTrack(stream)) {
+            if (existing == null || shouldPreferCollapsedVariant(existing, stream)) {
                 result.put(key, stream);
             }
         }
         return new ArrayList<>(result.values());
+    }
+
+    private static boolean shouldPreferCollapsedVariant(final VideoStream existing,
+                                                        final VideoStream candidate) {
+        if (existing.getDeliveryMethod() == DeliveryMethod.HLS
+                && candidate.getDeliveryMethod() != DeliveryMethod.HLS) {
+            return true;
+        }
+        return isOriginalAudioTrack(candidate) && !isOriginalAudioTrack(existing);
+    }
+
+    private static String getCodecFamily(final VideoStream stream) {
+        final String codec = stream.getCodec();
+        if (codec == null || codec.isEmpty()) {
+            return "";
+        }
+        return codec.split("\\.")[0];
     }
 
     private static boolean isOriginalAudioTrack(final VideoStream stream) {
