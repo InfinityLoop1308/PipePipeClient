@@ -24,7 +24,8 @@ public final class HlsDownloadStreamHelper {
         }
 
         final String hlsUrl = info.getHlsUrl();
-        if (hlsUrl == null || hlsUrl.isEmpty() || hasHlsStream(streams, hlsUrl)) {
+        if (hlsUrl == null || hlsUrl.isEmpty() || hasNonHlsStream(streams)
+                || hasHlsStream(streams, hlsUrl)) {
             return false;
         }
 
@@ -51,6 +52,15 @@ public final class HlsDownloadStreamHelper {
                 && !recovery.isDesired2()
                 && recovery.getFormat() == MediaFormat.MPEG_4
                 && HLS_MANIFEST_RESOLUTION.equals(recovery.getDesired());
+    }
+
+    private static boolean hasNonHlsStream(final List<VideoStream> streams) {
+        for (final VideoStream stream : streams) {
+            if (stream.getDeliveryMethod() != DeliveryMethod.HLS) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean hasHlsStream(final List<VideoStream> streams, final String hlsUrl) {
