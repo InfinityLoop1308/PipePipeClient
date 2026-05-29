@@ -297,15 +297,15 @@ internal class HlsDownloader(
             throw IOException("Inline HLS manifests are not supported by HlsDownloader yet")
         }
         return when {
-            !manifestUrl.isNullOrBlank() && looksLikeHls(manifestUrl) -> manifestUrl
+            !manifestUrl.isNullOrBlank() && HlsDownloadStreamHelper.looksLikeHls(manifestUrl) -> manifestUrl
             else -> url
         }
     }
 
     private fun isHlsResource(index: Int): Boolean {
         return mission.resourceDeliveryMethods?.getOrNull(index) == "HLS" ||
-            looksLikeHls(mission.resourceManifestUrls?.getOrNull(index)) ||
-            looksLikeHls(mission.urls.getOrNull(index))
+            HlsDownloadStreamHelper.looksLikeHls(mission.resourceManifestUrls?.getOrNull(index)) ||
+            HlsDownloadStreamHelper.looksLikeHls(mission.urls.getOrNull(index))
     }
 
     private fun updateResourceCheckpoint(resourceCheckpoint: HlsResourceCheckpoint) {
@@ -334,10 +334,6 @@ internal class HlsDownloader(
 
     private fun quote(value: String): String {
         return '"' + value.replace("\\", "\\\\").replace("\"", "\\\"") + '"'
-    }
-
-    private fun looksLikeHls(value: String?): Boolean {
-        return value?.contains(".m3u8", ignoreCase = true) == true
     }
 
     private fun outputExtension(): String {

@@ -1128,10 +1128,14 @@ public class DownloadDialog extends DialogFragment
                     new MissionRecoveryInfo(secondaryStream)};
         }
 
-        resourceDeliveryMethods = buildResourceDeliveryMethods(selectedStream, secondaryStream);
-        resourceManifestUrls = buildResourceManifestUrls(selectedStream, secondaryStream);
-        resourceIsUrls = buildResourceIsUrls(selectedStream, secondaryStream);
-        if (containsHlsResource(resourceDeliveryMethods, resourceManifestUrls, urls)) {
+        resourceDeliveryMethods = HlsDownloadStreamHelper
+                .buildResourceDeliveryMethods(selectedStream, secondaryStream);
+        resourceManifestUrls = HlsDownloadStreamHelper
+                .buildResourceManifestUrls(selectedStream, secondaryStream);
+        resourceIsUrls = HlsDownloadStreamHelper
+                .buildResourceIsUrls(selectedStream, secondaryStream);
+        if (HlsDownloadStreamHelper.containsHlsResource(resourceDeliveryMethods,
+                resourceManifestUrls, urls)) {
             psName = null;
             psArgs = null;
         }
@@ -1144,57 +1148,5 @@ public class DownloadDialog extends DialogFragment
                 Toast.LENGTH_SHORT).show();
 
         dismiss();
-    }
-
-    private String[] buildResourceDeliveryMethods(@NonNull final Stream selectedStream,
-                                                  @Nullable final Stream secondaryStream) {
-        if (secondaryStream == null) {
-            return new String[]{selectedStream.getDeliveryMethod().name()};
-        }
-        return new String[]{
-                selectedStream.getDeliveryMethod().name(),
-                secondaryStream.getDeliveryMethod().name()
-        };
-    }
-
-    private String[] buildResourceManifestUrls(@NonNull final Stream selectedStream,
-                                               @Nullable final Stream secondaryStream) {
-        if (secondaryStream == null) {
-            return new String[]{selectedStream.getManifestUrl()};
-        }
-        return new String[]{selectedStream.getManifestUrl(), secondaryStream.getManifestUrl()};
-    }
-
-    private boolean[] buildResourceIsUrls(@NonNull final Stream selectedStream,
-                                          @Nullable final Stream secondaryStream) {
-        if (secondaryStream == null) {
-            return new boolean[]{selectedStream.isUrl()};
-        }
-        return new boolean[]{selectedStream.isUrl(), secondaryStream.isUrl()};
-    }
-
-    private boolean containsHlsResource(final String[] deliveryMethods,
-                                        final String[] manifestUrls,
-                                        final String[] urls) {
-        for (final String method : deliveryMethods) {
-            if ("HLS".equals(method)) {
-                return true;
-            }
-        }
-        for (final String manifestUrl : manifestUrls) {
-            if (looksLikeHls(manifestUrl)) {
-                return true;
-            }
-        }
-        for (final String url : urls) {
-            if (looksLikeHls(url)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean looksLikeHls(@Nullable final String value) {
-        return value != null && value.toLowerCase(Locale.ROOT).contains(".m3u8");
     }
 }
