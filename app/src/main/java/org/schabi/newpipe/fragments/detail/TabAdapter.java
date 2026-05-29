@@ -112,12 +112,12 @@ public class TabAdapter extends FragmentPagerAdapter {
         notifyDataSetChanged();
     }
 
-    @Override
-    public void destroyItem(@NonNull final ViewGroup container,
-                            final int position,
-                            @NonNull final Object object) {
-        fragmentManager.beginTransaction().remove((Fragment) object).commitNowAllowingStateLoss();
-    }
+//    @Override
+//    public void destroyItem(@NonNull final ViewGroup container,
+//                            final int position,
+//                            @NonNull final Object object) {
+//        fragmentManager.beginTransaction().remove((Fragment) object).commitNowAllowingStateLoss();
+//    }
 
     @Override
     public void notifyDataSetChanged() {

@@ -9,7 +9,7 @@ plugins {
 
 android {
     compileSdk 33
-
+    buildToolsVersion "33.0.2"
     defaultConfig {
         applicationId "InfinityLoop1309.NewPipeEnhanced"
         resValue "string", "app_name", "PipePipe"

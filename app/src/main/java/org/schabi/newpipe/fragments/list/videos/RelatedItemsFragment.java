@@ -24,6 +24,7 @@ import org.schabi.newpipe.ktx.ViewUtils;
 import org.schabi.newpipe.util.RelatedItemInfo;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import io.reactivex.rxjava3.core.Single;
@@ -97,8 +98,18 @@ public class RelatedItemsFragment extends BaseListInfoFragment<InfoItem, Related
     //////////////////////////////////////////////////////////////////////////*/
 
     @Override
+    protected void doInitialLoadLogic() {
+        if (relatedItemInfo != null) {
+            super.doInitialLoadLogic();
+        } else {
+            showLoading();
+        }
+    }
+
+    @Override
     protected Single<RelatedItemInfo> loadResult(final boolean forceLoad) {
-        return Single.fromCallable(() -> relatedItemInfo);
+        return relatedItemInfo != null ? Single.just(relatedItemInfo)
+                : Single.error(new IllegalStateException("Related items info is null"));
     }
 
     @Override
@@ -135,17 +146,31 @@ public class RelatedItemsFragment extends BaseListInfoFragment<InfoItem, Related
         // Nothing to do - override parent
     }
 
-    private void setInitialData(final StreamInfo info) {
-        super.setInitialData(info.getServiceId(), info.getUrl(), info.getName());
-        if (this.relatedItemInfo == null) {
-            this.relatedItemInfo = RelatedItemInfo.getInfo(info);
+    public void update(final StreamInfo info) {
+        if (Objects.equals(this.url, info.getUrl()) && relatedItemInfo != null) {
+            return;
         }
+
+        if (infoListAdapter != null) {
+            infoListAdapter.clearStreamItemList();
+        }
+
+        setInitialData(info);
+        if (isAdded()) {
+            startLoading(true);
+        }
+    }
+
+    public void setInitialData(final StreamInfo info) {
+        super.setInitialData(info.getServiceId(), info.getUrl(), info.getName());
+        this.relatedItemInfo = RelatedItemInfo.getInfo(info);
     }
 
     @Override
     public void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(relatedItemInfo.getRelatedItems().size() <= 100){
+        if (relatedItemInfo != null && relatedItemInfo.getRelatedItems() != null
+                && relatedItemInfo.getRelatedItems().size() <= 100) {
             outState.putSerializable(INFO_KEY, relatedItemInfo);
         }
     }

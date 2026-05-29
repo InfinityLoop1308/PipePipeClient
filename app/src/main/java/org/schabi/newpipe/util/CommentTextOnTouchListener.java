@@ -6,6 +6,7 @@ import android.text.Spannable;
 import android.text.Spanned;
 import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
+import android.text.style.URLSpan;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -50,13 +51,7 @@ public class CommentTextOnTouchListener implements View.OnTouchListener {
 
                 if (link.length != 0) {
                     if (action == MotionEvent.ACTION_UP) {
-                        if (link[0] instanceof URLSpan) {
-                            final String url = ((URLSpan) link[0]).getURL();
-                            if (!InternalUrlsHandler.handleUrlCommentsTimestamp(
-                                    new CompositeDisposable(), v.getContext(), url)) {
-                                ShareUtils.openUrlInBrowser(v.getContext(), url, false);
-                            }
-                        }
+                        link[0].onClick(widget);
                     } else if (action == MotionEvent.ACTION_DOWN) {
                         Selection.setSelection(buffer,
                                 buffer.getSpanStart(link[0]),

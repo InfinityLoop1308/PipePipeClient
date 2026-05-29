@@ -101,8 +101,7 @@ public class CommentReplyFragment extends BaseFragment implements BackPressable 
 
     @Override
     public boolean onBackPressed() {
-        final FragmentManager fm = getFM();
-        fm.popBackStack();
+        getParentFragmentManager().popBackStack();
         return true;
     }
 }

@@ -273,7 +273,7 @@ public abstract class BaseListInfoFragment<I extends InfoItem, L extends ListInf
     // Utils
     //////////////////////////////////////////////////////////////////////////*/
 
-    protected void setInitialData(final int sid, final String u, final String title) {
+    public void setInitialData(final int sid, final String u, final String title) {
         this.serviceId = sid;
         this.url = u;
         this.name = !TextUtils.isEmpty(title) ? title : "";

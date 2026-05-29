@@ -3,41 +3,23 @@ package org.schabi.newpipe.info_list
 import android.content.Context
 import android.graphics.Bitmap
 import android.view.MotionEvent
+import android.content.Intent
+import android.util.Patterns
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,9 +30,13 @@ import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -60,6 +46,7 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.RequestCreator
 import com.squareup.picasso.Target
 import org.schabi.newpipe.R
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import org.schabi.newpipe.database.LocalItem
 import org.schabi.newpipe.database.playlist.PlaylistMetadataEntry
 import org.schabi.newpipe.database.playlist.PlaylistStreamEntry
@@ -68,16 +55,23 @@ import org.schabi.newpipe.database.stream.StreamStatisticsEntry
 import org.schabi.newpipe.extractor.InfoItem
 import org.schabi.newpipe.extractor.InfoItem.InfoType
 import org.schabi.newpipe.extractor.channel.ChannelInfoItem
+import org.schabi.newpipe.extractor.comments.CommentsInfoItem
 import org.schabi.newpipe.extractor.playlist.PlaylistInfoItem
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import org.schabi.newpipe.extractor.stream.StreamType
 import org.schabi.newpipe.extractor.NewPipe
+import org.schabi.newpipe.fragments.detail.VideoDetailFragment
 import org.schabi.newpipe.local.history.HistoryRecordManager
 import org.schabi.newpipe.util.Localization
+import org.schabi.newpipe.util.NavigationHelper
 import org.schabi.newpipe.util.PicassoHelper
 import org.schabi.newpipe.util.ThemeHelper
+import org.schabi.newpipe.util.external_communication.InternalUrlsHandler
+import org.schabi.newpipe.util.external_communication.ShareUtils
+import org.schabi.newpipe.util.external_communication.TimestampExtractor
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
+import java.util.regex.Pattern
 
 @Composable
 fun PipePipeComposeTheme(
@@ -212,7 +206,12 @@ data class ComposeItemState(
     val showPaidBadge: Boolean,
     val progress: Float?,
     val playlistCount: String?,
-    val isChannel: Boolean
+    val isChannel: Boolean,
+    val isComment: Boolean = false,
+    val replyCountText: String? = null,
+    val likeCountText: String? = null,
+    val uploadDateText: String? = null,
+    val serviceId: Int = -1
 )
 
 fun buildInfoItemState(
@@ -265,7 +264,8 @@ fun buildInfoItemState(
                     null
                 },
                 playlistCount = null,
-                isChannel = false
+                isChannel = false,
+                serviceId = item.serviceId
             )
         }
         InfoType.PLAYLIST -> {
@@ -280,7 +280,8 @@ fun buildInfoItemState(
                 showPaidBadge = false,
                 progress = null,
                 playlistCount = Localization.localizeStreamCountMini(context, item.streamCount),
-                isChannel = false
+                isChannel = false,
+                serviceId = item.serviceId
             )
         }
         InfoType.CHANNEL -> {
@@ -306,7 +307,39 @@ fun buildInfoItemState(
                 showPaidBadge = false,
                 progress = null,
                 playlistCount = null,
-                isChannel = true
+                isChannel = true,
+                serviceId = item.serviceId
+            )
+        }
+        InfoType.COMMENT -> {
+            item as CommentsInfoItem
+            ComposeItemState(
+                title = item.uploaderName ?: "",
+                subtitle = item.commentText,
+                details = null,
+                imageUrl = item.uploaderAvatarUrl,
+                durationText = null,
+                showLiveBadge = false,
+                showPaidBadge = false,
+                progress = null,
+                playlistCount = null,
+                isChannel = false,
+                isComment = true,
+                replyCountText = if (item.replies != null) {
+                    val replyCount = item.replyCount
+                    if (replyCount > 0) {
+                        context.resources.getQuantityString(R.plurals.replies, replyCount, replyCount)
+                    } else {
+                        context.getString(R.string.replies)
+                    }
+                } else null,
+                likeCountText = if (item.likeCount >= 0) {
+                    Localization.shortCount(context, item.likeCount.toLong())
+                } else null,
+                uploadDateText = item.uploadDate?.let {
+                    Localization.relativeTime(it.offsetDateTime())
+                } ?: item.textualUploadDate,
+                serviceId = item.serviceId
             )
         }
         else -> null
@@ -342,7 +375,8 @@ fun buildLocalItemState(
                     null
                 },
                 playlistCount = null,
-                isChannel = false
+                isChannel = false,
+                serviceId = item.streamEntity.serviceId
             )
         }
         LocalItem.LocalItemType.STATISTIC_STREAM_ITEM -> {
@@ -368,7 +402,8 @@ fun buildLocalItemState(
                     null
                 },
                 playlistCount = null,
-                isChannel = false
+                isChannel = false,
+                serviceId = item.streamEntity.serviceId
             )
         }
         LocalItem.LocalItemType.PLAYLIST_LOCAL_ITEM -> {
@@ -398,7 +433,8 @@ fun buildLocalItemState(
                 showPaidBadge = false,
                 progress = null,
                 playlistCount = Localization.localizeStreamCountMini(context, item.streamCount ?: -1L),
-                isChannel = false
+                isChannel = false,
+                serviceId = item.serviceId
             )
         }
     }
@@ -413,9 +449,18 @@ fun CommonItem(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,
-    onDragStart: (() -> Unit)? = null
+    onDragStart: (() -> Unit)? = null,
+    onReplyClick: (() -> Unit)? = null
 ) {
-    if (state.isChannel) {
+    if (state.isComment) {
+        CommentListItem(
+            state = state,
+            modifier = modifier,
+            onClick = onClick,
+            onLongClick = onLongClick,
+            onReplyClick = onReplyClick
+        )
+    } else if (state.isChannel) {
         if (isGridLayout || isCardLayout) {
             ChannelGridItem(
                 state = state,
@@ -450,6 +495,135 @@ fun CommonItem(
             showDragHandle = showDragHandle,
             onDragStart = onDragStart
         )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun CommentListItem(
+    state: ComposeItemState,
+    modifier: Modifier,
+    onClick: () -> Unit,
+    onLongClick: (() -> Unit)?,
+    onReplyClick: (() -> Unit)?
+) {
+    val context = LocalContext.current
+    val bitmap = rememberPicassoBitmap(state.imageUrl) {
+        PicassoHelper.loadAvatar(state.imageUrl)
+    }
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick)
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+    ) {
+        RemoteImage(
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape),
+            contentScale = ContentScale.Crop,
+            bitmap = bitmap
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = state.title,
+                style = TextStyle(fontSize = 13.sp, fontWeight = FontWeight.Medium),
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            val linkColor = Color(ThemeHelper.resolveColorFromAttr(context, R.attr.colorAccent))
+            val annotatedText = remember(state.subtitle, linkColor) {
+                linkifyText(state.subtitle ?: "", linkColor)
+            }
+            ClickableText(
+                text = annotatedText,
+                style = TextStyle(fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface),
+                onClick = { offset ->
+                    val timestampAnnotations = annotatedText.getStringAnnotations("TIMESTAMP", offset, offset)
+                    if (timestampAnnotations.isNotEmpty()) {
+                        val intent = Intent(VideoDetailFragment.ACTION_SEEK_TO)
+                        intent.setPackage(context.packageName)
+                        intent.putExtra("Timestamp", timestampAnnotations.first().item.toInt())
+                        context.sendBroadcast(intent)
+                        return@ClickableText
+                    }
+
+                    val urlAnnotations = annotatedText.getStringAnnotations("URL", offset, offset)
+                    if (urlAnnotations.isNotEmpty()) {
+                        val url = urlAnnotations.first().item
+                        if (!InternalUrlsHandler.handleUrlDescriptionTimestamp(CompositeDisposable(), context, url)
+                            && !InternalUrlsHandler.handleUrl(context, url, CompositeDisposable())
+                        ) {
+                            ShareUtils.openUrlInBrowser(context, url, false)
+                        }
+                        return@ClickableText
+                    }
+
+                    val hashtagAnnotations = annotatedText.getStringAnnotations("HASHTAG", offset, offset)
+                    if (hashtagAnnotations.isNotEmpty()) {
+                        NavigationHelper.openSearch(context, state.serviceId, hashtagAnnotations.first().item)
+                        return@ClickableText
+                    }
+
+                    onClick()
+                }
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (!state.uploadDateText.isNullOrEmpty()) {
+                    Text(
+                        text = state.uploadDateText,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                if (!state.likeCountText.isNullOrEmpty()) {
+                    if (!state.uploadDateText.isNullOrEmpty()) {
+                        Text(
+                            text = " • ",
+                            style = MaterialTheme.typography.bodySmall,
+                            fontSize = 11.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Icon(
+                        imageVector = Icons.Default.ThumbUp,
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = state.likeCountText,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            if (!state.replyCountText.isNullOrEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = state.replyCountText,
+                    style = TextStyle(
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(ThemeHelper.resolveColorFromAttr(context, R.attr.colorAccent))
+                    ),
+                    modifier = Modifier.clickable { onReplyClick?.invoke() }
+                )
+            }
+        }
     }
 }
 
@@ -745,12 +919,27 @@ private fun StreamOrPlaylistListItem(
                 .fillMaxHeight(),
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            Text(
-                text = state.title,
-                style = TextStyle(fontSize = 13.5.sp),
-                color = MaterialTheme.colorScheme.onSurface,
+            val context = LocalContext.current
+            val linkColor = Color(ThemeHelper.resolveColorFromAttr(context, R.attr.colorAccent))
+            val annotatedTitle = remember(state.title, linkColor) {
+                linkifyText(state.title, linkColor)
+            }
+            ClickableText(
+                text = annotatedTitle,
+                style = TextStyle(fontSize = 13.5.sp, color = MaterialTheme.colorScheme.onSurface),
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                onClick = { offset ->
+                    val timestampAnnotations = annotatedTitle.getStringAnnotations("TIMESTAMP", offset, offset)
+                    if (timestampAnnotations.isNotEmpty()) {
+                        val intent = Intent(VideoDetailFragment.ACTION_SEEK_TO)
+                        intent.setPackage(context.packageName)
+                        intent.putExtra("Timestamp", timestampAnnotations.first().item.toInt())
+                        context.sendBroadcast(intent)
+                        return@ClickableText
+                    }
+                    onClick()
+                }
             )
             state.subtitle?.let {
                 Text(
@@ -811,15 +1000,30 @@ private fun StreamOrPlaylistGridItem(
 
         Spacer(modifier = Modifier.height(8.dp))
         Box(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = state.title,
-                style = TextStyle(fontSize = 13.5.sp, fontWeight = FontWeight.Medium),
-                color = MaterialTheme.colorScheme.onSurface,
+            val context = LocalContext.current
+            val linkColor = Color(ThemeHelper.resolveColorFromAttr(context, R.attr.colorAccent))
+            val annotatedTitle = remember(state.title, linkColor) {
+                linkifyText(state.title, linkColor)
+            }
+            ClickableText(
+                text = annotatedTitle,
+                style = TextStyle(fontSize = 13.5.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(end = if (showDragHandle) 28.dp else 0.dp)
+                    .padding(end = if (showDragHandle) 28.dp else 0.dp),
+                onClick = { offset ->
+                    val timestampAnnotations = annotatedTitle.getStringAnnotations("TIMESTAMP", offset, offset)
+                    if (timestampAnnotations.isNotEmpty()) {
+                        val intent = Intent(VideoDetailFragment.ACTION_SEEK_TO)
+                        intent.setPackage(context.packageName)
+                        intent.putExtra("Timestamp", timestampAnnotations.first().item.toInt())
+                        context.sendBroadcast(intent)
+                        return@ClickableText
+                    }
+                    onClick()
+                }
             )
 
             if (showDragHandle) {
@@ -850,6 +1054,76 @@ private fun StreamOrPlaylistGridItem(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
+
+private val HASHTAGS_PATTERN = Pattern.compile("(#[\\p{L}0-9_]+)")
+
+private fun linkifyText(text: String, linkColor: Color): AnnotatedString {
+    return buildAnnotatedString {
+        append(text)
+
+        // Timestamps
+        val timestampMatcher = TimestampExtractor.TIMESTAMPS_PATTERN.matcher(text)
+        while (timestampMatcher.find()) {
+            val start = timestampMatcher.start()
+            val end = timestampMatcher.end()
+            val match = TimestampExtractor.getTimestampFromMatcher(timestampMatcher, text)
+            if (match != null) {
+                addStyle(
+                    style = SpanStyle(
+                        color = linkColor,
+                        textDecoration = TextDecoration.Underline
+                    ),
+                    start = start,
+                    end = end
+                )
+                addStringAnnotation(
+                    tag = "TIMESTAMP",
+                    annotation = match.seconds().toString(),
+                    start = start,
+                    end = end
+                )
+            }
+        }
+
+        // URLs
+        val urlMatcher = Patterns.WEB_URL.matcher(text)
+        while (urlMatcher.find()) {
+            addStyle(
+                style = SpanStyle(
+                    color = linkColor,
+                    textDecoration = TextDecoration.Underline
+                ),
+                start = urlMatcher.start(),
+                end = urlMatcher.end()
+            )
+            addStringAnnotation(
+                tag = "URL",
+                annotation = urlMatcher.group(),
+                start = urlMatcher.start(),
+                end = urlMatcher.end()
+            )
+        }
+
+        // Hashtags
+        val hashtagMatcher = HASHTAGS_PATTERN.matcher(text)
+        while (hashtagMatcher.find()) {
+            addStyle(
+                style = SpanStyle(
+                    color = linkColor,
+                    textDecoration = TextDecoration.Underline
+                ),
+                start = hashtagMatcher.start(),
+                end = hashtagMatcher.end()
+            )
+            addStringAnnotation(
+                tag = "HASHTAG",
+                annotation = hashtagMatcher.group(),
+                start = hashtagMatcher.start(),
+                end = hashtagMatcher.end()
             )
         }
     }

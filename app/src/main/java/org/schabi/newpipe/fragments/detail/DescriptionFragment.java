@@ -78,6 +78,21 @@ public class DescriptionFragment extends BaseFragment {
         super.onDestroy();
     }
 
+    public void update(final StreamInfo info) {
+        setInitialData(info);
+        if (binding != null) {
+            setupUploadDate();
+            setupDescription();
+            setupStaffs();
+            binding.detailMetadataLayout.removeAllViews();
+            setupMetadata(getLayoutInflater(), binding.detailMetadataLayout);
+        }
+    }
+
+    public void setInitialData(final StreamInfo info) {
+        this.streamInfo = info;
+    }
+
 
     private void setupUploadDate() {
         if (streamInfo.getUploadDate() != null) {

@@ -39,21 +39,21 @@ public final class TimestampExtractor {
         final int timestampEnd = timestampMatches.end(3);
 
         final String parsedTimestamp = baseText.substring(timestampStart, timestampEnd);
-        String[] timestampParts = parsedTimestamp.split(":");
-
-        if (timestampParts.length == 1) {
-            timestampParts = parsedTimestamp.split("：");
-        }
+        String[] timestampParts = parsedTimestamp.split("[:：]");
 
         final int seconds;
-        if (timestampParts.length == 3) { // timestamp format: XX:XX:XX
-            seconds = Integer.parseInt(timestampParts[0]) * 3600 // hours
-                    + Integer.parseInt(timestampParts[1]) * 60 // minutes
-                    + Integer.parseInt(timestampParts[2]); // seconds
-        } else if (timestampParts.length == 2) { // timestamp format: XX:XX
-            seconds = Integer.parseInt(timestampParts[0]) * 60 // minutes
-                    + Integer.parseInt(timestampParts[1]); // seconds
-        } else {
+        try {
+            if (timestampParts.length == 3) { // timestamp format: XX:XX:XX
+                seconds = Integer.parseInt(timestampParts[0].trim()) * 3600 // hours
+                        + Integer.parseInt(timestampParts[1].trim()) * 60 // minutes
+                        + Integer.parseInt(timestampParts[2].trim()); // seconds
+            } else if (timestampParts.length == 2) { // timestamp format: XX:XX
+                seconds = Integer.parseInt(timestampParts[0].trim()) * 60 // minutes
+                        + Integer.parseInt(timestampParts[1].trim()); // seconds
+            } else {
+                return null;
+            }
+        } catch (NumberFormatException e) {
             return null;
         }
 

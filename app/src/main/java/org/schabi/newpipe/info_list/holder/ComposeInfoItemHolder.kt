@@ -43,6 +43,7 @@ class ComposeInfoItemHolder(
                             is org.schabi.newpipe.extractor.stream.StreamInfoItem -> infoItemBuilder.getOnStreamSelectedListener()?.selected(infoItem)
                             is org.schabi.newpipe.extractor.channel.ChannelInfoItem -> infoItemBuilder.getOnChannelSelectedListener()?.selected(infoItem)
                             is org.schabi.newpipe.extractor.playlist.PlaylistInfoItem -> infoItemBuilder.getOnPlaylistSelectedListener()?.selected(infoItem)
+                            is org.schabi.newpipe.extractor.comments.CommentsInfoItem -> infoItemBuilder.getOnCommentsSelectedListener()?.selected(infoItem)
                         }
                     },
                     onLongClick = {
@@ -50,6 +51,11 @@ class ComposeInfoItemHolder(
                             is org.schabi.newpipe.extractor.stream.StreamInfoItem -> infoItemBuilder.getOnStreamSelectedListener()?.held(infoItem)
                             is org.schabi.newpipe.extractor.channel.ChannelInfoItem -> infoItemBuilder.getOnChannelSelectedListener()?.held(infoItem)
                             is org.schabi.newpipe.extractor.playlist.PlaylistInfoItem -> infoItemBuilder.getOnPlaylistSelectedListener()?.held(infoItem)
+                        }
+                    },
+                    onReplyClick = {
+                        if (infoItem is org.schabi.newpipe.extractor.comments.CommentsInfoItem) {
+                            infoItemBuilder.getOnCommentsReplyListener()?.selected(infoItem)
                         }
                     }
                 )

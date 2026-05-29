@@ -73,6 +73,18 @@ public class SponsorBlockFragment
         super.onDetach();
     }
 
+    public void update(final StreamInfo info) {
+        setInitialData(info);
+        if (segmentListAdapter != null) {
+            segmentListAdapter.setItems(info.getSponsorBlockSegments());
+            segmentListAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public void setInitialData(final StreamInfo info) {
+        this.streamInfo = info;
+    }
+
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater,
                              @Nullable final ViewGroup container,

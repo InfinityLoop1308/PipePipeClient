@@ -99,9 +99,10 @@ public final class InternalUrlsHandler {
                                               @NonNull final String url,
                                               @NonNull final Pattern pattern,
                                               @NonNull final CompositeDisposable disposables) {
-        if(url.contains("internal://timestamp/")) {
+        if(url.startsWith("internal://timestamp/")) {
             Intent intent = new Intent(ACTION_SEEK_TO);
-            intent.putExtra("Timestamp", Integer.parseInt(url.split("internal://timestamp/")[1]));
+            intent.setPackage(context.getPackageName());
+            intent.putExtra("Timestamp", Integer.parseInt(url.substring("internal://timestamp/".length())));
             context.sendBroadcast(intent);
             return true;
         }

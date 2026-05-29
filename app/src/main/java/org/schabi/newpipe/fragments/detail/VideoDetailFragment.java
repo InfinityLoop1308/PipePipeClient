@@ -918,15 +918,17 @@ public final class VideoDetailFragment
     private boolean callCommentFragmentOnBack() {
         final String currentPage = pageAdapter.getItemTitle(binding.viewPager.getCurrentItem());
         if (COMMENTS_TAB_TAG.equals(currentPage)) {
-            final FragmentManager fm = getFM();
-            final Fragment fragment = fm
-                    .findFragmentById(R.id.fragment_container_view);
-            if (fragment instanceof BackPressable) {
-                if (fm.getBackStackEntryCount() > 1) {
-                    fm.popBackStack();
-                    return true;
+            for (final Fragment fragment : getChildFragmentManager().getFragments()) {
+                if (fragment instanceof CommentsFragmentContainer && fragment.isVisible()) {
+                    if (((BackPressable) fragment).onBackPressed()) {
+                        return true;
+                    }
                 }
-                return ((BackPressable) fragment).onBackPressed();
+            }
+            final int index = pageAdapter.getItemPositionByTitle(RELATED_TAB_TAG);
+            if (index != -1) {
+                binding.viewPager.setCurrentItem(index);
+                return true;
             }
         }
         return false;
@@ -1089,7 +1091,8 @@ public final class VideoDetailFragment
         if (shouldShowComments()) {
             try {
                 pageAdapter.addFragment(
-                        EmptyFragment.newInstance(false), COMMENTS_TAB_TAG);
+                        CommentsFragmentContainer.getInstance(serviceId, url, title),
+                        COMMENTS_TAB_TAG);
                 tabIcons.add(R.drawable.ic_comment);
                 tabContentDescriptions.add(R.string.comments_tab_description);
             } catch (final Exception e) {
@@ -1102,7 +1105,9 @@ public final class VideoDetailFragment
         if (showRelatedItems && binding.relatedItemsLayout == null) {
             // temp empty fragment. will be updated in handleResult
             try {
-                pageAdapter.addFragment(EmptyFragment.newInstance(false), RELATED_TAB_TAG);
+                final RelatedItemsFragment relatedItemsFragment = new RelatedItemsFragment();
+                relatedItemsFragment.setInitialData(serviceId, url, title);
+                pageAdapter.addFragment(relatedItemsFragment, RELATED_TAB_TAG);
                 tabIcons.add(R.drawable.ic_art_track);
                 tabContentDescriptions.add(R.string.related_items_tab_description);
             } catch (IllegalStateException e) {
@@ -1114,7 +1119,8 @@ public final class VideoDetailFragment
         if (showDescription) {
             // temp empty fragment. will be updated in handleResult
             try {
-                pageAdapter.addFragment(EmptyFragment.newInstance(false), DESCRIPTION_TAB_TAG);
+                final DescriptionFragment descriptionFragment = new DescriptionFragment();
+                pageAdapter.addFragment(descriptionFragment, DESCRIPTION_TAB_TAG);
                 tabIcons.add(R.drawable.ic_description);
                 tabContentDescriptions.add(R.string.description_tab_description);
             } catch (IllegalStateException e) {
@@ -1124,7 +1130,9 @@ public final class VideoDetailFragment
         }
         if (shouldShowSponsorBlock()) {
             // temp empty fragment. will be updated in handleResult
-            pageAdapter.addFragment(EmptyFragment.newInstance(false), SPONSOR_BLOCK_TAB_TAG);
+            final SponsorBlockFragment sponsorBlockFragment = new SponsorBlockFragment();
+            sponsorBlockFragment.setListener(this);
+            pageAdapter.addFragment(sponsorBlockFragment, SPONSOR_BLOCK_TAB_TAG);
             tabIcons.add(R.drawable.ic_sponsor_block_enable);
             tabContentDescriptions.add(R.string.sponsor_block);
         }
@@ -1164,9 +1172,7 @@ public final class VideoDetailFragment
     private void updateTabs(@NonNull final StreamInfo info) {
         if (info.isRoundPlayStream() || (showRelatedItems && info.isSupportRelatedItems())) {
             try {
-                if (binding.relatedItemsLayout == null) { // phone
-                    pageAdapter.updateItem(RELATED_TAB_TAG, RelatedItemsFragment.getInstance(info));
-                } else { // tablet + TV
+                if (binding.relatedItemsLayout != null) { // tablet + TV
                     getChildFragmentManager().beginTransaction()
                             .replace(R.id.relatedItemsLayout, RelatedItemsFragment.getInstance(info))
                             .commitAllowingStateLoss();
@@ -1186,7 +1192,6 @@ public final class VideoDetailFragment
                 tabContentDescriptions.remove(Integer.valueOf(R.string.related_items_tab_description));
             }
         }
-
         if(!info.isSupportComments() || !shouldShowComments()){
             int index = pageAdapter.getItemPositionByTitle(COMMENTS_TAB_TAG);
             if(index != -1){
@@ -1197,15 +1202,43 @@ public final class VideoDetailFragment
         } else{
             int index = pageAdapter.getItemPositionByTitle(COMMENTS_TAB_TAG);
             if (index == -1 || !(pageAdapter.getItem(index) instanceof CommentsFragmentContainer)) {
-                pageAdapter.updateItem(COMMENTS_TAB_TAG, CommentsFragmentContainer.getInstance(serviceId, url, title));
-            } else {
-                Fragment existing = pageAdapter.getItem(index);
-                ((CommentsFragmentContainer) existing).update(serviceId, url, title);
+                pageAdapter.updateItem(COMMENTS_TAB_TAG, CommentsFragmentContainer.getInstance(info.getServiceId(), info.getUrl(), info.getName()));
             }
         }
 
-        if (showDescription) {
-            pageAdapter.updateItem(DESCRIPTION_TAB_TAG, new DescriptionFragment(info));
+        // Always try to update any existing container fragments in the fragment manager,
+        // because pageAdapter.getItem() might return a new instance that isn't attached yet
+        // while the old one is still shown by the ViewPager.
+        for (final Fragment fragment : getChildFragmentManager().getFragments()) {
+            if (fragment instanceof CommentsFragmentContainer) {
+                ((CommentsFragmentContainer) fragment).update(info.getServiceId(), info.getUrl(), info.getName());
+            } else if (fragment instanceof RelatedItemsFragment) {
+                ((RelatedItemsFragment) fragment).update(info);
+            } else if (fragment instanceof DescriptionFragment) {
+                ((DescriptionFragment) fragment).update(info);
+            } else if (fragment instanceof SponsorBlockFragment) {
+                ((SponsorBlockFragment) fragment).update(info);
+                if (currentSponsorBlockMode != null) {
+                    ((SponsorBlockFragment) fragment).setSponsorBlockMode(currentSponsorBlockMode);
+                }
+            }
+        }
+
+        // Also update fragments in the adapter that might not be attached yet
+        for (int i = 0; i < pageAdapter.getCount(); i++) {
+            final Fragment fragment = pageAdapter.getItem(i);
+            if (fragment instanceof CommentsFragmentContainer) {
+                ((CommentsFragmentContainer) fragment).update(info.getServiceId(), info.getUrl(), info.getName());
+            } else if (fragment instanceof RelatedItemsFragment) {
+                ((RelatedItemsFragment) fragment).update(info);
+            } else if (fragment instanceof DescriptionFragment) {
+                ((DescriptionFragment) fragment).update(info);
+            } else if (fragment instanceof SponsorBlockFragment) {
+                ((SponsorBlockFragment) fragment).update(info);
+                if (currentSponsorBlockMode != null) {
+                    ((SponsorBlockFragment) fragment).setSponsorBlockMode(currentSponsorBlockMode);
+                }
+            }
         }
 
         if (shouldShowSponsorBlock()) {
@@ -1221,15 +1254,14 @@ public final class VideoDetailFragment
                     tabContentDescriptions.remove(Integer.valueOf(R.string.sponsor_block));
                 }
             } else {
-                final SponsorBlockFragment sponsorBlockFragment = new SponsorBlockFragment(info);
-                sponsorBlockFragment.setListener(this);
-
-                pageAdapter.updateItem(SPONSOR_BLOCK_TAB_TAG, sponsorBlockFragment);
-
                 if (currentSponsorBlockMode == null) {
                     currentSponsorBlockMode = SponsorBlockMode.ENABLED;
                 }
-                sponsorBlockFragment.setSponsorBlockMode(currentSponsorBlockMode);
+                for (final Fragment fragment : getChildFragmentManager().getFragments()) {
+                    if (fragment instanceof SponsorBlockFragment) {
+                        ((SponsorBlockFragment) fragment).setSponsorBlockMode(currentSponsorBlockMode);
+                    }
+                }
             }
         }
 
@@ -1748,10 +1780,17 @@ public final class VideoDetailFragment
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
-                                context.sendBroadcast(new Intent(ACTION_SHOW_MAIN_PLAYER));
+                                Intent showPlayerIntent = new Intent(ACTION_SHOW_MAIN_PLAYER);
+                                showPlayerIntent.setPackage(context.getPackageName());
+                                context.sendBroadcast(showPlayerIntent);
                             }).start();
                         }
 
+                        break;
+                    case ACTION_SEEK_TO:
+                        if (player != null) {
+                            player.seekTo(intent.getIntExtra("Timestamp", 0) * 1000L);
+                        }
                         break;
                 }
             }
@@ -1761,7 +1800,12 @@ public final class VideoDetailFragment
         intentFilter.addAction(ACTION_HIDE_MAIN_PLAYER);
         intentFilter.addAction(ACTION_PLAYER_STARTED);
         intentFilter.addAction(ACTION_ENTER_FULLSCREEN);
-        activity.registerReceiver(broadcastReceiver, intentFilter);
+        intentFilter.addAction(ACTION_SEEK_TO);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            activity.registerReceiver(broadcastReceiver, intentFilter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            activity.registerReceiver(broadcastReceiver, intentFilter);
+        }
     }
 
 
@@ -1832,7 +1876,7 @@ public final class VideoDetailFragment
         super.handleResult(info);
 
         currentInfo = info;
-        setInitialData(info.getServiceId(), info.getOriginalUrl(), info.getName(), playQueue);
+        setInitialData(info.getServiceId(), info.getUrl(), info.getName(), playQueue);
 
         updateTabs(info);
 

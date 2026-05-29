@@ -13,6 +13,7 @@ import org.schabi.newpipe.BaseFragment;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.Page;
 import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
+import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.util.Constants;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ import java.util.Objects;
 
 import icepick.State;
 
-public class CommentsFragmentContainer extends BaseFragment {
+public class CommentsFragmentContainer extends BaseFragment implements BackPressable {
 
     @State
     protected int serviceId = Constants.NO_SERVICE_ID;
@@ -43,45 +44,44 @@ public class CommentsFragmentContainer extends BaseFragment {
             final LayoutInflater inflater, @Nullable final ViewGroup container,
             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_container, container, false);
-        if (savedInstanceState == null) {
-            setFragment(getFM(), serviceId, url, name);
+
+        Fragment existing = getChildFragmentManager().findFragmentById(R.id.fragment_container_view);
+        if (existing instanceof CommentsFragment) {
+            CommentsFragment cf = (CommentsFragment) existing;
+            if (cf.getServiceId() == serviceId && Objects.equals(cf.getUrl(), url)) {
+                return view;
+            }
         }
+
+        forceRefresh();
         return view;
     }
 
     public void update(final int serviceId, final String url, final String name) {
-        if (!isAdded() || isRemoving()) {
-            return;
-        }
-        if (this.serviceId == serviceId
-                && Objects.equals(this.url, url)
-                && Objects.equals(this.name, name)) {
-            return;
-        }
         this.serviceId = serviceId;
         this.url = url;
         this.name = name;
-        setFragment(getFM(), serviceId, url, name);
+
+        if (!isAdded() || isRemoving()) {
+            return;
+        }
+        forceRefresh();
+    }
+
+    private void forceRefresh() {
+        FragmentManager fm = getChildFragmentManager();
+        if (!fm.isStateSaved()) {
+            fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            setFragment(fm, serviceId, url, name);
+        }
     }
 
     public static void setFragment(
             FragmentManager fm,
             int sid, String u, String title) {
 
-        if (fm == null) {
+        if (fm == null || fm.isStateSaved()) {
             return;
-        }
-
-        if (fm.isStateSaved()) {
-            return;
-        }
-
-        Fragment existing = fm.findFragmentById(R.id.fragment_container_view);
-        if (existing instanceof CommentsFragment) {
-            CommentsFragment cf = (CommentsFragment) existing;
-            if (cf.getServiceId() == sid && cf.getUrl().equals(u) && cf.getName().equals(title)) {
-                return;
-            }
         }
 
         CommentsFragment fragment = CommentsFragment.getInstance(sid, u, title);
@@ -106,5 +106,22 @@ public class CommentsFragmentContainer extends BaseFragment {
                 .replace(R.id.fragment_container_view, fragment)
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (!isAdded()) {
+            return false;
+        }
+        final FragmentManager fm = getChildFragmentManager();
+        if (fm.getBackStackEntryCount() > 0) {
+            fm.popBackStackImmediate();
+            return true;
+        }
+        final Fragment fragment = fm.findFragmentById(R.id.fragment_container_view);
+        if (fragment instanceof BackPressable) {
+            return ((BackPressable) fragment).onBackPressed();
+        }
+        return false;
     }
 }

@@ -2,6 +2,7 @@ package org.schabi.newpipe.util.external_communication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.Spanned;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
@@ -163,18 +164,16 @@ public final class TextLinkifier {
      * using a regular expression, adds for each a {@link ClickableSpan} which opens the popup
      * player at the time indicated in the timestamps.
      *
-     * @param context              the context to use
      * @param spannableDescription the SpannableStringBuilder with the text of the
      *                             content description
      * @param relatedInfo          what to open in the popup player when timestamps are clicked
      * @param disposables          disposables created by the method are added here and their
      *                             lifecycle should be handled by the calling class
      */
-    private static void addClickListenersOnTimestamps(final Context context,
-                                                      @NonNull final SpannableStringBuilder
+    public static void addClickListenersOnTimestamps(@NonNull final SpannableStringBuilder
                                                               spannableDescription,
-                                                      final Info relatedInfo,
-                                                      final CompositeDisposable disposables) {
+                                                     final Info relatedInfo,
+                                                     final CompositeDisposable disposables) {
         final String descriptionText = spannableDescription.toString();
         final Matcher timestampsMatches =
                 TimestampExtractor.TIMESTAMPS_PATTERN.matcher(descriptionText);
@@ -194,13 +193,14 @@ public final class TextLinkifier {
                         @Override
                         public void onClick(@NonNull final View view) {
                             Intent intent = new Intent(ACTION_SEEK_TO);
+                            intent.setPackage(view.getContext().getPackageName());
                             intent.putExtra("Timestamp", timestampMatchDTO.seconds());
-                            context.sendBroadcast(intent);
+                            view.getContext().sendBroadcast(intent);
                         }
                     },
                     timestampMatchDTO.timestampStart(),
                     timestampMatchDTO.timestampEnd(),
-                    0);
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }
 
@@ -213,7 +213,7 @@ public final class TextLinkifier {
      * with {@link ShareUtils#openUrlInBrowser(Context, String, boolean)}.
      * This method will also add click listeners on timestamps in this description, which will play
      * the content in the popup player at the time indicated in the timestamp, by using
-     * {@link TextLinkifier#addClickListenersOnTimestamps(Context, SpannableStringBuilder, Info,
+     * {@link TextLinkifier#addClickListenersOnTimestamps(SpannableStringBuilder, Info,
      * CompositeDisposable)} method and click listeners on hashtags, by using
      * {@link TextLinkifier#addClickListenersOnHashtags(Context, SpannableStringBuilder, Info)},
      * which will open a search on the current service with the hashtag.
@@ -261,7 +261,7 @@ public final class TextLinkifier {
             // unneeded for meta-info or other TextViews
             if (relatedInfo != null) {
                 if (relatedInfo instanceof StreamInfo) {
-                    addClickListenersOnTimestamps(context, textBlockLinked, relatedInfo,
+                    addClickListenersOnTimestamps(textBlockLinked, relatedInfo,
                             disposables);
                 }
                 addClickListenersOnHashtags(context, textBlockLinked, relatedInfo);

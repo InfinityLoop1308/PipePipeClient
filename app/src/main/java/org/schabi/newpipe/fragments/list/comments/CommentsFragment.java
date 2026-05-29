@@ -58,7 +58,7 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfoItem, Com
     @Override
     protected void onItemCallback(final InfoItem selectedItem) throws Exception {
         super.onItemCallback(selectedItem);
-        CommentsFragmentContainer.setFragment(getFM(), (CommentsInfoItem) selectedItem);
+        CommentsFragmentContainer.setFragment(getParentFragmentManager(), (CommentsInfoItem) selectedItem);
     }
 
     public CommentsFragment() {

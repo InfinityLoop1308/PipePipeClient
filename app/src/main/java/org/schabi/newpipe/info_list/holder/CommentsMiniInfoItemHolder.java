@@ -1,8 +1,11 @@
 package org.schabi.newpipe.info_list.holder;
 
 import android.content.SharedPreferences;
+import android.text.Spannable;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
 import android.util.Log;
@@ -12,6 +15,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.util.regex.Matcher;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.text.util.LinkifyCompat;
@@ -28,10 +33,15 @@ import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.PicassoHelper;
+import org.schabi.newpipe.util.ThemeHelper;
+import org.schabi.newpipe.util.external_communication.InternalUrlsHandler;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
+import org.schabi.newpipe.util.external_communication.TextLinkifier;
 import org.schabi.newpipe.util.external_communication.TimestampExtractor;
 
 import java.util.Objects;
+import android.text.SpannableStringBuilder;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
 public class CommentsMiniInfoItemHolder extends InfoItemHolder {
     private static final String TAG = "CommentsMiniIIHolder";
@@ -69,6 +79,8 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
                 .getResources().getDimension(R.dimen.comments_horizontal_padding);
         commentVerticalPadding = (int) infoItemBuilder.getContext()
                 .getResources().getDimension(R.dimen.comments_vertical_padding);
+
+        itemContentView.setLinkTextColor(ThemeHelper.resolveColorFromAttr(infoItemBuilder.getContext(), R.attr.colorAccent));
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(parent.getContext());
         shouldEllipsize = pref.getBoolean(parent.getContext().getString(R.string.auto_ellipsize_key), false);
@@ -191,13 +203,12 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
     }
 
     private boolean shouldFocusLinks() {
-        if (itemView.isInTouchMode()) {
-            return false;
+        final CharSequence text = itemContentView.getText();
+        if (text instanceof Spanned) {
+            final ClickableSpan[] spans = ((Spanned) text).getSpans(0, text.length(), ClickableSpan.class);
+            return spans != null && spans.length != 0;
         }
-
-        final URLSpan[] urls = itemContentView.getUrls();
-
-        return urls != null && urls.length != 0;
+        return false;
     }
 
     private void determineLinkFocus() {
@@ -220,7 +231,7 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
                 end = Math.max(endOfLastLine - 2, 0);
             }
             final String newVal = itemContentView.getText().subSequence(0, end) + " …";
-            itemContentView.setText(newVal);
+            itemContentView.setText(newVal, TextView.BufferType.SPANNABLE);
             hasEllipsis = true;
         }
 
@@ -247,23 +258,22 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
         itemContentView.setMaxLines(COMMENT_EXPANDED_LINES);
         itemContentView.setText(commentText);
         linkify();
-        determineLinkFocus();
     }
 
     private void linkify() {
         LinkifyCompat.addLinks(itemContentView, Linkify.WEB_URLS);
-        LinkifyCompat.addLinks(itemContentView, TimestampExtractor.TIMESTAMPS_PATTERN, null, null,
+        LinkifyCompat.addLinks(itemContentView, TimestampExtractor.TIMESTAMPS_PATTERN, "internal://timestamp/", null,
                 (match, url) -> {
-                    try { //here url is like 15:38 or 01:00:00
+                    try {
                         final var timestampMatch = TimestampExtractor
                                 .getTimestampFromMatcher(match, commentText);
                         if (timestampMatch == null) {
-                            return url;
+                            return null;
                         }
-                        return "internal://timestamp/" + timestampMatch.seconds();
+                        return String.valueOf(timestampMatch.seconds());
                     } catch (final Exception ex) {
                         Log.e(TAG, "Unable to process url='" + url + "' as timestampLink", ex);
-                        return url;
+                        return null;
                     }
                 });
     }
