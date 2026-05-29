@@ -262,7 +262,8 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
         h.progress.setMarquee(mission.isRecovering() || !hasError && (!mission.isInitialized() || mission.unknownLength));
 
         double progress;
-        if (mission.unknownLength && mission.psAlgorithm.name != NICONICO_MUXER) {
+        if (mission.unknownLength
+                && (mission.psAlgorithm == null || !NICONICO_MUXER.equals(mission.psAlgorithm.name))) {
             progress = Double.NaN;
             h.progress.setProgress(0.0f);
         } else {

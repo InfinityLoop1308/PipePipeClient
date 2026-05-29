@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 import androidx.preference.Preference;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.util.InfoCache;
 import org.schabi.newpipe.util.ServiceHelper;
 
 import static android.app.Activity.RESULT_OK;
@@ -102,24 +103,34 @@ public abstract class BaseAccountSettingsFragment extends BasePreferenceFragment
     }
 
     protected void onLoginSuccess() {
-        ServiceHelper.initServices(getContext());
+        refreshAccountDependentState();
         Toast.makeText(requireContext(), R.string.success, Toast.LENGTH_SHORT).show();
         login.setEnabled(false);
         logout.setEnabled(true);
     }
 
     protected void onLogoutSuccess() {
-        ServiceHelper.initServices(getContext());
+        refreshAccountDependentState();
         Toast.makeText(requireContext(), R.string.success, Toast.LENGTH_SHORT).show();
         login.setEnabled(true);
         logout.setEnabled(false);
     }
 
+    protected void refreshAccountDependentState() {
+        ServiceHelper.initServices(getContext());
+        InfoCache.getInstance().clearCache();
+    }
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getCookiesKey())) {
+            refreshAccountDependentState();
+            updateLoginLogoutState();
+            return;
+        }
         if (shouldCheckOverrideKeys() &&
                 (key.equals(getOverrideSwitchKey()) || key.equals(getOverrideValueKey()))) {
-            ServiceHelper.initServices(getContext());
+            refreshAccountDependentState();
         }
     }
 

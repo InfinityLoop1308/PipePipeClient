@@ -806,7 +806,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在背景播放時自動隨機播放您的本地播放列表</string>
-<string name="update_log">### 新功能\n\n- 支援 YouTube 頻道的 Podcasts 分頁\n- 支援將影片播放器釘選於頂部，取代舊有的「留言區內部捲動」設定\n- 使新版實驗性介面改為手動啟用，可於進階設定中進行配置\n- 更新新版實驗性介面的排版\n- 重新排列設定選項以提升易讀性，並將較少使用的選項移至進階設定\n- 新增強制使用舊版搜尋篩選器介面的設定\n- 新增「超時強制結束」設定，以修正登入部分裝置時 YouTube 直播無法正常結束的問題\n\n### 錯誤修正\n\n- 修正因 YouTube SABR 加密導致的「不支援的內容」錯誤 (YouTube)\n- 修正動態消息回傳空白結果的問題 (YouTube)\n- 修正直播分頁未回傳任何結果的問題 (YouTube)\n- 修正部分播放清單不包含任何項目的問題 (YouTube)\n- 修正部分影片無法正確辨識為未發佈或付費內容的問題 (YouTube)\n- 修正影片載入失敗時未顯示實際原因的問題 (YouTube)\n- 修正播放清單中無法正確解析已刪除與私人影片的問題 (YouTube)\n- 修正部分影片的觀看次數與上傳日期無法正確解析的問題 (YouTube)\n- 修正新版搜尋篩選器未套用深色/純黑主題的問題\n- 修正列表檢視模式設定在 5.0.0 版本中未被正確轉移的問題</string>
+<string name="update_log">修復：所有影片上出現「This content is not supported by PipePipe」的錯誤 (YouTube)\n\nYouTube 最近更新頻繁，請務必開啟更新檢查，以便即時接收我們的最新修補程式。</string>
 <string name="speeding_playback_title">按住以加速播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這項計畫</string>

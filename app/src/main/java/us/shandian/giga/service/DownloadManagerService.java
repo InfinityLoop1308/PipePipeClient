@@ -44,6 +44,7 @@ import org.schabi.newpipe.player.helper.LockManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 
 import us.shandian.giga.get.DownloadMission;
@@ -83,6 +84,9 @@ public class DownloadManagerService extends Service {
     private static final String EXTRA_PARENT_PATH = "DownloadManagerService.extra.storageParentPath";
     private static final String EXTRA_STORAGE_TAG = "DownloadManagerService.extra.storageTag";
     private static final String EXTRA_RECOVERY_INFO = "DownloadManagerService.extra.recoveryInfo";
+    private static final String EXTRA_RESOURCE_DELIVERY_METHODS = "DownloadManagerService.extra.resourceDeliveryMethods";
+    private static final String EXTRA_RESOURCE_MANIFEST_URLS = "DownloadManagerService.extra.resourceManifestUrls";
+    private static final String EXTRA_RESOURCE_IS_URLS = "DownloadManagerService.extra.resourceIsUrls";
 
     private static final String ACTION_RESET_DOWNLOAD_FINISHED = APPLICATION_ID + ".reset_download_finished";
     private static final String ACTION_OPEN_DOWNLOADS_FINISHED = APPLICATION_ID + ".open_downloads_finished";
@@ -379,7 +383,10 @@ public class DownloadManagerService extends Service {
      */
     public static void startMission(Context context, String[] urls, StoredFileHelper storage,
                                     char kind, int threads, String source, String psName,
-                                    String[] psArgs, long nearLength, MissionRecoveryInfo[] recoveryInfo) {
+                                    String[] psArgs, long nearLength, MissionRecoveryInfo[] recoveryInfo,
+                                    String[] resourceDeliveryMethods,
+                                    String[] resourceManifestUrls,
+                                    boolean[] resourceIsUrls) {
         Intent intent = new Intent(context, DownloadManagerService.class);
         intent.setAction(Intent.ACTION_RUN);
         intent.putExtra(EXTRA_URLS, urls);
@@ -390,6 +397,9 @@ public class DownloadManagerService extends Service {
         intent.putExtra(EXTRA_POSTPROCESSING_ARGS, psArgs);
         intent.putExtra(EXTRA_NEAR_LENGTH, nearLength);
         intent.putExtra(EXTRA_RECOVERY_INFO, recoveryInfo);
+        intent.putExtra(EXTRA_RESOURCE_DELIVERY_METHODS, resourceDeliveryMethods);
+        intent.putExtra(EXTRA_RESOURCE_MANIFEST_URLS, resourceManifestUrls);
+        intent.putExtra(EXTRA_RESOURCE_IS_URLS, resourceIsUrls);
 
         intent.putExtra(EXTRA_PARENT_PATH, storage.getParentUri());
         intent.putExtra(EXTRA_PATH, storage.getUri());
@@ -410,6 +420,9 @@ public class DownloadManagerService extends Service {
         long nearLength = intent.getLongExtra(EXTRA_NEAR_LENGTH, 0);
         String tag = intent.getStringExtra(EXTRA_STORAGE_TAG);
         Parcelable[] parcelRecovery = intent.getParcelableArrayExtra(EXTRA_RECOVERY_INFO);
+        String[] resourceDeliveryMethods = intent.getStringArrayExtra(EXTRA_RESOURCE_DELIVERY_METHODS);
+        String[] resourceManifestUrls = intent.getStringArrayExtra(EXTRA_RESOURCE_MANIFEST_URLS);
+        boolean[] resourceIsUrls = intent.getBooleanArrayExtra(EXTRA_RESOURCE_IS_URLS);
 
         StoredFileHelper storage;
         try {
@@ -433,6 +446,15 @@ public class DownloadManagerService extends Service {
         mission.source = source;
         mission.nearLength = nearLength;
         mission.recoveryInfo = recovery;
+        mission.resourceDeliveryMethods = normalizeResourceMetadata(resourceDeliveryMethods, urls);
+        mission.resourceManifestUrls = normalizeResourceMetadata(resourceManifestUrls, urls);
+        mission.resourceIsUrls = normalizeResourceBooleans(resourceIsUrls, urls);
+
+        if (DEBUG && ps == null && urls != null && urls.length > 1
+                && !containsHlsResource(mission.resourceDeliveryMethods,
+                mission.resourceManifestUrls, urls)) {
+            Log.w(TAG, "mission created with multiple urls ¿missing post-processing algorithm?");
+        }
 
         if (ps != null)
             ps.setTemporalDir(DownloadManager.pickAvailableTemporalDir(this));
@@ -440,6 +462,66 @@ public class DownloadManagerService extends Service {
         handleConnectivityState(true);// first check the actual network status
 
         mManager.startMission(mission);
+    }
+
+    private String[] normalizeResourceMetadata(String[] metadata, String[] urls) {
+        if (urls == null) {
+            return metadata;
+        }
+        if (metadata != null && metadata.length == urls.length) {
+            return metadata;
+        }
+        return new String[urls.length];
+    }
+
+    private boolean[] normalizeResourceBooleans(boolean[] metadata, String[] urls) {
+        if (urls == null) {
+            return metadata;
+        }
+        if (metadata != null && metadata.length == urls.length) {
+            return metadata;
+        }
+        boolean[] values = new boolean[urls.length];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = true;
+        }
+        return values;
+    }
+
+    private static boolean containsHlsMethod(String[] values) {
+        if (values == null) {
+            return false;
+        }
+        for (String value : values) {
+            if ("HLS".equals(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean containsHlsValue(String[] values) {
+        if (values == null) {
+            return false;
+        }
+        for (String value : values) {
+            if (looksLikeHls(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean containsHlsResource(String[] deliveryMethods,
+                                               String[] manifestUrls,
+                                               String[] urls) {
+        return containsHlsMethod(deliveryMethods)
+                || containsHlsValue(manifestUrls)
+                || containsHlsValue(urls);
+    }
+
+    private static boolean looksLikeHls(String value) {
+        return value != null && value.toLowerCase(Locale.ROOT).contains(".m3u8");
     }
 
     public void notifyFinishedDownload(String name) {
