@@ -64,6 +64,7 @@ import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.PermissionHelper;
+import org.schabi.newpipe.util.StreamTypeUtil;
 import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.util.urlfinder.UrlFinder;
@@ -627,6 +628,13 @@ public class RouterActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> {
+                    if (StreamTypeUtil.isLiveStream(result.getStreamType())) {
+                        Toast.makeText(this, R.string.no_streams_available_download,
+                                Toast.LENGTH_LONG).show();
+                        finish();
+                        return;
+                    }
+
                     final FragmentManager fm = getSupportFragmentManager();
                     final DownloadDialog downloadDialog =
                             DownloadDialog.newInstance(this, result);
