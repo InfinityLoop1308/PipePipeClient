@@ -4,6 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import org.schabi.newpipe.extractor.MediaFormat
 import org.schabi.newpipe.extractor.stream.AudioStream
+import org.schabi.newpipe.extractor.stream.DeliveryMethod
 import org.schabi.newpipe.extractor.stream.Stream
 import org.schabi.newpipe.extractor.stream.SubtitlesStream
 import org.schabi.newpipe.extractor.stream.VideoStream
@@ -16,19 +17,24 @@ class MissionRecoveryInfo(
     var isDesired2: Boolean = false,
     var desiredBitrate: Int = 0,
     var kind: Char = Char.MIN_VALUE,
-    var validateCondition: String? = null
+    var validateCondition: String? = null,
+    var audioTrackId: String? = null,
+    var isHls: Boolean = false
 ) : Serializable, Parcelable {
     constructor(stream: Stream) : this(format = stream.getFormat()!!) {
+        isHls = stream.getDeliveryMethod() == DeliveryMethod.HLS
         when (stream) {
             is AudioStream -> {
                 desiredBitrate = stream.averageBitrate
                 isDesired2 = false
                 kind = 'a'
+                audioTrackId = stream.audioTrackId
             }
             is VideoStream -> {
                 desired = stream.resolution
                 isDesired2 = stream.isVideoOnly
                 kind = 'v'
+                audioTrackId = stream.audioTrackId
             }
             is SubtitlesStream -> {
                 desired = stream.languageTag

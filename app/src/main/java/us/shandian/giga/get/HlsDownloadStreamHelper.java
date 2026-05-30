@@ -1,6 +1,7 @@
 package us.shandian.giga.get;
 
 import org.schabi.newpipe.extractor.MediaFormat;
+import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.DeliveryMethod;
 import org.schabi.newpipe.extractor.stream.Stream;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
@@ -14,6 +15,7 @@ public final class HlsDownloadStreamHelper {
     public static final String HLS_MANIFEST_RESOLUTION = "HLS";
 
     private static final String HLS_MANIFEST_STREAM_ID = "hls-manifest";
+    private static final String HLS_AUDIO_FALLBACK_STREAM_ID = "hls-audio-fallback";
     private static final String HLS_MANIFEST_CODEC = "hls";
 
     private HlsDownloadStreamHelper() {
@@ -33,6 +35,59 @@ public final class HlsDownloadStreamHelper {
 
         streams.add(createManifestFallback(hlsUrl));
         return true;
+    }
+
+    public static boolean addAudioFallbackIfNeeded(final List<AudioStream> streams,
+                                                   final StreamInfo info) {
+        if (streams == null || info == null || info.getStreamType() != StreamType.VIDEO_STREAM
+                || !streams.isEmpty()) {
+            return false;
+        }
+
+        final AudioStream fallback = createAudioFallback(info.getVideoStreams(), info.getHlsUrl(),
+                null);
+        if (fallback == null) {
+            return false;
+        }
+
+        streams.add(fallback);
+        return true;
+    }
+
+    public static AudioStream createAudioFallback(final List<VideoStream> streams,
+                                                  final String hlsUrl,
+                                                  final String audioTrackId) {
+        final VideoStream source = findAudioFallbackSource(streams, audioTrackId);
+        if (source != null) {
+            final String manifestUrl = source.getManifestUrl() != null
+                    ? source.getManifestUrl() : source.getContent();
+            return new AudioStream.Builder()
+                    .setId(HLS_AUDIO_FALLBACK_STREAM_ID + "-" + source.getId())
+                    .setContent(source.getContent(), true)
+                    .setMediaFormat(MediaFormat.M4A)
+                    .setDeliveryMethod(DeliveryMethod.HLS)
+                    .setManifestUrl(manifestUrl)
+                    .setAverageBitrate(AudioStream.UNKNOWN_BITRATE)
+                    .setQuality(HLS_MANIFEST_RESOLUTION)
+                    .setAudioTrackId(source.getAudioTrackId())
+                    .setAudioTrackName(source.getAudioTrackName())
+                    .setAudioLocale(source.getAudioLocale())
+                    .build();
+        }
+
+        if (hlsUrl == null || hlsUrl.isEmpty()) {
+            return null;
+        }
+
+        return new AudioStream.Builder()
+                .setId(HLS_AUDIO_FALLBACK_STREAM_ID)
+                .setContent(hlsUrl, true)
+                .setMediaFormat(MediaFormat.M4A)
+                .setDeliveryMethod(DeliveryMethod.HLS)
+                .setManifestUrl(hlsUrl)
+                .setAverageBitrate(AudioStream.UNKNOWN_BITRATE)
+                .setQuality(HLS_MANIFEST_RESOLUTION)
+                .build();
     }
 
     public static VideoStream createManifestFallback(final String hlsUrl) {
@@ -113,6 +168,60 @@ public final class HlsDownloadStreamHelper {
             }
         }
         return false;
+    }
+
+    private static VideoStream findAudioFallbackSource(final List<VideoStream> streams,
+                                                       final String audioTrackId) {
+        if (streams == null) {
+            return null;
+        }
+
+        VideoStream best = null;
+        for (final VideoStream stream : streams) {
+            if (stream.getDeliveryMethod() != DeliveryMethod.HLS || stream.isVideoOnly()
+                    || !stream.isUrl()) {
+                continue;
+            }
+            if (audioTrackId != null && !audioTrackId.equals(stream.getAudioTrackId())) {
+                continue;
+            }
+            if (best == null || isSmallerVariant(stream, best)) {
+                best = stream;
+            }
+        }
+        return best;
+    }
+
+    private static boolean isSmallerVariant(final VideoStream candidate,
+                                            final VideoStream existing) {
+        final int candidateHeight = heightOf(candidate.getResolution());
+        final int existingHeight = heightOf(existing.getResolution());
+        if (candidateHeight != existingHeight) {
+            return candidateHeight < existingHeight;
+        }
+
+        final int candidateBitrate = candidate.getBitrate();
+        final int existingBitrate = existing.getBitrate();
+        return candidateBitrate > 0 && (existingBitrate <= 0 || candidateBitrate < existingBitrate);
+    }
+
+    private static int heightOf(final String resolution) {
+        if (resolution == null) {
+            return Integer.MAX_VALUE;
+        }
+        final int pIndex = resolution.toLowerCase(Locale.ROOT).indexOf('p');
+        if (pIndex <= 0) {
+            return Integer.MAX_VALUE;
+        }
+        int start = pIndex - 1;
+        while (start > 0 && Character.isDigit(resolution.charAt(start - 1))) {
+            start--;
+        }
+        try {
+            return Integer.parseInt(resolution.substring(start, pIndex));
+        } catch (final NumberFormatException ignored) {
+            return Integer.MAX_VALUE;
+        }
     }
 
     private static boolean containsHlsMethod(final String[] values) {

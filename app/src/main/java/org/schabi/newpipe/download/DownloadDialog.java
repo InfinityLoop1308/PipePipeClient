@@ -174,6 +174,7 @@ public class DownloadDialog extends DialogFragment
 
         final List<AudioStream> downloadableAudio = ListHelper
                 .filterDownloadableAudioStreams(info.getAudioStreams());
+        HlsDownloadStreamHelper.addAudioFallbackIfNeeded(downloadableAudio, info);
 
         final DownloadDialog instance = newInstance(info);
         instance.setVideoStreams(filteredVideoStreams);
@@ -326,7 +327,7 @@ public class DownloadDialog extends DialogFragment
         dialogBinding.fileName.setText(FilenameUtils.createFilename(getContext(),
                 currentInfo.getName()));
         selectedAudioIndex = ListHelper
-                .getDefaultAudioFormat(getContext(), currentInfo.getAudioStreams());
+                .getDefaultAudioFormat(getContext(), wrappedAudioStreams.getStreamsList());
 
         selectedSubtitleIndex = getSubtitleIndexBy(subtitleStreamsAdapter.getAll());
 

@@ -218,7 +218,9 @@ internal class HlsDownloader(
             inputs.forEach { input ->
                 append("-i ").append(quote(input.absolutePath)).append(' ')
             }
-            if (inputs.size > 1) {
+            if (mission.kind == 'a' && inputs.size == 1) {
+                append("-map 0:a? -vn ")
+            } else if (inputs.size > 1) {
                 inputs.indices.forEach { index ->
                     append("-map ").append(index).append(":v? ")
                     append("-map ").append(index).append(":a? ")

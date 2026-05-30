@@ -62,7 +62,10 @@ public class DirectDownloader {
 
         this.setVideoStreams(filteredVideoStreams);
         this.setSelectedVideoStream(selectedStreamIndex >= 0 ? selectedStreamIndex : 0);
-        this.setAudioStreams(ListHelper.filterDownloadableAudioStreams(info.getAudioStreams()));
+        final List<AudioStream> downloadableAudio = ListHelper
+                .filterDownloadableAudioStreams(info.getAudioStreams());
+        HlsDownloadStreamHelper.addAudioFallbackIfNeeded(downloadableAudio, info);
+        this.setAudioStreams(downloadableAudio);
         this.setInfo(info);
         this.type = type;
         this.context = context;

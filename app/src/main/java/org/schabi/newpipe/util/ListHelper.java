@@ -935,7 +935,7 @@ public final class ListHelper {
             final List<AudioStream> audioStreams) {
         final List<AudioStream> result = new ArrayList<>();
         for (final AudioStream a : audioStreams) {
-            if (a.getDeliveryMethod() != DeliveryMethod.HLS || a.getAudioTrackId() == null) {
+            if (a.getDeliveryMethod() != DeliveryMethod.HLS || a.isUrl()) {
                 result.add(a);
             }
         }
