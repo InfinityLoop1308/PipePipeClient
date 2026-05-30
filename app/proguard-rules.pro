@@ -46,3 +46,12 @@
 
 # for some reason NotificationModeConfigFragment wasn't kept (only referenced in a preference xml)
 -keep class org.schabi.newpipe.settings.notifications.** { *; }
+
+-dontwarn org.slf4j.impl.StaticLoggerBinder
+
+-keep class * extends androidx.room.RoomDatabase { *; }
+-keep @androidx.room.Database class * { *; }
+-keep class androidx.work.impl.WorkDatabase_Impl { *; }
+-dontwarn androidx.room.paging.**
+
+-keep class org.json.JSONException { *; }
