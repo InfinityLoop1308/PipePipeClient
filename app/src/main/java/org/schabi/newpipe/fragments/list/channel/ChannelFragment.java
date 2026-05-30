@@ -183,34 +183,28 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_item_notify:
-                final boolean value = !item.isChecked();
-                item.setEnabled(false);
-                setNotify(value);
-                break;
-            case R.id.action_settings:
-                NavigationHelper.openSettings(requireContext());
-                break;
-            case R.id.menu_item_rss:
-                if (currentInfo != null) {
-                    ShareUtils.openUrlInBrowser(
-                            requireContext(), currentInfo.getFeedUrl(), false);
-                }
-                break;
-            case R.id.menu_item_openInBrowser:
-                if (currentInfo != null) {
-                    ShareUtils.openUrlInBrowser(requireContext(), currentInfo.getOriginalUrl());
-                }
-                break;
-            case R.id.menu_item_share:
-                if (currentInfo != null) {
-                    ShareUtils.shareText(requireContext(), name, currentInfo.getOriginalUrl(),
-                            currentInfo.getAvatarUrl());
-                }
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.menu_item_notify) {
+            final boolean value = !item.isChecked();
+            item.setEnabled(false);
+            setNotify(value);
+        } else if (item.getItemId() == R.id.action_settings) {
+            NavigationHelper.openSettings(requireContext());
+        } else if (item.getItemId() == R.id.menu_item_rss) {
+            if (currentInfo != null) {
+                ShareUtils.openUrlInBrowser(
+                        requireContext(), currentInfo.getFeedUrl(), false);
+            }
+        } else if (item.getItemId() == R.id.menu_item_openInBrowser) {
+            if (currentInfo != null) {
+                ShareUtils.openUrlInBrowser(requireContext(), currentInfo.getOriginalUrl());
+            }
+        } else if (item.getItemId() == R.id.menu_item_share) {
+            if (currentInfo != null) {
+                ShareUtils.shareText(requireContext(), name, currentInfo.getOriginalUrl(),
+                        currentInfo.getAvatarUrl());
+            }
+        } else {
+            return super.onOptionsItemSelected(item);
         }
         return true;
     }

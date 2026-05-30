@@ -569,17 +569,13 @@ public class DownloadDialog extends DialogFragment
         }
         boolean flag = true;
 
-        switch (checkedId) {
-            case R.id.audio_button:
-                setupAudioSpinner();
-                break;
-            case R.id.video_button:
-                setupVideoSpinner();
-                break;
-            case R.id.subtitle_button:
-                setupSubtitleSpinner();
-                flag = false;
-                break;
+        if (checkedId == R.id.audio_button) {
+            setupAudioSpinner();
+        } else if (checkedId == R.id.video_button) {
+            setupVideoSpinner();
+        } else if (checkedId == R.id.subtitle_button) {
+            setupSubtitleSpinner();
+            flag = false;
         }
 
         dialogBinding.threads.setEnabled(flag);
@@ -593,16 +589,13 @@ public class DownloadDialog extends DialogFragment
                     + "parent = [" + parent + "], view = [" + view + "], "
                     + "position = [" + position + "], id = [" + id + "]");
         }
-        switch (dialogBinding.videoAudioGroup.getCheckedRadioButtonId()) {
-            case R.id.audio_button:
-                selectedAudioIndex = position;
-                break;
-            case R.id.video_button:
-                selectedVideoIndex = position;
-                break;
-            case R.id.subtitle_button:
-                selectedSubtitleIndex = position;
-                break;
+        final int checkedId1 = dialogBinding.videoAudioGroup.getCheckedRadioButtonId();
+        if (checkedId1 == R.id.audio_button) {
+            selectedAudioIndex = position;
+        } else if (checkedId1 == R.id.video_button) {
+            selectedVideoIndex = position;
+        } else if (checkedId1 == R.id.subtitle_button) {
+            selectedSubtitleIndex = position;
         }
         onItemSelectedSetFileName();
     }
@@ -618,23 +611,16 @@ public class DownloadDialog extends DialogFragment
                 || prevFileName.startsWith(getString(R.string.caption_file_name, fileName, ""))) {
             // only update the file name field if it was not edited by the user
 
-            switch (dialogBinding.videoAudioGroup.getCheckedRadioButtonId()) {
-                case R.id.audio_button:
-                case R.id.video_button:
-                    if (!prevFileName.equals(fileName)) {
-                        // since the user might have switched between audio and video, the correct
-                        // text might already be in place, so avoid resetting the cursor position
-                        dialogBinding.fileName.setText(fileName);
-                    }
-                    break;
-
-                case R.id.subtitle_button:
-                    final String setSubtitleLanguageCode = subtitleStreamsAdapter
-                            .getItem(selectedSubtitleIndex).getLanguageTag();
-                    // this will reset the cursor position, which is bad UX, but it can't be avoided
-                    dialogBinding.fileName.setText(getString(
-                            R.string.caption_file_name, fileName, setSubtitleLanguageCode));
-                    break;
+            final int checkedId2 = dialogBinding.videoAudioGroup.getCheckedRadioButtonId();
+            if (checkedId2 == R.id.audio_button || checkedId2 == R.id.video_button) {
+                if (!prevFileName.equals(fileName)) {
+                    dialogBinding.fileName.setText(fileName);
+                }
+            } else if (checkedId2 == R.id.subtitle_button) {
+                final String setSubtitleLanguageCode = subtitleStreamsAdapter
+                        .getItem(selectedSubtitleIndex).getLanguageTag();
+                dialogBinding.fileName.setText(getString(
+                        R.string.caption_file_name, fileName, setSubtitleLanguageCode));
             }
         }
     }
@@ -759,35 +745,32 @@ public class DownloadDialog extends DialogFragment
 
         filenameTmp = getNameEditText().concat(".");
 
-        switch (dialogBinding.videoAudioGroup.getCheckedRadioButtonId()) {
-            case R.id.audio_button:
-                selectedMediaType = getString(R.string.last_download_type_audio_key);
-                mainStorage = mainStorageAudio;
-                format = audioStreamsAdapter.getItem(selectedAudioIndex).getFormat();
-                if (format == MediaFormat.WEBMA_OPUS) {
-                    mimeTmp = "audio/ogg";
-                    filenameTmp += "opus";
-                } else {
-                    mimeTmp = format.mimeType;
-                    filenameTmp += format.suffix;
-                }
-                break;
-            case R.id.video_button:
-                selectedMediaType = getString(R.string.last_download_type_video_key);
-                mainStorage = mainStorageVideo;
-                format = videoStreamsAdapter.getItem(selectedVideoIndex).getFormat();
+        final int checkedId = dialogBinding.videoAudioGroup.getCheckedRadioButtonId();
+        if (checkedId == R.id.audio_button) {
+            selectedMediaType = getString(R.string.last_download_type_audio_key);
+            mainStorage = mainStorageAudio;
+            format = audioStreamsAdapter.getItem(selectedAudioIndex).getFormat();
+            if (format == MediaFormat.WEBMA_OPUS) {
+                mimeTmp = "audio/ogg";
+                filenameTmp += "opus";
+            } else {
                 mimeTmp = format.mimeType;
                 filenameTmp += format.suffix;
-                break;
-            case R.id.subtitle_button:
-                selectedMediaType = getString(R.string.last_download_type_subtitle_key);
-                mainStorage = mainStorageVideo; // subtitle & video files go together
-                format = subtitleStreamsAdapter.getItem(selectedSubtitleIndex).getFormat();
-                mimeTmp = format.mimeType;
-                filenameTmp += (format == MediaFormat.TTML ? MediaFormat.SRT : format).suffix;
-                break;
-            default:
-                throw new RuntimeException("No stream selected");
+            }
+        } else if (checkedId == R.id.video_button) {
+            selectedMediaType = getString(R.string.last_download_type_video_key);
+            mainStorage = mainStorageVideo;
+            format = videoStreamsAdapter.getItem(selectedVideoIndex).getFormat();
+            mimeTmp = format.mimeType;
+            filenameTmp += format.suffix;
+        } else if (checkedId == R.id.subtitle_button) {
+            selectedMediaType = getString(R.string.last_download_type_subtitle_key);
+            mainStorage = mainStorageVideo;
+            format = subtitleStreamsAdapter.getItem(selectedSubtitleIndex).getFormat();
+            mimeTmp = format.mimeType;
+            filenameTmp += (format == MediaFormat.TTML ? MediaFormat.SRT : format).suffix;
+        } else {
+            throw new RuntimeException("No stream selected");
         }
 
         if (!askForSavePath
@@ -1037,84 +1020,81 @@ public class DownloadDialog extends DialogFragment
         long nearLength = 0;
 
         // more download logic: select muxer, subtitle converter, etc.
-        switch (dialogBinding.videoAudioGroup.getCheckedRadioButtonId()) {
-            case R.id.audio_button:
-                kind = 'a';
-                selectedStream = audioStreamsAdapter.getItem(selectedAudioIndex);
-                if (currentInfo.getService() == ServiceList.NicoNico) {
+        final int checkedId3 = dialogBinding.videoAudioGroup.getCheckedRadioButtonId();
+        if (checkedId3 == R.id.audio_button) {
+            kind = 'a';
+            selectedStream = audioStreamsAdapter.getItem(selectedAudioIndex);
+            if (currentInfo.getService() == ServiceList.NicoNico) {
+                psName = Postprocessing.NICONICO_MUXER;
+            } else if (selectedStream.getFormat() == MediaFormat.M4A && currentInfo.getService() != ServiceList.BiliBili) {
+                psName = Postprocessing.ALGORITHM_M4A_NO_DASH;
+            } else if (selectedStream.getFormat() == MediaFormat.WEBMA_OPUS) {
+                psName = Postprocessing.ALGORITHM_OGG_FROM_WEBM_DEMUXER;
+            }
+        } else if (checkedId3 == R.id.video_button) {
+            kind = 'v';
+            selectedStream = videoStreamsAdapter.getItem(selectedVideoIndex);
+
+            final SecondaryStreamHelper<AudioStream> secondary = videoStreamsAdapter
+                    .getAllSecondary()
+                    .get(wrappedVideoStreams.getStreamsList().indexOf(selectedStream));
+
+            if (secondary != null) {
+                secondaryStream = secondary.getStream();
+
+                if(currentInfo.getService() == ServiceList.BiliBili) {
+                    psName = Postprocessing.BILIBILI_MUXER;
+                } else if (currentInfo.getService() == ServiceList.NicoNico) {
                     psName = Postprocessing.NICONICO_MUXER;
-                } else if (selectedStream.getFormat() == MediaFormat.M4A && currentInfo.getService() != ServiceList.BiliBili) {
-                    psName = Postprocessing.ALGORITHM_M4A_NO_DASH;
-                } else if (selectedStream.getFormat() == MediaFormat.WEBMA_OPUS) {
-                    psName = Postprocessing.ALGORITHM_OGG_FROM_WEBM_DEMUXER;
-                }
-                break;
-            case R.id.video_button:
-                kind = 'v';
-                selectedStream = videoStreamsAdapter.getItem(selectedVideoIndex);
-
-                final SecondaryStreamHelper<AudioStream> secondary = videoStreamsAdapter
-                        .getAllSecondary()
-                        .get(wrappedVideoStreams.getStreamsList().indexOf(selectedStream));
-
-                if (secondary != null) {
-                    secondaryStream = secondary.getStream();
-
-                    if(currentInfo.getService() == ServiceList.BiliBili) {
-                        psName = Postprocessing.BILIBILI_MUXER;
-                    } else if (currentInfo.getService() == ServiceList.NicoNico) {
-                        psName = Postprocessing.NICONICO_MUXER;
+                } else {
+                    if (selectedStream.getFormat() == MediaFormat.MPEG_4) {
+                        psName = Postprocessing.ALGORITHM_MP4_FROM_DASH_MUXER;
                     } else {
-                        if (selectedStream.getFormat() == MediaFormat.MPEG_4) {
-                            psName = Postprocessing.ALGORITHM_MP4_FROM_DASH_MUXER;
-                        } else {
-                            psName = Postprocessing.ALGORITHM_WEBM_MUXER;
-                        }
-                    }
-
-                    psArgs = null;
-                    final long videoSize = wrappedVideoStreams
-                            .getSizeInBytes((VideoStream) selectedStream);
-
-                    // set nearLength, only, if both sizes are fetched or known. This probably
-                    // does not work on slow networks but is later updated in the downloader
-                    if (secondary.getSizeInBytes() > 0 && videoSize > 0) {
-                        nearLength = secondary.getSizeInBytes() + videoSize;
+                        psName = Postprocessing.ALGORITHM_WEBM_MUXER;
                     }
                 }
-                break;
-            case R.id.subtitle_button:
-                threads = 1; // use unique thread for subtitles due small file size
-                kind = 's';
-                selectedStream = subtitleStreamsAdapter.getItem(selectedSubtitleIndex);
-                if(!selectedStream.isUrl()){
-                    try {
-                        String content = selectedStream.getContent();
-                        if (selectedStream.getFormat() == MediaFormat.TTML) {
-                            content = SrtFromTtmlWriter.convertTtmlToSrt(content);
-                        }
-                        OutputStream outputStream = storage.context.getContentResolver().openOutputStream(storage.getUri());
-                        outputStream.write(content.getBytes());
-                        outputStream.close();
-                        Toast.makeText(context, getString(R.string.recaptcha_done_button),
-                                Toast.LENGTH_SHORT).show();
 
-                        dismiss();
-                        return;
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                psArgs = null;
+                final long videoSize = wrappedVideoStreams
+                        .getSizeInBytes((VideoStream) selectedStream);
+
+                // set nearLength, only, if both sizes are fetched or known. This probably
+                // does not work on slow networks but is later updated in the downloader
+                if (secondary.getSizeInBytes() > 0 && videoSize > 0) {
+                    nearLength = secondary.getSizeInBytes() + videoSize;
+                }
+            }
+        } else if (checkedId3 == R.id.subtitle_button) {
+            threads = 1;
+            kind = 's';
+            selectedStream = subtitleStreamsAdapter.getItem(selectedSubtitleIndex);
+            if(!selectedStream.isUrl()){
+                try {
+                    String content = selectedStream.getContent();
+                    if (selectedStream.getFormat() == MediaFormat.TTML) {
+                        content = SrtFromTtmlWriter.convertTtmlToSrt(content);
                     }
+                    OutputStream outputStream = storage.context.getContentResolver().openOutputStream(storage.getUri());
+                    outputStream.write(content.getBytes());
+                    outputStream.close();
+                    Toast.makeText(context, getString(R.string.recaptcha_done_button),
+                            Toast.LENGTH_SHORT).show();
+
+                    dismiss();
+                    return;
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
-                if (selectedStream.getFormat() == MediaFormat.TTML) {
-                    psName = Postprocessing.ALGORITHM_TTML_CONVERTER;
-                    psArgs = new String[]{
-                            selectedStream.getFormat().getSuffix(),
-                            "false" // ignore empty frames
-                    };
-                }
-                break;
-            default:
-                return;
+            }
+            if (selectedStream.getFormat() == MediaFormat.TTML) {
+                psName = Postprocessing.ALGORITHM_TTML_CONVERTER;
+                psArgs = new String[]{
+                        selectedStream.getFormat().getSuffix(),
+                        "false"
+                };
+            }
+        } else {
+            return;
         }
 
         if (secondaryStream == null) {

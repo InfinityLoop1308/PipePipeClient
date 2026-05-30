@@ -520,117 +520,100 @@ public final class VideoDetailFragment
 
     @Override
     public void onClick(final View v) {
-        switch (v.getId()) {
-            case R.id.detail_controls_background:
-                openBackgroundPlayer(false);
-                break;
-            case R.id.detail_controls_popup:
-                openPopupPlayer(false);
-                break;
-            case R.id.detail_controls_playlist_append:
-                if (getFM() != null && currentInfo != null) {
-                    disposables.add(
-                            PlaylistDialog.createCorrespondingDialog(
-                                    getContext(),
-                                    Collections.singletonList(new StreamEntity(currentInfo)),
-                                    dialog -> dialog.show(getFM(), TAG)
-                            )
-                    );
-                }
-                break;
-            case R.id.detail_controls_download:
-                if (PermissionHelper.checkStoragePermissions(activity,
-                        PermissionHelper.DOWNLOAD_DIALOG_REQUEST_CODE)) {
-                    this.openDownloadDialog();
-                }
-                break;
-            case R.id.detail_controls_share:
-                if (currentInfo != null) {
-                    ShareUtils.shareText(requireContext(), currentInfo.getName(),
-                            currentInfo.getUrl(), currentInfo.getThumbnailUrl());
-                }
-                break;
-            case R.id.detail_controls_open_in_browser:
-                if (currentInfo != null) {
-                    ShareUtils.openUrlInBrowser(requireContext(), currentInfo.getUrl());
-                }
-                break;
-            case R.id.detail_controls_start_sleep_timer:
-                if (currentInfo != null) {
-                    Intent serviceIntent = new Intent(requireContext(), SleepTimerService.class);
-                    serviceIntent.setAction(SleepTimerService.ACTION_START_TIMER);
-                    // get time from shared preferences
-                    int time = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(activity).getString(
-                            getString(R.string.sleep_timer_length_key), String.valueOf(15)
-                    ));
-                    serviceIntent.putExtra("timeInMillis", time * 60000); // 60 seconds
-                    activity.startService(serviceIntent);
-                }
-                break;
-            case R.id.detail_controls_play_with_kodi:
-                if (currentInfo != null) {
-                    try {
-                        NavigationHelper.playWithKore(
-                                requireContext(), Uri.parse(currentInfo.getUrl()));
-                    } catch (final Exception e) {
-                        if (DEBUG) {
-                            Log.i(TAG, "Failed to start kore", e);
-                        }
-                        KoreUtils.showInstallKoreDialog(requireContext());
-                    }
-                }
-                break;
-            case R.id.detail_uploader_root_layout:
-                if (isEmpty(currentInfo.getSubChannelUrl())) {
-                    if (!isEmpty(currentInfo.getUploaderUrl())) {
-                        openChannel(currentInfo.getUploaderUrl(), currentInfo.getUploaderName());
-                    }
-
+        final int id = v.getId();
+        if (id == R.id.detail_controls_background) {
+            openBackgroundPlayer(false);
+        } else if (id == R.id.detail_controls_popup) {
+            openPopupPlayer(false);
+        } else if (id == R.id.detail_controls_playlist_append) {
+            if (getFM() != null && currentInfo != null) {
+                disposables.add(
+                        PlaylistDialog.createCorrespondingDialog(
+                                getContext(),
+                                Collections.singletonList(new StreamEntity(currentInfo)),
+                                dialog -> dialog.show(getFM(), TAG)
+                        )
+                );
+            }
+        } else if (id == R.id.detail_controls_download) {
+            if (PermissionHelper.checkStoragePermissions(activity,
+                    PermissionHelper.DOWNLOAD_DIALOG_REQUEST_CODE)) {
+                this.openDownloadDialog();
+            }
+        } else if (id == R.id.detail_controls_share) {
+            if (currentInfo != null) {
+                ShareUtils.shareText(requireContext(), currentInfo.getName(),
+                        currentInfo.getUrl(), currentInfo.getThumbnailUrl());
+            }
+        } else if (id == R.id.detail_controls_open_in_browser) {
+            if (currentInfo != null) {
+                ShareUtils.openUrlInBrowser(requireContext(), currentInfo.getUrl());
+            }
+        } else if (id == R.id.detail_controls_start_sleep_timer) {
+            if (currentInfo != null) {
+                Intent serviceIntent = new Intent(requireContext(), SleepTimerService.class);
+                serviceIntent.setAction(SleepTimerService.ACTION_START_TIMER);
+                // get time from shared preferences
+                int time = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(activity).getString(
+                        getString(R.string.sleep_timer_length_key), String.valueOf(15)
+                ));
+                serviceIntent.putExtra("timeInMillis", time * 60000); // 60 seconds
+                activity.startService(serviceIntent);
+            }
+        } else if (id == R.id.detail_controls_play_with_kodi) {
+            if (currentInfo != null) {
+                try {
+                    NavigationHelper.playWithKore(
+                            requireContext(), Uri.parse(currentInfo.getUrl()));
+                } catch (final Exception e) {
                     if (DEBUG) {
-                        Log.i(TAG, "Can't open sub-channel because we got no channel URL");
+                        Log.i(TAG, "Failed to start kore", e);
                     }
-                } else {
-                    openChannel(currentInfo.getSubChannelUrl(),
-                            currentInfo.getSubChannelName());
+                    KoreUtils.showInstallKoreDialog(requireContext());
                 }
-                break;
-            case R.id.detail_thumbnail_root_layout:
-                autoPlayEnabled = true; // forcefully start playing
-                // FIXME Workaround #7427
-                if (isPlayerAvailable()) {
-                    player.setRecovery();
-                }
-                openVideoPlayerAutoFullscreen();
-                break;
-            case R.id.detail_toggle_secondary_controls_view:
-                toggleTitleAndSecondaryControls();
-                break;
-            case R.id.overlay_thumbnail:
-            case R.id.overlay_metadata_layout:
-            case R.id.overlay_buttons_layout:
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                break;
-            case R.id.overlay_play_pause_button:
-                if (playerIsNotStopped()) {
-                    player.playPause();
-                    player.hideControls(0, 0);
-                    showSystemUi();
-                } else {
-                    autoPlayEnabled = true; // forcefully start playing
-                    openVideoPlayer(false);
+            }
+        } else if (id == R.id.detail_uploader_root_layout) {
+            if (isEmpty(currentInfo.getSubChannelUrl())) {
+                if (!isEmpty(currentInfo.getUploaderUrl())) {
+                    openChannel(currentInfo.getUploaderUrl(), currentInfo.getUploaderName());
                 }
 
-                setOverlayPlayPauseImage(isPlayerAvailable() && player.isPlaying());
-                break;
-            case R.id.overlay_close_button:
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                break;
-            case R.id.overlay_play_queue_button:
-                if (isPlayerAvailable()) {
-                    Intent queueActivityIntent = NavigationHelper.getPlayQueueActivityIntent(activity);
-                    activity.startActivity(queueActivityIntent);
+                if (DEBUG) {
+                    Log.i(TAG, "Can't open sub-channel because we got no channel URL");
                 }
-                break;
+            } else {
+                openChannel(currentInfo.getSubChannelUrl(),
+                        currentInfo.getSubChannelName());
+            }
+        } else if (id == R.id.detail_thumbnail_root_layout) {
+            autoPlayEnabled = true; // forcefully start playing
+            // FIXME Workaround #7427
+            if (isPlayerAvailable()) {
+                player.setRecovery();
+            }
+            openVideoPlayerAutoFullscreen();
+        } else if (id == R.id.detail_toggle_secondary_controls_view) {
+            toggleTitleAndSecondaryControls();
+        } else if (id == R.id.overlay_thumbnail || id == R.id.overlay_metadata_layout || id == R.id.overlay_buttons_layout) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        } else if (id == R.id.overlay_play_pause_button) {
+            if (playerIsNotStopped()) {
+                player.playPause();
+                player.hideControls(0, 0);
+                showSystemUi();
+            } else {
+                autoPlayEnabled = true; // forcefully start playing
+                openVideoPlayer(false);
+            }
+
+            setOverlayPlayPauseImage(isPlayerAvailable() && player.isPlaying());
+        } else if (id == R.id.overlay_close_button) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        } else if (id == R.id.overlay_play_queue_button) {
+            if (isPlayerAvailable()) {
+                Intent queueActivityIntent = NavigationHelper.getPlayQueueActivityIntent(activity);
+                activity.startActivity(queueActivityIntent);
+            }
         }
     }
 
@@ -649,50 +632,41 @@ public final class VideoDetailFragment
             return false;
         }
 
-        switch (v.getId()) {
-            case R.id.detail_controls_background:
-                openBackgroundPlayer(true);
-                break;
-            case R.id.detail_controls_popup:
-                openPopupPlayer(true);
-                break;
-            case R.id.detail_controls_download:
-                NavigationHelper.openDownloads(activity);
-                break;
-            case R.id.overlay_thumbnail:
-            case R.id.overlay_metadata_layout:
+        final int id = v.getId();
+        if (id == R.id.detail_controls_background) {
+            openBackgroundPlayer(true);
+        } else if (id == R.id.detail_controls_popup) {
+            openPopupPlayer(true);
+        } else if (id == R.id.detail_controls_download) {
+            NavigationHelper.openDownloads(activity);
+        } else if (id == R.id.overlay_thumbnail || id == R.id.overlay_metadata_layout) {
+            openChannel(currentInfo.getUploaderUrl(), currentInfo.getUploaderName());
+        } else if (id == R.id.detail_uploader_root_layout) {
+            if (isEmpty(currentInfo.getSubChannelUrl())) {
+                Log.w(TAG,
+                        "Can't open parent channel because we got no parent channel URL");
+            } else {
                 openChannel(currentInfo.getUploaderUrl(), currentInfo.getUploaderName());
-                break;
-            case R.id.detail_uploader_root_layout:
-                if (isEmpty(currentInfo.getSubChannelUrl())) {
-                    Log.w(TAG,
-                            "Can't open parent channel because we got no parent channel URL");
-                } else {
-                    openChannel(currentInfo.getUploaderUrl(), currentInfo.getUploaderName());
-                }
-                break;
-            case R.id.detail_video_title_view:
-                ShareUtils.copyToClipboard(requireContext(),
-                        binding.detailVideoTitleView.getText().toString());
-                break;
-            case R.id.detail_toggle_secondary_controls_view:
-                hideTitleAndSecondaryControls();
-                break;
-            case R.id.detail_controls_playlist_append:
-                if (getFM() != null && currentInfo != null) {
-                    disposables.add(
-                            PlaylistDialog.createCorrespondingDialog(
-                                    getContext(),
-                                    currentInfo.getRelatedItems().stream()
-                                            .filter(x -> x instanceof StreamInfoItem)
-                                            .filter(x -> ((StreamInfoItem) x).getUploaderName() != null)
-                                            .map(x -> new StreamEntity((StreamInfoItem)x))
-                                            .collect(Collectors.toList()),
-                                    dialog -> dialog.show(getFM(), TAG)
-                            )
-                    );
-                }
-                break;
+            }
+        } else if (id == R.id.detail_video_title_view) {
+            ShareUtils.copyToClipboard(requireContext(),
+                    binding.detailVideoTitleView.getText().toString());
+        } else if (id == R.id.detail_toggle_secondary_controls_view) {
+            hideTitleAndSecondaryControls();
+        } else if (id == R.id.detail_controls_playlist_append) {
+            if (getFM() != null && currentInfo != null) {
+                disposables.add(
+                        PlaylistDialog.createCorrespondingDialog(
+                                getContext(),
+                                currentInfo.getRelatedItems().stream()
+                                        .filter(x -> x instanceof StreamInfoItem)
+                                        .filter(x -> ((StreamInfoItem) x).getUploaderName() != null)
+                                        .map(x -> new StreamEntity((StreamInfoItem)x))
+                                        .collect(Collectors.toList()),
+                                dialog -> dialog.show(getFM(), TAG)
+                        )
+                );
+            }
         }
 
         return true;

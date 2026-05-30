@@ -602,24 +602,20 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
             return;
         }
 
-        switch (v.getId()) {
-            case R.id.sub_channel_avatar_view:
-            case R.id.sub_channel_title_view:
-                if (!TextUtils.isEmpty(currentInfo.getParentChannelUrl())) {
-                    try {
-                        NavigationHelper.openChannelFragment(getFM(), currentInfo.getServiceId(),
-                                currentInfo.getParentChannelUrl(),
-                                currentInfo.getParentChannelName());
-                    } catch (final Exception e) {
-                        ErrorUtil.showUiErrorSnackbar(this, "Opening channel fragment", e);
-                    }
-                } else if (DEBUG) {
-                    Log.i(TAG, "Can't open parent channel because we got no channel URL");
+        if (v.getId() == R.id.sub_channel_avatar_view || v.getId() == R.id.sub_channel_title_view) {
+            if (!TextUtils.isEmpty(currentInfo.getParentChannelUrl())) {
+                try {
+                    NavigationHelper.openChannelFragment(getFM(), currentInfo.getServiceId(),
+                            currentInfo.getParentChannelUrl(),
+                            currentInfo.getParentChannelName());
+                } catch (final Exception e) {
+                    ErrorUtil.showUiErrorSnackbar(this, "Opening channel fragment", e);
                 }
-                break;
-            case R.id.channel_add_to_group_button:
-                showAddToGroupDialog();
-                break;
+            } else if (DEBUG) {
+                Log.i(TAG, "Can't open parent channel because we got no channel URL");
+            }
+        } else if (v.getId() == R.id.channel_add_to_group_button) {
+            showAddToGroupDialog();
         }
     }
 
