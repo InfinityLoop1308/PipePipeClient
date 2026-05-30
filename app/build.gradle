@@ -139,7 +139,6 @@ ext {
     androidxRoomVersion = '2.4.2'
     androidxWorkVersion = '2.7.1'
 
-    icepickVersion = '3.2.0'
     exoPlayerVersion = '2.18.7'
     googleAutoServiceVersion = '1.0.1'
     groupieVersion = '2.10.0'
@@ -264,10 +263,6 @@ dependencies {
     implementation "androidx.car.app:app:1.2.0"
 
 /** Third-party libraries **/
-    // Instance state boilerplate elimination
-    implementation "frankiesardo:icepick:${icepickVersion}"
-    kapt "frankiesardo:icepick-processor:${icepickVersion}"
-
     // HTML parser
     implementation "org.jsoup:jsoup:1.14.3"
 

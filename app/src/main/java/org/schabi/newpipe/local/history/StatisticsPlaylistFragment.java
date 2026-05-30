@@ -50,7 +50,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -58,7 +57,6 @@ import io.reactivex.rxjava3.disposables.Disposable;
 public class StatisticsPlaylistFragment
         extends BaseLocalListFragment<List<StreamStatisticsEntry>, Void> implements BackPressable {
     private final CompositeDisposable disposables = new CompositeDisposable();
-    @State
     Parcelable itemsListState;
     private StatisticSortMode sortMode = StatisticSortMode.LAST_PLAYED;
 
@@ -235,6 +233,18 @@ public class StatisticsPlaylistFragment
     public void onPause() {
         super.onPause();
         itemsListState = Objects.requireNonNull(itemsList.getLayoutManager()).onSaveInstanceState();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("itemsListState", itemsListState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        itemsListState = savedInstanceState.getParcelable("itemsListState");
     }
 
     @Override

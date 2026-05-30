@@ -75,8 +75,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import icepick.Icepick;
-import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
@@ -90,11 +88,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
  */
 public class RouterActivity extends AppCompatActivity {
     protected final CompositeDisposable disposables = new CompositeDisposable();
-    @State
     protected int currentServiceId = -1;
-    @State
     protected LinkType currentLinkType;
-    @State
     protected int selectedRadioPosition = -1;
     protected int selectedPreviously = -1;
     protected String currentUrl;
@@ -106,7 +101,14 @@ public class RouterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Icepick.restoreInstanceState(this, savedInstanceState);
+        if (savedInstanceState != null) {
+            currentServiceId = savedInstanceState.getInt("currentServiceId", -1);
+            String linkTypeName = savedInstanceState.getString("currentLinkType");
+            if (linkTypeName != null) {
+                currentLinkType = LinkType.valueOf(linkTypeName);
+            }
+            selectedRadioPosition = savedInstanceState.getInt("selectedRadioPosition", -1);
+        }
 
         if (TextUtils.isEmpty(currentUrl)) {
             currentUrl = getUrl(getIntent());
@@ -135,7 +137,11 @@ public class RouterActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
-        Icepick.saveInstanceState(this, outState);
+        outState.putInt("currentServiceId", currentServiceId);
+        if (currentLinkType != null) {
+            outState.putString("currentLinkType", currentLinkType.name());
+        }
+        outState.putInt("selectedRadioPosition", selectedRadioPosition);
     }
 
     @Override

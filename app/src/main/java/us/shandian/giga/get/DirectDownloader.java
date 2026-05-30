@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.SparseArray;
 import androidx.preference.PreferenceManager;
-import icepick.State;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.ServiceList;
@@ -29,15 +28,10 @@ import static org.schabi.newpipe.util.FilenameUtils.createFilename;
 public class DirectDownloader {
 
     Context context;
-    @State
     StreamInfo currentInfo;
-    @State
     StreamItemAdapter.StreamSizeWrapper<AudioStream> wrappedAudioStreams = StreamItemAdapter.StreamSizeWrapper.empty();
-    @State
     StreamItemAdapter.StreamSizeWrapper<VideoStream> wrappedVideoStreams = StreamItemAdapter.StreamSizeWrapper.empty();
-    @State
     int selectedVideoIndex = 0;
-    @State
     int selectedAudioIndex = 0;
 
     private StreamItemAdapter<AudioStream, Stream> audioStreamsAdapter;

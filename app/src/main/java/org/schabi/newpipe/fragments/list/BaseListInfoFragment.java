@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
-import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -36,11 +35,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public abstract class BaseListInfoFragment<I extends InfoItem, L extends ListInfo<I>>
         extends BaseListFragment<L, ListExtractor.InfoItemsPage<I>> {
-    @State
     protected int serviceId = Constants.NO_SERVICE_ID;
-    @State
     protected String name;
-    @State
     protected String url;
 
     private final UserAction errorUserAction;
@@ -51,6 +47,22 @@ public abstract class BaseListInfoFragment<I extends InfoItem, L extends ListInf
 
     protected BaseListInfoFragment(final UserAction errorUserAction) {
         this.errorUserAction = errorUserAction;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("serviceId", serviceId);
+        outState.putString("name", name);
+        outState.putString("url", url);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        serviceId = savedInstanceState.getInt("serviceId", Constants.NO_SERVICE_ID);
+        name = savedInstanceState.getString("name");
+        url = savedInstanceState.getString("url");
     }
 
     @Override

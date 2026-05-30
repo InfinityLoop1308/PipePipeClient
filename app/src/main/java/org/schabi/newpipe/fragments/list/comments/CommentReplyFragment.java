@@ -21,19 +21,12 @@ import org.schabi.newpipe.util.Constants;
 
 import java.io.IOException;
 
-import icepick.State;
-
 public class CommentReplyFragment extends BaseFragment implements BackPressable {
 
-    @State
     protected int serviceId = Constants.NO_SERVICE_ID;
-    @State
     protected String name;
-    @State
     protected String url;
-    @State
     protected CommentsInfoItem comment;
-    @State
     protected Page replies;
 
     public static CommentReplyFragment getInstance(
@@ -45,6 +38,26 @@ public class CommentReplyFragment extends BaseFragment implements BackPressable 
         final CommentReplyFragment instance = new CommentReplyFragment();
         instance.setInitialData(serviceId, url, name, comment, replies);
         return instance;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("serviceId", serviceId);
+        outState.putString("name", name);
+        outState.putString("url", url);
+        outState.putSerializable("comment", comment);
+        outState.putSerializable("replies", replies);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        serviceId = savedInstanceState.getInt("serviceId", Constants.NO_SERVICE_ID);
+        name = savedInstanceState.getString("name");
+        url = savedInstanceState.getString("url");
+        comment = (CommentsInfoItem) savedInstanceState.getSerializable("comment");
+        replies = (Page) savedInstanceState.getSerializable("replies");
     }
 
     public static CommentsFragmentContainer newInstance(final int serviceId, final String url,

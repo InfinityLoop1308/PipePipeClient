@@ -30,14 +30,6 @@
 -dontwarn android.arch.persistence.room.paging.LimitOffsetDataSource
 
 
-# Rules for icepick. Copy paste from https://github.com/frankiesardo/icepick
--dontwarn icepick.**
--keep class icepick.** { *; }
--keep class **$$Icepick { *; }
--keepclasseswithmembernames class * {
-    @icepick.* <fields>;
-}
--keepnames class * { @icepick.State *;}
 
 # Rules for OkHttp. Copy paste from https://github.com/square/okhttp
 -dontwarn okhttp3.**

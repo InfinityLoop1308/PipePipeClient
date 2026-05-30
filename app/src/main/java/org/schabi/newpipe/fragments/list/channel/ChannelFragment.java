@@ -41,7 +41,6 @@ import org.schabi.newpipe.util.external_communication.ShareUtils;
 import java.util.List;
 import java.util.Queue;
 
-import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -51,11 +50,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class ChannelFragment extends BaseStateFragment<ChannelInfo>
         implements StateSaver.WriteRead {
-    @State
     protected int serviceId = Constants.NO_SERVICE_ID;
-    @State
     protected String name;
-    @State
     protected String url;
 
     protected org.schabi.newpipe.util.SavedState savedState;
@@ -137,6 +133,9 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
     public void onSaveInstanceState(final @NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("LastTab", binding == null ? lastTab: binding.tabLayout.getSelectedTabPosition());
+        outState.putInt("serviceId", serviceId);
+        outState.putString("name", name);
+        outState.putString("url", url);
         savedState = StateSaver
                 .tryToSave(activity.isChangingConfigurations(), savedState, outState, this);
     }
@@ -144,6 +143,9 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
     @Override
     protected void onRestoreInstanceState(@NonNull final Bundle bundle) {
         super.onRestoreInstanceState(bundle);
+        serviceId = bundle.getInt("serviceId", Constants.NO_SERVICE_ID);
+        name = bundle.getString("name");
+        url = bundle.getString("url");
         savedState = StateSaver.tryToRestore(bundle, this);
     }
     @Override

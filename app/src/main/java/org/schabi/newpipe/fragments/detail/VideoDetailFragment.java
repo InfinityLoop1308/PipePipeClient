@@ -104,7 +104,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -201,21 +200,15 @@ public final class VideoDetailFragment
         }
     }
 
-    @State
     protected int serviceId = Constants.NO_SERVICE_ID;
-    @State
     @NonNull
     protected String title = "";
-    @State
     @Nullable
     protected String url = null;
     @Nullable
     protected PlayQueue playQueue = null;
-    @State
     int bottomSheetState = BottomSheetBehavior.STATE_EXPANDED;
-    @State
     protected boolean autoPlayEnabled = true;
-    @State
     SponsorBlockMode currentSponsorBlockMode = null;
 
     @Nullable
@@ -355,6 +348,29 @@ public final class VideoDetailFragment
                              final Bundle savedInstanceState) {
         binding = FragmentVideoDetailBinding.inflate(inflater, container, false);
         return binding.getRoot();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("serviceId", serviceId);
+        outState.putString("title", title);
+        outState.putString("url", url);
+        outState.putInt("bottomSheetState", bottomSheetState);
+        outState.putBoolean("autoPlayEnabled", autoPlayEnabled);
+        outState.putString("currentSponsorBlockMode", currentSponsorBlockMode != null ? currentSponsorBlockMode.name() : null);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        serviceId = savedInstanceState.getInt("serviceId", Constants.NO_SERVICE_ID);
+        title = savedInstanceState.getString("title", "");
+        url = savedInstanceState.getString("url");
+        bottomSheetState = savedInstanceState.getInt("bottomSheetState", BottomSheetBehavior.STATE_EXPANDED);
+        autoPlayEnabled = savedInstanceState.getBoolean("autoPlayEnabled", true);
+        String modeStr = savedInstanceState.getString("currentSponsorBlockMode");
+        currentSponsorBlockMode = modeStr != null ? SponsorBlockMode.valueOf(modeStr) : null;
     }
 
     @Override

@@ -81,8 +81,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
-import icepick.Icepick;
-import icepick.State;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import us.shandian.giga.get.HlsDownloadStreamHelper;
 import us.shandian.giga.get.MissionRecoveryInfo;
@@ -99,19 +97,12 @@ public class DownloadDialog extends DialogFragment
     private static final String TAG = "DialogFragment";
     private static final boolean DEBUG = MainActivity.DEBUG;
 
-    @State
     StreamInfo currentInfo;
-    @State
     StreamSizeWrapper<AudioStream> wrappedAudioStreams = StreamSizeWrapper.empty();
-    @State
     StreamSizeWrapper<VideoStream> wrappedVideoStreams = StreamSizeWrapper.empty();
-    @State
     StreamSizeWrapper<SubtitlesStream> wrappedSubtitleStreams = StreamSizeWrapper.empty();
-    @State
     int selectedVideoIndex = 0;
-    @State
     int selectedAudioIndex = 0;
-    @State
     int selectedSubtitleIndex = 0;
 
     @Nullable
@@ -255,7 +246,15 @@ public class DownloadDialog extends DialogFragment
         context = getContext();
 
         setStyle(STYLE_NO_TITLE, ThemeHelper.getDialogTheme(context));
-        Icepick.restoreInstanceState(this, savedInstanceState);
+        if (savedInstanceState != null) {
+            currentInfo = (StreamInfo) savedInstanceState.getSerializable("currentInfo");
+            wrappedAudioStreams = (StreamSizeWrapper<AudioStream>) savedInstanceState.getSerializable("wrappedAudioStreams");
+            wrappedVideoStreams = (StreamSizeWrapper<VideoStream>) savedInstanceState.getSerializable("wrappedVideoStreams");
+            wrappedSubtitleStreams = (StreamSizeWrapper<SubtitlesStream>) savedInstanceState.getSerializable("wrappedSubtitleStreams");
+            selectedVideoIndex = savedInstanceState.getInt("selectedVideoIndex", 0);
+            selectedAudioIndex = savedInstanceState.getInt("selectedAudioIndex", 0);
+            selectedSubtitleIndex = savedInstanceState.getInt("selectedSubtitleIndex", 0);
+        }
 
         final SparseArray<SecondaryStreamHelper<AudioStream>> secondaryStreams
                 = new SparseArray<>(4);
@@ -402,7 +401,13 @@ public class DownloadDialog extends DialogFragment
     @Override
     public void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
-        Icepick.saveInstanceState(this, outState);
+        outState.putSerializable("currentInfo", currentInfo);
+        outState.putSerializable("wrappedAudioStreams", wrappedAudioStreams);
+        outState.putSerializable("wrappedVideoStreams", wrappedVideoStreams);
+        outState.putSerializable("wrappedSubtitleStreams", wrappedSubtitleStreams);
+        outState.putInt("selectedVideoIndex", selectedVideoIndex);
+        outState.putInt("selectedAudioIndex", selectedAudioIndex);
+        outState.putInt("selectedSubtitleIndex", selectedSubtitleIndex);
     }
 
 

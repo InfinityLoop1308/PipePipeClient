@@ -41,17 +41,27 @@ import org.schabi.newpipe.views.NewPipeRecyclerView;
 
 import java.util.*;
 
-import icepick.State;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
 public class DescriptionFragment extends BaseFragment {
 
-    @State
     StreamInfo streamInfo = null;
     final CompositeDisposable descriptionDisposables = new CompositeDisposable();
     FragmentDescriptionBinding binding;
 
     public DescriptionFragment() {
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("streamInfo", streamInfo);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        streamInfo = (StreamInfo) savedInstanceState.getSerializable("streamInfo");
     }
 
     public DescriptionFragment(final StreamInfo streamInfo) {

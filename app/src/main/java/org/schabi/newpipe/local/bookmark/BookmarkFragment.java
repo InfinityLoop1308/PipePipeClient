@@ -48,7 +48,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -58,7 +57,6 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
         implements DebounceSavable {
 
     private static final int MINIMUM_INITIAL_DRAG_VELOCITY = 12;
-    @State
     protected Parcelable itemsListState;
 
     private Subscription databaseSubscription;
@@ -211,6 +209,18 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
 
         // Save on exit
         saveImmediate();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("itemsListState", itemsListState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        itemsListState = savedInstanceState.getParcelable("itemsListState");
     }
 
     @Override

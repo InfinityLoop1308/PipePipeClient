@@ -38,8 +38,6 @@ import org.schabi.newpipe.util.ServiceHelper;
 import java.util.Collections;
 import java.util.List;
 
-import icepick.State;
-
 import static org.schabi.newpipe.extractor.subscription.SubscriptionExtractor.ContentSource.CHANNEL_URL;
 import static org.schabi.newpipe.local.subscription.services.SubscriptionsImportService.CHANNEL_URL_MODE;
 import static org.schabi.newpipe.local.subscription.services.SubscriptionsImportService.INPUT_STREAM_MODE;
@@ -47,7 +45,6 @@ import static org.schabi.newpipe.local.subscription.services.SubscriptionsImport
 import static org.schabi.newpipe.local.subscription.services.SubscriptionsImportService.KEY_VALUE;
 
 public class SubscriptionsImportFragment extends BaseFragment {
-    @State
     int currentServiceId = Constants.NO_SERVICE_ID;
 
     private List<SubscriptionExtractor.ContentSource> supportedSources;
@@ -100,6 +97,18 @@ public class SubscriptionsImportFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         setTitle(getString(R.string.import_title));
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("currentServiceId", currentServiceId);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        currentServiceId = savedInstanceState.getInt("currentServiceId", Constants.NO_SERVICE_ID);
     }
 
     @Nullable

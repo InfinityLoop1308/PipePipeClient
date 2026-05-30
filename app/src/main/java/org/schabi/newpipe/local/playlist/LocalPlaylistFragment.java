@@ -23,7 +23,6 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
-import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
@@ -82,11 +81,8 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
     // Save the list 10 seconds after the last change occurred
     private static final long SAVE_DEBOUNCE_MILLIS = 10000;
     private static final int MINIMUM_INITIAL_DRAG_VELOCITY = 12;
-    @State
     protected Long playlistId;
-    @State
     protected String name;
-    @State
     Parcelable itemsListState;
 
     private LocalPlaylistHeaderBinding headerBinding;
@@ -356,6 +352,26 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
 
         // Save on exit
         saveImmediate();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (playlistId != null) {
+            outState.putLong("playlistId", playlistId);
+        }
+        outState.putString("name", name);
+        outState.putParcelable("itemsListState", itemsListState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState.containsKey("playlistId")) {
+            playlistId = savedInstanceState.getLong("playlistId");
+        }
+        name = savedInstanceState.getString("name");
+        itemsListState = savedInstanceState.getParcelable("itemsListState");
     }
 
     @Override

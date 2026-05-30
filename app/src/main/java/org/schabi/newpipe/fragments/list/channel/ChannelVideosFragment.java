@@ -70,7 +70,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
@@ -91,7 +90,6 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
     private Disposable subscribeButtonMonitor;
     private MenuItem menuSortButton;
 
-    @State
     protected int selectedSortFilterId = Filter.ITEM_IDENTIFIER_UNKNOWN;
 
     private boolean channelContentNotSupported = false;
@@ -125,6 +123,18 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
 
     public ChannelVideosFragment() {
         super(UserAction.REQUESTED_CHANNEL);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("selectedSortFilterId", selectedSortFilterId);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        selectedSortFilterId = savedInstanceState.getInt("selectedSortFilterId", Filter.ITEM_IDENTIFIER_UNKNOWN);
     }
 
     @Override

@@ -21,8 +21,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.xwray.groupie.GroupieAdapter
 import com.xwray.groupie.OnItemClickListener
 import com.xwray.groupie.Section
-import icepick.Icepick
-import icepick.State
 import org.schabi.newpipe.R
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.databinding.DialogFeedGroupCreateBinding
@@ -61,16 +59,16 @@ class FeedGroupDialog : DialogFragment(), BackPressable {
         object DeleteScreen : ScreenState()
     }
 
-    @State @JvmField var selectedIcon: FeedGroupIcon? = null
-    @State @JvmField var selectedSubscriptions: HashSet<Long> = HashSet()
-    @State @JvmField var wasSubscriptionSelectionChanged: Boolean = false
-    @State @JvmField var currentScreen: ScreenState = InitialScreen
+    @JvmField var selectedIcon: FeedGroupIcon? = null
+    @JvmField var selectedSubscriptions: HashSet<Long> = HashSet()
+    @JvmField var wasSubscriptionSelectionChanged: Boolean = false
+    @JvmField var currentScreen: ScreenState = InitialScreen
 
-    @State @JvmField var subscriptionsListState: Parcelable? = null
-    @State @JvmField var iconsListState: Parcelable? = null
-    @State @JvmField var wasSearchSubscriptionsVisible = false
-    @State @JvmField var subscriptionsCurrentSearchQuery = ""
-    @State @JvmField var subscriptionsShowOnlyUngrouped = false
+    @JvmField var subscriptionsListState: Parcelable? = null
+    @JvmField var iconsListState: Parcelable? = null
+    @JvmField var wasSearchSubscriptionsVisible = false
+    @JvmField var subscriptionsCurrentSearchQuery = ""
+    @JvmField var subscriptionsShowOnlyUngrouped = false
 
     private val subscriptionMainSection = Section()
     private val subscriptionEmptyFooter = Section()
@@ -78,7 +76,17 @@ class FeedGroupDialog : DialogFragment(), BackPressable {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Icepick.restoreInstanceState(this, savedInstanceState)
+        if (savedInstanceState != null) {
+            selectedIcon = savedInstanceState.getString("selectedIcon")?.let { FeedGroupIcon.valueOf(it) }
+            selectedSubscriptions = HashSet(savedInstanceState.getLongArray("selectedSubscriptions")?.toList() ?: emptyList())
+            wasSubscriptionSelectionChanged = savedInstanceState.getBoolean("wasSubscriptionSelectionChanged", false)
+            currentScreen = savedInstanceState.getSerializable("currentScreen") as? ScreenState ?: InitialScreen
+            subscriptionsListState = savedInstanceState.getParcelable("subscriptionsListState")
+            iconsListState = savedInstanceState.getParcelable("iconsListState")
+            wasSearchSubscriptionsVisible = savedInstanceState.getBoolean("wasSearchSubscriptionsVisible", false)
+            subscriptionsCurrentSearchQuery = savedInstanceState.getString("subscriptionsCurrentSearchQuery", "")
+            subscriptionsShowOnlyUngrouped = savedInstanceState.getBoolean("subscriptionsShowOnlyUngrouped", false)
+        }
 
         setStyle(STYLE_NO_TITLE, ThemeHelper.getMinWidthDialogTheme(requireContext()))
         groupId = arguments?.getLong(KEY_GROUP_ID, NO_GROUP_SELECTED) ?: NO_GROUP_SELECTED
@@ -114,7 +122,15 @@ class FeedGroupDialog : DialogFragment(), BackPressable {
         iconsListState = feedGroupCreateBinding.iconSelector.layoutManager?.onSaveInstanceState()
         subscriptionsListState = feedGroupCreateBinding.subscriptionsSelectorList.layoutManager?.onSaveInstanceState()
 
-        Icepick.saveInstanceState(this, outState)
+        outState.putString("selectedIcon", selectedIcon?.name)
+        outState.putLongArray("selectedSubscriptions", selectedSubscriptions.toLongArray())
+        outState.putBoolean("wasSubscriptionSelectionChanged", wasSubscriptionSelectionChanged)
+        outState.putSerializable("currentScreen", currentScreen)
+        outState.putParcelable("subscriptionsListState", subscriptionsListState)
+        outState.putParcelable("iconsListState", iconsListState)
+        outState.putBoolean("wasSearchSubscriptionsVisible", wasSearchSubscriptionsVisible)
+        outState.putString("subscriptionsCurrentSearchQuery", subscriptionsCurrentSearchQuery)
+        outState.putBoolean("subscriptionsShowOnlyUngrouped", subscriptionsShowOnlyUngrouped)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
