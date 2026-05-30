@@ -443,7 +443,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         bundle.putString("lastSearchedString", lastSearchedString);
         bundle.putString("searchSuggestion", searchSuggestion);
         bundle.putBoolean("isCorrectedSearch", isCorrectedSearch);
-        bundle.putParcelableArray("metaInfo", metaInfo);
+        bundle.putSerializable("metaInfo", metaInfo);
         bundle.putBoolean("wasSearchFocused", wasSearchFocused);
         bundle.putIntegerArrayList("userSelectedContentFilterList", userSelectedContentFilterList);
         bundle.putIntegerArrayList("userSelectedSortFilterList", userSelectedSortFilterList);
@@ -457,7 +457,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         lastSearchedString = savedInstanceState.getString("lastSearchedString");
         searchSuggestion = savedInstanceState.getString("searchSuggestion");
         isCorrectedSearch = savedInstanceState.getBoolean("isCorrectedSearch", false);
-        metaInfo = (MetaInfo[]) savedInstanceState.getParcelableArray("metaInfo");
+        metaInfo = (MetaInfo[]) savedInstanceState.getSerializable("metaInfo");
         wasSearchFocused = savedInstanceState.getBoolean("wasSearchFocused", false);
         userSelectedContentFilterList = savedInstanceState.getIntegerArrayList("userSelectedContentFilterList");
         userSelectedSortFilterList = savedInstanceState.getIntegerArrayList("userSelectedSortFilterList");

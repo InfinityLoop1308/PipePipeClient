@@ -199,7 +199,7 @@ public final class DownloaderImpl extends Downloader {
         if (dataToSend != null) {
             requestBody = RequestBody.create(null, dataToSend);
         } else if (httpMethod.equals("POST")) {
-            requestBody = RequestBody.create("", null);
+            requestBody = RequestBody.create(null, "");
         }
 
         // Check if extractor headers already contain User-Agent or Cookie
