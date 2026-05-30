@@ -114,21 +114,17 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 
 androidComponents.onVariants(androidComponents.selector().all()) { variant ->
     def abiCodes = project.ext.abiCodes
-    // ABIs must match the order in splits.abi.include
-    def abiList = ['armeabi-v7a', 'arm64-v8a', 'x86_64', 'x86']
     def defaultVersionCode = android.defaultConfig.versionCode as int
 
-    // Per-ABI version codes via index-based output mapping
-    variant.outputs.eachWithIndex { output, idx ->
-        if (idx < abiList.size()) {
-            def baseCode = abiCodes.get(abiList[idx])
-            if (baseCode != null) {
-                output.versionCode.set((100 * defaultVersionCode) + baseCode)
+    variant.outputs.each { output ->
+        def versionCode = 100 * defaultVersionCode
+        for (abi in abiCodes.keySet().sort { -it.length() }) {
+            if (output.outputFileName.get().contains(abi)) {
+                versionCode = (100 * defaultVersionCode) + abiCodes[abi]
+                break
             }
-        } else {
-            // universal APK
-            output.versionCode.set(100 * defaultVersionCode)
         }
+        output.versionCode.set(versionCode)
     }
 }
 
