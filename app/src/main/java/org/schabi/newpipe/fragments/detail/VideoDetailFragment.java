@@ -391,7 +391,8 @@ public final class VideoDetailFragment
     public void onResume() {
         super.onResume();
 
-        activity.sendBroadcast(new Intent(ACTION_VIDEO_FRAGMENT_RESUMED));
+        activity.sendBroadcast(new Intent(ACTION_VIDEO_FRAGMENT_RESUMED)
+                .setPackage(activity.getPackageName()));
 
         setupBrightness();
 
@@ -416,7 +417,8 @@ public final class VideoDetailFragment
         super.onStop();
 
         if (!activity.isChangingConfigurations()) {
-            activity.sendBroadcast(new Intent(ACTION_VIDEO_FRAGMENT_STOPPED));
+            activity.sendBroadcast(new Intent(ACTION_VIDEO_FRAGMENT_STOPPED)
+                    .setPackage(activity.getPackageName()));
         }
     }
 
@@ -1738,7 +1740,8 @@ public final class VideoDetailFragment
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
-                                context.sendBroadcast(new Intent(ACTION_SHOW_MAIN_PLAYER));
+                                context.sendBroadcast(new Intent(ACTION_SHOW_MAIN_PLAYER)
+                                        .setPackage(context.getPackageName()));
                             }).start();
                         }
 

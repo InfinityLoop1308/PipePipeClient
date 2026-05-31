@@ -4408,7 +4408,8 @@ public final class Player implements
         } else if (v.getId() == binding.switchMute.getId()) {
             onMuteUnmuteButtonClicked();
         } else if (v.getId() == binding.playerCloseButton.getId()) {
-            context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_HIDE_MAIN_PLAYER));
+            context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_HIDE_MAIN_PLAYER)
+                    .setPackage(context.getPackageName()));
             service.stopService();
         } else if (v.getId() == binding.skipButton.getId()) {
             onSkipClicked();
