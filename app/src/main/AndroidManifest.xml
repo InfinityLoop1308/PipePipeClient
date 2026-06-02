@@ -500,6 +500,10 @@
         <activity android:name=".views.BiliBiliLoginWebViewActivity"
                   android:configChanges="orientation|screenSize"
                   android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity android:name=".views.SabrPoTokenPocActivity"
+                  android:exported="true"
+                  android:configChanges="orientation|screenSize"
+                  android:theme="@style/Theme.AppCompat.NoActionBar" />
 
         <activity
                 android:name=".settings.KeywordFilterListActivity"
