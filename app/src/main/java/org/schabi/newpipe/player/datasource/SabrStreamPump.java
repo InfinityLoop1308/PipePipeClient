@@ -27,6 +27,9 @@ final class SabrStreamPump {
     private static final long IDLE_POLL_MS = 400;     // server paced us / nothing new this round
     private static final long ERROR_RETRY_MS = 1000;  // transient network error
     private static final long IDLE_STOP_MS = 15_000;  // no reads for this long -> playback is gone
+    // how far ahead of the play head we let ourselves buffer. enough to not stutter, not so much
+    // that we hoard the whole video and start evicting segments the player hasn't even reached.
+    private static final long READAHEAD_CUSHION_MS = 30_000;
 
     private final YoutubeSabrSession session;
     private final SabrSessionStore.Holder holder;
@@ -94,15 +97,26 @@ final class SabrStreamPump {
     }
 
     private void loop() {
-        Log.i(TAG, "SABR-DIAG pump start: aFmt=" + holder.audioFormat.getItag()
-                + " vFmt=" + holder.videoFormat.getItag() + " video=" + holder.videoId);
         try {
             while (!stopped) {
                 if (System.currentTimeMillis() - lastReadMs > IDLE_STOP_MS || session.isComplete()) {
                     break;
                 }
                 try {
-                    session.getStreamState().setPlayerTimeMs(Math.max(0, holder.getPlayerTimeMs()));
+                    final long realMs = Math.max(0, holder.getPlayerTimeMs());
+                    // follow the SLOWER track (min). if one lags we keep feeding it instead of
+                    // sitting on our hands while it starves. and we stop a cushion ahead so we don't
+                    // buffer the whole video and evict segments nobody's watched yet.
+                    final long edgeMs = session.getStreamState().getMinBufferedEndMs();
+                    if (edgeMs - realMs > READAHEAD_CUSHION_MS) {
+                        Thread.sleep(IDLE_POLL_MS);
+                        continue;
+                    }
+                    // report the buffered edge as our position, not 0. say 0 and the server figures
+                    // we're full and stops feeding. say the edge and the segments keep coming.
+                    final long reportMs = Math.min(Math.max(realMs, edgeMs),
+                            realMs + READAHEAD_CUSHION_MS);
+                    session.getStreamState().setPlayerTimeMs(reportMs);
                     final List<SabrMediaSegment> segments = session.pumpOnce(localization);
                     if (segments.isEmpty()) {
                         Thread.sleep(IDLE_POLL_MS);
@@ -113,10 +127,9 @@ final class SabrStreamPump {
                     Thread.currentThread().interrupt();
                     break;
                 } catch (final IOException e) {
-                    Log.i(TAG, "SABR-DIAG transient IO, retry: " + e.getMessage());
                     sleepQuietly(ERROR_RETRY_MS);
                 } catch (final ExtractionException e) {
-                    Log.w(TAG, "SABR-DIAG pump FATAL (session evicted): " + e.getMessage(), e);
+                    Log.i(TAG, "SABR pump fatal: " + e.getMessage());
                     fatal = true;
                     // Drop the dead session so a re-open rebuilds a fresh one (new token, new state).
                     SabrSessionStore.evict(holder.videoId);

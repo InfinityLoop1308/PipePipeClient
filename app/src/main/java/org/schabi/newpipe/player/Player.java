@@ -3298,7 +3298,34 @@ public final class Player implements
     }
 
     public boolean shouldSeek() {
+        // our v1 SABR seek is a dumb byte-skip that can't land on a real position, so resuming
+        // mid-video just freezes the whole thing. so SABR always starts from 0, scrubbing can wait.
+        // honestly nobody died from rewatching an intro. plays fine from 0.
+        if (isCurrentStreamSabr()) {
+            return false;
+        }
         return !prefs.getBoolean(context.getString(R.string.always_start_from_beginning_key), false);
+    }
+
+    private boolean isCurrentStreamSabr() {
+        return getCurrentStreamInfo().map(info -> {
+            for (final VideoStream s : info.getVideoOnlyStreams()) {
+                if (s.getDeliveryMethod() == DeliveryMethod.SABR) {
+                    return true;
+                }
+            }
+            for (final VideoStream s : info.getVideoStreams()) {
+                if (s.getDeliveryMethod() == DeliveryMethod.SABR) {
+                    return true;
+                }
+            }
+            for (final AudioStream s : info.getAudioStreams()) {
+                if (s.getDeliveryMethod() == DeliveryMethod.SABR) {
+                    return true;
+                }
+            }
+            return false;
+        }).orElse(false);
     }
 
     public void seekTo(final long positionMillis) {

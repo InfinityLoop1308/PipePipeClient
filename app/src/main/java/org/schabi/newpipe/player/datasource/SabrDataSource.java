@@ -52,9 +52,6 @@ public final class SabrDataSource implements DataSource {
     private boolean ended;
     private long skipRemaining;
     private volatile boolean canceled;
-    // SABR-DIAG: avoid spamming the WAIT log every poll; only log when the awaited segment changes.
-    private int waitLoggedSeq = -2;
-    private boolean waitLoggedInit;
 
     public SabrDataSource(final SabrSessionStore.Holder holder,
                           final YoutubeSabrFormat format,
@@ -79,7 +76,6 @@ public final class SabrDataSource implements DataSource {
         this.ended = false;
         this.skipRemaining = Math.max(0, dataSpec.position);
         this.canceled = false;
-        Log.i(TAG, "SABR-DIAG open itag=" + format.getItag() + " pos=" + dataSpec.position);
         return C.LENGTH_UNSET;
     }
 
@@ -132,10 +128,6 @@ public final class SabrDataSource implements DataSource {
             pump.ensureStarted();
             final SabrMediaSegment segment = pump.getCached(request);
             if (segment != null) {
-                Log.i(TAG, "SABR-DIAG serve itag=" + format.getItag()
-                        + (request.isInitializationSegment()
-                                ? " init" : " seq=" + request.getSequenceNumber())
-                        + " len=" + segment.getLength());
                 if (initServed) {
                     nextSeq++;
                 } else {
@@ -148,15 +140,7 @@ public final class SabrDataSource implements DataSource {
                 }
                 return true;
             }
-            if (waitLoggedSeq != nextSeq || waitLoggedInit != initServed) {
-                waitLoggedSeq = nextSeq;
-                waitLoggedInit = initServed;
-                Log.i(TAG, "SABR-DIAG WAIT itag=" + format.getItag()
-                        + (initServed ? " want seq=" + nextSeq : " want init"));
-            }
             if (holder.isBeyondEnd(request)) {
-                Log.i(TAG, "SABR-DIAG EOF beyond-end itag=" + format.getItag()
-                        + " seq=" + nextSeq + " init=" + !initServed);
                 ended = true;
                 return false;
             }
