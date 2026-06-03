@@ -18,8 +18,8 @@ import java.util.List;
  * Single consumer of a {@link YoutubeSabrSession}: one daemon thread pumps the server-driven SABR
  * stream and fills the session's (concurrent) segment cache ahead of the play head. The server
  * paces us with policy-only responses once we are far enough ahead. Both the audio and video
- * {@link SabrDataSource}s only read the cache, so they never contend on the session nor block each
- * other on a network round-trip — which is what made the on-demand approach stall and starve a track.
+ * {@link SabrDataSource}s only read the cache, so they never fight over the session or block each
+ * other on a network round-trip, which is exactly what starved a track in the old on-demand approach.
  */
 final class SabrStreamPump {
 
@@ -78,7 +78,7 @@ final class SabrStreamPump {
         }
     }
 
-    /** Milliseconds since the pump last received any segment — its global liveness signal. */
+    /** ms since the pump last grabbed a segment. basically "is this thing dead or what". */
     long millisSinceLastSegment() {
         return System.currentTimeMillis() - lastSegmentMs;
     }
@@ -94,6 +94,8 @@ final class SabrStreamPump {
     }
 
     private void loop() {
+        Log.i(TAG, "SABR-DIAG pump start: aFmt=" + holder.audioFormat.getItag()
+                + " vFmt=" + holder.videoFormat.getItag() + " video=" + holder.videoId);
         try {
             while (!stopped) {
                 if (System.currentTimeMillis() - lastReadMs > IDLE_STOP_MS || session.isComplete()) {
@@ -111,9 +113,10 @@ final class SabrStreamPump {
                     Thread.currentThread().interrupt();
                     break;
                 } catch (final IOException e) {
+                    Log.i(TAG, "SABR-DIAG transient IO, retry: " + e.getMessage());
                     sleepQuietly(ERROR_RETRY_MS);
                 } catch (final ExtractionException e) {
-                    Log.i(TAG, "SABR pump fatal: " + e.getMessage());
+                    Log.w(TAG, "SABR-DIAG pump FATAL (session evicted): " + e.getMessage(), e);
                     fatal = true;
                     // Drop the dead session so a re-open rebuilds a fresh one (new token, new state).
                     SabrSessionStore.evict(holder.videoId);

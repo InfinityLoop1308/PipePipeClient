@@ -31,12 +31,11 @@ public final class SabrDataSource implements DataSource {
     private static final String TAG = "SabrDataSource";
 
     private static final long WAIT_MS = 250;
-    // Give up (so ExoPlayer re-opens us, which unsticks the SABR flow) only when the pump has pulled
-    // NO segment for a while. Be patient before playback ever starts — cold start blocks on the
-    // WebView PO-token mint with no segments — and a real underrun usually recovers as the pump
-    // catches up. We deliberately do NOT EOF early on a stall: signalling EOF makes ExoPlayer
-    // re-open at a byte offset, and the v1 byte-skip seek corrupts the fragmented container (frozen
-    // video). So we wait through stalls and only give up if the pump is truly dry for a long time.
+    // only bail once the pump's been dry a while (bailing makes ExoPlayer re-open us, which unsticks
+    // the flow). be patient at cold start: the ~45s WebView mint = zero segments for a bit, and most
+    // underruns just sort themselves out once the pump catches up.
+    // do NOT EOF early on a stall: ExoPlayer re-opens at a byte offset and our v1 byte-skip seek
+    // fucks the fragmented container = frozen video. so we just ride the stall out.
     private static final long STALL_MS = 120_000;
 
     private final SabrSessionStore.Holder holder;
@@ -53,6 +52,9 @@ public final class SabrDataSource implements DataSource {
     private boolean ended;
     private long skipRemaining;
     private volatile boolean canceled;
+    // SABR-DIAG: avoid spamming the WAIT log every poll; only log when the awaited segment changes.
+    private int waitLoggedSeq = -2;
+    private boolean waitLoggedInit;
 
     public SabrDataSource(final SabrSessionStore.Holder holder,
                           final YoutubeSabrFormat format,
@@ -77,6 +79,7 @@ public final class SabrDataSource implements DataSource {
         this.ended = false;
         this.skipRemaining = Math.max(0, dataSpec.position);
         this.canceled = false;
+        Log.i(TAG, "SABR-DIAG open itag=" + format.getItag() + " pos=" + dataSpec.position);
         return C.LENGTH_UNSET;
     }
 
@@ -129,6 +132,10 @@ public final class SabrDataSource implements DataSource {
             pump.ensureStarted();
             final SabrMediaSegment segment = pump.getCached(request);
             if (segment != null) {
+                Log.i(TAG, "SABR-DIAG serve itag=" + format.getItag()
+                        + (request.isInitializationSegment()
+                                ? " init" : " seq=" + request.getSequenceNumber())
+                        + " len=" + segment.getLength());
                 if (initServed) {
                     nextSeq++;
                 } else {
@@ -141,7 +148,15 @@ public final class SabrDataSource implements DataSource {
                 }
                 return true;
             }
+            if (waitLoggedSeq != nextSeq || waitLoggedInit != initServed) {
+                waitLoggedSeq = nextSeq;
+                waitLoggedInit = initServed;
+                Log.i(TAG, "SABR-DIAG WAIT itag=" + format.getItag()
+                        + (initServed ? " want seq=" + nextSeq : " want init"));
+            }
             if (holder.isBeyondEnd(request)) {
+                Log.i(TAG, "SABR-DIAG EOF beyond-end itag=" + format.getItag()
+                        + " seq=" + nextSeq + " init=" + !initServed);
                 ended = true;
                 return false;
             }
@@ -152,9 +167,9 @@ public final class SabrDataSource implements DataSource {
                 throw new IOException("SABR pump fatal for itag=" + format.getItag()
                         + " at seq=" + nextSeq);
             }
-            // Segment not cached yet: the pump is fetching or the server is pacing us. Wait — do
-            // NOT signal EOF here (it would trigger a corrupting re-open). Only give up if the pump
-            // has been fully dry (no segment for any track) long enough to be a genuine dead stall.
+            // not cached yet: pump's fetching or the server's pacing us. wait, don't signal EOF
+            // (that triggers a corrupting re-open). only bail if the pump's been fully dry long
+            // enough to be a real dead stall.
             if (pump.millisSinceLastSegment() > STALL_MS) {
                 Log.i(TAG, "end of SABR stream (stalled) itag=" + format.getItag()
                         + " at seq=" + nextSeq);

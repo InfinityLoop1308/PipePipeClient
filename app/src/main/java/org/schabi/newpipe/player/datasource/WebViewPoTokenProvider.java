@@ -68,8 +68,8 @@ public final class WebViewPoTokenProvider implements SabrPoTokenProvider {
     private final Context appContext;
     private final Handler mainHandler;
     private final Map<String, CachedToken> cache = new ConcurrentHashMap<>();
-    // Per-videoId lock so concurrent callers (e.g. a pre-warm and the pump) don't both run the
-    // expensive ~45s WebView mint for the same video — the second waits and gets the cached result.
+    // one lock per videoId so two callers (pre-warm + pump) don't both fire the ~45s WebView mint
+    // for the same video. second one just waits and takes the cached token.
     private final Map<String, Object> mintLocks = new ConcurrentHashMap<>();
 
     public WebViewPoTokenProvider(final Context context) {
