@@ -115,16 +115,17 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 androidComponents.onVariants(androidComponents.selector().all()) { variant ->
     def abiCodes = project.ext.abiCodes
     def defaultVersionCode = android.defaultConfig.versionCode as int
+    def defaultVersionName = android.defaultConfig.versionName
 
     variant.outputs.each { output ->
+        def outputFileName = output.outputFileName.get()
+        def abi = abiCodes.keySet().sort { -it.length() }.find { outputFileName.contains(it) }
         def versionCode = 100 * defaultVersionCode
-        for (abi in abiCodes.keySet().sort { -it.length() }) {
-            if (output.outputFileName.get().contains(abi)) {
-                versionCode = (100 * defaultVersionCode) + abiCodes[abi]
-                break
-            }
+        if (abi != null) {
+            versionCode = (100 * defaultVersionCode) + abiCodes[abi]
         }
         output.versionCode.set(versionCode)
+        output.outputFileName.set("PipePipe_${defaultVersionName}-${abi ?: 'universal'}-${variant.name}.apk")
     }
 }
 
