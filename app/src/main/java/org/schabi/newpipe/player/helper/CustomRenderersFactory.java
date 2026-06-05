@@ -3,10 +3,10 @@ package org.schabi.newpipe.player.helper;
 import android.content.Context;
 import android.os.Handler;
 
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.Renderer;
-import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
-import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import androidx.media3.exoplayer.DefaultRenderersFactory;
+import androidx.media3.exoplayer.Renderer;
+import androidx.media3.exoplayer.mediacodec.MediaCodecSelector;
+import androidx.media3.exoplayer.video.VideoRendererEventListener;
 
 import java.util.ArrayList;
 

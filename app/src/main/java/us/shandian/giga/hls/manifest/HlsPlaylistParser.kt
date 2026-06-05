@@ -1,13 +1,13 @@
 package us.shandian.giga.hls.manifest
 
 import android.net.Uri
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.Format
-import com.google.android.exoplayer2.source.hls.playlist.HlsMediaPlaylist as ExoHlsMediaPlaylist
-import com.google.android.exoplayer2.source.hls.playlist.HlsMediaPlaylist.Segment as ExoHlsSegment
-import com.google.android.exoplayer2.source.hls.playlist.HlsMediaPlaylist.SegmentBase as ExoHlsSegmentBase
-import com.google.android.exoplayer2.source.hls.playlist.HlsMultivariantPlaylist as ExoHlsMultivariantPlaylist
-import com.google.android.exoplayer2.source.hls.playlist.HlsPlaylistParser as ExoHlsPlaylistParser
+import androidx.media3.common.C
+import androidx.media3.common.Format
+import androidx.media3.exoplayer.hls.playlist.HlsMediaPlaylist as ExoHlsMediaPlaylist
+import androidx.media3.exoplayer.hls.playlist.HlsMediaPlaylist.Segment as ExoHlsSegment
+import androidx.media3.exoplayer.hls.playlist.HlsMediaPlaylist.SegmentBase as ExoHlsSegmentBase
+import androidx.media3.exoplayer.hls.playlist.HlsMultivariantPlaylist as ExoHlsMultivariantPlaylist
+import androidx.media3.exoplayer.hls.playlist.HlsPlaylistParser as ExoHlsPlaylistParser
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.net.URI

@@ -26,8 +26,8 @@ import org.schabi.newpipe.util.NavigationHelper;
 import java.util.List;
 
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_ONE;
+import static androidx.media3.common.Player.REPEAT_MODE_ALL;
+import static androidx.media3.common.Player.REPEAT_MODE_ONE;
 import static org.schabi.newpipe.player.PlayerService.ACTION_CLOSE;
 import static org.schabi.newpipe.player.PlayerService.ACTION_FAST_FORWARD;
 import static org.schabi.newpipe.player.PlayerService.ACTION_FAST_REWIND;
@@ -269,19 +269,19 @@ public final class NotificationUtil {
 
             case NotificationConstants.SMART_REWIND_PREVIOUS:
                 if (player.getPlayQueue() != null && player.getPlayQueue().size() > 1) {
-                    return getAction(player, R.drawable.exo_notification_previous,
+                    return getAction(player, R.drawable.exo_icon_previous,
                             R.string.exo_controls_previous_description, ACTION_PLAY_PREVIOUS);
                 } else {
-                    return getAction(player, R.drawable.exo_controls_rewind,
+                    return getAction(player, R.drawable.exo_icon_rewind,
                             R.string.exo_controls_rewind_description, ACTION_FAST_REWIND);
                 }
 
             case NotificationConstants.SMART_FORWARD_NEXT:
                 if (player.getPlayQueue() != null && player.getPlayQueue().size() > 1) {
-                    return getAction(player, R.drawable.exo_notification_next,
+                    return getAction(player, R.drawable.exo_icon_next,
                             R.string.exo_controls_next_description, ACTION_PLAY_NEXT);
                 } else {
-                    return getAction(player, R.drawable.exo_controls_fastforward,
+                    return getAction(player, R.drawable.exo_icon_fastforward,
                             R.string.exo_controls_fastforward_description, ACTION_FAST_FORWARD);
                 }
 
@@ -303,10 +303,10 @@ public final class NotificationUtil {
                         || player.getCurrentState() == Player.STATE_PREFLIGHT
                         || player.getCurrentState() == Player.STATE_BLOCKED
                         || player.getCurrentState() == Player.STATE_BUFFERING) {
-                    return getAction(player, R.drawable.exo_notification_pause,
+                    return getAction(player, R.drawable.exo_icon_pause,
                             R.string.exo_controls_pause_description, ACTION_PLAY_PAUSE);
                 } else {
-                    return getAction(player, R.drawable.exo_notification_play,
+                    return getAction(player, R.drawable.exo_icon_play,
                             R.string.exo_controls_play_description, ACTION_PLAY_PAUSE);
                 }
 
@@ -324,10 +324,10 @@ public final class NotificationUtil {
 
             case NotificationConstants.SHUFFLE:
                 if (player.getPlayQueue() != null && player.getPlayQueue().isShuffled()) {
-                    return getAction(player, R.drawable.exo_controls_shuffle_on,
+                    return getAction(player, R.drawable.exo_icon_shuffle_on,
                             R.string.exo_controls_shuffle_on_description, ACTION_SHUFFLE);
                 } else {
-                    return getAction(player, R.drawable.exo_controls_shuffle_off,
+                    return getAction(player, R.drawable.exo_icon_shuffle_off,
                             R.string.exo_controls_shuffle_off_description, ACTION_SHUFFLE);
                 }
 
