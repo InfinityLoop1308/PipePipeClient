@@ -1,6 +1,7 @@
 package org.schabi.newpipe.player.datasource;
 
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -34,6 +35,10 @@ public final class SabrSegmentDataSource implements DataSource {
     private final SabrSessionStore.Holder holder;
     private final YoutubeSabrFormat format;
     private final Localization localization;
+    // Prepend the init segment so each media chunk is a self-contained fmp4 (init + one fragment),
+    // which a fresh FragmentedMp4Extractor parses fully. SABR's init isn't a clean standalone atom
+    // boundary, so feeding it on its own (DASH-style InitializationChunk) hit an EOF mid-atom.
+    private final boolean prependInit;
 
     @Nullable
     private Uri uri;
@@ -45,10 +50,12 @@ public final class SabrSegmentDataSource implements DataSource {
 
     public SabrSegmentDataSource(final SabrSessionStore.Holder holder,
                                  final YoutubeSabrFormat format,
-                                 final Localization localization) {
+                                 final Localization localization,
+                                 final boolean prependInit) {
         this.holder = holder;
         this.format = format;
         this.localization = localization;
+        this.prependInit = prependInit;
     }
 
     @Override
@@ -62,7 +69,16 @@ public final class SabrSegmentDataSource implements DataSource {
         this.canceled = false;
         this.pos = (int) Math.max(0, dataSpec.position);
         final SabrSegmentRequest request = requestFromUri(dataSpec.uri);
-        this.data = awaitSegment(request);
+        if (prependInit && !request.isInitializationSegment()) {
+            final byte[] init = awaitSegment(SabrSegmentRequest.initialization(format));
+            final byte[] media = awaitSegment(request);
+            final byte[] both = new byte[init.length + media.length];
+            System.arraycopy(init, 0, both, 0, init.length);
+            System.arraycopy(media, 0, both, init.length, media.length);
+            this.data = both;
+        } else {
+            this.data = awaitSegment(request);
+        }
         this.opened = true;
         final int remaining = data.length - pos;
         return dataSpec.length == C.LENGTH_UNSET ? remaining : Math.min(dataSpec.length, remaining);
@@ -101,7 +117,14 @@ public final class SabrSegmentDataSource implements DataSource {
     /** Block until the pump has cached this segment, or give up on a real stall / cancellation. */
     private byte[] awaitSegment(final SabrSegmentRequest request) throws IOException {
         final SabrStreamPump pump = holder.getPump(localization);
+        int waited = 0;
         while (true) {
+            if (waited > 0 && waited % 8 == 0) {
+                Log.i("SabrSeg", "WAIT itag=" + format.getItag() + " seq="
+                        + (request.isInitializationSegment() ? "init" : request.getSequenceNumber())
+                        + " sinceSeg=" + pump.millisSinceLastSegment());
+            }
+            waited++;
             if (canceled) {
                 throw new IOException("SABR segment read canceled");
             }
@@ -123,6 +146,25 @@ public final class SabrSegmentDataSource implements DataSource {
                 throw new IOException("Interrupted awaiting SABR segment", ie);
             }
         }
+    }
+
+    private static String box(final byte[] b, final int off) {
+        if (b == null || off < 0 || off + 8 > b.length) {
+            return "EOF@" + off;
+        }
+        final long size = ((b[off] & 0xFFL) << 24) | ((b[off + 1] & 0xFFL) << 16)
+                | ((b[off + 2] & 0xFFL) << 8) | (b[off + 3] & 0xFFL);
+        final String type = new String(b, off + 4, 4, java.nio.charset.StandardCharsets.US_ASCII);
+        return size + ":" + type;
+    }
+
+    private static int nextBox(final byte[] b, final int off) {
+        if (b == null || off + 8 > b.length) {
+            return b == null ? 0 : b.length;
+        }
+        final long size = ((b[off] & 0xFFL) << 24) | ((b[off + 1] & 0xFFL) << 16)
+                | ((b[off + 2] & 0xFFL) << 8) | (b[off + 3] & 0xFFL);
+        return size <= 0 ? b.length : off + (int) size;
     }
 
     @Nullable

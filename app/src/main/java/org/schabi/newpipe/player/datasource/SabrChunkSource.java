@@ -18,7 +18,10 @@ import androidx.media3.exoplayer.source.chunk.ContainerMediaChunk;
 import androidx.media3.exoplayer.source.chunk.InitializationChunk;
 import androidx.media3.exoplayer.source.chunk.MediaChunk;
 import androidx.media3.exoplayer.upstream.LoadErrorHandlingPolicy;
+import androidx.media3.extractor.Extractor;
+import androidx.media3.extractor.mkv.MatroskaExtractor;
 import androidx.media3.extractor.mp4.FragmentedMp4Extractor;
+import androidx.media3.extractor.text.SubtitleParser;
 
 import org.schabi.newpipe.extractor.localization.Localization;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat;
@@ -40,9 +43,7 @@ final class SabrChunkSource implements ChunkSource {
     private final Format trackFormat;
     private final int trackType;
     private final Localization localization;
-    private final ChunkExtractor chunkExtractor;
 
-    private boolean initLoaded;
     @Nullable
     private IOException fatalError;
 
@@ -56,8 +57,6 @@ final class SabrChunkSource implements ChunkSource {
         this.trackFormat = trackFormat;
         this.trackType = trackType;
         this.localization = localization;
-        this.chunkExtractor = new BundledChunkExtractor(
-                new FragmentedMp4Extractor(), trackType, trackFormat);
     }
 
     @Override
@@ -91,10 +90,6 @@ final class SabrChunkSource implements ChunkSource {
     @Override
     public void getNextChunk(final LoadingInfo loadingInfo, final long loadPositionUs,
                              final List<? extends MediaChunk> queue, final ChunkHolder out) {
-        if (!initLoaded) {
-            out.chunk = newInitChunk();
-            return;
-        }
         final int nextSeq;
         if (queue.isEmpty()) {
             nextSeq = holder.session.getStreamState()
@@ -103,18 +98,14 @@ final class SabrChunkSource implements ChunkSource {
             nextSeq = (int) (queue.get(queue.size() - 1).getNextChunkIndex());
         }
         final long endSeq = holder.session.getStreamState().getEndSegment(format);
+        android.util.Log.i("SabrChunk", "itag=" + format.getItag() + " nextSeq=" + nextSeq
+                + " loadPosMs=" + (loadPositionUs / 1000) + " queue=" + queue.size()
+                + " endSeq=" + endSeq);
         if (endSeq > 0 && nextSeq > endSeq) {
             out.endOfStream = true;
             return;
         }
         out.chunk = newMediaChunk(nextSeq);
-    }
-
-    private Chunk newInitChunk() {
-        final DataSpec spec = new DataSpec(Uri.parse("sabrseg://" + format.getItag() + "/init"));
-        return new InitializationChunk(
-                new SabrSegmentDataSource(holder, format, localization), spec, trackFormat,
-                C.SELECTION_REASON_UNKNOWN, null, chunkExtractor);
     }
 
     private Chunk newMediaChunk(final int seq) {
@@ -123,19 +114,25 @@ final class SabrChunkSource implements ChunkSource {
         final long startUs = Math.max(0, startMs) * 1000;
         final long endUs = (endMs > 0 ? endMs : startMs) * 1000;
         final DataSpec spec = new DataSpec(Uri.parse("sabrseg://" + format.getItag() + "/" + seq));
+        // Fresh extractor per chunk: the data source prepends the init, so each chunk is a complete
+        // init + one fragment. Absolute fragment timestamps -> sampleOffsetUs = 0. Pick the container
+        // by mime: YouTube ships VP9/Opus in WebM (Matroska) and AVC/AAC in fragmented mp4.
+        final String mime = format.getMimeType();
+        final Extractor extractorImpl = mime != null && mime.contains("webm")
+                ? new MatroskaExtractor(SubtitleParser.Factory.UNSUPPORTED)
+                : new FragmentedMp4Extractor(SubtitleParser.Factory.UNSUPPORTED);
+        final ChunkExtractor extractor = new BundledChunkExtractor(
+                extractorImpl, trackType, trackFormat);
         return new ContainerMediaChunk(
-                new SabrSegmentDataSource(holder, format, localization), spec, trackFormat,
-                C.SELECTION_REASON_UNKNOWN, null,
+                new SabrSegmentDataSource(holder, format, localization, /* prependInit= */ true),
+                spec, trackFormat, C.SELECTION_REASON_UNKNOWN, null,
                 startUs, endUs, /* clippedStartTimeUs= */ startUs, /* clippedEndTimeUs= */ endUs,
-                /* chunkIndex= */ seq, /* chunkCount= */ 1, /* sampleOffsetUs= */ startUs,
-                chunkExtractor);
+                /* chunkIndex= */ seq, /* chunkCount= */ 1, /* sampleOffsetUs= */ 0L,
+                extractor);
     }
 
     @Override
     public void onChunkLoadCompleted(final Chunk chunk) {
-        if (chunk instanceof InitializationChunk) {
-            initLoaded = true;
-        }
     }
 
     @Override
@@ -148,6 +145,5 @@ final class SabrChunkSource implements ChunkSource {
 
     @Override
     public void release() {
-        chunkExtractor.release();
     }
 }
