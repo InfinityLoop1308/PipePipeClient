@@ -93,6 +93,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.X509TrustManager;
 
+import project.pipepipe.app.ui.ExperimentalVideoDetailHost;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     @SuppressWarnings("ConstantConditions")
@@ -151,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
                 .getHeaderView(0));
         toolbarLayoutBinding = mainBinding.toolbarLayout;
         setContentView(mainBinding.getRoot());
+        ExperimentalVideoDetailHost.attach(this, mainBinding.experimentalVideoDetailHost);
 
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
             initFragments();

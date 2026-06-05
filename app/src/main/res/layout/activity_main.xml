@@ -27,6 +27,12 @@
             app:behavior_peekHeight="0dp"
             app:layout_behavior="org.schabi.newpipe.player.event.CustomBottomSheetBehavior" />
 
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/experimental_video_detail_host"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
     </org.schabi.newpipe.views.FocusAwareCoordinator>
 
     <include
