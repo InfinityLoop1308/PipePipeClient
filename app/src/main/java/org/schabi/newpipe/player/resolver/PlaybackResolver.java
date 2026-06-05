@@ -51,7 +51,7 @@ import org.schabi.newpipe.App;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.localization.Localization;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat;
-import org.schabi.newpipe.player.datasource.SabrDataSource;
+import org.schabi.newpipe.player.datasource.SabrMediaSource;
 import org.schabi.newpipe.player.datasource.SabrSessionStore;
 
 import androidx.annotation.NonNull;
@@ -464,16 +464,15 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
         } catch (final ExtractionException e) {
             throw new IOException("Could not start SABR session for " + videoId, e);
         }
-        final YoutubeSabrFormat format = (stream instanceof AudioStream)
-                ? holder.audioFormat : holder.videoFormat;
-        final SabrDataSource.Factory factory = new SabrDataSource.Factory(
-                holder, format, new Localization("en", "US"));
-        return new ProgressiveMediaSource.Factory(factory).createMediaSource(
-                new MediaItem.Builder()
-                        .setTag(metadata)
-                        .setUri(Uri.parse("sabr://" + videoId + "/" + format.getItag()))
-                        .setCustomCacheKey(cacheKey)
-                        .build());
+        // One source carries both tracks; media3 track selection picks audio-only when there's no
+        // video renderer (background/popup). Seeking is real because it's chunk-based, not a byte
+        // stream. The audio resolver path skips its own SABR source (see VideoPlaybackResolver).
+        final MediaItem mediaItem = new MediaItem.Builder()
+                .setTag(metadata)
+                .setUri(Uri.parse("sabr://" + videoId))
+                .setCustomCacheKey(cacheKey)
+                .build();
+        return new SabrMediaSource(mediaItem, holder, new Localization("en", "US"));
     }
 
     @NonNull

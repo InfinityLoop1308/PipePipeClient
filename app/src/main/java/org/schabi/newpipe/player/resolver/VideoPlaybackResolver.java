@@ -147,9 +147,12 @@ public class VideoPlaybackResolver implements PlaybackResolver {
 
         // Use the audio stream if there is no video stream, or
         // merge with audio stream in case if video does not contain audio
+        // SABR carries audio + video in one MediaSource, so don't add a separate audio source.
+        final boolean videoIsSabr = video != null && video.getDeliveryMethod()
+                == org.schabi.newpipe.extractor.stream.DeliveryMethod.SABR;
         final boolean videoHasMatchingAudio = video != null && !video.isVideoOnly()
                 && audioTrack != null && audioTrack.equals(video.getAudioTrackId());
-        if (audio != null && !videoHasMatchingAudio
+        if (audio != null && !videoHasMatchingAudio && !videoIsSabr
                 && (video == null || video.isVideoOnly() || audioTrack != null)) {
             try {
                 final MediaSource audioSource = PlaybackResolver.buildMediaSource(
