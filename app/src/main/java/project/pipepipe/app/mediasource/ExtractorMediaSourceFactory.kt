@@ -1,5 +1,6 @@
 package project.pipepipe.app.mediasource
 
+import android.content.Context
 import android.net.Uri
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -15,6 +16,8 @@ import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.MergingMediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.exoplayer.upstream.LoadErrorHandlingPolicy
+import org.schabi.newpipe.DownloaderImpl
+import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.stream.AudioStream
 import org.schabi.newpipe.extractor.stream.DeliveryMethod
 import org.schabi.newpipe.extractor.stream.Stream
@@ -22,20 +25,27 @@ import org.schabi.newpipe.extractor.stream.StreamInfo
 import org.schabi.newpipe.extractor.stream.VideoStream
 import org.schabi.newpipe.util.ExtractorHelper
 import java.io.ByteArrayInputStream
+import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
 @UnstableApi
 class ExtractorMediaSourceFactory(
-    private val dataSourceFactory: DefaultDataSource.Factory
+    context: Context
 ) : MediaSource.Factory {
-    constructor(context: android.content.Context) : this(
+    private val context = context.applicationContext
+    private val dataSourceFactory = createDataSourceFactory(
+        mapOf("Referer" to "https://www.bilibili.com")
+    )
+
+    private fun createDataSourceFactory(headers: Map<String, String>): DefaultDataSource.Factory =
         DefaultDataSource.Factory(
-            context,
+            context.applicationContext,
             DefaultHttpDataSource.Factory()
+                .setUserAgent(DownloaderImpl.USER_AGENT)
+                .setDefaultRequestProperties(headers)
                 .setConnectTimeoutMs(30_000)
                 .setReadTimeoutMs(30_000)
         )
-    )
 
     override fun setDrmSessionManagerProvider(
         drmSessionManagerProvider: DrmSessionManagerProvider
@@ -75,9 +85,9 @@ class ExtractorMediaSourceFactory(
         val video = selectVideo(streamInfo)
         val audio = selectAudio(streamInfo)
         val sources = buildList {
-            video?.let { add(createStreamSource(mediaItem, it)) }
+            video?.let { add(createStreamSource(mediaItem, it, streamInfo)) }
             if (video == null || video.isVideoOnly()) {
-                audio?.let { add(createStreamSource(mediaItem, it)) }
+                audio?.let { add(createStreamSource(mediaItem, it, streamInfo)) }
             }
         }
         require(sources.isNotEmpty())
@@ -94,8 +104,25 @@ class ExtractorMediaSourceFactory(
             .filter { it.deliveryMethod != DeliveryMethod.TORRENT }
             .maxByOrNull { it.averageBitrate }
 
-    private fun createStreamSource(mediaItem: MediaItem, stream: Stream): MediaSource =
-        when (stream.deliveryMethod) {
+    private fun createStreamSource(
+        mediaItem: MediaItem,
+        stream: Stream,
+        streamInfo: StreamInfo
+    ): MediaSource {
+        if (streamInfo.service == ServiceList.NicoNico && stream.content.contains("#cookie=")) {
+            val sourceUrl = stream.content.substringBefore("#cookie=")
+            val cookie = URLDecoder.decode(
+                stream.content.substringAfter("#cookie=").substringBefore("&length="),
+                StandardCharsets.UTF_8.name()
+            )
+            return HlsMediaSource.Factory(createDataSourceFactory(mapOf("Cookie" to cookie)))
+                .createMediaSource(mediaItem.withUri(sourceUrl, MimeTypes.APPLICATION_M3U8))
+        }
+        if (streamInfo.service == ServiceList.BiliBili) {
+            return ProgressiveMediaSource.Factory(dataSourceFactory)
+                .createMediaSource(mediaItem.withUri(stream.content, null))
+        }
+        return when (stream.deliveryMethod) {
             DeliveryMethod.PROGRESSIVE_HTTP -> ProgressiveMediaSource.Factory(dataSourceFactory)
                 .createMediaSource(mediaItem.withUri(stream.content, null))
             DeliveryMethod.DASH -> createDashSource(mediaItem, stream)
@@ -103,6 +130,7 @@ class ExtractorMediaSourceFactory(
                 .createMediaSource(mediaItem.withUri(stream.content, MimeTypes.APPLICATION_M3U8))
             else -> error("Unsupported delivery method: ${stream.deliveryMethod}")
         }
+    }
 
     private fun createDashSource(mediaItem: MediaItem, stream: Stream): MediaSource {
         val factory = DashMediaSource.Factory(dataSourceFactory)
