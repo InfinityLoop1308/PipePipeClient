@@ -26,6 +26,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,11 +38,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerView
+import org.schabi.newpipe.R
+import org.schabi.newpipe.extractor.stream.StreamInfoItem
+import org.schabi.newpipe.info_list.CommonItem
+import org.schabi.newpipe.info_list.buildInfoItemState
+import org.schabi.newpipe.util.Localization
 import project.pipepipe.app.SharedContext
 import project.pipepipe.app.mediasource.MediaItemFactory
 import project.pipepipe.app.uistate.VideoDetailPageState
@@ -52,6 +61,7 @@ fun VideoDetailScreen(viewModel: VideoDetailViewModel) {
     val state by viewModel.uiState.collectAsState()
     val controller by SharedContext.mediaController.collectAsState()
     val density = LocalDensity.current
+    val context = LocalContext.current
     var dragDistance by remember { mutableFloatStateOf(0f) }
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val offset by animateDpAsState(
@@ -141,16 +151,61 @@ fun VideoDetailScreen(viewModel: VideoDetailViewModel) {
                             }
                         }
                     }
-                    Text(
-                        streamInfo.name,
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                    Text(
-                        streamInfo.uploaderName ?: "",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
+                    LazyColumn(Modifier.fillMaxWidth().weight(1f)) {
+                        item {
+                            Text(
+                                streamInfo.name,
+                                style = MaterialTheme.typography.titleLarge,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                            Text(
+                                streamInfo.uploaderName ?: "",
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                            if (streamInfo.viewCount >= 0) {
+                                Text(
+                                    Localization.shortViewCount(context, streamInfo.viewCount),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                )
+                            }
+                            streamInfo.description?.content?.takeIf(String::isNotBlank)?.let {
+                                Text(
+                                    stringResource(R.string.description_tab_description),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                                Text(
+                                    it,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier.padding(horizontal = 16.dp)
+                                )
+                            }
+                        }
+                        val relatedItems = streamInfo.relatedItems.filterIsInstance<StreamInfoItem>()
+                        if (relatedItems.isNotEmpty()) {
+                            item {
+                                Text(
+                                    stringResource(R.string.related_items_tab_description),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                            }
+                            items(relatedItems) { item ->
+                                buildInfoItemState(context, item, null)?.let { itemState ->
+                                    CommonItem(
+                                        state = itemState,
+                                        isGridLayout = false,
+                                        isCardLayout = false,
+                                        showDragHandle = false,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        onClick = { viewModel.open(item.serviceId, item.url) }
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
                 if (state.pageState == VideoDetailPageState.BOTTOM_PLAYER) {
                     Row(
