@@ -30,9 +30,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class SabrSessionStore {
 
     private static final Map<String, Holder> SESSIONS = new ConcurrentHashMap<>();
-    // Keep only the few most-recent sessions so the map + per-video segment caches + pump threads
-    // don't accumulate forever as the user browses videos. Mutated only under the class lock.
-    private static final int MAX_SESSIONS = 3;
+    // Current video plus one (next-item prefetch). Keeping more let abandoned sessions' pump threads
+    // linger and bleed into the new playback on a switch, leaving the decoder with no usable frame
+    // (black screen). Evicting the superseded session promptly (and stopping its pump) fixes that.
+    // Mutated only under the class lock.
+    private static final int MAX_SESSIONS = 2;
     private static final java.util.Deque<String> ORDER = new java.util.ArrayDeque<>();
     // Shared across videos so the PO-token cache (videoId-keyed, ~6h) is reused and a single
     // WebView is held instead of one per video.
