@@ -20,6 +20,9 @@ import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
 import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.util.NavigationHelper;
+import org.schabi.newpipe.util.ThemeHelper;
+
+import project.pipepipe.app.ExperimentalPlaybackRouter;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -100,8 +103,13 @@ public final class InternalUrlsHandler {
                                               @NonNull final Pattern pattern,
                                               @NonNull final CompositeDisposable disposables) {
         if(url.contains("internal://timestamp/")) {
+            final int timestamp = Integer.parseInt(url.split("internal://timestamp/")[1]);
+            if (ThemeHelper.shouldUseExperimentalNewUi(context)) {
+                ExperimentalPlaybackRouter.seekTo(timestamp * 1000L);
+                return true;
+            }
             Intent intent = new Intent(ACTION_SEEK_TO);
-            intent.putExtra("Timestamp", Integer.parseInt(url.split("internal://timestamp/")[1]));
+            intent.putExtra("Timestamp", timestamp);
             context.sendBroadcast(intent);
             return true;
         }

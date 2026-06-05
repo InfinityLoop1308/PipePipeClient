@@ -18,6 +18,9 @@ import androidx.core.text.HtmlCompat;
 import org.schabi.newpipe.extractor.Info;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.util.NavigationHelper;
+import org.schabi.newpipe.util.ThemeHelper;
+
+import project.pipepipe.app.ExperimentalPlaybackRouter;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -193,6 +196,10 @@ public final class TextLinkifier {
                     new ClickableSpan() {
                         @Override
                         public void onClick(@NonNull final View view) {
+                            if (ThemeHelper.shouldUseExperimentalNewUi(context)) {
+                                ExperimentalPlaybackRouter.seekTo(timestampMatchDTO.seconds() * 1000L);
+                                return;
+                            }
                             Intent intent = new Intent(ACTION_SEEK_TO);
                             intent.putExtra("Timestamp", timestampMatchDTO.seconds());
                             context.sendBroadcast(intent);

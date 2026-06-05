@@ -57,6 +57,11 @@ object ExperimentalPlaybackRouter {
         }
     }
 
+    @JvmStatic
+    fun seekTo(positionMs: Long) {
+        SharedContext.platformMediaController?.seekTo(positionMs)
+    }
+
     private suspend fun awaitController(): project.pipepipe.app.platform.PlatformMediaController? {
         repeat(50) {
             SharedContext.platformMediaController?.let { return it }

@@ -9,6 +9,9 @@ public class MediaButtonReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        if (ThemeHelper.shouldUseExperimentalNewUi(context)) {
+            return;
+        }
         // We only care about the MEDIA_BUTTON intent.
         if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
             KeyEvent event = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);

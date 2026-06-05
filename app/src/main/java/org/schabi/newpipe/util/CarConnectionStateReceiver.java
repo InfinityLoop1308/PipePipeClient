@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.car.app.connection.CarConnection;
 import org.schabi.newpipe.player.PlayerBinderInterface;
 import org.schabi.newpipe.player.mediasession.PlayerServiceInterface;
+import project.pipepipe.app.service.PlaybackService;
 
 public class CarConnectionStateReceiver extends BroadcastReceiver {
 
@@ -39,6 +40,10 @@ public class CarConnectionStateReceiver extends BroadcastReceiver {
     }
 
     private static void shutdownOldService(Context context) {
+        if (ThemeHelper.shouldUseExperimentalNewUi(context)) {
+            context.stopService(new Intent(context, PlaybackService.class));
+            return;
+        }
         ServiceConnection connection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
