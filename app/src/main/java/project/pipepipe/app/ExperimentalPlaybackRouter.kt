@@ -26,6 +26,12 @@ object ExperimentalPlaybackRouter {
             }
             controller.prepare()
             controller.play()
+            if (mode == PlaybackMode.POPUP) {
+                context.startService(
+                    Intent(context, PlaybackService::class.java)
+                        .setAction(PlaybackService.ACTION_SHOW_POPUP)
+                )
+            }
         }
     }
 

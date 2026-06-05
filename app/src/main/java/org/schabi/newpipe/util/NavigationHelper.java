@@ -164,6 +164,10 @@ public final class NavigationHelper {
             PermissionHelper.showPopupEnablementToast(context);
             return;
         }
+        if (ThemeHelper.shouldUseExperimentalNewUi(context)) {
+            ExperimentalPlaybackRouter.play(context, queue, PlaybackMode.POPUP, false);
+            return;
+        }
 
         Toast.makeText(context, R.string.popup_playing_toast, Toast.LENGTH_SHORT).show();
 
