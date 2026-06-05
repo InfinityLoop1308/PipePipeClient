@@ -131,6 +131,13 @@ public final class SabrSegmentDataSource implements DataSource {
             pump.ensureStarted();
             final SabrMediaSegment segment = pump.getCached(request);
             if (segment != null) {
+                if (!segment.getHeader().isInitSegment()) {
+                    // Tell the pump how far this track has been loaded so it keeps feeding ahead
+                    // (and repositions after a seek). Without this readerHead stayed 0 and the pump
+                    // throttled forever after the initial fill.
+                    holder.setReaderPositionMs(format.getItag(),
+                            segment.getHeader().getStartMs() + segment.getHeader().getDurationMs());
+                }
                 return segment.getData();
             }
             if (pump.isFatal()) {
