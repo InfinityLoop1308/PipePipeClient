@@ -47,6 +47,12 @@ import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.player.mediaitem.MediaItemTag;
 import org.schabi.newpipe.player.mediaitem.StreamInfoTag;
 import org.schabi.newpipe.util.StreamTypeUtil;
+import org.schabi.newpipe.App;
+import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.extractor.localization.Localization;
+import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat;
+import org.schabi.newpipe.player.datasource.SabrDataSource;
+import org.schabi.newpipe.player.datasource.SabrSessionStore;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -437,10 +443,37 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                                 .setUri(Uri.parse(stream.getContent()))
                                 .setCustomCacheKey(cacheKey)
                                 .build());
+            case SABR:
+                return buildSabrMediaSource(stream, streamInfo, cacheKey, metadata);
             default:
                 throw new IOException("Unsupported delivery method for YouTube contents: "
                         + deliveryMethod);
         }
+    }
+
+    @NonNull
+    private static MediaSource buildSabrMediaSource(@NonNull final Stream stream,
+                                                    @NonNull final StreamInfo streamInfo,
+                                                    @NonNull final String cacheKey,
+                                                    @NonNull final MediaItemTag metadata)
+            throws IOException {
+        final String videoId = streamInfo.getId();
+        final SabrSessionStore.Holder holder;
+        try {
+            holder = SabrSessionStore.getOrCreate(App.getApp(), videoId);
+        } catch (final ExtractionException e) {
+            throw new IOException("Could not start SABR session for " + videoId, e);
+        }
+        final YoutubeSabrFormat format = (stream instanceof AudioStream)
+                ? holder.audioFormat : holder.videoFormat;
+        final SabrDataSource.Factory factory = new SabrDataSource.Factory(
+                holder, format, new Localization("en", "US"));
+        return new ProgressiveMediaSource.Factory(factory).createMediaSource(
+                new MediaItem.Builder()
+                        .setTag(metadata)
+                        .setUri(Uri.parse("sabr://" + videoId + "/" + format.getItag()))
+                        .setCustomCacheKey(cacheKey)
+                        .build());
     }
 
     @NonNull

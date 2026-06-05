@@ -135,6 +135,7 @@ import org.schabi.newpipe.player.helper.LoadController;
 import org.schabi.newpipe.player.helper.MediaSessionManager;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.player.helper.PlayerHelper;
+import org.schabi.newpipe.player.datasource.SabrSessionStore;
 import org.schabi.newpipe.player.listeners.view.PlaybackSpeedClickListener;
 import org.schabi.newpipe.player.listeners.view.QualityClickListener;
 import org.schabi.newpipe.player.mediaitem.MediaItemTag;
@@ -1804,6 +1805,10 @@ public final class Player implements
             return;
         }
 
+        // Feed the real play head to any live SABR session (no-op otherwise).
+        getCurrentStreamInfo().ifPresent(info ->
+                SabrSessionStore.updatePlayerTime(info.getId(), currentProgress));
+
         if (duration != binding.playbackSeekBar.getMax()) {
             setVideoDurationToControls(duration);
         }
@@ -3380,7 +3385,34 @@ public final class Player implements
     }
 
     public boolean shouldSeek() {
+        // our v1 SABR seek is a dumb byte-skip that can't land on a real position, so resuming
+        // mid-video just freezes the whole thing. so SABR always starts from 0, scrubbing can wait.
+        // honestly nobody died from rewatching an intro. plays fine from 0.
+        if (isCurrentStreamSabr()) {
+            return false;
+        }
         return !prefs.getBoolean(context.getString(R.string.always_start_from_beginning_key), false);
+    }
+
+    private boolean isCurrentStreamSabr() {
+        return getCurrentStreamInfo().map(info -> {
+            for (final VideoStream s : info.getVideoOnlyStreams()) {
+                if (s.getDeliveryMethod() == DeliveryMethod.SABR) {
+                    return true;
+                }
+            }
+            for (final VideoStream s : info.getVideoStreams()) {
+                if (s.getDeliveryMethod() == DeliveryMethod.SABR) {
+                    return true;
+                }
+            }
+            for (final AudioStream s : info.getAudioStreams()) {
+                if (s.getDeliveryMethod() == DeliveryMethod.SABR) {
+                    return true;
+                }
+            }
+            return false;
+        }).orElse(false);
     }
 
     public void seekTo(final long positionMillis) {
@@ -4092,13 +4124,19 @@ public final class Player implements
 
         for (int i = 0; i < availableStreams.size(); i++) {
             final VideoStream videoStream = availableStreams.get(i);
-            qualityPopupMenu.getMenu().add(POPUP_MENU_ID_QUALITY, i, Menu.NONE, videoStream.getCodec().toUpperCase().split("\\.")[0] + " " + videoStream.resolution);
+            qualityPopupMenu.getMenu().add(POPUP_MENU_ID_QUALITY, i, Menu.NONE, videoStream.getCodec().toUpperCase().split("\\.")[0] + " " + videoStream.resolution + sabrTag(videoStream));
         }
         if (getSelectedVideoStream() != null) {
-            binding.qualityTextView.setText(getSelectedVideoStream().resolution);
+            binding.qualityTextView.setText(getSelectedVideoStream().resolution + sabrTag(getSelectedVideoStream()));
         }
         qualityPopupMenu.setOnMenuItemClickListener(this);
         qualityPopupMenu.setOnDismissListener(this);
+    }
+
+    // PoC marker: flag SABR-delivered streams in the quality UI
+    private static String sabrTag(final VideoStream stream) {
+        return stream != null && stream.getDeliveryMethod() == DeliveryMethod.SABR
+                ? " (SABR)" : "";
     }
 
     private void buildPlaybackSpeedMenu() {
@@ -4240,7 +4278,7 @@ public final class Player implements
         }
         isSomePopupMenuVisible = false; //TODO check if this works
         if (getSelectedVideoStream() != null) {
-            binding.qualityTextView.setText(getSelectedVideoStream().resolution);
+            binding.qualityTextView.setText(getSelectedVideoStream().resolution + sabrTag(getSelectedVideoStream()));
         }
         if (isPlaying()) {
             hideControls(DEFAULT_CONTROLS_DURATION, 0);
