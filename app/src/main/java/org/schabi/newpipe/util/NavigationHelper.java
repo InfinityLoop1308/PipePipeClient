@@ -140,6 +140,12 @@ public final class NavigationHelper {
                                         @NonNull final PlayQueue playQueue) {
         final PlayQueueItem item = playQueue.getItem();
         if (item != null) {
+            if (ThemeHelper.shouldUseExperimentalNewUi(activity)) {
+                ExperimentalPlaybackRouter.play(
+                        activity, playQueue, PlaybackMode.VIDEO_AUDIO, false);
+                ExperimentalVideoDetailHost.open(item.getServiceId(), item.getUrl());
+                return;
+            }
             openVideoDetailFragment(activity, activity.getSupportFragmentManager(),
                     item.getServiceId(), item.getUrl(), item.getTitle(), playQueue,
                     false);
@@ -151,6 +157,12 @@ public final class NavigationHelper {
                                         final boolean switchingPlayers) {
         final PlayQueueItem item = playQueue.getItem();
         if (item != null) {
+            if (ThemeHelper.shouldUseExperimentalNewUi(context)) {
+                ExperimentalPlaybackRouter.play(
+                        context, playQueue, PlaybackMode.VIDEO_AUDIO, false);
+                ExperimentalVideoDetailHost.open(item.getServiceId(), item.getUrl());
+                return;
+            }
             openVideoDetail(context,
                     item.getServiceId(), item.getUrl(), item.getTitle(), playQueue,
                     switchingPlayers);
@@ -212,12 +224,12 @@ public final class NavigationHelper {
     public static void enqueueOnPlayer(final Context context,
                                        final PlayQueue queue,
                                        final PlayerType playerType) {
-        if (ThemeHelper.shouldUseExperimentalNewUi(context) && playerType != PlayerType.POPUP) {
-            ExperimentalPlaybackRouter.enqueue(context, queue, false);
-            return;
-        }
         if ((playerType == PlayerType.POPUP) && !PermissionHelper.isPopupEnabled(context)) {
             PermissionHelper.showPopupEnablementToast(context);
+            return;
+        }
+        if (ThemeHelper.shouldUseExperimentalNewUi(context)) {
+            ExperimentalPlaybackRouter.enqueue(context, queue, false);
             return;
         }
 

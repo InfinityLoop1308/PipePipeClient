@@ -49,9 +49,9 @@ object ExperimentalPlaybackRouter {
             items.forEach(SharedContext.queueManager::addItem)
             if (next) {
                 val currentIndex = controller.currentItemIndex.value
-                repeat(items.size) {
-                    val from = SharedContext.queueManager.getCurrentQueue().lastIndex
-                    SharedContext.queueManager.moveItem(from, currentIndex + 1 + it)
+                items.forEachIndexed { offset, item ->
+                    val from = SharedContext.queueManager.getIndexOfItemUuid(item.uuid)
+                    SharedContext.queueManager.moveItem(from, currentIndex + 1 + offset)
                 }
             }
         }

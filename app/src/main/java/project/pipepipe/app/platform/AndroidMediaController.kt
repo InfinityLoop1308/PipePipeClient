@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import project.pipepipe.app.PlaybackMode
+import project.pipepipe.app.SharedContext
 import project.pipepipe.app.mediasource.MediaItemFactory
 
 @UnstableApi
@@ -191,7 +192,14 @@ class AndroidMediaController(
     }
 
     override fun stopService() = onStopService()
-    override fun syncQueueShuffle() = Unit
+    override fun syncQueueShuffle() {
+        val currentUuid = mutableCurrentMediaItem.value?.uuid
+        val currentPosition = player.currentPosition
+        val queue = SharedContext.queueManager.getCurrentQueue()
+        val currentIndex = queue.indexOfFirst { it.uuid == currentUuid }.coerceAtLeast(0)
+        player.setMediaItems(queue.map(MediaItemFactory::toMediaItem), currentIndex, currentPosition)
+        player.prepare()
+    }
     override fun syncQueueClear() = player.clearMediaItems()
     override fun syncQueueRemove(index: Int) = player.removeMediaItem(index)
     override fun syncQueueAppend(item: PlatformMediaItem) = player.addMediaItem(MediaItemFactory.toMediaItem(item))
