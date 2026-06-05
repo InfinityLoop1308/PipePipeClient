@@ -127,7 +127,6 @@
     <string name="update_log">Poprawka błędu: Błąd \"Ta treść nie jest obsługiwana przez PipePipe\" na wszystkich filmach (YouTube)\n\nYouTube ostanio często się aktualizuje, włącz sprawdzanie aktualizacji, aby dostawać szybko nasze najnowsze łatki.</string>
     <string name="speeding_playback_title">Przytrzymaj aby przyspieszyć odtwarzanie</string>
     <string name="view_on_github">Zobacz na GitHubie</string>
-    <string name="app_license_title">Licencja NewPipe</string>
     <string name="contribution_encouragement">Niezależnie od tego, czy masz pomysł na tłumaczenie, zmiany w projekcie, oczyszczenie kodu źródłowego, czy na naprawdę ciężkie zmiany w kodzie — pomoc jest zawsze mile widziana. Im więcej jest zrobione, tym lepiej!</string>
     <string name="read_full_license">Przeczytaj licencję</string>
     <string name="app_description_new">Aplikacja FLOSS na Androida która pozwala na przeglądanie YouTube, NicoNico i BiliBili.</string>
@@ -185,9 +184,6 @@
     </plurals>
     <string name="charset_most_special_characters">Większość znaków specjalnych</string>
     <string name="donation_title">Dotacja</string>
-    <string name="donation_encouragement">NewPipe jest rozwijany przez wolontariuszy, którzy poświęcają swój wolny czas, zapewniając Ci najlepsze wrażenia z użytkowania. To dobry moment na wsparcie programistów i sprawienie, aby NewPipe był jeszcze lepszy, podczas gdy oni będą mogli delektować się filiżanką kawy.</string>
-    <string name="website_title">Strona internetowa</string>
-    <string name="website_encouragement">Odwiedź stronę NewPipe, aby uzyskać więcej informacji i najnowsze wiadomości.</string>
     <string name="delete_item_search_history">Czy chcesz usunąć tę pozycję z historii wyszukiwania?</string>
     <string name="main_page_content">Zawartość strony głównej</string>
     <string name="blank_page_summary">Pusta strona</string>
@@ -331,11 +327,6 @@
     <string name="app_license_title_new">Licencja NewPipe\'a (Upstream)</string>
     <string name="app_license">NewPipe jest wolnym i bezpłatnym oprogramowaniem: Możesz używać, udostępniać i ulepszać je do woli. W szczególności możesz je redystrybuować i/lub modyfikować zgodnie z warunkami GNU General Public License, opublikowanej przez Free Software Fundation, w wersji 3 albo (według Twojego wyboru) jakiejkolwiek późniejszej wersji.</string>
     <string name="import_settings">Czy chcesz zaimportować również ustawienia?</string>
-    <string name="privacy_policy_title">Polityka prywatności NewPipe</string>
-    <string name="privacy_policy_encouragement">Projekt NewPipe bardzo poważnie traktuje Twoją prywatność, dlatego aplikacja nie gromadzi żadnych danych bez Twojej zgody.
-\nPolityka prywatności NewPipe szczegółowo wyjaśnia, jakie dane są zbierane i przesyłane, kiedy wysyłasz raport o awarii aplikacji.</string>
-    <string name="start_accept_privacy_policy">Ze względu na wprowadzenie Ogólnego rozporządzenia o ochronie danych (RODO), chcielibyśmy zwrócić Twoją uwagę na politykę prywatności NewPipe. Prosimy przeczytać ją uważnie.
-\nMusisz ją zaakceptować, aby przesyłać nam raporty o błędach.</string>
     <string name="semitone">Półton</string>
     <string name="limit_data_usage_none_description">Bez limitu</string>
     <string name="limit_mobile_data_usage_title">Ograniczaj rozdzielczość podczas korzystania z danych mobilnych</string>
@@ -360,7 +351,6 @@
     <string name="settings_category_updates_title">Aktualizacje</string>
     <string name="file_deleted">Usunięto plik</string>
     <string name="app_update_notification_channel_name">Powiadomienie o aktualizacji aplikacji</string>
-    <string name="app_update_notification_channel_description">Powiadomienia o nowych wersjach NewPipe</string>
     <string name="download_to_sdcard_error_title">Pamięć zewnętrzna niedostępna</string>
     <string name="download_to_sdcard_error_message">Pobieranie na kartę SD nie jest możliwe. Zresetować lokalizację folderu zapisywania\?</string>
     <string name="saved_tabs_invalid_json">Nie udało się odczytać zapisanych kart, więc będą używane domyślne</string>
@@ -375,7 +365,6 @@
     <string name="grid">Siatka</string>
     <string name="card">Karta</string>
     <string name="auto">Automatyczny</string>
-    <string name="app_update_notification_content_title">Dostępna jest aktualizacja NewPipe!</string>
     <string name="app_update_notification_content_title_new">Jest dostępna aktualizacja PipePipe.</string>
     <string name="app_update_notification_content_text">Naciśnij, aby pobrać</string>
     <string name="missions_header_finished">Zakończone</string>
@@ -419,7 +408,6 @@
     <string name="overwrite_unrelated_warning">Plik o tej nazwie już istnieje</string>
     <string name="overwrite_failed">Nie udało się nadpisać pliku</string>
     <string name="download_already_pending">Plik o tej samej nazwie oczekuje na pobranie</string>
-    <string name="error_postprocessing_stopped">NewPipe został zamknięty podczas pracy nad plikiem</string>
     <string name="error_postprocessing_stopped_new">PipePipe został zamknięty podczas pracy nad plikiem</string>
     <string name="error_insufficient_storage">Brak miejsca na urządzeniu</string>
     <string name="error_progress_lost">Utracono postęp, ponieważ plik został usunięty</string>
@@ -485,17 +473,7 @@
     </plurals>
     <string name="mute">Wycisz</string>
     <string name="unmute">Wyłącz wyciszenie</string>
-    <string name="feed_use_dedicated_fetch_method_help_text">Czy uważasz, że ładowanie kanałów jest zbyt powolne\? Jeśli tak, spróbuj włączyć szybkie ładowanie (możesz je zmienić w ustawieniach lub naciskając przycisk poniżej).
-\n
-\nNewPipe oferuje dwie strategie ładowania kanału:
-\n• Pobieranie całego kanału subskrypcji, co jest powolne, ale kompletne.
-\n• Korzystanie z dedykowanego punktu końcowego usługi, co jest szybkie, ale zwykle nie jest kompletne.
-\n
-\nRóżnica między nimi polega na tym, że w szybkim zwykle brakuje pewnych informacji, takich jak czas trwania lub typ pozycji (nie można odróżnić wideo na żywo od zwykłych), i może zwrócić mniej pozycji.
-\n
-\nYouTube jest przykładem usługi, która oferuje tę szybką metodę z kanałem RSS.
-\n
-\nTak więc wybór sprowadza się do tego, co wolisz: szybkość czy precyzyjne informacje.</string>
+    <string name="feed_use_dedicated_fetch_method_help_text">Czy uważasz, że ładowanie kanałów jest zbyt powolne\\? Jeśli tak, spróbuj włączyć szybkie ładowanie (możesz je zmienić w ustawieniach lub naciskając przycisk poniżej).    NewPipe oferuje dwie strategie ładowania kanału:  • Pobieranie całego kanału subskrypcji, co jest powolne, ale kompletne.  • Korzystanie z dedykowanego punktu końcowego usługi, co jest szybkie, ale zwykle nie jest kompletne.    Różnica między nimi polega na tym, że w szybkim zwykle brakuje pewnych informacji, takich jak czas trwania lub typ pozycji (nie można odróżnić wideo na żywo od zwykłych), i może zwrócić mniej pozycji.    YouTube jest przykładem usługi, która oferuje tę szybką metodę z kanałem RSS.    Tak więc wybór sprowadza się do tego, co wolisz: szybkość czy precyzyjne informacje.</string>
     <string name="feed_use_dedicated_fetch_method_disable_button">Wyłącz tryb szybki</string>
     <string name="feed_use_dedicated_fetch_method_enable_button">Włącz tryb szybki</string>
     <string name="feed_use_dedicated_fetch_method_summary">Dostępne w niektórych usługach. Jest zwykle znacznie szybsze, ale może zwrócić ograniczoną liczbę pozycji i często niekompletne informacje (np. brak czasu trwania, typu pozycji, statusu na żywo)</string>
@@ -536,9 +514,6 @@
         <item quantity="many">%d minut</item>
     </plurals>
     <string name="help">Pomoc</string>
-    <string name="content_not_supported">Ta treść nie jest jeszcze obsługiwana przez NewPipe.
-\n
-\nMiejmy nadzieję, że będzie obsługiwana w przyszłej wersji.</string>
     <string name="infinite_videos">∞ wideo</string>
     <string name="more_than_100_videos">100+ wideo</string>
     <string name="artists">Artyści</string>
@@ -564,7 +539,6 @@
     <string name="select_a_playlist">Wybierz playlistę</string>
     <string name="error_report_open_issue_button_text_new">Zgłoś na GitHubie</string>
     <string name="error_report_open_github_notice">Sprawdź, czy problem dotyczący Twojej awarii już istnieje. Tworząc zduplikowane zgłoszenia, zajmujesz nam czas, który możemy poświęcić na naprawienie istniejącego błędu.</string>
-    <string name="error_report_open_issue_button_text">Zgłoś na GitHubie</string>
     <string name="copy_for_github">Skopiuj sformatowany raport</string>
     <string name="search_showing_result_for">Wyświetlanie wyników dla: %s</string>
     <string name="never">Nigdy</string>
@@ -592,7 +566,6 @@
     <string name="enqueued">Dodano do kolejki</string>
     <string name="enqueue_stream">Dodaj do kolejki</string>
     <string name="show_memory_leaks">Pokaż wycieki pamięci</string>
-    <string name="clear_cookie_summary">Wyczyść ciasteczka, które NewPipe przechowuje po rozwiązaniu reCAPTCHA</string>
     <string name="recaptcha_cookies_cleared">Ciasteczka reCAPTCHA zostały wyczyszczone</string>
     <string name="clear_cookie_title">Wyczyść ciasteczka reCAPTCHA</string>
     <string name="notification_colorize_summary">Niech Android dostosuje kolor powiadomienia zgodnie z głównym kolorem na miniaturze (nie jest to dostępne na wszystkich urządzeniach)</string>
@@ -613,13 +586,7 @@
     <string name="no_app_to_open_intent">Żadna aplikacja na Twoim urządzeniu nie może tego otworzyć</string>
     <string name="related_items_tab_description">Powiązane pozycje</string>
     <string name="crash_the_app">Zepsuj aplikację</string>
-    <string name="paid_content">Ta zawartość dostępna jest tylko dla użytkowników, którzy za nią zapłacili. Nie może ona być strumieniowana ani pobierana przez NewPipe.</string>
-    <string name="youtube_music_premium_content">To wideo dostępne jest tylko dla subskrybentów usługi YouTube Music Premium. Nie może ono być strumieniowane ani pobierane przez NewPipe.</string>
-    <string name="private_content">Ta zawartość jest prywatna, więc nie może być strumieniowana ani pobierana przez NewPipe</string>
     <string name="georestricted_content">Ta treść nie jest dostępna w Twoim kraju</string>
-    <string name="restricted_video_no_stream">To wideo ma ograniczenia wiekowe.
-\nZe względu na nowe zasady YouTube odnośnie ograniczeń wiekowych, NewPipe nie ma dostępu do żadnego z jego strumieni wideo i dlatego nie jest w stanie go odtworzyć.</string>
-    <string name="soundcloud_go_plus_content">To jest utwór SoundCloud Go+ (przynajmniej w Twoim kraju). Nie może on być strumieniowany lub pobierany przez NewPipe.</string>
     <string name="radio">Radio</string>
     <string name="paid_content_new">Ta treść jest tylko dostępna dla użytkowników którz zapłacili, więc nie może być odtwarzany i pobierany przez PipePipe.</string>
     <string name="featured">Polecane</string>
@@ -653,11 +620,7 @@
     <string name="account_terminated">Konto zamknięte</string>
     <string name="feed_load_error_terminated_new">Konto autora zostało zamknięte. PipePipe nie będzie mógł już nic załadować z tego źródła w przyszłości. Czy chcesz odsubskrybować ten kanał?</string>
     <string name="feed_load_error_fast_unknown">Tryb szybki dla ładowania kanału nie dostarcza więcej informacji na ten temat.</string>
-    <string name="feed_load_error_terminated">Konto autora zostało zawieszone.
-\nNewPipe nie będzie w stanie załadować tego kanału w przyszłości.
-\nCzy chcesz anulować subskrypcję tego kanału\?</string>
     <string name="feed_load_error_account_info">Nie udało się załadować kanału dla „%s”.</string>
-    <string name="downloads_storage_use_saf_summary_api_19">Systemowy selektor folderów (SAF) nie jest obsługiwany przez system Android KitKat i niższy</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Zostaniesz zapytany(-na), gdzie zapisać każdy pobierany plik</string>
     <string name="no_dir_yet">Nie ustawiono jeszcze folderu zapisywania, wybierz domyślny teraz</string>
     <string name="feed_load_error">Błąd podczas ładowania kanału</string>
@@ -1053,4 +1016,19 @@
     <string name="force_end_on_overtime_summary">Wymuś koniec odtwarzania gdy aktualna pozycja jest większa niż długość strumienia, stosowane jako obejście dla strumieni które nie zatrzymują się naturalnie</string>
     <string name="use_old_search_filter_title">Używaj starych filtrów wyszukiwarki</string>
     <string name="use_old_search_filter_summary">Używaj starych bazowanych na menu filtrów wyszukiwarki zamiast nowego interfejsu</string>
+    <string name="main_tabs_position_summary">Przenieś główny wybierak kart na dół</string>
+    <string name="main_tabs_position_title">Pozycja głównych kart</string>
+    <string name="past_hour">Ostatnia godzina</string>
+    <string name="past_day">Ostatni dzień</string>
+    <string name="past_week">Ostatni tydzień</string>
+    <string name="past_month">Ostatni miesiąc</string>
+    <string name="past_year">Ostatni rok</string>
+    <string name="short_video">Krótkie</string>
+    <string name="medium_length">Średnie</string>
+    <string name="long_video">Długie</string>
+    <string name="extra_long">Bardzo długie</string>
+    <string name="upload_date">Data opublikowania</string>
+    <string name="duration">Długość</string>
+    <string name="license">Licencja</string>
+    <string name="published">Opublikowano</string>
 </resources>
