@@ -11,9 +11,13 @@ object SharedContext {
     private val mutablePlaybackMode = MutableStateFlow(PlaybackMode.VIDEO_AUDIO)
     val playbackMode: StateFlow<PlaybackMode> = mutablePlaybackMode.asStateFlow()
 
+    private val mutableMediaController = MutableStateFlow<PlatformMediaController?>(null)
+    val mediaController: StateFlow<PlatformMediaController?> = mutableMediaController.asStateFlow()
+
     var platformMediaController: PlatformMediaController? = null
         set(value) {
             field = value
+            mutableMediaController.value = value
             queueManager.attachController(value)
         }
 

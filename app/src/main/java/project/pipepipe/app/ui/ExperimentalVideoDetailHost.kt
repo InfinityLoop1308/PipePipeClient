@@ -1,26 +1,24 @@
 package project.pipepipe.app.ui
 
 import android.view.View
+import android.content.Intent
+import android.view.Gravity
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.schabi.newpipe.info_list.PipePipeComposeTheme
 import org.schabi.newpipe.util.ThemeHelper
-import project.pipepipe.app.uistate.VideoDetailPageState
+import project.pipepipe.app.service.PlaybackService
+import project.pipepipe.app.ui.screens.videodetail.VideoDetailScreen
+import project.pipepipe.app.viewmodel.VideoDetailViewModel
 
 object ExperimentalVideoDetailHost {
-    private val mutablePageState = MutableStateFlow(VideoDetailPageState.HIDDEN)
-    val pageState: StateFlow<VideoDetailPageState> = mutablePageState.asStateFlow()
+    val viewModel = VideoDetailViewModel()
 
     @JvmStatic
     fun attach(activity: AppCompatActivity, view: ComposeView) {
@@ -28,39 +26,46 @@ object ExperimentalVideoDetailHost {
             view.visibility = View.GONE
             return
         }
+        activity.startService(Intent(activity, PlaybackService::class.java))
         view.setContent {
             PipePipeComposeTheme(activity) {
-                Content()
+                VideoDetailScreen(viewModel)
             }
         }
         activity.lifecycleScope.launch {
-            pageState.collect {
-                view.visibility = if (it == VideoDetailPageState.HIDDEN) View.GONE else View.VISIBLE
+            viewModel.uiState.collectLatest {
+                view.visibility =
+                    if (it.pageState == project.pipepipe.app.uistate.VideoDetailPageState.HIDDEN) {
+                        View.GONE
+                    } else {
+                        View.VISIBLE
+                    }
+                if (it.pageState == project.pipepipe.app.uistate.VideoDetailPageState.BOTTOM_PLAYER) {
+                    delay(300)
+                    if (viewModel.uiState.value.pageState
+                        == project.pipepipe.app.uistate.VideoDetailPageState.BOTTOM_PLAYER
+                    ) {
+                        view.layoutParams = view.layoutParams.apply {
+                            height = (64 * view.resources.displayMetrics.density).toInt()
+                            if (this is CoordinatorLayout.LayoutParams) {
+                                gravity = Gravity.BOTTOM
+                            }
+                        }
+                    }
+                } else {
+                    view.layoutParams = view.layoutParams.apply {
+                        height = ViewGroup.LayoutParams.MATCH_PARENT
+                        if (this is CoordinatorLayout.LayoutParams) {
+                            gravity = Gravity.NO_GRAVITY
+                        }
+                    }
+                }
             }
         }
     }
 
-    fun showDetail() {
-        mutablePageState.value = VideoDetailPageState.DETAIL_PAGE
-    }
-
-    fun showBottomPlayer() {
-        mutablePageState.value = VideoDetailPageState.BOTTOM_PLAYER
-    }
-
-    fun showFullscreen() {
-        mutablePageState.value = VideoDetailPageState.FULLSCREEN_PLAYER
-    }
-
-    fun hide() {
-        mutablePageState.value = VideoDetailPageState.HIDDEN
-    }
-
-    @Composable
-    private fun Content() {
-        val state by pageState.collectAsState()
-        if (state != VideoDetailPageState.HIDDEN) {
-            Box(Modifier.fillMaxSize())
-        }
+    @JvmStatic
+    fun open(serviceId: Int, url: String) {
+        viewModel.open(serviceId, url)
     }
 }
