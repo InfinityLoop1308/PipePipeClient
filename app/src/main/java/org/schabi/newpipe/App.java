@@ -104,6 +104,7 @@ public class App extends MultiDexApplication {
 
         // Initialize settings first because others inits can use its values
         NewPipeSettings.initSettings(this);
+        StatusBarHelper.init(this);
 
         // Initialize Android Auto component state based on preference
         DeviceUtils.updateAndroidAutoComponentState(this);

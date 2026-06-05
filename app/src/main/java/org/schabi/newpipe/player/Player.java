@@ -492,6 +492,7 @@ public final class Player implements
 
     private void initViews(@NonNull final PlayerBinding playerBinding) {
         binding = playerBinding;
+        binding.playbackControlRoot.setFitsSystemWindows(isFullscreen);
         setupSubtitleView();
 
         binding.resizeTextView
@@ -4638,6 +4639,7 @@ public final class Player implements
         }
 
         isFullscreen = !isFullscreen;
+        binding.playbackControlRoot.setFitsSystemWindows(isFullscreen);
         if (!isFullscreen) {
             // Apply window insets because Android will not do it when orientation changes
             // from landscape to portrait (open vertical video to reproduce)

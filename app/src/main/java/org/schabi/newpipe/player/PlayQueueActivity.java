@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +18,11 @@ import android.widget.SeekBar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
+
+import com.google.android.material.appbar.AppBarLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -76,6 +81,37 @@ public final class PlayQueueActivity extends AppCompatActivity
         setContentView(queueControlBinding.getRoot());
 
         setSupportActionBar(queueControlBinding.toolbar);
+
+        queueControlBinding.appbar.setStatusBarForeground(null);
+        getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
+
+        WindowInsetsHelper.applyStatusBarInsets(this, queueControlBinding.toolbar);
+
+        ViewCompat.setOnApplyWindowInsetsListener(queueControlBinding.getRoot(), (v, insets) -> {
+            final int navBarHeight = insets.getInsets(
+                    WindowInsetsCompat.Type.navigationBars()).bottom;
+            final int twelveDp = (int) (12 * getResources()
+                    .getDisplayMetrics().density + 0.5f);
+
+            if (queueControlBinding.playbackControls != null) {
+                final ViewGroup.MarginLayoutParams controlsParams =
+                        (ViewGroup.MarginLayoutParams) queueControlBinding
+                                .playbackControls.getLayoutParams();
+                controlsParams.bottomMargin = twelveDp + navBarHeight;
+                queueControlBinding.playbackControls.setLayoutParams(controlsParams);
+            }
+
+            if (queueControlBinding.playbackControlsBottom != null) {
+                queueControlBinding.playbackControlsBottom.setPadding(
+                        queueControlBinding.playbackControlsBottom.getPaddingLeft(),
+                        queueControlBinding.playbackControlsBottom.getPaddingTop(),
+                        queueControlBinding.playbackControlsBottom.getPaddingRight(),
+                        navBarHeight);
+            }
+
+            return insets;
+        });
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(R.string.title_activity_play_queue);
