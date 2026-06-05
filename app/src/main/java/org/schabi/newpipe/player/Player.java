@@ -3559,6 +3559,8 @@ public final class Player implements
                 closeItemsList();
             }
         }
+
+        onMarkSeekbarRequested(info);
     }
 
     private void updateMetadataWith(@NonNull final StreamInfo streamInfo) {
