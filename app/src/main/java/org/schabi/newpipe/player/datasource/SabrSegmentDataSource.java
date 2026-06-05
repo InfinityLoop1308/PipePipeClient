@@ -1,7 +1,6 @@
 package org.schabi.newpipe.player.datasource;
 
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -117,14 +116,7 @@ public final class SabrSegmentDataSource implements DataSource {
     /** Block until the pump has cached this segment, or give up on a real stall / cancellation. */
     private byte[] awaitSegment(final SabrSegmentRequest request) throws IOException {
         final SabrStreamPump pump = holder.getPump(localization);
-        int waited = 0;
         while (true) {
-            if (waited > 0 && waited % 8 == 0) {
-                Log.i("SabrSeg", "WAIT itag=" + format.getItag() + " seq="
-                        + (request.isInitializationSegment() ? "init" : request.getSequenceNumber())
-                        + " sinceSeg=" + pump.millisSinceLastSegment());
-            }
-            waited++;
             if (canceled) {
                 throw new IOException("SABR segment read canceled");
             }
@@ -153,25 +145,6 @@ public final class SabrSegmentDataSource implements DataSource {
                 throw new IOException("Interrupted awaiting SABR segment", ie);
             }
         }
-    }
-
-    private static String box(final byte[] b, final int off) {
-        if (b == null || off < 0 || off + 8 > b.length) {
-            return "EOF@" + off;
-        }
-        final long size = ((b[off] & 0xFFL) << 24) | ((b[off + 1] & 0xFFL) << 16)
-                | ((b[off + 2] & 0xFFL) << 8) | (b[off + 3] & 0xFFL);
-        final String type = new String(b, off + 4, 4, java.nio.charset.StandardCharsets.US_ASCII);
-        return size + ":" + type;
-    }
-
-    private static int nextBox(final byte[] b, final int off) {
-        if (b == null || off + 8 > b.length) {
-            return b == null ? 0 : b.length;
-        }
-        final long size = ((b[off] & 0xFFL) << 24) | ((b[off + 1] & 0xFFL) << 16)
-                | ((b[off + 2] & 0xFFL) << 8) | (b[off + 3] & 0xFFL);
-        return size <= 0 ? b.length : off + (int) size;
     }
 
     @Nullable

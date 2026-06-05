@@ -196,8 +196,6 @@ final class SabrMediaPeriod implements MediaPeriod,
 
     @Override
     public long seekToUs(final long positionUs) {
-        android.util.Log.i("SabrSeek", "seekToUs=" + (positionUs / 1000) + "ms streams="
-                + streams.size());
         for (final ChunkSampleStream<SabrChunkSource> s : streams) {
             s.seekToUs(positionUs);
         }

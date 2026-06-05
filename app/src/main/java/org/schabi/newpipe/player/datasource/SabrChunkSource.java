@@ -15,7 +15,6 @@ import androidx.media3.exoplayer.source.chunk.ChunkExtractor;
 import androidx.media3.exoplayer.source.chunk.ChunkHolder;
 import androidx.media3.exoplayer.source.chunk.ChunkSource;
 import androidx.media3.exoplayer.source.chunk.ContainerMediaChunk;
-import androidx.media3.exoplayer.source.chunk.InitializationChunk;
 import androidx.media3.exoplayer.source.chunk.MediaChunk;
 import androidx.media3.exoplayer.upstream.LoadErrorHandlingPolicy;
 import androidx.media3.extractor.Extractor;
@@ -98,9 +97,6 @@ final class SabrChunkSource implements ChunkSource {
             nextSeq = (int) (queue.get(queue.size() - 1).getNextChunkIndex());
         }
         final long endSeq = holder.session.getStreamState().getEndSegment(format);
-        android.util.Log.i("SabrChunk", "itag=" + format.getItag() + " nextSeq=" + nextSeq
-                + " loadPosMs=" + (loadPositionUs / 1000) + " queue=" + queue.size()
-                + " endSeq=" + endSeq);
         if (endSeq > 0 && nextSeq > endSeq) {
             out.endOfStream = true;
             return;

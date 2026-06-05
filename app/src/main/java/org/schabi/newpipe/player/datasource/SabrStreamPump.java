@@ -121,9 +121,6 @@ final class SabrStreamPump {
                     final long edgeMs = session.getStreamState().getMinBufferedEndMs();
                     final boolean throttled = edgeMs - readerHeadMs > READAHEAD_CUSHION_MS
                             || session.getCachedBytes() > MAX_AHEAD_BYTES;
-                    Log.i(TAG, "head=" + readerHeadMs + " tail=" + holder.getReaderTailMs()
-                            + " edge=" + edgeMs + " cacheKB=" + (session.getCachedBytes() / 1024)
-                            + " throttled=" + throttled);
                     if (throttled) {
                         Thread.sleep(IDLE_POLL_MS);
                         continue;
@@ -134,7 +131,6 @@ final class SabrStreamPump {
                     // report on edge.
                     session.getStreamState().setPlayerTimeMs(edgeMs);
                     final List<SabrMediaSegment> segments = session.pumpOnce(localization);
-                    Log.i(TAG, "pumpOnce reported=" + edgeMs + " -> segs=" + segments.size());
                     if (segments.isEmpty()) {
                         Thread.sleep(IDLE_POLL_MS);
                     } else {
