@@ -18,10 +18,14 @@ import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.exoplayer.upstream.LoadErrorHandlingPolicy
 import org.schabi.newpipe.DownloaderImpl
 import org.schabi.newpipe.extractor.ServiceList
+import org.schabi.newpipe.extractor.services.youtube.dashmanifestcreators.YoutubeOtfDashManifestCreator
+import org.schabi.newpipe.extractor.services.youtube.dashmanifestcreators.YoutubePostLiveStreamDvrDashManifestCreator
+import org.schabi.newpipe.extractor.services.youtube.dashmanifestcreators.YoutubeProgressiveDashManifestCreator
 import org.schabi.newpipe.extractor.stream.AudioStream
 import org.schabi.newpipe.extractor.stream.DeliveryMethod
 import org.schabi.newpipe.extractor.stream.Stream
 import org.schabi.newpipe.extractor.stream.StreamInfo
+import org.schabi.newpipe.extractor.stream.StreamType
 import org.schabi.newpipe.extractor.stream.VideoStream
 import org.schabi.newpipe.util.ExtractorHelper
 import java.io.ByteArrayInputStream
@@ -109,6 +113,9 @@ class ExtractorMediaSourceFactory(
         stream: Stream,
         streamInfo: StreamInfo
     ): MediaSource {
+        if (streamInfo.service == ServiceList.YouTube) {
+            return createYoutubeStreamSource(mediaItem, stream, streamInfo)
+        }
         if (streamInfo.service == ServiceList.NicoNico && stream.content.contains("#cookie=")) {
             val sourceUrl = stream.content.substringBefore("#cookie=")
             val cookie = URLDecoder.decode(
@@ -132,17 +139,77 @@ class ExtractorMediaSourceFactory(
         }
     }
 
+    private fun createYoutubeStreamSource(
+        mediaItem: MediaItem,
+        stream: Stream,
+        streamInfo: StreamInfo
+    ): MediaSource {
+        if (streamInfo.streamType == StreamType.POST_LIVE_STREAM) {
+            val itag = requireNotNull(stream.itagItem)
+            val manifest = YoutubePostLiveStreamDvrDashManifestCreator
+                .fromPostLiveStreamDvrStreamingUrl(
+                    stream.content,
+                    itag,
+                    itag.targetDurationSec,
+                    streamInfo.duration
+                )
+            return createDashManifestSource(mediaItem, manifest, stream.content)
+        }
+        return when (stream.deliveryMethod) {
+            DeliveryMethod.PROGRESSIVE_HTTP -> {
+                if ((stream is VideoStream && stream.isVideoOnly()) || stream is AudioStream) {
+                    runCatching {
+                        YoutubeProgressiveDashManifestCreator.fromProgressiveStreamingUrl(
+                            stream.content,
+                            requireNotNull(stream.itagItem),
+                            streamInfo.duration
+                        )
+                    }.fold(
+                        onSuccess = { createDashManifestSource(mediaItem, it, stream.content) },
+                        onFailure = {
+                            ProgressiveMediaSource.Factory(dataSourceFactory)
+                                .createMediaSource(mediaItem.withUri(stream.content, null))
+                        }
+                    )
+                } else {
+                    ProgressiveMediaSource.Factory(dataSourceFactory)
+                        .createMediaSource(mediaItem.withUri(stream.content, null))
+                }
+            }
+            DeliveryMethod.DASH -> {
+                val manifest = YoutubeOtfDashManifestCreator.fromOtfStreamingUrl(
+                    stream.content,
+                    requireNotNull(stream.itagItem),
+                    streamInfo.duration
+                )
+                createDashManifestSource(mediaItem, manifest, stream.content)
+            }
+            DeliveryMethod.HLS -> HlsMediaSource.Factory(dataSourceFactory)
+                .createMediaSource(mediaItem.withUri(stream.content, MimeTypes.APPLICATION_M3U8))
+            else -> error("Unsupported YouTube delivery method: ${stream.deliveryMethod}")
+        }
+    }
+
     private fun createDashSource(mediaItem: MediaItem, stream: Stream): MediaSource {
         val factory = DashMediaSource.Factory(dataSourceFactory)
         if (stream.isUrl) {
             return factory.createMediaSource(mediaItem.withUri(stream.content, MimeTypes.APPLICATION_MPD))
         }
-        val manifestUri = Uri.parse(stream.manifestUrl ?: "")
+        return createDashManifestSource(mediaItem, stream.content, stream.manifestUrl ?: "")
+    }
+
+    private fun createDashManifestSource(
+        mediaItem: MediaItem,
+        manifestContent: String,
+        manifestUrl: String
+    ): MediaSource {
+        val manifestUri = Uri.parse(manifestUrl)
         val manifest = DashManifestParser().parse(
             manifestUri,
-            ByteArrayInputStream(stream.content.toByteArray(StandardCharsets.UTF_8))
+            ByteArrayInputStream(manifestContent.toByteArray(StandardCharsets.UTF_8))
         )
-        return factory.createMediaSource(manifest, mediaItem.withUri(manifestUri, MimeTypes.APPLICATION_MPD))
+        return DashMediaSource.Factory(dataSourceFactory)
+            .createMediaSource(manifest, mediaItem.withUri(manifestUri, MimeTypes.APPLICATION_MPD))
     }
 
     private fun MediaItem.withUri(uri: String, mimeType: String?): MediaItem =
