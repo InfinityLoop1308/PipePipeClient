@@ -22,6 +22,7 @@ package org.schabi.newpipe.views;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -37,9 +38,6 @@ import java.lang.annotation.Retention;
 import java.util.ArrayList;
 import java.util.List;
 
-import icepick.Icepick;
-import icepick.State;
-
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 import static org.schabi.newpipe.MainActivity.DEBUG;
 
@@ -54,7 +52,9 @@ public class CollapsibleView extends LinearLayout {
     public static final int COLLAPSED = 0;
     public static final int EXPANDED = 1;
 
-    @State
+    private static final String SUPER_STATE = "superState";
+    private static final String KEY_CURRENT_STATE = "currentState";
+
     @ViewMode
     int currentState = COLLAPSED;
     private boolean readyToChangeState;
@@ -210,12 +210,23 @@ public class CollapsibleView extends LinearLayout {
     @Nullable
     @Override
     public Parcelable onSaveInstanceState() {
-        return Icepick.saveInstanceState(this, super.onSaveInstanceState());
+        Parcelable superState = super.onSaveInstanceState();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(SUPER_STATE, superState);
+        bundle.putInt(KEY_CURRENT_STATE, currentState);
+        return bundle;
     }
 
     @Override
     public void onRestoreInstanceState(final Parcelable state) {
-        super.onRestoreInstanceState(Icepick.restoreInstanceState(this, state));
+        if (state instanceof Bundle) {
+            Bundle bundle = (Bundle) state;
+            currentState = bundle.getInt(KEY_CURRENT_STATE, COLLAPSED);
+            Parcelable superState = bundle.getParcelable(SUPER_STATE);
+            super.onRestoreInstanceState(superState);
+        } else {
+            super.onRestoreInstanceState(state);
+        }
 
         ready();
     }

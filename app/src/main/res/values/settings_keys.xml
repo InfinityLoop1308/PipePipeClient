@@ -1731,4 +1731,5 @@
     <string name="use_experimental_new_ui_key">use_experimental_new_ui</string>
     <string name="force_end_on_overtime_key">force_end_on_overtime</string>
     <string name="use_old_search_filter_key">use_old_search_filter</string>
+    <string name="main_tabs_position_key">main_tabs_position</string>
 </resources>

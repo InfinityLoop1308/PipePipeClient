@@ -954,4 +954,6 @@ Voulez-vous continuer?</string>
 <string name="force_end_on_overtime_summary">Forcer l\'arrêt de la lecture lorsque la position actuelle dépasse la durée du flux, comme solution de contournement pour les flux qui ne s\'arrêtent pas naturellement</string>
 <string name="use_old_search_filter_title">Utiliser l\'ancien filtre de recherche</string>
 <string name="use_old_search_filter_summary">Utiliser l\'ancien filtre de recherche basé sur un menu au lieu de la nouvelle interface de dialogue</string>
+<string name="main_tabs_position_summary">Déplacer le sélecteur d\'onglets principaux vers le bas</string>
+<string name="main_tabs_position_title">Position des onglets principaux</string>
 </resources>

@@ -937,4 +937,6 @@
 <string name="force_end_on_overtime_summary">Erzwingt das Ende der Wiedergabe, wenn die aktuelle Position die Stream-Dauer überschreitet, als Workaround für Streams, die nicht natürlich stoppen</string>
 <string name="use_old_search_filter_title">Alten Suchfilter verwenden</string>
 <string name="use_old_search_filter_summary">Verwenden Sie den alten menübasierten Suchfilter anstelle der neuen Dialog-UI</string>
+<string name="main_tabs_position_summary">Haupt-Tab-Auswahl nach unten verschieben</string>
+<string name="main_tabs_position_title">Position der Haupt-Tabs</string>
 </resources>

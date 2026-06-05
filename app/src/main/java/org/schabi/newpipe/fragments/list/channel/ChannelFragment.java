@@ -41,7 +41,6 @@ import org.schabi.newpipe.util.external_communication.ShareUtils;
 import java.util.List;
 import java.util.Queue;
 
-import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -51,11 +50,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class ChannelFragment extends BaseStateFragment<ChannelInfo>
         implements StateSaver.WriteRead {
-    @State
     protected int serviceId = Constants.NO_SERVICE_ID;
-    @State
     protected String name;
-    @State
     protected String url;
 
     protected org.schabi.newpipe.util.SavedState savedState;
@@ -137,6 +133,9 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
     public void onSaveInstanceState(final @NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("LastTab", binding == null ? lastTab: binding.tabLayout.getSelectedTabPosition());
+        outState.putInt("serviceId", serviceId);
+        outState.putString("name", name);
+        outState.putString("url", url);
         savedState = StateSaver
                 .tryToSave(activity.isChangingConfigurations(), savedState, outState, this);
     }
@@ -144,6 +143,9 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
     @Override
     protected void onRestoreInstanceState(@NonNull final Bundle bundle) {
         super.onRestoreInstanceState(bundle);
+        serviceId = bundle.getInt("serviceId", Constants.NO_SERVICE_ID);
+        name = bundle.getString("name");
+        url = bundle.getString("url");
         savedState = StateSaver.tryToRestore(bundle, this);
     }
     @Override
@@ -181,34 +183,28 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_item_notify:
-                final boolean value = !item.isChecked();
-                item.setEnabled(false);
-                setNotify(value);
-                break;
-            case R.id.action_settings:
-                NavigationHelper.openSettings(requireContext());
-                break;
-            case R.id.menu_item_rss:
-                if (currentInfo != null) {
-                    ShareUtils.openUrlInBrowser(
-                            requireContext(), currentInfo.getFeedUrl(), false);
-                }
-                break;
-            case R.id.menu_item_openInBrowser:
-                if (currentInfo != null) {
-                    ShareUtils.openUrlInBrowser(requireContext(), currentInfo.getOriginalUrl());
-                }
-                break;
-            case R.id.menu_item_share:
-                if (currentInfo != null) {
-                    ShareUtils.shareText(requireContext(), name, currentInfo.getOriginalUrl(),
-                            currentInfo.getAvatarUrl());
-                }
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.menu_item_notify) {
+            final boolean value = !item.isChecked();
+            item.setEnabled(false);
+            setNotify(value);
+        } else if (item.getItemId() == R.id.action_settings) {
+            NavigationHelper.openSettings(requireContext());
+        } else if (item.getItemId() == R.id.menu_item_rss) {
+            if (currentInfo != null) {
+                ShareUtils.openUrlInBrowser(
+                        requireContext(), currentInfo.getFeedUrl(), false);
+            }
+        } else if (item.getItemId() == R.id.menu_item_openInBrowser) {
+            if (currentInfo != null) {
+                ShareUtils.openUrlInBrowser(requireContext(), currentInfo.getOriginalUrl());
+            }
+        } else if (item.getItemId() == R.id.menu_item_share) {
+            if (currentInfo != null) {
+                ShareUtils.shareText(requireContext(), name, currentInfo.getOriginalUrl(),
+                        currentInfo.getAvatarUrl());
+            }
+        } else {
+            return super.onOptionsItemSelected(item);
         }
         return true;
     }

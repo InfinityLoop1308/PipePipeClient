@@ -27,7 +27,6 @@ import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.util.KioskTranslator;
 import org.schabi.newpipe.util.Localization;
 
-import icepick.State;
 import io.reactivex.rxjava3.core.Single;
 
 /**
@@ -55,10 +54,8 @@ import io.reactivex.rxjava3.core.Single;
  */
 
 public class KioskFragment extends BaseListInfoFragment<StreamInfoItem, KioskInfo> {
-    @State
     String kioskId = "";
     String kioskTranslatedName;
-    @State
     ContentCountry contentCountry;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -84,6 +81,20 @@ public class KioskFragment extends BaseListInfoFragment<StreamInfoItem, KioskInf
 
     public KioskFragment() {
         super(UserAction.REQUESTED_KIOSK);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("kioskId", kioskId);
+        outState.putSerializable("contentCountry", contentCountry);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        kioskId = savedInstanceState.getString("kioskId", "");
+        contentCountry = (ContentCountry) savedInstanceState.getSerializable("contentCountry");
     }
 
     /*//////////////////////////////////////////////////////////////////////////

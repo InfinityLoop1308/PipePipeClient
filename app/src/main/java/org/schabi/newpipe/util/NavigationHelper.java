@@ -347,11 +347,13 @@ public final class NavigationHelper {
     }
 
     public static void expandMainPlayer(final Context context) {
-        context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_SHOW_MAIN_PLAYER));
+        context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_SHOW_MAIN_PLAYER)
+                .setPackage(context.getPackageName()));
     }
 
     public static void sendPlayerStartedEvent(final Context context) {
-        context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_PLAYER_STARTED));
+        context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_PLAYER_STARTED)
+                .setPackage(context.getPackageName()));
     }
 
     public static void showMiniPlayer(final FragmentManager fragmentManager) {

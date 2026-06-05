@@ -931,4 +931,6 @@
 <string name="force_end_on_overtime_summary">Forza l\'interruzione della riproduzione quando la posizione corrente supera la durata dello stream, come soluzione alternativa per gli stream che non si interrompono naturalmente</string>
 <string name="use_old_search_filter_title">Usa il vecchio filtro di ricerca</string>
 <string name="use_old_search_filter_summary">Usa il vecchio filtro di ricerca basato su menu invece della nuova interfaccia utente a finestra di dialogo</string>
+<string name="main_tabs_position_summary">Sposta il selettore delle schede principali in basso</string>
+<string name="main_tabs_position_title">Posizione delle schede principali</string>
 </resources>

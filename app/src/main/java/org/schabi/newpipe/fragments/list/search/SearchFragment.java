@@ -77,7 +77,6 @@ import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
@@ -107,11 +106,9 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     private static final int SUGGESTIONS_DEBOUNCE = 120; //ms
     private final PublishSubject<String> suggestionPublisher = PublishSubject.create();
 
-    @State
     protected int serviceId = Constants.NO_SERVICE_ID;
 
     // these three represents the current search query
-    @State
     String searchString;
 
     /**
@@ -123,19 +120,14 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     ArrayList<FilterItem> selectedSortFilter;
 
     // these represents the last search
-    @State
     String lastSearchedString;
 
-    @State
     String searchSuggestion;
 
-    @State
     boolean isCorrectedSearch;
 
-    @State
     MetaInfo[] metaInfo;
 
-    @State
     boolean wasSearchFocused = false;
 
     private StreamingService service;
@@ -172,10 +164,8 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
 
     private TextWatcher textWatcher;
 
-    @State
     public ArrayList<Integer> userSelectedContentFilterList;
 
-    @State
     ArrayList<Integer> userSelectedSortFilterList = null;
 
     public static SearchFragment getInstance(final int serviceId, final String searchString) {
@@ -448,6 +438,29 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         }
 
         super.onSaveInstanceState(bundle);
+        bundle.putInt("serviceId", serviceId);
+        bundle.putString("searchString", searchString);
+        bundle.putString("lastSearchedString", lastSearchedString);
+        bundle.putString("searchSuggestion", searchSuggestion);
+        bundle.putBoolean("isCorrectedSearch", isCorrectedSearch);
+        bundle.putSerializable("metaInfo", metaInfo);
+        bundle.putBoolean("wasSearchFocused", wasSearchFocused);
+        bundle.putIntegerArrayList("userSelectedContentFilterList", userSelectedContentFilterList);
+        bundle.putIntegerArrayList("userSelectedSortFilterList", userSelectedSortFilterList);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        serviceId = savedInstanceState.getInt("serviceId", Constants.NO_SERVICE_ID);
+        searchString = savedInstanceState.getString("searchString");
+        lastSearchedString = savedInstanceState.getString("lastSearchedString");
+        searchSuggestion = savedInstanceState.getString("searchSuggestion");
+        isCorrectedSearch = savedInstanceState.getBoolean("isCorrectedSearch", false);
+        metaInfo = (MetaInfo[]) savedInstanceState.getSerializable("metaInfo");
+        wasSearchFocused = savedInstanceState.getBoolean("wasSearchFocused", false);
+        userSelectedContentFilterList = savedInstanceState.getIntegerArrayList("userSelectedContentFilterList");
+        userSelectedSortFilterList = savedInstanceState.getIntegerArrayList("userSelectedSortFilterList");
     }
 
     /*//////////////////////////////////////////////////////////////////////////

@@ -15,8 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
-import icepick.Icepick;
-import icepick.State;
 import io.reactivex.rxjava3.core.Single;
 import org.schabi.newpipe.BaseFragment;
 import org.schabi.newpipe.R;
@@ -32,12 +30,9 @@ public class SponsorBlockFragment
         extends BaseFragment
         implements CompoundButton.OnCheckedChangeListener,
         SponsorBlockSegmentListAdapterListener {
-    @State
     StreamInfo streamInfo = null;
     FragmentSponsorBlockBinding binding;
-    @State
     Integer markedStartTime = null;
-    @State
     Integer markedEndTime = null;
     private SponsorBlockSegmentListAdapter segmentListAdapter;
     private int currentProgress = -1;
@@ -280,14 +275,26 @@ public class SponsorBlockFragment
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        Icepick.saveInstanceState(this, outState);
+        outState.putSerializable("streamInfo", streamInfo);
+        if (markedStartTime != null) {
+            outState.putInt("markedStartTime", markedStartTime);
+        }
+        if (markedEndTime != null) {
+            outState.putInt("markedEndTime", markedEndTime);
+        }
     }
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState != null) {
-            Icepick.restoreInstanceState(this, savedInstanceState);
+            streamInfo = (StreamInfo) savedInstanceState.getSerializable("streamInfo");
+            if (savedInstanceState.containsKey("markedStartTime")) {
+                markedStartTime = savedInstanceState.getInt("markedStartTime");
+            }
+            if (savedInstanceState.containsKey("markedEndTime")) {
+                markedEndTime = savedInstanceState.getInt("markedEndTime");
+            }
         }
         refreshSponsorBlockSegments();
         updatePendingSegmentUI();

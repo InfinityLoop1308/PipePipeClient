@@ -229,44 +229,37 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                NavigationHelper.openSettings(requireContext());
-                break;
-            case R.id.menu_item_openInBrowser:
-                ShareUtils.openUrlInBrowser(requireContext(), url);
-                break;
-            case R.id.menu_item_share:
-                if (currentInfo != null) {
-                    ShareUtils.shareText(requireContext(), name, url,
-                            currentInfo.getThumbnailUrl());
-                }
-                break;
-            case R.id.menu_item_bookmark:
-                onBookmarkClicked();
-                break;
-            case R.id.menu_item_append_playlist:
-                if(isInfinitePlayList) {
-                    // Popup a dialog to tell user explicitly that infinite playlist cannot be appended
-                    new AlertDialog.Builder(requireContext())
-                            .setTitle(R.string.add_failed)
-                            .setMessage(R.string.append_playlist_not_supported)
-                            .setPositiveButton(R.string.ok, null)
-                            .show();
-                    return true;
-                }
-                disposables.add(PlaylistDialog.createCorrespondingDialog(
-                        getContext(),
-                        getPlayQueue()
-                                .getStreams()
-                                .stream()
-                                .map(StreamEntity::new)
-                                .collect(Collectors.toList()),
-                        dialog -> dialog.show(getFM(), TAG)
-                ));
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.action_settings) {
+            NavigationHelper.openSettings(requireContext());
+        } else if (item.getItemId() == R.id.menu_item_openInBrowser) {
+            ShareUtils.openUrlInBrowser(requireContext(), url);
+        } else if (item.getItemId() == R.id.menu_item_share) {
+            if (currentInfo != null) {
+                ShareUtils.shareText(requireContext(), name, url,
+                        currentInfo.getThumbnailUrl());
+            }
+        } else if (item.getItemId() == R.id.menu_item_bookmark) {
+            onBookmarkClicked();
+        } else if (item.getItemId() == R.id.menu_item_append_playlist) {
+            if(isInfinitePlayList) {
+                new AlertDialog.Builder(requireContext())
+                        .setTitle(R.string.add_failed)
+                        .setMessage(R.string.append_playlist_not_supported)
+                        .setPositiveButton(R.string.ok, null)
+                        .show();
+                return true;
+            }
+            disposables.add(PlaylistDialog.createCorrespondingDialog(
+                    getContext(),
+                    getPlayQueue()
+                            .getStreams()
+                            .stream()
+                            .map(StreamEntity::new)
+                            .collect(Collectors.toList()),
+                    dialog -> dialog.show(getFM(), TAG)
+            ));
+        } else {
+            return super.onOptionsItemSelected(item);
         }
         return true;
     }

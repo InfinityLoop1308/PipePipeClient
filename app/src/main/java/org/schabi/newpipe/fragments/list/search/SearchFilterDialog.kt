@@ -98,7 +98,6 @@ class SearchFilterDialog : DialogFragment() {
         val searchQuery = requireArguments().getString(ARG_SEARCH_QUERY).orEmpty()
         val callback = parentFragment as? Callback ?: activity as? Callback
         val context = requireContext()
-        val appContext = requireContext().applicationContext
 
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
@@ -110,7 +109,7 @@ class SearchFilterDialog : DialogFragment() {
                         initialContentFilterId = selectedContentFilterId,
                         initialSortFilterIds = selectedSortFilterIds,
                         searchQuery = searchQuery,
-                        appContext = appContext,
+                        context = context,
                         onApply = { serviceId, contentFilterId, sortFilterIds ->
                             callback?.onSearchFilterSelected(
                                 serviceId,
@@ -299,7 +298,7 @@ private fun FilterCard(
     initialContentFilterId: Int,
     initialSortFilterIds: List<Int>,
     searchQuery: String,
-    appContext: android.content.Context,
+    context: android.content.Context,
     onApply: (Int, Int, Set<Int>) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -351,7 +350,7 @@ private fun FilterCard(
                 ) {
                     FilterContent(
                         state = state,
-                        appContext = appContext,
+                        context = context,
                         onContentFilterChange = { filterId ->
                             state = createState(state.serviceId, filterId, emptySet())
                         },
@@ -520,7 +519,7 @@ private fun isYouTubeMusicFilter(filterItem: FilterItem): Boolean {
 @Composable
 private fun FilterContent(
     state: FilterUiState,
-    appContext: android.content.Context,
+    context: android.content.Context,
     onContentFilterChange: (Int) -> Unit,
     onSortFilterToggle: (FilterGroup, FilterItem) -> Unit
 ) {
@@ -565,7 +564,7 @@ private fun FilterContent(
                         onClick = { onContentFilterChange(contentFilter.identifier) }
                     )
                     Text(
-                        text = ServiceHelper.getTranslatedFilterString(contentFilter.name, appContext),
+                        text = ServiceHelper.getTranslatedFilterString(contentFilter.name, context),
                         style = MaterialTheme.typography.bodyMedium,
                         color = if (isSelected) {
                             MaterialTheme.colorScheme.onPrimaryContainer
@@ -601,7 +600,7 @@ private fun FilterContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = ServiceHelper.getTranslatedFilterString(groupName, appContext),
+                        text = ServiceHelper.getTranslatedFilterString(groupName, context),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -637,7 +636,7 @@ private fun FilterContent(
                                         Text(
                                             text = ServiceHelper.getTranslatedFilterString(
                                                 filterItem.name,
-                                                appContext
+                                                context
                                             ),
                                             style = MaterialTheme.typography.bodyMedium
                                         )

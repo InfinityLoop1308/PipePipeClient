@@ -960,4 +960,6 @@
 <string name="force_end_on_overtime_summary">自然に停止しないストリームの回避策として、現在の再生位置がストリームの再生時間を超えた場合に再生を強制終了します</string>
 <string name="use_old_search_filter_title">従来の検索フィルターを使用する</string>
 <string name="use_old_search_filter_summary">新しいダイアログUIではなく、従来のメニューベースの検索フィルターを使用します</string>
+<string name="main_tabs_position_summary">メインタブセレクタを下部に移動</string>
+<string name="main_tabs_position_title">メインタブの位置</string>
 </resources>

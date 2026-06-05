@@ -993,4 +993,6 @@
 <string name="force_end_on_overtime_summary">Forzar el fin de la reproducción cuando la posición actual supere la duración de la transmisión, como solución alternativa para las transmisiones que no se detienen de forma natural</string>
 <string name="use_old_search_filter_title">Usar filtro de búsqueda antiguo</string>
 <string name="use_old_search_filter_summary">Usar el antiguo filtro de búsqueda basado en menús en lugar de la nueva interfaz de diálogo</string>
+<string name="main_tabs_position_summary">Mover el selector de pestañas principales a la parte inferior</string>
+<string name="main_tabs_position_title">Posición de las pestañas principales</string>
 </resources>

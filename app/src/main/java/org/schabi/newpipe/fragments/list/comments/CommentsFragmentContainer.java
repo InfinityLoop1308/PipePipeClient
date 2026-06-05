@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -18,15 +19,10 @@ import org.schabi.newpipe.util.Constants;
 import java.io.IOException;
 import java.util.Objects;
 
-import icepick.State;
-
 public class CommentsFragmentContainer extends BaseFragment {
 
-    @State
     protected int serviceId = Constants.NO_SERVICE_ID;
-    @State
     protected String url;
-    @State
     protected String name;
 
     public static CommentsFragmentContainer getInstance(
@@ -36,6 +32,22 @@ public class CommentsFragmentContainer extends BaseFragment {
         fragment.url = url;
         fragment.name = name;
         return fragment;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("serviceId", serviceId);
+        outState.putString("url", url);
+        outState.putString("name", name);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        serviceId = savedInstanceState.getInt("serviceId", Constants.NO_SERVICE_ID);
+        url = savedInstanceState.getString("url");
+        name = savedInstanceState.getString("name");
     }
 
     @Override

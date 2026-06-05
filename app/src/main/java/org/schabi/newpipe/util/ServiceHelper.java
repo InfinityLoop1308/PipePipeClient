@@ -97,6 +97,12 @@ public final class ServiceHelper {
                 return c.getString(R.string.sortorder);
             case "features":
                 return c.getString(R.string.features);
+            case "latest":
+                return c.getString(R.string.newest_first);
+            case "popular":
+                return c.getString(R.string.sort_popular);
+            case "oldest":
+                return c.getString(R.string.oldest_first);
             case "sort_popular":
                 return c.getString(R.string.sort_popular);
             case "sort_view":
@@ -125,6 +131,38 @@ public final class ServiceHelper {
                 return c.getString(R.string.sort_rating);
             case "sort_ascending":
                 return c.getString(R.string.sort_ascending);
+            case "past_hour":
+                return c.getString(R.string.past_hour);
+            case "past_day":
+                return c.getString(R.string.past_day);
+            case "past_week":
+                return c.getString(R.string.past_week);
+            case "past_month":
+                return c.getString(R.string.past_month);
+            case "past_year":
+                return c.getString(R.string.past_year);
+            case "short_video":
+                return c.getString(R.string.short_video);
+            case "medium_length":
+                return c.getString(R.string.medium_length);
+            case "long_video":
+                return c.getString(R.string.long_video);
+            case "extra_long":
+                return c.getString(R.string.extra_long);
+            case "upload_date":
+                return c.getString(R.string.upload_date);
+            case "duration":
+                return c.getString(R.string.duration);
+            case "license":
+                return c.getString(R.string.license);
+            case "published":
+                return c.getString(R.string.published);
+            case "name":
+                return c.getString(R.string.name);
+            case "yes":
+                return c.getString(R.string.yes);
+            case "no":
+                return c.getString(R.string.no);
             default:
                 return filter;
         }

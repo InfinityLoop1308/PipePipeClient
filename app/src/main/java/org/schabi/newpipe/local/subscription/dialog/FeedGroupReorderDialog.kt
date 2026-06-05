@@ -13,8 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.xwray.groupie.GroupieAdapter
 import com.xwray.groupie.TouchCallback
-import icepick.Icepick
-import icepick.State
 import org.schabi.newpipe.R
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.databinding.DialogFeedGroupReorderBinding
@@ -34,7 +32,6 @@ class FeedGroupReorderDialog : DialogFragment() {
 
     private lateinit var viewModel: FeedGroupReorderDialogViewModel
 
-    @State
     @JvmField
     var groupOrderedIdList = ArrayList<Long>()
     private val groupAdapter = GroupieAdapter()
@@ -42,7 +39,9 @@ class FeedGroupReorderDialog : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Icepick.restoreInstanceState(this, savedInstanceState)
+        if (savedInstanceState != null) {
+            groupOrderedIdList = ArrayList(savedInstanceState.getLongArray("groupOrderedIdList")?.toList() ?: emptyList())
+        }
 
         setStyle(STYLE_NO_TITLE, ThemeHelper.getMinWidthDialogTheme(requireContext()))
     }
@@ -80,7 +79,7 @@ class FeedGroupReorderDialog : DialogFragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        Icepick.saveInstanceState(this, outState)
+        outState.putLongArray("groupOrderedIdList", groupOrderedIdList.toLongArray())
     }
 
     private fun handleGroups(list: List<FeedGroupEntity>) {

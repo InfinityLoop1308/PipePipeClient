@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.SparseArray;
 import androidx.preference.PreferenceManager;
-import icepick.State;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.ServiceList;
@@ -22,22 +21,16 @@ import java.io.IOException;
 // Keep for BiliBili video case if it writes to outputstream directly
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static org.schabi.newpipe.util.FilenameUtils.createFilename;
 
 public class DirectDownloader {
 
     Context context;
-    @State
     StreamInfo currentInfo;
-    @State
     StreamItemAdapter.StreamSizeWrapper<AudioStream> wrappedAudioStreams = StreamItemAdapter.StreamSizeWrapper.empty();
-    @State
     StreamItemAdapter.StreamSizeWrapper<VideoStream> wrappedVideoStreams = StreamItemAdapter.StreamSizeWrapper.empty();
-    @State
     int selectedVideoIndex = 0;
-    @State
     int selectedAudioIndex = 0;
 
     private StreamItemAdapter<AudioStream, Stream> audioStreamsAdapter;
@@ -63,7 +56,10 @@ public class DirectDownloader {
 
         this.setVideoStreams(filteredVideoStreams);
         this.setSelectedVideoStream(selectedStreamIndex >= 0 ? selectedStreamIndex : 0);
-        this.setAudioStreams(ListHelper.filterDownloadableAudioStreams(info.getAudioStreams()));
+        final List<AudioStream> downloadableAudio = ListHelper
+                .filterDownloadableAudioStreams(info.getAudioStreams());
+        HlsDownloadStreamHelper.addAudioFallbackIfNeeded(downloadableAudio, info);
+        this.setAudioStreams(downloadableAudio);
         this.setInfo(info);
         this.type = type;
         this.context = context;
@@ -267,10 +263,14 @@ public class DirectDownloader {
                     new MissionRecoveryInfo(secondaryStream)};
         }
 
-        resourceDeliveryMethods = buildResourceDeliveryMethods(selectedStream, secondaryStream);
-        resourceManifestUrls = buildResourceManifestUrls(selectedStream, secondaryStream);
-        resourceIsUrls = buildResourceIsUrls(selectedStream, secondaryStream);
-        if (containsHlsResource(resourceDeliveryMethods, resourceManifestUrls, urls)) {
+        resourceDeliveryMethods = HlsDownloadStreamHelper
+                .buildResourceDeliveryMethods(selectedStream, secondaryStream);
+        resourceManifestUrls = HlsDownloadStreamHelper
+                .buildResourceManifestUrls(selectedStream, secondaryStream);
+        resourceIsUrls = HlsDownloadStreamHelper
+                .buildResourceIsUrls(selectedStream, secondaryStream);
+        if (HlsDownloadStreamHelper.containsHlsResource(resourceDeliveryMethods,
+                resourceManifestUrls, urls)) {
             psName = null;
             psArgs = null;
         }
@@ -278,57 +278,5 @@ public class DirectDownloader {
         DownloadManagerService.startMission(context, urls, storage, kind, threads,
                 currentInfo.getUrl(), psName, psArgs, nearLength, recoveryInfo,
                 resourceDeliveryMethods, resourceManifestUrls, resourceIsUrls);
-    }
-
-    private String[] buildResourceDeliveryMethods(final Stream selectedStream,
-                                                  final Stream secondaryStream) {
-        if (secondaryStream == null) {
-            return new String[]{selectedStream.getDeliveryMethod().name()};
-        }
-        return new String[]{
-                selectedStream.getDeliveryMethod().name(),
-                secondaryStream.getDeliveryMethod().name()
-        };
-    }
-
-    private String[] buildResourceManifestUrls(final Stream selectedStream,
-                                               final Stream secondaryStream) {
-        if (secondaryStream == null) {
-            return new String[]{selectedStream.getManifestUrl()};
-        }
-        return new String[]{selectedStream.getManifestUrl(), secondaryStream.getManifestUrl()};
-    }
-
-    private boolean[] buildResourceIsUrls(final Stream selectedStream,
-                                          final Stream secondaryStream) {
-        if (secondaryStream == null) {
-            return new boolean[]{selectedStream.isUrl()};
-        }
-        return new boolean[]{selectedStream.isUrl(), secondaryStream.isUrl()};
-    }
-
-    private boolean containsHlsResource(final String[] deliveryMethods,
-                                        final String[] manifestUrls,
-                                        final String[] urls) {
-        for (final String method : deliveryMethods) {
-            if ("HLS".equals(method)) {
-                return true;
-            }
-        }
-        for (final String manifestUrl : manifestUrls) {
-            if (looksLikeHls(manifestUrl)) {
-                return true;
-            }
-        }
-        for (final String url : urls) {
-            if (looksLikeHls(url)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean looksLikeHls(final String value) {
-        return value != null && value.toLowerCase(Locale.ROOT).contains(".m3u8");
     }
 }

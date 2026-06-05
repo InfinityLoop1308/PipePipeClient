@@ -141,10 +141,15 @@ public class DownloadMissionRecover extends Thread {
         switch (mRecovery.getKind()) {
             case 'a':
                 for (AudioStream audio : mExtractor.getAudioStreams()) {
-                    if (audio.getAverageBitrate() == mRecovery.getDesiredBitrate() && audio.getFormat() == mRecovery.getFormat()) {
+                    if (matchesAudioRecovery(audio)) {
                         resolvedStream = audio;
                         break;
                     }
+                }
+                if (resolvedStream == null && mRecovery.isHls()) {
+                    resolvedStream = HlsDownloadStreamHelper.createAudioFallback(
+                            mExtractor.getVideoStreams(), mExtractor.getHlsUrl(),
+                            mRecovery.getAudioTrackId());
                 }
                 break;
             case 'v':
@@ -223,6 +228,22 @@ public class DownloadMissionRecover extends Thread {
         } finally {
             disconnect();
         }
+    }
+
+    private boolean matchesAudioRecovery(final AudioStream audio) {
+        if (audio.getFormat() != mRecovery.getFormat()) {
+            return false;
+        }
+
+        if (mRecovery.isHls()) {
+            if (audio.getDeliveryMethod() != org.schabi.newpipe.extractor.stream.DeliveryMethod.HLS) {
+                return false;
+            }
+            final String audioTrackId = mRecovery.getAudioTrackId();
+            return audioTrackId == null || audioTrackId.equals(audio.getAudioTrackId());
+        }
+
+        return audio.getAverageBitrate() == mRecovery.getDesiredBitrate();
     }
 
     private void recover(Stream stream, boolean stale) {

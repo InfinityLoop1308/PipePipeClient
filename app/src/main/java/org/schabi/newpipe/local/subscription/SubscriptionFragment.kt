@@ -17,7 +17,6 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.Section
 import com.xwray.groupie.viewbinding.GroupieViewHolder
-import icepick.State
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import org.schabi.newpipe.R
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
@@ -71,13 +70,10 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
     private val requestImportLauncher =
         registerForActivityResult(StartActivityForResult(), this::requestImportResult)
 
-    @State
     @JvmField
     var itemsListState: Parcelable? = null
-    @State
     @JvmField
     var feedGroupsListState: Parcelable? = null
-    @State
     @JvmField
     var importExportItemExpandedState: Boolean? = null
 
@@ -124,6 +120,20 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
         if (subscriptionBroadcastReceiver != null && activity != null) {
             LocalBroadcastManager.getInstance(activity).unregisterReceiver(subscriptionBroadcastReceiver!!)
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        itemsListState?.let { outState.putParcelable("itemsListState", it) }
+        feedGroupsListState?.let { outState.putParcelable("feedGroupsListState", it) }
+        importExportItemExpandedState?.let { outState.putBoolean("importExportItemExpandedState", it) }
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        itemsListState = savedInstanceState.getParcelable("itemsListState")
+        feedGroupsListState = savedInstanceState.getParcelable("feedGroupsListState")
+        importExportItemExpandedState = if (savedInstanceState.containsKey("importExportItemExpandedState")) savedInstanceState.getBoolean("importExportItemExpandedState") else null
     }
 
     override fun onDestroy() {

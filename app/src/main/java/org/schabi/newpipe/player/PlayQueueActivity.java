@@ -114,41 +114,40 @@ public final class PlayQueueActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            case R.id.action_settings:
-                NavigationHelper.openSettings(this);
-                return true;
-            case R.id.action_append_playlist:
-                player.onAddToPlaylistClicked(getSupportFragmentManager());
-                return true;
-            case R.id.action_playback_speed:
-                openPlaybackParameterDialog();
-                return true;
-            case R.id.action_mute:
-                player.onMuteUnmuteButtonClicked();
-                return true;
-            case R.id.action_system_audio:
-                startActivity(new Intent(Settings.ACTION_SOUND_SETTINGS));
-                return true;
-            case R.id.action_switch_main:
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        } else if (item.getItemId() == R.id.action_settings) {
+            NavigationHelper.openSettings(this);
+            return true;
+        } else if (item.getItemId() == R.id.action_append_playlist) {
+            player.onAddToPlaylistClicked(getSupportFragmentManager());
+            return true;
+        } else if (item.getItemId() == R.id.action_playback_speed) {
+            openPlaybackParameterDialog();
+            return true;
+        } else if (item.getItemId() == R.id.action_mute) {
+            player.onMuteUnmuteButtonClicked();
+            return true;
+        } else if (item.getItemId() == R.id.action_system_audio) {
+            startActivity(new Intent(Settings.ACTION_SOUND_SETTINGS));
+            return true;
+        } else if (item.getItemId() == R.id.action_switch_main) {
+            this.player.setRecovery();
+            NavigationHelper.playOnMainPlayer(this, player.getPlayQueue(), true);
+            return true;
+        } else if (item.getItemId() == R.id.action_switch_popup) {
+            if (PermissionHelper.isPopupEnabled(this)) {
                 this.player.setRecovery();
-                NavigationHelper.playOnMainPlayer(this, player.getPlayQueue(), true);
-                return true;
-            case R.id.action_switch_popup:
-                if (PermissionHelper.isPopupEnabled(this)) {
-                    this.player.setRecovery();
-                    NavigationHelper.playOnPopupPlayer(this, player.getPlayQueue(), true);
-                } else {
-                    PermissionHelper.showPopupEnablementToast(this);
-                }
-                return true;
-            case R.id.action_switch_background:
-                this.player.setRecovery();
-                NavigationHelper.playOnBackgroundPlayer(this, player.getPlayQueue(), true);
-                return true;
+                NavigationHelper.playOnPopupPlayer(this, player.getPlayQueue(), true);
+            } else {
+                PermissionHelper.showPopupEnablementToast(this);
+            }
+            return true;
+        } else if (item.getItemId() == R.id.action_switch_background) {
+            this.player.setRecovery();
+            NavigationHelper.playOnBackgroundPlayer(this, player.getPlayQueue(), true);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

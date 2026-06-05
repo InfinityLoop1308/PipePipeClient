@@ -634,35 +634,8 @@ public class DownloadMission extends Mission {
     }
 
     boolean hasHlsResource() {
-        if (resourceDeliveryMethods != null) {
-            for (String method : resourceDeliveryMethods) {
-                if ("HLS".equals(method)) {
-                    return true;
-                }
-            }
-        }
-
-        if (urls != null) {
-            for (String url : urls) {
-                if (looksLikeHls(url)) {
-                    return true;
-                }
-            }
-        }
-
-        if (resourceManifestUrls != null) {
-            for (String url : resourceManifestUrls) {
-                if (looksLikeHls(url)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    private boolean looksLikeHls(String url) {
-        return url != null && url.toLowerCase().contains(".m3u8");
+        return HlsDownloadStreamHelper.containsHlsResource(resourceDeliveryMethods,
+                resourceManifestUrls, urls);
     }
 
     /**

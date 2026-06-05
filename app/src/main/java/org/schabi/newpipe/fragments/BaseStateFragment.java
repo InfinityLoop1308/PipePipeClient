@@ -18,12 +18,9 @@ import org.schabi.newpipe.util.InfoCache;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import icepick.State;
-
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 
 public abstract class BaseStateFragment<I> extends BaseFragment implements ViewContract<I> {
-    @State
     protected AtomicBoolean wasLoading = new AtomicBoolean();
     protected AtomicBoolean isLoading = new AtomicBoolean();
 
@@ -34,13 +31,26 @@ public abstract class BaseStateFragment<I> extends BaseFragment implements ViewC
 
     private ErrorPanelHelper errorPanelHelper;
     @Nullable
-    @State
     protected ErrorInfo lastPanelError = null;
 
     @Override
     public void onViewCreated(@NonNull final View rootView, final Bundle savedInstanceState) {
         super.onViewCreated(rootView, savedInstanceState);
         doInitialLoadLogic();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("wasLoading", wasLoading.get());
+        outState.putParcelable("lastPanelError", lastPanelError);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        wasLoading = new AtomicBoolean(savedInstanceState.getBoolean("wasLoading", false));
+        lastPanelError = savedInstanceState.getParcelable("lastPanelError");
     }
 
     @Override

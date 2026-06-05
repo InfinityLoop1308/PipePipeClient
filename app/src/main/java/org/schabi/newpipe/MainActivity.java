@@ -341,22 +341,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean drawerItemSelected(final MenuItem item) {
-        switch (item.getGroupId()) {
-            case R.id.menu_services_group:
-                changeService(item);
-                break;
-            case R.id.menu_tabs_group:
-                try {
-                    tabSelected(item);
-                } catch (final Exception e) {
-                    ErrorUtil.showUiErrorSnackbar(this, "Selecting main page tab", e);
-                }
-                break;
-            case R.id.menu_options_about_group:
-                optionsAboutSelected(item);
-                break;
-            default:
-                return false;
+        if (item.getGroupId() == R.id.menu_services_group) {
+            changeService(item);
+        } else if (item.getGroupId() == R.id.menu_tabs_group) {
+            try {
+                tabSelected(item);
+            } catch (final Exception e) {
+                ErrorUtil.showUiErrorSnackbar(this, "Selecting main page tab", e);
+            }
+        } else if (item.getGroupId() == R.id.menu_options_about_group) {
+            optionsAboutSelected(item);
+        } else {
+            return false;
         }
 
         mainBinding.getRoot().closeDrawers();
@@ -923,7 +919,11 @@ public class MainActivity extends AppCompatActivity {
             };
             final IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(VideoDetailFragment.ACTION_PLAYER_STARTED);
-            registerReceiver(broadcastReceiver, intentFilter);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                registerReceiver(broadcastReceiver, intentFilter, Context.RECEIVER_NOT_EXPORTED);
+            } else {
+                registerReceiver(broadcastReceiver, intentFilter);
+            }
         }
     }
 

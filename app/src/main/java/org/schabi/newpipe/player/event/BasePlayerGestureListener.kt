@@ -299,20 +299,20 @@ abstract class BasePlayerGestureListener(
     }
 
     override fun onScroll(
-        initialEvent: MotionEvent,
+        initialEvent: MotionEvent?,
         movingEvent: MotionEvent,
         distanceX: Float,
         distanceY: Float
     ): Boolean {
         return if (player.popupPlayerSelected()) {
-            onScrollInPopup(initialEvent, movingEvent, distanceX, distanceY)
+            onScrollInPopup(initialEvent!!, movingEvent, distanceX, distanceY)
         } else {
-            onScrollInMain(initialEvent, movingEvent, distanceX, distanceY)
+            onScrollInMain(initialEvent!!, movingEvent, distanceX, distanceY)
         }
     }
 
     override fun onFling(
-        e1: MotionEvent,
+        e1: MotionEvent?,
         e2: MotionEvent,
         velocityX: Float,
         velocityY: Float

@@ -18,18 +18,14 @@ import org.schabi.newpipe.fragments.list.BaseListInfoFragment;
 import org.schabi.newpipe.util.Constants;
 import org.schabi.newpipe.util.ExtractorHelper;
 
-import icepick.State;
 import io.reactivex.rxjava3.core.Single;
 
 public class ChannelTabFragment extends BaseListInfoFragment<InfoItem, ChannelTabInfo> {
 
-    @State
     protected int serviceId = Constants.NO_SERVICE_ID;
 
-    @State
     protected ListLinkHandler tabHandler;
 
-    @State
     protected String channelName;
 
     public static ChannelTabFragment getInstance(final int serviceId,
@@ -44,6 +40,22 @@ public class ChannelTabFragment extends BaseListInfoFragment<InfoItem, ChannelTa
 
     public ChannelTabFragment() {
         super(UserAction.REQUESTED_CHANNEL);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("serviceId", serviceId);
+        outState.putSerializable("tabHandler", tabHandler);
+        outState.putString("channelName", channelName);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        serviceId = savedInstanceState.getInt("serviceId", Constants.NO_SERVICE_ID);
+        tabHandler = (ListLinkHandler) savedInstanceState.getSerializable("tabHandler");
+        channelName = savedInstanceState.getString("channelName");
     }
 
     /*//////////////////////////////////////////////////////////////////////////

@@ -761,7 +761,7 @@
 <string name="tags_only">僅標籤</string>
 <string name="sortby">排序方式</string>
 <string name="sortorder">排序順序</string>
-<string name="features">功能</string>
+<string name="features">特性</string>
 <string name="sort_popular">熱門</string>
 <string name="sort_view">觀看次數</string>
 <string name="sort_bookmark">書籤</string>
@@ -991,4 +991,19 @@
 <string name="force_end_on_overtime_summary">當目前播放位置超過串流時長時強制結束播放，作為無法自然停止之串流的因應措施</string>
 <string name="use_old_search_filter_title">使用舊版搜尋篩選器</string>
 <string name="use_old_search_filter_summary">使用舊版選單式搜尋篩選器，而不是新的對話方塊介面</string>
+<string name="main_tabs_position_summary">將主分頁選擇器移動至底部</string>
+<string name="main_tabs_position_title">主分頁位置</string>
+<string name="past_hour">過去一小時</string>
+<string name="past_day">過去一天</string>
+<string name="past_week">過去一週</string>
+<string name="past_month">過去一個月</string>
+<string name="past_year">過去一年</string>
+<string name="short_video">短片</string>
+<string name="medium_length">中等</string>
+<string name="long_video">長片</string>
+<string name="extra_long">超長</string>
+<string name="upload_date">上傳日期</string>
+<string name="duration">時長</string>
+<string name="license">授權</string>
+<string name="published">發布日期</string>
 </resources>

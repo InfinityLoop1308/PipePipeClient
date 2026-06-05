@@ -1,227 +1,152 @@
 package us.shandian.giga.hls.manifest
 
+import android.net.Uri
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.Format
+import com.google.android.exoplayer2.source.hls.playlist.HlsMediaPlaylist as ExoHlsMediaPlaylist
+import com.google.android.exoplayer2.source.hls.playlist.HlsMediaPlaylist.Segment as ExoHlsSegment
+import com.google.android.exoplayer2.source.hls.playlist.HlsMediaPlaylist.SegmentBase as ExoHlsSegmentBase
+import com.google.android.exoplayer2.source.hls.playlist.HlsMultivariantPlaylist as ExoHlsMultivariantPlaylist
+import com.google.android.exoplayer2.source.hls.playlist.HlsPlaylistParser as ExoHlsPlaylistParser
+import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.net.URI
-import java.util.Locale
 
 class HlsPlaylistParser {
     @Throws(IOException::class)
     fun parse(sourceUrl: String, body: String): HlsPlaylist {
-        val lines = body.lineSequence()
-            .map { it.trim().trimStart('\uFEFF') }
-            .filter { it.isNotEmpty() }
-            .toList()
-
-        if (lines.none { it == EXTM3U }) {
-            throw IOException("HLS playlist missing $EXTM3U firstLine=${safeLineSnippet(lines.firstOrNull())}")
+        val input = ByteArrayInputStream(body.toByteArray(Charsets.UTF_8))
+        return when (val playlist = ExoHlsPlaylistParser().parse(Uri.parse(sourceUrl), input)) {
+            is ExoHlsMediaPlaylist -> playlist.toInternalMediaPlaylist(sourceUrl)
+            is ExoHlsMultivariantPlaylist -> playlist.toInternalMasterPlaylist(sourceUrl)
+            else -> throw IOException("Unsupported HLS playlist type: ${playlist.javaClass.name}")
         }
-
-        val variants = parseVariants(sourceUrl, lines)
-        if (variants.isNotEmpty()) {
-            return HlsMasterPlaylist(sourceUrl, variants)
-        }
-
-        return parseMediaPlaylist(sourceUrl, lines)
     }
 
-    private fun parseVariants(sourceUrl: String, lines: List<String>): List<HlsVariant> {
-        val variants = mutableListOf<HlsVariant>()
-        var pendingAttributes: Map<String, String>? = null
-
-        for (line in lines) {
-            when {
-                line.startsWith(EXT_X_STREAM_INF) -> {
-                    pendingAttributes = parseAttributes(line.substringAfter(':'))
-                }
-                pendingAttributes != null && !line.startsWith('#') -> {
-                    val attributes = pendingAttributes
-                    variants += HlsVariant(
-                        url = resolveUrl(sourceUrl, line),
-                        bandwidth = attributes["BANDWIDTH"]?.toLongOrNull(),
-                        averageBandwidth = attributes["AVERAGE-BANDWIDTH"]?.toLongOrNull(),
-                        codecs = attributes["CODECS"],
-                        resolution = attributes["RESOLUTION"],
-                        frameRate = attributes["FRAME-RATE"]?.toDoubleOrNull(),
-                        audioGroupId = attributes["AUDIO"],
-                    )
-                    pendingAttributes = null
-                }
-            }
-        }
-
-        return variants
+    private fun ExoHlsMultivariantPlaylist.toInternalMasterPlaylist(sourceUrl: String): HlsMasterPlaylist {
+        return HlsMasterPlaylist(
+            sourceUrl = sourceUrl,
+            variants = variants.map { variant ->
+                val format = variant.format
+                HlsVariant(
+                    url = resolveUrl(sourceUrl, variant.url.toString()),
+                    bandwidth = positiveLong(format.peakBitrate) ?: positiveLong(format.bitrate),
+                    averageBandwidth = positiveLong(format.averageBitrate),
+                    codecs = format.codecs,
+                    resolution = resolutionOf(format),
+                    frameRate = format.frameRate.takeIf { it > 0 }?.toDouble(),
+                    audioGroupId = variant.audioGroupId,
+                )
+            },
+        )
     }
 
-    private fun parseMediaPlaylist(sourceUrl: String, lines: List<String>): HlsMediaPlaylist {
-        val segments = mutableListOf<HlsSegment>()
-        var targetDuration: Double? = null
-        var mediaSequence = 0L
-        var isEndList = false
-        var pendingDuration: Double? = null
-        var pendingTitle: String? = null
-        var pendingByteRange: HlsByteRange? = null
-        var pendingDiscontinuity = false
-        var initSegment: HlsInitSegment? = null
-        var hasEncryption = false
-        var hasUnsupportedEncryption = false
-        var hasDiscontinuity = false
-        var currentEncryptionKey: HlsEncryptionKey? = null
-
-        for (line in lines) {
-            when {
-                line.startsWith(EXT_X_TARGETDURATION) -> {
-                    targetDuration = line.substringAfter(':').toDoubleOrNull()
-                }
-                line.startsWith(EXT_X_MEDIA_SEQUENCE) -> {
-                    mediaSequence = line.substringAfter(':').toLongOrNull() ?: 0L
-                }
-                line.startsWith(EXT_X_BYTERANGE) -> {
-                    pendingByteRange = parseByteRange(line.substringAfter(':'))
-                }
-                line.startsWith(EXT_X_MAP) -> {
-                    initSegment = parseInitSegment(sourceUrl, line.substringAfter(':'), currentEncryptionKey)
-                }
-                line.startsWith(EXT_X_KEY) -> {
-                    val attributes = parseAttributes(line.substringAfter(':'))
-                    val method = attributes["METHOD"]
-                    currentEncryptionKey = when {
-                        method == null || method.equals("NONE", ignoreCase = true) -> null
-                        else -> {
-                            hasEncryption = true
-                            if (!method.equals("AES-128", ignoreCase = true)) {
-                                hasUnsupportedEncryption = true
-                            }
-                            HlsEncryptionKey(
-                                method = method,
-                                url = attributes["URI"]?.let { resolveUrl(sourceUrl, it) },
-                                iv = attributes["IV"],
-                            )
-                        }
-                    }
-                }
-                line == EXT_X_DISCONTINUITY -> {
-                    pendingDiscontinuity = true
-                    hasDiscontinuity = true
-                }
-                line.startsWith(EXTINF) -> {
-                    val value = line.substringAfter(':')
-                    pendingDuration = value.substringBefore(',').toDoubleOrNull()
-                    pendingTitle = value.substringAfter(',', "").ifBlank { null }
-                }
-                line == EXT_X_ENDLIST -> {
-                    isEndList = true
-                }
-                !line.startsWith('#') -> {
-                    segments += HlsSegment(
-                        url = resolveUrl(sourceUrl, line),
-                        durationSeconds = pendingDuration,
-                        title = pendingTitle,
-                        byteRange = pendingByteRange,
-                        discontinuity = pendingDiscontinuity,
-                        encryptionKey = currentEncryptionKey,
-                    )
-                    pendingDuration = null
-                    pendingTitle = null
-                    pendingByteRange = null
-                    pendingDiscontinuity = false
-                }
-            }
-        }
-
+    private fun ExoHlsMediaPlaylist.toInternalMediaPlaylist(sourceUrl: String): HlsMediaPlaylist {
+        val initSegment = segments
+            .firstOrNull { it.initializationSegment != null }
+            ?.initializationSegment
+            ?.toInternalInitSegment(sourceUrl)
         return HlsMediaPlaylist(
             sourceUrl = sourceUrl,
-            targetDurationSeconds = targetDuration,
+            targetDurationSeconds = secondsOf(targetDurationUs),
             mediaSequence = mediaSequence,
-            segments = segments,
-            isEndList = isEndList,
+            segments = segments.map { it.toInternalSegment(sourceUrl) },
+            isEndList = hasEndTag,
             initSegment = initSegment,
-            hasEncryption = hasEncryption,
-            hasUnsupportedEncryption = hasUnsupportedEncryption,
-            hasDiscontinuity = hasDiscontinuity,
+            hasEncryption = hasAes128Encryption(),
+            hasUnsupportedEncryption = hasUnsupportedEncryption(),
+            hasDiscontinuity = hasDiscontinuity(),
         )
     }
 
-    private fun parseInitSegment(
-        sourceUrl: String,
-        value: String,
-        encryptionKey: HlsEncryptionKey?,
-    ): HlsInitSegment? {
-        val attributes = parseAttributes(value)
-        val uri = attributes["URI"] ?: return null
+    private fun ExoHlsSegment.toInternalSegment(sourceUrl: String): HlsSegment {
+        return HlsSegment(
+            url = resolveUrl(sourceUrl, url),
+            durationSeconds = secondsOf(durationUs),
+            title = title.ifBlank { null },
+            byteRange = byteRange(),
+            discontinuity = relativeDiscontinuitySequence > 0,
+            encryptionKey = encryptionKey(sourceUrl),
+        )
+    }
+
+    private fun ExoHlsSegment.toInternalInitSegment(sourceUrl: String): HlsInitSegment {
         return HlsInitSegment(
-            url = resolveUrl(sourceUrl, uri),
-            byteRange = attributes["BYTERANGE"]?.let { parseByteRange(it) },
-            encryptionKey = encryptionKey,
+            url = resolveUrl(sourceUrl, url),
+            byteRange = byteRange(),
+            encryptionKey = encryptionKey(sourceUrl),
         )
     }
 
-    private fun parseAttributes(value: String): Map<String, String> {
-        return splitAttributeList(value).mapNotNull { attribute ->
-            val key = attribute.substringBefore('=', "").trim()
-            if (key.isBlank()) {
-                null
+    private fun ExoHlsMediaPlaylist.hasAes128Encryption(): Boolean {
+        return segments.any { it.fullSegmentEncryptionKeyUri != null }
+            || segments.any { it.initializationSegment?.fullSegmentEncryptionKeyUri != null }
+    }
+
+    private fun ExoHlsMediaPlaylist.hasUnsupportedEncryption(): Boolean {
+        return protectionSchemes != null || tags.any { tag ->
+            if (!tag.startsWith(EXT_X_KEY)) {
+                false
             } else {
-                key.uppercase(Locale.US) to attribute.substringAfter('=', "").trim().trim('"')
-            }
-        }.toMap()
-    }
-
-    private fun splitAttributeList(value: String): List<String> {
-        val result = mutableListOf<String>()
-        val current = StringBuilder()
-        var quoted = false
-
-        for (char in value) {
-            when (char) {
-                '"' -> {
-                    quoted = !quoted
-                    current.append(char)
-                }
-                ',' -> if (quoted) {
-                    current.append(char)
-                } else {
-                    result += current.toString()
-                    current.setLength(0)
-                }
-                else -> current.append(char)
+                val method = keyMethod(tag)
+                method != null
+                    && !method.equals("NONE", ignoreCase = true)
+                    && !method.equals("AES-128", ignoreCase = true)
             }
         }
-
-        if (current.isNotEmpty()) {
-            result += current.toString()
-        }
-
-        return result
     }
 
-    private fun parseByteRange(value: String): HlsByteRange? {
-        val length = value.substringBefore('@').toLongOrNull() ?: return null
-        val offset = value.substringAfter('@', "").toLongOrNull()
-        return HlsByteRange(length, offset)
+    private fun ExoHlsMediaPlaylist.hasDiscontinuity(): Boolean {
+        return tags.any { it == EXT_X_DISCONTINUITY }
+            || segments.any { it.relativeDiscontinuitySequence > 0 }
+    }
+
+    private fun ExoHlsSegmentBase.byteRange(): HlsByteRange? {
+        if (byteRangeLength <= 0) {
+            return null
+        }
+        return HlsByteRange(byteRangeLength, byteRangeOffset.takeIf { it >= 0 })
+    }
+
+    private fun ExoHlsSegmentBase.encryptionKey(sourceUrl: String): HlsEncryptionKey? {
+        val keyUri = fullSegmentEncryptionKeyUri ?: return null
+        return HlsEncryptionKey(
+            method = "AES-128",
+            url = resolveUrl(sourceUrl, keyUri),
+            iv = encryptionIV,
+        )
+    }
+
+    private fun keyMethod(tag: String): String? {
+        return Regex("(?:^|,)METHOD=([^,]+)")
+            .find(tag.substringAfter(':', ""))
+            ?.groupValues
+            ?.getOrNull(1)
+            ?.trim('"')
+    }
+
+    private fun resolutionOf(format: Format): String? {
+        return if (format.width > 0 && format.height > 0) {
+            "${format.width}x${format.height}"
+        } else {
+            null
+        }
+    }
+
+    private fun positiveLong(value: Int): Long? {
+        return value.takeIf { it > 0 }?.toLong()
+    }
+
+    private fun secondsOf(valueUs: Long): Double? {
+        return valueUs.takeIf { it != C.TIME_UNSET && it >= 0 }?.let { it / 1_000_000.0 }
     }
 
     private fun resolveUrl(sourceUrl: String, reference: String): String {
         return URI(sourceUrl).resolve(reference).toString()
     }
 
-    private fun safeLineSnippet(line: String?): String {
-        return line
-            ?.take(80)
-            ?.map { char -> if (char.code in 32..126) char else '.' }
-            ?.joinToString(separator = "")
-            ?: "<none>"
-    }
-
     private companion object {
-        const val EXTM3U = "#EXTM3U"
-        const val EXTINF = "#EXTINF:"
-        const val EXT_X_STREAM_INF = "#EXT-X-STREAM-INF:"
-        const val EXT_X_TARGETDURATION = "#EXT-X-TARGETDURATION:"
-        const val EXT_X_MEDIA_SEQUENCE = "#EXT-X-MEDIA-SEQUENCE:"
-        const val EXT_X_BYTERANGE = "#EXT-X-BYTERANGE:"
-        const val EXT_X_MAP = "#EXT-X-MAP:"
         const val EXT_X_KEY = "#EXT-X-KEY:"
         const val EXT_X_DISCONTINUITY = "#EXT-X-DISCONTINUITY"
-        const val EXT_X_ENDLIST = "#EXT-X-ENDLIST"
     }
 }

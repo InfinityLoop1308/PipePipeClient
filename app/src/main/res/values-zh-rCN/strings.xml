@@ -718,7 +718,7 @@
 <string name="tags_only">仅标签</string>
 <string name="sortby">排序方式</string>
 <string name="sortorder">排序方式</string>
-<string name="features">功能</string>
+<string name="features">特性</string>
 <string name="sort_popular">流行度</string>
 <string name="sort_view">观看次数</string>
 <string name="sort_bookmark">收藏数</string>
@@ -1001,4 +1001,19 @@
 <string name="force_end_on_overtime_summary">当当前播放位置超过流时长时强制结束播放，用于解决无法自然停止的流的问题</string>
 <string name="use_old_search_filter_title">使用旧版搜索筛选器</string>
 <string name="use_old_search_filter_summary">使用基于菜单的旧版搜索筛选器，而不是新的对话框界面</string>
+<string name="main_tabs_position_summary">将主标签页选择器移到底部</string>
+<string name="main_tabs_position_title">主标签页位置</string>
+<string name="past_hour">过去一小时</string>
+<string name="past_day">过去一天</string>
+<string name="past_week">过去一周</string>
+<string name="past_month">过去一月</string>
+<string name="past_year">过去一年</string>
+<string name="short_video">短片</string>
+<string name="medium_length">中等</string>
+<string name="long_video">长片</string>
+<string name="extra_long">超长</string>
+<string name="upload_date">上传日期</string>
+<string name="duration">时长</string>
+<string name="license">许可</string>
+<string name="published">发布日期</string>
 </resources>

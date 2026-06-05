@@ -44,10 +44,10 @@ import org.schabi.newpipe.player.helper.LockManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Objects;
 
 import us.shandian.giga.get.DownloadMission;
+import us.shandian.giga.get.HlsDownloadStreamHelper;
 import us.shandian.giga.get.MissionRecoveryInfo;
 import org.schabi.newpipe.streams.io.StoredDirectoryHelper;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
@@ -451,7 +451,7 @@ public class DownloadManagerService extends Service {
         mission.resourceIsUrls = normalizeResourceBooleans(resourceIsUrls, urls);
 
         if (DEBUG && ps == null && urls != null && urls.length > 1
-                && !containsHlsResource(mission.resourceDeliveryMethods,
+                && !HlsDownloadStreamHelper.containsHlsResource(mission.resourceDeliveryMethods,
                 mission.resourceManifestUrls, urls)) {
             Log.w(TAG, "mission created with multiple urls ¿missing post-processing algorithm?");
         }
@@ -486,42 +486,6 @@ public class DownloadManagerService extends Service {
             values[i] = true;
         }
         return values;
-    }
-
-    private static boolean containsHlsMethod(String[] values) {
-        if (values == null) {
-            return false;
-        }
-        for (String value : values) {
-            if ("HLS".equals(value)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean containsHlsValue(String[] values) {
-        if (values == null) {
-            return false;
-        }
-        for (String value : values) {
-            if (looksLikeHls(value)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean containsHlsResource(String[] deliveryMethods,
-                                               String[] manifestUrls,
-                                               String[] urls) {
-        return containsHlsMethod(deliveryMethods)
-                || containsHlsValue(manifestUrls)
-                || containsHlsValue(urls);
-    }
-
-    private static boolean looksLikeHls(String value) {
-        return value != null && value.toLowerCase(Locale.ROOT).contains(".m3u8");
     }
 
     public void notifyFinishedDownload(String name) {

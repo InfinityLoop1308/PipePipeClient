@@ -135,10 +135,6 @@ class AboutActivity : AppCompatActivity() {
                 "https://github.com/lisawray/groupie", StandardLicenses.MIT
             ),
             SoftwareComponent(
-                "Icepick", "2015", "Frankie Sardo",
-                "https://github.com/frankiesardo/icepick", StandardLicenses.EPL1
-            ),
-            SoftwareComponent(
                 "Jsoup", "2009 - 2020", "Jonathan Hedley",
                 "https://github.com/jhy/jsoup", StandardLicenses.MIT
             ),

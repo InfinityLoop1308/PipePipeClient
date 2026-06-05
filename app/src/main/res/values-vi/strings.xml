@@ -1046,4 +1046,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="force_end_on_overtime_summary">Buộc kết thúc phát khi vị trí hiện tại vượt quá thời lượng của luồng, như một giải pháp tạm thời cho các luồng không tự động dừng</string>
 <string name="use_old_search_filter_title">Sử dụng bộ lọc tìm kiếm cũ</string>
 <string name="use_old_search_filter_summary">Sử dụng bộ lọc tìm kiếm dựa trên menu cũ thay vì giao diện hộp thoại mới</string>
+<string name="main_tabs_position_summary">Di chuyển bộ chọn tab chính xuống dưới cùng</string>
+<string name="main_tabs_position_title">Vị trí tab chính</string>
 </resources>

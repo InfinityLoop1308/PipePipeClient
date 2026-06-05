@@ -1398,7 +1398,11 @@ public final class Player implements
     private void registerBroadcastReceiver() {
         // Try to unregister current first
         unregisterBroadcastReceiver();
-        context.registerReceiver(broadcastReceiver, intentFilter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.registerReceiver(broadcastReceiver, intentFilter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            context.registerReceiver(broadcastReceiver, intentFilter);
+        }
     }
 
     private void unregisterBroadcastReceiver() {
@@ -4404,7 +4408,8 @@ public final class Player implements
         } else if (v.getId() == binding.switchMute.getId()) {
             onMuteUnmuteButtonClicked();
         } else if (v.getId() == binding.playerCloseButton.getId()) {
-            context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_HIDE_MAIN_PLAYER));
+            context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_HIDE_MAIN_PLAYER)
+                    .setPackage(context.getPackageName()));
             service.stopService();
         } else if (v.getId() == binding.skipButton.getId()) {
             onSkipClicked();

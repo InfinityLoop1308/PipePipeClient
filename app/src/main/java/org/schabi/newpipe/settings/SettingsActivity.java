@@ -41,9 +41,6 @@ import org.schabi.newpipe.views.FocusOverlayView;
 
 import java.util.concurrent.TimeUnit;
 
-import icepick.Icepick;
-import icepick.State;
-
 /*
  * Created by Christian Schabesberger on 31.08.15.
  *
@@ -82,9 +79,7 @@ public class SettingsActivity extends AppCompatActivity implements
     private EditText searchEditText;
 
     // State
-    @State
     String searchText;
-    @State
     boolean wasSearchActive;
 
     @Override
@@ -93,7 +88,10 @@ public class SettingsActivity extends AppCompatActivity implements
         assureCorrectAppLanguage(this);
 
         super.onCreate(savedInstanceBundle);
-        Icepick.restoreInstanceState(this, savedInstanceBundle);
+        if (savedInstanceBundle != null) {
+            searchText = savedInstanceBundle.getString("searchText");
+            wasSearchActive = savedInstanceBundle.getBoolean("wasSearchActive", false);
+        }
         final boolean restored = savedInstanceBundle != null;
 
         final SettingsLayoutBinding settingsLayoutBinding =
@@ -125,7 +123,8 @@ public class SettingsActivity extends AppCompatActivity implements
     @Override
     protected void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
-        Icepick.saveInstanceState(this, outState);
+        outState.putString("searchText", searchText);
+        outState.putBoolean("wasSearchActive", wasSearchActive);
     }
 
     @Override
