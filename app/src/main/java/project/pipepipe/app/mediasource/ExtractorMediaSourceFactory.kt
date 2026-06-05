@@ -20,6 +20,7 @@ import org.schabi.newpipe.extractor.stream.DeliveryMethod
 import org.schabi.newpipe.extractor.stream.Stream
 import org.schabi.newpipe.extractor.stream.StreamInfo
 import org.schabi.newpipe.extractor.stream.VideoStream
+import org.schabi.newpipe.util.ExtractorHelper
 import java.io.ByteArrayInputStream
 import java.nio.charset.StandardCharsets
 
@@ -51,7 +52,11 @@ class ExtractorMediaSourceFactory(
     )
 
     override fun createMediaSource(mediaItem: MediaItem): MediaSource {
-        val streamInfo = requireNotNull(StreamInfoRepository.get(mediaItem.mediaId))
+        val streamInfo = StreamInfoRepository.get(mediaItem.mediaId)
+            ?: ExtractorHelper.getNewStreamInfo(
+                mediaItem.mediaMetadata.extras?.getInt(MediaItemFactory.KEY_SERVICE_ID) ?: -1,
+                mediaItem.mediaId
+            ).also(StreamInfoRepository::put)
         return createMediaSource(mediaItem, streamInfo)
     }
 

@@ -22,6 +22,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
+import org.schabi.newpipe.App;
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.NewPipeDatabase;
 import org.schabi.newpipe.R;
@@ -60,6 +61,10 @@ import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.settings.SettingsActivity;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
+
+import project.pipepipe.app.ui.ExperimentalVideoDetailHost;
+import project.pipepipe.app.ExperimentalPlaybackRouter;
+import project.pipepipe.app.PlaybackMode;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -170,6 +175,10 @@ public final class NavigationHelper {
     public static void playOnBackgroundPlayer(final Context context,
                                               final PlayQueue queue,
                                               final boolean resumePlayback) {
+        if (ThemeHelper.shouldUseExperimentalNewUi(context)) {
+            ExperimentalPlaybackRouter.play(context, queue, PlaybackMode.AUDIO_ONLY, false);
+            return;
+        }
         Toast.makeText(context, R.string.background_player_playing_toast, Toast.LENGTH_SHORT)
                 .show();
 
@@ -181,6 +190,10 @@ public final class NavigationHelper {
     public static void playOnBackgroundPlayerShuffled(final Context context,
                                                       final PlayQueue queue,
                                                       final boolean resumePlayback) {
+        if (ThemeHelper.shouldUseExperimentalNewUi(context)) {
+            ExperimentalPlaybackRouter.play(context, queue, PlaybackMode.AUDIO_ONLY, true);
+            return;
+        }
         Toast.makeText(context, R.string.background_player_playing_toast, Toast.LENGTH_SHORT)
                 .show();
         queue.setIndex(new Random().nextInt(queue.getStreams().size()));
@@ -195,6 +208,10 @@ public final class NavigationHelper {
     public static void enqueueOnPlayer(final Context context,
                                        final PlayQueue queue,
                                        final PlayerType playerType) {
+        if (ThemeHelper.shouldUseExperimentalNewUi(context) && playerType != PlayerType.POPUP) {
+            ExperimentalPlaybackRouter.enqueue(context, queue, false);
+            return;
+        }
         if ((playerType == PlayerType.POPUP) && !PermissionHelper.isPopupEnabled(context)) {
             PermissionHelper.showPopupEnablementToast(context);
             return;
@@ -219,6 +236,10 @@ public final class NavigationHelper {
 
     /* ENQUEUE NEXT */
     public static void enqueueNextOnPlayer(final Context context, final PlayQueue queue) {
+        if (ThemeHelper.shouldUseExperimentalNewUi(context)) {
+            ExperimentalPlaybackRouter.enqueue(context, queue, true);
+            return;
+        }
         PlayerType playerType = PlayerHolder.getInstance().getType();
         if (!PlayerHolder.getInstance().isPlayerOpen()) {
             Log.e(TAG, "Enqueueing next but no player is open; defaulting to background player");
@@ -347,6 +368,10 @@ public final class NavigationHelper {
     }
 
     public static void expandMainPlayer(final Context context) {
+        if (ThemeHelper.shouldUseExperimentalNewUi(context)) {
+            ExperimentalVideoDetailHost.expand();
+            return;
+        }
         context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_SHOW_MAIN_PLAYER)
                 .setPackage(context.getPackageName()));
     }
@@ -357,6 +382,10 @@ public final class NavigationHelper {
     }
 
     public static void showMiniPlayer(final FragmentManager fragmentManager) {
+        if (ThemeHelper.shouldUseExperimentalNewUi(fragmentManager.getFragments().isEmpty()
+                ? App.getApp() : fragmentManager.getFragments().get(0).requireContext())) {
+            return;
+        }
         final VideoDetailFragment instance = VideoDetailFragment.getInstanceInCollapsedState();
         defaultTransaction(fragmentManager)
                 .replace(R.id.fragment_player_holder, instance)
@@ -375,6 +404,10 @@ public final class NavigationHelper {
                                                @NonNull final String title,
                                                @Nullable final PlayQueue playQueue,
                                                final boolean switchingPlayers) {
+        if (ThemeHelper.shouldUseExperimentalNewUi(context) && url != null) {
+            ExperimentalVideoDetailHost.open(serviceId, url);
+            return;
+        }
 
         final boolean autoPlay;
         @Nullable final PlayerService.PlayerType playerType = PlayerHolder.getInstance().getType();

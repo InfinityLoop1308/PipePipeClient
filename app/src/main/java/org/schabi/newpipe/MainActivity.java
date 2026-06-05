@@ -620,6 +620,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if (ThemeHelper.shouldUseExperimentalNewUi(this)
+                && ExperimentalVideoDetailHost.onBackPressed()) {
+            return;
+        }
         if (DEBUG) {
             Log.d(TAG, "onBackPressed() called");
         }

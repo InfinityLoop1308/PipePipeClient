@@ -14,7 +14,9 @@ import kotlinx.coroutines.launch
 import org.schabi.newpipe.info_list.PipePipeComposeTheme
 import org.schabi.newpipe.util.ThemeHelper
 import project.pipepipe.app.service.PlaybackService
+import project.pipepipe.app.SharedContext
 import project.pipepipe.app.ui.screens.videodetail.VideoDetailScreen
+import project.pipepipe.app.uistate.VideoDetailPageState
 import project.pipepipe.app.viewmodel.VideoDetailViewModel
 
 object ExperimentalVideoDetailHost {
@@ -67,5 +69,34 @@ object ExperimentalVideoDetailHost {
     @JvmStatic
     fun open(serviceId: Int, url: String) {
         viewModel.open(serviceId, url)
+    }
+
+    @JvmStatic
+    fun expand() {
+        viewModel.showDetail()
+    }
+
+    @JvmStatic
+    fun showBottomPlayer() {
+        viewModel.showBottomPlayer()
+    }
+
+    @JvmStatic
+    fun onBackPressed(): Boolean = when (viewModel.uiState.value.pageState) {
+        VideoDetailPageState.FULLSCREEN_PLAYER -> {
+            viewModel.showDetail()
+            true
+        }
+        VideoDetailPageState.DETAIL_PAGE -> {
+            if (!viewModel.navigateBack()) {
+                if (SharedContext.platformMediaController?.currentMediaItem?.value != null) {
+                    viewModel.showBottomPlayer()
+                } else {
+                    viewModel.hide()
+                }
+            }
+            true
+        }
+        else -> false
     }
 }
