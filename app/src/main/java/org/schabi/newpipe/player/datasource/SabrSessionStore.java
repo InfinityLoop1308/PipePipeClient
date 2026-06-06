@@ -208,13 +208,14 @@ public final class SabrSessionStore {
 
     // Force AAC (mp4) audio instead of the "best" (Opus/webm). honestly: Opus/webm audio just does
     // NOT work through this chunk pipeline. it under-supplies the audio renderer -> AudioTrack
-    // underruns -> the play head freezes after ~2min, hundreds of rebuffers, phone cooks. i spent
-    // ~2h on this: ruled out fetch, cache, chunk timing, the media3 loading contract, buffer size...
-    // the data IS cached fine, so it's somewhere inside media3's Opus/webm extract->render with the
-    // way we chunk it, and i still have no fucking idea how to fix it. AAC (itag 140) is mp4,
-    // hardware-decoded, ~same bitrate (130 vs 136 kbps) and plays perfectly smooth. so: AAC until
-    // someone cracks the Opus path. (audio codec isn't a user-facing choice, so this isn't a
-    // band-aid on a user setting, just an internal pick.)
+    // underruns -> constant rebuffering (hundreds vs ~2 on AAC, phone cooks). re-confirmed on media3
+    // 1.10 AFTER fixing the separate ~2min pump false-stall, so it's its own bug, not that one. i
+    // spent ~2h on it: ruled out fetch, cache, chunk timing, the media3 loading contract, buffer
+    // size... the data IS cached fine, so it's somewhere inside media3's Opus/webm extract->render
+    // with the way we chunk it, and i still have no fucking idea how to fix it. AAC (itag 140) is
+    // mp4, hardware-decoded, ~same bitrate (130 vs 136 kbps) and plays perfectly smooth. so: AAC
+    // until someone cracks the Opus path. (audio codec isn't user-facing, so this isn't a band-aid
+    // on a user setting, just an internal pick.)
     private static YoutubeSabrFormat pickAudioFormat(@NonNull final YoutubeSabrInfo info) {
         YoutubeSabrFormat aac = null;
         for (final YoutubeSabrFormat f : info.getFormats()) {
