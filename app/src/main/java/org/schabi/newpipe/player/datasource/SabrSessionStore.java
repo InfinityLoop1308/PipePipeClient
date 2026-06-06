@@ -146,19 +146,40 @@ public final class SabrSessionStore {
         }
     }
 
+    // <=0 = audio-only / no preference -> any cached session is fine. Otherwise the session matches
+    // when the requested itag RESOLVES to the same format the session already holds. Comparing the
+    // raw itag is wrong: pickVideoFormat falls back when the requested itag isn't hw-decodable, so
+    // the session's format legitimately differs from the requested itag and we'd rebuild on every
+    // normal resolve (-> evict/rebuild loop -> endless buffering). Only a real quality change, which
+    // resolves to a different format, triggers a rebuild.
+    private static boolean sessionMatchesItag(@NonNull final Holder holder,
+                                              final int preferredVideoItag) {
+        if (preferredVideoItag <= 0) {
+            return true;
+        }
+        final YoutubeSabrFormat wanted = pickVideoFormat(holder.info, preferredVideoItag);
+        return wanted != null && wanted.getItag() == holder.videoFormat.getItag();
+    }
+
     @NonNull
     public static Holder getOrCreate(@NonNull final Context context,
                                      @NonNull final String videoId,
                                      final int preferredVideoItag)
             throws IOException, ExtractionException {
         final Holder existing = SESSIONS.get(videoId);
-        if (existing != null) {
+        if (existing != null && sessionMatchesItag(existing, preferredVideoItag)) {
             return existing;
         }
         synchronized (SabrSessionStore.class) {
-            final Holder racing = SESSIONS.get(videoId);
-            if (racing != null) {
-                return racing;
+            final Holder current = SESSIONS.get(videoId);
+            if (current != null) {
+                if (sessionMatchesItag(current, preferredVideoItag)) {
+                    return current;
+                }
+                // Quality/codec change: the resolver re-asks with a different video itag for the same
+                // video. The cached session is locked to its formats, so returning it would re-prepare
+                // the player on the old codec and dead-buffer. Drop it (stops the pump) + rebuild below.
+                evict(videoId);
             }
             final Localization localization = new Localization("en", "US");
             final ContentCountry contentCountry = new ContentCountry("US");
