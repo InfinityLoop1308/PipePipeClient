@@ -148,7 +148,8 @@ public final class SabrSessionStore {
 
     @NonNull
     public static Holder getOrCreate(@NonNull final Context context,
-                                     @NonNull final String videoId)
+                                     @NonNull final String videoId,
+                                     final int preferredVideoItag)
             throws IOException, ExtractionException {
         final Holder existing = SESSIONS.get(videoId);
         if (existing != null) {
@@ -162,8 +163,8 @@ public final class SabrSessionStore {
             final Localization localization = new Localization("en", "US");
             final ContentCountry contentCountry = new ContentCountry("US");
             final YoutubeSabrInfo info = YoutubeSabrProbeFetch(videoId, localization, contentCountry);
-            final YoutubeSabrFormat audioFormat = info.findBestAudioFormat();
-            final YoutubeSabrFormat videoFormat = pickHardwareFriendlyVideo(info);
+            final YoutubeSabrFormat audioFormat = pickAudioFormat(info);
+            final YoutubeSabrFormat videoFormat = pickVideoFormat(info, preferredVideoItag);
             if (audioFormat == null || videoFormat == null) {
                 throw new IOException("SABR: could not select audio/video formats for " + videoId);
             }
@@ -205,6 +206,54 @@ public final class SabrSessionStore {
                 videoId, YoutubeSabrClientProfile.WEB, localization, contentCountry);
     }
 
+    // Force AAC (mp4) audio instead of the "best" (Opus/webm). honestly: Opus/webm audio just does
+    // NOT work through this chunk pipeline. it under-supplies the audio renderer -> AudioTrack
+    // underruns -> the play head freezes after ~2min, hundreds of rebuffers, phone cooks. i spent
+    // ~2h on this: ruled out fetch, cache, chunk timing, the media3 loading contract, buffer size...
+    // the data IS cached fine, so it's somewhere inside media3's Opus/webm extract->render with the
+    // way we chunk it, and i still have no fucking idea how to fix it. AAC (itag 140) is mp4,
+    // hardware-decoded, ~same bitrate (130 vs 136 kbps) and plays perfectly smooth. so: AAC until
+    // someone cracks the Opus path. (audio codec isn't a user-facing choice, so this isn't a
+    // band-aid on a user setting, just an internal pick.)
+    private static YoutubeSabrFormat pickAudioFormat(@NonNull final YoutubeSabrInfo info) {
+        YoutubeSabrFormat aac = null;
+        for (final YoutubeSabrFormat f : info.getFormats()) {
+            if (!f.isAudio()) {
+                continue;
+            }
+            final String mime = f.getMimeType();
+            if (mime != null && mime.contains("mp4") && (aac == null
+                    || f.getBitrate() > aac.getBitrate())) {
+                aac = f;
+            }
+        }
+        return aac != null ? aac : info.findBestAudioFormat();
+    }
+
+    /** Honour the user-selected quality when that format is present and hardware-decodable;
+     * otherwise fall back to the best hardware-friendly one. */
+    private static YoutubeSabrFormat pickVideoFormat(@NonNull final YoutubeSabrInfo info,
+                                                     final int preferredItag) {
+        if (preferredItag > 0) {
+            final boolean hwVp9 = hasHardwareDecoder("video/x-vnd.on2.vp9");
+            final boolean hwAv1 = hasHardwareDecoder("video/av01");
+            for (final YoutubeSabrFormat f : info.getFormats()) {
+                if (f.isVideo() && f.getItag() == preferredItag && isDecodable(f, hwVp9, hwAv1)) {
+                    return f;
+                }
+            }
+        }
+        return pickHardwareFriendlyVideo(info);
+    }
+
+    private static boolean isDecodable(@NonNull final YoutubeSabrFormat f,
+                                       final boolean hwVp9, final boolean hwAv1) {
+        final String codec = codecFamily(f.getMimeType());
+        return "avc".equals(codec)
+                || ("vp9".equals(codec) && hwVp9)
+                || ("av1".equals(codec) && hwAv1);
+    }
+
     /**
      * Pick the highest-resolution video format the device can decode in HARDWARE. The decoder is
      * chosen by ExoPlayer from the container bytes, so a codec the device only decodes in software
@@ -212,7 +261,6 @@ public final class SabrSessionStore {
      * allow AVC always (universally HW), VP9 only when a HW VP9 decoder exists, AV1 only when a HW
      * AV1 decoder exists; otherwise fall back to the overall best (better some playback than none).
      */
-    @NonNull
     private static YoutubeSabrFormat pickHardwareFriendlyVideo(@NonNull final YoutubeSabrInfo info) {
         final boolean hwVp9 = hasHardwareDecoder("video/x-vnd.on2.vp9");
         final boolean hwAv1 = hasHardwareDecoder("video/av01");
@@ -221,11 +269,7 @@ public final class SabrSessionStore {
             if (!f.isVideo()) {
                 continue;
             }
-            final String codec = codecFamily(f.getMimeType());
-            final boolean decodable = "avc".equals(codec)
-                    || ("vp9".equals(codec) && hwVp9)
-                    || ("av1".equals(codec) && hwAv1);
-            if (!decodable) {
+            if (!isDecodable(f, hwVp9, hwAv1)) {
                 continue;
             }
             if (best == null || f.getHeight() > best.getHeight()

@@ -458,9 +458,13 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                                                     @NonNull final MediaItemTag metadata)
             throws IOException {
         final String videoId = streamInfo.getId();
+        // Honour the user-selected video quality instead of forcing the highest (4K is heavy and
+        // hits the device VP9 decoder wall); audio-only playback passes 0 and keeps the best audio.
+        final int preferredVideoItag =
+                (stream instanceof VideoStream) ? ((VideoStream) stream).getItag() : 0;
         final SabrSessionStore.Holder holder;
         try {
-            holder = SabrSessionStore.getOrCreate(App.getApp(), videoId);
+            holder = SabrSessionStore.getOrCreate(App.getApp(), videoId, preferredVideoItag);
         } catch (final ExtractionException e) {
             throw new IOException("Could not start SABR session for " + videoId, e);
         }
