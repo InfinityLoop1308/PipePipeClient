@@ -125,9 +125,12 @@ final class SabrMediaPeriod implements MediaPeriod,
         final Format trackFormat = group.getFormat(0);
         final SabrChunkSource chunkSource = new SabrChunkSource(holder, sabrFormats[groupIndex],
                 trackFormat, trackTypes[groupIndex], localization);
+        // Last 3 args are new in media3 1.10 (handleInitialDiscontinuity, firstChunkStartTimeUs,
+        // downloadExecutor); false / TIME_UNSET / null reproduces the pre-1.10 behaviour.
         return new ChunkSampleStream<>(trackTypes[groupIndex], null, null, chunkSource, this,
                 allocator, positionUs, drmSessionManager, drmEventDispatcher,
-                loadErrorHandlingPolicy, mediaSourceEventDispatcher);
+                loadErrorHandlingPolicy, mediaSourceEventDispatcher,
+                false, C.TIME_UNSET, null);
     }
 
     private void rebuildCompositeLoader() {

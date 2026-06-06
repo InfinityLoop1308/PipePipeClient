@@ -21,16 +21,18 @@ public class LoadController extends DefaultLoadControl {
     private boolean preloadingEnabled = true;
 
     public LoadController() {
+        // media3 1.10 split every buffer param into a normal + a "ForLocalPlayback" variant; we use
+        // the same value for both so behaviour is unchanged whether the source is local or remote.
         super(new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE),
-                MIN_BUFFER_MS,
-                MAX_BUFFER_MS,
-                BUFFER_FOR_PLAYBACK_MS,
-                BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS,
+                MIN_BUFFER_MS, MIN_BUFFER_MS,
+                MAX_BUFFER_MS, MAX_BUFFER_MS,
+                BUFFER_FOR_PLAYBACK_MS, BUFFER_FOR_PLAYBACK_MS,
+                BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS, BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS,
                 C.LENGTH_UNSET, // no byte cap: the SABR cache bounds memory, time bounds the player
                 // MUST be true: with false, media3 prioritises its (huge, ~128MB) default byte target
                 // and ignores maxBufferMs, reading ~50s ahead = right at the pump cushion, so it
                 // starved at the edge. true makes maxBufferMs (time) the real limit.
-                true,
+                true, true,
                 DEFAULT_BACK_BUFFER_DURATION_MS,
                 DEFAULT_RETAIN_BACK_BUFFER_FROM_KEYFRAME);
     }
