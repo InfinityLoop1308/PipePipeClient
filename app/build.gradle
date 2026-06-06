@@ -13,7 +13,8 @@ android {
 
     defaultConfig {
         applicationId "InfinityLoop1309.NewPipeEnhanced"
-        minSdk 21
+        // media3 1.9+ requires API 23 (media3-session). Bumped from 21 -> drops Android 5.0/5.1.
+        minSdk 23
         //noinspection ExpiredTargetSdkVersion
         targetSdk 33
         versionCode 1100
@@ -137,7 +138,7 @@ ext {
     androidxRoomVersion = '2.4.2'
     androidxWorkVersion = '2.10.2'
 
-    media3Version = '1.4.1'
+    media3Version = '1.10.1'
     googleAutoServiceVersion = '1.0.1'
     groupieVersion = '2.10.0'
     markwonVersion = '4.6.2'

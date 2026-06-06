@@ -117,10 +117,11 @@ public class PlayerDataSource {
         return new HlsMediaSource.Factory(cachelessDataSourceFactory)
                 .setAllowChunklessPreparation(true)
                 .setPlaylistTrackerFactory((dataSourceFactory, loadErrorHandlingPolicy,
-                                            playlistParserFactory) ->
+                                            playlistParserFactory, cmcdConfiguration,
+                                            downloadExecutorSupplier) ->
                         new DefaultHlsPlaylistTracker(dataSourceFactory, loadErrorHandlingPolicy,
-                                playlistParserFactory,
-                                PLAYLIST_STUCK_TARGET_DURATION_COEFFICIENT));
+                                playlistParserFactory, cmcdConfiguration,
+                                PLAYLIST_STUCK_TARGET_DURATION_COEFFICIENT, downloadExecutorSupplier));
     }
 
     public DashMediaSource.Factory getLiveDashMediaSourceFactory() {
@@ -257,10 +258,12 @@ public class PlayerDataSource {
         return new HlsMediaSource.Factory(newFactory)
                 .setAllowChunklessPreparation(true)
                 .setPlaylistTrackerFactory((dataSourceFactory, loadErrorHandlingPolicy,
-                                            playlistParserFactory) ->
+                                            playlistParserFactory, cmcdConfiguration,
+                                            downloadExecutorSupplier) ->
                         new DefaultHlsPlaylistTracker(dataSourceFactory, loadErrorHandlingPolicy,
-                                playlistParserFactory,
-                                PLAYLIST_STUCK_TARGET_DURATION_COEFFICIENT)).setLoadErrorHandlingPolicy(new DefaultLoadErrorHandlingPolicy());
+                                playlistParserFactory, cmcdConfiguration,
+                                PLAYLIST_STUCK_TARGET_DURATION_COEFFICIENT, downloadExecutorSupplier))
+                .setLoadErrorHandlingPolicy(new DefaultLoadErrorHandlingPolicy());
     }
 
     // BiliBiliMediaSourceFactories
