@@ -256,16 +256,26 @@ public final class SabrSessionStore {
      * otherwise fall back to the best hardware-friendly one. */
     private static YoutubeSabrFormat pickVideoFormat(@NonNull final YoutubeSabrInfo info,
                                                      final int preferredItag) {
+        final boolean hwVp9 = hasHardwareDecoder("video/x-vnd.on2.vp9");
+        final boolean hwAv1 = hasHardwareDecoder("video/av01");
+        int preferredHeight = 0;
         if (preferredItag > 0) {
-            final boolean hwVp9 = hasHardwareDecoder("video/x-vnd.on2.vp9");
-            final boolean hwAv1 = hasHardwareDecoder("video/av01");
             for (final YoutubeSabrFormat f : info.getFormats()) {
-                if (f.isVideo() && f.getItag() == preferredItag && isDecodable(f, hwVp9, hwAv1)) {
-                    return f;
+                if (f.isVideo() && f.getItag() == preferredItag) {
+                    if (isDecodable(f, hwVp9, hwAv1)) {
+                        return f;
+                    }
+                    // Right resolution, wrong codec for this device (e.g. AV1 1080p with no HW AV1):
+                    // remember the height so we fall back to a decodable codec at the SAME resolution.
+                    preferredHeight = f.getHeight();
+                    break;
                 }
             }
         }
-        return pickHardwareFriendlyVideo(info);
+        // Fall back to the highest decodable format AT the user's chosen resolution, not the absolute
+        // highest: otherwise an undecodable AV1 1080p pick would jump to VP9 4K (heavier, and on the
+        // Pixel it claims HW it can't sustain). preferredHeight 0 (no preference) = no cap.
+        return pickHardwareFriendlyVideo(info, preferredHeight);
     }
 
     private static boolean isDecodable(@NonNull final YoutubeSabrFormat f,
@@ -283,7 +293,8 @@ public final class SabrSessionStore {
      * allow AVC always (universally HW), VP9 only when a HW VP9 decoder exists, AV1 only when a HW
      * AV1 decoder exists; otherwise fall back to the overall best (better some playback than none).
      */
-    private static YoutubeSabrFormat pickHardwareFriendlyVideo(@NonNull final YoutubeSabrInfo info) {
+    private static YoutubeSabrFormat pickHardwareFriendlyVideo(@NonNull final YoutubeSabrInfo info,
+                                                               final int maxHeight) {
         final boolean hwVp9 = hasHardwareDecoder("video/x-vnd.on2.vp9");
         final boolean hwAv1 = hasHardwareDecoder("video/av01");
         YoutubeSabrFormat best = null;
@@ -293,6 +304,9 @@ public final class SabrSessionStore {
             }
             if (!isDecodable(f, hwVp9, hwAv1)) {
                 continue;
+            }
+            if (maxHeight > 0 && f.getHeight() > maxHeight) {
+                continue; // don't exceed the user's chosen resolution
             }
             if (best == null || f.getHeight() > best.getHeight()
                     || (f.getHeight() == best.getHeight() && f.getBitrate() > best.getBitrate())) {
