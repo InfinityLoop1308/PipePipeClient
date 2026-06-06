@@ -135,11 +135,17 @@ final class SabrMediaPeriod implements MediaPeriod,
         compositeLoader = new SequenceableLoader() {
             @Override
             public long getBufferedPositionUs() {
+                // Skip tracks already buffered to the end (END_OF_SOURCE = Long.MIN_VALUE), else a
+                // finished shorter track (audio) would collapse the min and make media3 think the
+                // whole period is buffered to the end, starving the still-loading video near the end.
                 long min = Long.MAX_VALUE;
                 for (final ChunkSampleStream<SabrChunkSource> s : streams) {
-                    min = Math.min(min, s.getBufferedPositionUs());
+                    final long b = s.getBufferedPositionUs();
+                    if (b != C.TIME_END_OF_SOURCE) {
+                        min = Math.min(min, b);
+                    }
                 }
-                return streams.isEmpty() ? C.TIME_END_OF_SOURCE : min;
+                return min == Long.MAX_VALUE ? C.TIME_END_OF_SOURCE : min;
             }
 
             @Override
