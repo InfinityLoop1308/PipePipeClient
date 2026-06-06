@@ -51,7 +51,12 @@ public final class WebViewPoTokenProvider implements SabrPoTokenProvider {
     private static final String DESKTOP_UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
             + "(KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36";
     private static final long TOKEN_TTL_MS = 6L * 60L * 60L * 1000L; // 6 hours
-    private static final long PIPELINE_TIMEOUT_MS = 45_000L;
+    // The WebView BotGuard mint can occasionally run long; a single 45s shot timing out returned a
+    // null token -> token-less SABR -> cold-start failure. 60s + one retry (in getPoToken) is robust.
+    private static final long PIPELINE_TIMEOUT_MS = 60_000L;
+    // Persist minted tokens across process restarts so an app cold-start doesn't pay the ~45s mint
+    // again while the videoId-bound token is still valid (<6h).
+    private static final String PREFS = "sabr_potoken_cache";
     private static final int READY_RETRIES = 20;
     private static final long READY_POLL_MS = 250L;
 
@@ -67,6 +72,7 @@ public final class WebViewPoTokenProvider implements SabrPoTokenProvider {
 
     private final Context appContext;
     private final Handler mainHandler;
+    private final android.content.SharedPreferences prefs;
     private final Map<String, CachedToken> cache = new ConcurrentHashMap<>();
     // one lock per videoId so two callers (pre-warm + pump) don't both fire the ~45s WebView mint
     // for the same video. second one just waits and takes the cached token.
@@ -75,6 +81,7 @@ public final class WebViewPoTokenProvider implements SabrPoTokenProvider {
     public WebViewPoTokenProvider(final Context context) {
         this.appContext = context.getApplicationContext();
         this.mainHandler = new Handler(Looper.getMainLooper());
+        this.prefs = this.appContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
     }
 
     @Nullable
@@ -89,16 +96,28 @@ public final class WebViewPoTokenProvider implements SabrPoTokenProvider {
                              final boolean forceRefresh) {
         final String videoId = info.getVideoId();
         if (forceRefresh) {
-            // Server rejected the cached token (expired): drop it and mint a fresh one.
+            // Server rejected the cached token (expired): drop it (memory + disk) and mint fresh.
             cache.remove(videoId);
+            prefs.edit().remove(videoId).apply();
         }
         synchronized (mintLocks.computeIfAbsent(videoId, k -> new Object())) {
             final long now = System.currentTimeMillis();
-            final CachedToken cached = cache.get(videoId);
+            CachedToken cached = cache.get(videoId);
+            if (cached == null) {
+                cached = diskLoad(videoId); // survive process restart, skip the ~45s mint
+                if (cached != null) {
+                    cache.put(videoId, cached);
+                }
+            }
             if (cached != null && now - cached.mintedAtMs < TOKEN_TTL_MS) {
                 return cached.token;
             }
-            final String tokenB64 = mintBlocking(videoId);
+            // One retry: the BotGuard mint occasionally times out, and a single null killed playback.
+            String tokenB64 = mintBlocking(videoId);
+            if (tokenB64 == null || tokenB64.isEmpty()) {
+                Log.w(TAG, "PO token mint returned null, retrying once for " + videoId);
+                tokenB64 = mintBlocking(videoId);
+            }
             if (tokenB64 == null || tokenB64.isEmpty()) {
                 return null;
             }
@@ -110,8 +129,37 @@ public final class WebViewPoTokenProvider implements SabrPoTokenProvider {
                 return null;
             }
             cache.put(videoId, new CachedToken(token, now));
+            diskSave(videoId, tokenB64, now);
             return token;
         }
+    }
+
+    @Nullable
+    private CachedToken diskLoad(final String videoId) {
+        final String v = prefs.getString(videoId, null);
+        if (v == null) {
+            return null;
+        }
+        final int sep = v.indexOf('|');
+        if (sep <= 0) {
+            return null;
+        }
+        try {
+            final long mintedAt = Long.parseLong(v.substring(0, sep));
+            if (System.currentTimeMillis() - mintedAt >= TOKEN_TTL_MS) {
+                prefs.edit().remove(videoId).apply();
+                return null;
+            }
+            return new CachedToken(Base64.getUrlDecoder().decode(v.substring(sep + 1)), mintedAt);
+        } catch (final IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    private void diskSave(final String videoId, final String tokenB64, final long mintedAt) {
+        // commit() (sync) not apply(): the token must hit disk before a fast force-stop/process kill,
+        // else an app cold-start re-mints (~45s) even though a valid token was just minted.
+        prefs.edit().putString(videoId, mintedAt + "|" + tokenB64).commit();
     }
 
     @Nullable
