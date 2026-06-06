@@ -116,6 +116,7 @@ public final class SabrSegmentDataSource implements DataSource {
     /** Block until the pump has cached this segment, or give up on a real stall / cancellation. */
     private byte[] awaitSegment(final SabrSegmentRequest request) throws IOException {
         final SabrStreamPump pump = holder.getPump(localization);
+        final long waitStart = System.currentTimeMillis();
         while (true) {
             if (canceled) {
                 throw new IOException("SABR segment read canceled");
@@ -135,7 +136,12 @@ public final class SabrSegmentDataSource implements DataSource {
             if (pump.isFatal()) {
                 throw new IOException("SABR pump fatal for itag=" + format.getItag());
             }
-            if (pump.millisSinceLastSegment() > STALL_MS) {
+            // Stall = THIS segment hasn't arrived within STALL_MS of us actually waiting for it. Do
+            // NOT use the pump's "time since it last produced a segment": the pump legitimately stops
+            // producing while throttled (buffer full, edge far ahead), so that clock goes stale and
+            // the first cache miss after a long throttle false-stalls at ~STALL_MS. That was the
+            // recurring ~2min freeze on longer/higher-bitrate streams.
+            if (System.currentTimeMillis() - waitStart > STALL_MS) {
                 throw new IOException("SABR segment stalled for itag=" + format.getItag());
             }
             try {
