@@ -41,6 +41,11 @@ final class SabrStreamPump {
     // hit an evicted segment the pump never re-fetches -> dead buffer). Bounded, same order as the
     // forward cushion. Rewinds beyond this still need a session re-request (separate follow-up).
     private static final long BACK_BUFFER_MS = 30_000;
+    // Fallback back-buffer used when the cache is already over the byte budget: at high bitrate (4K)
+    // a 30s back-buffer + readahead exceeds MAX_AHEAD_BYTES, and since eviction can't drop segments
+    // within the back-buffer window the cache can't drain -> the pump throttles forever and stalls.
+    // Shrinking the back-buffer when over budget lets eviction free bytes so playback keeps fetching.
+    private static final long MIN_BACK_BUFFER_MS = 5_000;
 
     private final YoutubeSabrSession session;
     private final SabrSessionStore.Holder holder;
@@ -123,9 +128,13 @@ final class SabrStreamPump {
                     // track read; readerTail = slowest track read (safe to evict below).
                     final long readerHeadMs = holder.getReaderHeadMs();
                     // Evict what both tracks have read past, EVERY round (or a full cache never drains
-                    // and the throttle latches forever -> freeze), but keep BACK_BUFFER_MS behind the
-                    // reader so a short backward seek finds its segments cached instead of a hole.
-                    session.setPlayHeadMs(Math.max(0, holder.getReaderTailMs() - BACK_BUFFER_MS));
+                    // and the throttle latches forever -> freeze), keeping BACK_BUFFER_MS behind the
+                    // reader so a short backward seek finds its segments cached. But when the cache is
+                    // already over the byte budget (high bitrate), shrink the back-buffer so eviction
+                    // can actually drain it, otherwise the pump throttles forever and playback stalls.
+                    final long backBufferMs = session.getCachedBytes() > MAX_AHEAD_BYTES
+                            ? MIN_BACK_BUFFER_MS : BACK_BUFFER_MS;
+                    session.setPlayHeadMs(Math.max(0, holder.getReaderTailMs() - backBufferMs));
                     session.evictPlayed();
                     final long edgeMs = session.getStreamState().getMinBufferedEndMs();
                     // Backward seek beyond the back-buffer: a reader is blocked on an evicted segment
