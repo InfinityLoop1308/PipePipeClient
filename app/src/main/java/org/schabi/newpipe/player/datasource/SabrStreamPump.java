@@ -36,6 +36,11 @@ final class SabrStreamPump {
     // Hard byte ceiling on read-ahead so a high-bitrate (4K) stream can't OOM the heap: 50s of 4K is
     // ~160MB and crashed. ~100MB still covers the player's ~30s read-ahead, well under the OOM line.
     private static final long MAX_AHEAD_BYTES = 100L * 1024 * 1024;
+    // Keep this much already-played video in the cache so a short backward seek lands on cached
+    // segments instead of a hole (eviction used to drop everything the reader passed, so any rewind
+    // hit an evicted segment the pump never re-fetches -> dead buffer). Bounded, same order as the
+    // forward cushion. Rewinds beyond this still need a session re-request (separate follow-up).
+    private static final long BACK_BUFFER_MS = 30_000;
 
     private final YoutubeSabrSession session;
     private final SabrSessionStore.Holder holder;
@@ -107,9 +112,10 @@ final class SabrStreamPump {
                     // freezes while buffering and that deadlocked the pump. readerHead = furthest
                     // track read; readerTail = slowest track read (safe to evict below).
                     final long readerHeadMs = holder.getReaderHeadMs();
-                    // evict everything both tracks have read past, EVERY round (even before we throttle
-                    // below) or a full cache never drains and the throttle latches forever -> freeze.
-                    session.setPlayHeadMs(holder.getReaderTailMs());
+                    // Evict what both tracks have read past, EVERY round (or a full cache never drains
+                    // and the throttle latches forever -> freeze), but keep BACK_BUFFER_MS behind the
+                    // reader so a short backward seek finds its segments cached instead of a hole.
+                    session.setPlayHeadMs(Math.max(0, holder.getReaderTailMs() - BACK_BUFFER_MS));
                     session.evictPlayed();
                     final long edgeMs = session.getStreamState().getMinBufferedEndMs();
                     final boolean throttled = edgeMs - readerHeadMs > READAHEAD_CUSHION_MS
