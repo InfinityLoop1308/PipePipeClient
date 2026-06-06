@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Caches one shared {@link YoutubeSabrSession} per videoId so the audio and video
- * {@link SabrDataSource}s drive the same session (a single SABR response carries both formats, so
+ * {@link SabrSegmentDataSource}s drive the same session (a single SABR response carries both formats, so
  * the session's segment cache serves both without doubling bandwidth).
  *
  * <p>v1: uses the best audio/video formats from the player response and a fixed en/US locale.</p>

@@ -18,7 +18,7 @@ import java.util.List;
  * Single consumer of a {@link YoutubeSabrSession}: one daemon thread pumps the server-driven SABR
  * stream and fills the session's (concurrent) segment cache ahead of the play head. The server
  * paces us with policy-only responses once we are far enough ahead. Both the audio and video
- * {@link SabrDataSource}s only read the cache, so they never fight over the session or block each
+ * {@link SabrSegmentDataSource}s only read the cache, so they never fight over the session or block each
  * other on a network round-trip, which is exactly what starved a track in the old on-demand approach.
  */
 final class SabrStreamPump {
@@ -45,7 +45,6 @@ final class SabrStreamPump {
     private volatile boolean stopped;
     private volatile boolean fatal;
     private volatile long lastReadMs;
-    private volatile long lastSegmentMs;
     private Thread thread;
 
     SabrStreamPump(@NonNull final YoutubeSabrSession session,
@@ -68,7 +67,6 @@ final class SabrStreamPump {
             }
             stopped = false;
             started = true;
-            lastSegmentMs = System.currentTimeMillis();
             thread = new Thread(this::loop, "SabrStreamPump");
             thread.setDaemon(true);
             thread.start();
@@ -85,11 +83,6 @@ final class SabrStreamPump {
                 thread.interrupt();
             }
         }
-    }
-
-    /** ms since the pump last grabbed a segment. basically "is this thing dead or what". */
-    long millisSinceLastSegment() {
-        return System.currentTimeMillis() - lastSegmentMs;
     }
 
     @Nullable
@@ -133,8 +126,6 @@ final class SabrStreamPump {
                     final List<SabrMediaSegment> segments = session.pumpOnce(localization);
                     if (segments.isEmpty()) {
                         Thread.sleep(IDLE_POLL_MS);
-                    } else {
-                        lastSegmentMs = System.currentTimeMillis();
                     }
                 } catch (final InterruptedException e) {
                     Thread.currentThread().interrupt();
