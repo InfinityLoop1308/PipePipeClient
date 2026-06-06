@@ -30,6 +30,9 @@ public final class SabrSegmentDataSource implements DataSource {
 
     private static final long WAIT_MS = 250;
     private static final long STALL_MS = 120_000;
+    // After waiting this long for a media segment that's BEHIND the buffered edge, treat it as a
+    // backward seek onto an evicted segment and ask the pump to reposition the session there.
+    private static final long REFETCH_AFTER_MS = 2_000;
 
     private final SabrSessionStore.Holder holder;
     private final YoutubeSabrFormat format;
@@ -117,6 +120,7 @@ public final class SabrSegmentDataSource implements DataSource {
     private byte[] awaitSegment(final SabrSegmentRequest request) throws IOException {
         final SabrStreamPump pump = holder.getPump(localization);
         final long waitStart = System.currentTimeMillis();
+        long lastRefetchMs = 0;
         while (true) {
             if (canceled) {
                 throw new IOException("SABR segment read canceled");
@@ -135,6 +139,24 @@ public final class SabrSegmentDataSource implements DataSource {
             }
             if (pump.isFatal()) {
                 throw new IOException("SABR pump fatal for itag=" + format.getItag());
+            }
+            // Backward seek to an evicted segment behind the buffered edge: the forward pump never
+            // re-fetches it, so it would never arrive. Drop our read position onto it (so eviction +
+            // pacing follow the rewind, not the stale pre-seek position) and ask the pump to
+            // reposition the session there. The edge check leaves a merely-slow forward fetch (the
+            // segment is still ahead of the edge) to the normal pump, so forward playback is untouched.
+            if (!request.isInitializationSegment()) {
+                final long now = System.currentTimeMillis();
+                if (now - waitStart > REFETCH_AFTER_MS && now - lastRefetchMs > REFETCH_AFTER_MS) {
+                    final long edgeMs = holder.session.getStreamState().getMinBufferedEndMs();
+                    final long segStartMs = holder.session.getStreamState()
+                            .getSegmentStartMs(format, request.getSequenceNumber());
+                    if (segStartMs < edgeMs) {
+                        holder.setReaderPositionMs(format.getItag(), segStartMs);
+                        pump.requestRefetchFrom(request);
+                        lastRefetchMs = now;
+                    }
+                }
             }
             // Stall = THIS segment hasn't arrived within STALL_MS of us actually waiting for it. Do
             // NOT use the pump's "time since it last produced a segment": the pump legitimately stops

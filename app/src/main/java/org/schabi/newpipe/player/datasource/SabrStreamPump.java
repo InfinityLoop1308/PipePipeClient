@@ -50,6 +50,9 @@ final class SabrStreamPump {
     private volatile boolean stopped;
     private volatile boolean fatal;
     private volatile long lastReadMs;
+    // Set by a reader blocked on an evicted segment behind the edge (backward seek); the loop
+    // repositions the session onto it next round. Single-slot: the latest rewind target wins.
+    private volatile SabrSegmentRequest pendingRefetch;
     private Thread thread;
 
     SabrStreamPump(@NonNull final YoutubeSabrSession session,
@@ -101,6 +104,13 @@ final class SabrStreamPump {
         return fatal;
     }
 
+    /** A reader is blocked on an evicted segment behind the buffered edge (backward seek). Ask the
+     * loop to reposition the session onto it so the server re-sends from there. */
+    void requestRefetchFrom(@NonNull final SabrSegmentRequest request) {
+        pendingRefetch = request;
+        ensureStarted();
+    }
+
     private void loop() {
         try {
             while (!stopped) {
@@ -118,6 +128,17 @@ final class SabrStreamPump {
                     session.setPlayHeadMs(Math.max(0, holder.getReaderTailMs() - BACK_BUFFER_MS));
                     session.evictPlayed();
                     final long edgeMs = session.getStreamState().getMinBufferedEndMs();
+                    // Backward seek beyond the back-buffer: a reader is blocked on an evicted segment
+                    // behind the edge. Reposition the session onto it (prepareForMediaSegment sets
+                    // buffered=up-to-(seg-1) + playerTime=seg start, so the server re-sends from there)
+                    // instead of fetching forward this round. Bypasses the throttle by design.
+                    final SabrSegmentRequest refetch = pendingRefetch;
+                    if (refetch != null) {
+                        pendingRefetch = null;
+                        session.prepareForRewind(refetch);
+                        session.pumpOnce(localization);
+                        continue;
+                    }
                     final boolean throttled = edgeMs - readerHeadMs > READAHEAD_CUSHION_MS
                             || session.getCachedBytes() > MAX_AHEAD_BYTES;
                     if (throttled) {
