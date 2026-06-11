@@ -5170,7 +5170,12 @@ public final class Player implements
         final SourceType sourceType = videoResolver.getStreamSourceType().orElse(
                 SourceType.VIDEO_WITH_AUDIO_OR_AUDIO_ONLY);
 
-        if (playQueueManagerReloadingNeeded(sourceType, info, getVideoRendererIndex())) {
+        // SABR is backed by a live, session-driven source: rebuilding it over the cached session on
+        // return-from-background re-prepares + cold-seeks and freezes playback (see
+        // ISSUE_SABR_RESUME_FREEZE.md). The session keeps both tracks buffered while backgrounded, so
+        // just re-enable the video track on the live source instead of a full reload.
+        if (!isCurrentStreamSabr()
+                && playQueueManagerReloadingNeeded(sourceType, info, getVideoRendererIndex())) {
             reloadPlayQueueManager();
         } else {
             final StreamType streamType = info.getStreamType();
