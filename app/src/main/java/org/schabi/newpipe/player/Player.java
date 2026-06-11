@@ -237,6 +237,10 @@ public final class Player implements
     private static final float[] PLAYBACK_SPEEDS = {0.1f, 0.3f, 0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 1.75f, 2.0f, 2.25f, 2.5f, 2.75f, 3.0f, 5.0f, 10.0f};
 
     private static final int RENDERER_UNAVAILABLE = -1;
+    // Cooldown between automatic recoveries from a surface-released decoder-init failure, so a
+    // genuinely broken surface can't loop recover->fail forever.
+    private static final long SURFACE_ERROR_RECOVERY_COOLDOWN_MS = 10_000;
+    private long lastSurfaceErrorRecoveryMs;
     private static final int MAX_RETRY_COUNT = 2;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -3192,18 +3196,35 @@ public final class Player implements
                 setRecovery();
                 reloadPlayQueueManager();
                 break;
-            case ERROR_CODE_DECODER_INIT_FAILED:
-                final AppCompatActivity activity = getParentActivity();
-                if (activity != null) {
-                    new AlertDialog.Builder(activity)
+case ERROR_CODE_DECODER_INIT_FAILED: {
+                final boolean surfaceReleased = isSurfaceReleasedError(error);
+                if (surfaceReleased && System.currentTimeMillis() - lastSurfaceErrorRecoveryMs
+                        > SURFACE_ERROR_RECOVERY_COOLDOWN_MS) {
+                    // The decoder died because the video surface was released under it (screen off /
+                    // surface lifecycle race), NOT because the device lacks a decoder. Recover like a
+                    // stream error instead of killing playback with the misleading "no hardware
+                    // decoder, use VLC" dialog. Cooldown-bounded so a genuinely broken surface still
+                    // falls through to shutdown below.
+                    lastSurfaceErrorRecoveryMs = System.currentTimeMillis();
+                    setRecovery();
+                    reloadPlayQueueManager();
+                    break;
+                }
+                // Only show the dialog when a hosting activity exists AND the failure is really
+                // about decoding capability. getParentActivity() is null in the background/popup
+                // player, and AlertDialog.Builder(null) NPEs -> the app crashed on a decoder-init
+                // failure while backgrounded. The error notification below still surfaces it.
+                final AppCompatActivity parentActivity = getParentActivity();
+                if (parentActivity != null && !surfaceReleased) {
+                    new AlertDialog.Builder(parentActivity)
                             .setTitle(R.string.decoder_init_failure)
                             .setMessage(R.string.unable_to_decode_summary)
-                            .setPositiveButton(R.string.ok, null)
+                            .setPositiveButton(R.string.ok, (dialog, which) -> { })
                             .show();
                 }
-
                 onPlaybackShutdown();
                 break;
+            }
             default:
                 // API, remote and renderer errors belong here:
                 onPlaybackShutdown();
@@ -3250,6 +3271,22 @@ public final class Player implements
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * True when a decoder-init failure was caused by the video surface being released under the
+     * codec (screen off / surface lifecycle race) rather than by a missing/unsupported decoder.
+     */
+    private static boolean isSurfaceReleasedError(@NonNull final PlaybackException error) {
+        Throwable cause = error.getCause();
+        for (int depth = 0; cause != null && depth < 8; depth++, cause = cause.getCause()) {
+            final String message = cause.getMessage();
+            if (cause instanceof IllegalArgumentException && message != null
+                    && message.toLowerCase(Locale.US).contains("surface")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void createErrorNotification(@NonNull final PlaybackException error) {
