@@ -33,6 +33,10 @@ public final class SabrSegmentDataSource implements DataSource {
     // After waiting this long for a media segment that's BEHIND the buffered edge, treat it as a
     // backward seek onto an evicted segment and ask the pump to reposition the session there.
     private static final long REFETCH_AFTER_MS = 2_000;
+    // If a media segment is this far AHEAD of the buffered edge after REFETCH_AFTER_MS, it's a cold
+    // forward seek (SponsorBlock skip at start, resume-from-history): the pump fills forward from the
+    // edge and would take minutes to reach it, so jump the session onto it instead of waiting.
+    private static final long FORWARD_SEEK_AHEAD_MS = 30_000;
 
     private final SabrSessionStore.Holder holder;
     private final YoutubeSabrFormat format;
@@ -152,8 +156,17 @@ public final class SabrSegmentDataSource implements DataSource {
                     final long segStartMs = holder.session.getStreamState()
                             .getSegmentStartMs(format, request.getSequenceNumber());
                     if (segStartMs < edgeMs) {
+                        // Backward seek onto an evicted segment behind the edge.
                         holder.setReaderPositionMs(format.getItag(), segStartMs);
                         pump.requestRefetchFrom(request);
+                        lastRefetchMs = now;
+                    } else if (segStartMs > edgeMs + FORWARD_SEEK_AHEAD_MS) {
+                        // Cold/forward seek far ahead of where the pump is filling (SponsorBlock skip
+                        // at start, resume-from-history): jump the session onto it instead of waiting
+                        // for the forward pump to crawl there. A merely-slow normal fetch (target just
+                        // past the edge) stays on the pump, so steady playback is untouched.
+                        holder.setReaderPositionMs(format.getItag(), segStartMs);
+                        pump.requestForwardSeekTo(request);
                         lastRefetchMs = now;
                     }
                 }

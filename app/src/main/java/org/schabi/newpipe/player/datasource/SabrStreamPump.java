@@ -58,6 +58,10 @@ final class SabrStreamPump {
     // Set by a reader blocked on an evicted segment behind the edge (backward seek); the loop
     // repositions the session onto it next round. Single-slot: the latest rewind target wins.
     private volatile SabrSegmentRequest pendingRefetch;
+    // Set by a reader blocked on a segment far AHEAD of the buffered edge (cold/forward seek:
+    // SponsorBlock skip at start, resume-from-history). The forward pump fills from edge 0 and would
+    // take minutes to reach it, so the loop jumps the session onto it next round. Single-slot.
+    private volatile SabrSegmentRequest pendingForwardSeek;
     private Thread thread;
 
     SabrStreamPump(@NonNull final YoutubeSabrSession session,
@@ -116,10 +120,25 @@ final class SabrStreamPump {
         ensureStarted();
     }
 
+    /** A reader is blocked on a segment far ahead of the buffered edge (cold/forward seek, e.g. a
+     * SponsorBlock skip at the start). Ask the loop to jump the session onto it so the server streams
+     * from there instead of crawling forward from the start. */
+    void requestForwardSeekTo(@NonNull final SabrSegmentRequest request) {
+        pendingForwardSeek = request;
+        ensureStarted();
+    }
+
     private void loop() {
         try {
             while (!stopped) {
-                if (System.currentTimeMillis() - lastReadMs > IDLE_STOP_MS || session.isComplete()) {
+                // Don't die on completion/idle while a reposition is pending: a backward seek after
+                // playback buffered to the end arrives with isComplete()=true, and breaking here
+                // meant the restarted pump exited before ever processing the refetch -> the reader
+                // waited forever (full buffer on rewind-after-end). prepareForRewind resets the
+                // buffered head, so isComplete() turns false again once the reposition runs.
+                if (pendingRefetch == null && pendingForwardSeek == null
+                        && (System.currentTimeMillis() - lastReadMs > IDLE_STOP_MS
+                                || session.isComplete())) {
                     break;
                 }
                 try {
@@ -145,6 +164,17 @@ final class SabrStreamPump {
                     if (refetch != null) {
                         pendingRefetch = null;
                         session.prepareForRewind(refetch);
+                        session.pumpOnce(localization);
+                        continue;
+                    }
+                    // Cold/forward seek (SponsorBlock skip, user seek far ahead): a reader is blocked
+                    // on a segment far ahead of the edge. Jump the session onto it
+                    // (prepareForForwardJump moves the buffered head to the target, so the edge-driven
+                    // pacing follows the new position instead of ping-ponging back to the old span).
+                    final SabrSegmentRequest forwardSeek = pendingForwardSeek;
+                    if (forwardSeek != null) {
+                        pendingForwardSeek = null;
+                        session.prepareForForwardJump(forwardSeek);
                         session.pumpOnce(localization);
                         continue;
                     }
