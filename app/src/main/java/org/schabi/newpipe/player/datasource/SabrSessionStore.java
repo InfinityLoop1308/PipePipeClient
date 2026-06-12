@@ -29,6 +29,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class SabrSessionStore {
 
+    // Debug: log the AAC audio-track candidates + the chosen one. Keep false outside debugging.
+    private static final boolean DIAG_AUDIO = false;
+
     private static final Map<String, Holder> SESSIONS = new ConcurrentHashMap<>();
     // Current video plus one (next-item prefetch). Keeping more let abandoned sessions' pump threads
     // linger and bleed into the new playback on a switch, leaving the decoder with no usable frame
@@ -244,10 +247,37 @@ public final class SabrSessionStore {
                 continue;
             }
             final String mime = f.getMimeType();
-            if (mime != null && mime.contains("mp4") && (aac == null
-                    || f.getBitrate() > aac.getBitrate())) {
+            if (mime == null || !mime.contains("mp4")) {
+                continue;
+            }
+            if (DIAG_AUDIO) {
+                System.out.println("SABR-AUDIO candidate itag=" + f.getItag()
+                        + " trackId=" + f.getAudioTrackId()
+                        + " name=" + f.getAudioTrackDisplayName()
+                        + " default=" + f.isAudioDefault()
+                        + " original=" + f.isOriginalAudio()
+                        + " bitrate=" + f.getBitrate());
+            }
+            if (aac == null) {
+                aac = f;
+                continue;
+            }
+            // Prefer the original-language track over an auto-dub, then the highest bitrate, so a
+            // dubbed default doesn't override the source audio. Falls back to plain highest-bitrate
+            // when no track is marked original (single-track videos).
+            final boolean preferForTrack = f.isOriginalAudio() && !aac.isOriginalAudio();
+            final boolean preferForBitrate = f.isOriginalAudio() == aac.isOriginalAudio()
+                    && f.getBitrate() > aac.getBitrate();
+            if (preferForTrack || preferForBitrate) {
                 aac = f;
             }
+        }
+        if (DIAG_AUDIO && aac != null) {
+            System.out.println("SABR-AUDIO chosen video=" + info.getVideoId()
+                    + " itag=" + aac.getItag()
+                    + " trackId=" + aac.getAudioTrackId()
+                    + " name=" + aac.getAudioTrackDisplayName()
+                    + " original=" + aac.isOriginalAudio());
         }
         return aac != null ? aac : info.findBestAudioFormat();
     }
