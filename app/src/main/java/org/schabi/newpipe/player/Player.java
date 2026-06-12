@@ -127,6 +127,7 @@ import org.schabi.newpipe.player.event.PlayerGestureListener;
 import org.schabi.newpipe.player.event.PlayerServiceEventListener;
 import org.schabi.newpipe.player.helper.AudioReactor;
 import org.schabi.newpipe.player.helper.CustomRenderersFactory;
+import org.schabi.newpipe.player.helper.LegacySubtitleRenderersFactory;
 import org.schabi.newpipe.player.helper.LoadController;
 import org.schabi.newpipe.player.helper.MediaSessionManager;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
@@ -438,7 +439,8 @@ public final class Player implements
         renderFactory = prefs.getBoolean(
                 context.getString(
                         R.string.always_use_exoplayer_set_output_surface_workaround_key), false)
-                ? new CustomRenderersFactory(context) : new DefaultRenderersFactory(context);
+                ? new CustomRenderersFactory(context)
+                : new LegacySubtitleRenderersFactory(context);
 
         renderFactory.setEnableDecoderFallback(true);
 

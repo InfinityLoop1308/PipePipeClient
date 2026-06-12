@@ -19,8 +19,12 @@ import java.util.ArrayList;
  * load video extension libraries is not needed in our case and has been removed. This should be
  * changed in the case an extension is shipped with the app, such as the AV1 one.
  * </p>
+ *
+ * <p>
+ * Extends {@link LegacySubtitleRenderersFactory} so this path also keeps legacy subtitle decoding.
+ * </p>
  */
-public final class CustomRenderersFactory extends DefaultRenderersFactory {
+public final class CustomRenderersFactory extends LegacySubtitleRenderersFactory {
 
     public CustomRenderersFactory(final Context context) {
         super(context);
