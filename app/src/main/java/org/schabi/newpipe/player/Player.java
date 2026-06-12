@@ -86,6 +86,7 @@ import androidx.media3.common.Tracks;
 import androidx.media3.exoplayer.source.MediaSource;
 import androidx.media3.common.TrackGroup;
 import androidx.media3.exoplayer.source.TrackGroupArray;
+import androidx.media3.common.text.Cue;
 import androidx.media3.common.text.CueGroup;
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
 import androidx.media3.exoplayer.trackselection.MappingTrackSelector;
@@ -3038,7 +3039,32 @@ public final class Player implements
 
     @Override
     public void onCues(@NonNull final CueGroup cueGroup) {
-        binding.subtitleView.setCues(cueGroup.cues);
+        binding.subtitleView.setCues(normalizeCuePositions(cueGroup.cues));
+    }
+
+    /**
+     * YouTube auto-captions can carry an explicit top line (e.g. line=0.05), so media3 draws them
+     * over the video instead of at the bottom. Drop a top-half fractional line so the SubtitleView
+     * falls back to its default bottom placement; cues that are already low or unpositioned are left
+     * untouched.
+     */
+    private static List<Cue> normalizeCuePositions(@NonNull final List<Cue> cues) {
+        List<Cue> out = null;
+        for (int i = 0; i < cues.size(); i++) {
+            final Cue cue = cues.get(i);
+            final boolean topAnchored = cue.lineType == Cue.LINE_TYPE_FRACTION
+                    && cue.line != Cue.DIMEN_UNSET && cue.line < 0.5f;
+            if (topAnchored) {
+                if (out == null) {
+                    out = new ArrayList<>(cues);
+                }
+                out.set(i, cue.buildUpon()
+                        .setLine(Cue.DIMEN_UNSET, Cue.TYPE_UNSET)
+                        .setLineAnchor(Cue.TYPE_UNSET)
+                        .build());
+            }
+        }
+        return out != null ? out : cues;
     }
 
     public void onPrepare() {
