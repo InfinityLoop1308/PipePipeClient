@@ -394,11 +394,12 @@ public final class VideoDetailFragment
 
         setupBrightness();
 
-        if (currentInfo != null) {
-            if (tabSettingsChanged) {
-                tabSettingsChanged = false;
-                initTabs();
-            }
+        // Only rebuild the tabs when the tab settings actually changed. Doing it on every resume
+        // recreated the related-items (and description) fragments each time, so returning from the
+        // share sheet / Home reloaded the related videos. A new video goes through handleResult().
+        if (currentInfo != null && tabSettingsChanged) {
+            tabSettingsChanged = false;
+            initTabs();
             updateTabs(currentInfo);
         }
 
