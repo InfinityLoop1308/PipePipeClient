@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.localization.ContentCountry;
 import org.schabi.newpipe.extractor.localization.Localization;
-import org.schabi.newpipe.extractor.services.youtube.sabr.SabrPoTokenProvider;
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrSegmentRequest;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrClientProfile;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat;
@@ -224,7 +223,7 @@ public final class SabrSessionStore {
             if (audioFormat == null || videoFormat == null) {
                 throw new IOException("SABR: could not select audio/video formats for " + videoId);
             }
-            final SabrPoTokenProvider provider = provider(context);
+            final WebViewPoTokenProvider provider = provider(context);
             final YoutubeSabrSession session =
                     new YoutubeSabrSession(info, audioFormat, videoFormat, provider);
             final Holder holder = new Holder(videoId, info, session, audioFormat, videoFormat);
@@ -249,12 +248,11 @@ public final class SabrSessionStore {
             }, "SabrTokenPrewarm");
             warm.setDaemon(true);
             warm.start();
-            if (preferredAudioTrackId != null) {
-                // Mid-playback rebuild (audio-track switch): the player seeks to the saved position
-                // right after this returns. Pre-load both tracks' init metadata now so that cold
-                // seek maps the time to the correct segment. Without it the mapping uses the default
-                // 5000ms segment duration, overshoots the real segment count and dead-buffers. The
-                // PO token is already cached from the prior session, so this is a single fast fetch.
+            // Pre-load init metadata when a seek will follow (audio switch, or cold-restore: a
+            // cached token means we played this recently). Else the seek maps with the default
+            // 5000ms segment duration -> audio UnexpectedDiscontinuityException. The token gate keeps
+            // the first play (starts at 0) off the ~45s mint.
+            if (preferredAudioTrackId != null || provider.hasCachedToken(videoId)) {
                 try {
                     session.fetchSegment(SabrSegmentRequest.initialization(audioFormat),
                             localization);

@@ -134,6 +134,19 @@ public final class WebViewPoTokenProvider implements SabrPoTokenProvider {
         }
     }
 
+    /**
+     * True if a non-expired PO token for this video is already in memory or on disk, WITHOUT minting.
+     * Lets a caller pre-load metadata cheaply when we've recently played this video (cold-restore /
+     * re-resolve) while NOT blocking the first-ever play on the ~45s mint.
+     */
+    public boolean hasCachedToken(final String videoId) {
+        final CachedToken mem = cache.get(videoId);
+        if (mem != null && System.currentTimeMillis() - mem.mintedAtMs < TOKEN_TTL_MS) {
+            return true;
+        }
+        return diskLoad(videoId) != null;
+    }
+
     @Nullable
     private CachedToken diskLoad(final String videoId) {
         final String v = prefs.getString(videoId, null);
