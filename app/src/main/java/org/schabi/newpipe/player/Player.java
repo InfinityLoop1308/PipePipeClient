@@ -241,6 +241,10 @@ public final class Player implements
     // genuinely broken surface can't loop recover->fail forever.
     private static final long SURFACE_ERROR_RECOVERY_COOLDOWN_MS = 10_000;
     private long lastSurfaceErrorRecoveryMs;
+    // One-shot: the next reload is an audio-track switch and must seek to the saved position rather
+    // than restart at 0. Scoped to the switch because that path pre-loads the SABR init metadata so
+    // the cold seek maps correctly; other SABR restarts stay at 0 (see shouldSeek).
+    private boolean seekOnNextSabrReload;
     private static final int MAX_RETRY_COUNT = 2;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -829,6 +833,7 @@ public final class Player implements
             if (shouldSeek()) {
                 simpleExoPlayer.seekTo(playQueue.getIndex(), newQueue.getItem().getRecoveryPosition());
             }
+            seekOnNextSabrReload = false;
 
             simpleExoPlayer.setPlayWhenReady(playWhenReady);
 
@@ -3418,15 +3423,18 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
             } else {
                 simpleExoPlayer.seekToDefaultPosition(currentPlayQueueIndex);
             }
+            seekOnNextSabrReload = false;
         }
     }
 
     public boolean shouldSeek() {
-        // our v1 SABR seek is a dumb byte-skip that can't land on a real position, so resuming
-        // mid-video just freezes the whole thing. so SABR always starts from 0, scrubbing can wait.
-        // honestly nobody died from rewatching an intro. plays fine from 0.
+        // SABR honours the saved position only on an audio-track switch: that path rebuilds the
+        // session and pre-loads the init metadata, so the cold seek maps the time to the right
+        // segment. Any other SABR (re)start stays at 0, because a cold seek before that metadata is
+        // loaded maps with the default segment duration and overshoots the segment count -> endless
+        // buffering. (Lifting this for resume needs the same metadata pre-load made general.)
         if (isCurrentStreamSabr()) {
-            return false;
+            return seekOnNextSabrReload;
         }
         return !prefs.getBoolean(context.getString(R.string.always_start_from_beginning_key), false);
     }
@@ -4491,6 +4499,9 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     private void setAudioTrack(@Nullable final String audioTrackId) {
         saveStreamProgressState();
         setRecovery();
+        // This reload is a switch: keep the saved position instead of restarting at 0 (see
+        // shouldSeek). Consumed in the recovery-seek paths below.
+        seekOnNextSabrReload = true;
         videoResolver.setAudioTrack(audioTrackId);
         audioResolver.setAudioTrack(audioTrackId);
         reloadPlayQueueManager();
