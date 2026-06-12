@@ -18,6 +18,7 @@ import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.SubtitlesStream;
 import org.schabi.newpipe.extractor.stream.VideoStream;
+import org.schabi.newpipe.player.datasource.SabrSessionStore;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.mediaitem.MediaItemTag;
@@ -72,6 +73,10 @@ public class VideoPlaybackResolver implements PlaybackResolver {
             streamSourceType = SourceType.LIVE_STREAM;
             return liveSource;
         }
+
+        // Hand the user-selected audio language to the SABR session store before it (re)builds the
+        // session for this video, so the switch actually changes the streamed track.
+        SabrSessionStore.setPreferredAudioTrack(info.getId(), audioTrack);
 
         final List<MediaSource> mediaSources = new ArrayList<>();
         final List<VideoStream> videoStreams = new ArrayList<>(info.getVideoStreams());

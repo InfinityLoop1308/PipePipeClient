@@ -5,6 +5,7 @@ import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.localization.ContentCountry;
@@ -33,6 +34,8 @@ public final class SabrSessionStore {
     private static final boolean DIAG_AUDIO = false;
 
     private static final Map<String, Holder> SESSIONS = new ConcurrentHashMap<>();
+    // The user-selected audio track id per video, applied on the next (re)build of its session.
+    private static final Map<String, String> PREFERRED_AUDIO = new ConcurrentHashMap<>();
     // Current video plus one (next-item prefetch). Keeping more let abandoned sessions' pump threads
     // linger and bleed into the new playback on a switch, leaving the decoder with no usable frame
     // (black screen). Evicting the superseded session promptly (and stopping its pump) fixes that.
@@ -164,30 +167,59 @@ public final class SabrSessionStore {
         return wanted != null && wanted.getItag() == holder.videoFormat.getItag();
     }
 
+    private static boolean sessionMatchesAudioTrack(@NonNull final Holder holder,
+                                                    @Nullable final String preferredTrackId) {
+        // No explicit pick -> any cached track is fine (the default original). Otherwise the cached
+        // session must already stream the requested track, else rebuild.
+        return preferredTrackId == null
+                || preferredTrackId.equals(holder.audioFormat.getAudioTrackId());
+    }
+
     @NonNull
+    /**
+     * Set (or clear with {@code null}) the audio track the user picked for a video. Read by
+     * {@link #getOrCreate} so the next session (re)build streams that language; a different value
+     * than the cached session's track forces a rebuild.
+     */
+    public static void setPreferredAudioTrack(@NonNull final String videoId,
+                                              @Nullable final String audioTrackId) {
+        if (DIAG_AUDIO) {
+            System.out.println("SABR-AUDIO setPreferred video=" + videoId + " track=" + audioTrackId);
+        }
+        if (audioTrackId == null) {
+            PREFERRED_AUDIO.remove(videoId);
+        } else {
+            PREFERRED_AUDIO.put(videoId, audioTrackId);
+        }
+    }
+
     public static Holder getOrCreate(@NonNull final Context context,
                                      @NonNull final String videoId,
                                      final int preferredVideoItag)
             throws IOException, ExtractionException {
+        final String preferredAudioTrackId = PREFERRED_AUDIO.get(videoId);
         final Holder existing = SESSIONS.get(videoId);
-        if (existing != null && sessionMatchesItag(existing, preferredVideoItag)) {
+        if (existing != null && sessionMatchesItag(existing, preferredVideoItag)
+                && sessionMatchesAudioTrack(existing, preferredAudioTrackId)) {
             return existing;
         }
         synchronized (SabrSessionStore.class) {
             final Holder current = SESSIONS.get(videoId);
             if (current != null) {
-                if (sessionMatchesItag(current, preferredVideoItag)) {
+                if (sessionMatchesItag(current, preferredVideoItag)
+                        && sessionMatchesAudioTrack(current, preferredAudioTrackId)) {
                     return current;
                 }
-                // Quality/codec change: the resolver re-asks with a different video itag for the same
-                // video. The cached session is locked to its formats, so returning it would re-prepare
-                // the player on the old codec and dead-buffer. Drop it (stops the pump) + rebuild below.
+                // Quality/codec OR audio-track change: the resolver re-asks with a different video
+                // itag or audio track for the same video. The cached session is locked to its
+                // formats, so returning it would re-prepare the player on the old pick and
+                // dead-buffer. Drop it (stops the pump) + rebuild below.
                 evict(videoId);
             }
             final Localization localization = new Localization("en", "US");
             final ContentCountry contentCountry = new ContentCountry("US");
             final YoutubeSabrInfo info = YoutubeSabrProbeFetch(videoId, localization, contentCountry);
-            final YoutubeSabrFormat audioFormat = pickAudioFormat(info);
+            final YoutubeSabrFormat audioFormat = pickAudioFormat(info, preferredAudioTrackId);
             final YoutubeSabrFormat videoFormat = pickVideoFormat(info, preferredVideoItag);
             if (audioFormat == null || videoFormat == null) {
                 throw new IOException("SABR: could not select audio/video formats for " + videoId);
@@ -217,6 +249,21 @@ public final class SabrSessionStore {
             }, "SabrTokenPrewarm");
             warm.setDaemon(true);
             warm.start();
+            if (preferredAudioTrackId != null) {
+                // Mid-playback rebuild (audio-track switch): the player seeks to the saved position
+                // right after this returns. Pre-load both tracks' init metadata now so that cold
+                // seek maps the time to the correct segment. Without it the mapping uses the default
+                // 5000ms segment duration, overshoots the real segment count and dead-buffers. The
+                // PO token is already cached from the prior session, so this is a single fast fetch.
+                try {
+                    session.fetchSegment(SabrSegmentRequest.initialization(audioFormat),
+                            localization);
+                    session.fetchSegment(SabrSegmentRequest.initialization(videoFormat),
+                            localization);
+                } catch (final Exception ignored) {
+                    // Best-effort; on failure the seek falls back to the previous behaviour.
+                }
+            }
             return holder;
         }
     }
@@ -240,7 +287,8 @@ public final class SabrSessionStore {
     // mp4, hardware-decoded, ~same bitrate (130 vs 136 kbps) and plays perfectly smooth. so: AAC
     // until someone cracks the Opus path. (audio codec isn't user-facing, so this isn't a band-aid
     // on a user setting, just an internal pick.)
-    private static YoutubeSabrFormat pickAudioFormat(@NonNull final YoutubeSabrInfo info) {
+    private static YoutubeSabrFormat pickAudioFormat(@NonNull final YoutubeSabrInfo info,
+                                                     @Nullable final String preferredTrackId) {
         YoutubeSabrFormat aac = null;
         for (final YoutubeSabrFormat f : info.getFormats()) {
             if (!f.isAudio()) {
@@ -248,6 +296,11 @@ public final class SabrSessionStore {
             }
             final String mime = f.getMimeType();
             if (mime == null || !mime.contains("mp4")) {
+                continue;
+            }
+            // When the user picked a language, only consider that track; otherwise fall through to
+            // the original-language preference below.
+            if (preferredTrackId != null && !preferredTrackId.equals(f.getAudioTrackId())) {
                 continue;
             }
             if (DIAG_AUDIO) {
@@ -278,6 +331,10 @@ public final class SabrSessionStore {
                     + " trackId=" + aac.getAudioTrackId()
                     + " name=" + aac.getAudioTrackDisplayName()
                     + " original=" + aac.isOriginalAudio());
+        }
+        if (aac == null && preferredTrackId != null) {
+            // The requested track has no mp4/AAC variant: fall back to the default original pick.
+            return pickAudioFormat(info, null);
         }
         return aac != null ? aac : info.findBestAudioFormat();
     }
