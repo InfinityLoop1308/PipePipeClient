@@ -65,7 +65,7 @@ android {
                 resValue "string", "app_name", "PipePipe"
             }
             minifyEnabled true
-            shrinkResources true
+            shrinkResources false // disabled to fix F-Droid's reproducible build
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
