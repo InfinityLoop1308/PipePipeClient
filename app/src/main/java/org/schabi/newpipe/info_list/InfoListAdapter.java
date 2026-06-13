@@ -253,10 +253,11 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (position == infoItemList.size() && showFooter) {
             return FOOTER_TYPE;
         }
-        if (shouldUseExperimentalNewUi(layoutInflater.getContext())) {
+        final InfoItem item = infoItemList.get(position);
+        if (shouldUseExperimentalNewUi(layoutInflater.getContext())
+                && item.getInfoType() != InfoItem.InfoType.COMMENT) {
             return COMPOSE_HOLDER_TYPE;
         }
-        final InfoItem item = infoItemList.get(position);
         switch (item.getInfoType()) {
             case STREAM:
                 if (itemMode == ItemViewMode.CARD) {
