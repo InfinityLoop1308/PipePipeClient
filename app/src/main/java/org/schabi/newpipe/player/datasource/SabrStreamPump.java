@@ -46,6 +46,11 @@ final class SabrStreamPump {
     // within the back-buffer window the cache can't drain -> the pump throttles forever and stalls.
     // Shrinking the back-buffer when over budget lets eviction free bytes so playback keeps fetching.
     private static final long MIN_BACK_BUFFER_MS = 5_000;
+    // The back-buffer is sized by BYTES, not a fixed 30s: 30s of already-played video is ~60MB at 4K
+    // (mostly wasted, rewinds are rare) but only ~12MB at 1080p. Holding a constant ~16MB keeps
+    // low-res rewinds generous without ballooning the 4K heap. Rewinds past it re-fetch, so
+    // correctness is intact; read-ahead (what playback needs) is untouched, so no extra rebuffering.
+    private static final long BACK_BUFFER_BYTES = 16L * 1024 * 1024;
 
     private final YoutubeSabrSession session;
     private final SabrSessionStore.Holder holder;
@@ -152,7 +157,7 @@ final class SabrStreamPump {
                     // already over the byte budget (high bitrate), shrink the back-buffer so eviction
                     // can actually drain it, otherwise the pump throttles forever and playback stalls.
                     final long backBufferMs = session.getCachedBytes() > MAX_AHEAD_BYTES
-                            ? MIN_BACK_BUFFER_MS : BACK_BUFFER_MS;
+                            ? MIN_BACK_BUFFER_MS : targetBackBufferMs();
                     session.setPlayHeadMs(Math.max(0, holder.getReaderTailMs() - backBufferMs));
                     session.evictPlayed();
                     final long edgeMs = session.getStreamState().getMinBufferedEndMs();
@@ -211,6 +216,20 @@ final class SabrStreamPump {
                 stopped = true;
             }
         }
+    }
+
+    /** Back-buffer duration for THIS stream's bitrate, so it holds ~{@link #BACK_BUFFER_BYTES}
+     * regardless of resolution. Clamped to [MIN, MAX]; falls back to the time-based default when the
+     * bitrate is unknown. */
+    private long targetBackBufferMs() {
+        final long bitsPerSec = (long) holder.videoFormat.getBitrate()
+                + Math.max(0, holder.audioFormat.getBitrate());
+        if (bitsPerSec <= 0) {
+            return BACK_BUFFER_MS;
+        }
+        final long bytesPerMs = Math.max(1, bitsPerSec / 8 / 1000);
+        return Math.max(MIN_BACK_BUFFER_MS,
+                Math.min(BACK_BUFFER_MS, BACK_BUFFER_BYTES / bytesPerMs));
     }
 
     private static void sleepQuietly(final long ms) {
