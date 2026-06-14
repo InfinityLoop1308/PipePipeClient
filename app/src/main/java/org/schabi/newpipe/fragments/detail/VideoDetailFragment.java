@@ -44,6 +44,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
@@ -814,7 +815,9 @@ public final class VideoDetailFragment
                     WindowInsetsCompat.Type.statusBars()).top;
             statusBarInset = insets.getInsetsIgnoringVisibility(
                     WindowInsetsCompat.Type.statusBars()).top;
-            v.setPadding(v.getPaddingLeft(), statusBarHeight,
+            final int topPadding = isPlayerAvailable() && player.isFullscreen()
+                    ? 0 : statusBarHeight;
+            v.setPadding(v.getPaddingLeft(), topPadding,
                     v.getPaddingRight(), v.getPaddingBottom());
             updateBottomSheetPeekHeight();
             return insets;
@@ -2281,7 +2284,13 @@ public final class VideoDetailFragment
 
         addVideoPlayerView();
         final View bottomSheetLayout = requireActivity().findViewById(R.id.fragment_player_holder);
-        ViewCompat.requestApplyInsets(bottomSheetLayout);
+        if (fullscreen) {
+            bottomSheetLayout.setPadding(bottomSheetLayout.getPaddingLeft(), 0,
+                    bottomSheetLayout.getPaddingRight(), bottomSheetLayout.getPaddingBottom());
+        } else {
+            bottomSheetLayout.setPadding(bottomSheetLayout.getPaddingLeft(), statusBarInset,
+                    bottomSheetLayout.getPaddingRight(), bottomSheetLayout.getPaddingBottom());
+        }
     }
 
     @Override
@@ -2352,6 +2361,11 @@ public final class VideoDetailFragment
                     WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT;
         }
         activity.getWindow().getDecorView().setSystemUiVisibility(0);
+        final WindowInsetsControllerCompat controller = ViewCompat.getWindowInsetsController(
+                activity.getWindow().getDecorView());
+        if (controller != null) {
+            controller.show(WindowInsetsCompat.Type.systemBars());
+        }
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         activity.getWindow().setStatusBarColor(ThemeHelper.resolveColorFromAttr(
                 requireContext(), android.R.attr.colorPrimary));
@@ -2384,19 +2398,24 @@ public final class VideoDetailFragment
             visibility |= View.SYSTEM_UI_FLAG_FULLSCREEN;
         }
         activity.getWindow().getDecorView().setSystemUiVisibility(visibility);
+        final WindowInsetsControllerCompat controller = ViewCompat.getWindowInsetsController(
+                activity.getWindow().getDecorView());
+        if (controller != null) {
+            controller.setSystemBarsBehavior(
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+            controller.hide(WindowInsetsCompat.Type.systemBars());
+        }
 
         if (isInMultiWindow || isPlayerAvailable() && player.isFullscreen()) {
             activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
             activity.getWindow().setNavigationBarColor(Color.TRANSPARENT);
         }
-        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     // Listener implementation
     public void hideSystemUiIfNeeded() {
-        if (isPlayerAvailable()
-                && player.isFullscreen()
-                && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+        if (isPlayerAvailable() && player.isFullscreen()) {
             hideSystemUi();
         }
     }
