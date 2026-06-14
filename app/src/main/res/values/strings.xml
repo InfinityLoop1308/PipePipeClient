@@ -425,6 +425,10 @@
 <string name="resize_fit">Fit</string>
 <string name="resize_fill">Fill</string>
 <string name="resize_zoom">Zoom</string>
+<string name="aspect_ratio_custom">Custom…</string>
+<string name="aspect_ratio_custom_title">Custom aspect ratio</string>
+<string name="aspect_ratio_custom_hint">e.g. 16:9 or 1.78</string>
+<string name="aspect_ratio_invalid">Invalid aspect ratio</string>
 <string name="caption_auto_generated">Auto-generated</string>
 <!-- Caption Settings -->
 <string name="caption_setting_title">Captions</string>

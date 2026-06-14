@@ -45,6 +45,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
+import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -71,6 +72,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GestureDetectorCompat;
+import androidx.core.view.MenuCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentManager;
@@ -310,12 +312,19 @@ public final class Player implements
     private static final int POPUP_MENU_ID_PLAYBACK_SPEED = 79;
     private static final int POPUP_MENU_ID_CAPTION = 89;
     private static final int POPUP_MENU_ID_AUDIO_TRACK = 99;
+    private static final int POPUP_MENU_ID_DISPLAY_MODE = 109;
+    private static final int POPUP_MENU_ID_ASPECT_RATIO = 119;
 
     private boolean isSomePopupMenuVisible = false;
     private PopupMenu qualityPopupMenu;
     private PopupMenu playbackSpeedPopupMenu;
     private PopupMenu captionPopupMenu;
     private PopupMenu audioTrackPopupMenu;
+    private PopupMenu displayModePopupMenu;
+
+    // Aspect ratio forced by the user, 0 means "auto" (use the video's own aspect ratio)
+    private float forcedAspectRatio;
+    private float videoNaturalAspectRatio;
 
     /*//////////////////////////////////////////////////////////////////////////
     // Popup player
@@ -494,8 +503,7 @@ public final class Player implements
         binding = playerBinding;
         setupSubtitleView();
 
-        binding.resizeTextView
-                .setText(PlayerHelper.resizeTypeOf(context, binding.surfaceView.getResizeMode()));
+        updateDisplayModeButtonText();
 
         binding.playbackSeekBar.getThumb()
                 .setColorFilter(new PorterDuffColorFilter(Color.RED, PorterDuff.Mode.SRC_IN));
@@ -509,6 +517,7 @@ public final class Player implements
         playbackSpeedPopupMenu = new PopupMenu(context, binding.playbackSpeed);
         captionPopupMenu = new PopupMenu(themeWrapper, binding.captionTextView);
         audioTrackPopupMenu = new PopupMenu(themeWrapper, binding.audioTrackTextView);
+        displayModePopupMenu = new PopupMenu(themeWrapper, binding.resizeTextView);
 
         binding.progressBarLoadingPanel.getIndeterminateDrawable()
                 .setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY));
@@ -3529,6 +3538,13 @@ public final class Player implements
             Log.d(TAG, "Playback - onMetadataChanged() called, playing: " + info.getName());
         }
 
+        // a forced aspect ratio is a per-video correction, don't carry it over to the next one;
+        // it temporarily forced the resize mode to Fit, so restore the persisted resize mode
+        if (forcedAspectRatio > 0) {
+            forcedAspectRatio = 0.0f;
+            setResizeMode(PlayerHelper.retrieveResizeModeFromPrefs(this));
+        }
+
         initThumbnail(info.getThumbnailUrl());
         registerStreamViewed();
         updateStreamRelatedViews();
@@ -4178,6 +4194,9 @@ public final class Player implements
         if (captionPopupMenu != null) {
             captionPopupMenu.dismiss();
         }
+        if (displayModePopupMenu != null) {
+            displayModePopupMenu.dismiss();
+        }
         isSomePopupMenuVisible = false;
     }
     //endregion
@@ -4362,7 +4381,7 @@ public final class Player implements
             Log.d(TAG, "onClick() called with: v = [" + v + "]");
         }
         if (v.getId() == binding.resizeTextView.getId()) {
-            onResizeClicked();
+            onDisplayModeClicked();
         } else if (v.getId() == binding.captionTextView.getId()) {
             onCaptionClicked();
         } else if (v.getId() == binding.audioTrackTextView.getId()) {
@@ -4594,13 +4613,149 @@ public final class Player implements
 
     private void setResizeMode(@AspectRatioFrameLayout.ResizeMode final int resizeMode) {
         binding.surfaceView.setResizeMode(resizeMode);
-        binding.resizeTextView.setText(PlayerHelper.resizeTypeOf(context, resizeMode));
+        updateDisplayModeButtonText();
     }
 
-    void onResizeClicked() {
-        if (binding != null) {
-            setResizeMode(nextResizeModeAndSaveToPrefs(this, binding.surfaceView.getResizeMode()));
+    /**
+     * Updates the display-mode button label: the forced aspect ratio takes precedence over the
+     * resize mode, since selecting an aspect ratio is what the user sees applied.
+     */
+    private void updateDisplayModeButtonText() {
+        binding.resizeTextView.setText(forcedAspectRatio > 0
+                ? PlayerHelper.aspectRatioNameOf(forcedAspectRatio)
+                : PlayerHelper.resizeTypeOf(context, binding.surfaceView.getResizeMode()));
+    }
+
+    void onDisplayModeClicked() {
+        if (DEBUG) {
+            Log.d(TAG, "onDisplayModeClicked() called");
         }
+        if (displayModePopupMenu == null) {
+            return;
+        }
+        // rebuild on every open so the checkmark reflects the current resize mode / forced ratio
+        buildDisplayModeMenu();
+        displayModePopupMenu.show();
+        isSomePopupMenuVisible = true;
+    }
+
+    /**
+     * Builds the single display-mode menu that combines the resize modes (Fit / Fill / Zoom) with
+     * the forced aspect ratios (1:1 / 4:3 / ... / Custom). Picking a resize mode clears any forced
+     * aspect ratio; picking an aspect ratio applies it with the resize mode set to Fit.
+     */
+    private void buildDisplayModeMenu() {
+        if (displayModePopupMenu == null) {
+            return;
+        }
+        final Menu menu = displayModePopupMenu.getMenu();
+        menu.removeGroup(POPUP_MENU_ID_DISPLAY_MODE);
+        menu.removeGroup(POPUP_MENU_ID_ASPECT_RATIO);
+        // draw a divider between the resize-mode group and the aspect-ratio group
+        MenuCompat.setGroupDividerEnabled(menu, true);
+        displayModePopupMenu.setOnDismissListener(this);
+
+        // a forced aspect ratio takes precedence: when active, no resize mode is the "current" one
+        final boolean ratioActive = forcedAspectRatio > 0;
+        final int currentResizeMode = binding.surfaceView.getResizeMode();
+        MenuItem activeItem = null;
+
+        int order = 0;
+        for (final int resizeMode : new int[]{
+                AspectRatioFrameLayout.RESIZE_MODE_FIT,
+                AspectRatioFrameLayout.RESIZE_MODE_FILL,
+                AspectRatioFrameLayout.RESIZE_MODE_ZOOM}) {
+            final MenuItem resizeItem = menu.add(POPUP_MENU_ID_DISPLAY_MODE, order, order,
+                    PlayerHelper.resizeTypeOf(context, resizeMode));
+            resizeItem.setOnMenuItemClickListener(menuItem -> {
+                onResizeModeSelected(resizeMode);
+                return true;
+            });
+            if (!ratioActive && resizeMode == currentResizeMode) {
+                activeItem = resizeItem;
+            }
+            order++;
+        }
+
+        for (int i = 0; i < PlayerHelper.ASPECT_RATIO_VALUES.length; i++) {
+            final float ratio = PlayerHelper.ASPECT_RATIO_VALUES[i];
+            final MenuItem ratioItem = menu.add(POPUP_MENU_ID_ASPECT_RATIO, order, order,
+                    PlayerHelper.ASPECT_RATIO_LABELS[i]);
+            ratioItem.setOnMenuItemClickListener(menuItem -> {
+                setForcedAspectRatio(ratio);
+                return true;
+            });
+            if (ratioActive && Math.abs(forcedAspectRatio - ratio) < 0.001f) {
+                activeItem = ratioItem;
+            }
+            order++;
+        }
+
+        final MenuItem customItem = menu.add(POPUP_MENU_ID_ASPECT_RATIO, order, order,
+                R.string.aspect_ratio_custom);
+        customItem.setOnMenuItemClickListener(menuItem -> {
+            openCustomAspectRatioDialog();
+            return true;
+        });
+        // a forced ratio that matches none of the presets is a custom value
+        if (ratioActive && activeItem == null) {
+            activeItem = customItem;
+        }
+
+        menu.setGroupCheckable(POPUP_MENU_ID_DISPLAY_MODE, true, true);
+        menu.setGroupCheckable(POPUP_MENU_ID_ASPECT_RATIO, true, true);
+        if (activeItem != null) {
+            activeItem.setChecked(true);
+        }
+    }
+
+    private void onResizeModeSelected(@AspectRatioFrameLayout.ResizeMode final int resizeMode) {
+        // a resize mode supersedes any forced aspect ratio, which would otherwise have no effect
+        forcedAspectRatio = 0.0f;
+        if (videoNaturalAspectRatio > 0) {
+            binding.surfaceView.setAspectRatio(videoNaturalAspectRatio);
+        }
+        setResizeMode(resizeMode);
+        PlayerHelper.saveResizeMode(this, resizeMode);
+    }
+
+    private void setForcedAspectRatio(final float aspectRatio) {
+        forcedAspectRatio = aspectRatio;
+        // a forced aspect ratio is only meaningful with Fit; this resize mode change is per-video
+        // and is intentionally not persisted, so the saved resize mode is restored on the next video
+        setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+
+        final float effectiveRatio = aspectRatio > 0 ? aspectRatio : videoNaturalAspectRatio;
+        if (effectiveRatio > 0) {
+            binding.surfaceView.setAspectRatio(effectiveRatio);
+        }
+    }
+
+    private void openCustomAspectRatioDialog() {
+        final AppCompatActivity activity = getParentActivity();
+        if (activity == null) {
+            return;
+        }
+        final EditText input = new EditText(activity);
+        input.setHint(R.string.aspect_ratio_custom_hint);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        if (forcedAspectRatio > 0) {
+            input.setText(PlayerHelper.aspectRatioNameOf(forcedAspectRatio));
+        }
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.aspect_ratio_custom_title)
+                .setView(input)
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
+                    final float ratio = PlayerHelper.parseAspectRatio(input.getText().toString());
+                    if (ratio > 0) {
+                        setForcedAspectRatio(ratio);
+                    } else {
+                        Toast.makeText(context, R.string.aspect_ratio_invalid, Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     @Override // exoplayer listener
@@ -4613,7 +4768,9 @@ public final class Player implements
                     + "pixelWidthHeightRatio = [" + videoSize.pixelWidthHeightRatio + "]");
         }
 
-        binding.surfaceView.setAspectRatio(((float) videoSize.width) / videoSize.height);
+        videoNaturalAspectRatio = ((float) videoSize.width) / videoSize.height;
+        binding.surfaceView.setAspectRatio(forcedAspectRatio > 0
+                ? forcedAspectRatio : videoNaturalAspectRatio);
         isVerticalVideo = videoSize.width < videoSize.height;
 
         if (globalScreenOrientationLocked(context)
