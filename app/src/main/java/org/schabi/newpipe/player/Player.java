@@ -3199,6 +3199,8 @@ public final class Player implements
             case ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT:
             case ERROR_CODE_UNSPECIFIED:
                 setRecovery();
+                // SABR: recover at the saved position, not 0 (see shouldSeek).
+                seekOnNextSabrReload = true;
                 reloadPlayQueueManager();
                 break;
 case ERROR_CODE_DECODER_INIT_FAILED: {
@@ -3212,6 +3214,8 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                     // falls through to shutdown below.
                     lastSurfaceErrorRecoveryMs = System.currentTimeMillis();
                     setRecovery();
+                    // SABR: recover at the saved position, not 0 (see shouldSeek).
+                    seekOnNextSabrReload = true;
                     reloadPlayQueueManager();
                     break;
                 }
@@ -4297,6 +4301,10 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
 
             saveStreamProgressState(); //TODO added, check if good
             setRecovery();
+            // Quality change is a reload, not a fresh start: keep the saved position (see shouldSeek).
+            // getOrCreate eager-loads the new format's init metadata (token is cached), so the seek
+            // maps to the right segment.
+            seekOnNextSabrReload = true;
             setSelectedIndex(menuItemIndex);
             reloadPlayQueueManager();
 
