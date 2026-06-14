@@ -11,6 +11,8 @@ import org.schabi.newpipe.extractor.downloader.CancellableCall;
 import org.schabi.newpipe.extractor.downloader.Downloader;
 import org.schabi.newpipe.extractor.downloader.Request;
 import org.schabi.newpipe.extractor.downloader.Response;
+import org.schabi.newpipe.extractor.downloader.StreamingResponse;
+import org.schabi.newpipe.extractor.localization.Localization;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
 import org.schabi.newpipe.extractor.services.bilibili.BilibiliService;
@@ -22,7 +24,9 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
@@ -303,6 +307,52 @@ public final class DownloaderImpl extends Downloader {
         final String latestUrl = response.request().url().toString();
         return new Response(response.code(), response.message(), response.headers().toMultimap(),
                 responseBodyToReturn, rawBodyBytes, latestUrl);
+    }
+
+    /**
+     * Streaming POST: returns the body as a stream (okhttp {@code byteStream()}) instead of reading
+     * it whole, so a large SABR media batch (50-150MB at 4K) is not buffered into one byte[] (that
+     * was OOM-ing the 512MB heap). Mirrors execute()'s request building; caller closes the result.
+     */
+    @Override
+    public StreamingResponse postStreaming(final String url,
+                                           @Nullable final Map<String, List<String>> headers,
+                                           @Nullable final byte[] dataToSend,
+                                           @Nullable final Localization localization)
+            throws IOException, ReCaptchaException {
+        final Map<String, List<String>> hdrs = headers == null ? Collections.emptyMap() : headers;
+        final RequestBody requestBody = RequestBody.create(null,
+                dataToSend == null ? new byte[0] : dataToSend);
+        final okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder()
+                .method("POST", requestBody).url(url);
+        if (!hdrs.containsKey("User-Agent")) {
+            requestBuilder.header("User-Agent", USER_AGENT);
+        }
+        final String cookies = getCookies(url);
+        if (!hdrs.containsKey("Cookie") && !cookies.isEmpty()) {
+            requestBuilder.header("Cookie", cookies);
+        }
+        for (final Map.Entry<String, List<String>> pair : hdrs.entrySet()) {
+            final List<String> values = pair.getValue();
+            if (values.size() > 1) {
+                requestBuilder.removeHeader(pair.getKey());
+                for (final String value : values) {
+                    requestBuilder.addHeader(pair.getKey(), value);
+                }
+            } else if (values.size() == 1) {
+                requestBuilder.header(pair.getKey(), values.get(0));
+            }
+        }
+        final okhttp3.Response response = client.newCall(requestBuilder.build()).execute();
+        if (response.code() == 429) {
+            response.close();
+            throw new ReCaptchaException("reCaptcha Challenge requested", url);
+        }
+        final ResponseBody body = response.body();
+        final InputStream stream = body == null
+                ? new ByteArrayInputStream(new byte[0]) : body.byteStream();
+        // StreamingResponse.close() closes this stream -> closes the okhttp body + connection.
+        return new StreamingResponse(response.code(), response.headers().toMultimap(), stream);
     }
 
     public CancellableCall executeAsync(@NonNull final Request request, @NonNull final Downloader.AsyncCallback callback) {
