@@ -724,6 +724,21 @@ public final class VideoDetailFragment
         pageAdapter = new TabAdapter(getChildFragmentManager());
         binding.viewPager.setAdapter(pageAdapter);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
+        // Edge-to-edge (targetSdk 35+): the bottom tab strip is laid out gravity=bottom, so without
+        // insets it sits behind the system navigation bar (tabs unclickable) and the pager's last
+        // item runs under it. Pad the tab strip by the nav-bar inset and grow the pager's bottom
+        // padding (its XML 48dp tab clearance) by the same amount so content clears both.
+        final int viewPagerBottomBase = binding.viewPager.getPaddingBottom();
+        ViewCompat.setOnApplyWindowInsetsListener(binding.tabLayout, (v, insets) -> {
+            final int navBottom = insets.getInsets(
+                    WindowInsetsCompat.Type.navigationBars()).bottom;
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), navBottom);
+            binding.viewPager.setPadding(binding.viewPager.getPaddingLeft(),
+                    binding.viewPager.getPaddingTop(), binding.viewPager.getPaddingRight(),
+                    viewPagerBottomBase + navBottom);
+            return insets;
+        });
+        ViewCompat.requestApplyInsets(binding.tabLayout);
         updateStickyPlayerMode();
 
         binding.detailThumbnailRootLayout.requestFocus();
