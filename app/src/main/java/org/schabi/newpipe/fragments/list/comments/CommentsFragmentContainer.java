@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 
 import org.schabi.newpipe.BaseFragment;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.extractor.Page;
 import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
 import org.schabi.newpipe.util.Constants;
@@ -19,7 +20,7 @@ import org.schabi.newpipe.util.Constants;
 import java.io.IOException;
 import java.util.Objects;
 
-public class CommentsFragmentContainer extends BaseFragment {
+public class CommentsFragmentContainer extends BaseFragment implements BackPressable {
 
     protected int serviceId = Constants.NO_SERVICE_ID;
     protected String url;
@@ -56,7 +57,7 @@ public class CommentsFragmentContainer extends BaseFragment {
             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_container, container, false);
         if (savedInstanceState == null) {
-            setFragment(getFM(), serviceId, url, name);
+            setFragment(getChildFragmentManager(), serviceId, url, name);
         }
         return view;
     }
@@ -73,7 +74,20 @@ public class CommentsFragmentContainer extends BaseFragment {
         this.serviceId = serviceId;
         this.url = url;
         this.name = name;
-        setFragment(getFM(), serviceId, url, name);
+        setFragment(getChildFragmentManager(), serviceId, url, name);
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        // Replies are pushed onto our OWN child FragmentManager (tied to this fragment's view), so
+        // backing out of a reply pops here. When the view is gone (e.g. video sent to pop-up) the
+        // child FM is torn down with it, so there's no stale entry to recreate -> no crash on back.
+        final FragmentManager childFm = getChildFragmentManager();
+        if (childFm.getBackStackEntryCount() > 0) {
+            childFm.popBackStack();
+            return true;
+        }
+        return false;
     }
 
     public static void setFragment(

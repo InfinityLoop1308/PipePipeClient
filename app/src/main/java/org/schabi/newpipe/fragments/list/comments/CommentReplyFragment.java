@@ -114,8 +114,9 @@ public class CommentReplyFragment extends BaseFragment implements BackPressable 
 
     @Override
     public boolean onBackPressed() {
-        final FragmentManager fm = getFM();
-        fm.popBackStack();
+        // Pop the FragmentManager this reply lives in (its container's child FM), matching where it
+        // was pushed, so back works and nothing is left referencing a destroyed container.
+        getParentFragmentManager().popBackStack();
         return true;
     }
 }

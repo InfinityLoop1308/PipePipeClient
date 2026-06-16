@@ -939,17 +939,15 @@ public final class VideoDetailFragment
     }
 
     private boolean callCommentFragmentOnBack() {
-        final String currentPage = pageAdapter.getItemTitle(binding.viewPager.getCurrentItem());
+        final int currentItem = binding.viewPager.getCurrentItem();
+        final String currentPage = pageAdapter.getItemTitle(currentItem);
         if (COMMENTS_TAB_TAG.equals(currentPage)) {
-            final FragmentManager fm = getFM();
-            final Fragment fragment = fm
-                    .findFragmentById(R.id.fragment_container_view);
-            if (fragment instanceof BackPressable) {
-                if (fm.getBackStackEntryCount() > 1) {
-                    fm.popBackStack();
-                    return true;
-                }
-                return ((BackPressable) fragment).onBackPressed();
+            // Delegate to the comments tab itself: it owns the replies in its child FragmentManager
+            // and pops them on back. (Previously this popped the parent FM directly, which could
+            // recreate a comment fragment in a destroyed container -> crash when going to pop-up.)
+            final Fragment tab = pageAdapter.getItem(currentItem);
+            if (tab instanceof BackPressable) {
+                return ((BackPressable) tab).onBackPressed();
             }
         }
         return false;

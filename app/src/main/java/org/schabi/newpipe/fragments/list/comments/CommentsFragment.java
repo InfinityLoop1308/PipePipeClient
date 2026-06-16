@@ -58,7 +58,11 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfoItem, Com
     @Override
     protected void onItemCallback(final InfoItem selectedItem) throws Exception {
         super.onItemCallback(selectedItem);
-        CommentsFragmentContainer.setFragment(getFM(), (CommentsInfoItem) selectedItem);
+        // Push the reply onto the FragmentManager this fragment lives in (its container's child FM),
+        // not the parent activity FM, so it's torn down with the container's view (avoids the
+        // "No view found for fragment_container_view" crash on back when the player goes to pop-up).
+        CommentsFragmentContainer.setFragment(getParentFragmentManager(),
+                (CommentsInfoItem) selectedItem);
     }
 
     public CommentsFragment() {
