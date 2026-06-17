@@ -79,6 +79,8 @@ class AboutActivity : AppCompatActivity() {
                 aboutAppVersion.text = BuildConfig.VERSION_NAME
                 aboutGithubLink.openLink(R.string.github_url)
                 aboutDonationLink.openLink(R.string.donation_url)
+                // Edge-to-edge (targetSdk 35+): keep the bottom of the page above the nav bar.
+                WindowInsetsHelper.applyNavigationBarInsets(root)
                 return root
             }
         }

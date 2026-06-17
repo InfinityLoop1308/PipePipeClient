@@ -47,6 +47,8 @@ public class DownloadActivity extends AppCompatActivity {
         setSupportActionBar(downloaderBinding.toolbarLayout.toolbar);
 
         WindowInsetsHelper.applyStatusBarInsets(this, downloaderBinding.toolbarLayout.toolbar);
+        // Edge-to-edge (targetSdk 35+): keep the bottom of the downloads list above the nav bar.
+        WindowInsetsHelper.applyNavigationBarInsets(downloaderBinding.frame);
 
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

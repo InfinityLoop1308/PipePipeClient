@@ -81,6 +81,8 @@ public class ReCaptchaActivity extends AppCompatActivity {
 
         WindowInsetsHelper.applyStatusBarInsets(this, recaptchaBinding.toolbar,
                 recaptchaBinding.reCaptchaWebView);
+        // Edge-to-edge (targetSdk 35+): keep the captcha web view content above the nav bar.
+        WindowInsetsHelper.applyNavigationBarInsets(recaptchaBinding.reCaptchaWebView);
 
         final String url = sanitizeRecaptchaUrl(getIntent().getStringExtra(RECAPTCHA_URL_EXTRA));
         // set return to Cancel by default

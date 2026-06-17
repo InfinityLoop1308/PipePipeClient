@@ -63,6 +63,8 @@ public abstract class BaseFilterListActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.filter_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // Edge-to-edge (targetSdk 35+): keep the bottom of the filter list above the nav bar.
+        WindowInsetsHelper.applyNavigationBarInsets(recyclerView);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         loadFilterItems();

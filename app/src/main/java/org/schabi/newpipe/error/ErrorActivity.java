@@ -108,6 +108,8 @@ public class ErrorActivity extends AppCompatActivity {
         WindowInsetsHelper.applyStatusBarInsets(this,
                 activityErrorBinding.toolbarLayout.toolbar,
                 activityErrorBinding.scrollView);
+        // Edge-to-edge (targetSdk 35+): keep the bottom of a long error report above the nav bar.
+        WindowInsetsHelper.applyNavigationBarInsets(activityErrorBinding.scrollView);
 
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

@@ -7,6 +7,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.appcompat.app.AppCompatActivity;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.util.WindowInsetsHelper;
 
 public abstract class BaseLoginWebViewActivity extends AppCompatActivity {
 
@@ -18,6 +19,8 @@ public abstract class BaseLoginWebViewActivity extends AppCompatActivity {
         setContentView(R.layout.login_webview);
 
         webView = findViewById(R.id.login_webview);
+        // Edge-to-edge (targetSdk 35+): keep the bottom of the login page above the nav bar.
+        WindowInsetsHelper.applyNavigationBarInsets(webView);
         configureWebView();
         webView.setWebViewClient(createWebViewClient());
         loadLoginUrl();
