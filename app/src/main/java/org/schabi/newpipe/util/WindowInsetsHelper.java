@@ -71,6 +71,24 @@ public final class WindowInsetsHelper {
         });
     }
 
+    /**
+     * Pads the bottom of a content view by the navigation-bar inset, so its last items stay above
+     * the system navigation bar in edge-to-edge (targetSdk 35+). Used on the main fragment holder
+     * so feed/search/channel/playlist lists are not drawn behind the nav bar.
+     */
+    public static void applyNavigationBarInsets(@NonNull final View content) {
+        final int initialLeft = content.getPaddingLeft();
+        final int initialTop = content.getPaddingTop();
+        final int initialRight = content.getPaddingRight();
+        final int initialBottom = content.getPaddingBottom();
+
+        ViewCompat.setOnApplyWindowInsetsListener(content, (view, insets) -> {
+            final Insets navBars = insets.getInsets(WindowInsetsCompat.Type.navigationBars());
+            view.setPadding(initialLeft, initialTop, initialRight, initialBottom + navBars.bottom);
+            return insets;
+        });
+    }
+
     private static int getActionBarSize(@NonNull final AppCompatActivity activity) {
         final TypedValue typedValue = new TypedValue();
         if (activity.getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true)) {

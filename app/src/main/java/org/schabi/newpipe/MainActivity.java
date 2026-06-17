@@ -154,6 +154,9 @@ public class MainActivity extends AppCompatActivity {
 
         WindowInsetsHelper.applyStatusBarInsets(this, toolbarLayoutBinding.toolbar,
                 mainBinding.fragmentHolder);
+        // Edge-to-edge (targetSdk 35+): keep the main content (feed/search/channel/playlist lists,
+        // and the bottom tab strip) above the system navigation bar.
+        WindowInsetsHelper.applyNavigationBarInsets(mainBinding.fragmentHolder);
 
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
             initFragments();
