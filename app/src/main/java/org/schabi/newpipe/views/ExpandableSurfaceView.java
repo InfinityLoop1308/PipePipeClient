@@ -70,8 +70,9 @@ public class ExpandableSurfaceView extends SurfaceView {
     @Override
     protected void onLayout(final boolean changed,
                             final int left, final int top, final int right, final int bottom) {
-        setScaleX(scaleX);
-        setScaleY(scaleY);
+        // Defensive: never push a non-finite scale into the view (it throws and takes down layout).
+        setScaleX(Float.isFinite(scaleX) ? scaleX : 1.0f);
+        setScaleY(Float.isFinite(scaleY) ? scaleY : 1.0f);
     }
 
     /**
@@ -102,11 +103,15 @@ public class ExpandableSurfaceView extends SurfaceView {
     }
 
     public void setAspectRatio(final float aspectRatio) {
-        if (videoAspectRatio == aspectRatio) {
+        // A 0x0 / not-yet-known video gives NaN (or Infinity) here; keep it as "no ratio" (0) so the
+        // measure path skips scaling instead of pushing NaN into setScaleX, which throws
+        // IllegalArgumentException and crashes the player during layout (#2515).
+        final float sanitized = Float.isFinite(aspectRatio) ? aspectRatio : 0.0f;
+        if (videoAspectRatio == sanitized) {
             return;
         }
 
-        videoAspectRatio = aspectRatio;
+        videoAspectRatio = sanitized;
         requestLayout();
     }
 }
