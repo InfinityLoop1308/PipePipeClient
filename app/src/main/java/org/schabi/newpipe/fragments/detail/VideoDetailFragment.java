@@ -226,6 +226,7 @@ public final class VideoDetailFragment
     private List<VideoStream> sortedVideoStreams;
     private int selectedVideoStreamIndex = -1;
     private int statusBarInset;
+    private int navigationBarInset;
     private BottomSheetBehavior<FrameLayout> bottomSheetBehavior;
     private BroadcastReceiver broadcastReceiver;
 
@@ -813,10 +814,15 @@ public final class VideoDetailFragment
                     WindowInsetsCompat.Type.statusBars()).top;
             statusBarInset = insets.getInsetsIgnoringVisibility(
                     WindowInsetsCompat.Type.statusBars()).top;
-            final int topPadding = isPlayerAvailable() && player.isFullscreen()
-                    ? 0 : statusBarHeight;
-            v.setPadding(v.getPaddingLeft(), topPadding,
-                    v.getPaddingRight(), v.getPaddingBottom());
+            final int navBarHeight = insets.getInsets(
+                    WindowInsetsCompat.Type.navigationBars()).bottom;
+            navigationBarInset = insets.getInsetsIgnoringVisibility(
+                    WindowInsetsCompat.Type.navigationBars()).bottom;
+            // In fullscreen the player must cover the whole screen, so drop both insets; otherwise
+            // keep the content above the status and navigation bars (mini player / detail, #53).
+            final boolean fullscreen = isPlayerAvailable() && player.isFullscreen();
+            v.setPadding(v.getPaddingLeft(), fullscreen ? 0 : statusBarHeight,
+                    v.getPaddingRight(), fullscreen ? 0 : navBarHeight);
             updateBottomSheetPeekHeight();
             return insets;
         });
@@ -2280,12 +2286,17 @@ public final class VideoDetailFragment
         addVideoPlayerView();
         final View bottomSheetLayout = requireActivity().findViewById(R.id.fragment_player_holder);
         if (fullscreen) {
+            // Cover the whole screen, including the navigation-bar area (no bottom strip, #2517).
             bottomSheetLayout.setPadding(bottomSheetLayout.getPaddingLeft(), 0,
-                    bottomSheetLayout.getPaddingRight(), bottomSheetLayout.getPaddingBottom());
+                    bottomSheetLayout.getPaddingRight(), 0);
         } else {
+            // Restore the system-bar insets so the mini player / detail stay above the bars (#53).
             bottomSheetLayout.setPadding(bottomSheetLayout.getPaddingLeft(), statusBarInset,
-                    bottomSheetLayout.getPaddingRight(), bottomSheetLayout.getPaddingBottom());
+                    bottomSheetLayout.getPaddingRight(), navigationBarInset);
         }
+        // Recompute the peek so the sheet content fills the screen in fullscreen (#2517);
+        // the inset listener that normally calls this does not re-fire on a fullscreen toggle.
+        updateBottomSheetPeekHeight();
     }
 
     @Override
@@ -2619,9 +2630,15 @@ public final class VideoDetailFragment
     }
 
     private void updateBottomSheetPeekHeight() {
+        // Grow the peek by the navigation-bar inset so the collapsed mini player sits above the nav
+        // bar (#2491); the holder is padded by the same inset (see the bottom-sheet inset listener).
         final int peekHeight = getResources().getDimensionPixelSize(R.dimen.mini_player_height)
-                + statusBarInset;
-        bottomSheetBehavior.setPeekHeight(bottomSheetState == BottomSheetBehavior.STATE_HIDDEN
+                + statusBarInset + navigationBarInset;
+        // In fullscreen the sheet is fully expanded and must cover the whole screen; a non-zero peek
+        // shrinks the sheet content by that amount, leaving an uncovered bottom strip (#2517).
+        final boolean fullscreen = isPlayerAvailable() && player.isFullscreen();
+        bottomSheetBehavior.setPeekHeight(
+                bottomSheetState == BottomSheetBehavior.STATE_HIDDEN || fullscreen
                 ? 0 : peekHeight);
     }
 
