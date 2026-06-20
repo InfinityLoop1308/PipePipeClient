@@ -11,7 +11,6 @@ import org.schabi.newpipe.R
 import org.schabi.newpipe.about.LicenseFragmentHelper.showLicense
 import org.schabi.newpipe.databinding.FragmentLicensesBinding
 import org.schabi.newpipe.databinding.ItemSoftwareComponentBinding
-import org.schabi.newpipe.util.WindowInsetsHelper
 
 /**
  * Fragment containing the software licenses.
@@ -68,8 +67,6 @@ class LicenseFragment : Fragment() {
             registerForContextMenu(root)
         }
         activeLicense?.let { compositeDisposable.add(showLicense(activity, it)) }
-        // Edge-to-edge (targetSdk 35+): keep the bottom of the licenses list above the nav bar.
-        WindowInsetsHelper.applyNavigationBarInsets(binding.root)
         return binding.root
     }
 

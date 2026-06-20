@@ -106,9 +106,6 @@ public class SettingsActivity extends AppCompatActivity implements
         WindowInsetsHelper.applyStatusBarInsets(this,
                 settingsLayoutBinding.settingsToolbarLayout.toolbar,
                 settingsLayoutBinding.settingsFragmentHolder);
-        // Edge-to-edge (targetSdk 35+): keep the last preference entry on long, scrollable
-        // settings pages above the system navigation bar.
-        WindowInsetsHelper.applyNavigationBarInsets(settingsLayoutBinding.settingsFragmentHolder);
 
         if (restored) {
             // Restore state
