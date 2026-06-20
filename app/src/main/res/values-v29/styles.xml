@@ -3,7 +3,7 @@
 
     <!-- Base Theme -->
     <style name="Base.V29" parent="Base.V27">
-        <item name="android:enforceNavigationBarContrast">true</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
     </style>
     <style name="Base" parent="Base.V29"/>
 
