@@ -53,7 +53,6 @@
         android:logo="@mipmap/ic_launcher"
         android:theme="@style/OpeningTheme"
         android:resizeableActivity="true"
-        android:enableOnBackInvokedCallback="false"
         tools:ignore="AllowBackup">
         <activity
                 android:name=".MainActivity"

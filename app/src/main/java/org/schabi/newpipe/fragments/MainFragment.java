@@ -24,8 +24,6 @@ import android.widget.RelativeLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapterMenuWorkaround;
@@ -106,17 +104,6 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
         binding.mainTabLayout.addOnTabSelectedListener(this);
         binding.mainTabLayout.setTabRippleColor(binding.mainTabLayout.getTabRippleColor()
                 .withAlpha(32));
-
-        // Edge-to-edge (targetSdk 35+): when the tab strip is moved to the bottom it sits behind the
-        // system navigation bar (tabs unclickable). Pad it by the nav-bar inset; the pager is laid
-        // out relative to the tab strip so it follows automatically. requestApplyInsets() in
-        // updateTabLayoutPosition() re-runs this when the user toggles the position.
-        ViewCompat.setOnApplyWindowInsetsListener(binding.mainTabLayout, (v, insets) -> {
-            final int navBottom = mainTabsPositionBottom
-                    ? insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom : 0;
-            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), navBottom);
-            return insets;
-        });
 
         setupTabs();
         updateTabLayoutPosition();
@@ -248,9 +235,6 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
         tabLayout.setTabRippleColor(ColorStateList.valueOf(iconColor).withAlpha(32));
         tabLayout.setTabIconTint(ColorStateList.valueOf(iconColor));
         tabLayout.setSelectedTabIndicatorColor(iconColor);
-
-        // Re-apply the nav-bar inset padding for the new position (added at bottom, cleared at top).
-        ViewCompat.requestApplyInsets(tabLayout);
     }
 
     @Override
