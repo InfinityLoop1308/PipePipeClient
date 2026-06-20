@@ -42,9 +42,6 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
@@ -225,7 +222,6 @@ public final class VideoDetailFragment
 
     private List<VideoStream> sortedVideoStreams;
     private int selectedVideoStreamIndex = -1;
-    private int statusBarInset;
     private BottomSheetBehavior<FrameLayout> bottomSheetBehavior;
     private BroadcastReceiver broadcastReceiver;
 
@@ -807,20 +803,6 @@ public final class VideoDetailFragment
         });
 
         setupBottomPlayer();
-        final View bottomSheetLayout = activity.findViewById(R.id.fragment_player_holder);
-        ViewCompat.setOnApplyWindowInsetsListener(bottomSheetLayout, (v, insets) -> {
-            final int statusBarHeight = insets.getInsets(
-                    WindowInsetsCompat.Type.statusBars()).top;
-            statusBarInset = insets.getInsetsIgnoringVisibility(
-                    WindowInsetsCompat.Type.statusBars()).top;
-            final int topPadding = isPlayerAvailable() && player.isFullscreen()
-                    ? 0 : statusBarHeight;
-            v.setPadding(v.getPaddingLeft(), topPadding,
-                    v.getPaddingRight(), v.getPaddingBottom());
-            updateBottomSheetPeekHeight();
-            return insets;
-        });
-        ViewCompat.requestApplyInsets(bottomSheetLayout);
         if (!playerHolder.isBound()) {
             setHeightThumbnail();
         } else {
@@ -2278,14 +2260,6 @@ public final class VideoDetailFragment
         scrollToTop();
 
         addVideoPlayerView();
-        final View bottomSheetLayout = requireActivity().findViewById(R.id.fragment_player_holder);
-        if (fullscreen) {
-            bottomSheetLayout.setPadding(bottomSheetLayout.getPaddingLeft(), 0,
-                    bottomSheetLayout.getPaddingRight(), bottomSheetLayout.getPaddingBottom());
-        } else {
-            bottomSheetLayout.setPadding(bottomSheetLayout.getPaddingLeft(), statusBarInset,
-                    bottomSheetLayout.getPaddingRight(), bottomSheetLayout.getPaddingBottom());
-        }
     }
 
     @Override
@@ -2356,11 +2330,6 @@ public final class VideoDetailFragment
                     WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT;
         }
         activity.getWindow().getDecorView().setSystemUiVisibility(0);
-        final WindowInsetsControllerCompat controller = ViewCompat.getWindowInsetsController(
-                activity.getWindow().getDecorView());
-        if (controller != null) {
-            controller.show(WindowInsetsCompat.Type.systemBars());
-        }
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         activity.getWindow().setStatusBarColor(ThemeHelper.resolveColorFromAttr(
                 requireContext(), android.R.attr.colorPrimary));
@@ -2393,24 +2362,19 @@ public final class VideoDetailFragment
             visibility |= View.SYSTEM_UI_FLAG_FULLSCREEN;
         }
         activity.getWindow().getDecorView().setSystemUiVisibility(visibility);
-        final WindowInsetsControllerCompat controller = ViewCompat.getWindowInsetsController(
-                activity.getWindow().getDecorView());
-        if (controller != null) {
-            controller.setSystemBarsBehavior(
-                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
-            controller.hide(WindowInsetsCompat.Type.systemBars());
-        }
 
         if (isInMultiWindow || isPlayerAvailable() && player.isFullscreen()) {
             activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
             activity.getWindow().setNavigationBarColor(Color.TRANSPARENT);
         }
-        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     // Listener implementation
     public void hideSystemUiIfNeeded() {
-        if (isPlayerAvailable() && player.isFullscreen()) {
+        if (isPlayerAvailable()
+                && player.isFullscreen()
+                && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
             hideSystemUi();
         }
     }
@@ -2618,13 +2582,6 @@ public final class VideoDetailFragment
                 newBottomPadding);
     }
 
-    private void updateBottomSheetPeekHeight() {
-        final int peekHeight = getResources().getDimensionPixelSize(R.dimen.mini_player_height)
-                + statusBarInset;
-        bottomSheetBehavior.setPeekHeight(bottomSheetState == BottomSheetBehavior.STATE_HIDDEN
-                ? 0 : peekHeight);
-    }
-
     private void setupBottomPlayer() {
         final CoordinatorLayout.LayoutParams params =
                 (CoordinatorLayout.LayoutParams) binding.appBarLayout.getLayoutParams();
@@ -2633,9 +2590,10 @@ public final class VideoDetailFragment
         final FrameLayout bottomSheetLayout = activity.findViewById(R.id.fragment_player_holder);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
         bottomSheetBehavior.setState(bottomSheetState);
+        final int peekHeight = getResources().getDimensionPixelSize(R.dimen.mini_player_height);
         if (bottomSheetState != BottomSheetBehavior.STATE_HIDDEN) {
             manageSpaceAtTheBottom(false);
-            updateBottomSheetPeekHeight();
+            bottomSheetBehavior.setPeekHeight(peekHeight);
             if (bottomSheetState == BottomSheetBehavior.STATE_COLLAPSED) {
                 binding.overlayLayout.setAlpha(MAX_OVERLAY_ALPHA);
             } else if (bottomSheetState == BottomSheetBehavior.STATE_EXPANDED) {
@@ -2663,7 +2621,7 @@ public final class VideoDetailFragment
                             moveFocusToMainFragment(false);
                             manageSpaceAtTheBottom(false);
 
-                            updateBottomSheetPeekHeight();
+                            bottomSheetBehavior.setPeekHeight(peekHeight);
                             // Disable click because overlay buttons located on top of buttons
                             // from the player
                             setOverlayElementsClickable(false);
@@ -2689,7 +2647,7 @@ public final class VideoDetailFragment
                             moveFocusToMainFragment(true);
                             manageSpaceAtTheBottom(false);
 
-                            updateBottomSheetPeekHeight();
+                            bottomSheetBehavior.setPeekHeight(peekHeight);
 
                             // Re-enable clicks
                             setOverlayElementsClickable(true);

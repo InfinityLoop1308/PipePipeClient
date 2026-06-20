@@ -500,7 +500,6 @@ public final class Player implements
 
     private void initViews(@NonNull final PlayerBinding playerBinding) {
         binding = playerBinding;
-        updatePlaybackControlInsetsMode();
         setupSubtitleView();
 
         binding.resizeTextView
@@ -1388,7 +1387,6 @@ public final class Player implements
                 // and thus enlarging the whole player.
                 // This causes the seekbar to be ouf the visible area.
                 updateEndScreenThumbnail();
-                updatePlaybackControlInsetsMode();
                 break;
             case Intent.ACTION_SCREEN_ON:
                 // Interrupt playback only when screen turns on
@@ -2251,10 +2249,6 @@ public final class Player implements
     private void showSystemUIPartially() {
         final AppCompatActivity activity = getParentActivity();
         if (isFullscreen && activity != null) {
-            if (!service.isLandscape()) {
-                hideSystemUIIfNeeded();
-                return;
-            }
             activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
             activity.getWindow().setNavigationBarColor(Color.TRANSPARENT);
             final int visibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -4716,7 +4710,6 @@ public final class Player implements
         }
 
         isFullscreen = !isFullscreen;
-        updatePlaybackControlInsetsMode();
         if (!isFullscreen) {
             // Apply window insets because Android will not do it when orientation changes
             // from landscape to portrait (open vertical video to reproduce)
@@ -4742,14 +4735,6 @@ public final class Player implements
             binding.sleepTimer.setVisibility(View.GONE);
         }
         setupScreenRotationButton();
-    }
-
-    private void updatePlaybackControlInsetsMode() {
-        final boolean fitSystemWindows = isFullscreen && service.isLandscape();
-        binding.playbackControlRoot.setFitsSystemWindows(fitSystemWindows);
-        if (!fitSystemWindows) {
-            binding.playbackControlRoot.setPadding(0, 0, 0, 0);
-        }
     }
 
     public void checkLandscape() {

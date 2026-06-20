@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -28,7 +27,6 @@ import org.schabi.newpipe.extractor.downloader.Downloader;
 import org.schabi.newpipe.util.ErrorMatcher;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.ThemeHelper;
-import org.schabi.newpipe.util.WindowInsetsHelper;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.util.utils;
 
@@ -104,10 +102,6 @@ public class ErrorActivity extends AppCompatActivity {
         final Intent intent = getIntent();
 
         setSupportActionBar(activityErrorBinding.toolbarLayout.toolbar);
-
-        WindowInsetsHelper.applyStatusBarInsets(this,
-                activityErrorBinding.toolbarLayout.toolbar,
-                activityErrorBinding.scrollView);
 
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

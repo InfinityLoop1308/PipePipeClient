@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
 import androidx.appcompat.app.ActionBar;
@@ -16,7 +15,6 @@ import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.ActivityDownloaderBinding;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ThemeHelper;
-import org.schabi.newpipe.util.WindowInsetsHelper;
 import org.schabi.newpipe.views.FocusOverlayView;
 
 import us.shandian.giga.service.DownloadManagerService;
@@ -45,8 +43,6 @@ public class DownloadActivity extends AppCompatActivity {
         setContentView(downloaderBinding.getRoot());
 
         setSupportActionBar(downloaderBinding.toolbarLayout.toolbar);
-
-        WindowInsetsHelper.applyStatusBarInsets(this, downloaderBinding.toolbarLayout.toolbar);
 
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

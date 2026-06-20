@@ -101,9 +101,7 @@ public final class FocusAwareCoordinator extends CoordinatorLayout {
     protected boolean fitSystemWindows(final Rect insets) {
         final ViewGroup controls = findViewById(R.id.playbackControlRoot);
         if (controls != null) {
-            controls.setPadding(insets.left,
-                    controls.getFitsSystemWindows() ? insets.top : 0,
-                    insets.right, insets.bottom);
+            controls.setPadding(insets.left, insets.top, insets.right, insets.bottom);
         }
         return super.fitSystemWindows(insets);
     }

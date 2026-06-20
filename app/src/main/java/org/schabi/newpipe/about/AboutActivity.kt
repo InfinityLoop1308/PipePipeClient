@@ -17,7 +17,6 @@ import org.schabi.newpipe.databinding.ActivityAboutBinding
 import org.schabi.newpipe.databinding.FragmentAboutBinding
 import org.schabi.newpipe.util.Localization
 import org.schabi.newpipe.util.ThemeHelper
-import org.schabi.newpipe.util.WindowInsetsHelper
 import org.schabi.newpipe.util.external_communication.ShareUtils
 
 class AboutActivity : AppCompatActivity() {
@@ -32,7 +31,6 @@ class AboutActivity : AppCompatActivity() {
         setContentView(aboutBinding.root)
         setSupportActionBar(aboutBinding.aboutToolbar)
 
-        WindowInsetsHelper.applyStatusBarInsets(this, aboutBinding.aboutToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // Create the adapter that will return a fragment for each of the three

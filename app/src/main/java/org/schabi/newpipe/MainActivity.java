@@ -152,9 +152,6 @@ public class MainActivity extends AppCompatActivity {
         toolbarLayoutBinding = mainBinding.toolbarLayout;
         setContentView(mainBinding.getRoot());
 
-        WindowInsetsHelper.applyStatusBarInsets(this, toolbarLayoutBinding.toolbar,
-                mainBinding.fragmentHolder);
-
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
             initFragments();
         }
