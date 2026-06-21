@@ -51,7 +51,6 @@ import com.xwray.groupie.GroupieAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.OnItemClickListener
 import com.xwray.groupie.OnItemLongClickListener
-import icepick.State
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -98,14 +97,14 @@ class FeedFragment : BaseStateFragment<FeedState>() {
     private val disposables = CompositeDisposable()
 
     private lateinit var viewModel: FeedViewModel
-    @State @JvmField var listState: Parcelable? = null
+    @JvmField var listState: Parcelable? = null
 
     private var groupId = FeedGroupEntity.GROUP_ALL_ID
     private var groupName = ""
     private var oldestSubscriptionUpdate: OffsetDateTime? = null
 
     private lateinit var groupAdapter: GroupieAdapter
-    @State @JvmField var showPlayedItems: Boolean = true
+    @JvmField var showPlayedItems: Boolean = true
 
     private var onSettingsChangeListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
     private var updateListViewModeOnResume = false
@@ -467,6 +466,18 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         searchClear = null
 
         super.onDestroyView()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        listState?.let { outState.putParcelable("listState", it) }
+        outState.putBoolean("showPlayedItems", showPlayedItems)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        listState = savedInstanceState.getParcelable("listState")
+        showPlayedItems = savedInstanceState.getBoolean("showPlayedItems", true)
     }
 
     private fun updateTogglePlayedItemsButton(menuItem: MenuItem) {
@@ -907,7 +918,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
 
             var typeface = Typeface.DEFAULT
             var backgroundSupplier = { ctx: Context ->
-                resolveDrawable(ctx, R.attr.selectableItemBackground)
+                resolveDrawable(ctx, android.R.attr.selectableItemBackground)
             }
             if (doCheck) {
                 // If the uploadDate is null or true we should highlight the item
@@ -920,7 +931,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
                         LayerDrawable(
                             arrayOf(
                                 resolveDrawable(ctx, R.attr.dashed_border),
-                                resolveDrawable(ctx, R.attr.selectableItemBackground)
+                                resolveDrawable(ctx, android.R.attr.selectableItemBackground)
                             )
                         )
                     }

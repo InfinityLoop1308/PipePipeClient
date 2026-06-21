@@ -10,13 +10,13 @@
     android:focusable="true"
     android:padding="@dimen/video_item_search_padding">
 
-    <com.google.android.material.imageview.ShapeableImageView
+    <ImageView
         android:id="@+id/itemThumbnailView"
         android:layout_width="@dimen/video_item_search_thumbnail_image_width"
         android:layout_height="@dimen/video_item_search_thumbnail_image_height"
         android:scaleType="centerCrop"
         android:src="@drawable/dummy_thumbnail"
-        app:shapeAppearance="@style/RoundedThumbnailImageView"
+        app:layout_constraintBottom_toTopOf="@+id/itemProgressView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -47,7 +47,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="@dimen/video_item_search_title_text_size"
         app:layout_constraintBottom_toTopOf="@+id/itemUploaderView"
-        app:layout_constraintEnd_toStartOf="@+id/itemHandle"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/itemThumbnailView"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc tristique vitae sem vitae blanditLorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsumLorem ipsum" />
@@ -61,7 +61,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textSize="@dimen/video_item_search_uploader_text_size"
         app:layout_constraintBottom_toTopOf="@+id/itemAdditionalDetails"
-        app:layout_constraintEnd_toStartOf="@+id/itemHandle"
+        app:layout_constraintEnd_toEndOf="@+id/itemVideoTitleView"
         app:layout_constraintStart_toStartOf="@+id/itemVideoTitleView"
         app:layout_constraintTop_toBottomOf="@+id/itemVideoTitleView"
         tools:text="Uploader" />
@@ -75,7 +75,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textSize="@dimen/video_item_search_upload_date_text_size"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/itemHandle"
+        app:layout_constraintEnd_toEndOf="@+id/itemVideoTitleView"
         app:layout_constraintStart_toStartOf="@+id/itemVideoTitleView"
         app:layout_constraintTop_toBottomOf="@+id/itemUploaderView"
         tools:text="2 years ago • 10M views" />
@@ -85,23 +85,10 @@
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="0dp"
         android:layout_height="4dp"
-        android:progressDrawable="@drawable/progress_youtube_horizontal_light_rounded"
-        app:layout_constraintBottom_toBottomOf="@+id/itemThumbnailView"
+        android:progressDrawable="?progress_horizontal_drawable"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/itemThumbnailView"
-        app:layout_constraintStart_toStartOf="@+id/itemThumbnailView" />
-
-    <ImageView
-        android:id="@+id/itemHandle"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/video_item_search_thumbnail_image_height"
-        android:contentDescription="@string/detail_drag_description"
-        android:paddingLeft="@dimen/video_item_search_image_right_margin"
-        android:scaleType="center"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/itemThumbnailView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/itemThumbnailView"
-        app:srcCompat="@drawable/ic_drag_handle"
-        tools:ignore="RtlHardcoded,RtlSymmetry" />
+        app:layout_constraintStart_toStartOf="@+id/itemThumbnailView"
+        app:layout_constraintTop_toBottomOf="@+id/itemThumbnailView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

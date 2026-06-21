@@ -40,7 +40,6 @@ public final class SettingsResourceRegistry {
         add(PlayerNotificationSettingsFragment.class, R.xml.player_notification_settings);
         add(UpdateSettingsFragment.class, R.xml.update_settings);
         add(VideoAudioSettingsFragment.class, R.xml.video_audio_settings);
-        add(BehaviorSettingsFragment.class, R.xml.behavior_settings);
         add(GestureSettingsFragment.class, R.xml.gesture_settings);
         add(AdvancedSettingsFragment.class, R.xml.advanced_settings);
         add(BackupSettingsFragment.class, R.xml.backup_settings);

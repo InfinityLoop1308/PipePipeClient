@@ -13,9 +13,6 @@
     <string name="settings">Asetukset</string>
     <string name="did_you_mean">Tarkoititko ”%1$s”\?</string>
     <string name="share_dialog_title">Jaa</string>
-    <string name="use_external_video_player_title">Käytä ulkoista videosoitinta</string>
-    <string name="use_external_video_player_summary">Ääni saattaa lakata toimimasta joillakin resoluutioilla</string>
-    <string name="use_external_audio_player_title">Käytä ulkoista äänisoitinta</string>
     <string name="subscribe_button_title">Tilaa</string>
     <string name="subscribed_button_title">Tilattu</string>
     <string name="channel_unsubscribed">Kanavan tilaus peruttu</string>
@@ -33,21 +30,13 @@
     <string name="download_path_audio_dialog_title">Valitse äänitiedostojen latauskansio</string>
     <string name="default_resolution_title">Oletusresoluutio</string>
     <string name="default_popup_resolution_title">Ponnahdusikkunan oletusresoluutio</string>
-    <string name="show_higher_resolutions_title">Näytä korkeammat resoluutiot</string>
-    <string name="show_higher_resolutions_summary">Vain jotkin laitteet voivat toistaa 2K/4K-videota</string>
     <string name="play_with_kodi_title">Toista Kodissa</string>
     <string name="kore_not_found">Asennetaanko puuttuva Kore-sovellus\?</string>
-    <string name="show_play_with_kodi_title">Näytä ”Toista Kodissa”-vaihtoehto</string>
-    <string name="show_play_with_kodi_summary">Näyttää vaihtoehdon videon toistamiseen Kodi-mediasoittimessa</string>
     <string name="play_audio">Ääni</string>
-    <string name="default_audio_format_title">Oletusääniformaatti</string>
-    <string name="default_video_format_title">Oletusvideoformaatti</string>
     <string name="theme_title">Teema</string>
     <string name="light_theme_title">Kirkas</string>
     <string name="dark_theme_title">Tumma</string>
     <string name="black_theme_title">Musta</string>
-    <string name="popup_remember_size_pos_title">Muista ponnahdusikkunan ominaisuudet</string>
-    <string name="popup_remember_size_pos_summary">Muista ponnahdusikkunan viimeisin koko ja sijainti</string>
     <string name="show_search_suggestions_title">Hakuehdotukset</string>
     <string name="show_search_suggestions_summary">Valitse ehdotuksia, jotka näkyvät hakiessa</string>
     <string name="enable_search_history_title">Hakuhistoria</string>
@@ -56,18 +45,13 @@
     <string name="enable_watch_history_summary">Pidä muistissa katsotut videot</string>
     <string name="resume_on_audio_focus_gain_summary">Jatka toistoa keskeytysten jälkeen (esim. puhelut)</string>
     <string name="download_dialog_title">Lataus</string>
-    <string name="show_next_and_similar_title">Näytä seuraavia ja samankaltaisia videoita</string>
     <string name="unsupported_url">URL ei tuettu</string>
-    <string name="content_language_title">Sisällon oletuskieli</string>
     <string name="settings_category_player_title">Soitin</string>
-    <string name="settings_category_player_behavior_title">Käyttäytyminen</string>
-    <string name="settings_category_video_audio_title">Video ja ääni</string>
     <string name="settings_category_history_title">Historia ja välimuisti</string>
     <string name="settings_category_appearance_title">Ulkoasu</string>
     <string name="background_player_playing_toast">Toistaa taustalla</string>
     <string name="popup_playing_toast">Toistetaan ponnahdusikkunatilassa</string>
     <string name="content">Sisältö</string>
-    <string name="show_age_restricted_content_title">Näytä ikärajoitettu sisältö</string>
     <string name="duration_live">Suora</string>
     <string name="downloads">Lataukset</string>
     <string name="downloads_title">Lataukset</string>
@@ -140,14 +124,11 @@
     <string name="recaptcha_request_toast">reCAPTCHA-haaste pyydetty</string>
     <string name="settings_category_downloads_title">Lataus</string>
     <string name="settings_file_charset_title">Sallitut merkit tiedostonimissä</string>
-    <string name="settings_file_replacement_character_summary">Kielletyt merkit korvataan tällä arvolla</string>
-    <string name="settings_file_replacement_character_title">Korvaava merkki</string>
     <string name="charset_letters_and_digits">Kirjaimet ja numerot</string>
     <string name="charset_most_special_characters">Suurin osa erikoismerkeistä</string>
     <string name="title_activity_about">Tietoja NewPipe</string>
     <string name="title_licenses">Kolmannen osapuolen Lisenssit</string>
     <string name="tab_about">Tietoja</string>
-    <string name="tab_licenses">Lisenssit</string>
     <string name="app_description">Vapaata ja kevyttä suoratoistoa Androidilla.</string>
     <string name="view_on_github">Näytä GitHub:ssa</string>
     <string name="app_license_title">NewPipe:n Lisenssi</string>
@@ -171,7 +152,6 @@
     <string name="trending">Nousussa</string>
     <string name="top_50">Top 50</string>
     <string name="new_and_hot">Uudet ja kuumat</string>
-    <string name="show_hold_to_append_summary">Näytä vihje, kun taustasoitto- tai ponnahdusikkunapainiketta painetaan videon yksityiskohtanäkymässä</string>
     <string name="play_all">Toista kaikki</string>
     <string name="player_stream_failure">Tätä suoratoistosisältöä ei voitu toistaa</string>
     <string name="player_unrecoverable_failure">Palautuskelvoton soittimen virhe</string>
@@ -180,13 +160,11 @@
     <string name="play_queue_stream_detail">Yksityiskohdat</string>
     <string name="play_queue_audio_settings">Ääniasetukset</string>
     <string name="hold_to_append">Pidä pohjassa lisätäksesi jonoon</string>
-    <string name="show_hold_to_append_title">Näytä vihje soittolistaan lisäämiseksi</string>
     <string name="unknown_content">[Tuntematon]</string>
     <string name="start_here_on_background">Aloita toisto taustalla</string>
     <string name="start_here_on_popup">Aloita toisto ponnahdusikkunassa</string>
     <string name="donation_title">Lahjoita</string>
     <string name="donation_encouragement">NewPipe on vapaaehtoisten vapaa-ajallaan kehittämä tuoden sinulle parhaan mahdollisen käyttäjäkokemuksen. Nyt on aika auttaa kehittäjiä tekemään NewPipesta vielä parempi heidän nauttiessaan kupin kahvia.</string>
-    <string name="give_back">Anna takaisin</string>
     <string name="website_title">Websivu</string>
     <string name="website_encouragement">Käy verkkosivuillamme saadaksesi lisää tietoa ja uusimmat uutiset NewPipe:stä.</string>
     <string name="no_player_found_toast">Suoratoistosoitinta ei löytynyt (voit asentaa VLC:n toistaaksesi).</string>
@@ -244,7 +222,6 @@
     <string name="privacy_policy_title">NewPipen tietosuojakäytäntö</string>
     <string name="privacy_policy_encouragement">NewPipe ottaa yksityisyytesi tosissaan. Siksi se ei kerää sinulta mitään tietoja ilman lupaasi.
 \nNewPipen tietosuojakäytännössä selitetään tarkasti mitä tietoja lähetetään tai tallennetaan virheraportin yhteydessä.</string>
-    <string name="read_privacy_policy">Lue tietosuojakäytäntö</string>
     <string name="auto_queue_title">Lisää ehdotettu suoratoistosisältö automaattisesti soittolistaan</string>
     <string name="no_streams_available_download">Suoratoistosisältöä ei saatavilla ladattavaksi</string>
     <string name="app_license">NewPipe on vapaata ohjelmistoa. Voit käyttää, opiskella, jakaa ja parantaa sitä mielesi mukaan. Tarkemmin sanottuna voit jakaa sitä edelleen ja/tai muokata sitä Free Software Foundationin julkaiseman GNU General Public Licensen, version 3 tai uudemman, ehdoilla.</string>
@@ -324,8 +301,6 @@
     <string name="playback_reset">Nollaa</string>
     <string name="start_accept_privacy_policy">Noudattaaksemme EU:n yleistä tietosuoja-asetusta (GDPR), meidän pitää muistuttaa sinua lukemaan NewPipen tietosuojakäytäntö. Lue se tarkkaan.
 \nSinun pitää myös hyväksyä se, jotta voit lähettää virheraportin.</string>
-    <string name="accept">Hyväksy</string>
-    <string name="decline">Hylkää</string>
     <string name="limit_data_usage_none_description">Ei rajaa</string>
     <string name="limit_mobile_data_usage_title">Rajoita resoluutiota mobiilidataa käytettäessä</string>
     <string name="minimize_on_exit_title">Pienennä vaihdettaessa ohjelmaa</string>
@@ -379,7 +354,6 @@
     <string name="restricted_video">Tämä video on ikärajoitettu.
 \n
 \nSalli ”%1$s” asetuksissa katsoaksesi.</string>
-    <string name="youtube_restricted_mode_enabled_title">Ota käyttöön YouTuben ”Rajoitettu tila”</string>
     <string name="settings_category_updates_title">Päivitykset</string>
     <string name="peertube_instance_add_exists">Instanssi on jo olemassa</string>
     <string name="peertube_instance_add_https_only">Vain HTTPS-URL:t ovat tuettuja</string>
@@ -397,13 +371,10 @@
     <string name="brightness_gesture_control_title">Kirkkauden eleohjaus</string>
     <string name="volume_gesture_control_summary">Käytä eleitä ohjataksesi soittimen äänenvoimakkuutta</string>
     <string name="volume_gesture_control_title">Äänenvoimakkuuden eleohjaus</string>
-    <string name="show_comments_summary">Poista käytöstä piilottaaksesi kommentit</string>
     <string name="watch_history_states_deleted">Toistokohdat poistettu</string>
     <string name="delete_playback_states_alert">Poistetaanko kaikki toistokohdat\?</string>
     <string name="clear_playback_states_summary">Poistaa kaikki toistokohdat</string>
     <string name="clear_playback_states_title">Poista toistokohdat</string>
-    <string name="enable_playback_state_lists_summary">Näytä toistokohtien osoittimet listoissa</string>
-    <string name="enable_playback_state_lists_title">Kohdat listoissa</string>
     <string name="enable_playback_resume_summary">Palauta edellinen toistokohta</string>
     <string name="remove_watched_popup_warning">Aiemmin katsotut ja soittolistaan lisätyt videot poistetaan.
 \nOletko varma\? Tätä ei voi peruuttaa!</string>
@@ -415,7 +386,6 @@
     <string name="delete_downloaded_files">Poista ladatut tiedostot</string>
     <string name="confirm_prompt">Haluatko tyhjentää lataushistoriasi vai poistaa kaikki ladatut tiedostot\?</string>
     <string name="no_comments">Ei kommentteja</string>
-    <string name="show_comments_title">Näytä kommentit</string>
     <string name="detail_sub_channel_thumbnail_view_description">Kanavan hahmokuvake</string>
     <string name="video_detail_by">Kenen toimesta: %s</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Onko syötteen lataaminen mielestäsi liian hidas\? Voit koittaa ottaa käyttöön nopean lataamisen (voit vaihtaa sen asetuksista tai painamalla alla olevaa painiketta).
@@ -472,7 +442,6 @@
         <item quantity="one">%d sekunti</item>
         <item quantity="other">%d sekuntia</item>
     </plurals>
-    <string name="new_seek_duration_toast">ExoPlayerin rajoitusten takia kelauksen aika-askel asetettiin %d sekuntiin</string>
     <string name="remove_watched">Poista katsotut</string>
     <string name="systems_language">Järjestelmän oletus</string>
     <string name="app_language_title">Sovelluksen kieli</string>
@@ -568,8 +537,6 @@
     <string name="clear_cookie_summary">Poista evästeet, jotka NewPipe tallentaa, kun ratkaiset reCAPTCHA:n</string>
     <string name="recaptcha_cookies_cleared">reCAPTCHA-evästeet on poistettu</string>
     <string name="clear_cookie_title">Poista reCAPTCHA-evästeet</string>
-    <string name="youtube_restricted_mode_enabled_summary">YouTube tarjoaa ”Rajoitetun tilan”, joka piilottaa aikuisviihdesisällön</string>
-    <string name="show_age_restricted_content_summary">Näytä mahdollisesti lapsille sopimaton sisältö, jolla on ikäraja (esim. 18+)</string>
     <string name="notification_colorize_summary">Anna Androidin muokata ilmoituksen väriä esikatselukuvan päävärin mukaan (tämä ei ole mahdollista kaikilla laitteilla)</string>
     <string name="notification_colorize_title">Käytä värejä ilmoituksessa</string>
     <string name="show_thumbnail_summary">Käytä esikatselukuvaa lukitusruudun ja ilmoitusten taustakuvana</string>
@@ -578,9 +545,7 @@
     <string name="show_meta_info_summary">Poista käytöstä piilottaaksesi metatiedot suoratoiston luojasta, sisällöstä tai hakupyynnöstä</string>
     <string name="show_meta_info_title">Näytä metatieto</string>
     <string name="recent">Viimeisimmät</string>
-    <string name="show_description_title">Näytä kuvaus</string>
     <string name="open_with">Avaa sovelluksella</string>
-    <string name="show_description_summary">Poista valinta piilottaaksesi videon kuvauksen ja lisätiedot</string>
     <string name="no_app_to_open_intent">Mikään sovellus laitteessasi ei voi avata tätä</string>
     <string name="chapters">Jaksot</string>
     <string name="description_tab_description">Kuvaus</string>
@@ -608,11 +573,9 @@
     <string name="description_select_disable">Poista käytöstä tekstinvalinta kuvauskentän sisältä</string>
     <string name="description_select_note">Voit nyt valita tekstin kuvauskentän sisältä. Huomioithan, että valintatilan aikana sivu voi vilkkua ja linkit eivät ehkä ole klikattavia.</string>
     <string name="service_provides_reason">%s tuo tämän syyn:</string>
-    <string name="seekbar_preview_thumbnail_title">Säätövivun kuvakkeen esikatselu</string>
     <string name="disable_media_tunneling_summary">Poista median tunnelointi käytöstä, jos havaitset mustan näyttöruudun tai änkytystä videon toistossa</string>
     <string name="disable_media_tunneling_title">Poista median tunnelointi käytöstä</string>
     <string name="feed_load_error_fast_unknown">Nopea syötetila ei tarjoa enempää tietoa tästä.</string>
-    <string name="downloads_storage_use_saf_summary_api_29">\'Storage Access Framework\' on tuettu vain Android 10:stä alkaen</string>
     <string name="off">Pois päältä</string>
     <string name="on">Päällä</string>
     <string name="tablet_mode_title">Tablettitila</string>

@@ -138,6 +138,10 @@ public abstract class PlaylistDialog extends DialogFragment implements StateSave
             final List<StreamEntity> streamEntities,
             final Consumer<PlaylistDialog> onExec
     ) {
+        if (streamEntities == null || streamEntities.isEmpty()) {
+            return Disposable.empty();
+        }
+
         return new LocalPlaylistManager(NewPipeDatabase.getInstance(context))
                 .hasPlaylists()
                 .observeOn(AndroidSchedulers.mainThread())

@@ -11,8 +11,6 @@
     <string name="settings">Ρυθμίσεις</string>
     <string name="did_you_mean">Μήπως εννοείτε «%1$s»;</string>
     <string name="share_dialog_title">Κοινοποίηση με</string>
-    <string name="use_external_video_player_title">Χρήση εξωτερικής εφαρμογής αναπαραγωγής βίντεο</string>
-    <string name="use_external_audio_player_title">Χρήση εξωτερικής συσκευής αναπαραγωγής ήχου</string>
     <string name="download_path_title">Φάκελος λήψης βίντεο</string>
     <string name="download_path_summary">Τα ληφθέντα αρχεία βίντεο αποθηκεύονται εδώ</string>
     <string name="download_path_dialog_title">Επιλέξτε φάκελο λήψης για αρχεία βίντεο</string>
@@ -22,18 +20,12 @@
     <string name="default_resolution_title">Προεπιλεγμένη ανάλυση</string>
     <string name="play_with_kodi_title">Αναπαραγωγή με το Kodi</string>
     <string name="kore_not_found">Εγκατάσταση της εφαρμογής Kore;</string>
-    <string name="show_play_with_kodi_title">Εμφάνιση της επιλογής «Αναπαραγωγή με το Kodi»</string>
-    <string name="show_play_with_kodi_summary">Προβολή μιας επιλογής για αναπαραγωγή με το Kodi media center</string>
     <string name="play_audio">Ήχος</string>
-    <string name="default_audio_format_title">Προεπιλεγμένη μορφή ήχου</string>
     <string name="theme_title">Θέμα</string>
     <string name="dark_theme_title">Σκοτεινό</string>
     <string name="light_theme_title">Φωτεινό</string>
     <string name="download_dialog_title">Λήψη</string>
-    <string name="show_next_and_similar_title">Εμφάνιση «Επόμενου» και «Σχετικών» βίντεο</string>
     <string name="unsupported_url">Δεν υποστηρίζεται η διεύθυνση URL</string>
-    <string name="content_language_title">Προεπιλεγμένη γλώσσα περιεχομένου</string>
-    <string name="settings_category_video_audio_title">Βίντεο και ήχος</string>
     <string name="settings_category_appearance_title">Εμφάνιση</string>
     <string name="background_player_playing_toast">Αναπαραγωγή στο παρασκήνιο</string>
     <string name="network_error">Σφάλμα δικτύου</string>
@@ -45,7 +37,6 @@
     <string name="open_in_popup_mode">Άνοιγμα σε αναδυόμενο παράθυρο</string>
     <string name="subscribe_button_title">Εγγραφή</string>
     <string name="subscribed_button_title">Εγγεγραμμένος</string>
-    <string name="show_higher_resolutions_summary">Μόνο μερικές συσκευές μπορούν να παίξουν 2K/4K βίντεο</string>
     <string name="black_theme_title">Μαύρο</string>
     <string name="show_search_suggestions_title">Προτάσεις αναζήτησης</string>
     <string name="enable_search_history_title">Ιστορικό αναζήτησης</string>
@@ -66,14 +57,12 @@
     <string name="msg_running_detail">Πατήστε για λεπτομέρειες</string>
     <string name="settings_category_downloads_title">Λήψη</string>
     <string name="charset_letters_and_digits">Γράμματα και ψηφία</string>
-    <string name="tab_licenses">Άδειες</string>
     <string name="title_activity_history">Ιστορικό</string>
     <string name="action_history">Ιστορικό</string>
     <string name="show_info">Εμφάνιση πληροφοριών</string>
     <string name="main_bg_subtitle">Πατήστε το μεγεθυντικό φακό για να ξεκινήσετε.</string>
     <string name="no_player_found_toast">Δε βρέθηκε πρόγραμμα αναπαραγωγής ροής δεδομένων (μπορείτε να εγκαταστήσετε το VLC για να κάνετε αναπαραγωγή).</string>
     <string name="controls_download_desc">Λήψη του αρχείου ροής</string>
-    <string name="use_external_video_player_summary">Αφαιρείται ο ήχος από κάποιες αναλύσεις</string>
     <string name="channel_unsubscribed">Το κανάλι διαγράφηκε</string>
     <string name="subscription_change_failed">Αδύνατη η αλλαγή της εγγραφής</string>
     <string name="subscription_update_failed">Αδύνατη η ενημέρωση της εγγραφής</string>
@@ -84,10 +73,6 @@
     <string name="controls_popup_title">Αναδυόμενο παράθυρο</string>
     <string name="controls_add_to_playlist_title">Προσθήκη σε</string>
     <string name="default_popup_resolution_title">Προεπιλεγμένη ανάλυση αναδυόμενου παραθύρου</string>
-    <string name="show_higher_resolutions_title">Εμφάνιση υψηλότερων αναλύσεων</string>
-    <string name="default_video_format_title">Προεπιλεγμένη μορφή βίντεο</string>
-    <string name="popup_remember_size_pos_title">Ενθύμηση ιδιοτήτων αναδυόμενου παραθύρου</string>
-    <string name="popup_remember_size_pos_summary">Ενθύμηση του τελευταίου μεγέθους και θέσης του παραθύρου</string>
     <string name="use_inexact_seek_title">Χρήση γρήγορης ανακριβούς αναζήτησης</string>
     <string name="use_inexact_seek_summary">Η μην ακριβής αναζήτηση επιτρέπει στην εφαρμογή να αναζητεί θέσεις στο βίντεο γρηγορότερα με μειωμένη ακρίβεια. Δε λειτουργεί για διαστήματα των 5, 15 ή 25 δευτερολέπτων</string>
     <string name="download_thumbnail_title">Φόρτωση μικρογραφιών</string>
@@ -104,16 +89,12 @@
     <string name="enable_watch_history_summary">Κρατήστε ιστορικό των αναπαραχθέντων βίντεο</string>
     <string name="resume_on_audio_focus_gain_title">Ανάκτηση αναπαραγωγής</string>
     <string name="resume_on_audio_focus_gain_summary">Συνέχιση της αναπαραγωγής έπειτα από διακοπές (π.χ. κλήσεις)</string>
-    <string name="show_hold_to_append_title">Εμφάνιση επεξήγησης του «Πιέστε παρατεταμένα για προσθήκη στην ουρά»</string>
-    <string name="show_hold_to_append_summary">Εμφάνιση υπόδειξης όταν πατηθεί το κουμπί παρασκηνίου ή αναδυόμενου παραθύρου στη σελίδα λεπτομερειών του βίντεο</string>
     <string name="default_content_country_title">Προεπιλεγμένη χώρα περιεχομένου</string>
     <string name="settings_category_player_title">Αναπαραγωγός</string>
-    <string name="settings_category_player_behavior_title">Συμπεριφορά</string>
     <string name="settings_category_history_title">Ιστορικό και προσωρινή μνήμη</string>
     <string name="settings_category_debug_title">Αποσφαλμάτωση</string>
     <string name="popup_playing_toast">Αναπαραγωγή σε αναδυόμενο παράθυρο</string>
     <string name="content">Περιεχόμενο</string>
-    <string name="show_age_restricted_content_title">Εμφάνιση περιεχομένου περιορισμένης ηλικίας</string>
     <string name="duration_live">Ζωντανά</string>
     <string name="error_report_title">Αναφορά σφαλμάτων</string>
     <string name="channels">Κανάλια</string>
@@ -207,8 +188,6 @@
     <string name="title_activity_recaptcha">Δοκιμασία reCAPTCHA</string>
     <string name="recaptcha_request_toast">Ζητήθηκε δοκιμασία reCAPTCHA</string>
     <string name="settings_file_charset_title">Επιτρεπόμενοι χαρακτήρες σε ονόματα αρχείων</string>
-    <string name="settings_file_replacement_character_summary">Οι μη έγκυροι χαρακτήρες αντικαθίστανται με αυτήν την τιμή</string>
-    <string name="settings_file_replacement_character_title">Αντικαταστάτης χαρακτήρας</string>
     <string name="charset_most_special_characters">Οι περισσότεροι ειδικοί χαρακτήρες</string>
     <string name="toast_no_player">Δεν υπάρχει εγκατεστημένη εφαρμογή για την αναπαραγωγή αυτού του αρχείου</string>
     <string name="title_activity_about">Σχετικά με το NewPipe</string>
@@ -221,13 +200,11 @@
     <string name="view_on_github">Δείτε το στο GitHub</string>
     <string name="donation_title">Δωρεά</string>
     <string name="donation_encouragement">Το NewPipe αναπτύσσεται από εθελοντές που δαπανούν τον ελεύθερο χρόνο τους για να σας προσφέρουν τη βέλτιστη δυνατή εμπειρία χρήστη. Ανταποδώστε το, για να βοηθήσετε τους προγραμματιστές του NewPipe να το κάνουν ακόμα καλύτερο, όσο απολαμβάνουν ένα φλιτζάνι καφέ.</string>
-    <string name="give_back">Προσφέρετε</string>
     <string name="website_title">Ιστότοπος</string>
     <string name="website_encouragement">Επισκευτείτε τον ιστότοπο του NewPipe για περισσότερες πληροφορίες και νέα.</string>
     <string name="privacy_policy_title">Πολιτική ιδιωτικού απόρρητου του NewPipe</string>
     <string name="privacy_policy_encouragement">Το NewPipe παίρνει πολύ σοβαρά την ιδιωτικότητα σας. Έτσι, η εφαρμογή αυτή δεν συλλέγει δεδομένα από εσάς χωρίς τη συγκατάθεσή σας.
 \nΗ πολιτική ιδιωτικού απόρρητου του NewPipe εξηγεί λεπτομερώς ποια δεδομένα αποστέλλονται και αποθηκεύονται όταν επιλέγετε να στείλετε μια αναφορά σφαλμάτων.</string>
-    <string name="read_privacy_policy">Ανάγνωση της πολιτικής ιδιωτικού απόρρητου</string>
     <string name="app_license_title">Η άδεια του NewPipe</string>
     <string name="app_license">Το NewPipe είναι copylelft ελεύθερο λογισμικό: Μπορείτε να το χρησιμοποιήσετε, να το μελετήσετε, να το μοιραστείτε και να το βελτιώσετε κατά βούληση. Ειδικότερα, μπορείτε να το αναδιανείμετε ή/και να το τροποποιήσετε υπό την άδεια GNU General Public Licence όπως αυτή εκδόθηκε από το Free Software Foundation, είτε υπό την έκδοση 3 της άδειας, είτε (προαιρετικά) υπό οποιαδήποτε μεταγενέστερη άδεια.</string>
     <string name="read_full_license">Ανάγνωση της άδειας</string>
@@ -325,8 +302,6 @@
     <string name="playback_reset">Επαναφορά</string>
     <string name="start_accept_privacy_policy">Προς συμμόρφωση με τον Ευρωπαϊκό Γενικό Κανονισμό για την Προστασία Δεδομένων (GDPR), σας εφιστούμε την προσοχή στην πολιτική προστασίας προσωπικών δεδομένων του NewPipe. Παραλούμε, διαβάστε την προσεκτικά.
 \nΘα πρέπει να την αποδεχτείτε προκειμένου να μας αποστείλετε την αναφορά σφάλματος.</string>
-    <string name="accept">Αποδοχή</string>
-    <string name="decline">Απόρριψη</string>
     <string name="limit_data_usage_none_description">Χωρίς όριο</string>
     <string name="limit_mobile_data_usage_title">Περιορισμός της ανάλυσης όταν γίνεται χρήση δεδομένων</string>
     <string name="minimize_on_exit_title">Ελαχιστοποίηση κατά την εναλλαγή εφαρμογών</string>
@@ -388,16 +363,12 @@
     <string name="max_retry_desc">Μέγιστος αριθμός προσπαθειών προτού γίνει ακύρωση της λήψης</string>
     <string name="pause_downloads_on_mobile">Διακοπή σε δίκτυα με ογκοχρέωση</string>
     <string name="pause_downloads_on_mobile_desc">Χρήσιμο κατά τη μετάβαση σε δεδομένα κινητής τηλεφωνίας, αν και ορισμένες λήψεις δεν μπορούν να ανασταλούν</string>
-    <string name="show_comments_title">Προβολή σχολίων</string>
-    <string name="show_comments_summary">Απενεργοποίηση για διακοπή της εμφάνιση σχολίων</string>
     <string name="autoplay_title">Αυτόματη αναπαραγωγή</string>
     <string name="no_comments">Χωρίς σχόλια</string>
     <string name="error_unable_to_load_comments">Δεν ήταν δυνατή η φόρτωση σχολίων</string>
     <string name="close">Κλείσιμο</string>
     <string name="enable_playback_resume_title">Ανάκτηση αναπαραγωγής</string>
     <string name="enable_playback_resume_summary">Επαναφορά της τελευταίας θέσης αναπαραγωγής</string>
-    <string name="enable_playback_state_lists_title">Θέσεις στις λίστες</string>
-    <string name="enable_playback_state_lists_summary">Εμφάνιση ενδείξεων θέσης αναπαραγωγής στις λίστες</string>
     <string name="settings_category_clear_data_title">Εκκαθάριση δεδομένων</string>
     <string name="watch_history_states_deleted">Οι θέσεις αναπαραγωγής διαγράφηκαν</string>
     <string name="missing_file">Το αρχείο μετακινήθηκε ή διαγράφηκε</string>
@@ -482,7 +453,6 @@
     <string name="restricted_video">Αυτό το βίντεο έχει περιορισμό ηλικίας.
 \n
 \nΕνεργοποιήστε το «%1$s» στις ρυθμίσεις εάν θέλετε να το δείτε.</string>
-    <string name="youtube_restricted_mode_enabled_title">Λειτουργία περιορισμένης πρόσβασης του YouTube</string>
     <string name="unsupported_url_dialog_message">Δεν ήταν δυνατή η αναγνώριση της διεύθυνσης URL. Άνοιγμα με άλλη εφαρμογή;</string>
     <string name="auto_queue_toggle">Αυτόματη προσθήκη στην ουρά</string>
     <string name="clear_queue_confirmation_description">Η ουρά του ενεργού αναπαραγωγού θα αντικατασταθεί</string>
@@ -537,7 +507,6 @@
         <item quantity="one">%d δευτερόλεπτο</item>
         <item quantity="other">%d δευτερόλεπτα</item>
     </plurals>
-    <string name="new_seek_duration_toast">Λόγω περιορισμών του ExoPlayer, η διάρκεια αναζήτησης ορίστηκε στα %d δευτερόλεπτα</string>
     <string name="remove_watched_popup_yes_and_partially_watched_videos">Ναι. Και τα μερικώς θεαθέντα βίντεο</string>
     <string name="remove_watched_popup_warning">Τα βίντεο που εθεάθησαν πριν και αφού προστέθηκαν στη λίστα αναπαραγωγής θα απομακρυνθούν
 \nΕίστε σίγουρος; Δεν μπορεί να αναιρεθεί!</string>
@@ -560,8 +529,6 @@
     <string name="clear_cookie_summary">Εκκαθάριση των cookies που αποθηκεύει η εφαρμογή όταν επιλύετε ένα reCAPTCHA</string>
     <string name="recaptcha_cookies_cleared">Τα reCAPTCHA cookies εκκαθαρίστηκαν</string>
     <string name="clear_cookie_title">Εκκαθάριση reCAPTCHA cookies</string>
-    <string name="youtube_restricted_mode_enabled_summary">Το YouTube διαθέτει «Περιορισμένη Λειτουργία» η οποία κρύβει πιθανώς ακατάλληλο περιεχόμενο</string>
-    <string name="show_age_restricted_content_summary">Εμφάνιση πιθανώς ακατάλληλου περιεχομένου (18+)</string>
     <string name="peertube_instance_add_exists">Το instance υπάρχει ήδη</string>
     <string name="peertube_instance_add_fail">Αδυναμία πιστοποίησης του instance</string>
     <string name="peertube_instance_add_help">Προσθέστε την URL του instance</string>
@@ -584,8 +551,6 @@
     <string name="description_tab_description">Περιγραφή</string>
     <string name="related_items_tab_description">Σχετιζόμενες ροές</string>
     <string name="comments_tab_description">Σχόλια</string>
-    <string name="show_description_summary">Απενεργοποιήστε για απόκρυψη περιγραφής και πρόσθετων πληροφοριών</string>
-    <string name="show_description_title">Εμφάνιση περιγραφής</string>
     <string name="open_with">Άνοιγμα με</string>
     <string name="no_app_to_open_intent">Καμία εφαρμογή στη συσκευή σας δεν μπορεί το ανοίξει</string>
     <string name="crash_the_app">Κατάρρευση εφαρμογής</string>
@@ -631,7 +596,6 @@
 \nΘέλετε να απεγγραφείτε από αυτό το κανάλι;</string>
     <string name="feed_load_error_account_info">Αδυναμία φόρτωσης τροφοδοσίας για \'%s\'.</string>
     <string name="feed_load_error">Σφάλμα φόρτωσης τροφοδοσίας</string>
-    <string name="downloads_storage_use_saf_summary_api_29">Από το Android 10 και μετά, μόνο το SAF υποστηρίζεται</string>
     <string name="downloads_storage_use_saf_summary_api_19">Το «Πλαίσιο Πρόσβασης Αποθήκευσης» δεν υποστηρίζεται σε Android KitKat και παλαιότερο</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Θα ερωτηθείτε πού να αποθηκεύσετε κάθε λήψη</string>
     <string name="no_dir_yet">Δεν έχει ορισθεί φάκελος λήψεων ακόμα, eπιλέξτε τον προεπιλεγμένο φάκελο τώρα</string>
@@ -644,7 +608,6 @@
     <string name="dont_show">Απόκρυψη</string>
     <string name="low_quality_smaller">Χαμηλή ποιότητα (μικρότερο)</string>
     <string name="high_quality_larger">Υψηλή ποιότητα (μεγαλύτερο)</string>
-    <string name="seekbar_preview_thumbnail_title">Προεπισκόπηση στην μπάρα αναζήτησης</string>
     <string name="mark_as_watched">Σήμανση ως αναπαραχθέν</string>
     <string name="detail_heart_img_view_description">Επισημάνθηκε από τον δημιουργό</string>
     <string name="show_image_indicators_summary">Εμφάνιση χρωματιστής κορδέλας πάνω στις εικόνες, που δείχνει την πηγή τους: κόκκινη για δίκτυο, μπλε για δίσκο και πράσινο για μνήμη</string>
@@ -704,7 +667,6 @@
     <string name="enable_streams_notifications_summary">Ειδοποίηση για νέες ροές από συνδρομές</string>
     <string name="delete_downloaded_files_confirm">Διαγραφή όλων των ληφθέντων αρχείων από το δίσκο;</string>
     <string name="notifications_disabled">Οι ειδοποιήσεις είναι απενεργοποιημένες</string>
-    <string name="enumeration_comma">,</string>
     <string name="get_notified">Λάβετε ειδοποίηση</string>
     <string name="you_successfully_subscribed">Έχετε εγγραφεί τώρα σε αυτό το κανάλι</string>
     <string name="toggle_all">Εναλλαγή όλων</string>

@@ -79,6 +79,7 @@ public class App extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        EdgeToEdgeWorkaround.apply();
 
         app = this;
 
@@ -116,8 +117,6 @@ public class App extends MultiDexApplication {
 
         StateSaver.init(this);
         initNotificationChannels();
-
-        FilterPreferenceMigrator.migrateIfNeeded(this);
 
         ServiceHelper.initServices(this);
 

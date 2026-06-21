@@ -30,6 +30,7 @@ class AboutActivity : AppCompatActivity() {
         val aboutBinding = ActivityAboutBinding.inflate(layoutInflater)
         setContentView(aboutBinding.root)
         setSupportActionBar(aboutBinding.aboutToolbar)
+
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // Create the adapter that will return a fragment for each of the three
@@ -133,10 +134,6 @@ class AboutActivity : AppCompatActivity() {
             SoftwareComponent(
                 "Groupie", "2016", "Lisa Wray",
                 "https://github.com/lisawray/groupie", StandardLicenses.MIT
-            ),
-            SoftwareComponent(
-                "Icepick", "2015", "Frankie Sardo",
-                "https://github.com/frankiesardo/icepick", StandardLicenses.EPL1
             ),
             SoftwareComponent(
                 "Jsoup", "2009 - 2020", "Jonathan Hedley",

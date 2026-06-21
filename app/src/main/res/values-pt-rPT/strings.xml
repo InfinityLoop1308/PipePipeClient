@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="decline">Recusar</string>
     <string name="start_here_on_background">Iniciar reprodução em segundo plano</string>
     <string name="import_network_expensive_warning">Tenha em atenção de que esta operação pode sobrecarregar a sua rede.
 \n
@@ -8,9 +7,7 @@
     <string name="main_bg_subtitle">Toque na lupa para começar.</string>
     <string name="enable_playback_resume_title">Continuar reprodução</string>
     <string name="msg_threads">Processos</string>
-    <string name="settings_file_replacement_character_summary">Os carateres inválidos são substituídos por este valor</string>
     <string name="download">Descarregar</string>
-    <string name="use_external_video_player_summary">Remove o áudio em algumas resoluções</string>
     <string name="systems_language">Predefinição do sistema</string>
     <string name="minimize_on_exit_title">Minimizar ao trocar de aplicação</string>
     <string name="unmute">Ativar som</string>
@@ -24,7 +21,6 @@
     <string name="error_progress_lost">Progresso perdido, o ficheiro foi eliminado</string>
     <string name="channel_unsubscribed">Canal não subscrito</string>
     <string name="msg_name">Nome do ficheiro</string>
-    <string name="enable_playback_state_lists_summary">Mostrar indicadores de posição de reprodução nas listas</string>
     <string name="notification_channel_description">Notificações para o reprodutor do NewPipe</string>
     <string name="unhook_checkbox">Desvincular (pode causar distorção)</string>
     <string name="show_search_suggestions_summary">Escolha as sugestões a mostrar ao pesquisar</string>
@@ -38,7 +34,6 @@
     <string name="error_occurred_detail">Ocorreu um erro: %1$s</string>
     <string name="controls_popup_title">Popup</string>
     <string name="msg_running">Descarga NewPipe</string>
-    <string name="new_seek_duration_toast">Devido às restrições de ExoPlayer, a duração da pesquisa foi definida para %d segundos</string>
     <string name="overwrite">Sobrescrever</string>
     <string name="mute">Sem som</string>
     <string name="enable_watch_history_title">Histórico de visualizações</string>
@@ -56,7 +51,6 @@
     <string name="play_all">Reproduzir tudo</string>
     <string name="delete_playlist_prompt">Eliminar esta lista de reprodução\?</string>
     <string name="what_device_headline">Informação:</string>
-    <string name="tab_licenses">Licenças</string>
     <string name="pause_downloads_on_mobile">Interromper em redes limitadas</string>
     <string name="detail_thumbnail_view_description">Reproduzir vídeo, duração:</string>
     <string name="feed_create_new_group_button_title">Novo</string>
@@ -81,7 +75,6 @@
     <string name="clear_download_history">Limpar histórico de descargas</string>
     <string name="delete_playback_states_alert">Remover todas as posições de reprodução\?</string>
     <string name="enable_queue_limit">Limitar fila de descargas</string>
-    <string name="show_age_restricted_content_title">Mostrar conteúdo com restrição de idade</string>
     <string name="privacy_policy_encouragement">O projeto NewPipe leva a sua privacidade muito a sério. Por isso, não recolhe nenhum dado sem o seu consentimento.
 \nA polícia de privacidade do NewPipe explica, em detalhe, os tipos de dados enviados sempre que submete um relatório de erro.</string>
     <string name="file">Ficheiro</string>
@@ -91,7 +84,6 @@
     <string name="subscribe_button_title">Subscrever</string>
     <string name="artists">Artistas</string>
     <string name="error_connect_host">Não foi possível ligar ao servidor</string>
-    <string name="show_play_with_kodi_summary">Mostrar uma opção para reproduzir o vídeo no Kodi</string>
     <string name="list_view_mode">Modo de exibição</string>
     <string name="use_inexact_seek_summary">A pesquisa inexata permite que esta seja mais rápida, mas reduz a precisão. Procurar por 5, 15 ou 25 segundos não funciona corretamente</string>
     <string name="permission_display_over_apps">Permitir sobreposição a outras aplicações</string>
@@ -119,23 +111,17 @@
         <item quantity="other">%d selecionadas</item>
     </plurals>
     <string name="share">Partilhar</string>
-    <string name="read_privacy_policy">Ver política de privacidade</string>
     <string name="player_unrecoverable_failure">Ocorreu um erro compulsivo do reprodutor</string>
-    <string name="youtube_restricted_mode_enabled_title">Ativar \"Modo restrito\" do YouTube</string>
     <string name="invalid_directory">Pasta inexistente</string>
     <string name="all">Tudo</string>
     <string name="sorry_string">Bolas, isto não deveria ter acontecido.</string>
     <string name="undo">Anular</string>
     <string name="no_channel_subscribed_yet">Não existem canais subscritos</string>
-    <string name="settings_category_player_behavior_title">Comportamento</string>
     <string name="no_available_dir">Tem que definir, nas definições, uma pasta para as descargas</string>
-    <string name="enable_playback_state_lists_title">Posições em listas</string>
     <string name="enable_queue_limit_desc">Permitir apenas uma descarga de cada vez</string>
     <string name="error_http_not_found">Não encontrado</string>
     <string name="background_player_playing_toast">Reprodução em segundo plano</string>
-    <string name="show_higher_resolutions_title">Mostrar resoluções mais altas</string>
     <string name="no_subscribers">Sem subscritores</string>
-    <string name="use_external_audio_player_title">Utilizar reprodutor de áudio externo</string>
     <string name="download_thumbnail_summary">Desative para parar o carregamento de miniaturas, poupar dados e utilização da memória. As alterações limpam a cache de imagens do disco e da memória</string>
     <string name="did_you_mean">Será que queria dizer \"%1$s\"\?</string>
     <string name="updates_setting_description">Mostrar uma notificação para pedir a atualização da aplicação se existir uma nova versão</string>
@@ -168,7 +154,6 @@
     <string name="error_unable_to_load_comments">Não foi possível carregar os comentários</string>
     <string name="default_content_country_title">País padrão para conteúdo</string>
     <string name="app_description">Aplicação livre de reprodução de emissões para Android.</string>
-    <string name="content_language_title">Idioma padrão para conteúdo</string>
     <string name="import_youtube_instructions">Importar subscrições do YouTube do Google Takeout:
 \n
 \n1. Vá para este URL: %1$s
@@ -202,7 +187,6 @@
     <string name="title_licenses">Licenças de terceiros</string>
     <string name="generate_unique_name">Gerar nome único</string>
     <string name="minimize_on_exit_summary">Ação a executar ao trocar para outra aplicação a partir do menu principal - %s</string>
-    <string name="use_external_video_player_title">Utilizar reprodutor de vídeo externo</string>
     <string name="info_labels">O quê:\\nPedido:\\nIdioma do conteúdo:\\nPaís do conteúdo\\nIdioma da app\\nServiço:\\nHora GMT:\\nPacote:\\nVersão:\\nVersão do SO:</string>
     <string name="contribution_encouragement">Se tem ideias para: tradução, alterações de desenho, limpeza de código, ou alterações significativas no código fonte - todas as ajudas são bem-vindas. Quanto mais se faz, melhor ficará!</string>
     <string name="settings_category_clear_data_title">Limpar dados</string>
@@ -211,7 +195,6 @@
     <string name="resize_fill">Preencher</string>
     <string name="dark_theme_title">Escuro</string>
     <string name="retry">Tentar novamente</string>
-    <string name="show_next_and_similar_title">Mostrar vídeos \'Seguintes\' e \'Semelhantes\'</string>
     <string name="queued">na fila</string>
     <string name="open_in_browser">Abrir no navegador</string>
     <string name="new_and_hot">Novos e tendências</string>
@@ -292,7 +275,6 @@
     <string name="missions_header_finished">Terminada</string>
     <string name="watch_history_deleted">Histórico de vídeos apagado</string>
     <string name="no_player_found">Não tem um reprodutor de vídeo. Instalar VLC\?</string>
-    <string name="show_comments_summary">Desative para ocultar comentários</string>
     <string name="limit_mobile_data_usage_title">Limitar resolução se em dados móveis</string>
     <string name="main_page_content_summary">Separadores mostrados na página principal</string>
     <string name="play_queue_audio_settings">Definições de áudio</string>
@@ -303,7 +285,6 @@
     <string name="settings_category_debug_title">Depuração</string>
     <string name="peertube_instance_add_help">Digite o URL da instância</string>
     <string name="preferred_open_action_settings_title">Ação de \'Abrir\' preferida</string>
-    <string name="settings_category_video_audio_title">Vídeo e áudio</string>
     <string name="charset_letters_and_digits">Letras e dígitos</string>
     <string name="enable_leak_canary_summary">A monitorização de memória pode tornar a aplicação instável</string>
     <string name="copy_for_github">Copiar relatório formatado</string>
@@ -384,7 +365,6 @@
     <string name="playlists">Listas de reprodução</string>
     <string name="start">Iniciar</string>
     <string name="download_already_pending">Existe uma descarga pendente com este nome</string>
-    <string name="accept">Aceitar</string>
     <string name="what_happened_headline">O que ocorreu:</string>
     <string name="contribution_title">Participar</string>
     <string name="controls_background_title">Segundo plano</string>
@@ -402,7 +382,6 @@
     <string name="search_history_deleted">Histórico de pesquisa removido</string>
     <string name="clear_search_history_title">Limpar histórico de pesquisas</string>
     <string name="msg_error">Erro</string>
-    <string name="popup_remember_size_pos_title">Lembrar propriedades do popup</string>
     <string name="download_path_summary">Os ficheiros de vídeo descarregados serão guardados aqui</string>
     <string name="switch_to_main">Mudar para principal</string>
     <string name="msg_popup_permission">Esta permissão é necessária
@@ -434,8 +413,6 @@
     <string name="caption_none">Sem legendas</string>
     <string name="website_title">Site oficial</string>
     <string name="tab_subscriptions">Subscrições</string>
-    <string name="give_back">Contribuir</string>
-    <string name="default_audio_format_title">Formato padrão de áudio</string>
     <string name="invalid_file">O ficheiro não existe ou não tem permissões para ler e/ou escrever</string>
     <string name="feed_group_dialog_empty_name">O nome do grupo está vazio</string>
     <string name="download_thumbnail_title">Carregar miniaturas</string>
@@ -465,30 +442,24 @@
     <string name="feed_use_dedicated_fetch_method_title">Se possível, obter de uma fonte dedicada</string>
     <string name="feed_group_dialog_select_subscriptions">Selecionar subscrições</string>
     <string name="playlist_add_stream_success">Adicionado à lista de reprodução</string>
-    <string name="default_video_format_title">Formato padrão de vídeo</string>
-    <string name="show_hold_to_append_title">Mostrar dica \"Toque longo para enfileirar\"</string>
     <string name="choose_instance_prompt">Escolha uma instância</string>
     <string name="metadata_cache_wipe_summary">Limpar todos os dados da página web</string>
     <string name="drawer_close">Fechar menu</string>
     <string name="brightness_gesture_control_summary">Utilizar gestos para controlar o brilho do reprodutor</string>
     <string name="remove_watched">Remover visualizados</string>
-    <string name="settings_file_replacement_character_title">Carácter de substituição</string>
     <string name="video">Vídeo</string>
     <string name="no_streams_available_download">Não existem vídeos para descarregar</string>
     <string name="download_path_audio_summary">Os ficheiros de áudio descarregados serão guardados aqui</string>
     <string name="videos_string">Vídeos</string>
     <string name="metadata_cache_wipe_complete_notice">Meta-dados em cache limpos</string>
-    <string name="show_hold_to_append_summary">Mostrar dica ao premir em segundo plano ou no botão \"Detalhes:\" da janela popup</string>
     <string name="no_player_found_toast">Não foi encontrado um reprodutor (pode instalar VLC para reproduzir).</string>
     <string name="downloads_storage_ask_summary">Ser-lhe-á perguntado onde guardar cada transferência.
 \nAtive o seletor de pastas do sistema (SAF) se quiser transferir para um cartão SD externo</string>
-    <string name="show_play_with_kodi_title">Mostrar opção \"Reproduzir no Kodi\"</string>
     <string name="search_no_results">Sem resultados</string>
     <string name="disabled">Desativado</string>
     <string name="trending">Tendências</string>
     <string name="always_ask_open_action">Perguntar sempre</string>
     <string name="error_timeout">Ligação expirada</string>
-    <string name="show_higher_resolutions_summary">Apenas alguns dispositivos conseguem reproduzir vídeos em 2K/4K</string>
     <string name="settings_category_appearance_title">Aparência</string>
     <string name="donation_title">Doar</string>
     <string name="error_report_open_github_notice">Verifique se o seu erro já foi reportado. A criação de erros em duplicado tira-nos tempo que pode ser utilizado para corrigir os erros.</string>
@@ -536,7 +507,6 @@
     <string name="error_snackbar_action">Relatório</string>
     <string name="msg_running_detail">Toque para detalhes</string>
     <string name="paused">em pausa</string>
-    <string name="show_comments_title">Mostrar comentários</string>
     <string name="recaptcha_done_button">Aceitar</string>
     <string name="feed_use_dedicated_fetch_method_disable_button">Desativar modo rápido</string>
     <string name="never">Nunca</string>
@@ -548,7 +518,6 @@
     <string name="clear_queue_confirmation_description">A fila do reprodutor ativo será substituída</string>
     <string name="clear_queue_confirmation_summary">Mudar de um reprodutor para outro pode substituir a sua fila</string>
     <string name="clear_queue_confirmation_title">Pedir confirmação antes de limpar uma fila</string>
-    <string name="popup_remember_size_pos_summary">Lembrar último tamanho e posição do popup</string>
     <string name="notification_action_nothing">Nada</string>
     <string name="notification_action_buffering">A carregar</string>
     <string name="notification_action_shuffle">Baralhar</string>
@@ -568,8 +537,6 @@
     <string name="clear_cookie_summary">Limpar cookies que NewPipe armazena quando resolve um reCAPTCHA</string>
     <string name="recaptcha_cookies_cleared">Os cookies reCAPTCHA foram limpos</string>
     <string name="clear_cookie_title">Limpar cookies reCAPTCHA</string>
-    <string name="youtube_restricted_mode_enabled_summary">O YouTube fornece um \"Modo restrito\" que oculta o conteúdo destinado a adultos</string>
-    <string name="show_age_restricted_content_summary">Mostrar conteúdo possivelmente impróprio para crianças porque tem um limite de idade (como 18+)</string>
     <string name="notification_colorize_summary">Fazer com que o Android personalize a cor da notificação conforme a cor principal na miniatura (esta opção não está disponível em todos os dispositivos)</string>
     <string name="notification_colorize_title">Colorir notificação</string>
     <string name="show_thumbnail_summary">Usar miniaturas no fundo do ecrã de bloqueio e em notificações</string>
@@ -585,8 +552,6 @@
     <string name="description_tab_description">Descrição</string>
     <string name="related_items_tab_description">Emissões relacionadas</string>
     <string name="comments_tab_description">Comentários</string>
-    <string name="show_description_summary">Desative para ocultar a descrição do vídeo e informações adicionais</string>
-    <string name="show_description_title">Mostrar descrição</string>
     <string name="open_with">Abrir com</string>
     <string name="crash_the_app">A app travou</string>
     <string name="paid_content">Este conteúdo só está disponível para utilizadores que pagaram, portanto não pode ser transmitido ou descarregado pelo NewPipe.</string>
@@ -637,13 +602,11 @@
 \nQuer cancelar a inscrição deste canal\?</string>
     <string name="feed_load_error_account_info">Não foi possível carregar o feed para \'%s\'.</string>
     <string name="feed_load_error">Erro ao carregar o feed</string>
-    <string name="downloads_storage_use_saf_summary_api_29">A partir do Android 10, apenas o \'Storage Access Framework\' é compatível</string>
     <string name="downloads_storage_use_saf_summary_api_19">\'Storage Access Framework\' não é compatível com Android KitKat e versões anteriores</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Sempre que descarregar um ficheiro, terá que indicar o local para o guardar</string>
     <string name="dont_show">Não mostrar</string>
     <string name="low_quality_smaller">Baixa qualidade (menor)</string>
     <string name="high_quality_larger">Alta qualidade (maior)</string>
-    <string name="seekbar_preview_thumbnail_title">Pré-visualização da miniatura da barra de pesquisa</string>
     <string name="no_dir_yet">Ainda não foi definida uma pasta de descarregamento, escolha agora a pasta de descarregamento padrão</string>
     <string name="comments_are_disabled">Comentários estão desativados</string>
     <string name="mark_as_watched">Marcar como visto</string>
@@ -706,6 +669,5 @@
     <string name="settings_category_player_notification_summary">Configurar a notificação da reprodução do fluxo atual</string>
     <string name="get_notified">Seja notificado</string>
     <string name="you_successfully_subscribed">Agora assinou este canal</string>
-    <string name="enumeration_comma">,</string>
     <string name="streams_notification_channel_name">Novos fluxos</string>
 </resources>

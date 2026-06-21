@@ -15,9 +15,6 @@
     <string name="settings">ਸੈਟਿੰਗਾਂ</string>
     <string name="did_you_mean">ਕੀ ਤੁਹਾਡਾ ਮਤਲਬ ਸੀ \"%1$s\"\?</string>
     <string name="share_dialog_title">ਇਸ ਨਾਲ਼ ਸਾਂਝਾ ਕਰੋ</string>
-    <string name="use_external_video_player_title">ਬਾਹਰੀ ਵੀਡੀਓ ਪਲੇਅਰ ਵਰਤੋ</string>
-    <string name="use_external_video_player_summary">ਕੁਝ ਰੈਜ਼ੋਲੂਸ਼ਨਾਂ \'ਤੇ ਆਵਾਜ਼ ਨੂੰ ਹਟਾ ਦਿੰਦੈ</string>
-    <string name="use_external_audio_player_title">ਬਾਹਰੀ ਆਡੀਓ ਪਲੇਅਰ ਵਰਤੋ</string>
     <string name="subscribe_button_title">ਸਬਸਕ੍ਰਾਈਬ ਕਰੋ</string>
     <string name="subscribed_button_title">ਸਬਸਕ੍ਰਾਈਬ ਹੋ ਗਿਆ</string>
     <string name="channel_unsubscribed">ਚੈਨਲ ਅਨ-ਸਬਸਕ੍ਰਾਈਬ ਹੋ ਗਿਆ</string>
@@ -38,21 +35,13 @@
     <string name="download_path_audio_dialog_title">ਆਡੀਓ ਫ਼ਾਈਲਾਂ ਲਈ ਡਾਊਨਲੋਡ ਫ਼ੋਲਡਰ ਚੁਣੋ</string>
     <string name="default_resolution_title">ਡਿਫ਼ਾਲਟ ਰੈਜ਼ੋਲੂਸ਼ਨ</string>
     <string name="default_popup_resolution_title">ਤੈਰਦੀ-ਤਸਵੀਰ ਲਈ ਡਿਫ਼ਾਲਟ ਰੈਜ਼ੋਲੂਸ਼ਨ</string>
-    <string name="show_higher_resolutions_title">ਵੱਡੀਆਂ ਰੈਜ਼ੋਲੂਸ਼ਨਾਂ ਦਿਖਾਓ</string>
-    <string name="show_higher_resolutions_summary">ਸਿਰਫ਼ ਕੁਝ ਹੀ ਡਿਵਾਈਸ 2K/4K ਵੀਡੀਓ ਨੂੰ ਚਲਾ ਸਕਦੇ ਹਨ</string>
     <string name="play_with_kodi_title">Kodi ਵਿੱਚ ਚਲਾਓ</string>
     <string name="kore_not_found">Kore ਐਪ ਇੰਸਟਾਲ ਨਹੀਂ ਹੈ\?</string>
-    <string name="show_play_with_kodi_title">\"Kodi ਵਿੱਚ ਚਲਾਓ\" ਆਪਸ਼ਨ ਦਿਖਾਓ</string>
-    <string name="show_play_with_kodi_summary">ਕੋਡੀ ਮੀਡੀਆ ਸੈਂਟਰ ਰਾਹੀਂ ਵੀਡੀਓ ਚਲਾਉਣ ਦੀ ਆਪਸ਼ਨ ਵਿਖਾਓ</string>
     <string name="play_audio">ਆਡੀਓ</string>
-    <string name="default_audio_format_title">Default ਆਡੀਓ ਫਾਰਮੈਟ</string>
-    <string name="default_video_format_title">Default ਵੀਡੀਓ ਫਾਰਮੈਟ</string>
     <string name="theme_title">ਥੀਮ</string>
     <string name="light_theme_title">ਸਫੈਦ</string>
     <string name="dark_theme_title">ਗੂੜਾ</string>
     <string name="black_theme_title">ਕਾਲਾ</string>
-    <string name="popup_remember_size_pos_title">ਪੌਪ-ਅਪ ਦਾ ਆਕਾਰ ਅਤੇ ਸਥਿਤੀ ਯਾਦ ਰੱਖੋ</string>
-    <string name="popup_remember_size_pos_summary">ਪੌਪ-ਅਪ ਦਾ ਆਖਰੀ ਅਕਾਰ ਅਤੇ ਸਥਿਤੀ ਯਾਦ ਰੱਖੋ</string>
     <string name="use_inexact_seek_title">ਤੇਜ਼ ਪਰ inexact seek ਵਰਤੋ</string>
     <string name="use_inexact_seek_summary">Inexact seek ਵੀਡੀਓ ਨੂੰ ਤੇਜ਼ ਪਰ ਅਣ-ਸਟੀਕ ਢੰਗ ਨਾਲ ਅੱਗੇ-ਪਿੱਛੇ ਲਿਜਾਂਦਾ ਹੈ । ਇਸ ਨਾਲ ਅੱਗੇ-ਪਿੱਛੇ 5,15 ਜਾਂ 25 ਸੈਕੰਡ ਜਾਣਾ ਕੰਮ ਨਹੀਂ ਕਰੇਗਾ।</string>
     <string name="download_thumbnail_title">ਥੰਬਨੇਲ ਲੋਡ ਕਰੋ</string>
@@ -72,21 +61,15 @@
     <string name="resume_on_audio_focus_gain_title">ਚਲਾਉਣਾ ਮੁੜ-ਸ਼ੁਰੂ ਕਰੋ</string>
     <string name="resume_on_audio_focus_gain_summary">ਵਿਘਨਾਂ (ਜਿਵੇਂ ਕਿ ਫ਼ੋਨ-ਕਾਲਾਂ, ਸੁਨੇਹੇ) ਤੋਂ ਬਾਅਦ ਚਲਾਉਣਾ ਜਾਰੀ ਰੱਖੋ</string>
     <string name="download_dialog_title">ਡਾਊਨਲੋਡ</string>
-    <string name="show_next_and_similar_title">\'ਅੱਗੇ\' ਅਤੇ \'ਸਮਾਨਅੰਤਰ\' ਵੀਡੀਓ ਦਿਖਾਓ</string>
-    <string name="show_hold_to_append_title">\"Hold to append\" ਸੁਝਾਅ ਦਿਖਾਓ</string>
-    <string name="show_hold_to_append_summary">ਵੀਡੀਓ ਦੇ ਵੇਰਵੇ ਪੰਨੇ \'ਤੇ ਬੈਕਗ੍ਰਾਉਂਡ ਜਾਂ ਪੌਪ-ਅਪ ਬਟਨ ਨੱਪਣ \'ਤੇ ਰਮਜ਼ ਦਿਖਾਓ</string>
     <string name="unsupported_url">ਅਣ-ਸਹਾਇਕ URL</string>
     <string name="default_content_country_title">ਮੂਲ ਦੇਸ਼ Content</string>
     <string name="settings_category_player_title">ਪਲੇਯਰ</string>
-    <string name="settings_category_player_behavior_title">ਵਿਵਹਾਰ</string>
-    <string name="settings_category_video_audio_title">ਵੀਡੀਓ ਅਤੇ ਆਡੀਓ</string>
     <string name="settings_category_history_title">ਇਤਿਹਾਸ ਅਤੇ ਕੈਸ਼</string>
     <string name="settings_category_appearance_title">ਦਿੱਖ</string>
     <string name="settings_category_debug_title">ਡੀ-ਬੱਗ</string>
     <string name="background_player_playing_toast">ਬੈਕਗ੍ਰਾਉਂਡ ਵਿੱਚ ਚੱਲ ਰਿਹਾ ਹੈ</string>
     <string name="popup_playing_toast">ਪੌਪ-ਅਪ ਮੋਡ ਵਿੱਚ ਚੱਲ ਰਿਹਾ ਹੈ</string>
     <string name="content">Content</string>
-    <string name="show_age_restricted_content_title">ਉਮਰ-ਮੁਤਾਬਕ-ਪਾਬੰਦੀਸ਼ੁਦਾ ਸਮੱਗਰੀ ਵਿਖਾਓ</string>
     <string name="duration_live">ਲਾਈਵ</string>
     <string name="downloads">ਡਾਊਨਲੋਡਸ</string>
     <string name="downloads_title">ਡਾਊਨਲੋਡਸ</string>
@@ -196,8 +179,6 @@
     <string name="recaptcha_request_toast">ReCaptcha ਚੁਣੌਤੀ ਲਈ ਬੇਨਤੀ</string>
     <string name="settings_category_downloads_title">ਡਾਊਨਲੋਡ</string>
     <string name="settings_file_charset_title">ਫਾਈਲ ਨਾਮ ਵਿੱਚ ਪ੍ਰਵਾਨਿਤ ਅੱਖਰ</string>
-    <string name="settings_file_replacement_character_summary">ਗਲਤ ਅੱਖਰ ਇਸ Value ਨਾਲ ਤਬਦੀਲ ਕੀਤੇ ਜਾਣਗੇ</string>
-    <string name="settings_file_replacement_character_title">Replacement ਅੱਖਰ</string>
     <string name="charset_letters_and_digits">ਅੱਖਰ ਅਤੇ ਅੰਕ</string>
     <string name="charset_most_special_characters">ਬਹੁਤੇ ਖ਼ਾਸ ਅੱਖਰ</string>
     <string name="toast_no_player">ਇਸ ਫਾਈਲ ਨੂੰ ਚਲਾਉਣ ਲਈ ਕੋਈ ਐਪ ਇੰਸਟਾਲ ਨਹੀਂ ਹੈ</string>
@@ -205,14 +186,12 @@
     <string name="title_licenses">ਥਰਡ-ਪਾਰਟੀ ਲਾਇਸੈਂਸ</string>
     <string name="copyright" formatted="true">© %1$s ਵਲੋਂ %2$s, %3$s ਅਧੀਨ</string>
     <string name="tab_about">ਐਪ ਬਾਰੇ</string>
-    <string name="tab_licenses">ਲਾਇਸੈਂਸ</string>
     <string name="app_description">ਐਂਡਰਾਇਡ ਤੇ ਮੁਫਤ ਲਾਈਟਵੇਟ ਸਟ੍ਰੀਮਿੰਗ.</string>
     <string name="contribution_title">ਯੋਗਦਾਨ ਪਾਓ</string>
     <string name="contribution_encouragement">ਭਾਵੇਂ ਤੁਹਾਡੇ ਕੋਲ ਵਿਚਾਰ ਹਨ; ਅਨੁਵਾਦ, ਡਿਜ਼ਾਈਨ ਬਦਲਾਵ, ਕੋਡ ਦੀ ਸਫਾਈ, ਜਾਂ ਅਸਲ ਭਾਰੀ ਕੋਡ ਬਦਲਾਵ — ਹਰ ਮਦਦ ਦਾ ਸਦਾ ਸਵਾਗਤ ਹੈ. ਜਿੰਨਾ ਇਸ ਨੂੰ ਜ਼ਿਆਦਾ ਕੀਤਾ ਜਾਂਦਾ ਹੈ ਉੱਨਾ ਹੀ ਇਹ ਬਿਹਤਰ ਹੁੰਦਾ ਹੈ!</string>
     <string name="view_on_github">GitHub ਤੇ ਵੇਖੋ</string>
     <string name="donation_title">ਦਾਨ ਕਰੋ</string>
     <string name="donation_encouragement">ਨਿਊ-ਪਾਈਪ ਵਲੰਟੀਅਰਾਂ ਦੁਆਰਾ ਵਿਕਸਤ ਕੀਤੀ ਗਈ ਹੈ ਜੋ ਤੁਹਾਡੇ ਲਈ ਬਿਹਤਰ ਵਰਤੋਂਕਾਰ ਤਜਰਬਾ ਲਿਆਉਣ ਲਈ ਸਮਾਂ ਬਿਤਾਉਂਦੇ ਹਨ। ਡਿਵੈਲਪਰਾਂ ਵਾਸਤੇ ਇੱਕ ਕੱਪ ਕਾਫ਼ੀ ਖ਼ਰੀਦ ਦਿਓ ਤਾਂ ਕਿ ਇਸਦਾ ਆਨੰਦ ਲੈਂਦੇ ਹੋਏ ਉਹ ਨਿਊ-ਪਾਈਪ ਨੂੰ ਹੋਰ ਵਧੀਆ ਬਣਾ ਸਕਣ।</string>
-    <string name="give_back">ਵਾਪਸ ਦਿਓ</string>
     <string name="website_title">ਵੈਬਸਾਈਟ</string>
     <string name="website_encouragement">ਵਧੇਰੇ ਜਾਣਕਾਰੀ ਅਤੇ ਖ਼ਬਰਾਂ ਲਈ NewPipe ਵੈਬਸਾਈਟ ਵੇਖੋ.</string>
     <string name="app_license_title">NewPipe\'s ਲਾਇਸੈਂਸ</string>
@@ -307,11 +286,8 @@
     <string name="privacy_policy_title">NewPipe\'s ਗੋਪਨੀਯਤਾ ਨੀਤੀ</string>
     <string name="privacy_policy_encouragement">NewPipe ਪ੍ਰੋਜੈਕਟ ਤੁਹਾਡੀ ਗੋਪਨੀਯਤਾ ਨੂੰ ਬਹੁਤ ਗੰਭੀਰਤਾ ਨਾਲ ਲੈਂਦਾ ਹੈ. ਇਸ ਲਈ ਐਪ ਤੁਹਾਡੀ ਸਹਿਮਤੀ ਤੋਂ ਬਿਨਾਂ ਕੋਈ ਵੀ ਡਾਟਾ ਇੱਕਠਾ ਨਹੀਂ ਕਰਦਾ.
 \nNewPipe ਦੀ ਗੋਪਨੀਯਤਾ ਨੀਤੀ ਵਿਸਥਾਰ ਵਿੱਚ ਦੱਸਦੀ ਹੈ ਕਿ ਜਦੋਂ ਤੁਸੀਂ ਕਰੈਸ਼ ਰਿਪੋਰਟ ਭੇਜਦੇ ਹੋ ਤਾਂ ਕਿਹੜਾ ਡੇਟਾ ਭੇਜਿਆ ਜਾਂ ਸਟੋਰ ਕੀਤਾ ਜਾਂਦਾ ਹੈ.</string>
-    <string name="read_privacy_policy">ਗੋਪਨੀਯਤਾ ਨੀਤੀ ਪੜ੍ਹੋ</string>
     <string name="start_accept_privacy_policy">ਯੂਰਪੀਅਨ ਜਨਰਲ ਡੇਟਾ ਪ੍ਰੋਟੈਕਸ਼ਨ ਰੈਗੂਲੇਸ਼ਨ (ਜੀਡੀਪੀਆਰ) ਦੀ ਪਾਲਣਾ ਕਰਨ ਲਈ, ਅਸੀਂ ਤੁਹਾਡਾ ਧਿਆਨ NewPipe ਦੀ ਗੋਪਨੀਯਤਾ ਨੀਤੀ ਵੱਲ ਖਿੱਚਦੇ ਹਾਂ. ਕਿਰਪਾ ਕਰਕੇ ਇਸਨੂੰ ਧਿਆਨ ਨਾਲ ਪੜ੍ਹੋ.
 \nਸਾਨੂੰ BUG ਰਿਪੋਰਟ ਭੇਜਣ ਲਈ ਤੁਹਾਨੂੰ ਇਸ ਨੂੰ ਸਵੀਕਾਰ ਕਰਨਾ ਪਵੇਗਾ.</string>
-    <string name="accept">ਸਵੀਕਾਰ ਕਰੋ</string>
-    <string name="decline">ਅਸਵੀਕਾਰ</string>
     <string name="limit_data_usage_none_description">ਕੋਈ ਸੀਮਾ ਨਹੀਂ</string>
     <string name="limit_mobile_data_usage_title">ਮੋਬਾਈਲ ਡਾਟਾ ਦੀ ਵਰਤੋਂ ਕਰਦੇ ਸਮੇਂ Resolution ਨੂੰ ਸੀਮਿਤ ਕਰੋ</string>
     <string name="minimize_on_exit_title">ਐਪ switch ਕਰਨ ਤੇ minimize ਕਰੋ</string>
@@ -332,7 +308,6 @@
     <string name="volume_gesture_control_summary">ਆਵਾਜ਼ ਕੰਟਰੋਲ ਕਰਨ ਲਈ ਸ਼ਵਾਵਾਂ ਦੀ ਵਰਤੋਂ ਕਰੋ</string>
     <string name="brightness_gesture_control_title">ਸਕ੍ਰੀਨ ਲਾਈਟ gesture ਕੰਟਰੋਲ</string>
     <string name="brightness_gesture_control_summary">ਵੀਡੀਓ ਸਕ੍ਰੀਨ ਦੀ ਚਮਕ ਕੰਟਰੋਲ ਕਰਨ ਲਈ ਸ਼ਵਾਵਾਂ ਦੀ ਵਰਤੋਂ ਕਰੋ</string>
-    <string name="content_language_title">ਮੂਲ ਭਾਸ਼ਾ Content</string>
     <string name="settings_category_updates_title">ਅਪਡੇਟਾਂ</string>
     <string name="file_deleted">ਫਾਈਲ ਮਿਟਾ ਦਿੱਤੀ ਗਈ ਹੈ</string>
     <string name="app_update_notification_channel_name">ਐਪ ਅੱਪਡੇਟ ਨੋਟੀਫਿਕੇਸ਼ਨ</string>
@@ -380,16 +355,12 @@
     <string name="pause_downloads_on_mobile_desc">ਮੋਬਾਈਲ ਡਾਟਾ ਤੇ switch ਕਰਨ ਵੇਲੇ ਲਾਭਦਾਇਕ ਹੈ, ਹਾਲਾਂਕਿ ਕੁਝ ਡਾਉਨਲੋਡਾਂ ਨੂੰ suspend ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ</string>
     <string name="events">ਇਵੇੰਟਸ</string>
     <string name="conferences">ਕਾਨਫਰੰਸਾਂ</string>
-    <string name="show_comments_title">ਟਿੱਪਣੀਆਂ ਦਿਖਾਓ</string>
-    <string name="show_comments_summary">ਟਿੱਪਣੀਆਂ ਵਿਖਾਉਣਾ ਰੋਕਣ ਲਈ ਇਸਨੂੰ ਬੰਦ ਕਰੋ</string>
     <string name="autoplay_title">ਆਟੋ-ਪਲੇ</string>
     <string name="no_comments">ਕੋਈ ਟਿੱਪਣੀ ਨਹੀਂ ਕੀਤੀ ਗਈ</string>
     <string name="error_unable_to_load_comments">ਟਿੱਪਣੀਆਂ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕੀਆਂ</string>
     <string name="close">ਬੰਦ ਕਰੋ</string>
     <string name="enable_playback_resume_title">ਪਲੇਅਬੈਕ ਦੋਬਾਰਾ ਸ਼ੁਰੂ ਕਰੋ</string>
     <string name="enable_playback_resume_summary">ਪਿਛਲੀ ਪਲੇਅਬੈਕ ਸਥਿਤੀ ਤੋਂ ਮੁੜ ਚਲਾਓ</string>
-    <string name="enable_playback_state_lists_title">ਸੂਚੀਆਂ ਦੀ ਸਥਿਤੀ</string>
-    <string name="enable_playback_state_lists_summary">ਸੂਚੀਆਂ ਵਿੱਚ ਪਲੇਅਬੈਕ ਸਥਿਤੀ ਸੂਚਕ ਦਿਖਾਓ</string>
     <string name="settings_category_clear_data_title">ਡਾਟਾ ਮਿਟਾਓ</string>
     <string name="watch_history_deleted">Watch ਹਿਸਟਰੀ ਮਿਟਾ ਦਿੱਤੀ ਗਈ ਹੈ.</string>
     <string name="watch_history_states_deleted">ਪਲੇਬੈਕ ਸਥਿਤੀ ਨੂੰ ਮਿਟਾ ਦਿੱਤਾ ਗਿਆ ਹੈ.</string>
@@ -416,7 +387,6 @@
     <string name="search_showing_result_for">%s ਲਈ ਨਤੀਜੇ ਵਿਖਾਏ ਜਾ ਰਹੇ ਹਨ</string>
     <string name="feed_use_dedicated_fetch_method_title">ਜਦੋਂ ਉਪਲਬਧ ਹੋਵੇ ਤਾਂ ਖ਼ਾਸ ਫ਼ੀਡ ਤੋਂ ਮੰਗਵਾਓ</string>
     <string name="feed_load_error_fast_unknown">ਤੇਜ਼ ਫ਼ੀਡ ਮੋਡ ਇਸ ਬਾਰੇ ਕੋਈ ਹੋਰ ਜਾਣਕਾਰੀ ਮੁੱਹਈਆ ਨਹੀਂ ਕਰਾਉਂਦਾ।</string>
-    <string name="new_seek_duration_toast">ਐਕਸੋਪਲੇਅਰ ਦੀਆਂ ਬੰਦਿਸ਼ਾਂ ਕਰਕੇ ਲੱਭਣ ਮਿਆਦ %d ਸਕਿੰਟ ਸੈੱਟ ਕੀਤੀ ਗਈ ਸੀ</string>
     <string name="error_download_resource_gone">ਇਹ ਡਾਊਨਲੋਡ ਮੁੜ-ਪ੍ਰਾਪਤ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ</string>
     <string name="recovering">ਮੁੜ-ਪ੍ਰਾਪਤੀ</string>
     <string name="disable_media_tunneling_summary">ਜੇ ਤੁਹਾਨੂੰ ਕਾਲ਼ੀ ਸਕਰੀਨ ਮਿਲੇ ਜਾਂ ਵੀਡਿਓ ਰੁਕ-ਰੁਕ ਕੇ ਚੱਲੇ ਤਾਂ ਮੀਡੀਆ ਟਨਲਿੰਗ ਬੰਦ ਕਰ ਦਿਓ</string>
@@ -528,7 +498,6 @@
     <string name="systems_language">ਸਿਸਟਮ ਡਿਫ਼ਾਲਟ</string>
     <string name="app_language_title">ਐਪ ਭਾਸ਼ਾ</string>
     <string name="choose_instance_prompt">ਕੋਈ ਸਥਿਤੀ ਚੁਣੋ</string>
-    <string name="downloads_storage_use_saf_summary_api_29">\'ਸਟੋਰੇਜ ਐਕਸੈੱਸ ਫ਼ਰੇਮਵਰਕ\' ਐਂਡਰਾਇਡ 10 ਤੋਂ ਕੰਮ ਕਰਨਾ ਸ਼ੁਰੂ ਕਰਦਾ ਹੈ</string>
     <string name="downloads_storage_use_saf_summary_api_19">\'ਸਟੋਰੇਜ ਐਕਸੈੱਸ ਫ਼ਰੇਮਵਰਕ\' ਐਂਡਰਾਇਡ ਕਿਟਕੈਟ ਅਤੇ ਇਸਤੋਂ ਹੇਠਾਂ ਦੇ ਵਰਜਨਾਂ \'ਤੇ ਕੰਮ ਨਹੀਂ ਕਰਦਾ</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">ਤੁਹਾਨੂੰ ਹਰ ਵਾਰ ਪੁੱਛਿਆ ਜਾਵੇਗਾ ਕਿ ਡਾਊਨਲੋਡ ਨੂੰ ਕਿੱਥੇ ਸਾਂਭਣਾ ਹੈ</string>
     <string name="delete_downloaded_files">ਡਾਊਨਲੋਡ ਕੀਤੀਆਂ ਫ਼ਾਈਲਾਂ ਮਿਟਾਓ</string>
@@ -581,9 +550,6 @@
     <string name="restricted_video">ਇਹ ਵੀਡੀਓ ਉਮਰ-ਪਾਬੰਦੀਸ਼ੁਦਾ ਹੈ।
 \n
 \nਜੇ ਤੁਸੀਂ ਇਸਨੂੰ ਵੇਖਣਾ ਚਾਹੁੰਦੇ ਹੋ ਤਾਂ ਸੈਟਿੰਗਾਂ ਵਿੱਚੋਂ \"%1$s\" ਚਾਲੂ ਕਰੋ।</string>
-    <string name="youtube_restricted_mode_enabled_summary">ਯੂਟਿਊਬ \"ਪਾਬੰਦੀਸ਼ੁਦਾ ਮੋਡ\" ਉਪਲਬਧ ਕਰਾਉਂਦਾ ਹੈ ਜੋ ਬਾਲਗਾਂ ਵਾਲ਼ੀ ਸਮੱਗਰੀ ਲੁਕਾਉਂਦਾ ਹੈ</string>
-    <string name="youtube_restricted_mode_enabled_title">ਯੂਟਿਊਬ ਦਾ ਪਾਬੰਦੀਸ਼ੁਦਾ ਮੋਡ ਚਾਲੂ ਕਰੋ</string>
-    <string name="show_age_restricted_content_summary">ਉਹ ਸਮੱਗਰੀ ਵੀ ਵਿਖਾਓ ਜੋ ਉਮਰ-ਸੀਮਾ ਕਰਕੇ ਬੱਚਿਆਂ ਲਈ ਸ਼ਾਇਦ ਸਹੀ ਨਾ ਹੋਵੇ (ਜਿਵੇਂ 18+)</string>
     <string name="peertube_instance_add_exists">ਸਥਿਤੀ ਪਹਿਲਾਂ ਨੂੰ ਮੌਜੂਦ ਹੈ</string>
     <string name="peertube_instance_add_https_only">ਸਿਰਫ਼ HTTP URLs ਹੀ ਮਾਣਨਯੋਗ ਹਨ</string>
     <string name="peertube_instance_add_fail">ਸਥਿਤੀ ਦੀ ਜਾਇਜ਼ਗੀ ਤਸਦੀਕ ਨਹੀਂ ਹੋ ਸਕੀ</string>
@@ -596,8 +562,6 @@
     <string name="auto_queue_toggle">ਆਪ-ਮੁਖ਼ਤਾਰ ਕਤਾਰ</string>
     <string name="show_meta_info_summary">ਸਟ੍ਰੀਮ ਦੇ ਕਰਤਾ, ਸਮੱਗਰੀ ਜਾਂ ਖੋਜ ਬੇਨਤੀ ਵਾਲੇ ਵਾਧੂ ਜਾਣਕਾਰੀ ਬਕਸਿਆਂ ਵਾਲ਼ੀ ਮੈਟਾ ਜਾਣਕਾਰੀ ਲੁਕਾਉਣ ਲਈ ਇਸਨੂੰ ਬੰਦ ਕਰ ਦਿਓ।</string>
     <string name="show_meta_info_title">ਮੈਟਾ ਜਾਣਕਾਰੀ ਦਿਖਾਓ</string>
-    <string name="show_description_summary">ਵਿਡੀਉ ਵੇਰਵਾ ਅਤੇ ਵਾਧੂ ਜਾਣਕਾਰੀ ਲੁਕਾਉਣ ਲਈ ਇਸ ਇਸਨੂੰ ਬੰਦ ਕਰ ਦਿਓ</string>
-    <string name="show_description_title">ਵੇਰਵਾ ਦਿਖਾਓ</string>
     <string name="clear_queue_confirmation_description">ਸਰਗਰਮ ਪਲੇਅਰ ਕਤਾਰ ਬਦਲ ਜਾਵੇਗੀ</string>
     <string name="clear_queue_confirmation_summary">ਪਲੇਅਰ ਬਦਲਣ ਨਾਲ ਤੁਹਾਡੀ ਕਤਾਰ ਬਦਲ ਸਕਦੀ ਹੈ</string>
     <string name="clear_queue_confirmation_title">ਕਤਾਰ ਨੂੰ ਖ਼ਾਲੀ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ ਤਸਦੀਕ ਕਰਨ ਲਈ ਪੁੱਛੋ</string>

@@ -86,16 +86,8 @@ public final class Localization {
 
     public static org.schabi.newpipe.extractor.localization.Localization getPreferredLocalization(
             final Context context) {
-        final String contentLanguage = PreferenceManager
-                .getDefaultSharedPreferences(context)
-                .getString(context.getString(R.string.content_language_key),
-                        context.getString(R.string.default_localization_key));
-        if (contentLanguage.equals(context.getString(R.string.default_localization_key))) {
-            return org.schabi.newpipe.extractor.localization.Localization
-                    .fromLocale(Locale.getDefault());
-        }
         return org.schabi.newpipe.extractor.localization.Localization
-                .fromLocalizationCode(contentLanguage);
+                .fromLocale(getAppLocale(context));
     }
 
     public static ContentCountry getPreferredContentCountry(final Context context) {
@@ -106,25 +98,6 @@ public final class Localization {
             return new ContentCountry(Locale.getDefault().getCountry());
         }
         return new ContentCountry(contentCountry);
-    }
-
-    public static Locale getPreferredLocale(final Context context) {
-        final SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-
-        final String languageCode = sp.getString(context.getString(R.string.content_language_key),
-                context.getString(R.string.default_localization_key));
-
-        try {
-            if (languageCode.length() == 2) {
-                return new Locale(languageCode);
-            } else if (languageCode.contains("_")) {
-                final String country = languageCode.substring(languageCode.indexOf("_"));
-                return new Locale(languageCode.substring(0, 2), country);
-            }
-        } catch (final Exception ignored) {
-        }
-
-        return Locale.getDefault();
     }
 
     public static String localizeNumber(final Context context, final long number) {

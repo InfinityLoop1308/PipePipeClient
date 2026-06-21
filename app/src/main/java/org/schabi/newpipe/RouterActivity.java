@@ -64,6 +64,7 @@ import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.PermissionHelper;
+import org.schabi.newpipe.util.StreamTypeUtil;
 import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.util.urlfinder.UrlFinder;
@@ -75,8 +76,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import icepick.Icepick;
-import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
@@ -90,11 +89,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
  */
 public class RouterActivity extends AppCompatActivity {
     protected final CompositeDisposable disposables = new CompositeDisposable();
-    @State
     protected int currentServiceId = -1;
-    @State
     protected LinkType currentLinkType;
-    @State
     protected int selectedRadioPosition = -1;
     protected int selectedPreviously = -1;
     protected String currentUrl;
@@ -106,7 +102,14 @@ public class RouterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Icepick.restoreInstanceState(this, savedInstanceState);
+        if (savedInstanceState != null) {
+            currentServiceId = savedInstanceState.getInt("currentServiceId", -1);
+            String linkTypeName = savedInstanceState.getString("currentLinkType");
+            if (linkTypeName != null) {
+                currentLinkType = LinkType.valueOf(linkTypeName);
+            }
+            selectedRadioPosition = savedInstanceState.getInt("selectedRadioPosition", -1);
+        }
 
         if (TextUtils.isEmpty(currentUrl)) {
             currentUrl = getUrl(getIntent());
@@ -135,7 +138,11 @@ public class RouterActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
-        Icepick.saveInstanceState(this, outState);
+        outState.putInt("currentServiceId", currentServiceId);
+        if (currentLinkType != null) {
+            outState.putString("currentLinkType", currentLinkType.name());
+        }
+        outState.putInt("selectedRadioPosition", selectedRadioPosition);
     }
 
     @Override
@@ -289,8 +296,7 @@ public class RouterActivity extends AppCompatActivity {
             handleChoice(addToPlaylistKey);
         } else {
             final boolean isExtVideoEnabled = false;
-            final boolean isExtAudioEnabled = preferences.getBoolean(
-                    getString(R.string.use_external_audio_player_key), false);
+            final boolean isExtAudioEnabled = false;
             final boolean isVideoPlayerSelected = selectedChoiceKey.equals(videoPlayerKey)
                     || selectedChoiceKey.equals(popupPlayerKey);
             final boolean isAudioPlayerSelected = selectedChoiceKey.equals(backgroundPlayerKey);
@@ -433,8 +439,7 @@ public class RouterActivity extends AppCompatActivity {
         final SharedPreferences preferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
         final boolean isExtVideoEnabled = false;
-        final boolean isExtAudioEnabled = preferences.getBoolean(
-                getString(R.string.use_external_audio_player_key), false);
+        final boolean isExtAudioEnabled = false;
 
         final AdapterChoiceItem videoPlayer = new AdapterChoiceItem(
                 getString(R.string.video_player_key), getString(R.string.video_player),
@@ -629,6 +634,13 @@ public class RouterActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> {
+                    if (StreamTypeUtil.isLiveStream(result.getStreamType())) {
+                        Toast.makeText(this, R.string.no_streams_available_download,
+                                Toast.LENGTH_LONG).show();
+                        finish();
+                        return;
+                    }
+
                     final FragmentManager fm = getSupportFragmentManager();
                     final DownloadDialog downloadDialog =
                             DownloadDialog.newInstance(this, result);
@@ -764,8 +776,7 @@ public class RouterActivity extends AppCompatActivity {
                 final SharedPreferences preferences = PreferenceManager
                         .getDefaultSharedPreferences(this);
                 final boolean isExtVideoEnabled = false;
-                final boolean isExtAudioEnabled = preferences.getBoolean(
-                        getString(R.string.use_external_audio_player_key), false);
+                final boolean isExtAudioEnabled = false;
 
                 final PlayQueue playQueue;
                 if (info instanceof StreamInfo) {

@@ -11,8 +11,6 @@
     <string name="settings">Setări</string>
     <string name="did_you_mean">V-ați referit la: %1$s \?</string>
     <string name="share_dialog_title">Distribuiți cu</string>
-    <string name="use_external_video_player_title">Folosiți un player video extern</string>
-    <string name="use_external_audio_player_title">Folosește un player audio extern</string>
     <string name="download_path_title">Locația videoclipurilor descărcate</string>
     <string name="download_path_summary">Videoclipurile descărcate sunt stocate aici</string>
     <string name="download_path_dialog_title">Alegeți folderul de descărcare pentru fișierele video</string>
@@ -22,22 +20,15 @@
     <string name="default_resolution_title">Rezoluție implicită</string>
     <string name="play_with_kodi_title">Redați folosind Kodi</string>
     <string name="kore_not_found">Aplicația Kore nu a fost găsită. Doriți să o instalați?</string>
-    <string name="show_play_with_kodi_title">Arată opțiunea \"Redați folosind Kodi\"</string>
-    <string name="show_play_with_kodi_summary">Arată opțiunea de redare a videoclipurilor via player-ului media Kodi</string>
     <string name="play_audio">Audio</string>
-    <string name="default_audio_format_title">Format audio implicit</string>
     <string name="theme_title">Temă</string>
     <string name="dark_theme_title">Întunecat</string>
     <string name="light_theme_title">Luminos</string>
     <string name="download_dialog_title">Descărcați</string>
-    <string name="show_next_and_similar_title">Arată videoclipurile care \'Urmează\' şi cele \'Similare\'</string>
     <string name="unsupported_url">URL nesuportat</string>
-    <string name="content_language_title">Limba dorită a conținutului</string>
-    <string name="settings_category_video_audio_title">Video și Audio</string>
     <string name="settings_category_appearance_title">Aspect</string>
     <string name="background_player_playing_toast">Redare în fundal</string>
     <string name="content">Conținut</string>
-    <string name="show_age_restricted_content_title">Afișați conținutul restricționat de vârstă</string>
     <string name="general_error">Eroare</string>
     <string name="network_error">Eroare de rețea</string>
     <string name="could_not_load_thumbnails">Nu s-au putut încărca toate miniaturile</string>
@@ -84,9 +75,6 @@
     <string name="title_activity_recaptcha">Provocare reCAPTCHA</string>
     <string name="recaptcha_request_toast">Provocare reCAPTCHA solicitată</string>
     <string name="default_popup_resolution_title">Rezoluția implicită a ferestrei pop-up</string>
-    <string name="show_higher_resolutions_title">Afișează rezoluții mai mari</string>
-    <string name="show_higher_resolutions_summary">Doar anumite dispozitive suportă redarea videoclipurilor 2K/4K</string>
-    <string name="default_video_format_title">Format video implicit</string>
     <string name="black_theme_title">Negru</string>
     <string name="popup_playing_toast">Redare în mod pop-up</string>
     <string name="all">Toate</string>
@@ -96,11 +84,8 @@
     <string name="short_thousand">k</string>
     <string name="short_million">mil.</string>
     <string name="short_billion">mld.</string>
-    <string name="use_external_video_player_summary">Elimină sunetul audio la anumite rezoluții</string>
     <string name="controls_background_title">Fundal</string>
     <string name="controls_popup_title">Pop-up</string>
-    <string name="popup_remember_size_pos_title">Reține dimensiunea și poziția pop-up-ului</string>
-    <string name="popup_remember_size_pos_summary">Reține ultima dimensiune și poziție a pop-up-ului</string>
     <string name="show_search_suggestions_title">Sugestii de căutare</string>
     <string name="show_search_suggestions_summary">Alegeți sugestiile care vor fi afișate la căutare</string>
     <string name="clear">Ștergeți</string>
@@ -119,7 +104,6 @@
     <string name="resume_on_audio_focus_gain_title">Reluați redarea</string>
     <string name="resume_on_audio_focus_gain_summary">Continuă redarea după întreruperi (ex: după apeluri)</string>
     <string name="settings_category_player_title">Player</string>
-    <string name="settings_category_player_behavior_title">Comportament</string>
     <string name="settings_category_history_title">Istoric și cache</string>
     <string name="undo">Anulare</string>
     <string name="notification_channel_name">Notificare NewPipe</string>
@@ -146,15 +130,12 @@
     </plurals>
     <string name="settings_category_downloads_title">Descărcați</string>
     <string name="settings_file_charset_title">Caractere permise în numele fișierelor</string>
-    <string name="settings_file_replacement_character_summary">Caracterele nevalabile sunt înlocuite cu această valoare</string>
-    <string name="settings_file_replacement_character_title">Caracter de înlocuire</string>
     <string name="charset_letters_and_digits">Litere și cifre</string>
     <string name="charset_most_special_characters">Caracterele cele mai speciale</string>
     <string name="title_activity_about">Despre NewPipe</string>
     <string name="title_licenses">Licențe terță-parte</string>
     <string name="copyright" formatted="true">© %1$s de %2$s sub %3$s</string>
     <string name="tab_about">Despre</string>
-    <string name="tab_licenses">Licențe</string>
     <string name="app_description">Un player de streaming „uşor” liber, pentru Android.</string>
     <string name="view_on_github">Vedeți pe GitHub</string>
     <string name="app_license_title">Licența NewPipe</string>
@@ -189,8 +170,6 @@
     <string name="metadata_cache_wipe_complete_notice">Cache pentru metadata șters</string>
     <string name="auto_queue_title">Adaugă următorul stream în coadă automat</string>
     <string name="auto_queue_summary">Continuă coadă de redare (care nu se repetă) prin adăugarea unui flux asemănător</string>
-    <string name="show_hold_to_append_title">Afișați sfatul \"Țineți apăsat pentru a adăuga\"</string>
-    <string name="show_hold_to_append_summary">Afișați un sfat la apăsarea fundalului sau a butonului popup în videoclipul \"Detalii:\"</string>
     <string name="default_content_country_title">Țara implicită pentru conținut</string>
     <string name="settings_category_debug_title">Depanare</string>
     <string name="play_all">Redă toate</string>
@@ -217,7 +196,6 @@
     <string name="file_name_empty_error">Numele fișierului nu poate fi gol</string>
     <string name="error_occurred_detail">A survenit o eroare: %1$s</string>
     <string name="donation_encouragement">NewPipe este dezvoltat de voluntari care își petrec timpul liber pentru a vă oferi cea mai bună experiență de utilizare. Donează pentru a ajuta dezvoltatorii să facă NewPipe și mai bun în timp ce ei se bucură de o ceașcă de cafea.</string>
-    <string name="give_back">Dăruiește înapoi</string>
     <string name="website_title">Site web</string>
     <string name="website_encouragement">Vizitați site-ul NewPipe pentru mai multe informații și noutăți.</string>
     <string name="title_last_played">Ultimele vizionări</string>
@@ -274,8 +252,6 @@
     <string name="subscriptions_import_unsuccessful">Nu s-au putut importa abonamentele</string>
     <string name="subscriptions_export_unsuccessful">Nu s-au putut exporta abonamentele</string>
     <string name="playback_tempo">Viteză</string>
-    <string name="accept">Acceptați</string>
-    <string name="decline">Refuzați</string>
     <string name="unsubscribe">Dezabonează-te</string>
     <string name="tab_choose">Alegeți fila</string>
     <string name="volume_gesture_control_title">Controlul prin gesturi al volumului</string>
@@ -310,22 +286,17 @@
     <string name="privacy_policy_title">Politica de confidențialitate a NewPipe</string>
     <string name="privacy_policy_encouragement">Proiectul NewPipe ia foarte în serios confidențialitatea dumneavoastră. Prin urmare, aplicația nu colectează niciun fel de date fără consimțământul dumneavoastră.
 \nPolitica de confidențialitate a NewPipe explică în detaliu ce date sunt trimise și stocate atunci când trimiteți un raport de eroare.</string>
-    <string name="read_privacy_policy">Citiți politica de confidențialitate</string>
     <string name="saved_tabs_invalid_json">Nu s-au putut citi filele salvate, deci se folosesc cele implicite</string>
     <string name="restore_defaults">Restaurați valorile implicite</string>
     <string name="restore_defaults_confirmation">Doriți să restaurați valorile implicite\?</string>
     <string name="subscribers_count_not_available">Numărul de abonați nu este disponibil</string>
     <string name="main_page_content_summary">Ce file vor fi afișate pe pagina principală</string>
     <string name="conferences">Conferințe</string>
-    <string name="show_comments_title">Arată comentariile</string>
-    <string name="show_comments_summary">Dezactivează pentru oprirea afișării comentariilor</string>
     <string name="autoplay_title">Redare automată</string>
     <string name="no_comments">Fără comentarii</string>
     <string name="error_unable_to_load_comments">Nu s-au putut încărca comentariile</string>
     <string name="enable_playback_resume_title">Reluare redare</string>
     <string name="enable_playback_resume_summary">Restabilirea ultimei poziții de redare</string>
-    <string name="enable_playback_state_lists_title">Poziții în liste</string>
-    <string name="enable_playback_state_lists_summary">Afișează indicatorii de poziție de redare în liste</string>
     <string name="settings_category_clear_data_title">Ștergeți datele</string>
     <string name="watch_history_states_deleted">Poziții de redare șterse</string>
     <string name="missing_file">Fișier mutat sau șters</string>
@@ -360,9 +331,6 @@
     <string name="restricted_video">Acest videoclip este restricționat în funcție de vârstă.
 \n
 \nActivați \"%1$s\" în setări dacă doriți să îl vedeți.</string>
-    <string name="youtube_restricted_mode_enabled_summary">YouTube oferă un \"Mod restricționat\" care ascunde conținutul potențial matur</string>
-    <string name="youtube_restricted_mode_enabled_title">Activați \"Modul restricționat\" de pe YouTube</string>
-    <string name="show_age_restricted_content_summary">Afișați conținut posibil nepotrivit pentru copii, deoarece are o limită de vârstă (cum ar fi 18+)</string>
     <string name="unsupported_url_dialog_message">Adresa URL nu a putut fi recunoscută. Deschideți cu o altă aplicație\?</string>
     <string name="show_meta_info_title">Afișează informațiile meta</string>
     <string name="notification_colorize_summary">Faceți ca Android să personalizeze culoarea notificării în funcție de culoarea principală din miniatură (rețineți că aceasta nu este disponibilă pe toate dispozitivele)</string>
@@ -443,7 +411,6 @@
         <item quantity="few">%d secunde</item>
         <item quantity="other">%d de secunde</item>
     </plurals>
-    <string name="new_seek_duration_toast">Datorită constrângerilor ExoPlayer, durata de căutare a fost setată la %d secunde</string>
     <string name="remove_watched_popup_yes_and_partially_watched_videos">Da, și videoclipuri vizionate parțial</string>
     <string name="remove_watched_popup_warning">Videoclipurile care au fost vizionate înainte și după ce au fost adăugate la lista de redare vor fi eliminate.
 \nSunteți sigur\? Acest lucru nu poate fi anulat!</string>
@@ -595,8 +562,6 @@
     <string name="error_report_open_github_notice">Vă rugăm să verificați dacă nu există deja o problemă în care se discută despre eroarea dumneavoastră. Atunci când creați tichete duplicate, ne consumați timp pe care l-am putea dedica rezolvării problemei actuale.</string>
     <string name="copy_for_github">Copiați raportul formatat</string>
     <string name="show_meta_info_summary">Dezactivați pentru a ascunde casetele de informații meta cu informații suplimentare despre creatorul fluxului, conținutul fluxului sau o cerere de căutare</string>
-    <string name="show_description_summary">Dezactivați pentru a ascunde descrierea videoclipului și informațiile suplimentare</string>
-    <string name="show_description_title">Arată descrierea</string>
     <string name="open_with">Deschideți cu</string>
     <string name="crash_the_app">Blocați aplicația</string>
     <string name="recaptcha_solve">Rezolvați</string>
@@ -648,7 +613,6 @@
 \nDoriți să vă dezabonați de la acest canal\?</string>
     <string name="feed_load_error_account_info">Nu s-a putut încărca fluxul pentru \"%s\".</string>
     <string name="feed_load_error">Eroare la încărcarea fluxului</string>
-    <string name="downloads_storage_use_saf_summary_api_29">Începând cu Android 10, este acceptat doar \"Storage Access Framework\"</string>
     <string name="downloads_storage_use_saf_summary_api_19">\"Storage Access Framework\" nu este acceptat pe Android KitKat și versiunile ulterioare</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Veți fi întrebat unde să salvați fiecare descărcare</string>
     <plurals name="deleted_downloads_toast">
@@ -672,7 +636,6 @@
     <string name="dont_show">Nu afișa</string>
     <string name="low_quality_smaller">Calitate scăzută (mai mică)</string>
     <string name="high_quality_larger">Calitate înaltă (mai mare)</string>
-    <string name="seekbar_preview_thumbnail_title">Miniatură de previzualizare în bara de derulare</string>
     <string name="show_image_indicators_summary">Afișați panglici colorate de Picasso deasupra imaginilor, indicând sursa acestora: roșu pentru rețea, albastru pentru disc și verde pentru memorie</string>
     <string name="show_image_indicators_title">Afișați indicatorii de imagine</string>
     <string name="disable_media_tunneling_summary">Dezactivați tunelarea media dacă întâmpinați un ecran negru sau blocaje la redarea video</string>

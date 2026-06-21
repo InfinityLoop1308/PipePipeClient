@@ -77,9 +77,9 @@ class FeedLoadManager(private val context: Context) {
             false
         )
 
-        val showFutureItems = defaultSharedPreferences.getBoolean(
-            context.getString(R.string.toggle_show_future_items_key),
-            false
+        val filterFutureItems = defaultSharedPreferences.getBoolean(
+            context.getString(R.string.filter_future_items_key),
+            true
         )
 
         val outdatedThreshold = if (ignoreOutdatedThreshold) {
@@ -214,7 +214,7 @@ class FeedLoadManager(private val context: Context) {
                                         }
                                         .filterIsInstance<StreamInfoItem>()
                                 }
-                                streams = streams?.filterNot { it.isRoundPlayStream  || (!showFutureItems && it.uploadDate != null && it.uploadDate!!.offsetDateTime().isAfter(OffsetDateTime.now())) }
+                                streams = streams?.filterNot { it.isRoundPlayStream || (filterFutureItems && it.uploadDate != null && it.uploadDate!!.offsetDateTime().isAfter(OffsetDateTime.now())) }
 
                                 return@defer Flowable.just(
                                     FeedUpdateInfo(

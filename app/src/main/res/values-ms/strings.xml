@@ -15,9 +15,6 @@
     <string name="settings">Tetapan</string>
     <string name="did_you_mean">Adakah anda maksudkan \"%1$s\"\?</string>
     <string name="share_dialog_title">Berkongsi dengan</string>
-    <string name="use_external_video_player_title">Guna pemain video luaran</string>
-    <string name="use_external_video_player_summary">Menghilangkan audio untuk beberapa resolusi</string>
-    <string name="use_external_audio_player_title">Gunakan pemain audio luaran</string>
     <string name="subscribe_button_title">Langgan</string>
     <string name="subscribed_button_title">Dilanggan</string>
     <string name="channel_unsubscribed">Langganan saluran dihenti</string>
@@ -40,21 +37,13 @@
     <string name="download_path_audio_dialog_title">Pilih folder muat turun untuk fail audio</string>
     <string name="default_resolution_title">Resolusi utama</string>
     <string name="default_popup_resolution_title">Resolusi popup utama</string>
-    <string name="show_higher_resolutions_title">Papar resolusi yang lebih tinggi</string>
-    <string name="show_higher_resolutions_summary">Hanya peranti tertentu yang boleh bermain video 2K/4K</string>
     <string name="play_with_kodi_title">Main dengan Kodi</string>
     <string name="kore_not_found">Pasangkan aplikasi Kore yang tidak dijumpai\?</string>
-    <string name="show_play_with_kodi_title">Paparkan opsyen \"Main dengan Kodi\"</string>
-    <string name="show_play_with_kodi_summary">Paparkan opsyen untuk memain video dengan Kodi</string>
     <string name="play_audio">Audio</string>
-    <string name="default_audio_format_title">Format audio utama</string>
-    <string name="default_video_format_title">Format video utama</string>
     <string name="theme_title">Tema</string>
     <string name="light_theme_title">Cerah</string>
     <string name="dark_theme_title">Gelap</string>
     <string name="black_theme_title">Hitam</string>
-    <string name="popup_remember_size_pos_title">Mengingat saiz dan posisi popup</string>
-    <string name="popup_remember_size_pos_summary">Mengingat saiz dan posisi popup terakhir</string>
     <string name="use_inexact_seek_title">Gunakan tinjau laju tidak tepat</string>
     <string name="use_inexact_seek_summary">Membolehkan pemain untuk meninjau ke posisi lebih laju dengan kurang ketepatan. Mencari 5, 15 atau 25 saat tidak berfungsi dengan ini</string>
     <string name="download_thumbnail_title">Muatkan thumbnail</string>
@@ -78,15 +67,9 @@
     <string name="resume_on_audio_focus_gain_title">Teruskan apabila fokus</string>
     <string name="resume_on_audio_focus_gain_summary">Teruskan bermain selepas gangguan (contohnya panggilan telefon)</string>
     <string name="download_dialog_title">Muat turun</string>
-    <string name="show_next_and_similar_title">Paparkan video \'Seterusnya\' dan \'Berkaitan\'</string>
-    <string name="show_hold_to_append_title">Tunjukkan tip \"Pegang untuk menambahkan\"</string>
-    <string name="show_hold_to_append_summary">Tunjukkan tip apabila butang latar belakang atau popup ditekan pada halaman butiran video</string>
     <string name="unsupported_url">URL tidak disokong</string>
     <string name="default_content_country_title">Negara kandungan utama</string>
-    <string name="content_language_title">Bahasa kandungan utama</string>
     <string name="settings_category_player_title">Pemain</string>
-    <string name="settings_category_player_behavior_title">Tingkah laku</string>
-    <string name="settings_category_video_audio_title">Video dan audio</string>
     <string name="settings_category_history_title">Sejarah dan cache</string>
     <string name="settings_category_appearance_title">Penampilan</string>
     <string name="settings_category_debug_title">Nyahpepijat</string>
@@ -94,7 +77,6 @@
     <string name="background_player_playing_toast">Bermain di latar belakang</string>
     <string name="popup_playing_toast">Bermain dalam mod popup</string>
     <string name="content">Kandungan</string>
-    <string name="show_age_restricted_content_title">Kandungan terhad umur</string>
     <string name="duration_live">Langsung</string>
     <string name="downloads">Muat turun</string>
     <string name="downloads_title">Muat turun</string>
@@ -214,8 +196,6 @@
     <string name="recaptcha_request_toast">Meminta kod reCAPTCHA</string>
     <string name="settings_category_downloads_title">Muat turun</string>
     <string name="settings_file_charset_title">Karakter yang dibenarkan dalam nama fail</string>
-    <string name="settings_file_replacement_character_summary">Karakter tidak sah digantikan dengan nilai ini</string>
-    <string name="settings_file_replacement_character_title">Karakter pengganti</string>
     <string name="charset_letters_and_digits">Huruf dan angka</string>
     <string name="charset_most_special_characters">Karakter yang paling istimewa</string>
     <string name="toast_no_player">Tiada app dipasang untuk memainkan fail ini</string>
@@ -223,20 +203,17 @@
     <string name="title_licenses">Lesen Pihak Ketiga</string>
     <string name="copyright" formatted="true">© %1$s oleh %2$s di bawah %3$s</string>
     <string name="tab_about">Tentang</string>
-    <string name="tab_licenses">Lesen</string>
     <string name="app_description">Aplikasi strim yang percuma dan ringan untuk Android.</string>
     <string name="contribution_title">Sumbang</string>
     <string name="contribution_encouragement">Sama ada anda mempunyai idea; terjemahan, perubahan reka bentuk, pembersihan kod, atau perubahan kod sebenar yang berat-bantuan sentiasa dialu-alukan. Semakin banyak yang dilakukan semakin baik!</string>
     <string name="view_on_github">Lihat di GitHub</string>
     <string name="donation_title">Derma</string>
     <string name="donation_encouragement">NewPipe dibangunkan oleh sukarelawan menghabiskan masa membawa pengalaman terbaik. Beri balik untuk membantu pemaju membuat NewPipe lebih baik sambil menikmati secawan kopi.</string>
-    <string name="give_back">Bagi balik</string>
     <string name="website_title">Laman Web</string>
     <string name="website_encouragement">Lawati Laman Web NewPipe untuk maklumat lanjut dan berita.</string>
     <string name="privacy_policy_title">Dasar Privasi NewPipe</string>
     <string name="privacy_policy_encouragement">Projek NewPipe mengambil perhatian privasi anda dengan sangat serius. Oleh itu, aplikasi tidak mengumpulkan sebarang data tanpa persetujuan anda.
 \nDasar privasi NewPipe menerangkan secara terperinci apa data dihantar dan disimpan apabila anda menghantar laporan ranap.</string>
-    <string name="read_privacy_policy">Baca dasar privasi</string>
     <string name="app_license_title">Lesen NewPipe</string>
     <string name="app_license">NewPipe adalah perisian copyleft percuma: Anda boleh menggunakan, berkongsi kajian dan memperbaikinya mengikut kehendak. Khususnya anda boleh mengagihkan semula dan / atau mengubahnya di bawah syarat GNU General Public License seperti yang diterbitkan oleh Free Software Foundation, sama ada versi 3 dari Lesen, atau (pada pilihan anda) versi yang lebih baru.</string>
     <string name="read_full_license">Baca lesen</string>
@@ -333,8 +310,6 @@
     <string name="playback_reset">Tetapkan semula</string>
     <string name="start_accept_privacy_policy">Untuk mematuhi Peraturan Perlindungan Data Umum Eropah (GDPR), kami dengan ini menarik perhatian anda kepada dasar privasi NewPipe. Sila baca dengan teliti.
 \nAnda mesti menerimanya untuk menghantar laporan bug kepada kami.</string>
-    <string name="accept">Terima</string>
-    <string name="decline">Tolak</string>
     <string name="limit_data_usage_none_description">Tiada had</string>
     <string name="limit_mobile_data_usage_title">Had resolusi apabila menggunakan data mudah alih</string>
     <string name="updates_setting_title">Kemas kini</string>
@@ -411,16 +386,9 @@
     <string name="restricted_video">Video ini ada had umur.
 \n
 \nAktifkan \"%1$s\" dalam tetapan jika anda ingin melihatnya.</string>
-    <string name="youtube_restricted_mode_enabled_summary">YouTube menyediakan \"Mode Terhad\" yang menyembunyikan kandungan dewasa</string>
-    <string name="youtube_restricted_mode_enabled_title">Aktifkan \"Mod Terhad\" YouTube</string>
-    <string name="show_age_restricted_content_summary">Tunjuk kandungan yang mungkin tidak wajar untuk kanak-kanak kerana mempunyai had umur (seperti 18+)</string>
     <string name="unsupported_url_dialog_message">URL tidak dikenali. Buka dengan aplikasi lain\?</string>
     <string name="settings_category_clear_data_title">Kosongkan data</string>
     <string name="show_meta_info_summary">Matikan untuk menyembunyikan kotak meta-maklumat yang ada maklumat lanjut tentang pencipta, kandungan strim atau permintaan carian</string>
-    <string name="show_description_summary">Matikan untuk menyembunyikan deskripsi video dan maklumat lanjut</string>
-    <string name="show_description_title">Tunjuk deskripsi</string>
-    <string name="show_comments_summary">Matikan untuk menyembunyikan ulasan</string>
-    <string name="show_comments_title">Tunjuk ulasan</string>
     <string name="seek_duration_title">Tempoh langkau/balik</string>
     <string name="night_theme_title">Tema Malam</string>
     <string name="notification_actions_at_most_three">Anda hanya boleh pilih hingga tiga aksi untuk dipapar dalam pemberitahuan padat!</string>

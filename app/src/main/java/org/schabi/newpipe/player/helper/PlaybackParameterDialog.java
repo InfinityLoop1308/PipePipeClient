@@ -38,9 +38,6 @@ import java.util.function.DoubleConsumer;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
 
-import icepick.Icepick;
-import icepick.State;
-
 public class PlaybackParameterDialog extends DialogFragment {
     private static final String TAG = "PlaybackParameterDialog";
 
@@ -83,18 +80,12 @@ public class PlaybackParameterDialog extends DialogFragment {
     @Nullable
     private Callback callback;
 
-    @State
     double initialTempo = DEFAULT_TEMPO;
-    @State
     double initialPitchPercent = DEFAULT_PITCH_PERCENT;
-    @State
     boolean initialSkipSilence = DEFAULT_SKIP_SILENCE;
 
-    @State
     double tempo = DEFAULT_TEMPO;
-    @State
     double pitchPercent = DEFAULT_PITCH_PERCENT;
-    @State
     boolean skipSilence = DEFAULT_SKIP_SILENCE;
 
     private DialogPlaybackParameterBinding binding;
@@ -136,7 +127,12 @@ public class PlaybackParameterDialog extends DialogFragment {
     @Override
     public void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
-        Icepick.saveInstanceState(this, outState);
+        outState.putDouble("initialTempo", initialTempo);
+        outState.putDouble("initialPitchPercent", initialPitchPercent);
+        outState.putBoolean("initialSkipSilence", initialSkipSilence);
+        outState.putDouble("tempo", tempo);
+        outState.putDouble("pitchPercent", pitchPercent);
+        outState.putBoolean("skipSilence", skipSilence);
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -147,7 +143,14 @@ public class PlaybackParameterDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable final Bundle savedInstanceState) {
         assureCorrectAppLanguage(getContext());
-        Icepick.restoreInstanceState(this, savedInstanceState);
+        if (savedInstanceState != null) {
+            initialTempo = savedInstanceState.getDouble("initialTempo", DEFAULT_TEMPO);
+            initialPitchPercent = savedInstanceState.getDouble("initialPitchPercent", DEFAULT_PITCH_PERCENT);
+            initialSkipSilence = savedInstanceState.getBoolean("initialSkipSilence", DEFAULT_SKIP_SILENCE);
+            tempo = savedInstanceState.getDouble("tempo", DEFAULT_TEMPO);
+            pitchPercent = savedInstanceState.getDouble("pitchPercent", DEFAULT_PITCH_PERCENT);
+            skipSilence = savedInstanceState.getBoolean("skipSilence", DEFAULT_SKIP_SILENCE);
+        }
 
         binding = DialogPlaybackParameterBinding.inflate(LayoutInflater.from(getContext()));
         initUI();

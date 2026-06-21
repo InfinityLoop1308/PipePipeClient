@@ -11,8 +11,6 @@
     <string name="settings">Налаштування</string>
     <string name="did_you_mean">Ви мали на увазі: «%1$s»\?</string>
     <string name="share_dialog_title">Поширити через</string>
-    <string name="use_external_video_player_title">Зовнішній відеопрогравач</string>
-    <string name="use_external_audio_player_title">Зовнішній аудіопрогравач</string>
     <string name="download_path_title">Тека для завантаження відео</string>
     <string name="download_path_dialog_title">Виберіть теку для завантаження відеофайлів</string>
     <string name="download_path_audio_dialog_title">Виберіть теку для завантаження аудіофайлів</string>
@@ -22,22 +20,15 @@
     <string name="default_resolution_title">Типова роздільність</string>
     <string name="play_with_kodi_title">Програти в Kodi</string>
     <string name="kore_not_found">Встановити відсутній застосунок Kore\?</string>
-    <string name="show_play_with_kodi_title">Показати опцію «Відтворити у Kodi»</string>
-    <string name="show_play_with_kodi_summary">Показати опцію відтворення відео в Kodi</string>
     <string name="play_audio">Аудіо</string>
-    <string name="default_audio_format_title">Типовий формат звуку</string>
     <string name="theme_title">Тема</string>
     <string name="dark_theme_title">Темна</string>
     <string name="light_theme_title">Світла</string>
     <string name="download_dialog_title">Завантажити</string>
-    <string name="show_next_and_similar_title">Показувати «Наступне» і «Схожі» відео</string>
     <string name="unsupported_url">URL не підтримується</string>
-    <string name="content_language_title">Переважна мова вмісту</string>
-    <string name="settings_category_video_audio_title">Відео та звук</string>
     <string name="settings_category_appearance_title">Зовнішній вигляд</string>
     <string name="background_player_playing_toast">Відтворення у фоновому режимі</string>
     <string name="content">Вміст</string>
-    <string name="show_age_restricted_content_title">Вміст із віковими обмеженнями</string>
     <string name="duration_live">Наживо</string>
     <string name="general_error">Помилка</string>
     <string name="network_error">Помилка мережі</string>
@@ -84,7 +75,6 @@
     <string name="no_available_dir">Вкажіть теку для завантажень пізніше в налаштуваннях</string>
     <string name="no_player_found_toast">Програвач потокового відео не знайдений (ви можете встановити VLC для програвання).</string>
     <string name="open_in_popup_mode">Відкрити у віконному режимі</string>
-    <string name="use_external_video_player_summary">Прибирає звук за певної роздільності</string>
     <string name="subscribe_button_title">Підписатися</string>
     <string name="subscribed_button_title">Ви підписалися</string>
     <string name="channel_unsubscribed">Ви відписалися від каналу</string>
@@ -95,28 +85,19 @@
     <string name="controls_background_title">У фоновому режимі</string>
     <string name="controls_popup_title">У вікні</string>
     <string name="default_popup_resolution_title">Типова роздільність вікна</string>
-    <string name="show_higher_resolutions_summary">Не всі пристрої можуть відтворювати 2K/4K-відео</string>
-    <string name="show_higher_resolutions_title">Показувати вищі роздільності</string>
-    <string name="default_video_format_title">Типовий формат відео</string>
-    <string name="popup_remember_size_pos_title">Памʼятати властивості вікна</string>
-    <string name="popup_remember_size_pos_summary">Памʼятати останній розмір і позицію вікна</string>
     <string name="show_search_suggestions_title">Пошукові пропозиції</string>
     <string name="show_search_suggestions_summary">Виберіть які пропозиції показувати під час пошуку</string>
     <string name="enable_search_history_title">Історія пошуків</string>
     <string name="enable_search_history_summary">Зберігати пошукові запити локально</string>
     <string name="enable_playback_resume_title">Продовжувати перегляд</string>
     <string name="enable_playback_resume_summary">Відновлювати останню позицію</string>
-    <string name="enable_playback_state_lists_title">Позиції у списках</string>
-    <string name="enable_playback_state_lists_summary">Показувати індикатори позицій переглядів у списках</string>
     <string name="settings_category_clear_data_title">Очистити дані</string>
     <string name="enable_watch_history_summary">Вести облік перегляду відеозаписів</string>
     <string name="enable_watch_history_title">Історія переглядів</string>
     <string name="resume_on_audio_focus_gain_title">Відновлювати відтворення</string>
     <string name="resume_on_audio_focus_gain_summary">Продовжувати відтворення після переривань (напр. телефонних дзвінків)</string>
-    <string name="show_hold_to_append_title">Показувати підказку «Утримуйте, щоб додати в чергу»</string>
     <string name="default_content_country_title">Типова країна вмісту</string>
     <string name="settings_category_player_title">Програвач</string>
-    <string name="settings_category_player_behavior_title">Поведінка</string>
     <string name="settings_category_history_title">Історія та кеш</string>
     <string name="popup_playing_toast">Відтворення у віконному режимі</string>
     <string name="clear">Очистити</string>
@@ -145,12 +126,9 @@
 \nу віконному режимі</string>
     <string name="settings_category_downloads_title">Завантаження</string>
     <string name="settings_file_charset_title">Допустимі символи в назвах файлів</string>
-    <string name="settings_file_replacement_character_summary">Недопустимі символи замінюватимуться цим значенням</string>
-    <string name="settings_file_replacement_character_title">Замінні символи</string>
     <string name="charset_letters_and_digits">Букви та цифри</string>
     <string name="charset_most_special_characters">Більшість спеціальних символів</string>
     <string name="title_activity_about">Про NewPipe</string>
-    <string name="tab_licenses">Ліцензії</string>
     <string name="contribution_title">Посприяти</string>
     <string name="view_on_github">Переглянути на GitHub</string>
     <string name="donation_title">Фінансова допомога</string>
@@ -171,7 +149,6 @@
     <string name="show_info">Показати інформацію</string>
     <string name="tab_bookmarks">Закладки відтворення</string>
     <string name="controls_add_to_playlist_title">Додати до</string>
-    <string name="show_hold_to_append_summary">Показати підказку при натисканні на тло або на спливну кнопку «Деталі:» у відео</string>
     <string name="player_unrecoverable_failure">Сталася невиправна помилка програвача</string>
     <string name="external_player_unsupported_link_type">Зовнішні програвачі не підтримують такі види посилань</string>
     <string name="info_labels">Що:\\nЗапит:\\nМова вмісту:\\nКраїна вмісту:\\nМова застосунку:\\nСлужба:\\nЧас GMT:\\nПакунок:\\nВерсія:\\nВерсія ОС:</string>
@@ -209,7 +186,6 @@
     <string name="recaptcha_request_toast">Запит перевірки reCAPTCHA</string>
     <string name="copyright" formatted="true">© %1$s, %2$s під %3$s</string>
     <string name="donation_encouragement">NewPipe розроблений добровольцями, які витрачають власний час заради вашого задоволення. Допоможіть розробникам зробити NewPipe ще ліпшим, насолоджуючись філіжанкою кави.</string>
-    <string name="give_back">Ваша допомога</string>
     <string name="website_encouragement">Завітайте на офіційний сайт NewPipe, щоб отримати більше інформації та новин.</string>
     <string name="app_license_title">Ліцензія NewPipe</string>
     <string name="read_full_license">Прочитати ліцензію</string>
@@ -322,11 +298,8 @@
     <string name="privacy_policy_title">Політика приватності NewPipe</string>
     <string name="privacy_policy_encouragement">Проєкт NewPipe дуже серйозно ставиться до вашої приватності. Тому застосунок не збирає ніяких даних без вашої згоди.
 \nПолітика приватності докладно NewPipe пояснює, які дані надсилаються і зберігаються у звіті про збій програми.</string>
-    <string name="read_privacy_policy">Читати політику приватності</string>
     <string name="start_accept_privacy_policy">З метою дотримання Загального регламенту про захист даних ЄС (General Data Protection Regulation, GDPR) ми звертаємо вашу увагу на політику приватності NewPipe. Будь ласка, прочитайте уважно.
 \nВи маєте прийняти її, аби надіслати нам звіт про помилку.</string>
-    <string name="accept">Прийняти</string>
-    <string name="decline">Відхилити</string>
     <string name="limit_data_usage_none_description">Без обмежень</string>
     <string name="limit_mobile_data_usage_title">Обмежити роздільність під час мобільних даних</string>
     <string name="skip_silence_checkbox">Пропускати тихі проміжки</string>
@@ -396,8 +369,6 @@
     <string name="main_page_content_summary">Вкладки, показані на головній сторінці</string>
     <string name="updates_setting_description">Показувати сповіщення з пропозицією оновити застосунок за наявності нової версії</string>
     <string name="pause_downloads_on_mobile_desc">Корисно під час перемикання на мобільні дані, хоча деякі завантаження неможливо призупинити</string>
-    <string name="show_comments_title">Показувати коментарі</string>
-    <string name="show_comments_summary">Вимкніть, щоб сховати коментарі</string>
     <string name="autoplay_title">Автовідтворення</string>
     <string name="no_comments">Коментарі відсутні</string>
     <string name="error_unable_to_load_comments">Не вдалося завантажити коментарі</string>
@@ -522,7 +493,6 @@
     <string name="feed_notification_loading">Завантаження каналу…</string>
     <string name="feed_subscription_not_loaded_count">Не завантажено: %d</string>
     <string name="feed_oldest_subscription_update">Останнє оновлення: %s</string>
-    <string name="new_seek_duration_toast">Через обмеження ExoPlayer точність перемотування становить %d секунд</string>
     <string name="remove_watched_popup_yes_and_partially_watched_videos">Так, а також частково переглянуті відео</string>
     <string name="remove_watched_popup_warning">Відео, які Ви переглядали до та після додавання в добірку, вилучатимуться.
 \nВи впевнені\? Це незворотна дія!</string>
@@ -539,7 +509,6 @@
 \nЩоб побачити його ввімкніть «%1$s» в налаштуваннях.</string>
     <string name="detail_sub_channel_thumbnail_view_description">Ескіз аватара каналу</string>
     <string name="show_original_time_ago_summary">Оригінальні тексти сервісів будуть видимі в потокових елементах</string>
-    <string name="youtube_restricted_mode_enabled_title">Увімкнути «Обмежений режим» YouTube</string>
     <string name="search_showing_result_for">Результати для: %s</string>
     <string name="channel_created_by">Створено %s</string>
     <string name="feed_group_show_only_ungrouped_subscriptions">Показати лише незгруповані підписки</string>
@@ -566,7 +535,6 @@
     <string name="radio">Радіо</string>
     <string name="georestricted_content">Цей вміст недоступний у вашій країні.</string>
     <string name="no_app_to_open_intent">На вашому пристрої нема програми, щоб відкрити це</string>
-    <string name="youtube_restricted_mode_enabled_summary">YouTube надає «Обмежений режим», що ховає потенційно дорослий вміст</string>
     <string name="chapters">Розділи</string>
     <string name="recent">Останні</string>
     <string name="show_thumbnail_title">Показувати ескіз</string>
@@ -583,7 +551,6 @@
     <string name="unsupported_url_dialog_message">Не розпізнано URL. Відкрити через іншу програму\?</string>
     <string name="auto_queue_toggle">Автоматична черга</string>
     <string name="show_meta_info_title">Показувати метадані</string>
-    <string name="show_description_title">Показувати описи</string>
     <string name="night_theme_title">Нічна тема</string>
     <string name="video_detail_by">Від %s</string>
     <string name="show_thumbnail_summary">Використовувати ескізи для фону екрана блокування і для сповіщень</string>
@@ -606,9 +573,7 @@
     <string name="hash_channel_name">Сповіщення про відеохешування</string>
     <string name="restricted_video_no_stream">Це відео має вікові обмеження.
 \nЗгідно з новою політикою YouTube щодо відео з віковими обмеженнями NewPipe не може мати доступ до жодного потоку цього відео і, таким чином, не має можливості відтворити його.</string>
-    <string name="show_age_restricted_content_summary">Показувати вміст, який, можливо, не підходить для дітей, бо має вікове обмеження (наприклад, 18+)</string>
     <string name="show_meta_info_summary">Вимкніть, щоб приховати поля метаданих (автор потоку, вміст потоку або пошуковий запит)</string>
-    <string name="show_description_summary">Вимкніть, щоб приховати опис відео та додаткові відомості</string>
     <string name="clear_queue_confirmation_description">Черга активного програвача буде замінена</string>
     <string name="clear_queue_confirmation_summary">Перехід від одного програвача до іншого може замінити вашу чергу</string>
     <string name="clear_queue_confirmation_title">Підтверджувати очищення черги</string>
@@ -619,7 +584,6 @@
     <string name="notification_scale_to_square_image_summary">Масштабувати мініатюру відео 16: 9 до 1:1 (можливі спотворення)</string>
     <string name="disable_media_tunneling_summary">Вимкнення тунелювання медіаданих за наявності чорного екрана або гальмування під час відтворення відео</string>
     <string name="disable_media_tunneling_title">Вимкнути тунелювання медіа</string>
-    <string name="downloads_storage_use_saf_summary_api_29">«Фреймворк доступу до сховища» (SAF) підтримується лише починаючи з Android 10</string>
     <string name="downloads_storage_use_saf_summary_api_19">«Фреймворк доступу до сховища» (SAF) не підтримується в KitKat і нижче</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Вас питатиме, куди зберігати кожне завантаження</string>
     <string name="no_dir_yet">Не вказано теки завантаження, оберіть типову теку завантаження зараз</string>
@@ -656,7 +620,6 @@
     <string name="dont_show">Не показувати</string>
     <string name="low_quality_smaller">Низька якість (менше)</string>
     <string name="high_quality_larger">Висока якість (більше)</string>
-    <string name="seekbar_preview_thumbnail_title">Мініатюра з попереднім переглядом на повзунку поступу</string>
     <string name="detail_heart_img_view_description">Вподобано автором</string>
     <string name="mark_as_watched">Позначити переглянутим</string>
     <string name="show_image_indicators_summary">Показувати кольорові стрічки Пікассо поверх зображень із зазначенням їх джерела: червоний для мережі, синій для диска та зелений для пам’яті</string>
@@ -703,7 +666,6 @@
     <string name="progressive_load_interval_exoplayer_default">Типовий ExoPlayer</string>
     <string name="progressive_load_interval_summary">Змінити розмір інтервалу завантаження (наразі %s). Менше значення може прискорити початкове завантаження відео. Зміни вимагають перезапуску програвача.</string>
     <string name="you_successfully_subscribed">Ви підписалися на цей канал</string>
-    <string name="enumeration_comma">,</string>
     <string name="streams_notification_channel_description">Сповіщення про нові трансляції для підписок</string>
     <plurals name="new_streams">
         <item quantity="one">%s нова трансляція</item>

@@ -1,6 +1,5 @@
 package org.schabi.newpipe.fragments.list.comments;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -13,7 +12,6 @@ import androidx.annotation.Nullable;
 
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
-import androidx.preference.PreferenceManager;
 import org.schabi.newpipe.BaseFragment;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.Page;
@@ -23,19 +21,12 @@ import org.schabi.newpipe.util.Constants;
 
 import java.io.IOException;
 
-import icepick.State;
-
 public class CommentReplyFragment extends BaseFragment implements BackPressable {
 
-    @State
     protected int serviceId = Constants.NO_SERVICE_ID;
-    @State
     protected String name;
-    @State
     protected String url;
-    @State
     protected CommentsInfoItem comment;
-    @State
     protected Page replies;
 
     public static CommentReplyFragment getInstance(
@@ -47,6 +38,26 @@ public class CommentReplyFragment extends BaseFragment implements BackPressable 
         final CommentReplyFragment instance = new CommentReplyFragment();
         instance.setInitialData(serviceId, url, name, comment, replies);
         return instance;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("serviceId", serviceId);
+        outState.putString("name", name);
+        outState.putString("url", url);
+        outState.putSerializable("comment", comment);
+        outState.putSerializable("replies", replies);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        serviceId = savedInstanceState.getInt("serviceId", Constants.NO_SERVICE_ID);
+        name = savedInstanceState.getString("name");
+        url = savedInstanceState.getString("url");
+        comment = (CommentsInfoItem) savedInstanceState.getSerializable("comment");
+        replies = (Page) savedInstanceState.getSerializable("replies");
     }
 
     public static CommentsFragmentContainer newInstance(final int serviceId, final String url,
@@ -68,20 +79,17 @@ public class CommentReplyFragment extends BaseFragment implements BackPressable 
         final ImageButton backButton = view.findViewById(R.id.backButton);
         backButton.setOnClickListener(v -> onBackPressed());
 
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        if (!prefs.getBoolean("comments_inner_scroll_key", false)) {
-            final CommentsFragment commentsFragment = CommentsFragment.getInstance(
-                    serviceId, url, name, comment
-            );
-            getChildFragmentManager().beginTransaction()
-                    .add(R.id.commentFragment, commentsFragment).commit();
+        final CommentsFragment commentsFragment = CommentsFragment.getInstance(
+                serviceId, url, name, comment
+        );
+        getChildFragmentManager().beginTransaction()
+                .add(R.id.commentFragment, commentsFragment).commit();
 
-            int marginStart = getResources().getDimensionPixelSize(R.dimen.video_item_search_avatar_left_margin);
-            FragmentContainerView commentReplyFragment = view.findViewById(R.id.commentReplyFragment);
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) commentReplyFragment.getLayoutParams();
-            params.setMarginStart(marginStart);
-            commentReplyFragment.setLayoutParams(params);
-        }
+        int marginStart = getResources().getDimensionPixelSize(R.dimen.video_item_search_avatar_left_margin);
+        FragmentContainerView commentReplyFragment = view.findViewById(R.id.commentReplyFragment);
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) commentReplyFragment.getLayoutParams();
+        params.setMarginStart(marginStart);
+        commentReplyFragment.setLayoutParams(params);
 
         final CommentsFragment commentsReplyFragment = CommentsFragment.getInstance(
                 serviceId, url, name, replies
@@ -106,8 +114,9 @@ public class CommentReplyFragment extends BaseFragment implements BackPressable 
 
     @Override
     public boolean onBackPressed() {
-        final FragmentManager fm = getFM();
-        fm.popBackStack();
+        // Pop the FragmentManager this reply lives in (its container's child FM), matching where it
+        // was pushed, so back works and nothing is left referencing a destroyed container.
+        getParentFragmentManager().popBackStack();
         return true;
     }
 }

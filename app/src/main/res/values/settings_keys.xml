@@ -1580,8 +1580,8 @@
     <string name="bullet_comments_outline_radius_key">bullet_comments_outline_radius_key</string>
     <string name="advanced_formats_key">advanced_formats_key</string>
     <string name="preferred_audio_language_key">preferred_audio_language_key</string>
-    <string name="comments_inner_scroll_key">comments_inner_scroll_key</string>
     <string name="filter_by_keyword_key">filter_by_keyword_key</string>
+    <string name="pin_video_to_top_key">pin_video_to_top_key</string>
     <string-array name="advanced_formats_values">
         <item>VP9</item>
         <item>AV01</item>
@@ -1713,4 +1713,24 @@
     </string-array>
 
     <string name="show_channel_tabs_podcasts">show_channel_tabs_podcasts</string>
+    <string name="last_used_pipepipe_preferences_version">last_used_pipepipe_preferences_version</string>
+    <string name="video_tabs_key">video_tabs_key</string>
+    <string-array name="video_tabs_value_list">
+        <item>comments</item>
+        <item>related</item>
+        <item>sponsorblock</item>
+        <item>description</item>
+    </string-array>
+    <string-array name="video_tabs_description_list">
+        <item>@string/comments_tab_description</item>
+        <item>@string/related_items_tab_description</item>
+        <item>@string/sponsor_block</item>
+        <item>@string/description_tab_description</item>
+    </string-array>
+    <string name="filter_future_items_key">filter_future_items_key</string>
+    <string name="use_experimental_new_ui_key">use_experimental_new_ui</string>
+    <string name="force_end_on_overtime_key">force_end_on_overtime</string>
+    <string name="use_old_search_filter_key">use_old_search_filter</string>
+    <string name="main_tabs_position_key">main_tabs_position</string>
+    <string name="disable_exoplayer_media_codec_async_queueing_key">disable_exoplayer_media_codec_async_queueing_key</string>
 </resources>

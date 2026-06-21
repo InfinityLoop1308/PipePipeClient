@@ -186,10 +186,6 @@
     <string name="restricted_video">Ev vîdyo temen tê sînorkirin.
 \n
 \nHeke hûn dixwazin bibînin \"%1$s\" di mîhengan de veke.</string>
-    <string name="youtube_restricted_mode_enabled_summary">YouTube \"Modeya Bicîhkirî\" peyda dike ku naveroka potansiyel gihîştî vedişêre</string>
-    <string name="youtube_restricted_mode_enabled_title">\"Modeya Bicîh\" a YouTube-ê veke</string>
-    <string name="show_age_restricted_content_summary">Naverok ji bo zarokan dibe ku ne guncan be nîşan bikin ji ber ku sînorek temenê wê heye (mîna 18+)</string>
-    <string name="show_age_restricted_content_title">Naveroka sînorkirî ya temenê nîşan bikin</string>
     <string name="content">Dilşad</string>
     <string name="popup_playing_toast">Di moda popupê de dilîzin</string>
     <string name="background_player_playing_toast">Di paşayê de dilîzin</string>
@@ -197,8 +193,6 @@
     <string name="settings_category_debug_title">Xeletkirin</string>
     <string name="settings_category_appearance_title">Xuyabûnî</string>
     <string name="settings_category_history_title">Dîrok û kaş</string>
-    <string name="settings_category_video_audio_title">Video û deng</string>
-    <string name="settings_category_player_behavior_title">Xwenîşandinî</string>
     <string name="settings_category_player_title">Lîstikvan</string>
     <string name="peertube_instance_add_exists">Mînak jixwe heye</string>
     <string name="peertube_instance_add_https_only">Tenê URL-yên HTTPS têne piştgirî kirin</string>
@@ -208,20 +202,15 @@
     <string name="peertube_instance_url_help">Mînakên ku hûn dixwazin li %s bibînin</string>
     <string name="peertube_instance_url_summary">Mînakên xweyên bijare yên PeerTube hilbijêrin</string>
     <string name="peertube_instance_url_title">Mînakên PeerTube</string>
-    <string name="content_language_title">Zimanê naveroka bixweber</string>
     <string name="default_content_country_title">Welatê naverokê standard</string>
     <string name="unsupported_url_dialog_message">URL-yê nasnakin. Bi sepek din vedibe\?</string>
     <string name="unsupported_url">URL-ya ku nayê piştgirî kirin</string>
-    <string name="show_hold_to_append_summary">Dema ku hûn paşnav an bişkoja popupê ya di vîdyoyê de \"Hûrgulî:\" bişkînin tip nîşan bidin</string>
-    <string name="show_hold_to_append_title">Serişteya \"Ji bo pêvekirinê bigire\" nîşan bide</string>
     <string name="autoplay_title">Lîstik bixweber</string>
     <string name="download_dialog_title">Dakêşînin</string>
     <string name="resume_on_audio_focus_gain_summary">Piştî qutbûnan lîstikê bidomînin (mînak telefonên telefonê)</string>
     <string name="resume_on_audio_focus_gain_title">Ji nû ve lîstin</string>
     <string name="enable_watch_history_summary">Vîdyoyên temaşekirî bişopînin</string>
     <string name="settings_category_clear_data_title">Daneyên paqij bikin</string>
-    <string name="enable_playback_state_lists_summary">Di navnîşan de nîşanên pozîsyona playback nîşan bikin</string>
-    <string name="enable_playback_state_lists_title">Di nav lîsteyan de helwest</string>
     <string name="enable_playback_resume_summary">Cihê lîstika paşîn vegerînin</string>
     <string name="enable_playback_resume_title">Vejînê ji nû ve bidin dest pê kirin</string>
     <string name="enable_watch_history_title">Li dîrokê temaşe bikin</string>
@@ -242,11 +231,6 @@
     <string name="thumbnail_cache_wipe_complete_notice">belleka wêneyê paqij kir</string>
     <string name="show_meta_info_summary">Vedixwin da ku qutiyên agahdariya meta yên bi agahdariya din ên di derheqê afirînerê rûberê, naveroka herikê an daxwazek lêgerînê de veşêrin.</string>
     <string name="show_meta_info_title">Agahdariya meta nîşan bide</string>
-    <string name="show_description_summary">Vedixwin da ku danasîna vîdyoyê û agahdariya zêde veşêrin</string>
-    <string name="show_description_title">Danasînê nîşan bide</string>
-    <string name="show_next_and_similar_title">Vîdyoyên \'Pêş\' û \'Bi vî rengî\' nîşan bidin</string>
-    <string name="show_comments_summary">Zivirandin da ku şîroveyan veşêrin</string>
-    <string name="show_comments_title">Şîroveyan nîşan bide</string>
     <string name="download_thumbnail_summary">Ji bo pêşîgirtina li barkirina nîgarkêşan, daneya daneyê û karanîna bîranînê xilas bibe vemirînin. Guherandinên kaşeya wêneyê hem di bîra û hem jî li ser dîskê paqij dikin.</string>
     <string name="download_thumbnail_title">Nîgarên barkêş</string>
     <string name="clear_queue_confirmation_description">Dê rêza lîstikvanê çalak were guhertin</string>
@@ -255,14 +239,10 @@
     <string name="seek_duration_title">Zû-zû/-vejîn li dûvçûnê digerin</string>
     <string name="use_inexact_seek_summary">Lêgerîna nerast destûrê dide lîstikvan ku bi rastbûna kêmkirî zûtir li helwestan bigere. 5, 15 an 25 saniyeyan lêgerîn bi vê yekê re kar nake.</string>
     <string name="use_inexact_seek_title">Lêgerîna nerast ya zû bikar bînin</string>
-    <string name="popup_remember_size_pos_summary">Mezinahî û pozîsyona paşîn a paşîn bîr bînin</string>
-    <string name="popup_remember_size_pos_title">Taybetmendiyên popupê bi bîr bînin</string>
     <string name="black_theme_title">Reş</string>
     <string name="dark_theme_title">Tarî</string>
     <string name="light_theme_title">Ronî</string>
     <string name="theme_title">Mijad</string>
-    <string name="default_video_format_title">Formata vîdyoyê ya jixweber</string>
-    <string name="default_audio_format_title">Formata bihîstwerê ya neraza</string>
     <string name="play_audio">Deng</string>
     <string name="notification_colorize_summary">Android-ê rengê notification-ê li gorî rengê sereke-yê di thumbnail-ê de xwerû bikî (not bikin ku ev li ser hemî amûran tune)</string>
     <string name="notification_colorize_title">Ragihandinê rengîn bikin</string>
@@ -279,14 +259,10 @@
     <string name="notification_action_0_title">Bişkoja çalakiya yekem</string>
     <string name="notification_scale_to_square_image_summary">Mîqneya vîdyoyê ya ku di agahdariyê de ji 16:9 ber 1:1 rêjeya aliyî ve hatî nîşankirin bipîve (dibe ku berevajîkirinan destnîşan bike)</string>
     <string name="notification_scale_to_square_image_title">Mîqneya pîvanê bi rêjeya aliyî ya 1:1 ve</string>
-    <string name="show_play_with_kodi_summary">Vebijarkek ji bo lîstina vîdyoyek bi navgîniya navenda medya Kodi nîşan bidin</string>
-    <string name="show_play_with_kodi_title">Vebijarka \"Bi Kodi re lîstin\" nîşan bidin</string>
     <string name="kore_not_found">Sepana Kore ya wenda saz dike\?</string>
     <string name="play_with_kodi_title">Bi Kodî re bilîzin</string>
     <string name="msg_popup_permission">Vê destûr hewce ye ku
 \ndi moda popupê de vekin</string>
-    <string name="show_higher_resolutions_summary">Tenê hin cîhaz dikarin vîdyoyên 2K/4K bilîzin</string>
-    <string name="show_higher_resolutions_title">Pêşniyarên mezintir nîşan bidin</string>
     <string name="default_popup_resolution_title">Çareseriya popupê ya jixweber</string>
     <string name="default_resolution_title">Vebijêrk jixweber</string>
     <string name="download_path_audio_dialog_title">Ji bo pelên deng peldanka dakêşanê hilbijêrin</string>
@@ -308,9 +284,6 @@
     <string name="unsubscribe">Betal kirin</string>
     <string name="subscribed_button_title">Abonekirin</string>
     <string name="subscribe_button_title">Bibin abone</string>
-    <string name="use_external_audio_player_title">Lîsteya bihîstwerê derveyî bikar bînin</string>
-    <string name="use_external_video_player_summary">Dengê li hin biryaran radike</string>
-    <string name="use_external_video_player_title">Vîdyoyek derveyî bikar bînin</string>
     <string name="share_dialog_title">Parve dikin li gel</string>
     <string name="search_showing_result_for">Encaman ji bo: %s nîşan dide</string>
     <string name="did_you_mean">Mebesta we \"%1$s\" bû\?</string>
@@ -366,7 +339,6 @@
         <item quantity="one">%d çirk</item>
         <item quantity="other">%d çirkeyan</item>
     </plurals>
-    <string name="new_seek_duration_toast">Ji ber astengiyên ExoPlayer dema lêgerînê li %d çirkeyan hate saz kirin</string>
     <string name="remove_watched_popup_yes_and_partially_watched_videos">Erê, û bi qismî vîdyoyan temaşe kir</string>
     <string name="remove_watched_popup_warning">Vîdyoyên ku berî û piştî ku li lîsteya lîsteyê hatine zêdekirin hatine temaşekirin, dê werin rakirin.
 \nPiştrastin\? Ev nayê betal kirin!</string>
@@ -442,8 +414,6 @@
     <string name="updates_setting_title">Nûvekirin</string>
     <string name="limit_mobile_data_usage_title">Dema ku daneyên mobîl bikar tînin çareseriyê sînor bikin</string>
     <string name="limit_data_usage_none_description">Sînor tune</string>
-    <string name="decline">Paşvegerrî</string>
-    <string name="accept">Baweranîn</string>
     <string name="start_accept_privacy_policy">Ji bo ku em rêzê li Rêziknameya Parastina Daneya Giştî ya Ewropî (GDPR) bigirin, em herby bala we dikişînin ser siyaseta nepeniya NewPipe. Ji kerema xwe bi baldarî bixwînin.
 \nDivê hûn wê qebûl bikin da ku em rapora çewtiyê ji me re bişînin.</string>
     <string name="playback_reset">Reset bikin</string>
@@ -526,13 +496,11 @@
     <string name="top_50">Yekem 50</string>
     <string name="trending">Tiştên Trend</string>
     <string name="app_license_title">Lîsansa NewPipe</string>
-    <string name="read_privacy_policy">Polîtîkaya nepeniyê bixwînin</string>
     <string name="privacy_policy_encouragement">Projeya NewPipe nepenîtiya we pir cidî digire. Ji ber vê yekê, sepanê bêyî razîbûna we tu daneyan kom nake.
 \nSiyaseta taybetîtiyê ya NewPipe dema ku hûn rapora qeza dişînin çi daneyên têne şandin û hilanîn bi berfirehî vedibêje.</string>
     <string name="privacy_policy_title">Siyaseta taybetîtiyê ya NewPipe</string>
     <string name="website_encouragement">Ji bo bêtir agahdarî û nûçeyan biçin Malpera NewPipe.</string>
     <string name="website_title">Malper</string>
-    <string name="give_back">Vegerînin</string>
     <string name="donation_encouragement">NewPipe ji hêla dilxwazan ve dema xweya vala derbas dikin ji we re ezmûna bikarhênerê çêtirîn anîne pêşve xistin. Vegerînin da ku ji pêşdebiran re bibin alîkar ku NewPipe hê çêtir bikin dema ku ew ji fîncanek qehweyê kêfê bigirin.</string>
     <string name="donation_title">Bêşdan</string>
     <string name="view_on_github">GitHub-ê bibînin</string>
@@ -543,8 +511,6 @@
     <string name="toast_no_player">Ji bo lîstina vê pelê tu bername nehat saz kirin</string>
     <string name="charset_most_special_characters">Pir karakterên taybetî</string>
     <string name="charset_letters_and_digits">Name û reqem</string>
-    <string name="settings_file_replacement_character_title">Karaktera guheztinê</string>
-    <string name="settings_file_replacement_character_summary">Karakteyên nederbasdar bi vê nirxê têne veguheztin</string>
     <string name="settings_file_charset_title">Di navên pelan de tîpan destûr dan</string>
     <string name="settings_category_downloads_title">Dakêşînin</string>
     <string name="recaptcha_done_button">Kirî</string>
@@ -583,7 +549,6 @@
 \nJi ber vê yekê bijarde bi tiştê ku hûn tercîh dikin ve girêdayî ye: leza an agahdariya rastîn.</string>
     <string name="feed_use_dedicated_fetch_method_disable_button">Modeya lezgîn neçalak bikin</string>
     <string name="feed_use_dedicated_fetch_method_enable_button">Modeya lezgîn çalak bikin</string>
-    <string name="tab_licenses">Destûrên</string>
     <string name="tab_about">Derbar</string>
     <string name="copyright">© %1$s bi %2$s di bin %3$s de</string>
     <string name="title_licenses">Lîsansên partiya sêyemîn</string>

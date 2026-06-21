@@ -11,23 +11,15 @@
     <string name="settings">Definições</string>
     <string name="did_you_mean">Você quis dizer \"%1$s\"\?</string>
     <string name="share_dialog_title">Compartilhar com</string>
-    <string name="use_external_video_player_title">Utilizar reprodutor de vídeo externo</string>
-    <string name="use_external_audio_player_title">Utilizar reprodutor de áudio externo</string>
     <string name="download_path_title">Pasta para os arquivos de vídeo</string>
     <string name="download_path_summary">Os arquivos de vídeo baixados serão guardados aqui</string>
     <string name="download_path_dialog_title">Escolha a pasta para colocar os arquivos de vídeo</string>
     <string name="default_resolution_title">Resolução padrão</string>
     <string name="play_with_kodi_title">Reproduzir no Kodi</string>
     <string name="kore_not_found">Instalar Kore\?</string>
-    <string name="show_play_with_kodi_title">Mostrar opção \"Reproduzir no Kodi\"</string>
-    <string name="show_play_with_kodi_summary">Mostrar uma opção para reproduzir o vídeo no Kodi</string>
     <string name="play_audio">Áudio</string>
-    <string name="default_audio_format_title">Formato padrão de áudio</string>
     <string name="download_dialog_title">Descarregar</string>
-    <string name="show_next_and_similar_title">Mostrar vídeos \'Seguintes\' e \'Semelhantes\'</string>
     <string name="unsupported_url">URL não suportado</string>
-    <string name="content_language_title">Idioma padrão para conteúdo</string>
-    <string name="settings_category_video_audio_title">Vídeo e áudio</string>
     <string name="detail_thumbnail_view_description">Reproduzir vídeo, duração:</string>
     <string name="detail_uploader_thumbnail_view_description">Miniatura do avatar do canal</string>
     <string name="detail_dislikes_img_view_description">Não gosto</string>
@@ -47,7 +39,6 @@
     <string name="parsing_error">Não foi possível processar o site</string>
     <string name="content_not_available">Conteúdo indisponível</string>
     <string name="content">Conteúdo</string>
-    <string name="show_age_restricted_content_title">Mostrar conteúdo com restrição de idade</string>
     <string name="could_not_setup_download_menu">Não foi possível configurar o menu de descargas</string>
     <string name="sorry_string">Bolas, isto não deveria ter acontecido.</string>
     <string name="error_report_button_text">Reportar erro por e-mail</string>
@@ -91,17 +82,11 @@
     <string name="title_activity_recaptcha">Desafio reCAPTCHA</string>
     <string name="recaptcha_request_toast">Desafio reCAPTCHA solicitado</string>
     <string name="popup_playing_toast">Reproduzir no modo poppup</string>
-    <string name="default_video_format_title">Formato padrão de vídeo</string>
     <string name="disabled">Desativado</string>
     <string name="default_popup_resolution_title">Resolução padrão para janela popup</string>
-    <string name="show_higher_resolutions_title">Mostrar resoluções mais altas</string>
-    <string name="show_higher_resolutions_summary">Apenas alguns dispositivos conseguem reproduzir vídeos em 2K/4K</string>
     <string name="controls_popup_title">Pop-up</string>
-    <string name="popup_remember_size_pos_title">Lembrar propriedades do popup</string>
     <string name="clear">Limpar</string>
     <string name="controls_background_title">Segundo plano</string>
-    <string name="use_external_video_player_summary">Remove o áudio em algumas resoluções</string>
-    <string name="popup_remember_size_pos_summary">Lembrar último tamanho e posição do popup</string>
     <string name="show_search_suggestions_title">Sugestões de pesquisa</string>
     <string name="show_search_suggestions_summary">Escolha as sugestões a mostrar ao pesquisar</string>
     <string name="best_resolution">Melhor resolução</string>
@@ -109,7 +94,6 @@
     <string name="title_licenses">Licenças de terceiros</string>
     <string name="copyright" formatted="true">© %1$s de %2$s nos termos da %3$s</string>
     <string name="tab_about">Acerca</string>
-    <string name="tab_licenses">Licenças</string>
     <string name="app_description">Aplicação livre de reprodução de emissões para Android.</string>
     <string name="view_on_github">Ver no GitHub</string>
     <string name="app_license_title">Licença do NewPipe</string>
@@ -130,7 +114,6 @@
     <string name="resume_on_audio_focus_gain_title">Continuar reprodução</string>
     <string name="resume_on_audio_focus_gain_summary">Continuar reprodução após interrupções (ex. chamadas)</string>
     <string name="settings_category_player_title">Reprodutor</string>
-    <string name="settings_category_player_behavior_title">Comportamento</string>
     <string name="settings_category_history_title">Histórico e cache</string>
     <string name="undo">Anular</string>
     <string name="notification_channel_name">Notificação NewPipe</string>
@@ -154,8 +137,6 @@
     </plurals>
     <string name="settings_category_downloads_title">Transferências</string>
     <string name="settings_file_charset_title">Carateres permitidos no nome dos ficheiros</string>
-    <string name="settings_file_replacement_character_summary">Os carateres inválidos são substituídos por este valor</string>
-    <string name="settings_file_replacement_character_title">Carácter de substituição</string>
     <string name="charset_letters_and_digits">Letras e dígitos</string>
     <string name="charset_most_special_characters">Mais caracteres especiais</string>
     <string name="title_activity_history">Histórico</string>
@@ -280,8 +261,6 @@
     <string name="playback_tempo">Ritmo</string>
     <string name="clear_views_history_title">Limpar histórico de visualizações</string>
     <string name="auto_queue_summary">Continuar (sem repetição) a fila de reprodução anexando um vídeo relacionado</string>
-    <string name="show_hold_to_append_title">Mostrar dica \"Toque longo para enfileirar\"</string>
-    <string name="show_hold_to_append_summary">Mostrar dica ao premir em segundo plano ou no botão \"Detalhes:\" da janela popup</string>
     <string name="channels">Canais</string>
     <string name="playlists">Listas de reprodução</string>
     <string name="tracks">Faixas</string>
@@ -296,11 +275,9 @@
     <string name="one_item_deleted">1 item eliminado.</string>
     <string name="toast_no_player">Não existe uma aplicação para reproduzir este ficheiro</string>
     <string name="donation_encouragement">NewPipe é desenvolvido por voluntários que utilizam o seu tempo livre para nos proporcionar a melhor experiência. Retribua para ajudar os programadores a tornarem NewPipe ainda melhor.</string>
-    <string name="give_back">Contribuir</string>
     <string name="privacy_policy_title">Política de privacidade do NewPipe</string>
     <string name="privacy_policy_encouragement">O projeto NewPipe leva a sua privacidade muito a sério. Por isso, não recolhe nenhum dado sem o seu consentimento.
 \nA polícia de privacidade do NewPipe explica, em detalhe, os tipos de dados enviados sempre que submete um relatório de erro.</string>
-    <string name="read_privacy_policy">Ver política de privacidade</string>
     <string name="auto_queue_title">Enfileirar o próximo stream automaticamente</string>
     <string name="app_license">NewPipe é um software livre \"copyleft\": pode utilizar, estudar, partilhar e melhorar a aplicação. Especificamente, pode redistribuir e/ou modificar a aplicação nos termos da GNU General Public License, conforme publicada pela Free Software Foundation, tanto a versão 3 da licença ou (por opção) qualquer versão posterior.</string>
     <string name="import_settings">Também deseja importar as definições\?</string>
@@ -324,8 +301,6 @@
     <string name="playback_reset">Repor</string>
     <string name="start_accept_privacy_policy">Para cumprir com o Regulamento Geral da Proteção de Dados (RGPD), chamamos a sua atenção para a política de privacidade do NewPipe. Por favor, leia com atenção.
 \nTem que aceitar esta política para nos poder enviar o seu relatório.</string>
-    <string name="accept">Aceitar</string>
-    <string name="decline">Recusar</string>
     <string name="limit_data_usage_none_description">Sem limite</string>
     <string name="limit_mobile_data_usage_title">Limitar resolução se em dados móveis</string>
     <string name="minimize_on_exit_title">Minimizar ao trocar de aplicação</string>
@@ -387,16 +362,12 @@
     <string name="events">Eventos</string>
     <string name="conferences">Conferências</string>
     <string name="missions_header_pending">Pendente</string>
-    <string name="show_comments_title">Mostrar comentários</string>
-    <string name="show_comments_summary">Desative para ocultar comentários</string>
     <string name="autoplay_title">Reprodução automática</string>
     <string name="no_comments">Sem comentários</string>
     <string name="error_unable_to_load_comments">Não foi possível carregar os comentários</string>
     <string name="close">Fechar</string>
     <string name="enable_playback_resume_title">Continuar reprodução</string>
     <string name="enable_playback_resume_summary">Restaurar última posição de reprodução</string>
-    <string name="enable_playback_state_lists_title">Posições em listas</string>
-    <string name="enable_playback_state_lists_summary">Mostrar indicadores de posição de reprodução nas listas</string>
     <string name="settings_category_clear_data_title">Limpar dados</string>
     <string name="watch_history_states_deleted">Posições de reprodução removidas</string>
     <string name="missing_file">Ficheiro movido ou eliminado</string>
@@ -505,7 +476,6 @@
         <item quantity="one">%d segundo</item>
         <item quantity="other">%d segundos</item>
     </plurals>
-    <string name="new_seek_duration_toast">Devido às restrições de ExoPlayer, a duração da pesquisa foi definida para %d segundos</string>
     <string name="unmute">Ativar som</string>
     <string name="mute">Sem som</string>
     <string name="help">Ajuda</string>
@@ -528,7 +498,6 @@
     <string name="remove_watched">Remover visualizados</string>
     <string name="show_original_time_ago_summary">Os textos originais dos serviços serão visíveis nos itens de fluxo</string>
     <string name="show_original_time_ago_title">Mostrar antiguidade nos itens</string>
-    <string name="youtube_restricted_mode_enabled_title">Ativar \"Modo restrito\" do YouTube</string>
     <string name="video_detail_by">Por %s</string>
     <string name="channel_created_by">Criado por %s</string>
     <string name="detail_sub_channel_thumbnail_view_description">Miniatura do avatar do canal</string>
@@ -568,8 +537,6 @@
     <string name="clear_cookie_summary">Limpar cookies que NewPipe armazena quando resolve um reCAPTCHA</string>
     <string name="recaptcha_cookies_cleared">Os cookies reCAPTCHA foram limpos</string>
     <string name="clear_cookie_title">Limpar cookies reCAPTCHA</string>
-    <string name="youtube_restricted_mode_enabled_summary">O YouTube fornece um \"Modo restrito\" que oculta o conteúdo destinado a adultos</string>
-    <string name="show_age_restricted_content_summary">Mostrar conteúdo possivelmente impróprio para crianças porque tem um limite de idade (como 18+)</string>
     <string name="notification_colorize_summary">Fazer com que o Android personalize a cor da notificação conforme a cor principal na miniatura (esta opção não está disponível em todos os dispositivos)</string>
     <string name="notification_colorize_title">Colorir notificação</string>
     <string name="show_thumbnail_summary">Usar miniaturas no fundo do ecrã de bloqueio e em notificações</string>
@@ -585,8 +552,6 @@
     <string name="description_tab_description">Descrição</string>
     <string name="related_items_tab_description">Emissões relacionadas</string>
     <string name="comments_tab_description">Comentários</string>
-    <string name="show_description_summary">Desative para ocultar a descrição do vídeo e informações adicionais</string>
-    <string name="show_description_title">Mostrar descrição</string>
     <string name="open_with">Abrir com</string>
     <string name="crash_the_app">A app travou</string>
     <string name="restricted_video_no_stream">Este vídeo tem uma restrição de idade.
@@ -618,9 +583,7 @@
 \nQuer cancelar a inscrição deste canal\?</string>
     <string name="feed_load_error_account_info">Não foi possível carregar o feed para \'%s\'.</string>
     <string name="feed_load_error">Erro ao carregar o feed</string>
-    <string name="downloads_storage_use_saf_summary_api_29">A partir do Android 10, apenas o \'Storage Access Framework\' é compatível</string>
     <string name="downloads_storage_use_saf_summary_api_19">A \'Framework de acesso ao armazenamento\' não está disponível no Android KitKat e anteriores</string>
-    <string name="seekbar_preview_thumbnail_title">Pré-visualização da miniatura da barra de pesquisa</string>
     <string name="mark_as_watched">Marcar como visto</string>
     <string name="off">Desligado</string>
     <string name="on">Ligado</string>
@@ -707,5 +670,4 @@
     </plurals>
     <string name="get_notified">Seja notificado</string>
     <string name="notifications_disabled">Notificações são desativadas</string>
-    <string name="enumeration_comma">,</string>
 </resources>

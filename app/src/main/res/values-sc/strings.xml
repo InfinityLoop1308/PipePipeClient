@@ -91,20 +91,17 @@
     <string name="read_full_license">Leghe sa litzèntzia</string>
     <string name="app_license">NewPipe est unu programma lìberu cun litzèntzia copyleft: lu podes impreare, cumpartzire e megiorare comente cheres. Pro èssere prus craros, lu podes torrare a intregare in suta de sos tèrmines de sa Litzèntzia Generale Pùblica GNU publicada dae sa Free Software Foundation, sa versione 3 de sa litzèntzia o, si preferis, una prus noa.</string>
     <string name="app_license_title">Litzèntzia de NewPipe</string>
-    <string name="read_privacy_policy">Leghe sa polìtica de riservadesa</string>
     <string name="privacy_policy_encouragement">Su progetu NewPipe pigat sa riservadesa tua in manera sèria a beru. Pro custa resone s\'aplicatzione non collit perunu datu chene su cunsensu tuo.
 \n Sa polìtica de riservadesa de NewPipe ispiegat a sa minuda ite genia de datos benint imbiados cando imbias unu raportu de errore.</string>
     <string name="privacy_policy_title">Polìtica de riservadesa de NewPipe</string>
     <string name="website_encouragement">Bìsita su situ web de NewPipe pro àteras informatziones e noas.</string>
     <string name="website_title">Situ web</string>
-    <string name="give_back">Retribui</string>
     <string name="donation_encouragement">NewPipe benit isvilupadu dae voluntàrios chi impreant su tempus lìberu issoro batende·ti sa mègius esperièntzia de impreadore. Torra·li su favore pro agiudare sos isvilupadores a megiorare NewPipe galu de prus, in su mentres chi si gosant una tzìchera de cafè.</string>
     <string name="donation_title">Dona</string>
     <string name="view_on_github">Pòmpia in GitHub</string>
     <string name="contribution_encouragement">Si tenes ideas pro sa tradutzione, modìficas de su progetu, pro s\'innetadura de su còdighe o pro modìficas de su còdighe mannas, s\'agiudu est semper benebènnidu. Prus si faghet e mègius est!</string>
     <string name="contribution_title">Contribui</string>
     <string name="app_description">Riprodutzione lìbera e lèbia de trasmissiones (streaming) in Android.</string>
-    <string name="tab_licenses">Litzèntzias</string>
     <string name="tab_about">Informatziones</string>
     <string name="copyright">© %1$s de %2$s cun litzèntzia %3$s</string>
     <string name="title_licenses">Litzèntzias de tertzas partes</string>
@@ -112,8 +109,6 @@
     <string name="toast_no_player">Peruna aplicatzione installada pro pòdere riproduire custu documentu</string>
     <string name="charset_most_special_characters">Majoria de sos caràteres ispetziales</string>
     <string name="charset_letters_and_digits">Lìteras e tzifras</string>
-    <string name="settings_file_replacement_character_title">Caràtere de remplasamentu</string>
-    <string name="settings_file_replacement_character_summary">Sos caràteres non vàlidos benint remplasados cun custu valore</string>
     <string name="settings_file_charset_title">Caràteres permìtidos in sos nùmenes de sos documentos</string>
     <string name="settings_category_downloads_title">Iscàrriga</string>
     <string name="recaptcha_done_button">Fatu</string>
@@ -288,7 +283,6 @@
         <item quantity="one">%d segundos</item>
         <item quantity="other">%d segundu</item>
     </plurals>
-    <string name="new_seek_duration_toast">Pro more de sos lìmites de ExoPlayer sa longària de s\'iscostiamentu lestru est istada impostada a %d segundos</string>
     <string name="remove_watched_popup_yes_and_partially_watched_videos">Eja, e fintzas sos vìdeos pompiados in parte</string>
     <string name="remove_watched_popup_warning">Sos vìdeos pompiados in antis e a pustis de los àere annànghidos a s\'iscalita ant a èssere bogados.
 \n Seguru ses\? Custu no est reversìbile!</string>
@@ -358,8 +352,6 @@
     <string name="updates_setting_title">Agiornamentos</string>
     <string name="limit_mobile_data_usage_title">Lìmita sa risolutzione durante s\'impreu de sos datos mòbiles</string>
     <string name="limit_data_usage_none_description">Perunu lìmite</string>
-    <string name="decline">Refuda</string>
-    <string name="accept">Atzeto</string>
     <string name="start_accept_privacy_policy">Pro pòdere rispetare su Regulamentu Europeu Generale de Amparu de sos Datos (GDPR) ti pedimus de dare cara a sa polìtica de riservadesa de NewPipe.
 \n La depes atzetare pro nos pòdere imbiare sa sinnalatzione de errore.</string>
     <string name="playback_reset">Reseta</string>
@@ -429,8 +421,6 @@
     <string name="downloads_title">Iscarrigamentos</string>
     <string name="downloads">Iscarrigamentos</string>
     <string name="duration_live">In direta</string>
-    <string name="youtube_restricted_mode_enabled_title">Allughe sa modalidade cun restritziones de YouTube</string>
-    <string name="show_age_restricted_content_title">Ammustra sos cuntenutos limitados pro edade</string>
     <string name="content">Cuntenutos</string>
     <string name="popup_playing_toast">Riproduende in modalidade a ventanedda</string>
     <string name="background_player_playing_toast">Riproduende in s\'isfundu</string>
@@ -438,8 +428,6 @@
     <string name="settings_category_debug_title">Depuratzione de errores</string>
     <string name="settings_category_appearance_title">Aparèntzia</string>
     <string name="settings_category_history_title">Cronologia e memòria temporànea</string>
-    <string name="settings_category_video_audio_title">Vìdeos e àudio</string>
-    <string name="settings_category_player_behavior_title">Cumportamentu</string>
     <string name="settings_category_player_title">Riproduidore</string>
     <string name="peertube_instance_add_exists">S\'istàntzia esistit giai</string>
     <string name="peertube_instance_add_https_only">Petzi sos URL HTTPS sunt suportados</string>
@@ -449,20 +437,14 @@
     <string name="peertube_instance_url_help">Agata sas istàntzias chi t\'agradant in %s</string>
     <string name="peertube_instance_url_summary">Ischerta sas istàntzias de PeerTube preferidas tuas</string>
     <string name="peertube_instance_url_title">Istàntzias de PeerTube</string>
-    <string name="content_language_title">Limba predefinida pro sos cuntenutos</string>
     <string name="default_content_country_title">Istadu predefinidu pro sos cuntenutos</string>
     <string name="unsupported_url">URL non suportadu</string>
-    <string name="show_hold_to_append_summary">Ammustra un\'impòsitu cando incarcas in su butone de isfundu o de sa ventanedda in sa pàgina de sos detàllios de unu vìdeu</string>
-    <string name="show_hold_to_append_title">Ammustra s\'impòsitu \"Mantene incarcadu pro pònnere in lista\"</string>
-    <string name="show_next_and_similar_title">Ammustra sos vìdeos imbenientes e simigiantes</string>
     <string name="autoplay_title">Riprodutzione automàtica</string>
     <string name="download_dialog_title">Iscàrriga</string>
     <string name="resume_on_audio_focus_gain_summary">Sighi a riproduire a pustis de sas interrutziones (a es. una mutida)</string>
     <string name="resume_on_audio_focus_gain_title">Sighi a riproduire</string>
     <string name="enable_watch_history_summary">Sarva sa cronologia de sos elementos pompiados</string>
     <string name="settings_category_clear_data_title">Isbòida sos datos</string>
-    <string name="enable_playback_state_lists_summary">Ammustra sos indicadores de sa positzione de riprodutzione in sas listas</string>
-    <string name="enable_playback_state_lists_title">Positziones in sas listas</string>
     <string name="enable_playback_resume_summary">Riprìstina s\'ùrtima positzione de riprodutzione</string>
     <string name="enable_playback_resume_title">Sighi cun sa riprodutzione</string>
     <string name="enable_watch_history_title">Cronologia de sos pompiados</string>
@@ -481,26 +463,17 @@
     <string name="metadata_cache_wipe_title">Iscantzella sos metadatos in sa memòria temporànea</string>
     <string name="thumbnail_cache_wipe_complete_notice">Memòria temporànea de sas immàgines isboidada</string>
     <string name="download_thumbnail_summary">Istuda pro prevènnere su carrigamentu de sas miniaduras, su sarvamentu de sos datos e s\'impreu de sa memòria. Sas modìficas ant a isbodiare siat sa memòria temporànea de sa memòria siat cussa de su discu</string>
-    <string name="show_comments_summary">Istuda pro cuare sos cummentos</string>
-    <string name="show_comments_title">Ammustra sos cummentos</string>
     <string name="download_thumbnail_title">Càrriga sas miniaduras</string>
     <string name="seek_duration_title">Longària de s\'avantzamentu e de sa torrada in segus lestros</string>
     <string name="use_inexact_seek_summary">Su moimentu inesatu permitit a su riproduidore de si mòere cara a una positzione in manera prus lestra ma prus pagu pretzisa. Su de si mòere de 5, 15 o 25 segundos non funtzionat, cun custa optzione</string>
     <string name="use_inexact_seek_title">Imprea su moimentu inesatu lestru</string>
-    <string name="popup_remember_size_pos_title">Ammenta sas propriedades de sa ventanedda</string>
     <string name="black_theme_title">Nieddu</string>
     <string name="dark_theme_title">Iscuru</string>
     <string name="light_theme_title">Craru</string>
     <string name="theme_title">Tema</string>
-    <string name="default_video_format_title">Formadu vìdeu predefinidu</string>
-    <string name="default_audio_format_title">Formadu àudio predefinidu</string>
     <string name="play_audio">Àudio</string>
-    <string name="show_play_with_kodi_summary">Ammustra un\'optzione pro riproduire unu vìdeu pro mèdiu de su tentru multimediale Kodi</string>
-    <string name="show_play_with_kodi_title">Ammustra s\'optzione \"Riprodui cun Kodi\"</string>
     <string name="kore_not_found">Cheres installare s\'aplicatzione Kore chi mancat\?</string>
     <string name="play_with_kodi_title">Riprodui cun Kodi</string>
-    <string name="show_higher_resolutions_summary">Petzi unos cantos dispositivos podent riproduire vìdeos in 2K/4K</string>
-    <string name="show_higher_resolutions_title">Ammustra sas risolutziones prus artas</string>
     <string name="default_popup_resolution_title">Risolutzione predefinida de sa ventanedda</string>
     <string name="default_resolution_title">Risolutzione predefinida</string>
     <string name="download_path_audio_dialog_title">Issèbera sa cartella de iscarrigamentu pro sos documentos àudio</string>
@@ -522,9 +495,6 @@
     <string name="unsubscribe">Boga s\'iscritzione</string>
     <string name="subscribed_button_title">Iscritu</string>
     <string name="subscribe_button_title">Iscrie·ti</string>
-    <string name="use_external_audio_player_title">Imprea unu riproduidore àudio esternu</string>
-    <string name="use_external_video_player_summary">Bogat s\'àudio pro unas cantas risolutziones</string>
-    <string name="use_external_video_player_title">Imprea unu riproduidore de vìdeos esternu</string>
     <string name="share_dialog_title">Cumpartzi cun</string>
     <string name="did_you_mean">Cherias nàrrere \"%1$s\"\?</string>
     <string name="settings">Impostatziones</string>
@@ -567,11 +537,8 @@
     <string name="clear_cookie_summary">Iscantzella sos testimòngios chi NewPipe sarvat cando risolves unu reCAPTCHA</string>
     <string name="recaptcha_cookies_cleared">As isboidadu sos testimòngios reCAPTCHA</string>
     <string name="clear_cookie_title">Isbòida sos testimòngios reCAPTCHA</string>
-    <string name="youtube_restricted_mode_enabled_summary">YouTube frunit una \"Modalidade cun restritziones\" chi cuat sos cuntenudos chi diant pòdere èssere pro adultos</string>
-    <string name="show_age_restricted_content_summary">Ammustra sos cuntenutos chi diant pòdere no èssere adatos pro sos pitzinnos ca tenent unu lìmite de edade (che a 18+)</string>
     <string name="notification_colorize_summary">Pedi a Android de personalizare su colore de sa notìfica sighende su colore printzipale de sa miniadura (ammenta·ti chi custu no est a disponimentu pro totu sos dispositivos)</string>
     <string name="notification_colorize_title">Colora sas notìficas</string>
-    <string name="popup_remember_size_pos_summary">Ammenta s\'ùrtima mannària e sa positzione in sa ventanedda</string>
     <string name="show_thumbnail_summary">Imprea sa miniatura siat comente isfundu de s\'ischermada de blocu e siat in sas notìficas</string>
     <string name="show_thumbnail_title">Ammustra sa miniatura</string>
     <string name="msg_calculating_hash">Carculende s\'hash</string>
@@ -585,8 +552,6 @@
     <string name="description_tab_description">Descritzione</string>
     <string name="related_items_tab_description">Flussos ligados</string>
     <string name="comments_tab_description">Cummentos</string>
-    <string name="show_description_summary">Istuda pro cuare sa descritzione de su vìdeu e sas informatziones additzionales</string>
-    <string name="show_description_title">Ammustra sa descritzione</string>
     <string name="open_with">Aberi cun</string>
     <string name="paid_content">Custu vìdeu est a disponimentu petzi pro sos impreadores chi ant pagadu, e duncas non podet èssere riproduidu o iscarrigadu dae NewPipe.</string>
     <string name="youtube_music_premium_content">Custu vìdeu est a disponimentu petzi pro sos membros de YouTube Music Premium, e duncas non podet èssere riproduidu o iscarrigadu dae NewPipe.</string>
@@ -623,7 +588,6 @@
     <string name="description_select_disable">Disabìlita s\'ischerta de su testu in sa descritzione</string>
     <string name="description_select_enable">Abìlita s\'ischerta de su testu in sa descritzione</string>
     <string name="description_select_note">Como podes ischertare su testu in intro de sa descritzione. Ammenta·ti chi sa pàgina diat pòdere trèmere e sos ligàmenes si diant pòdere no abèrrere cando ses in modalidade de ischerta.</string>
-    <string name="downloads_storage_use_saf_summary_api_29">Incumintzende dae Android 10 petzi sa \'Storage Access Framework\' (Istrutura de Atzessu a s\'Archiviatzione) est suportada</string>
     <string name="open_website_license">Aberi su situ web</string>
     <string name="service_provides_reason">%s frunit custa resone:</string>
     <string name="account_terminated">Contu serradu</string>
@@ -643,7 +607,6 @@
     <string name="dont_show">No ammustres</string>
     <string name="low_quality_smaller">Calidade bassa (prus minore)</string>
     <string name="high_quality_larger">Calidade arta (prus manna)</string>
-    <string name="seekbar_preview_thumbnail_title">Antiprima in sa barra de avantzamentu</string>
     <string name="comments_are_disabled">Sos cummentos sunt disabilitados</string>
     <string name="detail_heart_img_view_description">Su creadore b\'at postu unu coro</string>
     <string name="mark_as_watched">Marca comente pompiadu</string>
@@ -701,7 +664,6 @@
     <string name="any_network">Cale si siat retze</string>
     <string name="notifications_disabled">Sas notìficas sunt disabilitadas</string>
     <string name="get_notified">Retzi notìficas</string>
-    <string name="enumeration_comma">,</string>
     <string name="toggle_all">Ativa/disativa totu</string>
     <string name="you_successfully_subscribed">Como ses iscritu a custu canale</string>
     <string name="settings_category_player_notification_title">Notìfica de su riproduidore</string>

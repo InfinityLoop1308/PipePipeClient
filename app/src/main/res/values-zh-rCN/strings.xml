@@ -20,9 +20,6 @@
 <string name="did_you_mean">您是不是要找“%1$s”？</string>
 <string name="search_showing_result_for">显示结果：%s</string>
 <string name="share_dialog_title">分享给</string>
-<string name="use_external_video_player_title">使用外部视频播放器</string>
-<string name="use_external_video_player_summary">在某些分辨率中会移除音频</string>
-<string name="use_external_audio_player_title">使用外部音频播放器</string>
 <string name="subscribe_button_title">订阅</string>
 <string name="subscribed_button_title">已订阅</string>
 <string name="unsubscribe">取消订阅</string>
@@ -46,12 +43,8 @@
 <string name="download_path_audio_dialog_title">选择音频文件下载路径</string>
 <string name="default_resolution_title">默认分辨率</string>
 <string name="default_popup_resolution_title">默认悬浮窗分辨率</string>
-<string name="show_higher_resolutions_title">显示更高的分辨率</string>
-<string name="show_higher_resolutions_summary">仅部分设备支持播放 2K/4K 视频</string>
 <string name="play_with_kodi_title">使用 Kodi 播放</string>
 <string name="kore_not_found">安装缺少的 Kore 应用？</string>
-<string name="show_play_with_kodi_title">显示“使用 Kodi 播放”选项</string>
-<string name="show_play_with_kodi_summary">显示通过 Kodi 媒体中心播放的选项</string>
 <string name="crash_the_player">崩溃播放器</string>
 <string name="notification_scale_to_square_image_title">将缩略图裁剪为 1:1 比例</string>
 <string name="notification_scale_to_square_image_summary">将通知中显示的视频缩略图从 16:9 裁剪为 1:1 比例</string>
@@ -69,15 +62,11 @@
 <string name="notification_colorize_title">彩色通知</string>
 <string name="notification_colorize_summary">让 Android 根据缩略图中的主要颜色自定义通知的颜色（请注意，这并非在所有设备上都可用）</string>
 <string name="play_audio">音频</string>
-<string name="default_audio_format_title">默认音频格式</string>
-<string name="default_video_format_title">默认视频格式</string>
 <string name="theme_title">主题</string>
 <string name="night_theme_title">夜间主题</string>
 <string name="light_theme_title">亮色</string>
 <string name="dark_theme_title">暗色</string>
 <string name="black_theme_title">黑色</string>
-<string name="popup_remember_size_pos_title">记住悬浮窗属性</string>
-<string name="popup_remember_size_pos_summary">记住上次播放时悬浮窗大小和位置</string>
 <string name="use_inexact_seek_title">使用快速粗略定位</string>
 <string name="use_inexact_seek_summary">粗略定位使播放器以较低的精度更快地定位。定位 5、15 或 25 秒不适用于此</string>
 <string name="seek_duration_title">快进/快退定位单位时间</string>
@@ -88,11 +77,6 @@
 <string name="clear_queue_confirmation_description">当前播放器队列将被替换</string>
 <string name="download_thumbnail_title">加载缩略图</string>
 <string name="download_thumbnail_summary">关闭以防止加载缩略图、保存数据和内存占用。更改会清除内存中和磁盘上的图像缓存</string>
-<string name="show_comments_title">显示评论</string>
-<string name="show_comments_summary">关闭以隐藏评论</string>
-<string name="show_next_and_similar_title">显示“下一个”和“类似”视频</string>
-<string name="show_description_title">显示简介</string>
-<string name="show_description_summary">关闭以隐藏视频简介和附加信息</string>
 <string name="show_meta_info_title">显示元数据</string>
 <string name="show_meta_info_summary">关闭以隐藏包含有关串流创建者、串流内容或搜索请求的附加信息的元数据框</string>
 <string name="thumbnail_cache_wipe_complete_notice">图像缓存已清除</string>
@@ -115,8 +99,6 @@
 <string name="enable_watch_history_title">观看历史</string>
 <string name="enable_playback_resume_title">恢复播放</string>
 <string name="enable_playback_resume_summary">恢复上次播放位置</string>
-<string name="enable_playback_state_lists_title">列表中的播放位置</string>
-<string name="enable_playback_state_lists_summary">在列表中显示播放位置指示器</string>
 <string name="settings_category_clear_data_title">清除数据</string>
 <string name="enable_watch_history_summary">记录观看的视频</string>
 <string name="resume_on_audio_focus_gain_title">恢复播放</string>
@@ -125,12 +107,9 @@
 <string name="start_main_player_fullscreen_title">全屏启动主播放器</string>
 <string name="start_main_player_fullscreen_summary">若自动旋转被锁定，不在迷你播放器中开始播放视频，而是直接转到全屏模式。您仍可以通过退出全屏来访问迷你播放器</string>
 <string name="autoplay_title">自动播放</string>
-<string name="show_hold_to_append_title">显示“长按加入队列”提示</string>
-<string name="show_hold_to_append_summary">在视频详细信息中点击后台或悬浮窗按钮时显示提示</string>
 <string name="unsupported_url">不支持的 URL</string>
 <string name="unsupported_url_dialog_message">无法识别 URL。在其他应用中打开？</string>
 <string name="default_content_country_title">默认内容国家</string>
-<string name="content_language_title">默认内容语言</string>
 <plurals name="replies">
 <item quantity="one">%s 条回复</item>
 <item quantity="other">%s 条回复</item>
@@ -144,8 +123,6 @@
 <string name="peertube_instance_add_https_only">仅支持 HTTPS URL</string>
 <string name="peertube_instance_add_exists">实例已存在</string>
 <string name="settings_category_player_title">播放器</string>
-<string name="settings_category_player_behavior_title">行为</string>
-<string name="settings_category_video_audio_title">视频和音频</string>
 <string name="settings_category_history_title">历史和缓存</string>
 <string name="settings_category_appearance_title">外观</string>
 <string name="settings_category_debug_title">调试</string>
@@ -155,10 +132,6 @@
 <string name="background_player_playing_toast">后台播放</string>
 <string name="popup_playing_toast">悬浮窗模式播放</string>
 <string name="content">内容</string>
-<string name="show_age_restricted_content_title">显示年龄限制内容</string>
-<string name="show_age_restricted_content_summary">显示因年龄限制可能不适合儿童的内容（例如 18+）</string>
-<string name="youtube_restricted_mode_enabled_title">打开 YouTube 的“受限模式”</string>
-<string name="youtube_restricted_mode_enabled_summary">YouTube 提供了一种隐藏潜在成人内容的“受限模式”</string>
 <string name="restricted_video">该视频有年龄限制。\n\n如果您想观看，请在设置中打开“%1$s”。</string>
 <string name="restricted_video_no_stream_new">此视频已设置年龄限制。\n如果要观看，请通过设置登录。</string>
 <string name="duration_live">直播</string>
@@ -325,8 +298,6 @@
 <!-- Downloads -->
 <string name="settings_category_downloads_title">下载</string>
 <string name="settings_file_charset_title">文件名中允许的字符</string>
-<string name="settings_file_replacement_character_summary">无效字符替换为该字符</string>
-<string name="settings_file_replacement_character_title">替换字符</string>
 <string name="charset_letters_and_digits">字母和数字</string>
 <string name="charset_most_special_characters">特殊字符</string>
 <string name="toast_no_player">未安装播放此文件的应用</string>
@@ -335,14 +306,9 @@
 <string name="title_licenses">第三方许可证</string>
 <string name="copyright">© %1$s 作者 %2$s 使用 %3$s</string>
 <string name="tab_about">关于</string>
-<string name="tab_licenses">许可证</string>
 <string name="app_description_new">一个自由浏览 YouTube、NicoNico 和 BiliBili 的 FLOSS Android 应用程序</string>
 <string name="contribution_title">贡献</string>
 <string name="contribution_encouragement">您是否有想法；翻译、更改设计、代码清理或繁重的代码更改——我们随时欢迎您提供帮助。做得越多越好！</string>
-<string name="view_on_codeberg">在 CodeBerg 上查看</string>
-<string name="give_back">回赠</string>
-<string name="website_title_new">网站（上游）</string>
-<string name="read_privacy_policy">阅读隐私政策</string>
 <string name="app_license_title_new">NewPipe 的许可证（上游）</string>
 <string name="app_license">NewPipe 是版权自由软件：您可以随时使用、研究共享和改进。您可以根据自由软件基金会发布的 GNU 通用公共许可证 GPLv3 或（由您选择）任何更高版本的许可证重新分发或修改该软件。</string>
 <string name="read_full_license">阅读许可证</string>
@@ -486,9 +452,6 @@
 <string name="percent">百分比</string>
 <string name="semitone">半音</string>
 <!-- GDPR dialog -->
-<string name="start_accept_privacy_policy_new">为了遵守欧盟的《通用数据保护条例》（GDPR），我们特此提醒您注意 PipePipe 的隐私政策。请您仔细阅读。 \n您必须在同意以后才能向我们发送错误报告。</string>
-<string name="accept">接受</string>
-<string name="decline">拒绝</string>
 <!-- Limit mobile data usage  -->
 <string name="limit_data_usage_none_description">无限制</string>
 <string name="limit_mobile_data_usage_title">使用移动数据时限制分辨率</string>
@@ -529,7 +492,6 @@
 <string name="grid">网格</string>
 <string name="auto">自动</string>
 <!-- Seekbar Preview Thumbnail-->
-<string name="seekbar_preview_thumbnail_title">定位栏缩略图预览</string>
 <string name="high_quality_larger">高质量（更大）</string>
 <string name="low_quality_smaller">低质量（更小）</string>
 <string name="dont_show">不显示</string>
@@ -599,7 +561,6 @@
 <string name="downloads_storage_ask_summary_no_saf_notice">系统将询问您每次下载保存到何处</string>
 <string name="downloads_storage_use_saf_title">使用系统文件夹选择器（SAF）</string>
 <string name="downloads_storage_use_saf_summary">“存储访问框架”允许下载到外部 SD 卡</string>
-<string name="downloads_storage_use_saf_summary_api_29">从 Android 10 开始支持“存储访问框架”</string>
 <string name="choose_instance_prompt">选择实例</string>
 <string name="app_language_title">应用语言</string>
 <string name="systems_language">系统默认</string>
@@ -608,7 +569,6 @@
 <string name="remove_watched_popup_warning">添加到播放列表之前和之后观看过的视频将被删除。
         \n您确定\?这不能被撤消！</string>
 <string name="remove_watched_popup_yes_and_partially_watched_videos">是，部分观看的视频</string>
-<string name="new_seek_duration_toast">由于 ExoPlayer 限制，搜索持续时间设置为 %d 秒</string>
 <!-- Feed -->
 <string name="fragment_feed_title">最近更新</string>
 <string name="feed_groups_header_title">频道组</string>
@@ -651,7 +611,6 @@
         \n
         \n所以选择归结为您喜欢什么：速度或精确信息。</string>
 <string name="feed_toggle_show_played_items">显示已观看项目</string>
-<string name="feed_toggle_hide_played_items">隐藏已观看项目</string>
 <string name="content_not_supported_new">PipePipe 尚未支持此内容。\n\n希望在未来的版本中支持。</string>
 <string name="detail_sub_channel_thumbnail_view_description">频道头像缩略图</string>
 <string name="channel_created_by">由 %s 创建</string>
@@ -692,11 +651,6 @@
 <string name="metadata_support">支持</string>
 <string name="metadata_host">主持</string>
 <string name="metadata_thumbnail_url">缩略图 URL</string>
-<string name="metadata_thumbnails">缩略图</string>
-<string name="metadata_subchannel_avatars">子频道头像</string>
-<string name="metadata_uploader_avatars">上传者头像</string>
-<string name="metadata_avatars">头像</string>
-<string name="metadata_banners">横幅</string>
 <string name="metadata_privacy_public">公开</string>
 <string name="metadata_privacy_unlisted">非公开</string>
 <string name="metadata_privacy_private">私人</string>
@@ -714,21 +668,10 @@
 <string name="notifications_disabled">通知关闭</string>
 <string name="get_notified">收到通知</string>
 <string name="you_successfully_subscribed">您现在订阅了此频道</string>
-<string name="enumeration_comma">,</string>
 <string name="toggle_all">开关全部</string>
-<string name="show_replies">显示回复</string>
 <string name="remove_duplicates">删除重复项</string>
 <string name="remove_duplicates_popup_title">删除重复串流？</string>
 <string name="remove_duplicates_popup_warning">播放列表中的重复串流将被删除。\n\n您确定吗？这不能被撤消！</string>
-<string name="streams_not_yet_supported_removed">隐藏下载器尚未支持的串流</string>
-<string name="selected_stream_external_player_not_supported">外部播放器不支持所选串流</string>
-<string name="no_audio_streams_available_for_external_players">无可供外部播放器使用的音频串流</string>
-<string name="no_video_streams_available_for_external_players">无可供外部播放器使用的视频串流</string>
-<string name="select_quality_external_players">为外部播放器选择质量</string>
-<string name="unknown_format">未知格式</string>
-<string name="unknown_quality">未知质量</string>
-<string name="feed_toggle_show_future_items">显示未来项目</string>
-<string name="feed_toggle_hide_future_items">隐藏未来项目</string>
 <string name="channel_tab_videos">视频</string>
 <string name="channel_tab_livestreams">直播</string>
 <string name="channel_tab_shorts">短视频</string>
@@ -738,8 +681,6 @@
 <string name="channel_tab_info">信息</string>
 <string name="show_channel_tabs">频道选项卡</string>
 <string name="show_channel_tabs_summary">频道页面显示选项卡</string>
-<string name="image_quality_title">图片质量</string>
-<string name="image_quality_summary">选择图片质量以及是否根本不加载图片来降低数据和内存使用。更改选项会清除内存中和磁盘上的图片缓存 - %s</string>
 <string name="image_quality_none">不加载图片</string>
 <string name="image_quality_low">低质量</string>
 <string name="image_quality_medium">中等质量</string>
@@ -777,7 +718,7 @@
 <string name="tags_only">仅标签</string>
 <string name="sortby">排序方式</string>
 <string name="sortorder">排序方式</string>
-<string name="features">功能</string>
+<string name="features">特性</string>
 <string name="sort_popular">流行度</string>
 <string name="sort_view">观看次数</string>
 <string name="sort_bookmark">收藏数</string>
@@ -792,8 +733,6 @@
 <string name="sort_relevance">相关</string>
 <string name="sort_rating">评分</string>
 <string name="sort_ascending">升序</string>
-<string name="auto_queue_partition_summary">总是尝试将下一段加入队列</string>
-<string name="auto_queue_partition_title">自动将下一个段加入队列</string>
 <string name="title_staff_list">合作者列表</string>
 <string name="av_num">稿件av号</string>
 <string name="stat_view">播放数</string>
@@ -808,7 +747,6 @@
 <string name="stat_dislike">点踩数</string>
 <string name="stat_evaluation">视频评分</string>
 <string name="button_view_pictures">查看图片 (%d)</string>
-<string name="next">下一个</string>
 <string name="previous">上一个</string>
 <string name="no">不</string>
 <string name="later">稍后</string>
@@ -835,7 +773,6 @@
 <string name="sponsor_block_enable_title">跳过赞助</string>
 <string name="sponsor_block_enable_summary">自动跳过视频中的赞助商。适用于YouTube和BiliBili。</string>
 <string name="sponsor_block_api_url_title">API网址</string>
-<string name="sponsor_block_api_url_summary">查询SponsorBlock API时使用的网址。必须设置此项才能使SponsorBlock生效。</string>
 <string name="sponsor_block_notifications_title">跳过赞助时通知</string>
 <string name="sponsor_block_notifications_summary">当自动跳过赞助时显示一个提示通知。</string>
 <string name="sponsor_block_privacy_title">查看隐私政策</string>
@@ -850,25 +787,11 @@
 <string name="sponsor_block_skip_non_music_toast">已跳过非音乐</string>
 <string name="sponsor_block_skip_preview_toast">已跳过预览/回顾</string>
 <string name="sponsor_block_skip_filler_toast">已跳过填充/笑话</string>
-<string name="sponsor_block_toggle_skipping">切换跳过赞助</string>
-<string name="sponsor_block_clear_whitelist_title">清除白名单</string>
-<string name="sponsor_block_clear_whitelist_summary">清除SponsorBlock将忽略的上传者列表。</string>
-<string name="sponsor_block_enabled_toast">SponsorBlock已启用</string>
-<string name="sponsor_block_disabled_toast">SponsorBlock已禁用</string>
-<string name="sponsor_block_whitelist_cleared_toast">白名单已清除</string>
-<string name="sponsor_block_uploader_added_to_whitelist_toast">上传者已添加到白名单</string>
-<string name="sponsor_block_uploader_removed_from_whitelist_toast">上传者已从白名单中移除</string>
-<string name="sponsor_block_confirm_clear_whitelist">您确定要清除白名单吗？</string>
 <string name="sponsor_block_confirm_reset_colors">您确定要重置类别颜色吗？</string>
 <string name="download_all_message">请确保您已选择下载文件夹并授予访问权限，否则下载将失败。已存在的文件将不会被覆盖。如果音频无法单独下载，将会下载相应的视频。</string>
-<string name="feed_show_watched">已完全观看</string>
-<string name="feed_show_partially_watched">部分观看</string>
-<string name="feed_show_upcoming">即将播出</string>
 <string name="sort">排序</string>
 <string name="settings_category_exoplayer_title">ExoPlayer设置</string>
 <string name="settings_category_exoplayer_summary">管理一些ExoPlayer设置。这些更改需要重新启动播放器才能生效。</string>
-<string name="use_exoplayer_decoder_fallback_title">使用ExoPlayer的解码器回退功能</string>
-<string name="use_exoplayer_decoder_fallback_summary">如果您遇到解码器初始化问题，启用此选项将会回退到优先级较低的解码器，如果主要解码器初始化失败。这可能导致播放性能不如使用主要解码器时好。</string>
 <string name="always_use_exoplayer_set_output_surface_workaround_title">始终使用ExoPlayer的视频输出表面设置解决方法</string>
 <string name="always_use_exoplayer_set_output_surface_workaround_summary">此解决方法在表面发生变化时释放并重新实例化视频编解码器，而不是直接将表面设置给编解码器。已在一些存在此问题的设备上由ExoPlayer使用，此设置仅在Android 6及更高版本上生效\n\n启用此选项可能会防止切换当前视频播放器或切换到全屏时出现播放错误。</string>
 <string name="high_res">播放和下载（适用于高级内容/更高视频分辨率和音频质量）</string>
@@ -881,9 +804,6 @@
 <string name="sort_origin_reverse">原始（逆向）</string>
 <string name="dialog_title_enable_update_checker">启用更新检查器</string>
 <string name="dialog_message_enable_update_checker">您要启用更新检查器吗？您可以在设置中禁用它。</string>
-<string name="warning">警告</string>
-<string name="download_temp_warning">播放列表下载仍处于测试阶段。绝对不要用它来下载包含50个以上项目的播放列表。</string>
-<string name="donation_encouragement_new">我已尽最大努力为您提供最佳的用户体验，但您有机会通过捐赠使 PipePipe 变得更好。有了足够的捐款，我可以投入更多时间来开发这个项目。</string>
 <string name="error_priority_notice">优先级：GitHub/CodeBerg 上的问题 &gt; 标题清晰、内容礼貌且包含错误报告的邮件 &gt; 仅包含错误报告的邮件。\n仅包含错误报告的邮件将不会收到回复。</string>
 <string name="sleep_timer_length_title">睡眠定时器</string>
 <string name="error_match_notification_title">找到了您遇到的错误的匹配项</string>
@@ -891,7 +811,6 @@
 <string name="oldest_first">最早优先</string>
 <string name="newest_first">最新优先</string>
 <string name="same_as_item_mode">与条目相同</string>
-<string name="playlist_sorting_mode_title">播放列表排序模式</string>
 <string name="dont_auto_queue_long_title">不要自动入队长视频</string>
 <string name="dont_auto_queue_long_description">只自动入队不超过6分钟的视频</string>
 <string name="enable_notification_text">请启用此应用程序的通知,以确保其正常运行。我们只会在必要时提醒你。</string>
@@ -899,17 +818,16 @@
 <string name="sponsor_promote">成为支持者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">在后台播放时自动随机播放您的本地播放列表</string>
-<string name="update_log">### 新功能\n\n- 略微改进了 UI，使 PipePipe 看起来更现代\n- 重新设计了搜索过滤菜单 \n\n### 修复问题\n\n- 在某些情况下，已登录时无法播放 YouTube 视频（YouTube）\n- 在某些情况下，搜索结果中的上传者名称错误（YouTube） \n- 在某些情况下发生解析错误（YouTube）\n- 有时无法提取频道上传者（BiliBili）\n- 有时由于风控无法提取频道详情（BiliBili）\n- 在某些情况下崩溃 \n\n### 其他\n\n- 提高稳定性</string>
+<string name="update_log">修复：所有视频（YouTube）上出现的“This content is not supported by PipePipe”错误\n\n最近 YouTube 频繁更新，请确保开启更新检查，以便及时接收我们的最新补丁。</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 <string name="donation_dialog_title">支持该项目</string>
-<string name="donation_dialog_message">在 Ko-fi 上支持我们，帮助保持视频观看的开放性和无追踪。</string>
+<string name="donation_dialog_message">感谢您使用 PipePipe！如果您觉得它有用，请考虑在 Ko-Fi 上成为支持者。您的支持对我很重要，并帮助我添加更多令人兴奋的新功能。每一点都很重要！😇</string>
 <string name="fullscreen_gesture_control_summary">使用手势进入/退出全屏</string>
 <string name="fullscreen_gesture_control_title">全屏手势控制</string>
 <string name="require_audio_focus_summary">确保只有 PipePipe 正在播放音频</string>
 <string name="require_audio_focus_title">需要音频焦点</string>
 <string name="decoder_init_failure">解码器初始化失败</string>
-<string name="go_to_settings">去设置</string>
 <string name="unable_to_decode_summary">您的设备缺乏所需的硬件解码器，因此无法在PipePipe中播放此视频。\n请下载并在VLC中播放。</string>
 <string name="settings_category_gestures_summary">手势设置</string>
 <string name="settings_category_bullet_comments_summary">弹幕设置</string>
@@ -919,8 +837,6 @@
 <string name="advanced_formats_summary">如果您的设备支持，启用高级格式可以减少数据消耗并提供更高的分辨率。\n必须启用 WEBM 或 AV1 才能在 YouTube 上显示 2k/4k 内容。\n使用您的设备不支持的格式将导致黑屏或崩溃。</string>
 <string name="advanced_formats_title">启用高级格式</string>
 <string name="preferred_audio_language_title">首选音频语言</string>
-<string name="comments_inner_scroll_title">评论内滚动</string>
-<string name="comments_inner_scroll_summary">在滚动评论时使视频位置固定</string>
 <string name="ip_blocked_summary">您的IP已被YouTube暂时封锁。在一段时间内，您播放某些视频时可能会遇到问题。\nn如果错误持续，请通过设置登录以继续。</string>
 <string name="settings_category_filter_title">内容过滤器</string>
 <string name="filter_by_keyword_title">按关键词过滤</string>
@@ -966,7 +882,6 @@
 <string name="sponsor_block_clear_segment">清除片段</string>
 <string name="sponsor_block_submit_segment">提交片段</string>
 <string name="sponsor_block_skip_marked_segments">跳过标记的片段</string>
-<string name="sponsor_block_whitelist_channel">白名单频道</string>
 <string name="settings_category_sponsor_block_categories_quick_actions">快速操作</string>
 <string name="settings_category_sponsor_block_categories_all_colors_on_title">全部开启</string>
 <string name="settings_category_sponsor_block_categories_all_colors_off_title">全部关闭</string>
@@ -1023,8 +938,6 @@
 <string name="enable_max_rows_customization_summary">启用以自定义弹幕的最大行数</string>
 <string name="always_list_mode_for_bookmark_title">始终使用列表模式显示书签</string>
 <string name="select_channel_group_prompt">选择一个频道组</string>
-<string name="feed_groups_grid_layout_title">对频道组列表使用网格布局</string>
-<string name="feed_groups_grid_layout_summary">在订阅页面中，将频道组显示为网格而不是水平滚动</string>
 <string name="press_back_again_to_exit">再次按返回键退出</string>
 <string name="need_login_hint"> 此内容需要账户才能查看。通过设置登录以继续。</string>
 <string name="exit_app_confirmation_message">显示“再次按返回键退出”提示以避免意外退出</string>
@@ -1051,32 +964,61 @@
 <string name="clear_webview_cookies">清除 WebView Cookie</string>
 <string name="clear_webview_cookies_summary">清除 WebView 组件存储的所有 Cookie，以便您可以使用新账户</string>
 <string name="webview_cookies_cleared">WebView Cookie 已清除</string>
-<string name="webview_cookies_clear_failed">清除 WebView Cookie 失败</string>
 <string name="import_urls_from_file">从文件导入URL</string>
 <string name="import_urls_error">导入URL时出错：%s</string>
 <string name="import_urls_no_valid_urls">在所选文件中未找到有效的URL</string>
 <string name="remove_from_playlist_confirmation">从播放列表中移除此项目？</string>
 <string name="filter_paid_contents_title">筛选付费内容</string>
 <string name="filter_paid_contents_summary">从结果中移除付费内容</string>
-<string name="show_auto_translated_subtitles_title">显示自动翻译的字幕</string>
-<string name="show_auto_translated_subtitles_summary">如果启用，PipePipe 将尝试在您的默认内容语言中添加一个自动翻译的字幕轨道。\n这会使视频加载速度稍微变慢。</string>
 <string name="local_playlist_swipe_action_title">本地播放列表中的右滑操作</string>
 <string name="search_suggestions_count_title">搜索建议计数</string>
 <string name="search_suggestions_count_summary">显示的过去搜索建议数量</string>
 <string name="disable_android_auto_title">禁用 Android Auto</string>
 <string name="disable_android_auto_summary">禁用 Android Auto 连接以避免在 Android 12 及更早版本上出现通知问题。\n\n重新启用此选项后，您必须重新启动应用程序并重新连接到汽车以使更改生效。</string>
-<string name="youtube_account_temporarily_disabled">暂时停用</string>
-<string name="beta_test_dialog_title">加入 PipePipe 5.0.0 Beta-2 测试！</string>
-<string name="beta_test_dialog_message">感谢您一直以来的支持！我们很高兴发布 PipePipe 5.0.0 Beta-2，这是我们对应用从零重构的一次重大进展。\n\n此版本根据早期反馈，着重提升稳定性并完善功能。虽然我们离正式版更近了，但它仍然是测试版，您的反馈非常宝贵。\n\n提醒：它将以 \"PipePipe Beta\" 的形式安装，不会影响您当前的应用或数据。\n\n如果您遇到任何问题或有建议，请在我们的 GitHub 仓库提交 issue 告诉我们！</string>
-<string name="trending_replaced">YouTube 最近移除了热门视频功能，因此我们已将默认的 YouTube 热门标签页改为显示推荐直播。如果你不想看到此内容，可以在设置中移除该标签页，并将其他标签页设为你的首页。</string>
 <string name="youtube_login_warning_title">仅在需要时登录</string>
 <string name="youtube_login_warning_message">由于 YouTube 的加密机制，登录状态下播放仅提供 AVC 格式，无法下载纯音频，不支持回放正在直播中的直播流，并且提取稳定性更低。\n\n仅在以下情况下才应登录：\n1. 由于 IP 封锁，你无法匿名观看视频\n2. 你需要观看有年龄限制的视频\n3. 你是某个频道的会员，需要观看仅会员可见的视频\n\n如果在登录状态下视频提取或播放失败，请尝试退出登录并在 GitHub 上报告该问题。</string>
 <string name="filter">筛选</string>
 <string name="search_type">搜索类型</string>
-<string name="select_service">选择服务</string>
 <string name="perform_search">执行搜索</string>
 <string name="done">完成</string>
 <string name="expand">展开</string>
 <string name="collapse">折叠</string>
-<string name="sponsor_promote_later">以后再说</string>
+<string name="grid_layout_title">网格布局</string>
+<string name="grid_layout_summary">在网格中显示支持的列表，而不是单列列表</string>
+<string name="grid_columns_title">网格列数</string>
+<string name="grid_columns_landscape_title">网格列数（横屏）</string>
+<string name="channel_tab_podcasts">播客</string>
+<string name="video_tabs_title">视频标签页</string>
+<string name="video_tabs_summary">配置在视频详情页面上显示的标签页</string>
+<string name="filter_future_items_title">过滤未来的项目</string>
+<string name="filter_future_items_summary">移除计划在未来发布的项目</string>
+<string name="pin_video_to_top_title">将视频固定在顶部</string>
+<string name="pin_video_to_top_summary">在滚动视频详情页面时保持视频固定在顶部</string>
+<string name="settings_category_behavior_title">行为</string>
+<string name="use_experimental_new_ui_title">使用实验性新 UI</string>
+<string name="use_experimental_new_ui_summary">使用新的基于 Compose 的 UI，仍在优化中。更改此项将重启应用。</string>
+<string name="force_end_on_overtime_title">超时强制结束</string>
+<string name="force_end_on_overtime_summary">当当前播放位置超过流时长时强制结束播放，用于解决无法自然停止的流的问题</string>
+<string name="use_old_search_filter_title">使用旧版搜索筛选器</string>
+<string name="use_old_search_filter_summary">使用基于菜单的旧版搜索筛选器，而不是新的对话框界面</string>
+<string name="main_tabs_position_summary">将主标签页选择器移到底部</string>
+<string name="main_tabs_position_title">主标签页位置</string>
+<string name="past_hour">过去一小时</string>
+<string name="past_day">过去一天</string>
+<string name="past_week">过去一周</string>
+<string name="past_month">过去一月</string>
+<string name="past_year">过去一年</string>
+<string name="short_video">短片</string>
+<string name="medium_length">中等</string>
+<string name="long_video">长片</string>
+<string name="extra_long">超长</string>
+<string name="upload_date">上传日期</string>
+<string name="duration">时长</string>
+<string name="license">许可</string>
+<string name="published">发布日期</string>
+<string name="disable_exoplayer_media_codec_async_queueing_title">禁用 MediaCodec 异步队列</string>
+<string name="disable_exoplayer_media_codec_async_queueing_summary">解决部分设备上由 MediaCodec 异步队列引起的播放错误的变通方案。启用此选项可能会提升兼容性，但会降低播放性能。</string>
+<string name="media_codec_workaround_hint_title">MediaCodec 播放失败</string>
+<string name="media_codec_async_workaround_hint">此故障可能是由 MediaCodec 异步队列引起的。请尝试在 ExoPlayer 设置中启用 \"禁用 MediaCodec 异步队列\"，然后重新启动播放。</string>
+<string name="media_codec_surface_workaround_hint">此故障发生在更改视频输出 Surface 时。请尝试在 ExoPlayer 设置中启用 \"始终使用 ExoPlayer 的视频输出 Surface 设置变通方案\"，然后重新启动播放。</string>
 </resources>

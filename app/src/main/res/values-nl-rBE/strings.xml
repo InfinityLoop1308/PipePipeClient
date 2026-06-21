@@ -15,9 +15,6 @@
     <string name="settings">Instellingen</string>
     <string name="did_you_mean">Bedoelde je \"%1$s\"\?</string>
     <string name="share_dialog_title">Delen met</string>
-    <string name="use_external_video_player_title">Externe videospeler gebruiken</string>
-    <string name="use_external_video_player_summary">Verwijdert het geluid bij sommige resoluties</string>
-    <string name="use_external_audio_player_title">Externe audiospeler gebruiken</string>
     <string name="subscribe_button_title">Abonneer</string>
     <string name="subscribed_button_title">Geabonneerd</string>
     <string name="channel_unsubscribed">Abonnement opgezegd</string>
@@ -38,21 +35,13 @@
     <string name="download_path_audio_dialog_title">Kies de downloadlocatie voor audiobestanden</string>
     <string name="default_resolution_title">Standaard resolutie</string>
     <string name="default_popup_resolution_title">Standaard resolutie voor pop-up</string>
-    <string name="show_higher_resolutions_title">Hogere resoluties weergeven</string>
-    <string name="show_higher_resolutions_summary">Slechts enkele toestellen kunnen 2K- en 4K-video\'s afspelen</string>
     <string name="play_with_kodi_title">Afspelen met Kodi</string>
     <string name="kore_not_found">Wilt u de missende Kore-app installeren\?</string>
-    <string name="show_play_with_kodi_title">Toon “Afspelen met Kodi”-optie</string>
-    <string name="show_play_with_kodi_summary">Toont een optie om video af te spelen op een Kodi media center</string>
     <string name="play_audio">Audio</string>
-    <string name="default_audio_format_title">Standaard audio formaat</string>
-    <string name="default_video_format_title">Standaard video formaat</string>
     <string name="theme_title">Thema</string>
     <string name="light_theme_title">Licht</string>
     <string name="dark_theme_title">Donker</string>
     <string name="black_theme_title">Zwart</string>
-    <string name="popup_remember_size_pos_title">Onthoud grootte en positie van pop-up</string>
-    <string name="popup_remember_size_pos_summary">Onthoud laatste grootte en positie van pop-up</string>
     <string name="use_inexact_seek_title">Snel, minder exact spoelen gebruiken</string>
     <string name="use_inexact_seek_summary">Minder exact spoelen laat de speler sneller posities zoeken met verminderde precisie. 5, 15 en 25 seconden werken niet</string>
     <string name="download_thumbnail_title">Miniatuurvoorbeelden laden</string>
@@ -72,22 +61,15 @@
     <string name="resume_on_audio_focus_gain_title">Hervat afspelen</string>
     <string name="resume_on_audio_focus_gain_summary">Ga verder met afspelen na onderbrekingen (b.v. telefoongesprekken)</string>
     <string name="download_dialog_title">Downloaden</string>
-    <string name="show_next_and_similar_title">Toont ‘Volgende’ en ‘Vergelijkbare’ video’s</string>
-    <string name="show_hold_to_append_title">Toon tip ‘Ingedrukt houden om toe te voegen’</string>
-    <string name="show_hold_to_append_summary">Toon tip als de achtergrond- of pop-up knop wordt ingedrukt in de video \"Details:\"</string>
     <string name="unsupported_url">URL wordt niet ondersteund</string>
     <string name="default_content_country_title">Standaard land</string>
-    <string name="content_language_title">Standaard taal voor inhoud</string>
     <string name="settings_category_player_title">Speler</string>
-    <string name="settings_category_player_behavior_title">Gedrag</string>
-    <string name="settings_category_video_audio_title">Video en audio</string>
     <string name="settings_category_history_title">Geschiedenis en cache</string>
     <string name="settings_category_appearance_title">Uiterlijk</string>
     <string name="settings_category_debug_title">Foutopsporing</string>
     <string name="background_player_playing_toast">Speelt af in achtergrond</string>
     <string name="popup_playing_toast">Speelt af in pop-upmodus</string>
     <string name="content">Inhoud</string>
-    <string name="show_age_restricted_content_title">Toon inhoud met leeftijdsbeperking</string>
     <string name="duration_live">Live</string>
     <string name="downloads">Downloads</string>
     <string name="downloads_title">Downloads</string>
@@ -190,8 +172,6 @@
     <string name="recaptcha_request_toast">reCAPTCHA-uitdaging gevraagd</string>
     <string name="settings_category_downloads_title">Download</string>
     <string name="settings_file_charset_title">Toegelaten tekens in bestandsnamen</string>
-    <string name="settings_file_replacement_character_summary">Ongeldige tekens worden vervangen door deze waarde</string>
-    <string name="settings_file_replacement_character_title">Vervangend teken</string>
     <string name="charset_letters_and_digits">Letters en cijfers</string>
     <string name="charset_most_special_characters">Meeste speciale tekens</string>
     <string name="toast_no_player">Er is geen app geïnstalleerd die dit bestand kan afspelen</string>
@@ -199,14 +179,12 @@
     <string name="title_licenses">Derdepartijlicenties</string>
     <string name="copyright" formatted="true">© %1$s door %2$s, uitgebracht onder de %3$s</string>
     <string name="tab_about">Over</string>
-    <string name="tab_licenses">Licenties</string>
     <string name="app_description">Vrij en licht streamen voor Android.</string>
     <string name="contribution_title">Bijdragen</string>
     <string name="contribution_encouragement">Hulp is altijd welkom, of u nu nieuwe ideeën hebt, vertalingen kunt bijdragen, wijzigingen hebt voor het ontwerp, de code kunt opkuisen of er zelfs grote wijzigingen in wilt maken. Hoe meer hulp, hoe beter dat het wordt!</string>
     <string name="view_on_github">Bekijken op GitHub</string>
     <string name="donation_title">Doneren</string>
     <string name="donation_encouragement">NewPipe wordt door vrijwilligers in hun vrije tijd ontwikkeld om jou de beste ervaring te brengen. Geef wat terug zodat onze ontwikkelaars NewPipe nóg beter kunnen maken terwijl ze van hun kopje koffie genieten.</string>
-    <string name="give_back">Teruggeven</string>
     <string name="website_title">Website</string>
     <string name="website_encouragement">Bezoek de website van NewPipe voor meer informatie en het laatste nieuws.</string>
     <string name="app_license_title">Licentie van NewPipe</string>
@@ -314,11 +292,8 @@
     <string name="privacy_policy_title">Privacybeleid van NewPipe</string>
     <string name="privacy_policy_encouragement">Het NewPipe-project neemt privacy serieus. Daarom verzamelt de app geen gegevens zonder uw toestemming.
 \nNewPipe\'s privacybeleid legt gedetailleerd uit welke gegevens verstuurd en opgeslagen worden als u een crashrapport verstuurt.</string>
-    <string name="read_privacy_policy">Privacybeleid lezen</string>
     <string name="start_accept_privacy_policy">Om de Europese Algemene Verordening Gegevensbescherming (ook wel: AVG of GDPR) na te leven, wijzen we u op het nieuwe privacybeleid van NewPipe. Lees dit zorgvuldig.
 \nU moet het beleid aanvaarden om ons het foutrapport te kunnen opsturen.</string>
-    <string name="accept">Aanvaarden</string>
-    <string name="decline">Weigeren</string>
     <string name="limit_data_usage_none_description">Onbeperkt</string>
     <string name="limit_mobile_data_usage_title">Resolutie beperken bij gebruik van mobiele gegevens</string>
     <string name="minimize_on_exit_title">Minimaliseren bij overschakelen naar andere app</string>
@@ -386,8 +361,6 @@
     <string name="max_retry_desc">Maximaal aantal pogingen vooraleer dat de download wordt geannuleerd</string>
     <string name="pause_downloads_on_mobile">Pauzeren bij mobiele data verbinding</string>
     <string name="pause_downloads_on_mobile_desc">Nuttig bij het gebruik van mobiele data, hoewel sommige downloads niet uitgesteld kunnen worden</string>
-    <string name="show_comments_title">Commentaren weergeven</string>
-    <string name="show_comments_summary">Schakel dit uit om reacties te verbergen</string>
     <string name="autoplay_title">Automatisch afspelen</string>
     <string name="no_comments">Geen commentaren</string>
     <string name="error_unable_to_load_comments">Kan commentaren niet laden</string>
@@ -451,7 +424,6 @@
         <item quantity="one">%d seconde</item>
         <item quantity="other">%d seconden</item>
     </plurals>
-    <string name="new_seek_duration_toast">Door beperkingen van ExoPlayer is de zoekduur ingesteld op %d seconden</string>
     <string name="remove_watched_popup_yes_and_partially_watched_videos">Ja, en deels bekeken video\'s</string>
     <string name="remove_watched_popup_warning">Video\'s die zijn bekeken voor, en na, ze werden toegevoegd aan de afspeellijst worden verwijderd.
 \nBent u zeker\? Dit kan niet ongedaan gemaakt worden!</string>
@@ -534,9 +506,6 @@
     <string name="restricted_video">Deze video heeft een leeftijdsbeperking.
 \n
 \nSchakel \"%1$s\" in bij de instellingen als u die wilt zien.</string>
-    <string name="youtube_restricted_mode_enabled_summary">YouTube biedt een \"beperkte modes\" aan, dit verbergt mogelijk materiaal voor volwassenen</string>
-    <string name="youtube_restricted_mode_enabled_title">YouTube \"beperkte modus\" aanzetten</string>
-    <string name="show_age_restricted_content_summary">Toon inhoud die mogelijk niet geschikt is voor kinderen omwille van een leeftijdslimiet (zoals 18+)</string>
     <string name="peertube_instance_add_exists">Kanaal bestaat al</string>
     <string name="peertube_instance_add_https_only">Alleen HTTPS URL\'s worden ondersteund</string>
     <string name="peertube_instance_add_fail">Kon kanaal niet valideren</string>
@@ -547,8 +516,6 @@
     <string name="peertube_instance_url_title">PeerTube kanaal</string>
     <string name="unsupported_url_dialog_message">Kon de URL niet herkennen. In een andere app openen\?</string>
     <string name="settings_category_clear_data_title">Wis data</string>
-    <string name="enable_playback_state_lists_summary">Laat afspeeltijd in afspeellijst zien</string>
-    <string name="enable_playback_state_lists_title">Posities in lijst</string>
     <string name="enable_playback_resume_summary">Verder afspelen vanaf laatste positie</string>
     <string name="enable_playback_resume_title">Afspelen hervatten</string>
     <string name="auto_queue_toggle">Volgende stream automatisch in wachtrij plaatsen</string>
@@ -588,8 +555,6 @@
     <string name="comments_tab_description">Reacties</string>
     <string name="restricted_video_no_stream">Deze video heeft een leeftijdsbeperking.
 \nAls gevolg van het nieuwe YouTube-beleid met video\'s met leeftijdsbeperkingen heeft NewPipe geen toegang tot deze videostreams en kan deze dus niet afspelen.</string>
-    <string name="show_description_summary">Zet uit om videobeschrijving en extra informatie te verbergen</string>
-    <string name="show_description_title">Toon beschrijving</string>
     <string name="night_theme_title">Nacht Thema</string>
     <string name="open_with">Open met</string>
     <string name="featured">Featured</string>
@@ -613,7 +578,6 @@
     <string name="low_quality_smaller">Lage kwaliteit (kleiner)</string>
     <string name="start_main_player_fullscreen_title">Start hoofdspeler in volledig scherm</string>
     <string name="main_page_content_swipe_remove">Veeg items om ze te verwijderen</string>
-    <string name="seekbar_preview_thumbnail_title">Zoekbalk miniatuurvoorbeeld</string>
     <string name="mark_as_watched">Markeer als bekeken</string>
     <string name="local_search_suggestions">Lokale zoeksuggesties</string>
     <string name="remote_search_suggestions">Suggesties voor zoeken op afstand</string>

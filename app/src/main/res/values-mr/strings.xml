@@ -18,8 +18,6 @@
     <string name="unsubscribe">सबस्क्राईब काढा</string>
     <string name="subscribed_button_title">सबस्क्राईब केले</string>
     <string name="subscribe_button_title">सबस्क्राईब</string>
-    <string name="use_external_audio_player_title">बाहेरील ऑडियो प्लेअर वापरा</string>
-    <string name="use_external_video_player_title">बाहेरील व्हिडिओ प्लेअर वापरा</string>
     <string name="share_dialog_title">शेअर करा</string>
     <string name="search_showing_result_for">यासाठी रिझल्ट दाखवत आहे: %s</string>
     <string name="settings">सेटिंग</string>
@@ -36,8 +34,6 @@
     <string name="no_player_found">प्लेअर सापडले नाही. VLC प्लेअर इंस्टॉल करू इच्छिता का\?</string>
     <string name="main_bg_subtitle">सुरू करण्यासाठी \"शोधा\" दाबा</string>
     <string name="play_with_kodi_title">कोडी वापरून चालवा</string>
-    <string name="show_higher_resolutions_summary">फक्त काही उपकरणे 2k/4k व्हिडिओ चालवू शकतात</string>
-    <string name="show_higher_resolutions_title">वरचे रेसॉल्युशन दाखवा</string>
     <string name="default_popup_resolution_title">डिफॉल्ट पॉप अप रेसिल्युशन</string>
     <string name="default_resolution_title">डीफॉल्ट रेसोल्युशन निवडा</string>
     <string name="controls_add_to_playlist_title">मध्ये टाका</string>

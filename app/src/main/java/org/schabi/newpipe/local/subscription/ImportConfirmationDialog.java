@@ -12,13 +12,9 @@ import androidx.fragment.app.Fragment;
 
 import org.schabi.newpipe.R;
 
-import icepick.Icepick;
-import icepick.State;
-
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
 public class ImportConfirmationDialog extends DialogFragment {
-    @State
     protected Intent resultServiceIntent;
 
     public static void show(@NonNull final Fragment fragment,
@@ -57,12 +53,14 @@ public class ImportConfirmationDialog extends DialogFragment {
             throw new IllegalStateException("Result intent is null");
         }
 
-        Icepick.restoreInstanceState(this, savedInstanceState);
+        if (savedInstanceState != null) {
+            resultServiceIntent = savedInstanceState.getParcelable("resultServiceIntent");
+        }
     }
 
     @Override
     public void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
-        Icepick.saveInstanceState(this, outState);
+        outState.putParcelable("resultServiceIntent", resultServiceIntent);
     }
 }

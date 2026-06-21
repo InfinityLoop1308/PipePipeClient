@@ -1,25 +1,23 @@
 plugins {
     id "com.android.application"
-    id "kotlin-android"
-    id "kotlin-kapt"
-    id "kotlin-parcelize"
+    id "org.jetbrains.kotlin.android"
+    id "org.jetbrains.kotlin.plugin.compose"
+    id "org.jetbrains.kotlin.plugin.parcelize"
+    id "org.jetbrains.kotlin.kapt"
     id "checkstyle"
-    id "org.sonarqube" version "3.3"
+    id "org.sonarqube"
 }
 
 android {
-    compileSdk 33
+    compileSdk 37
 
     defaultConfig {
         applicationId "InfinityLoop1309.NewPipeEnhanced"
-        resValue "string", "app_name", "PipePipe"
-        minSdk 21
+        minSdk 23
         //noinspection ExpiredTargetSdkVersion
-        targetSdk 33
-        versionCode 1098
-        versionName "5.0.0"
-        archivesBaseName = 'PipePipe_' + versionName
-
+        targetSdk 36
+        versionCode 1100
+        versionName "5.2.0-beta3"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -36,19 +34,7 @@ android {
         abi {
             reset()
             enable true
-            universalApk true // If true, also generate a universal APK
             include "armeabi-v7a", "arm64-v8a", "x86_64", "x86"
-//            include "arm64-v8a"
-        }
-    }
-    android.applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            def baseAbiVersionCode = project.ext.abiCodes.get(output.getFilter(com.android.build.OutputFile.ABI))
-            if (baseAbiVersionCode != null) {
-                output.versionCodeOverride = (100 * project.android.defaultConfig.versionCode) + baseAbiVersionCode
-            } else {
-                output.versionCodeOverride = 100 * project.android.defaultConfig.versionCode
-            }
         }
     }
 
@@ -66,22 +52,19 @@ android {
             } else {
                 applicationIdSuffix ".debug." + normalizedWorkingBranch
                 resValue "string", "app_name", "PipePipe " + workingBranch
-                archivesBaseName = 'PipePipe_' + normalizedWorkingBranch
             }
         }
 
-        // Keep the release build type at the end of the list to override 'archivesBaseName' of
-        // debug build. This seems to be a Gradle bug, therefore
-        // TODO: update Gradle version
         release {
             if (System.properties.containsKey('packageSuffix')) {
                 applicationIdSuffix System.getProperty('packageSuffix')
                 resValue "string", "app_name", "PipePipe " + System.getProperty('packageSuffix')
-                archivesBaseName = 'PipePipe_' + System.getProperty('packageSuffix')
+            } else {
+                resValue "string", "app_name", "PipePipe"
             }
             minifyEnabled true
             shrinkResources false // disabled to fix F-Droid's reproducible build
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -93,28 +76,23 @@ android {
         // suppress false warning ("Resource IDs will be non-final in Android Gradle Plugin version
         // 5.0, avoid using them in switch case statements"), which affects only library projects
         disable 'NonConstantResourceId'
+        disable 'MutableCollectionMutableState'
     }
 
     compileOptions {
         // Flag to enable support for the new language APIs
         coreLibraryDesugaringEnabled true
 
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_25
+        targetCompatibility JavaVersion.VERSION_25
         encoding 'utf-8'
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11
-    }
-
     buildFeatures {
+        buildConfig true
         viewBinding true
         compose true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion '1.3.2'
+        resValues true
     }
 
     dependenciesInfo {
@@ -124,7 +102,36 @@ android {
         includeInBundle = false
     }
 
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
     namespace 'org.schabi.newpipe'
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = '25'
+    }
+}
+
+androidComponents.onVariants(androidComponents.selector().all()) { variant ->
+    def abiCodes = project.ext.abiCodes
+    def defaultVersionCode = android.defaultConfig.versionCode as int
+    def defaultVersionName = android.defaultConfig.versionName
+
+    variant.outputs.each { output ->
+        def outputFileName = output.outputFileName.get()
+        def abi = abiCodes.keySet().sort { -it.length() }.find { outputFileName.contains(it) }
+        def versionCode = 100 * defaultVersionCode
+        if (abi != null) {
+            versionCode = (100 * defaultVersionCode) + abiCodes[abi]
+        }
+        output.versionCode.set(versionCode)
+        output.outputFileName.set("PipePipe_${defaultVersionName}-${abi ?: 'universal'}-${variant.name}.apk")
+    }
 }
 
 ext {
@@ -132,10 +139,9 @@ ext {
 
     androidxLifecycleVersion = '2.3.1'
     androidxRoomVersion = '2.4.2'
-    androidxWorkVersion = '2.7.1'
+    androidxWorkVersion = '2.10.2'
 
-    icepickVersion = '3.2.0'
-    exoPlayerVersion = '2.18.7'
+    media3Version = '1.10.1'
     googleAutoServiceVersion = '1.0.1'
     groupieVersion = '2.10.0'
     markwonVersion = '4.6.2'
@@ -215,14 +221,16 @@ dependencies {
     // name and the commit hash with the commit hash of the (pushed) commit you want to test
     // This works thanks to JitPack: https://jitpack.io/
     implementation 'com.github.TeamNewPipe:nanojson:1d9e1aea9049fc9f85e68b43ba39fe7be1c1f751'
-    implementation 'com.github.TeamNewPipe:NewPipeExtractor:6a858368c86bc9a55abee586eb6c733e86c26b97'
+    implementation('com.github.TeamNewPipe:NewPipeExtractor:6a858368c86bc9a55abee586eb6c733e86c26b97') {
+        exclude group: 'org.json', module: 'json'
+    }
 
 /** Checkstyle **/
     checkstyle "com.puppycrawl.tools:checkstyle:${checkstyleVersion}"
     ktlint 'com.pinterest:ktlint:0.44.0'
 
 /** Kotlin **/
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlin_version}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
     implementation 'androidx.compose.animation:animation:1.3.1'
     implementation 'androidx.compose.foundation:foundation:1.3.1'
     implementation 'androidx.compose.material3:material3:1.0.1'
@@ -256,12 +264,10 @@ dependencies {
     implementation "androidx.work:work-runtime:${androidxWorkVersion}"
     implementation "androidx.work:work-runtime-ktx:${androidxWorkVersion}"
     implementation "androidx.work:work-rxjava3:${androidxWorkVersion}"
-    implementation "androidx.car.app:app:1.2.0"
+    implementation "androidx.car.app:app:1.7.0"
 
 /** Third-party libraries **/
-    // Instance state boilerplate elimination
-    implementation "frankiesardo:icepick:${icepickVersion}"
-    kapt "frankiesardo:icepick-processor:${icepickVersion}"
+    implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:6.1'
 
     // HTML parser
     implementation "org.jsoup:jsoup:1.14.3"
@@ -271,8 +277,14 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:3.12.13"
 
     // Media player
-    implementation "com.google.android.exoplayer:exoplayer:${exoPlayerVersion}"
-    implementation "com.google.android.exoplayer:extension-mediasession:${exoPlayerVersion}"
+    implementation "androidx.media3:media3-exoplayer:${media3Version}"
+    implementation "androidx.media3:media3-exoplayer-dash:${media3Version}"
+    implementation "androidx.media3:media3-exoplayer-hls:${media3Version}"
+    implementation "androidx.media3:media3-exoplayer-smoothstreaming:${media3Version}"
+    implementation "androidx.media3:media3-datasource:${media3Version}"
+    implementation "androidx.media3:media3-ui:${media3Version}"
+    implementation "androidx.media3:media3-session:${media3Version}"
+    implementation "androidx.media3:media3-common:${media3Version}"
 
     // Metadata generator for service descriptors
     compileOnly "com.google.auto.service:auto-service-annotations:${googleAutoServiceVersion}"
@@ -297,7 +309,7 @@ dependencies {
     implementation "com.github.chrisbanes:PhotoView:2.3.0"
 
     // Crash reporting
-    implementation "ch.acra:acra-core:5.9.1"
+    implementation "ch.acra:acra-core:5.13.1"
 
     // Properly restarting
     implementation 'com.jakewharton:process-phoenix:2.1.2'

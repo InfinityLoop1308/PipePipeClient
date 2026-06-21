@@ -22,6 +22,7 @@ import org.schabi.newpipe.info_list.holder.ChannelInfoItemHolder;
 import org.schabi.newpipe.info_list.holder.ChannelMiniInfoItemHolder;
 import org.schabi.newpipe.info_list.holder.CommentsInfoItemHolder;
 import org.schabi.newpipe.info_list.holder.CommentsMiniInfoItemHolder;
+import org.schabi.newpipe.info_list.holder.ComposeInfoItemHolder;
 import org.schabi.newpipe.info_list.holder.InfoItemHolder;
 import org.schabi.newpipe.info_list.holder.PlaylistCardInfoItemHolder;
 import org.schabi.newpipe.info_list.holder.PlaylistGridInfoItemHolder;
@@ -31,6 +32,7 @@ import org.schabi.newpipe.info_list.holder.StaffInfoItemHolder;
 import org.schabi.newpipe.info_list.holder.StreamCardInfoItemHolder;
 import org.schabi.newpipe.info_list.holder.StreamGridInfoItemHolder;
 import org.schabi.newpipe.info_list.holder.StreamInfoItemHolder;
+import org.schabi.newpipe.info_list.holder.StreamMiniInfoItemHolder;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.util.FallbackViewHolder;
 import org.schabi.newpipe.util.OnClickGesture;
@@ -40,6 +42,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import static org.schabi.newpipe.util.ThemeHelper.isGrid;
+import static org.schabi.newpipe.util.ThemeHelper.shouldUseExperimentalNewUi;
 
 /*
  * Created by Christian Schabesberger on 01.08.16.
@@ -68,6 +71,8 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int HEADER_TYPE = 0;
     private static final int FOOTER_TYPE = 1;
 
+    private static final int COMPOSE_HOLDER_TYPE = 2;
+    private static final int MINI_STREAM_HOLDER_TYPE = 0x100;
     private static final int STREAM_HOLDER_TYPE = 0x101;
     private static final int GRID_STREAM_HOLDER_TYPE = 0x102;
     private static final int CARD_STREAM_HOLDER_TYPE = 0x103;
@@ -249,12 +254,18 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             return FOOTER_TYPE;
         }
         final InfoItem item = infoItemList.get(position);
+        if (shouldUseExperimentalNewUi(layoutInflater.getContext())
+                && item.getInfoType() != InfoItem.InfoType.COMMENT) {
+            return COMPOSE_HOLDER_TYPE;
+        }
         switch (item.getInfoType()) {
             case STREAM:
                 if (itemMode == ItemViewMode.CARD) {
                     return CARD_STREAM_HOLDER_TYPE;
                 } else if (isGrid(itemMode)) {
                     return GRID_STREAM_HOLDER_TYPE;
+                } else if (useMiniVariant) {
+                    return MINI_STREAM_HOLDER_TYPE;
                 } else {
                     return STREAM_HOLDER_TYPE;
                 }
@@ -304,6 +315,10 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         .inflate(layoutInflater, parent, false)
                         .getRoot()
                 );
+            case COMPOSE_HOLDER_TYPE:
+                return new ComposeInfoItemHolder(infoItemBuilder, parent, itemMode);
+            case MINI_STREAM_HOLDER_TYPE:
+                return new StreamMiniInfoItemHolder(infoItemBuilder, parent);
             case STREAM_HOLDER_TYPE:
                 return new StreamInfoItemHolder(infoItemBuilder, parent);
             case GRID_STREAM_HOLDER_TYPE:

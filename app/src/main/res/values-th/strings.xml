@@ -15,8 +15,6 @@
     <string name="settings">ตั้งค่า</string>
     <string name="did_you_mean">หรือคุณหมายถึง \"%1$s\"\?</string>
     <string name="share_dialog_title">แชร์ด้วย</string>
-    <string name="use_external_video_player_title">Use external video player</string>
-    <string name="use_external_audio_player_title">ใช้แอปเล่นเสียงภายนอก</string>
     <string name="subscribe_button_title">ติดตาม</string>
     <string name="subscribed_button_title">ติดตามแล้ว</string>
     <string name="unsubscribe">ยกเลิกการติดตาม</string>
@@ -39,26 +37,16 @@
     <string name="download_path_audio_dialog_title">ป้อนเส้นทางการดาวน์โหลดสำหรับไฟล์เสียง</string>
     <string name="default_resolution_title">ความละเอียดเริ่มต้น</string>
     <string name="default_popup_resolution_title">ความละเอียดเริ่มต้นในโหมดป๊อปอัพ</string>
-    <string name="show_higher_resolutions_title">แสดงความละเอียดที่สูงขึ้น</string>
-    <string name="show_higher_resolutions_summary">เฉพาะบางอุปกรณ์ที่รองรับการเล่นวิดีโอ 2K/4K</string>
     <string name="play_with_kodi_title">เปิดด้วย Kodi</string>
     <string name="kore_not_found">ไม่พบแอป Kore จะติดตั้งหรือไม่\?</string>
-    <string name="show_play_with_kodi_title">แสดงตัวเลือก \"เปิดด้วย Kodi\"</string>
-    <string name="show_play_with_kodi_summary">แสดงตัวเลือกในการเล่นวิดีโอผ่าน Kodi media center</string>
     <string name="play_audio">เสียง</string>
-    <string name="default_audio_format_title">รูปแบบเสียงเริ่มต้น</string>
-    <string name="default_video_format_title">รูปแบบวีดีโอเริ่มต้น</string>
     <string name="theme_title">ธีม</string>
     <string name="light_theme_title">สว่าง</string>
     <string name="dark_theme_title">มืด</string>
     <string name="black_theme_title">สีดำ</string>
-    <string name="popup_remember_size_pos_title">จำขนาดและตำแหน่งของป๊อปอัพ</string>
-    <string name="popup_remember_size_pos_summary">จำขนาดและตำแหน่งสุดท้ายของป๊อปอัพ</string>
     <string name="use_inexact_seek_title">ใช้การข้ามที่ไม่แม่นยำ</string>
     <string name="use_inexact_seek_summary">การข้ามช่วงที่ไม่แม่นยำจะทำให้เลื่อนไปยังตำแหน่งเวลาที่ต้องการได้เร็วขึ้น แต่จะลดความแม่นยำในการลากตำแหน่งลง</string>
     <string name="download_thumbnail_title">โหลดภาพขนาดย่อ</string>
-    <string name="show_comments_title">แสดงความคิดเห็น</string>
-    <string name="show_comments_summary">ปิดใช้งานเพื่อซ่อนความคิดเห็น</string>
     <string name="download_thumbnail_summary">ปิดเพื่อป้องกันการโหลดรูปขนาดย่อ ลดการใช้ข้อมูลและหน่วยความจำ การเปลี่ยนแปลงล้างแคชภาพในหน่วยความจำและบนดิสก์</string>
     <string name="thumbnail_cache_wipe_complete_notice">ล้างแคชของรูปภาพแล้ว</string>
     <string name="metadata_cache_wipe_summary">ลบข้อมูลเว็บเพจที่แคชไว้ทั้งหมด</string>
@@ -77,15 +65,9 @@
     <string name="resume_on_audio_focus_gain_summary">เล่นต่อหลังการขัดจังหวะ (เช่น การรับโทรศัพท์)</string>
     <string name="download_dialog_title">ดาวน์โหลด</string>
     <string name="autoplay_title">เล่นอัตโนมัติ</string>
-    <string name="show_next_and_similar_title">แสดงวิดีโอ \'ถัดไป\' และ \'ที่คล้ายกัน\'</string>
-    <string name="show_hold_to_append_title">แสดงเคล็ดลับ \"แตะค้างเพื่อเพิ่ม\"</string>
-    <string name="show_hold_to_append_summary">แสดงเคล็ดลับเมื่อกดปุ่มพื้นหลังหรือป๊อปอัพในหน้ารายละเอียดวิดีโอ</string>
     <string name="unsupported_url">URL ที่ไม่สนับสนุน</string>
     <string name="default_content_country_title">ประเทศเริ่มต้นของเนื้อหา</string>
-    <string name="content_language_title">ภาษาของเนื้อหาเริ่มต้น</string>
     <string name="settings_category_player_title">เครื่องเล่น</string>
-    <string name="settings_category_player_behavior_title">พฤติกรรม</string>
-    <string name="settings_category_video_audio_title">วิดีโอและเสียง</string>
     <string name="settings_category_history_title">ประวัติและแคช</string>
     <string name="settings_category_appearance_title">ลักษณะ</string>
     <string name="settings_category_debug_title">แก้ข้อบกพร่อง</string>
@@ -93,7 +75,6 @@
     <string name="background_player_playing_toast">กำลังเล่นในโหมดพื้นหลัง</string>
     <string name="popup_playing_toast">กำลังเล่นในโหมดป๊อปอัพ</string>
     <string name="content">เนื้อหา</string>
-    <string name="show_age_restricted_content_title">เนื้อหาที่จำกัดอายุ</string>
     <string name="duration_live">สด</string>
     <string name="downloads">ดาวน์โหลด</string>
     <string name="downloads_title">ดาวน์โหลด</string>
@@ -203,8 +184,6 @@
     <string name="one_item_deleted">ลบ 1 รายการแล้ว</string>
     <string name="settings_category_downloads_title">ดาวน์โหลด</string>
     <string name="settings_file_charset_title">อักขระที่อนุญาตในชื่อไฟล์</string>
-    <string name="settings_file_replacement_character_summary">อักขระที่ไม่ถูกต้องจะถูกแทนที่ด้วยค่านี้</string>
-    <string name="settings_file_replacement_character_title">อักขระทดแทน</string>
     <string name="charset_letters_and_digits">ตัวอักษรและตัวเลข</string>
     <string name="charset_most_special_characters">อักขระพิเศษส่วนใหญ่</string>
     <string name="toast_no_player">ไม่มีแอพที่ติดตั้งเพื่อให้เล่นไฟล์นี้ได้</string>
@@ -212,19 +191,16 @@
     <string name="title_licenses">สัญญาอนุญาตของบุคคลที่สาม</string>
     <string name="copyright" formatted="true">© %1$s โดย %2$s ภายใต้ %3$s</string>
     <string name="tab_about">เกี่ยวกับ</string>
-    <string name="tab_licenses">สัญญาอนุญาต</string>
     <string name="app_description">แอปสตรีมมิ่งที่เล็กและเสรีบน Android</string>
     <string name="contribution_title">สนับสนุน</string>
     <string name="contribution_encouragement">ไม่ว่าคุณจะมีความคิดที่จะช่วยแปลภาษา เปลี่ยนดีไซน์ แก้ไขโค้ดของโปรแกรมให้ดีขึ้นทั้งในระดับเล็กน้อยหรือจะเปลี่ยนแปลงกันแบบขนานใหญ่ เรายินดีให้คุณได้ร่วมช่วยเหลือเสมอ… ยิ่งทำมาก ยิ่งช่วยให้ดีขึ้นมาก!</string>
     <string name="view_on_github">ดูบน GitHub</string>
     <string name="donation_title">บริจาค</string>
-    <string name="give_back">คืนให้</string>
     <string name="website_title">เว็บไซต์</string>
     <string name="website_encouragement">เยี่ยมชมเว็บไซต์ NewPipe สำหรับข้อมูลเพิ่มเติมและข่าวสาร</string>
     <string name="privacy_policy_title">นโยบายความเป็นส่วนตัวของ NewPipe</string>
     <string name="privacy_policy_encouragement">โครงการ NewPipe คำนึงถึงความเป็นส่วนตัวของคุณอย่างจริงจัง ดังนั้นแอปจะไม่เก็บรวบรวมข้อมูลใดๆ โดยไม่ได้รับความยินยอมจากคุณ
 \nนโยบายความเป็นส่วนตัวของ NewPipe มีการอธิบายในรายละเอียดเกี่ยวกับข้อมูลที่จะถูกส่งออกไปและเก็บไว้เมื่อคุณรายงานความผิดพลาดของแอป</string>
-    <string name="read_privacy_policy">อ่านนโยบายความเป็นส่วนตัว</string>
     <string name="app_license_title">สัญญาอนุญาตของ NewPipe</string>
     <string name="read_full_license">อ่านสัญญาอนุญาต</string>
     <string name="title_activity_history">ประวัติ</string>
@@ -316,8 +292,6 @@
     <string name="playback_reset">รีเซ็ต</string>
     <string name="start_accept_privacy_policy">เพื่อให้สอดคล้องกับระเบียบข้อบังคับว่าด้วยการป้องกันข้อมูลทั่วไปของยุโรป (GDPR) เราขอแนะนำให้คุณอ่านนโยบายความเป็นส่วนตัวของ NewPipe อย่างระมัดระวังและถี่ถ้วน
 \nคุณต้องยอมรับข้อตกลงเพื่ออนุญาตให้ส่งรายงานข้อผิดพลาดถึงเรา</string>
-    <string name="accept">ยอมรับ</string>
-    <string name="decline">ปฏิเสธ</string>
     <string name="limit_data_usage_none_description">ไม่จำกัด</string>
     <string name="limit_mobile_data_usage_title">จำกัดความละเอียดเมื่อใช้ข้อมูลมือถือ</string>
     <string name="updates_setting_title">อัพเดท</string>
@@ -358,13 +332,10 @@
     <string name="pause_downloads_on_mobile">หยุดชั่วคราวเมื่อเปลี่ยนเป็นข้อมูลมือถือ</string>
     <string name="pause_downloads_on_mobile_desc">การดาวน์โหลดที่ไม่สามารถหยุดพักได้จะเริ่มต้นใหม่</string>
     <string name="close">ปิด</string>
-    <string name="use_external_video_player_summary">Removes audio at some resolutions</string>
     <string name="metadata_cache_wipe_complete_notice">แคช metadate ถูกลบแล้ว</string>
     <string name="resume_on_audio_focus_gain_title">เล่นต่อหลังจากการขัดจังหวะ</string>
     <string name="enable_playback_resume_title">เล่นต่อ</string>
     <string name="enable_playback_resume_summary">เล่นต่อจากที่เคยเล่นครั้งล่าสุด</string>
-    <string name="enable_playback_state_lists_title">ตำแหน่งวีดิโอในรายการ</string>
-    <string name="enable_playback_state_lists_summary">แสดงตำแหน่งวีดิโอที่เล่นในรายการ</string>
     <string name="settings_category_clear_data_title">ล้างข้อมูล</string>
     <string name="search_showing_result_for">กำลังแสดงผลลัพธ์สำหรับ: %s</string>
 </resources>

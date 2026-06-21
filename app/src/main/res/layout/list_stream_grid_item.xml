@@ -19,7 +19,6 @@
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
         android:src="@drawable/dummy_thumbnail"
-        app:shapeAppearance="@style/RoundedThumbnailImageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

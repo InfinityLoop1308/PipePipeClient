@@ -29,11 +29,9 @@ import org.schabi.newpipe.util.external_communication.TextLinkifier;
 
 import java.util.List;
 
-import icepick.State;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
 public class ChannelInfoFragment extends BaseFragment {
-    @State
     protected ChannelInfo channelInfo;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
@@ -47,6 +45,18 @@ public class ChannelInfoFragment extends BaseFragment {
 
     public ChannelInfoFragment() {
         super();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("channelInfo", channelInfo);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        channelInfo = (ChannelInfo) savedInstanceState.getSerializable("channelInfo");
     }
 
     @Override

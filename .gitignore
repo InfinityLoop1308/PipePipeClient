@@ -18,3 +18,5 @@ app/release/
 bin/
 .vscode/
 *.code-workspace
+/config.py
+__pycache__

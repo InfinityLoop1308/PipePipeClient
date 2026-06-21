@@ -13,14 +13,17 @@ import org.schabi.newpipe.local.history.HistoryRecordManager;
 import java.time.format.DateTimeFormatter;
 
 public class RemoteBookmarkPlaylistItemHolder extends RemotePlaylistItemHolder {
+    private final View itemHandleView;
+
     public RemoteBookmarkPlaylistItemHolder(final LocalItemBuilder infoItemBuilder,
                                             final ViewGroup parent) {
-        this(infoItemBuilder, R.layout.list_playlist_item, parent);
+        this(infoItemBuilder, R.layout.list_playlist_bookmark_item, parent);
     }
 
     RemoteBookmarkPlaylistItemHolder(final LocalItemBuilder infoItemBuilder, final int layoutId,
                                      final ViewGroup parent) {
         super(infoItemBuilder, layoutId, parent);
+        itemHandleView = itemView.findViewById(R.id.itemHandle);
     }
 
     @Override
@@ -32,10 +35,32 @@ public class RemoteBookmarkPlaylistItemHolder extends RemotePlaylistItemHolder {
         }
         final PlaylistRemoteEntity item = (PlaylistRemoteEntity) localItem;
 
-        itemHandleView.setVisibility(View.VISIBLE);
         itemHandleView.setOnTouchListener(getOnTouchListener(item));
 
         super.updateFromItem(localItem, historyRecordManager, dateTimeFormatter);
+
+        if (itemHandleView != null
+                && itemHandleView.getLayoutParams()
+                instanceof android.widget.RelativeLayout.LayoutParams) {
+            final android.widget.RelativeLayout.LayoutParams params =
+                    (android.widget.RelativeLayout.LayoutParams) itemHandleView
+                            .getLayoutParams();
+            if (itemUploaderView == null
+                    || android.text.TextUtils.isEmpty(itemUploaderView.getText())
+                    || itemUploaderView.getVisibility() != View.VISIBLE) {
+                params.removeRule(android.widget.RelativeLayout.ALIGN_TOP);
+                params.removeRule(android.widget.RelativeLayout.ALIGN_BOTTOM);
+                params.addRule(android.widget.RelativeLayout.ALIGN_TOP, R.id.itemTitleView);
+                params.addRule(android.widget.RelativeLayout.ALIGN_BOTTOM, R.id.itemTitleView);
+            } else {
+                params.removeRule(android.widget.RelativeLayout.ALIGN_TOP);
+                params.removeRule(android.widget.RelativeLayout.ALIGN_BOTTOM);
+                params.addRule(android.widget.RelativeLayout.ALIGN_TOP, R.id.itemUploaderView);
+                params.addRule(android.widget.RelativeLayout.ALIGN_BOTTOM,
+                        R.id.itemUploaderView);
+            }
+            itemHandleView.setLayoutParams(params);
+        }
     }
 
     private View.OnTouchListener getOnTouchListener(final PlaylistRemoteEntity item) {

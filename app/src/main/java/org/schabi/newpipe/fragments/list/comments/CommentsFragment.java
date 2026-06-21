@@ -1,6 +1,5 @@
 package org.schabi.newpipe.fragments.list.comments;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.TextView;
@@ -8,7 +7,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import androidx.preference.PreferenceManager;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.InfoItem;
@@ -19,7 +17,6 @@ import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
 import org.schabi.newpipe.fragments.list.BaseListInfoFragment;
 import org.schabi.newpipe.info_list.ItemViewMode;
 import org.schabi.newpipe.ktx.ViewUtils;
-import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ExtractorHelper;
 
 import java.util.List;
@@ -61,7 +58,11 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfoItem, Com
     @Override
     protected void onItemCallback(final InfoItem selectedItem) throws Exception {
         super.onItemCallback(selectedItem);
-        CommentsFragmentContainer.setFragment(getFM(), (CommentsInfoItem) selectedItem);
+        // Push the reply onto the FragmentManager this fragment lives in (its container's child FM),
+        // not the parent activity FM, so it's torn down with the container's view (avoids the
+        // "No view found for fragment_container_view" crash on back when the player goes to pop-up).
+        CommentsFragmentContainer.setFragment(getParentFragmentManager(),
+                (CommentsInfoItem) selectedItem);
     }
 
     public CommentsFragment() {
@@ -80,32 +81,6 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfoItem, Com
         super.initViews(rootView, savedInstanceState);
 
         emptyStateDesc = rootView.findViewById(R.id.empty_state_desc);
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        if (!DeviceUtils.isLandscape(requireContext()) && prefs.getBoolean("comments_inner_scroll_key", false)) {
-            itemsList.setNestedScrollingEnabled(false);
-            itemsList.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    itemsList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
-                    int height = 800;
-                    try {
-                        height = requireActivity().findViewById(R.id.detail_main_content).getHeight() -  requireActivity().findViewById(R.id.player_placeholder).getHeight() - requireActivity().findViewById(R.id.detail_content_root_layout).getHeight() - requireActivity().findViewById(R.id.tab_layout).getHeight();
-                        if (((View) itemsList.getParent().getParent()).getId() == R.id.commentReplyFragment) {
-                            height -= requireActivity().findViewById(R.id.toolbar).getHeight();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    // Set layout params to match parent height
-                    ViewGroup.LayoutParams params = itemsList.getLayoutParams();
-                    params.height = height;
-                    itemsList.setLayoutParams(params);
-
-                    itemsList.requestLayout();
-                }
-            });
-        }
     }
 
     /*//////////////////////////////////////////////////////////////////////////

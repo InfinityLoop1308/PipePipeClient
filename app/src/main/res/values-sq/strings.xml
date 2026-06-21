@@ -23,10 +23,7 @@
     <string name="enable_watch_history_title">Të shikuarat</string>
     <string name="enable_watch_history_summary">Ruaji videot e shikuara</string>
     <string name="download_dialog_title">Shkarko</string>
-    <string name="content_language_title">Gjuha e dëshiruar e përmbajtjeve</string>
     <string name="settings_category_player_title">Luajtësi</string>
-    <string name="settings_category_player_behavior_title">Sjellja</string>
-    <string name="settings_category_video_audio_title">Video dhe audio</string>
     <string name="settings_category_history_title">Historia dhe depoja</string>
     <string name="settings_category_appearance_title">Pamja</string>
     <string name="content">Përmbajtja</string>
@@ -58,7 +55,6 @@
         <item quantity="one">%d sekondë</item>
         <item quantity="other">%d sekonda</item>
     </plurals>
-    <string name="new_seek_duration_toast">Për shkak të limitimeve të ExoPlayer kohëzgjatja e kërkimit u vendos në %d sekonda</string>
     <string name="systems_language">E parazgjedhura e sistemit</string>
     <string name="app_language_title">Gjuha e aplikacionit</string>
     <string name="choose_instance_prompt">Zgjidhni një instancë</string>
@@ -125,8 +121,6 @@
     <string name="updates_setting_title">Përditësimet</string>
     <string name="limit_mobile_data_usage_title">Limitoje rezolucionin kur je duke përdorur internetin nga SIM</string>
     <string name="limit_data_usage_none_description">Pa limit</string>
-    <string name="decline">Refuzo</string>
-    <string name="accept">Prano</string>
     <string name="start_accept_privacy_policy">Për të qenë në përputhje me Rregulloren e Përgjithshme Evropiane për Mbrojtjen e të Dhënave (GDPR), ne ju tërheqim vëmendjen tek politika e privatësisë së NewPipe. Ju lutemi lexojeni me kujdes.
 \nJu duhet ta pranoni atë për të na dërguar raportin e problemit.</string>
     <string name="playback_reset">Rikthe</string>
@@ -233,20 +227,17 @@
     <string name="action_history">Historiku</string>
     <string name="read_full_license">Lexo licensën</string>
     <string name="app_license_title">Licensa e NewPipe</string>
-    <string name="read_privacy_policy">Lexoni politikën e privatësisë</string>
     <string name="privacy_policy_encouragement">Projekti NewPipe e merr privatësinë tuaj seriozisht. Kështu, aplikacioni nuk mbledh të dhëna pa dijeninë tuaj.
 \nPolitika e privatësisë së NewPipe shpjegon në detaje se çfarë të dhënat dërgohen dhe ruhen kur ju dërgoni një raport dështimi/crash.</string>
     <string name="privacy_policy_title">Politika e Privatësisë së NewPipe</string>
     <string name="website_encouragement">Shfletoni faqen e internetit të NewPipe për më tepër informacion dhe lajme.</string>
     <string name="website_title">Faqja e internetit</string>
-    <string name="give_back">Jep</string>
     <string name="donation_encouragement">NewPipe zhvillohet nga zhvillues të cilët shpenzojnë kohën e tyre të lirë për t\'u prurë juve eksperiencën më të mirë për përdoruesin. Ktheni nderin duke ndihmuar zhvilluesit që ta bëjnë NewPipe akoma edhe më të mirë ndërkohë që ata pijnë një filxhan kafe.</string>
     <string name="donation_title">Dhuro</string>
     <string name="view_on_github">Shikoje në GitHub</string>
     <string name="contribution_encouragement">Nëse keni ide rreth; përkthimeve, ndryshimeve në dizajn, pastrimit të kodit, apo ndryshime rrënjësore të kodit—ndihma është gjithnjë e mirëpritur. Sa më shumë të bëhet aq më mirë do jetë!</string>
     <string name="contribution_title">Kontribuo</string>
     <string name="app_description">Luajtës i lehtë dhe libre në Android.</string>
-    <string name="tab_licenses">Licensat</string>
     <string name="tab_about">Rreth</string>
     <string name="copyright" formatted="true">© %1$s nga %2$s nën %3$s</string>
     <string name="title_licenses">Licensat e palëve të treta</string>
@@ -254,8 +245,6 @@
     <string name="toast_no_player">Nuk ka aplikacion të instaluar që mund ta luajë këtë skedar</string>
     <string name="charset_most_special_characters">Shumica e karaktereve speciale</string>
     <string name="charset_letters_and_digits">Shkronjat dhe numrat</string>
-    <string name="settings_file_replacement_character_title">Karakteri zëvendësues</string>
-    <string name="settings_file_replacement_character_summary">Karakteret e palejuara zëvendësohen me këtë vlerë</string>
     <string name="settings_file_charset_title">Karakteret e lejuara në emrat e skedarëve</string>
     <string name="settings_category_downloads_title">Shkarko</string>
     <string name="recaptcha_done_button">U bë</string>
@@ -344,9 +333,6 @@
     <string name="channel_unsubscribed">Kanali u ç\'abonua</string>
     <string name="unsubscribe">Ç\'abonohu</string>
     <string name="subscribed_button_title">I abonuar</string>
-    <string name="use_external_audio_player_title">Përdor lexues të jashtëm audio</string>
-    <string name="use_external_video_player_summary">Heq audio për disa rezolucione</string>
-    <string name="use_external_video_player_title">Përdorni lexues video të jashtëm</string>
     <string name="controls_download_desc">Shkarko skedarin stream</string>
     <string name="open_in_popup_mode">Hape në modalitetin popup</string>
     <string name="no_player_found">Nuk u gjend lexues për stream. Instalo VLC\?</string>
@@ -456,7 +442,6 @@
     <string name="restricted_video">Kjo video ka kufizime moshe.
 \n
 \nAktivizoni \"%1$s\" tek aranzhimet nëse doni ta shihni.</string>
-    <string name="show_age_restricted_content_title">Shfaq përmbajtjet me moshë të kufizuar</string>
     <string name="popup_playing_toast">Duke luajtur në modalitetin popup</string>
     <string name="background_player_playing_toast">Duke luajtur në sfond</string>
     <string name="settings_category_updates_title">Përditësimet</string>
@@ -471,15 +456,10 @@
     <string name="peertube_instance_url_title">Instancat PeerTube</string>
     <string name="default_content_country_title">Shteti i parazgjedhur i përmbajtjes</string>
     <string name="unsupported_url">URL e pambështetur</string>
-    <string name="show_hold_to_append_summary">Trego ndihmën kur shtypet sfondi ose butoni i popup në \"Detajet:\" e videos</string>
-    <string name="show_hold_to_append_title">Trego ndihmën \"Mbaje shtypur për ta shtuar në listë\"</string>
-    <string name="show_next_and_similar_title">Trego \'Tjetra\' dhe videot \'E ngjashme\'</string>
     <string name="autoplay_title">Luajtje automatike</string>
     <string name="resume_on_audio_focus_gain_summary">Vazhdoje luajtjen pas ndërprerjeve (psh. telefonatat)</string>
     <string name="resume_on_audio_focus_gain_title">Vazhdoje luajtjen</string>
     <string name="settings_category_clear_data_title">Fshij të dhënat</string>
-    <string name="enable_playback_state_lists_summary">Shfaq treguesit e pozicionit të luajtjes në lista</string>
-    <string name="enable_playback_state_lists_title">Pozicionet në lista</string>
     <string name="enable_playback_resume_summary">Rikthe pozicionin e fundit të luajtjes</string>
     <string name="enable_playback_resume_title">Vazhdo luajtjen</string>
     <string name="enable_search_history_summary">Ruani frazat e kërkuara lokalisht</string>
@@ -496,23 +476,13 @@
     <string name="metadata_cache_wipe_title">Boshatis depon e të dhënave meta</string>
     <string name="download_thumbnail_summary">Fikeni për të ndaluar shfaqjen e pamjeve statike, duke kursyer internet dhe memorje. Ndryshimet boshatisin depon e imazheve në memorje dhe në disk</string>
     <string name="thumbnail_cache_wipe_complete_notice">Depoja e imazheve u boshatis</string>
-    <string name="show_comments_summary">Fikeni për të fshehur komentet</string>
-    <string name="show_comments_title">Shfaq komentet</string>
     <string name="seek_duration_title">Kohëzgjatja e kërkimit me shtytje-përpara/-pas</string>
     <string name="use_inexact_seek_summary">Kërkuesi i pasaktë e lejon luajtësin që të kërkojë pozicionet më shpejt më saktësi të reduktuar. Kërkimi për 5, 15 ose 25 sekonda nuk punon me këtë</string>
     <string name="use_inexact_seek_title">Përdor kërkuesin e pasaktë por të shpejtë</string>
-    <string name="popup_remember_size_pos_summary">Mbaj mend madhësinë e fundit dhe pozicionin e popup</string>
-    <string name="popup_remember_size_pos_title">Mbaj mend popup</string>
     <string name="dark_theme_title">E errët</string>
     <string name="light_theme_title">E bardhë</string>
     <string name="theme_title">Tema</string>
-    <string name="default_video_format_title">Formati i parazgjedhur video</string>
-    <string name="default_audio_format_title">Formati i parazgjedhur audio</string>
-    <string name="show_play_with_kodi_summary">Shfaq një opsion për të luajtur videot përmes Kodi</string>
-    <string name="show_play_with_kodi_title">Shfaq opsionin \"Luaj me Kodi\"</string>
     <string name="kore_not_found">Instaloni aplikacionin Kore që mungon\?</string>
-    <string name="show_higher_resolutions_summary">Vetëm disa pajisje mund të luajnë video 2K/4K</string>
-    <string name="show_higher_resolutions_title">Shfaq rezolucione më të larta</string>
     <string name="default_popup_resolution_title">Rezolucioni i parazgjedhur i popup</string>
     <string name="download_path_audio_dialog_title">Zgjidhni dosjen e shkarkimit për skedarët audio</string>
     <string name="download_path_audio_summary">Skedarët audio të shkarkuara ruhen lëtu</string>
@@ -527,7 +497,6 @@
     <string name="remove_watched">Hiq të parat</string>
     <string name="show_original_time_ago_summary">Tekstet origjinale nga shërbimet do shihen në produktet e luajtshme</string>
     <string name="show_original_time_ago_title">Shfaq titullin origjinal \"kohë më parë\" në objekte</string>
-    <string name="youtube_restricted_mode_enabled_title">Aktivizo modalitetin e kufizuar të YouTube</string>
     <string name="detail_sub_channel_thumbnail_view_description">Pamja statike e avatarit të kanalit</string>
     <string name="video_detail_by">Nga %s</string>
     <string name="channel_created_by">Krijuar nga %s</string>
@@ -576,13 +545,9 @@
     <string name="hash_channel_description">Njoftimet mbi progresin e hash-imit të videove</string>
     <string name="hash_channel_name">Njoftimi për Hash e Videos</string>
     <string name="show_meta_info_title">Shfaq të dhënat meta</string>
-    <string name="show_description_summary">Ç\'aktivizoje për të fshehur përshkrimin e videos dhe informacione shtesë</string>
-    <string name="show_description_title">Shfaq përshkrimin</string>
     <string name="notification_colorize_summary">Lejoje Android që të modifikojë ngjyrën e njoftimit bazuar tek ngjyra kryesore në pamjen miniaturë (mbani mend që kjo nuk është e disponueshme në të gjitha pajisjet)</string>
     <string name="open_with">Hape me</string>
     <string name="clear_cookie_summary">Pastroni biskotat që NewPipe ruan kur zgjidhni një reCAPTCHA</string>
-    <string name="youtube_restricted_mode_enabled_summary">YouTube ofron një \"Modalitet të Kufizuar\" që fsheh përmbajtje vetëm për të rritur</string>
-    <string name="show_age_restricted_content_summary">Shfaq përmbajtje ndoshta të papërshtatshme për fëmijë sepse ka një kufi moshe (si 18+)</string>
     <string name="featured">E përzgjedhur</string>
     <string name="paid_content">Kjo përmbajtje është e disponueshme vetëm për përdoruesit që kanë paguar, kështu që nuk mund të luhet apo shkarkohet nga NewPipe.</string>
     <string name="youtube_music_premium_content">Kjo video është e disponueshme vetëm për anëtarët e YouTube Music Premium, kështu që nuk mund të luhet apo shkarkohet nga NewPipe.</string>
@@ -625,7 +590,6 @@
 \nA doni të ç\'abonoheni nga ky kanal\?</string>
     <string name="feed_load_error_account_info">Nuk u arrit të ngarkohej feed-i për \'%s\'.</string>
     <string name="feed_load_error">Gabim gjatë ngarkimit të feed-it</string>
-    <string name="downloads_storage_use_saf_summary_api_29">Duke nisur nga Android 10 vetëm \'Storage Access Framework\' është i mbështetur</string>
     <string name="downloads_storage_use_saf_summary_api_19">\'Storage Access Framework\' nuk është e mbështetur në Android KitKat dhe më poshtë</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Ju do të pyeteni se ku doni të ruani çdo shkarkim</string>
     <string name="crash_the_app">Rrëzoje aplikacionin manualisht</string>
@@ -643,7 +607,6 @@
     <string name="dont_show">Mos shfaq</string>
     <string name="low_quality_smaller">Cilësi e ulët (më e vogël)</string>
     <string name="high_quality_larger">Cilësi e lartë (më e madhe)</string>
-    <string name="seekbar_preview_thumbnail_title">Parapamje e pamjes miniaturë të lëvizësit të kohës</string>
     <string name="comments_are_disabled">Komentet janë të ç\'aktivizuara</string>
     <string name="mark_as_watched">Shëno si të parë</string>
 </resources>

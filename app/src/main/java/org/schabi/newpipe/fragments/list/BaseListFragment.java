@@ -526,7 +526,8 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
             if (key.equals(getString(R.string.list_view_mode_key))
                     || key.equals(getString(R.string.grid_layout_enabled_key))
                     || key.equals(getString(R.string.grid_columns_key))
-                    || key.equals(getString(R.string.grid_columns_landscape_key))) {
+                    || key.equals(getString(R.string.grid_columns_landscape_key))
+                    || key.equals(getString(R.string.use_experimental_new_ui_key))) {
                 updateFlags |= LIST_MODE_UPDATE_FLAG;
             }
         } catch (final Exception e) {

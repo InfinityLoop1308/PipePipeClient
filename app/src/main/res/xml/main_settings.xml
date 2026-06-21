@@ -11,10 +11,10 @@
         app:iconSpaceReserved="false" />
 
     <PreferenceScreen
-            android:fragment="org.schabi.newpipe.settings.BehaviorSettingsFragment"
-            android:icon="@drawable/ic_button_pointer"
-            android:title="@string/settings_category_player_behavior_title"
-            app:iconSpaceReserved="false" />
+        android:fragment="org.schabi.newpipe.settings.GestureSettingsFragment"
+        android:icon="@drawable/ic_button_pointer"
+        android:title="@string/settings_category_gestures_summary"
+        app:iconSpaceReserved="false" />
 
     <PreferenceScreen
         android:fragment="org.schabi.newpipe.settings.DownloadSettingsFragment"

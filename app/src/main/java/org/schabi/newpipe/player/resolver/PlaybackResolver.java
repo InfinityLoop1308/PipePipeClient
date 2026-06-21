@@ -6,19 +6,19 @@ import static org.schabi.newpipe.player.helper.PlayerDataSource.LIVE_STREAM_EDGE
 import android.net.Uri;
 import android.util.Log;
 
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.source.dash.DashMediaSource;
-import com.google.android.exoplayer2.source.dash.manifest.DashManifest;
-import com.google.android.exoplayer2.source.dash.manifest.DashManifestParser;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.source.hls.playlist.HlsPlaylist;
-import com.google.android.exoplayer2.source.hls.playlist.HlsPlaylistParser;
-import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
-import com.google.android.exoplayer2.source.smoothstreaming.manifest.SsManifest;
-import com.google.android.exoplayer2.source.smoothstreaming.manifest.SsManifestParser;
+import androidx.media3.common.C;
+import androidx.media3.common.MediaItem;
+import androidx.media3.exoplayer.source.MediaSource;
+import androidx.media3.exoplayer.source.ProgressiveMediaSource;
+import androidx.media3.exoplayer.dash.DashMediaSource;
+import androidx.media3.exoplayer.dash.manifest.DashManifest;
+import androidx.media3.exoplayer.dash.manifest.DashManifestParser;
+import androidx.media3.exoplayer.hls.HlsMediaSource;
+import androidx.media3.exoplayer.hls.playlist.HlsPlaylist;
+import androidx.media3.exoplayer.hls.playlist.HlsPlaylistParser;
+import androidx.media3.exoplayer.smoothstreaming.SsMediaSource;
+import androidx.media3.exoplayer.smoothstreaming.manifest.SsManifest;
+import androidx.media3.exoplayer.smoothstreaming.manifest.SsManifestParser;
 import com.grack.nanojson.JsonObject;
 import com.grack.nanojson.JsonParser;
 import com.grack.nanojson.JsonParserException;
@@ -501,11 +501,90 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             final String cacheKey,
             final MediaItemTag metadata) throws IOException{
         final String url = stream.getContent();
+        final String manifest = createBiliBiliDashManifest(stream, streamInfo);
+        if (manifest != null) {
+            return dataSource.getBiliDashMediaSourceFactory().createMediaSource(
+                    createDashManifest(manifest, stream),
+                    new MediaItem.Builder()
+                            .setTag(metadata)
+                            .setUri(Uri.parse(url))
+                            .setCustomCacheKey(cacheKey)
+                            .build());
+        }
         return dataSource.getBiliMediaSourceFactory(streamInfo.getUrl()).createMediaSource(
                 new MediaItem.Builder()
                         .setTag(metadata)
                         .setUri(Uri.parse(url))
                         .setCustomCacheKey(cacheKey)
                         .build());
+    }
+
+    @Nullable
+    private static <T extends Stream> String createBiliBiliDashManifest(
+            final T stream,
+            final StreamInfo streamInfo) {
+        final boolean isAudio = stream instanceof AudioStream;
+        final boolean isVideo = stream instanceof VideoStream;
+        if (!isAudio && !isVideo) {
+            return null;
+        }
+        final int initStart;
+        final int initEnd;
+        final int indexStart;
+        final int indexEnd;
+        final String mimeType;
+        final String codecs;
+        final int bandwidth;
+        final String extraAttributes;
+        if (isAudio) {
+            final AudioStream audioStream = (AudioStream) stream;
+            initStart = audioStream.getInitStart();
+            initEnd = audioStream.getInitEnd();
+            indexStart = audioStream.getIndexStart();
+            indexEnd = audioStream.getIndexEnd();
+            mimeType = "audio/mp4";
+            codecs = audioStream.getCodec();
+            bandwidth = audioStream.getBitrate() > 0
+                    ? audioStream.getBitrate() : audioStream.getAverageBitrate();
+            extraAttributes = "";
+        } else {
+            final VideoStream videoStream = (VideoStream) stream;
+            initStart = videoStream.getInitStart();
+            initEnd = videoStream.getInitEnd();
+            indexStart = videoStream.getIndexStart();
+            indexEnd = videoStream.getIndexEnd();
+            mimeType = "video/mp4";
+            codecs = videoStream.getCodec();
+            bandwidth = videoStream.getBitrate();
+            extraAttributes = (videoStream.getWidth() > 0 ? " width=\"" + videoStream.getWidth() + "\"" : "")
+                    + (videoStream.getHeight() > 0 ? " height=\"" + videoStream.getHeight() + "\"" : "")
+                    + (videoStream.getFps() > 0 ? " frameRate=\"" + videoStream.getFps() + "\"" : "");
+        }
+        if (initEnd <= initStart || indexEnd <= indexStart || bandwidth <= 0
+                || codecs == null || codecs.isEmpty()) {
+            return null;
+        }
+        final String contentType = isAudio ? "audio" : "video";
+        final long duration = Math.max(1, streamInfo.getDuration());
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + "<MPD xmlns=\"urn:mpeg:dash:schema:mpd:2011\" type=\"static\" profiles=\"urn:mpeg:dash:profile:isoff-on-demand:2011\" minBufferTime=\"PT1.5S\" mediaPresentationDuration=\"PT" + duration + "S\">"
+                + "<Period duration=\"PT" + duration + "S\">"
+                + "<AdaptationSet contentType=\"" + contentType + "\" mimeType=\"" + mimeType + "\" subsegmentAlignment=\"true\">"
+                + "<Representation id=\"" + escapeXml(stream.getId()) + "\" bandwidth=\"" + bandwidth + "\" codecs=\"" + escapeXml(codecs) + "\"" + extraAttributes + ">"
+                + "<BaseURL>" + escapeXml(stream.getContent()) + "</BaseURL>"
+                + "<SegmentBase indexRange=\"" + indexStart + "-" + indexEnd + "\">"
+                + "<Initialization range=\"" + initStart + "-" + initEnd + "\"/>"
+                + "</SegmentBase>"
+                + "</Representation>"
+                + "</AdaptationSet>"
+                + "</Period>"
+                + "</MPD>";
+    }
+
+    private static String escapeXml(final String value) {
+        return value.replace("&", "&amp;")
+                .replace("\"", "&quot;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;");
     }
 }

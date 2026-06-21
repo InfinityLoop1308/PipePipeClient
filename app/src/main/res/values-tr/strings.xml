@@ -22,9 +22,6 @@
 <string name="did_you_mean">Bunu mu demek istediniz: \"%1$s\"?</string>
 <string name="search_showing_result_for">Sonuçlar gösteriliyor: %s</string>
 <string name="share_dialog_title">Şununla paylaş</string>
-<string name="use_external_video_player_title">Harici video oynatıcı kullan</string>
-<string name="use_external_video_player_summary">Bazı çözünürlüklerde sesi kaldırır</string>
-<string name="use_external_audio_player_title">Harici ses oynatıcı kullan</string>
 <string name="subscribe_button_title">Abone ol</string>
 <string name="subscribed_button_title">Abone olundu</string>
 <string name="unsubscribe">Abonelikten çık</string>
@@ -48,12 +45,8 @@
 <string name="download_path_audio_dialog_title">Ses dosyaları için indirme klasörünü seçin</string>
 <string name="default_resolution_title">Varsayılan çözünürlük</string>
 <string name="default_popup_resolution_title">Varsayılan açılır pencere çözünürlüğü</string>
-<string name="show_higher_resolutions_title">Daha yüksek çözünürlükleri göster</string>
-<string name="show_higher_resolutions_summary">Yalnızca bazı cihazlar 2K/4K videoları oynatabilir</string>
 <string name="play_with_kodi_title">Kodi ile oynat</string>
 <string name="kore_not_found">Eksik Kore uygulaması yüklensin mi?</string>
-<string name="show_play_with_kodi_title">\"Kodi ile oynat\" seçeneğini göster</string>
-<string name="show_play_with_kodi_summary">Bir videoyu Kodi medya merkezi aracılığıyla oynatma seçeneğini görüntüle</string>
 <string name="crash_the_player">Oynatıcıyı çökert</string>
 <string name="notification_scale_to_square_image_title">Küçük resmi 1:1 en boy oranına kırp</string>
 <string name="notification_scale_to_square_image_summary">Bildirimde gösterilen video küçük resmini 16:9\'dan 1:1 en boy oranına kırp</string>
@@ -71,15 +64,11 @@
 <string name="notification_colorize_title">Bildirimi renklendir</string>
 <string name="notification_colorize_summary">Android\'in bildirimin rengini küçük resimdeki ana renge göre özelleştirmesini sağla (bunun tüm cihazlarda mevcut olmadığını unutmayın)</string>
 <string name="play_audio">Ses</string>
-<string name="default_audio_format_title">Varsayılan ses formatı</string>
-<string name="default_video_format_title">Varsayılan video formatı</string>
 <string name="theme_title">Tema</string>
 <string name="night_theme_title">Gece Teması</string>
 <string name="light_theme_title">Açık</string>
 <string name="dark_theme_title">Koyu</string>
 <string name="black_theme_title">Siyah</string>
-<string name="popup_remember_size_pos_title">Açılır pencere özelliklerini hatırla</string>
-<string name="popup_remember_size_pos_summary">Açılır pencerenin son boyutunu ve konumunu hatırla</string>
 <string name="use_inexact_seek_title">Hızlı kesin olmayan arama kullan</string>
 <string name="use_inexact_seek_summary">Kesin olmayan arama, oynatıcının daha düşük hassasiyetle pozisyonlara daha hızlı atlamasını sağlar. 5, 15 veya 25 saniye arama bununla çalışmaz</string>
 <string name="disable_android_auto_title">Android Auto\'yu Devre Dışı Bırak</string>
@@ -92,11 +81,6 @@
 <string name="clear_queue_confirmation_description">Aktif oynatıcı sırası değiştirilecek</string>
 <string name="download_thumbnail_title">Küçük resimleri yükle</string>
 <string name="download_thumbnail_summary">Küçük resimlerin yüklenmesini engelleyerek veri ve bellek kullanımından tasarruf etmek için kapatın. Değişiklikler hem bellek içi hem de disk üzerindeki resim önbelleğini temizler</string>
-<string name="show_comments_title">Yorumları göster</string>
-<string name="show_comments_summary">Yorumları gizlemek için kapatın</string>
-<string name="show_next_and_similar_title">\'Sonraki\' ve \'Benzer\' videoları göster</string>
-<string name="show_description_title">Açıklamayı göster</string>
-<string name="show_description_summary">Video açıklamasını ve ek bilgileri gizlemek için kapatın</string>
 <string name="show_meta_info_title">Meta bilgilerini göster</string>
 <string name="show_meta_info_summary">Akış oluşturucu, akış içeriği veya arama isteği hakkında ek bilgiler içeren meta bilgi kutularını gizlemek için kapatın</string>
 <string name="thumbnail_cache_wipe_complete_notice">Resim önbelleği temizlendi</string>
@@ -123,8 +107,6 @@
 <string name="enable_watch_history_title">İzleme geçmişi</string>
 <string name="enable_playback_resume_title">Oynatmaya devam et</string>
 <string name="enable_playback_resume_summary">Son oynatma konumunu geri yükle</string>
-<string name="enable_playback_state_lists_title">Listelerdeki konumlar</string>
-<string name="enable_playback_state_lists_summary">Listelerde oynatma konumu göstergelerini göster</string>
 <string name="settings_category_clear_data_title">Verileri temizle</string>
 <string name="enable_watch_history_summary">İzlenen videoları takip et</string>
 <string name="resume_on_audio_focus_gain_title">Oynatmaya devam et</string>
@@ -133,14 +115,9 @@
 <string name="start_main_player_fullscreen_title">Ana oynatıcıyı tam ekranda başlat</string>
 <string name="start_main_player_fullscreen_summary">Videoları mini oynatıcıda başlatma, otomatik döndürme kilitliyse doğrudan tam ekran moduna geç. Tam ekrandan çıkarak mini oynatıcıya yine de erişebilirsiniz</string>
 <string name="autoplay_title">Otomatik oynat</string>
-<string name="show_hold_to_append_title">\"Sıraya eklemek için basılı tut\" ipucunu göster</string>
-<string name="show_hold_to_append_summary">Arka plana veya video \"Ayrıntıları:\"ndaki açılır pencere düğmesine basıldığında ipucunu göster</string>
 <string name="unsupported_url">Desteklenmeyen URL</string>
 <string name="unsupported_url_dialog_message">URL tanınamadı. Başka bir uygulamayla açılsın mı?</string>
 <string name="default_content_country_title">Varsayılan içerik ülkesi</string>
-<string name="content_language_title">Varsayılan içerik dili</string>
-<string name="show_auto_translated_subtitles_title">Otomatik çevrilmiş altyazıları göster</string>
-<string name="show_auto_translated_subtitles_summary">Etkinleştirilirse, PipePipe varsayılan içerik dilinizde otomatik çevrilmiş bir altyazı parçası eklemeye çalışır. Bu, video yüklemesini biraz yavaşlatır.</string>
 <plurals name="replies">
 <item quantity="one">%s yanıt</item>
 <item quantity="other">%s yanıt</item>
@@ -154,8 +131,6 @@
 <string name="peertube_instance_add_https_only">Yalnızca HTTPS URL\'leri desteklenir</string>
 <string name="peertube_instance_add_exists">Sunucu zaten mevcut</string>
 <string name="settings_category_player_title">Oynatıcı</string>
-<string name="settings_category_player_behavior_title">Davranış</string>
-<string name="settings_category_video_audio_title">Video ve ses</string>
 <string name="settings_category_history_title">Geçmiş ve önbellek</string>
 <string name="settings_category_appearance_title">Görünüm</string>
 <string name="settings_category_debug_title">Hata Ayıklama</string>
@@ -165,10 +140,6 @@
 <string name="background_player_playing_toast">Arka planda oynatılıyor</string>
 <string name="popup_playing_toast">Açılır pencere modunda oynatılıyor</string>
 <string name="content">İçerik</string>
-<string name="show_age_restricted_content_title">Yaş kısıtlamalı içeriği göster</string>
-<string name="show_age_restricted_content_summary">Çocuklar için uygun olmayabilecek yaş sınırı olan (18+ gibi) içerikleri göster</string>
-<string name="youtube_restricted_mode_enabled_title">YouTube\'un \"Kısıtlı Modunu\" aç</string>
-<string name="youtube_restricted_mode_enabled_summary">YouTube, potansiyel olarak yetişkinlere uygun içeriği gizleyen bir \"Kısıtlı Mod\" sağlar</string>
 <string name="restricted_video">Bu video yaş kısıtlamalıdır.\n\nGörmek istiyorsanız ayarlardan \"%1$s\" seçeneğini açın.</string>
 <string name="restricted_video_no_stream_new">Bu video yaş kısıtlamalıdır. \nGörmek istiyorsanız Ayarlar üzerinden giriş yapın.</string>
 <string name="duration_live">Canlı</string>
@@ -355,8 +326,6 @@
 <!-- Downloads -->
 <string name="settings_category_downloads_title">İndirme</string>
 <string name="settings_file_charset_title">Dosya adlarında izin verilen karakterler</string>
-<string name="settings_file_replacement_character_summary">Geçersiz karakterler bu değerle değiştirilir</string>
-<string name="settings_file_replacement_character_title">Değiştirme karakteri</string>
 <string name="charset_letters_and_digits">Harfler ve rakamlar</string>
 <string name="charset_most_special_characters">Çoğu özel karakter</string>
 <string name="toast_no_player">Bu dosyayı oynatmak için yüklü bir uygulama yok</string>
@@ -365,16 +334,10 @@
 <string name="title_licenses">Üçüncü Taraf Lisansları</string>
 <string name="copyright">© %1$s %2$s tarafından %3$s altında</string>
 <string name="tab_about">Hakkında</string>
-<string name="tab_licenses">Lisanslar</string>
 <string name="app_description_new">YouTube, NicoNico ve BiliBili\'ye özgürce göz atmanızı sağlayan bir FLOSS Android uygulaması</string>
 <string name="contribution_title">Katkıda Bulun</string>
 <string name="contribution_encouragement">Çeviri, tasarım değişiklikleri, kod temizliği veya gerçek ağır kod değişiklikleri gibi fikirleriniz varsa—yardım her zaman memnuniyetle karşılanır. Ne kadar çok yapılırsa o kadar iyi olur!</string>
-<string name="view_on_codeberg">CodeBerg\'de görüntüle</string>
 <string name="donation_title">Bağış Yap</string>
-<string name="donation_encouragement_new">Size en iyi kullanıcı deneyimini sunmak için elimden gelenin en iyisini yaptım, ancak bağış yaparak PipePipe\'ı daha da iyi hale getirme fırsatına sahipsiniz. Yeterli bağışla, projeyi geliştirmeye daha fazla zaman ayırabilirim.</string>
-<string name="give_back">Geri ver</string>
-<string name="website_title_new">Web Sitesi (Kaynak)</string>
-<string name="read_privacy_policy">Gizlilik politikasını oku</string>
 <string name="app_license_title_new">NewPipe\'ın Lisansı (Kaynak)</string>
 <string name="app_license">NewPipe copyleft özgür yazılımdır: İsteğinize göre kullanabilir, inceleyebilir, paylaşabilir ve geliştirebilirsiniz. Özellikle, Özgür Yazılım Vakfı tarafından yayınlanan GNU Genel Kamu Lisansı\'nın 3. sürümü veya (tercihinize göre) daha sonraki herhangi bir sürümü altında yeniden dağıtabilir ve/veya değiştirebilirsiniz.</string>
 <string name="read_full_license">Lisansı oku</string>
@@ -519,10 +482,6 @@
 <string name="percent">Yüzde</string>
 <string name="semitone">Yarım ton</string>
 <!-- GDPR dialog -->
-<string name="start_accept_privacy_policy_new">Avrupa Genel Veri Koruma Yönetmeliği\'ne (GDPR) uymak amacıyla, PipePipe\'ın gizlilik politikasına dikkatinizi çekeriz. Lütfen dikkatlice okuyun.
-\nHata raporunu bize göndermek için bunu kabul etmelisiniz.</string>
-<string name="accept">Kabul Et</string>
-<string name="decline">Reddet</string>
 <!-- Limit mobile data usage  -->
 <string name="limit_data_usage_none_description">Sınır yok</string>
 <string name="limit_mobile_data_usage_title">Mobil veri kullanırken çözünürlüğü sınırla</string>
@@ -565,7 +524,6 @@
 <string name="card">Kart</string>
 <string name="auto">Otomatik</string>
 <!-- Seekbar Preview Thumbnail-->
-<string name="seekbar_preview_thumbnail_title">Arama çubuğu küçük resim önizlemesi</string>
 <string name="high_quality_larger">Yüksek kalite (daha büyük)</string>
 <string name="low_quality_smaller">Düşük kalite (daha küçük)</string>
 <string name="dont_show">Gösterme</string>
@@ -635,7 +593,6 @@
 <string name="downloads_storage_ask_summary_no_saf_notice">Her indirmeyi nereye kaydedeceğiniz sorulacaktır</string>
 <string name="downloads_storage_use_saf_title">Sistem klasör seçicisini (SAF) kullan</string>
 <string name="downloads_storage_use_saf_summary">\'Depolama Erişim Çerçevesi\' (SAF) harici bir SD karta indirmeye izin verir</string>
-<string name="downloads_storage_use_saf_summary_api_29">Android 10\'dan itibaren yalnızca \'Depolama Erişim Çerçevesi\' desteklenmektedir</string>
 <string name="choose_instance_prompt">Bir sunucu seçin</string>
 <string name="app_language_title">Uygulama dili</string>
 <string name="systems_language">Sistem varsayılanı</string>
@@ -644,7 +601,6 @@
 <string name="remove_watched_popup_warning">Daha önce izlenen ve oynatma listesine eklendikten sonra izlenen videolar kaldırılacaktır.
 \nEmin misiniz\? Bu işlem geri alınamaz!</string>
 <string name="remove_watched_popup_yes_and_partially_watched_videos">Evet, ve kısmen izlenen videolar</string>
-<string name="new_seek_duration_toast">ExoPlayer kısıtlamaları nedeniyle arama süresi %d saniye olarak ayarlandı</string>
 <!-- Time duration plurals -->
 <plurals name="seconds">
 <item quantity="one">%d saniye</item>
@@ -704,7 +660,6 @@
 \n
 \nBu nedenle seçim, neyi tercih ettiğinize bağlıdır: hız veya kesin bilgi.</string>
 <string name="feed_toggle_show_played_items">İzlenen öğeleri göster</string>
-<string name="feed_toggle_hide_played_items">İzlenen öğeleri gizle</string>
 <string name="feed_fetch_channel_tabs">Kanal sekmelerini getir</string>
 <string name="feed_fetch_channel_tabs_summary">Akış güncellenirken getirilecek sekmeler. Kanal hızlı mod kullanılarak güncellenirse bu seçeneğin bir etkisi olmaz.</string>
 <string name="sponsor_block">SponsorBlock</string>
@@ -723,7 +678,6 @@
 <string name="sponsor_block_enable_title">SponsorBlock\'u Etkinleştir</string>
 <string name="sponsor_block_enable_summary">Videolardaki sponsorları otomatik olarak atla. YouTube ve BiliBili için çalışır.</string>
 <string name="sponsor_block_api_url_title">API Url</string>
-<string name="sponsor_block_api_url_summary">SponsorBlock API\'sini sorgularken kullanılacak URL. SponsorBlock\'un çalışması için bu ayarlanmalıdır.</string>
 <string name="sponsor_block_notifications_title">Sponsorlar atlandığında bildir</string>
 <string name="sponsor_block_notifications_summary">Bir sponsor otomatik olarak atlandığında bir toast bildirimi göster.</string>
 <string name="sponsor_block_privacy_title">Gizlilik Politikasını Görüntüle</string>
@@ -739,15 +693,6 @@
 <string name="sponsor_block_skip_preview_toast">Önizleme/özet atlandı</string>
 <string name="sponsor_block_skip_filler_toast">Dolgu atlandı</string>
 <string name="sponsor_block_skip_pending_toast">Bekleyen bölüm atlandı</string>
-<string name="sponsor_block_toggle_skipping">Sponsorları atlamayı aç/kapat</string>
-<string name="sponsor_block_clear_whitelist_title">Beyaz Listeyi Temizle</string>
-<string name="sponsor_block_clear_whitelist_summary">SponsorBlock\'un yok sayacağı yükleyicilerin listesini temizle.</string>
-<string name="sponsor_block_enabled_toast">SponsorBlock etkinleştirildi</string>
-<string name="sponsor_block_disabled_toast">SponsorBlock devre dışı bırakıldı</string>
-<string name="sponsor_block_whitelist_cleared_toast">Beyaz liste temizlendi</string>
-<string name="sponsor_block_uploader_added_to_whitelist_toast">Kanal beyaz listeye eklendi</string>
-<string name="sponsor_block_uploader_removed_from_whitelist_toast">Kanal beyaz listeden çıkarıldı</string>
-<string name="sponsor_block_confirm_clear_whitelist">Beyaz listeyi temizlemek istediğinizden emin misiniz?</string>
 <string name="sponsor_block_confirm_reset_colors">Kategori renklerini sıfırlamak istediğinizden emin misiniz?</string>
 <string name="sponsor_block_segment_voted_up_toast">Bölüme olumlu oy verildi</string>
 <string name="sponsor_block_segment_voted_down_toast">Bölüme olumsuz oy verildi</string>
@@ -765,7 +710,6 @@
 <string name="sponsor_block_clear_segment">Bölümü temizle</string>
 <string name="sponsor_block_submit_segment">Bölümü gönder</string>
 <string name="sponsor_block_skip_marked_segments">İşaretli bölümleri atla</string>
-<string name="sponsor_block_whitelist_channel">Kanalı beyaz listeye al</string>
 <string name="settings_category_sponsor_block_categories_quick_actions">Hızlı İşlemler</string>
 <string name="settings_category_sponsor_block_categories_title">SponsorBlock Kategorileri</string>
 <string name="settings_category_sponsor_block_categories_summary">Hangi video bölümlerinin atlanacağını ve arama çubuğundaki renk işaretlerini özelleştirin.</string>
@@ -840,11 +784,6 @@
 <string name="metadata_support">Destek</string>
 <string name="metadata_host">Sunucu</string>
 <string name="metadata_thumbnail_url">Küçük Resim URL\'si</string>
-<string name="metadata_thumbnails">Küçük Resimler</string>
-<string name="metadata_uploader_avatars">Yükleyici avatarları</string>
-<string name="metadata_subchannel_avatars">Alt kanal avatarları</string>
-<string name="metadata_avatars">Avatarlar</string>
-<string name="metadata_banners">Bannerlar</string>
 <string name="metadata_privacy_public">Herkese Açık</string>
 <string name="metadata_privacy_unlisted">Liste Dışı</string>
 <string name="metadata_privacy_private">Özel</string>
@@ -862,21 +801,10 @@
 <string name="notifications_disabled">Bildirimler devre dışı</string>
 <string name="get_notified">Bildirim al</string>
 <string name="you_successfully_subscribed">Bu kanala şimdi abone oldunuz</string>
-<string name="enumeration_comma">,</string>
 <string name="toggle_all">Tümünü değiştir</string>
-<string name="show_replies">Yanıtları Göster</string>
 <string name="remove_duplicates">Kopyaları kaldır</string>
 <string name="remove_duplicates_popup_title">Kopya akışlar kaldırılsın mı?</string>
 <string name="remove_duplicates_popup_warning">Oynatma listesindeki kopya akışlar kaldırılacak.\n\nEmin misiniz? Bu işlem geri alınamaz!</string>
-<string name="streams_not_yet_supported_removed">İndirici tarafından henüz desteklenmeyen akışlar gösterilmiyor</string>
-<string name="selected_stream_external_player_not_supported">Seçilen akış harici oynatıcılar tarafından desteklenmiyor</string>
-<string name="no_audio_streams_available_for_external_players">Harici oynatıcılar için kullanılabilir ses akışı yok</string>
-<string name="no_video_streams_available_for_external_players">Harici oynatıcılar için kullanılabilir video akışı yok</string>
-<string name="select_quality_external_players">Harici oynatıcılar için kalite seçin</string>
-<string name="unknown_format">Bilinmeyen format</string>
-<string name="unknown_quality">Bilinmeyen kalite</string>
-<string name="feed_toggle_show_future_items">Gelecek öğeleri göster</string>
-<string name="feed_toggle_hide_future_items">Gelecek öğeleri gizle</string>
 <string name="channel_tab_videos">Videolar</string>
 <string name="channel_tab_tracks">Parçalar</string>
 <string name="channel_tab_livestreams">Canlı</string>
@@ -887,8 +815,6 @@
 <string name="channel_tab_info">Bilgi</string>
 <string name="show_channel_tabs">Kanal sekmeleri</string>
 <string name="show_channel_tabs_summary">Kanal sayfalarında hangi sekmelerin gösterileceği</string>
-<string name="image_quality_title">Resim kalitesi</string>
-<string name="image_quality_summary">Resimlerin kalitesini ve veri ile bellek kullanımını azaltmak için resimlerin yüklenip yüklenmeyeceğini seçin. Değişiklikler hem bellek içi hem de disk üzerindeki resim önbelleğini temizler — %s</string>
 <string name="image_quality_none">Resimleri yükleme</string>
 <string name="image_quality_low">Düşük kalite</string>
 <string name="image_quality_medium">Orta kalite</string>
@@ -946,16 +872,9 @@
 <string name="sort_relevance">Alaka Düzeyi</string>
 <string name="sort_rating">Puan</string>
 <string name="sort_ascending">Artan</string>
-<string name="auto_queue_partition_summary">Her zaman bir sonraki bölümü sıraya almaya çalış</string>
-<string name="auto_queue_partition_title">Sonraki bölümü otomatik sıraya al</string>
-<string name="feed_show_watched">Tamamen izlendi</string>
-<string name="feed_show_partially_watched">Kısmen izlendi</string>
-<string name="feed_show_upcoming">Yaklaşan</string>
 <string name="sort">Sırala</string>
 <string name="settings_category_exoplayer_title">ExoPlayer ayarları</string>
 <string name="settings_category_exoplayer_summary">Bazı ExoPlayer ayarlarını yönetin. Bu değişikliklerin etkili olması için oynatıcının yeniden başlatılması gerekir</string>
-<string name="use_exoplayer_decoder_fallback_title">ExoPlayer\'ın kod çözücü geri dönüş özelliğini kullan</string>
-<string name="use_exoplayer_decoder_fallback_summary">Kod çözücü başlatma sorunlarınız varsa bu seçeneği etkinleştirin, birincil kod çözücü başlatma başarısız olursa daha düşük öncelikli kod çözücülere geri döner. Bu, birincil kod çözücüleri kullanmaya kıyasla daha düşük oynatma performansı ile sonuçlanabilir</string>
 <string name="always_use_exoplayer_set_output_surface_workaround_title">ExoPlayer\'ın video çıkış yüzeyi ayarı çözümünü her zaman kullan</string>
 <string name="always_use_exoplayer_set_output_surface_workaround_summary">Bu çözüm, yüzeyi doğrudan kodek bileşenine ayarlamak yerine, bir yüzey değişikliği meydana geldiğinde video kodek bileşenlerini serbest bırakır ve yeniden başlatır. Bu soruna sahip bazı cihazlarda ExoPlayer tarafından zaten kullanılmaktadır, bu ayar yalnızca Android 6 ve üzerinde etkilidir\n\nMevcut video oynatıcıyı değiştirirken veya tam ekrana geçerken oynatma hatalarını önlemek için bu seçeneği etkinleştirmek gerekebilir</string>
 <string name="high_res">Oynat ve indir (premium içerikler / daha yüksek video çözünürlükleri ve ses kaliteleri için)</string>
@@ -982,10 +901,7 @@
 <string name="stat_dislike">Beğenmeme</string>
 <string name="stat_evaluation">Değerlendirme</string>
 <string name="button_view_pictures">Resimleri Görüntüle (%d)</string>
-<string name="next">Sonraki</string>
 <string name="previous">Önceki</string>
-<string name="warning">Uyarı</string>
-<string name="download_temp_warning">Oynatma listesi indirme işlemi hala beta aşamasındadır. 50+ öğeli oynatma listelerini indirmek için ASLA kullanmayın.</string>
 <string name="error_priority_notice">Öncelik: GitHub/CodeBerg\'deki sorunlar &gt; Net başlık, kibar içerik ve hata raporu içeren e-postalar &gt; Yalnızca hata raporu içeren e-postalar. \nYalnızca hata raporu içeren e-postalar yanıt almayacaktır.</string>
 <string name="sleep_timer_length_title">Uyku Zamanlayıcısı</string>
 <string name="error_match_notification_title">Karşılaştığınız hata için bir eşleşme bulundu</string>
@@ -993,7 +909,6 @@
 <string name="oldest_first">Önce en eskiler</string>
 <string name="newest_first">Önce en yeniler</string>
 <string name="same_as_item_mode">Öğelerle aynı</string>
-<string name="playlist_sorting_mode_title">Oynatma listesi sıralama modu</string>
 <string name="dont_auto_queue_long_title">Uzun videoları otomatik sıraya alma</string>
 <string name="dont_auto_queue_long_description">Yalnızca 6 dakikadan kısa videoları otomatik sıraya al</string>
 <string name="enable_notification_text">Uygulamanın normal çalışmasını sağlamak için lütfen bu uygulama için bildirimleri etkinleştirin. Sizi yalnızca gerektiğinde uyaracağız.</string>
@@ -1011,7 +926,6 @@
 <string name="require_audio_focus_summary">Yalnızca PipePipe\'ın ses çaldığından emin ol</string>
 <string name="require_audio_focus_title">Ses odağı gerektir</string>
 <string name="decoder_init_failure">Kod çözücü başlatma başarısız oldu</string>
-<string name="go_to_settings">Ayarlara git</string>
 <string name="unable_to_decode_summary">Cihazınız gerekli donanım kod çözücülerinden yoksun, bu yüzden bu videoyu PipePipe\'ta oynatamazsınız.\nLütfen indirin ve VLC\'de oynatın.</string>
 <string name="settings_category_gestures_summary">Jest Ayarları</string>
 <string name="settings_category_bullet_comments_summary">Kayan Yorum Ayarları</string>
@@ -1021,8 +935,6 @@
 <string name="advanced_formats_summary">Cihazınız destekliyorsa, gelişmiş formatları etkinleştirmek veri tüketimini azaltabilir ve daha yüksek çözünürlükler sağlayabilir. \nYouTube\'da 2k/4k içerikleri göstermek için WEBM veya AV1 etkinleştirilmelidir. \nCihazınızın desteklemediği bir format kullanmak siyah ekrana veya çökmeye neden olur.</string>
 <string name="advanced_formats_title">Gelişmiş formatları etkinleştir</string>
 <string name="preferred_audio_language_title">Tercih edilen ses dili</string>
-<string name="comments_inner_scroll_title">Yorumlar iç kaydırma</string>
-<string name="comments_inner_scroll_summary">Yorumları kaydırırken video konumunu sabit yap</string>
 <string name="ip_blocked_summary">IP adresiniz YouTube tarafından geçici olarak engellendi. Bir süre boyunca, belirli videoları oynatırken sorunlar yaşayacaksınız. Hata devam ederse, devam etmek için lütfen Ayarlar üzerinden giriş yapın.</string>
 <string name="settings_category_filter_title">İçerik Filtresi</string>
 <string name="filter_by_keyword_title">Anahtar kelimeye göre filtrele</string>
@@ -1087,8 +999,6 @@
 <string name="always_list_mode_for_bookmark_title">Yer İşaretleri için her zaman liste modunu kullan</string>
 <string name="select_channel_group_prompt">Bir kanal grubu seçin</string>
 <string name="channel_group_tab_summary">Kanal Grubu</string>
-<string name="feed_groups_grid_layout_title">Kanal grubu listesi için ızgara düzeni kullan</string>
-<string name="feed_groups_grid_layout_summary">Abonelikler sayfasında, kanal gruplarını yatay kaydırma yerine ızgara şeklinde göster</string>
 <string name="need_login_hint"> Bu içeriği görüntülemek için bir hesap gereklidir. Devam etmek için ayarlardan giriş yapın.</string>
 <string name="exit_app_confirmation_message">Yanlışlıkla çıkmayı önlemek için "çıkmak için tekrar geri tuşuna basın" uyarısını göster</string>
 <string name="exit_app_confirmation_title">Uygulamadan çıkış onayı</string>
@@ -1099,11 +1009,6 @@
 <string name="clear_webview_cookies">WebView çerezlerini temizle</string>
 <string name="clear_webview_cookies_summary">Yeni bir hesap kullanabilmek için WebView bileşenleri tarafından saklanan tüm çerezleri temizle</string>
 <string name="webview_cookies_cleared">WebView çerezleri temizlendi</string>
-<string name="webview_cookies_clear_failed">WebView çerezleri temizlenemedi</string>
 <string name="remove_from_playlist_confirmation">Bu öğe oynatma listesinden kaldırılsın mı?</string>
 <string name="local_playlist_swipe_action_title">Yerel oynatma listelerinde sağa kaydırma eylemi</string>
-<string name="youtube_account_temporarily_disabled">Geçici olarak devre dışı bırakıldı</string>
-<string name="beta_test_dialog_title">PipePipe 5.0.0 Beta-2 Testine Katılın!</string>
-<string name="beta_test_dialog_message">Devam eden desteğiniz için teşekkür ederiz! Uygulamayı baştan aşağı yeniden oluşturma sürecimizde büyük bir adım olan PipePipe 5.0.0 Beta-2\'yi yayınlamaktan heyecan duyuyoruz.\n\nBu sürüm, erken geri bildirimlere dayanarak kararlılık ve özellik tamamlama konusunda önemli iyileştirmelere odaklanmaktadır. Son sürüme çok yaklaşmış olsak da, bu hala bir betadır ve geri bildiriminiz paha biçilemez.\n\nHatırlatma: Bu, \"PipePipe Beta\" olarak yüklenecek ve mevcut uygulamanızı veya verilerinizi etkilemeyecektir.\n\nHerhangi bir hatayla karşılaşırsanız veya önerileriniz varsa, lütfen GitHub depomuzda bir sorun açarak bize bildirin!</string>
-<string name="trending_replaced">YouTube kısa süre önce Trend Videolar özelliğini kaldırdı, bu nedenle varsayılan YouTube trend sekmemizi bunun yerine Önerilen Canlı Yayınları gösterecek şekilde güncelledik. Bunu görmek istemiyorsanız, Ayarlar\'dan sekmeyi kaldırabilir ve başka birini ana sayfanız olarak ayarlayabilirsiniz.</string>
 </resources>

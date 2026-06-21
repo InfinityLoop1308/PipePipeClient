@@ -199,7 +199,7 @@ public final class DownloaderImpl extends Downloader {
         if (dataToSend != null) {
             requestBody = RequestBody.create(null, dataToSend);
         } else if (httpMethod.equals("POST")) {
-            requestBody = RequestBody.create("", null);
+            requestBody = RequestBody.create(null, "");
         }
 
         // Check if extractor headers already contain User-Agent or Cookie
@@ -238,14 +238,16 @@ public final class DownloaderImpl extends Downloader {
         OkHttpClient tmpClient = client;
         okhttp3.Response response = null;
 
-        if(url.contains("pipepipe.dev")) {
-            tmpClient = new OkHttpClient.Builder()
-                    .readTimeout(30, TimeUnit.SECONDS)
-                    .build();
-        } else if (customTimeout != null) {
-            tmpClient = new OkHttpClient.Builder()
-                    .readTimeout(customTimeout, TimeUnit.SECONDS)
-                    .build();
+        if (url.contains("pipepipe.dev") || customTimeout != null || !request.followRedirects()) {
+            final OkHttpClient.Builder builder = client.newBuilder()
+                    .followRedirects(request.followRedirects())
+                    .followSslRedirects(request.followRedirects());
+            if (url.contains("pipepipe.dev")) {
+                builder.readTimeout(30, TimeUnit.SECONDS);
+            } else if (customTimeout != null) {
+                builder.readTimeout(customTimeout, TimeUnit.SECONDS);
+            }
+            tmpClient = builder.build();
         }
 
         int maxRetries = 2;
@@ -339,10 +341,14 @@ public final class DownloaderImpl extends Downloader {
         }
 
         OkHttpClient tmpClient = client;
-        if (customTimeout != null) {
-            tmpClient = new OkHttpClient.Builder()
-                    .readTimeout(customTimeout, TimeUnit.SECONDS)
-                    .build();
+        if (customTimeout != null || !request.followRedirects()) {
+            final OkHttpClient.Builder builder = client.newBuilder()
+                    .followRedirects(request.followRedirects())
+                    .followSslRedirects(request.followRedirects());
+            if (customTimeout != null) {
+                builder.readTimeout(customTimeout, TimeUnit.SECONDS);
+            }
+            tmpClient = builder.build();
         }
 
         Call call = tmpClient.newCall(requestBuilder.build());

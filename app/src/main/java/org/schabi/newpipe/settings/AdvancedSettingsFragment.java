@@ -1,22 +1,59 @@
 package org.schabi.newpipe.settings;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
+
 import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreferenceCompat;
+
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.util.DeviceUtils;
+import org.schabi.newpipe.util.NavigationHelper;
+import org.schabi.newpipe.util.PicassoHelper;
 import org.schabi.newpipe.util.ServiceHelper;
 
-public class AdvancedSettingsFragment extends BasePreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener{
+import java.io.IOException;
 
-    private SharedPreferences.OnSharedPreferenceChangeListener listener;
+public class AdvancedSettingsFragment extends BasePreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Override
     public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
         addPreferencesFromResourceRegistry();
         initializeAndroidAutoPreference();
+        requirePreference(R.string.download_thumbnail_key).setOnPreferenceChangeListener(
+                (preference, newValue) -> {
+                    PicassoHelper.setShouldLoadImages((Boolean) newValue);
+                    try {
+                        PicassoHelper.clearCache(preference.getContext());
+                        Toast.makeText(preference.getContext(),
+                                R.string.thumbnail_cache_wipe_complete_notice, Toast.LENGTH_SHORT)
+                                .show();
+                    } catch (final IOException e) {
+                        Log.e(TAG, "Unable to clear Picasso cache", e);
+                    }
+                    return true;
+                });
+
+        findPreference(getString(R.string.use_experimental_new_ui_key))
+                .setOnPreferenceChangeListener((preference, newValue) -> {
+                    defaultPreferences.edit()
+                            .putBoolean(getString(R.string.use_experimental_new_ui_key),
+                                    (Boolean) newValue)
+                            .commit();
+                    final Activity activity = getActivity();
+                    if (activity != null) {
+                        NavigationHelper.restartApp(activity);
+                    }
+                    return true;
+                });
+
+        if (DeviceUtils.isTv(getContext())) {
+            findPreference(getString(R.string.use_old_search_filter_key)).setVisible(false);
+        }
     }
     
     private void initializeAndroidAutoPreference() {
@@ -39,10 +76,28 @@ public class AdvancedSettingsFragment extends BasePreferenceFragment implements 
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if(key.equals(getString(R.string.loading_timeout_key))) {
+        if (key.equals(getString(R.string.loading_timeout_key))) {
             ServiceHelper.initServices(this.getContext());
-        } else if(key.equals(getString(R.string.disable_android_auto_key))) {
+        } else if (key.equals(getString(R.string.disable_android_auto_key))) {
             DeviceUtils.updateAndroidAutoComponentState(requireContext());
+        } else if (key.equals(getString(R.string.fetch_full_playlist_key))) {
+            ServiceHelper.initServices(this.getContext());
+        } else if (key.equals(getString(R.string.show_dislike_key))) {
+            ServiceHelper.initServices(this.getContext());
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getPreferenceManager().getSharedPreferences()
+                .registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getPreferenceManager().getSharedPreferences()
+                .unregisterOnSharedPreferenceChangeListener(this);
     }
 }

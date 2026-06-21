@@ -3,24 +3,24 @@ package org.schabi.newpipe.player.helper;
 import android.content.Context;
 import android.net.Uri;
 
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.source.SingleSampleMediaSource;
-import com.google.android.exoplayer2.source.dash.DashMediaSource;
-import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.source.hls.DefaultHlsExtractorFactory;
-import com.google.android.exoplayer2.source.hls.playlist.DefaultHlsPlaylistTracker;
-import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
-import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
-import com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSource;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
-import com.google.android.exoplayer2.upstream.DefaultLoadErrorHandlingPolicy;
-import com.google.android.exoplayer2.upstream.ResolvingDataSource;
-import com.google.android.exoplayer2.upstream.TransferListener;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
+import androidx.media3.exoplayer.source.MediaSource;
+import androidx.media3.exoplayer.source.ProgressiveMediaSource;
+import androidx.media3.exoplayer.source.SingleSampleMediaSource;
+import androidx.media3.exoplayer.dash.DashMediaSource;
+import androidx.media3.exoplayer.dash.DefaultDashChunkSource;
+import androidx.media3.exoplayer.hls.HlsMediaSource;
+import androidx.media3.exoplayer.hls.DefaultHlsExtractorFactory;
+import androidx.media3.exoplayer.hls.playlist.DefaultHlsPlaylistTracker;
+import androidx.media3.exoplayer.smoothstreaming.DefaultSsChunkSource;
+import androidx.media3.exoplayer.smoothstreaming.SsMediaSource;
+import androidx.media3.extractor.ts.DefaultTsPayloadReaderFactory;
+import androidx.media3.datasource.DataSource;
+import androidx.media3.datasource.DefaultDataSource;
+import androidx.media3.datasource.DefaultHttpDataSource;
+import androidx.media3.exoplayer.upstream.DefaultLoadErrorHandlingPolicy;
+import androidx.media3.datasource.ResolvingDataSource;
+import androidx.media3.datasource.TransferListener;
+import androidx.media3.datasource.cache.CacheDataSource;
 import com.grack.nanojson.JsonObject;
 import com.grack.nanojson.JsonParser;
 import com.grack.nanojson.JsonParserException;
@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import com.google.android.exoplayer2.source.hls.playlist.HlsPlaylistParserFactory;
+import androidx.media3.exoplayer.hls.playlist.HlsPlaylistParserFactory;
 
 import org.schabi.newpipe.extractor.services.youtube.dashmanifestcreators.YoutubeOtfDashManifestCreator;
 import org.schabi.newpipe.extractor.services.youtube.dashmanifestcreators.YoutubePostLiveStreamDvrDashManifestCreator;
@@ -117,10 +117,11 @@ public class PlayerDataSource {
         return new HlsMediaSource.Factory(cachelessDataSourceFactory)
                 .setAllowChunklessPreparation(true)
                 .setPlaylistTrackerFactory((dataSourceFactory, loadErrorHandlingPolicy,
-                                            playlistParserFactory) ->
+                                            playlistParserFactory, cmcdConfiguration,
+                                            downloadExecutorSupplier) ->
                         new DefaultHlsPlaylistTracker(dataSourceFactory, loadErrorHandlingPolicy,
-                                playlistParserFactory,
-                                PLAYLIST_STUCK_TARGET_DURATION_COEFFICIENT));
+                                playlistParserFactory, cmcdConfiguration,
+                                PLAYLIST_STUCK_TARGET_DURATION_COEFFICIENT, downloadExecutorSupplier));
     }
 
     public DashMediaSource.Factory getLiveDashMediaSourceFactory() {
@@ -257,10 +258,12 @@ public class PlayerDataSource {
         return new HlsMediaSource.Factory(newFactory)
                 .setAllowChunklessPreparation(true)
                 .setPlaylistTrackerFactory((dataSourceFactory, loadErrorHandlingPolicy,
-                                            playlistParserFactory) ->
+                                            playlistParserFactory, cmcdConfiguration,
+                                            downloadExecutorSupplier) ->
                         new DefaultHlsPlaylistTracker(dataSourceFactory, loadErrorHandlingPolicy,
-                                playlistParserFactory,
-                                PLAYLIST_STUCK_TARGET_DURATION_COEFFICIENT)).setLoadErrorHandlingPolicy(new DefaultLoadErrorHandlingPolicy());
+                                playlistParserFactory, cmcdConfiguration,
+                                PLAYLIST_STUCK_TARGET_DURATION_COEFFICIENT, downloadExecutorSupplier))
+                .setLoadErrorHandlingPolicy(new DefaultLoadErrorHandlingPolicy());
     }
 
     // BiliBiliMediaSourceFactories
@@ -274,6 +277,13 @@ public class PlayerDataSource {
         }
         return new ProgressiveMediaSource.Factory(factory)
                 .setContinueLoadingCheckIntervalBytes(continueLoadingCheckIntervalBytes);
+    }
+
+    public DashMediaSource.Factory getBiliDashMediaSourceFactory(){
+        cacheDataSourceFactoryBuilder.setUpstreamDataSourceFactory(biliCachelessDataSourceFactory);
+        return new DashMediaSource.Factory(
+                getDefaultDashChunkSourceFactory(cacheDataSourceFactoryBuilder.build()),
+                cacheDataSourceFactoryBuilder.build());
     }
 
     public void disconnectWebSocketClients() {

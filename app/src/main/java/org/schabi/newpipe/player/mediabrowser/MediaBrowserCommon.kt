@@ -4,8 +4,8 @@ import org.schabi.newpipe.BuildConfig
 import org.schabi.newpipe.extractor.InfoItem.InfoType
 import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException
 
-internal const val ID_AUTHORITY = BuildConfig.APPLICATION_ID
-internal const val ID_ROOT = "//$ID_AUTHORITY"
+internal val ID_AUTHORITY: String get() = BuildConfig.APPLICATION_ID
+internal val ID_ROOT: String get() = "//$ID_AUTHORITY"
 internal const val ID_BOOKMARKS = "playlists"
 internal const val ID_HISTORY = "history"
 internal const val ID_INFO_ITEM = "item"

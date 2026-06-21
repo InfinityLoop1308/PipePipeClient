@@ -22,9 +22,6 @@
 <string name="did_you_mean">Ý bạn là \"%1$s\"?</string>
 <string name="search_showing_result_for">Hiển thị kết quả cho: %s</string>
 <string name="share_dialog_title">Chia sẻ với</string>
-<string name="use_external_video_player_title">Sử dụng trình phát băng hình bên ngoài</string>
-<string name="use_external_video_player_summary">Loại bỏ âm thanh ở một số độ phân giải</string>
-<string name="use_external_audio_player_title">Sử dụng trình phát âm thanh bên ngoài</string>
 <string name="subscribe_button_title">Đăng ký</string>
 <string name="subscribed_button_title">Đã đăng ký</string>
 <string name="unsubscribe">Hủy đăng ký</string>
@@ -48,12 +45,8 @@
 <string name="download_path_audio_dialog_title">Chọn thư mục tải xuống cho tệp âm thanh</string>
 <string name="default_resolution_title">Độ phân giải mặc định</string>
 <string name="default_popup_resolution_title">Độ phân giải bật lên mặc định</string>
-<string name="show_higher_resolutions_title">Hiển thị độ phân giải cao hơn</string>
-<string name="show_higher_resolutions_summary">Chỉ một số thiết bị mới có thể phát băng hình 2K/4K</string>
 <string name="play_with_kodi_title">Phát với Kodi</string>
 <string name="kore_not_found">Cài đặt ứng dụng Kore còn thiếu?</string>
-<string name="show_play_with_kodi_title">Hiển thị tùy chọn \"Phát với Kodi\"</string>
-<string name="show_play_with_kodi_summary">Hiển thị tùy chọn phát băng hình qua trung tâm truyền thông Kodi</string>
 <string name="crash_the_player">Hỏng trình phát</string>
 <string name="notification_scale_to_square_image_title">Cắt hình thu nhỏ thành tỷ lệ khung hình 1:1</string>
 <string name="notification_scale_to_square_image_summary">Cắt hình thu nhỏ của băng hình hiển thị trong thông báo từ tỷ lệ khung hình 16:9 xuống 1:1</string>
@@ -71,15 +64,11 @@
 <string name="notification_colorize_title">Tô màu thông báo</string>
 <string name="notification_colorize_summary">Yêu cầu Android tùy chỉnh màu của thông báo theo màu chính trong hình thu nhỏ (lưu ý rằng màu này không có sẵn trên tất cả các thiết bị)</string>
 <string name="play_audio">Âm thanh</string>
-<string name="default_audio_format_title">Định dạng âm thanh mặc định</string>
-<string name="default_video_format_title">Định dạng băng hình mặc định</string>
 <string name="theme_title">Chủ đề</string>
 <string name="night_theme_title">Chủ đề ban đêm</string>
 <string name="light_theme_title">Sáng</string>
 <string name="dark_theme_title">Tối</string>
 <string name="black_theme_title">Đen</string>
-<string name="popup_remember_size_pos_title">Ghi nhớ thuộc tính bật lên</string>
-<string name="popup_remember_size_pos_summary">Ghi nhớ kích thước và vị trí cuối cùng của cửa sổ bật lên</string>
 <string name="use_inexact_seek_title">Sử dụng tua nhanh không chính xác</string>
 <string name="use_inexact_seek_summary">Tua không chính xác cho phép trình phát tua vị trí nhanh hơn với độ chính xác giảm. Tua trong 5, 15 hoặc 25 giây không có tác dụng với điều này</string>
 <string name="seek_duration_title">Thời lượng tua nhanh tới/lui</string>
@@ -90,11 +79,6 @@
 <string name="clear_queue_confirmation_description">Hàng chờ trình phát đang hoạt động sẽ được thay thế</string>
 <string name="download_thumbnail_title">Tải hình thu nhỏ</string>
 <string name="download_thumbnail_summary">Tắt để tránh tải hình thu nhỏ, tiết kiệm dữ liệu và sử dụng bộ nhớ. Các thay đổi sẽ xóa cả bộ nhớ đệm hình ảnh trong bộ nhớ và trên đĩa</string>
-<string name="show_comments_title">Hiển thị bình luận</string>
-<string name="show_comments_summary">Tắt để ẩn bình luận</string>
-<string name="show_next_and_similar_title">Hiển thị băng hình \'Tiếp theo\' và \'Tương tự\'</string>
-<string name="show_description_title">Hiển thị mô tả</string>
-<string name="show_description_summary">Tắt để ẩn mô tả băng hình và thông tin bổ sung</string>
 <string name="show_meta_info_title">Hiển thị siêu dữ liệu</string>
 <string name="show_meta_info_summary">Tắt để ẩn các hộp siêu dữ liệu với thông tin bổ sung về người tạo luồng, nội dung luồng hoặc yêu cầu tìm kiếm</string>
 <string name="thumbnail_cache_wipe_complete_notice">Bộ nhớ đệm hình ảnh đã bị xóa</string>
@@ -117,8 +101,6 @@
 <string name="enable_watch_history_title">Lịch sử xem</string>
 <string name="enable_playback_resume_title">Tiếp tục phát lại</string>
 <string name="enable_playback_resume_summary">Khôi phục vị trí phát lại cuối cùng</string>
-<string name="enable_playback_state_lists_title">Vị trí trong danh sách</string>
-<string name="enable_playback_state_lists_summary">Hiển thị chỉ báo vị trí phát lại trong danh sách</string>
 <string name="settings_category_clear_data_title">Xóa dữ liệu</string>
 <string name="enable_watch_history_summary">Theo dõi các băng hình đã xem</string>
 <string name="resume_on_audio_focus_gain_title">Tiếp tục phát</string>
@@ -127,12 +109,9 @@
 <string name="start_main_player_fullscreen_title">Bắt đầu trình phát chính trong chế độ toàn màn hình</string>
 <string name="start_main_player_fullscreen_summary">Không bắt đầu băng hình trong trình phát tí hon mà hãy chuyển trực tiếp sang chế độ toàn màn hình nếu tính năng xoay tự động bị khóa. Bạn vẫn có thể truy cập trình phát tí hon bằng cách thoát khỏi chế độ toàn màn hình</string>
 <string name="autoplay_title">Tự động phát</string>
-<string name="show_hold_to_append_title">Hiển thị mẹo \"Giữ để xếp hàng\"</string>
-<string name="show_hold_to_append_summary">Hiển thị mẹo khi nhấn vào nền hoặc nút bật lên trong băng hình \"Chi tiết:\"</string>
 <string name="unsupported_url">URL không được hỗ trợ</string>
 <string name="unsupported_url_dialog_message">Không thể nhận ra URL. Mở bằng ứng dụng khác?</string>
 <string name="default_content_country_title">Quốc gia nội dung mặc định</string>
-<string name="content_language_title">Ngôn ngữ nội dung mặc định</string>
 <plurals name="replies">
 <item quantity="one">%s trả lời</item>
 <item quantity="other">%s trả lời</item>
@@ -146,8 +125,6 @@
 <string name="peertube_instance_add_https_only">Chỉ hỗ trợ URL HTTPS</string>
 <string name="peertube_instance_add_exists">Phiên bản đã tồn tại</string>
 <string name="settings_category_player_title">Trình phát</string>
-<string name="settings_category_player_behavior_title">Hành vi</string>
-<string name="settings_category_video_audio_title">Băng hình và âm thanh</string>
 <string name="settings_category_history_title">Lịch sử và bộ đệm</string>
 <string name="settings_category_appearance_title">Ngoại hình</string>
 <string name="settings_category_debug_title">Gỡ lỗi</string>
@@ -171,10 +148,7 @@
 <string name="background_player_playing_toast">Đang phát trong chế độ nền</string>
 <string name="popup_playing_toast">Phát trong chế độ bật lên</string>
 <string name="content">Nội dung</string>
-<string name="show_age_restricted_content_title">Hiển thị nội dung bị giới hạn độ tuổi</string>
-<string name="show_age_restricted_content_summary">Hiển thị nội dung có thể không phù hợp với trẻ em vì nó có giới hạn độ tuổi (như 18+)</string>
-<string name="youtube_restricted_mode_enabled_title">Bật \"Chế độ hạn chế\"</string> của YouTube
-    <string name="youtube_restricted_mode_enabled_summary">YouTube cung cấp \"Chế độ hạn chế\" để ẩn nội dung có khả năng dành cho người trưởng thành</string>
+của YouTube
 <string name="restricted_video">Băng hình này bị giới hạn độ tuổi.\n\nHãy bật \"%1$s\" trong thiết đặt nếu bạn muốn xem.</string>
 <string name="restricted_video_no_stream_new">Video này bị giới hạn độ tuổi. \nĐăng nhập qua Cài đặt nếu bạn muốn xem.</string>
 <string name="duration_live">Trực tiếp</string>
@@ -362,8 +336,6 @@
 <!-- Downloads -->
 <string name="settings_category_downloads_title">Tải xuống</string>
 <string name="settings_file_charset_title">Ký tự được phép trong tên tệp</string>
-<string name="settings_file_replacement_character_summary">Các ký tự không hợp lệ được thay thế bằng giá trị này</string>
-<string name="settings_file_replacement_character_title">Ký tự thay thế</string>
 <string name="charset_letters_and_digits">Chữ cái và chữ số</string>
 <string name="charset_most_special_characters">Hầu hết các ký tự đặc biệt</string>
 <string name="toast_no_player">Chưa cài đặt ứng dụng nào để phát tệp này</string>
@@ -372,16 +344,10 @@
 <string name="title_licenses">Giấy phép của bên thứ ba</string>
 <string name="copyright">© %1$s bởi %2$s dưới %3$s</string>
 <string name="tab_about">Giới thiệu</string>
-<string name="tab_licenses">Giấy phép</string>
 <string name="app_description_new">Ứng dụng FLOSS Android cho phép bạn duyệt YouTube, NicoNico và BiliBili một cách tự do</string>
 <string name="contribution_title">Đóng góp</string>
 <string name="contribution_encouragement">Cho dù bạn có ý tưởng về; dịch thuật, thay đổi thiết kế, dọn mã hoặc thay đổi mã thực sự nhiều—sự trợ giúp luôn hoan nghênh. Càng làm nhiều thì càng tốt!</string>
-<string name="view_on_codeberg">Xem trên CodeBerg</string>
 <string name="donation_title">Quyên tặng</string>
-<string name="donation_encouragement_new">Tôi đã nỗ lực hết sức để cung cấp cho bạn trải nghiệm người dùng tốt nhất, nhưng bạn có cơ hội làm cho PipePipe trở nên tốt hơn nữa bằng cách quyên góp. Với số tiền quyên góp đủ, tôi có thể dành nhiều thời gian hơn để phát triển dự án. </string>
-<string name="give_back">Đền đáp</string>
-<string name="website_title_new">Trang web (Ngược dòng)</string>
-<string name="read_privacy_policy">Đọc chính sách bảo mật</string>
 <string name="app_license_title_new">Giấy phép của NewPipe (Ngược dòng)</string>
 <string name="app_license">NewPipe là phần mềm miễn phí copyleft: Bạn có thể sử dụng, nghiên cứu, chia sẻ và cải tiến nó theo ý muốn. Cụ thể là bạn có thể phân phối lại và/hoặc sửa đổi nó theo các điều khoản của Giấy phép Công cộng GNU do Tổ chức Phần mềm Tự do xuất bản, phiên bản 3 của Giấy phép hoặc (tùy theo lựa chọn của bạn) bất kỳ phiên bản nào mới hơn.</string>
 <string name="read_full_license">Đọc giấy phép</string>
@@ -526,10 +492,6 @@
 <string name="percent">Phần trăm</string>
 <string name="semitone">Nửa cung</string>
 <!-- GDPR dialog -->
-<string name="start_accept_privacy_policy_new">Để tuân thủ Quy định bảo vệ dữ liệu chung của Châu Âu (GDPR), chúng tôi xin lưu ý bạn đến chính sách quyền riêng tư của PipePipe. Xin vui lòng đọc nó một cách cẩn thận.
-\nBạn phải chấp nhận nó để gửi báo cáo lỗi cho chúng tôi.</string>
-<string name="accept">Chấp nhận</string>
-<string name="decline">Từ chối</string>
 <!-- Limit mobile data usage  -->
 <string name="limit_data_usage_none_description">Không có giới hạn</string>
 <string name="limit_mobile_data_usage_title">Giới hạn độ phân giải khi sử dụng dữ liệu di động</string>
@@ -570,7 +532,6 @@
 <string name="grid">Lưới</string>
 <string name="auto">Tự động</string>
 <!-- Seekbar Preview Thumbnail-->
-<string name="seekbar_preview_thumbnail_title">Xem trước hình thu nhỏ của thanh tua</string>
 <string name="high_quality_larger">Chất lượng cao (lớn hơn)</string>
 <string name="low_quality_smaller">Chất lượng thấp (nhỏ hơn)</string>
 <string name="dont_show">Đừng hiển thị</string>
@@ -640,7 +601,6 @@
 <string name="downloads_storage_ask_summary_no_saf_notice">Bạn sẽ được hỏi nơi lưu mỗi lần tải xuống</string>
 <string name="downloads_storage_use_saf_title">Sử dụng bộ chọn thư mục hệ thống (SAF)</string>
 <string name="downloads_storage_use_saf_summary">\'Khung truy cập lưu trữ\' cho phép tải xuống thẻ SD bên ngoài</string>
-<string name="downloads_storage_use_saf_summary_api_29">Bắt đầu từ Android 10, chỉ hỗ trợ \'Khung truy cập lưu trữ\'</string>
 <string name="choose_instance_prompt">Chọn một phiên bản</string>
 <string name="app_language_title">Ngôn ngữ ứng dụng</string>
 <string name="systems_language">Mặc định hệ thống</string>
@@ -649,7 +609,6 @@
 <string name="remove_watched_popup_warning">Những băng hình đã xem trước và sau khi thêm vào danh sách phát sẽ bị loại bỏ.
 \nBạn có chắc không\? Vì việc này không thể hoàn tác!</string>
 <string name="remove_watched_popup_yes_and_partially_watched_videos">Có, và đã xem một phần băng hình</string>
-<string name="new_seek_duration_toast">Do các hạn chế của ExoPlayer, thời lượng tua được đặt thành %d giây</string>
 <!-- Time duration plurals -->
 <plurals name="seconds">
 <item quantity="one">%d giây</item>
@@ -709,7 +668,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 \n
 \nVì vậy, sự lựa chọn tập trung vào những gì bạn thích: tốc độ hoặc thông tin chính xác.</string>
 <string name="feed_toggle_show_played_items">Hiển thị các mục đã xem</string>
-<string name="feed_toggle_hide_played_items">Ẩn các mục đã xem</string>
 <!-- SponsorBlock -->
 <string name="sponsor_block">ChặnNhàTàiTrợ</string>
 <string name="sponsor_block_home_page_title">Xem trang web</string>
@@ -717,7 +675,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sponsor_block_enable_title">Bỏ qua nhà tài trợ</string>
 <string name="sponsor_block_enable_summary">Tự động bỏ qua nhà tài trợ trong video. Hoạt động cho YouTube và BiliBili.</string>
 <string name="sponsor_block_api_url_title">Url API</string>
-<string name="sponsor_block_api_url_summary">Url sẽ sử dụng khi truy vấn API ChặnNhàTàiTrợ. Điều này phải được đặt để ChặnNhàTàiTrợ hoạt động.</string>
 <string name="sponsor_block_notifications_title">Thông báo khi nhà tài trợ bị bỏ qua</string>
 <string name="sponsor_block_notifications_summary">Hiển thị thông báo chúc mừng khi nhà tài trợ tự động bị bỏ qua.</string>
 <string name="sponsor_block_privacy_title">Xem Chính sách quyền riêng tư</string>
@@ -732,15 +689,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sponsor_block_skip_non_music_toast">Đã bỏ qua phần không có nhạc</string>
 <string name="sponsor_block_skip_preview_toast">Đã bỏ qua bản xem trước/tóm tắt</string>
 <string name="sponsor_block_skip_filler_toast">Đã bỏ qua phần bổ sung</string>
-<string name="sponsor_block_toggle_skipping">Chuyển đổi bỏ qua nhà tài trợ</string>
-<string name="sponsor_block_clear_whitelist_title">Xóa danh sách trắng</string>
-<string name="sponsor_block_clear_whitelist_summary">Xóa danh sách những người tải lên mà ChặnNhàTàiTrợ sẽ bỏ qua.</string>
-<string name="sponsor_block_enabled_toast">Đã bật ChặnNhàTàiTrợ</string>
-<string name="sponsor_block_disabled_toast">Đã tắt ChặnNhàTàiTrợ</string>
-<string name="sponsor_block_whitelist_cleared_toast">Đã xóa danh sách trắng</string>
-<string name="sponsor_block_uploader_added_to_whitelist_toast">Đã thêm người tải lên vào danh sách trắng</string>
-<string name="sponsor_block_uploader_removed_from_whitelist_toast">Đã loại người tải lên khỏi danh sách trắng</string>
-<string name="sponsor_block_confirm_clear_whitelist">Bạn có chắc chắn muốn xóa danh sách trắng không?</string>
 <string name="sponsor_block_confirm_reset_colors">Bạn có chắc chắn muốn đặt lại màu danh mục không?</string>
 <!--End -->
 <string name="content_not_supported_new">Nội dung này chưa được PipePipe hỗ trợ.\n\nHy vọng nó sẽ được hỗ trợ trong phiên bản tương lai.</string>
@@ -783,11 +731,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="metadata_support">Hỗ trợ</string>
 <string name="metadata_host">Máy chủ</string>
 <string name="metadata_thumbnail_url">URL hình thu nhỏ</string>
-<string name="metadata_thumbnails">Hình thu nhỏ</string>
-<string name="metadata_uploader_avatars">Hình đại diện của người tải lên</string>
-<string name="metadata_subchannel_avatars">Hình đại diện kênh phụ</string>
-<string name="metadata_avatars">Hình đại diện</string>
-<string name="metadata_banners">Biểu ngữ</string>
 <string name="metadata_privacy_public">Công khai</string>
 <string name="metadata_privacy_unlisted">Ngoài sổ</string>
 <string name="metadata_privacy_private">Riêng tư</string>
@@ -805,21 +748,10 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="notifications_disabled">Thông báo đã bị tắt</string>
 <string name="get_notified">Nhận thông báo</string>
 <string name="you_successfully_subscribed">Hiện bạn đã đăng ký kênh này</string>
-<string name="enumeration_comma">,</string>
 <string name="toggle_all">Chuyển đổi tất cả</string>
-<string name="show_replies">Hiển thị câu trả lời</string>
 <string name="remove_duplicates">Loại bỏ trùng lặp</string>
 <string name="remove_duplicates_popup_title">Loại bỏ các luồng trùng lặp?</string>
 <string name="remove_duplicates_popup_warning">Các luồng trùng lặp trong danh sách phát sẽ bị xóa.\n\nBạn có chắc chắn không? Việc này không thể hoàn tác!</string>
-<string name="streams_not_yet_supported_removed">Các luồng chưa được trình tải xuống hỗ trợ sẽ không được hiển thị</string>
-<string name="selected_stream_external_player_not_supported">Luồng đã chọn không được hỗ trợ bởi trình phát bên ngoài</string>
-<string name="no_audio_streams_available_for_external_players">Không có luồng âm thanh nào cho trình phát bên ngoài</string>
-<string name="no_video_streams_available_for_external_players">Không có luồng băng hình nào cho trình phát bên ngoài</string>
-<string name="select_quality_external_players">Chọn chất lượng cho trình phát bên ngoài</string>
-<string name="unknown_format">Định dạng không xác định</string>
-<string name="unknown_quality">Chất lượng không xác định</string>
-<string name="feed_toggle_show_future_items">Hiện các mục trong tương lai</string>
-<string name="feed_toggle_hide_future_items">Ẩn các mục trong tương lai</string>
 <string name="channel_tab_videos">Băng hình</string>
 <string name="channel_tab_livestreams">Trực tiếp</string>
 <string name="channel_tab_shorts">Ngắn</string>
@@ -829,8 +761,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="channel_tab_info">Thông tin</string>
 <string name="show_channel_tabs">Tag kênh</string>
 <string name="show_channel_tabs_summary">Những tab nào được hiển thị trên các trang kênh</string>
-<string name="image_quality_title">Chất lượng hình ảnh</string>
-<string name="image_quality_summary">Chọn chất lượng hình ảnh và có tải hình ảnh hay không để giảm mức sử dụng dữ liệu và bộ nhớ. Các thay đổi sẽ xóa cả bộ nhớ đệm hình ảnh trong bộ nhớ và trên đĩa — %s</string>
 <string name="image_quality_none">Không tải hình ảnh</string>
 <string name="image_quality_low">Chất lượng thấp</string>
 <string name="image_quality_medium">Chất lượng trung bình</string>
@@ -889,16 +819,9 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sort_relevance">Mức độ liên quan</string>
 <string name="sort_rating">Xếp hạng</string>
 <string name="sort_ascending">Tăng dần</string>
-<string name="auto_queue_partition_summary">Luôn cố gắng xếp hàng phân vùng tiếp theo</string>
-<string name="auto_queue_partition_title">Tự động xếp hàng phân vùng tiếp theo</string>
-<string name="feed_show_watched">Đã xem đầy đủ</string>
-<string name="feed_show_partially_watched">Đã xem một phần</string>
-<string name="feed_show_upcoming">Sắp tới</string>
 <string name="sort">Sắp xếp</string>
 <string name="settings_category_exoplayer_title">Thiết đặt ExoPlayer</string>
 <string name="settings_category_exoplayer_summary">Quản lý một số thiết đặt ExoPlayer. Những thay đổi này yêu cầu trình phát phải khởi động lại để có hiệu lực</string>
-<string name="use_exoplayer_decoder_fallback_title">Sử dụng tính năng dự phòng bộ giải mã của ExoPlayer</string>
-<string name="use_exoplayer_decoder_fallback_summary">Bật tùy chọn này nếu bạn gặp sự cố khi khởi chạy bộ giải mã, vấn đề này sẽ quay trở lại bộ giải mã có mức độ ưu tiên thấp hơn nếu quá trình khởi tạo bộ giải mã chính thất bại. Điều này có thể dẫn đến hiệu suất phát lại kém hơn so với khi sử dụng bộ giải mã chính</string>
 <string name="always_use_exoplayer_set_output_surface_workaround_title">Luôn sử dụng giải pháp thay thế thiết đặt bề mặt đầu ra băng hình của ExoPlayer</string>
 <string name="always_use_exoplayer_set_output_surface_workaround_summary">Cách giải quyết này giải phóng và khởi tạo lại codec băng hình khi xảy ra thay đổi bề mặt, thay vì trực tiếp đặt bề mặt thành codec. Đã được ExoPlayer sử dụng trên một số thiết bị gặp sự cố này, thiết đặt này chỉ có hiệu lực trên Android 6 trở lên\n\nViệc bật tùy chọn này có thể ngăn ngừa lỗi phát lại khi chuyển trình phát băng hình hiện tại hoặc chuyển sang chế độ toàn màn hình</string>
 <string name="high_res">Phát &amp; tải xuống (đối với nội dung cao cấp / độ phân giải băng hình và chất lượng âm thanh cao hơn)</string>
@@ -925,10 +848,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="stat_dislike">Không thích</string>
 <string name="stat_evaluation">Ước lượng</string>
 <string name="button_view_pictures">Xem hình ảnh (%d)</string>
-<string name="next">Tiếp theo</string>
 <string name="previous">Trước đó</string>
-<string name="warning">Cảnh báo</string>
-<string name="download_temp_warning">Tải xuống danh sách phát vẫn đang trong giai đoạn thử nghiệm. KHÔNG BAO GIỜ sử dụng nó để tải xuống danh sách phát có hơn 50 mục.</string>
 <string name="error_priority_notice">Ưu tiên: Các vấn đề trên GitHub/CodeBerg &gt; Email có tiêu đề rõ ràng, nội dung lịch sự và báo cáo lỗi &gt; Email chỉ báo cáo lỗi. \nCác email chỉ báo cáo lỗi sẽ không nhận được phản hồi.</string>
 <string name="sleep_timer_length_title">Hẹn giờ ngủ</string>
 <string name="error_match_notification_title">Đã tìm thấy kết quả phù hợp với lỗi bạn gặp phải</string>
@@ -936,7 +856,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="oldest_first">Cũ nhất trước</string>
 <string name="newest_first">Mới nhất trước</string>
 <string name="same_as_item_mode">Tương tự như các mục</string>
-<string name="playlist_sorting_mode_title">Chế độ sắp xếp danh sách phát</string>
 <string name="dont_auto_queue_long_title">Đừng tự động xếp hàng các băng hình dài</string>
 <string name="dont_auto_queue_long_description">Chỉ tự động xếp hàng các băng hình ngắn hơn 6 phút</string>
 <string name="enable_notification_text">Vui lòng bật thông báo cho ứng dụng này để đảm bảo nó hoạt động bình thường. Chúng tôi chỉ cảnh báo khi cần thiết.</string>
@@ -944,17 +863,16 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sponsor_promote">Trở thành người ủng hộ</string>
 <string name="random_play_order_title">Trình tự ngẫu nhiên</string>
 <string name="random_play_order_summary">Tự động xáo trộn danh sách phát cục bộ của bạn khi phát trong nền</string>
-<string name="update_log">### Tính năng mới\n\n- Cải thiện nhẹ giao diện người dùng để PipePipe trông hiện đại hơn\n- Thiết kế lại menu bộ lọc tìm kiếm\n\n### Sửa lỗi\n\n- Không phát được video YT nếu đã đăng nhập trong một số điều kiện nhất định (YouTube)\n- Kết quả tìm kiếm hiển thị sai tên người tải lên trong một số điều kiện nhất định (YouTube)\n- Lỗi phân tích trong một số điều kiện nhất định (YouTube)\n- Thỉnh thoảng không thể trích xuất người tải lên của kênh (BiliBili)\n- Thỉnh thoảng không thể trích xuất chi tiết kênh do kiểm soát rủi ro (BiliBili)\n- Ứng dụng bị sập trong một số điều kiện nhất định\n\n### Khác\n\n- Cải thiện độ ổn định</string>
+<string name="update_log">Sửa lỗi: Lỗi \"This content is not supported by PipePipe\" trên tất cả các video (YouTube)\n\nYouTube gần đây cập nhật rất thường xuyên, vui lòng đảm bảo bật kiểm tra cập nhật để nhận các bản vá mới nhất của chúng tôi kịp thời.</string>
 <string name="speeding_playback_title">Nhấn và giữ để tăng tốc độ phát lại</string>
 <string name="view_on_github">Xem trên GitHub</string>
 <string name="donation_dialog_title">Hỗ trợ Dự án</string>
-<string name="donation_dialog_message">Hỗ trợ chúng tôi trên Ko‑fi và giúp việc xem video luôn mở và không theo dõi.</string>
+<string name="donation_dialog_message">Cảm ơn bạn đã sử dụng PipePipe! Nếu bạn thấy nó hữu ích, hãy xem xét trở thành người ủng hộ trên Ko-Fi. Sự ủng hộ của bạn rất quan trọng đối với tôi và giúp tôi bổ sung thêm nhiều tính năng mới thú vị. Mỗi sự hỗ trợ đều có ý nghĩa! 😇</string>
 <string name="fullscreen_gesture_control_summary">Sử dụng cử chỉ để vào / thoát toàn màn hình</string>
 <string name="fullscreen_gesture_control_title">Điều khiển cử chỉ toàn màn hình</string>
 <string name="require_audio_focus_summary">Đảm bảo chỉ có PipePipe đang phát âm thanh</string>
 <string name="require_audio_focus_title">Yêu cầu tiêu điểm âm thanh</string>
 <string name="decoder_init_failure">Khởi tạo bộ giải mã thất bại</string>
-<string name="go_to_settings">Đi đến cài đặt</string>
 <string name="unable_to_decode_summary">Thiết bị của bạn thiếu các bộ giải mã phần cứng cần thiết, vì vậy bạn không thể phát video này trong PipePipe. \nVui lòng tải xuống và phát nó trong VLC.</string>
 <string name="settings_category_gestures_summary">Cài đặt cử chỉ</string>
 <string name="settings_category_bullet_comments_summary">Cài đặt bình luận đạn</string>
@@ -964,8 +882,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="advanced_formats_summary">Nếu thiết bị của bạn có hỗ trợ, việc bật các định dạng nâng cao có thể giảm tiêu thụ dữ liệu và cung cấp độ phân giải cao hơn. \nWEBM hoặc AV1 phải được bật để hiển thị nội dung 2k/4k trên YouTube. \nSử dụng định dạng mà thiết bị của bạn không hỗ trợ sẽ dẫn đến màn hình đen hoặc sự cố.</string>
 <string name="advanced_formats_title">Kích hoạt định dạng nâng cao</string>
 <string name="preferred_audio_language_title">Ngôn ngữ âm thanh ưu tiên</string>
-<string name="comments_inner_scroll_title">Bình luận cuộn bên trong</string>
-<string name="comments_inner_scroll_summary">Làm cho vị trí video cố định khi cuộn bình luận</string>
 <string name="ip_blocked_summary">IP của bạn đã bị YouTube tạm thời chặn. Trong một khoảng thời gian, bạn sẽ gặp sự cố khi phát một số video nhất định. Nếu lỗi vẫn tiếp diễn, vui lòng đăng nhập qua Cài đặt để tiếp tục.</string>
 <string name="settings_category_filter_title">Bộ lọc nội dung</string>
 <string name="filter_by_keyword_title">Lọc theo từ khóa</string>
@@ -1011,7 +927,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sponsor_block_clear_segment">Xóa đoạn</string>
 <string name="sponsor_block_submit_segment">Gửi đoạn</string>
 <string name="sponsor_block_skip_marked_segments">Bỏ qua các đoạn đã đánh dấu</string>
-<string name="sponsor_block_whitelist_channel">Danh sách trắng kênh</string>
 <string name="settings_category_sponsor_block_categories_quick_actions">Hành động nhanh</string>
 <string name="settings_category_sponsor_block_categories_all_colors_on_title">Bật tất cả</string>
 <string name="settings_category_sponsor_block_categories_all_colors_off_title">Tắt tất cả</string>
@@ -1068,8 +983,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="enable_max_rows_customization_summary">Bật để tùy chỉnh số hàng tối đa cho nhận xét dạng gạch đầu dòng</string>
 <string name="always_list_mode_for_bookmark_title">Luôn sử dụng chế độ danh sách cho Dấu trang</string>
 <string name="select_channel_group_prompt">Chọn một nhóm kênh</string>
-<string name="feed_groups_grid_layout_title">Sử dụng bố cục lưới cho danh sách nhóm kênh</string>
-<string name="feed_groups_grid_layout_summary">Trong trang Đăng ký, hiển thị các nhóm kênh dưới dạng lưới thay vì cuộn ngang</string>
 <string name="press_back_again_to_exit">Nhấn quay lại lần nữa để thoát</string>
 <string name="need_login_hint"> Nội dung này yêu cầu tài khoản để xem. Đăng nhập qua cài đặt để tiếp tục.</string>
 <string name="exit_app_confirmation_message">Hiển thị thông báo "nhấn quay lại lần nữa để thoát" để tránh thoát nhầm</string>
@@ -1096,32 +1009,48 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="clear_webview_cookies">Xóa cookie WebView</string>
 <string name="clear_webview_cookies_summary">Xóa tất cả cookie được lưu trữ bởi các thành phần WebView để bạn có thể sử dụng tài khoản mới</string>
 <string name="webview_cookies_cleared">Cookie WebView đã được xóa</string>
-<string name="webview_cookies_clear_failed">Không thể xóa cookie WebView</string>
 <string name="import_urls_from_file">Nhập URL từ tệp</string>
 <string name="import_urls_error">Lỗi nhập URL: %s</string>
 <string name="import_urls_no_valid_urls">Không tìm thấy URL hợp lệ trong tệp đã chọn</string>
 <string name="remove_from_playlist_confirmation">Xóa mục này khỏi danh sách phát?</string>
 <string name="filter_paid_contents_title">Lọc nội dung trả phí</string>
 <string name="filter_paid_contents_summary">Xóa nội dung trả phí khỏi kết quả</string>
-<string name="show_auto_translated_subtitles_title">Hiển thị phụ đề được dịch tự động</string>
-<string name="show_auto_translated_subtitles_summary">Nếu được bật, PipePipe sẽ cố gắng thêm một bản phụ đề được dịch tự động bằng ngôn ngữ nội dung mặc định của bạn. Điều này làm cho việc tải video chậm hơn một chút.</string>
 <string name="local_playlist_swipe_action_title">Hành động vuốt sang phải trong danh sách phát cục bộ</string>
 <string name="search_suggestions_count_title">Số lượng gợi ý tìm kiếm</string>
 <string name="search_suggestions_count_summary">Số lượng gợi ý tìm kiếm trước đây để hiển thị</string>
 <string name="disable_android_auto_title">Tắt Android Auto</string>
 <string name="disable_android_auto_summary">Tắt kết nối Android Auto để tránh các vấn đề thông báo trên Android 12 và các phiên bản cũ hơn.\n\nSau khi bật lại tùy chọn này, bạn cần khởi động lại ứng dụng và kết nối lại với xe để thay đổi có hiệu lực.</string>
-<string name="youtube_account_temporarily_disabled">Tạm thời bị vô hiệu hóa</string>
-<string name="beta_test_dialog_title">Tham gia thử nghiệm PipePipe 5.0.0 Beta-2!</string>
-<string name="beta_test_dialog_message">Cảm ơn bạn đã luôn ủng hộ chúng tôi! Chúng tôi rất háo hức ra mắt PipePipe 5.0.0 Beta-2, một bước tiến lớn trong quá trình xây dựng lại ứng dụng từ đầu.\n\nPhiên bản này tập trung vào những cải tiến đáng kể về độ ổn định và mức độ hoàn thiện tính năng, dựa trên phản hồi sớm. Dù chúng tôi đã tiến rất gần đến bản phát hành chính thức, đây vẫn là bản beta và phản hồi của bạn vô cùng quý giá.\n\nLưu ý: Phiên bản này sẽ được cài đặt với tên \"PipePipe Beta\" và sẽ không ảnh hưởng đến ứng dụng hoặc dữ liệu hiện tại của bạn.\n\nNếu bạn gặp lỗi hoặc có đề xuất, vui lòng cho chúng tôi biết bằng cách tạo một issue trên kho GitHub của chúng tôi!</string>
-<string name="trending_replaced">YouTube gần đây đã gỡ bỏ tính năng Video thịnh hành, vì vậy chúng tôi đã cập nhật tab thịnh hành mặc định của YouTube để hiển thị các luồng trực tiếp được đề xuất thay vào đó. Nếu bạn không muốn thấy điều này, bạn có thể xóa tab trong Cài đặt và đặt tab khác làm trang chủ của mình.</string>
 <string name="youtube_login_warning_title">Chỉ đăng nhập khi cần thiết</string>
 <string name="youtube_login_warning_message">Do mã hóa của YouTube, phát lại khi đã đăng nhập chỉ cung cấp định dạng AVC, không thể tải xuống âm thanh בלבד, không thể tua lại các luồng trực tiếp đang diễn ra, và việc trích xuất kém ổn định hơn. \n\nBạn chỉ nên đăng nhập nếu:\n1. Bạn không thể xem video ẩn danh vì bị chặn IP\n2. Bạn cần xem các video bị giới hạn độ tuổi\n3. Bạn là thành viên của một kênh và cần xem các video chỉ dành cho thành viên của kênh đó\n\nNếu việc trích xuất video hoặc phát lại thất bại khi đã đăng nhập, vui lòng thử đăng xuất và báo cáo sự cố trên GitHub.</string>
 <string name="filter">Bộ lọc</string>
 <string name="search_type">Loại tìm kiếm</string>
-<string name="select_service">Chọn dịch vụ</string>
 <string name="perform_search">Thực hiện tìm kiếm</string>
 <string name="done">Xong</string>
 <string name="expand">Mở rộng</string>
 <string name="collapse">Thu gọn</string>
-<string name="sponsor_promote_later">Để sau</string>
+<string name="grid_layout_title">Bố cục lưới</string>
+<string name="grid_layout_summary">Hiển thị các danh sách được hỗ trợ dưới dạng lưới thay vì danh sách một cột</string>
+<string name="grid_columns_title">Số cột lưới</string>
+<string name="grid_columns_landscape_title">Số cột lưới (ngang)</string>
+<string name="channel_tab_podcasts">Podcast</string>
+<string name="video_tabs_title">Các thẻ video</string>
+<string name="video_tabs_summary">Cấu hình các thẻ sẽ hiển thị trên màn hình chi tiết video</string>
+<string name="filter_future_items_title">Lọc các mục trong tương lai</string>
+<string name="filter_future_items_summary">Loại bỏ các mục được lên lịch phát hành trong tương lai</string>
+<string name="pin_video_to_top_title">Ghim video lên đầu</string>
+<string name="pin_video_to_top_summary">Giữ video được ghim ở đầu khi cuộn trang chi tiết video</string>
+<string name="settings_category_behavior_title">Hành vi</string>
+<string name="use_experimental_new_ui_title">Sử dụng giao diện người dùng mới thử nghiệm</string>
+<string name="use_experimental_new_ui_summary">Sử dụng giao diện người dùng dựa trên Compose mới, vẫn đang được tối ưu hóa. Việc thay đổi điều này sẽ khởi động lại ứng dụng.</string>
+<string name="force_end_on_overtime_title">Buộc kết thúc khi quá giờ</string>
+<string name="force_end_on_overtime_summary">Buộc kết thúc phát khi vị trí hiện tại vượt quá thời lượng của luồng, như một giải pháp tạm thời cho các luồng không tự động dừng</string>
+<string name="use_old_search_filter_title">Sử dụng bộ lọc tìm kiếm cũ</string>
+<string name="use_old_search_filter_summary">Sử dụng bộ lọc tìm kiếm dựa trên menu cũ thay vì giao diện hộp thoại mới</string>
+<string name="main_tabs_position_summary">Di chuyển bộ chọn tab chính xuống dưới cùng</string>
+<string name="main_tabs_position_title">Vị trí tab chính</string>
+<string name="disable_exoplayer_media_codec_async_queueing_title">Tắt tính năng xếp hàng không đồng bộ MediaCodec</string>
+<string name="disable_exoplayer_media_codec_async_queueing_summary">Giải pháp thay thế cho các lỗi phát lại do tính năng xếp hàng không đồng bộ MediaCodec gây ra trên một số thiết bị. Bật tùy chọn này có thể cải thiện khả năng tương thích nhưng có thể làm giảm hiệu suất phát lại.</string>
+<string name="media_codec_workaround_hint_title">Phát lại MediaCodec thất bại</string>
+<string name="media_codec_async_workaround_hint">Lỗi này có thể do việc xếp hàng đợi không đồng bộ của MediaCodec. Hãy thử bật \"Tắt xếp hàng đợi không đồng bộ MediaCodec\" trong cài đặt ExoPlayer, sau đó khởi động lại quá trình phát.</string>
+<string name="media_codec_surface_workaround_hint">Lỗi này xảy ra trong khi thay đổi bề mặt đầu ra video. Hãy thử bật \"Luôn sử dụng giải pháp thay thế cài đặt bề mặt đầu ra video của ExoPlayer\" trong cài đặt ExoPlayer, sau đó khởi động lại quá trình phát.</string>
 </resources>

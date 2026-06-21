@@ -1,6 +1,16 @@
 package org.schabi.newpipe.fragments;
 
+import static android.widget.RelativeLayout.ABOVE;
+import static android.widget.RelativeLayout.ALIGN_PARENT_BOTTOM;
+import static android.widget.RelativeLayout.ALIGN_PARENT_TOP;
+import static android.widget.RelativeLayout.BELOW;
+import static com.google.android.material.tabs.TabLayout.INDICATOR_GRAVITY_BOTTOM;
+import static com.google.android.material.tabs.TabLayout.INDICATOR_GRAVITY_TOP;
+
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +28,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapterMenuWorkaround;
 import androidx.preference.PreferenceManager;
+import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -29,6 +41,8 @@ import org.schabi.newpipe.settings.tabs.Tab;
 import org.schabi.newpipe.settings.tabs.TabsManager;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.ServiceHelper;
+import org.schabi.newpipe.util.ThemeHelper;
+import org.schabi.newpipe.views.ScrollableTabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +55,9 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
     private TabsManager tabsManager;
 
     private boolean hasTabsChanged = false;
+    private SharedPreferences prefs;
+    private boolean mainTabsPositionBottom;
+    private String mainTabsPositionKey;
 
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -64,6 +81,10 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
             }
         });
 
+        prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        mainTabsPositionKey = getString(R.string.main_tabs_position_key);
+        mainTabsPositionBottom = prefs.getBoolean(mainTabsPositionKey, false);
+
     }
 
     @Override
@@ -85,6 +106,7 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
                 .withAlpha(32));
 
         setupTabs();
+        updateTabLayoutPosition();
     }
 
     @Override
@@ -93,6 +115,12 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
 
         if (hasTabsChanged) {
             setupTabs();
+        }
+
+        final boolean newMainTabsPosition = prefs.getBoolean(mainTabsPositionKey, false);
+        if (mainTabsPositionBottom != newMainTabsPosition) {
+            mainTabsPositionBottom = newMainTabsPosition;
+            updateTabLayoutPosition();
         }
     }
 
@@ -176,6 +204,37 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
 
     private void updateTitleForTab(final int tabPosition) {
         setTitle(tabsList.get(tabPosition).getTabName(requireContext()));
+    }
+
+    private void updateTabLayoutPosition() {
+        final ScrollableTabLayout tabLayout = binding.mainTabLayout;
+        final ViewPager viewPager = binding.pager;
+        final boolean bottom = mainTabsPositionBottom;
+
+        final RelativeLayout.LayoutParams tabParams =
+                (RelativeLayout.LayoutParams) tabLayout.getLayoutParams();
+        final RelativeLayout.LayoutParams pagerParams =
+                (RelativeLayout.LayoutParams) viewPager.getLayoutParams();
+
+        tabParams.removeRule(bottom ? ALIGN_PARENT_TOP : ALIGN_PARENT_BOTTOM);
+        tabParams.addRule(bottom ? ALIGN_PARENT_BOTTOM : ALIGN_PARENT_TOP);
+        pagerParams.removeRule(bottom ? BELOW : ABOVE);
+        pagerParams.addRule(bottom ? ABOVE : BELOW, R.id.main_tab_layout);
+        tabLayout.setSelectedTabIndicatorGravity(
+                bottom ? INDICATOR_GRAVITY_TOP : INDICATOR_GRAVITY_BOTTOM);
+
+        tabLayout.setLayoutParams(tabParams);
+        viewPager.setLayoutParams(pagerParams);
+
+        tabLayout.setBackgroundColor(ThemeHelper.resolveColorFromAttr(requireContext(),
+                bottom ? android.R.attr.windowBackground : R.attr.colorPrimary));
+
+        final int iconColor = bottom
+                ? ThemeHelper.resolveColorFromAttr(requireContext(), android.R.attr.colorAccent)
+                : Color.WHITE;
+        tabLayout.setTabRippleColor(ColorStateList.valueOf(iconColor).withAlpha(32));
+        tabLayout.setTabIconTint(ColorStateList.valueOf(iconColor));
+        tabLayout.setSelectedTabIndicatorColor(iconColor);
     }
 
     @Override

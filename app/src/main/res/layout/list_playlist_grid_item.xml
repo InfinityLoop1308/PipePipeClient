@@ -21,7 +21,6 @@
             android:layout_centerHorizontal="true"
             android:scaleType="centerCrop"
             android:src="@drawable/dummy_thumbnail_playlist"
-            app:shapeAppearance="@style/RoundedThumbnailImageView"
             tools:ignore="RtlHardcoded"/>
 
     <org.schabi.newpipe.views.NewPipeTextView

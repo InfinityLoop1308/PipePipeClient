@@ -15,9 +15,6 @@
     <string name="settings">Opcións</string>
     <string name="did_you_mean">Non querería dicir \"%1$s\"\?</string>
     <string name="share_dialog_title">Compartillar con</string>
-    <string name="use_external_video_player_title">Usar un reprodutor de vídeo externo</string>
-    <string name="use_external_video_player_summary">Elimina o audio con algunhas resolucións</string>
-    <string name="use_external_audio_player_title">Usar un reprodutor externo de audio</string>
     <string name="subscribe_button_title">Subscribir</string>
     <string name="subscribed_button_title">Subscrito</string>
     <string name="channel_unsubscribed">Xa non está subscrito ao canal</string>
@@ -38,21 +35,13 @@
     <string name="download_path_audio_dialog_title">Elixa un cartafol para descargar os audios</string>
     <string name="default_resolution_title">Resolución predeterminada</string>
     <string name="default_popup_resolution_title">Resolución predeterminada do popup</string>
-    <string name="show_higher_resolutions_title">Mostrar resolucións máis altas</string>
-    <string name="show_higher_resolutions_summary">Só algúns dispositivos poden reproducir vídeos en 2K/4K</string>
     <string name="play_with_kodi_title">Reproducir co Kodi</string>
     <string name="kore_not_found">Quere instalar o aplicativo Kore que falta\?</string>
-    <string name="show_play_with_kodi_title">Mostrar a opción «Reproducir co Kodi»</string>
-    <string name="show_play_with_kodi_summary">Mostrar unha opción para reproducir o vídeo co Kodi Media Center</string>
     <string name="play_audio">Audio</string>
-    <string name="default_audio_format_title">Formato de audio predeterminado</string>
-    <string name="default_video_format_title">Formato de vídeo predeterminado</string>
     <string name="theme_title">Tema</string>
     <string name="light_theme_title">Claro</string>
     <string name="dark_theme_title">Escuro</string>
     <string name="black_theme_title">Negro</string>
-    <string name="popup_remember_size_pos_title">Lembrar o tamaño e a posición do «popup»</string>
-    <string name="popup_remember_size_pos_summary">Lembrar o tamaño e a posición anteriores do «popup»</string>
     <string name="use_inexact_seek_title">Usar un salto inexacto mais inexacto</string>
     <string name="use_inexact_seek_summary">A busca inexacta permite ao reprodutor procurar posicións máis rápidas con precisión reducida. A busca de 5, 15 ou 25 segundos non funciona con isto</string>
     <string name="download_thumbnail_title">Carregar miniaturas</string>
@@ -72,21 +61,15 @@
     <string name="resume_on_audio_focus_gain_title">Retormar o vídeo reproducíndoo</string>
     <string name="resume_on_audio_focus_gain_summary">Continuar reproducindo o vídeo despois das interrupcións (como, por exemplo, as chamadas)</string>
     <string name="download_dialog_title">Descarregar</string>
-    <string name="show_next_and_similar_title">Mostrar vídeos \"seguintes\" e \"semellantes\"</string>
-    <string name="show_hold_to_append_title">Mostrar a suxestión \"Manteña presionado para engadir á fila\"</string>
-    <string name="show_hold_to_append_summary">Amosar o consello ao premer o fondo ou o botón emerxente \"Detalles:\" no vídeo</string>
     <string name="unsupported_url">URL non soportado</string>
     <string name="default_content_country_title">País predeterminado para o contido</string>
     <string name="settings_category_player_title">Reprodutor</string>
-    <string name="settings_category_player_behavior_title">Comportamento</string>
-    <string name="settings_category_video_audio_title">Vídeo e audio</string>
     <string name="settings_category_history_title">Historial e caché</string>
     <string name="settings_category_appearance_title">Aparencia</string>
     <string name="settings_category_debug_title">Depuración</string>
     <string name="background_player_playing_toast">Reproducindo en segundo plano</string>
     <string name="popup_playing_toast">Reproducindo en modo «popup»</string>
     <string name="content">Contido</string>
-    <string name="show_age_restricted_content_title">Mostrar contido con restrición de idade</string>
     <string name="duration_live">En directo</string>
     <string name="downloads">Descargas</string>
     <string name="downloads_title">Descargas</string>
@@ -202,8 +185,6 @@
     <string name="recaptcha_request_toast">ReCAPTCHA reto solicitado</string>
     <string name="settings_category_downloads_title">Descarregar</string>
     <string name="settings_file_charset_title">Caracteres permitidos nos nomes de ficheiros</string>
-    <string name="settings_file_replacement_character_summary">Os caracteres inválidos serán substituídos por este valor</string>
-    <string name="settings_file_replacement_character_title">Carácter de substitución</string>
     <string name="charset_letters_and_digits">Letras e díxitos</string>
     <string name="charset_most_special_characters">A maioría dos caracteres especiais</string>
     <string name="toast_no_player">Non hai ningún aplicativo instalado para reproducir este ficheiro</string>
@@ -211,20 +192,17 @@
     <string name="title_licenses">Licenzas de terceiros</string>
     <string name="copyright" formatted="true">© %1$s de %2$s, so %3$s</string>
     <string name="tab_about">Sobre</string>
-    <string name="tab_licenses">Licenzas</string>
     <string name="app_description">Reprodutor lixeiro e libre para Android.</string>
     <string name="contribution_title">Colaborar</string>
     <string name="contribution_encouragement">Se ten ideas de tradución, mudanzas ao deseño, limpeza de código ou mudanzas serias deste—a axuda sempre é benvida. Canto máis fixermos, tanto máis vai mellorar!</string>
     <string name="view_on_github">Ver no GitHub</string>
     <string name="donation_title">Doar</string>
     <string name="donation_encouragement">NewPipe é desenvolvido por voluntarios que pasan o seu tempo libre para brindarte a mellor experiencia de usuario. Regresa aos desenvolvedores para que NewPipe sexa aínda mellor mentres gozan dunha cunca de café.</string>
-    <string name="give_back">Retribuír</string>
     <string name="website_title">Sitio web</string>
     <string name="website_encouragement">Visite o sitio web do NewPipe para saber máis e ver noticias sobre o proxecto.</string>
     <string name="privacy_policy_title">Política de privacidade do NewPipe</string>
     <string name="privacy_policy_encouragement">O proxecto NewPipe dá moita importancia á súa privacidade. Por tanto, non recolle ningún dato sen o seu consentimento.
 \nA política de privacidade do NewPipe explica con máis detalle que datos son enviados e gardados cando envía un relatorio de erros.</string>
-    <string name="read_privacy_policy">Ler a política de privacidade</string>
     <string name="app_license_title">Licenza do NewPipe</string>
     <string name="app_license">NewPipe é un software libre copyleft: Pode usar, estudar compartir e melloralo a vontade. En concreto, pode redistribuír e / ou modificala segundo os termos da Licenza Pública Xeral GNU publicada pola Free Software Foundation, xa sexa a versión 3 da licenza, ou (na súa opción) calquera outra versión posterior.</string>
     <string name="read_full_license">Ler a licenza</string>
@@ -323,8 +301,6 @@
     <string name="playback_reset">Reiniciar</string>
     <string name="start_accept_privacy_policy">Para cumprirmos co Regulamento Xeral Europeo de Protección de Datos (GDPR), chamamos a súa atención sobre a nova política de privacidade do NewPipe. Por favor, léao con coidado.
 \nDebe aceptalo para nos enviar un relatorio de erro.</string>
-    <string name="accept">Aceptar</string>
-    <string name="decline">Recusar</string>
     <string name="limit_data_usage_none_description">Sen límite</string>
     <string name="limit_mobile_data_usage_title">Limitar a resolución ao usar datos móbiles</string>
     <string name="minimize_on_exit_title">Minimizar cando se mude de aplicativo</string>
@@ -335,7 +311,6 @@
     <string name="local">Limitado</string>
     <string name="peertube_instance_add_https_only">Só son compatibles os URLs HTTPS</string>
     <string name="volume_gesture_control_title">Control xestual do volume</string>
-    <string name="show_comments_summary">Desactíveo para agochar os comentarios</string>
     <string name="enable_playback_resume_title">Retomar a reprodución</string>
     <string name="playlist_page_summary">Páxina das listas de reprodución</string>
     <string name="video_detail_by">Por %s</string>
@@ -394,7 +369,6 @@
         <item quantity="one">%d segundo</item>
         <item quantity="other">%d segundos</item>
     </plurals>
-    <string name="new_seek_duration_toast">Debido ás restricións de ExoPlayer, a duración da busca estableceuse en %d segundos</string>
     <string name="remove_watched_popup_yes_and_partially_watched_videos">Si, e visualizou parcialmente estes vídeos</string>
     <string name="remove_watched_popup_warning">Eliminaranse os vídeos vistos antes e despois de seren engadidos á lista de reprodución.
 \nEstás seguro\? Isto non se pode desfacer.!</string>
@@ -455,7 +429,6 @@
     <string name="app_update_notification_content_text">Prema para descargar</string>
     <string name="app_update_notification_content_title">A actualización de NewPipe está dispoñible!</string>
     <string name="auto">Automático</string>
-    <string name="enable_playback_state_lists_summary">Amosar indicadores de posición de reprodución en listas</string>
     <string name="brightness_gesture_control_summary">Use xestos para controlar o brillo do reprodutor</string>
     <string name="grid">Rede</string>
     <string name="list">Lista</string>
@@ -519,7 +492,6 @@
     <string name="restricted_video">Este vídeo está restrinxido por idade.
 \n
 \nSe desexa visualizalo, habilite \"%1$s\" nas opcións.</string>
-    <string name="youtube_restricted_mode_enabled_title">Activar modo restrinxido de YouTube</string>
     <string name="settings_category_updates_title">Actualizacións</string>
     <string name="peertube_instance_add_exists">A instancia xa existe</string>
     <string name="peertube_instance_add_fail">Non se puido validar a instancia</string>
@@ -528,14 +500,11 @@
     <string name="peertube_instance_url_help">Atopar as instancias que lle gustan en %s</string>
     <string name="peertube_instance_url_summary">Selecciona as instancias favoritas de PeerTube</string>
     <string name="peertube_instance_url_title">Instancias de PeerTube</string>
-    <string name="content_language_title">Idioma do contido predeterminado</string>
     <string name="autoplay_title">Reprodución automática</string>
     <string name="settings_category_clear_data_title">Eliminar datos</string>
-    <string name="enable_playback_state_lists_title">Posicións nas listas</string>
     <string name="enable_playback_resume_summary">Restaurar a última posición de reprodución</string>
     <string name="brightness_gesture_control_title">Control do xesto de brillo</string>
     <string name="volume_gesture_control_summary">Use xestos para controlar o volume do reprodutor</string>
-    <string name="show_comments_title">Amosar comentarios</string>
     <string name="seek_duration_title">Duración da busca rápida cara a adiante / cara atrás</string>
     <string name="tab_choose">Elixir lapela</string>
     <string name="unsubscribe">Darse de baixa</string>
@@ -593,11 +562,8 @@
     <string name="hash_channel_name">Notificación do \"hash\" do vídeo</string>
     <string name="restricted_video_no_stream">Este vídeo ten restrición de idade.
 \nDebido ás novas políticas de Youtube cos vídeos con restrición de idade, NewPipe non pode acceder ás transmisións do vídeo, polo que non pode reproducilo.</string>
-    <string name="youtube_restricted_mode_enabled_summary">Youtube ten un \"Modo Restrinxido\" que oculta contido potencialmente só para adultos</string>
     <string name="unsupported_url_dialog_message">URL non recoñecido. Abrir con outra aplicación\?</string>
     <string name="show_meta_info_title">Mostrar metainformación</string>
-    <string name="show_description_summary">Desactíveo para ocultar a descrición do vídeo e a información adicional</string>
-    <string name="show_description_title">Ver descrición</string>
     <string name="clear_queue_confirmation_title">Pedir confirmación antes de baleirar unha cola</string>
     <string name="night_theme_title">Tema Escuro</string>
     <string name="notification_action_nothing">Nada</string>
@@ -611,7 +577,6 @@
     <string name="show_thumbnail_summary">Usar miniaturas para a pantalla de bloqueo e para as notificacións</string>
     <string name="feed_toggle_show_played_items">Mostrar elementos vistos</string>
     <string name="comments_are_disabled">Os comentarios están desactivados</string>
-    <string name="show_age_restricted_content_summary">Mostrar contido potencialmente non apto para menores porque ten unha limitación de idade (como +18)</string>
     <string name="notification_colorize_title">Definir cor da notificación</string>
     <string name="on">Prendido</string>
     <string name="metadata_host">Provedor</string>
@@ -638,7 +603,6 @@
         <item quantity="one">Descarga finalizada</item>
         <item quantity="other">%s descargas finalizadas</item>
     </plurals>
-    <string name="seekbar_preview_thumbnail_title">Miniatura na barra de busca</string>
     <string name="show_image_indicators_title">Mostrar indicadores de imaxe</string>
     <string name="disable_media_tunneling_summary">Desactive o túnel multimedia se experimentaren unha pantalla en negro ou interrupcións na reprodución</string>
     <string name="disable_media_tunneling_title">Desactivar túnel multimedia</string>
@@ -673,7 +637,6 @@
     <string name="manual_update_title">Procurar actualizacións</string>
     <string name="manual_update_description">Procurar manualmente novas versións</string>
     <string name="checking_updates_toast">A procurar actualizacións…</string>
-    <string name="downloads_storage_use_saf_summary_api_29">A partir do Android 10, só o \'Sistema de Acceso ao Almacenamento\' está soportado</string>
     <string name="progressive_load_interval_summary">Cambia o tamaño do intervalo de carga (actualmente %s). Un valor menor pode acelerar o carregamento do vídeo. Cambios poden precisar un reinicio do reprodutor.</string>
     <string name="processing_may_take_a_moment">Procesando... Pode devagar un momento</string>
     <string name="create_error_notification">Crear unha notificación de erro</string>

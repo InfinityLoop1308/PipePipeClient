@@ -55,6 +55,7 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     private static final int HEADER_TYPE = 0;
     private static final int FOOTER_TYPE = 1;
+    private static final int COMPOSE_HOLDER_TYPE = 2;
 
     private static final int STREAM_STATISTICS_HOLDER_TYPE = 0x1000;
     private static final int STREAM_PLAYLIST_HOLDER_TYPE = 0x1001;
@@ -95,7 +96,7 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
         localItemBuilder = new LocalItemBuilder(context);
         localItems = new ArrayList<>();
         dateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)
-                .withLocale(Localization.getPreferredLocale(context));
+                .withLocale(Localization.getAppLocale(context));
         sortMode = utils.parseSortMode(PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.playlist_sort_mode_key), SortMode.ORIGIN.name()));
     }
@@ -280,6 +281,9 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (footer != null && position == currentItems.size() && showFooter) {
             return FOOTER_TYPE;
         }
+        if (ThemeHelper.shouldUseExperimentalNewUi(localItemBuilder.getContext())) {
+            return COMPOSE_HOLDER_TYPE;
+        }
         final LocalItem item = currentItems.get(position);
         switch (item.getLocalItemType()) {
             case PLAYLIST_LOCAL_ITEM:
@@ -346,6 +350,9 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 return new HeaderFooterHolder(header);
             case FOOTER_TYPE:
                 return new HeaderFooterHolder(footer);
+            case COMPOSE_HOLDER_TYPE:
+                return new ComposeLocalItemHolder(localItemBuilder, parent, itemViewMode,
+                        useItemHandle || itemViewMode != ItemViewMode.LIST);
             case LOCAL_PLAYLIST_HOLDER_TYPE:
                 return new LocalPlaylistItemHolder(localItemBuilder, parent);
             case LOCAL_PLAYLIST_GRID_HOLDER_TYPE:

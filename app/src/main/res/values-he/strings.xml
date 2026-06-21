@@ -13,9 +13,6 @@
     <string name="settings">הגדרות</string>
     <string name="did_you_mean">כוונתך הייתה „%1$s”\?</string>
     <string name="share_dialog_title">שיתוף עם</string>
-    <string name="use_external_video_player_title">שימוש בנגן סרטונים חיצוני</string>
-    <string name="use_external_video_player_summary">בחלק מהרזולוציות השמע יוסר</string>
-    <string name="use_external_audio_player_title">שימוש בנגן שמע חיצוני</string>
     <string name="controls_background_title">רקע</string>
     <string name="controls_popup_title">חלון צף</string>
     <string name="download_path_title">תיקייה להורדת סרטונים</string>
@@ -26,33 +23,21 @@
     <string name="download_path_audio_dialog_title">נא לבחור תיקייה לשמירת קובצי שמע</string>
     <string name="default_resolution_title">רזולוציית ברירת המחדל</string>
     <string name="default_popup_resolution_title">רזולוציית ברירת המחדל לחלון צף</string>
-    <string name="show_higher_resolutions_title">הצגת רזולוציות גבוהות יותר</string>
-    <string name="show_higher_resolutions_summary">רק חלק מהמכשירים יכולים לנגן סרטונים ב־2K/4K</string>
     <string name="play_with_kodi_title">נגינה ב־Kodi</string>
     <string name="kore_not_found">להתקין את יישומון Kore החסר\?</string>
-    <string name="show_play_with_kodi_title">הצגת האפשרות לניגון עם Kodi</string>
-    <string name="show_play_with_kodi_summary">הצגת אפשרות לנגן סרטון דרך מרכז המדיה Kodi</string>
     <string name="play_audio">שמע</string>
-    <string name="default_audio_format_title">תבנית שמע כברירת מחדל</string>
-    <string name="default_video_format_title">תבנית סרטון כברירת מחדל</string>
     <string name="theme_title">ערכת נושא</string>
     <string name="light_theme_title">בהיר</string>
     <string name="dark_theme_title">כהה</string>
     <string name="black_theme_title">שחור</string>
-    <string name="popup_remember_size_pos_title">שמירת מאפייני החלון הצף</string>
-    <string name="popup_remember_size_pos_summary">שמירת המיקום והגודל האחרונים של החלון הצף</string>
     <string name="show_search_suggestions_title">הצעות חיפוש</string>
     <string name="show_search_suggestions_summary">נא לבחור את ההצעות להצגה בזמן החיפוש</string>
     <string name="download_dialog_title">הורדה</string>
-    <string name="show_next_and_similar_title">להציג סרטונים דומים והבאים בתור</string>
     <string name="unsupported_url">כתובת לא נתמכת</string>
-    <string name="content_language_title">שפת התוכן המועדפת</string>
-    <string name="settings_category_video_audio_title">סרטונים ושמע</string>
     <string name="settings_category_appearance_title">תצוגה</string>
     <string name="background_player_playing_toast">מתנגן ברקע</string>
     <string name="popup_playing_toast">מתנגן בחלון צף</string>
     <string name="content">תוכן</string>
-    <string name="show_age_restricted_content_title">הצגת תוכן עם הגבלת גיל</string>
     <string name="duration_live">חי</string>
     <string name="downloads">הורדות</string>
     <string name="downloads_title">הורדות</string>
@@ -88,10 +73,7 @@
     <string name="enable_watch_history_summary">תיעוד הסרטונים שנצפו</string>
     <string name="resume_on_audio_focus_gain_title">להמשיך את הניגון</string>
     <string name="resume_on_audio_focus_gain_summary">להמשיך לנגן לאחר הפרעות (למשל: שיחות טלפון)</string>
-    <string name="show_hold_to_append_title">להציג את העצה „להחזיק כדי להוסיף לרשימת נגינה”</string>
-    <string name="show_hold_to_append_summary">להציג עצה בעת לחיצה על הרקע או על הכפתור של הנגן הצף ב„פרטים:” על הסרטון</string>
     <string name="settings_category_player_title">נגן</string>
-    <string name="settings_category_player_behavior_title">התנהגות</string>
     <string name="settings_category_history_title">היסטוריה ומטמון</string>
     <string name="best_resolution">רזולוציה מיטבית</string>
     <string name="undo">ביטול</string>
@@ -156,22 +138,18 @@
     <string name="recaptcha_request_toast">התקבלה בקשה לאתגר reCAPTCHA</string>
     <string name="settings_category_downloads_title">הורדה</string>
     <string name="settings_file_charset_title">רשימת תווים אפשרית בשמות קבצים</string>
-    <string name="settings_file_replacement_character_summary">תווים לא נתמכים מוחלפים בערך הזה</string>
-    <string name="settings_file_replacement_character_title">תו חלופי</string>
     <string name="charset_letters_and_digits">אותיות וספרות</string>
     <string name="charset_most_special_characters">רוב התווים המיוחדים</string>
     <string name="title_activity_about">על אודות NewPipe</string>
     <string name="title_licenses">רישיונות צד שלישי</string>
     <string name="copyright" formatted="true">© %1$s ע״י %2$s תחת %3$s</string>
     <string name="tab_about">על אודות</string>
-    <string name="tab_licenses">רישיונות</string>
     <string name="app_description">נגן קל וחופשי להזרמת מדיה עבור Android.</string>
     <string name="contribution_title">התנדבות</string>
     <string name="contribution_encouragement">אם יש לך רעיון כלשהו בנוגע לתרגום, שינויי עיצוב, ניקוי הקוד או שינויים מהותיים בקוד - אנו תמיד שמחים לקבל עזרה. ככל שיותר דברים מתבצעים כך היישומון משתפר!</string>
     <string name="view_on_github">הצגה ב־GitHub</string>
     <string name="donation_title">תרומה</string>
     <string name="donation_encouragement">הפיתוח של NewPipe נערך ע״י מתנדבים שמשקיעים את זמנם הפנוי כדי להגיש לך את חווית השימוש הטובה ביותר. באפשרותך להעניק בחזרה כדי לסייע למפתחים לשפר את NewPipe בעודם נהנים מכוס קפה.</string>
-    <string name="give_back">לתרום בחזרה</string>
     <string name="website_title">אתר הבית</string>
     <string name="website_encouragement">מומלץ לבקר באתר של NewPipe לפרטים נוספים ולחדשות.</string>
     <string name="app_license_title">הרישיון של NewPipe</string>
@@ -293,7 +271,6 @@
     <string name="privacy_policy_title">מדיניות הפרטיות של NewPipe</string>
     <string name="privacy_policy_encouragement">מיזם NewPipe שומר על הפרטיות שלך בצורה מאוד קפדנית. לפיכך, היישומון אינו אוסף נתונים ללא הסכמתך.
 \nמדיניות הפרטיות של NewPipe מסבירה בפרטי פרטים אילו נתונים נשלחים ומאוחסנים בעת שליחת דיווח על תקלה.</string>
-    <string name="read_privacy_policy">הצגת מדיניות הפרטיות</string>
     <string name="app_license">NewPipe הוא יישומון חופשי בהתאם לרישיון קופילפט: מותר לך להשתמש, לחקור, לשתף ולשפר בכל דרך שנראית לך. במיוחד מותר לך להפיץ מחדש ו/או לשנות תחת תנאי הרישיון הציבורי הכללי של GNU כפי שמופץ על ידי קרן התכנה החופשית, בין אם גרסה 3 של הרישיון או (לשיקולך) כל גרסה עדכנית יותר שלו.</string>
     <string name="title_last_played">התנגנו אחרונים</string>
     <string name="title_most_played">הכי נצפים</string>
@@ -318,8 +295,6 @@
     <string name="skip_silence_checkbox">להאיץ קדימה כאשר שקט</string>
     <string name="playback_step">צעד</string>
     <string name="playback_reset">איפוס</string>
-    <string name="accept">קבלה</string>
-    <string name="decline">דחייה</string>
     <string name="limit_data_usage_none_description">ללא מגבלה</string>
     <string name="minimize_on_exit_title">מזעור בעת מעבר בין יישומונים</string>
     <string name="minimize_on_exit_summary">הפעולה לביצוע בעת מעבר ליישומון אחר מנגן הווידאו הראשי — %s</string>
@@ -392,8 +367,6 @@
     <string name="max_retry_desc">מספר הניסיונות החוזרים המרבי בטרם ביטול ההורדה</string>
     <string name="pause_downloads_on_mobile">לייצר הפרעה ברשתות מדודות</string>
     <string name="pause_downloads_on_mobile_desc">שימושי בעת מעבר לחיבור רשת סלולרית, למרות שישנן הורדות שלא ניתן להשהות</string>
-    <string name="show_comments_title">הצגת תגובות</string>
-    <string name="show_comments_summary">יש להשבית כדי להסתיר תגובות</string>
     <string name="autoplay_title">ניגון אוטומטי</string>
     <string name="no_comments">אין תגובות</string>
     <string name="error_unable_to_load_comments">לא ניתן לטעון תגובות</string>
@@ -401,8 +374,6 @@
     <string name="missions_header_pending">בהמתנה</string>
     <string name="enable_playback_resume_title">להמשיך בנגינה</string>
     <string name="enable_playback_resume_summary">לשחזר את מיקום הנגינה האחרון</string>
-    <string name="enable_playback_state_lists_title">מיקומים ברשימות</string>
-    <string name="enable_playback_state_lists_summary">להציג מחווני מיקומי נגינה ברשימות</string>
     <string name="settings_category_clear_data_title">לנקות את הנתונים</string>
     <string name="watch_history_states_deleted">מיקומי הנגינה נמחקו</string>
     <string name="missing_file">הקובץ הועבר או נמחק</string>
@@ -473,7 +444,6 @@
         <item quantity="many">%d שניות</item>
         <item quantity="other">%d שניות</item>
     </plurals>
-    <string name="new_seek_duration_toast">עקב מגבלות של ExoPlayer מגבלות טווחי החיפוש הוגדרו לכדי %d שניות</string>
     <string name="mute">השתקה</string>
     <string name="unmute">ביטול השתקה</string>
     <string name="help">עזרה</string>
@@ -548,7 +518,6 @@
     <string name="remove_watched_popup_title">להסיר סרטונים שנצפו\?</string>
     <string name="show_original_time_ago_summary">הטקסט המקורי משירותים יופיע בפריטי התזרים</string>
     <string name="show_original_time_ago_title">הצגת לפני כמה זמן מקורי על פריטים</string>
-    <string name="youtube_restricted_mode_enabled_title">הפעלת „מצב מוגבל” של YouTube</string>
     <string name="video_detail_by">מאת %s</string>
     <string name="channel_created_by">נוצר ע״י %s</string>
     <string name="detail_sub_channel_thumbnail_view_description">תמונה ממוזערת של הערוץ</string>
@@ -588,8 +557,6 @@
     <string name="clear_cookie_summary">לנקות עוגיות שנשמרות על ידי NewPipe בעת פתרון reCAPTCHA</string>
     <string name="recaptcha_cookies_cleared">העוגיות של ה־reCAPTCHA נמחקו</string>
     <string name="clear_cookie_title">פינוי עוגיות reCAPTCHA</string>
-    <string name="youtube_restricted_mode_enabled_summary">פלטפורמת YouTube מספקת „מצב מוגבל” שמסתיר תוכן שעשוי להתאים למבוגרים בלבד</string>
-    <string name="show_age_restricted_content_summary">הצגת תוכן שעלול להיות בלתי הולם לילדים עקב מגבלת גיל (כגון 18+)</string>
     <string name="notification_colorize_summary">לאפשר ל־Android להתאים את צבע ההתראה בהתאם לצבע העיקרי של התמונה הממוזערת (לא זמין בכל המכשירים)</string>
     <string name="notification_colorize_title">צביעת ההתראה</string>
     <string name="show_thumbnail_summary">להשתמש בתמונה ממוזערת גם כרקע מסך הנעילה וגם בהתראות</string>
@@ -604,8 +571,6 @@
     <string name="description_tab_description">תיאור</string>
     <string name="related_items_tab_description">תזרימים קשורים</string>
     <string name="comments_tab_description">הערות</string>
-    <string name="show_description_summary">יש לכבות כדי להסתיר תיאורי סרטונים ומידע נוסף</string>
-    <string name="show_description_title">הצגת תיאור</string>
     <string name="open_with">פתיחה באמצעות</string>
     <string name="no_app_to_open_intent">אין יישומון על המכשיר שלך שיכול לפתוח את זה</string>
     <string name="crash_the_app">להקריס את היישומון</string>
@@ -652,7 +617,6 @@
     <string name="feed_load_error_fast_unknown">מצב ההזנה המהירה לא מספק מידע נוסף על כך.</string>
     <string name="feed_load_error_account_info">לא ניתן לטעון את ההזנה עבור ‚%s’.</string>
     <string name="feed_load_error">שגיאה בהורדת ההזנה</string>
-    <string name="downloads_storage_use_saf_summary_api_29">התמיכה ב‚תשתית גישה לאחסון’ נתמכת מ־Android 10 בלבד</string>
     <string name="downloads_storage_use_saf_summary_api_19">‚תשתית הגישה לאחסון’ אינה נתמכת על ידי Android KitKat ומטה</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">תופיע שאלה לאן לשמור כל הורדה</string>
     <string name="no_dir_yet">טרם הוגדרה תיקיית הורדה, נא לבחור את תיקיית ההורדה כעת</string>
@@ -664,7 +628,6 @@
     <string name="dont_show">לא להציג</string>
     <string name="low_quality_smaller">איכות נמוכה (קטן יותר)</string>
     <string name="high_quality_larger">איכות גבוהה (גדול יותר)</string>
-    <string name="seekbar_preview_thumbnail_title">תמונה מוקטנת בסרגל הנגינה</string>
     <string name="detail_heart_img_view_description">סומן בלב על ידי היוצר</string>
     <string name="mark_as_watched">סימון כנצפה</string>
     <string name="show_image_indicators_summary">הצגת סרטים בסגנון פיקאסו בראש התמונות לציון המקור שלהם: אדום זה מהרשת, כחול מהכונן וירוק מהזיכרון</string>
@@ -727,7 +690,6 @@
     <string name="check_new_streams">הרצת בדיקה על תזרימים חדשים</string>
     <string name="enable_streams_notifications_title">התראות תזרימים חדשים</string>
     <string name="enable_streams_notifications_summary">הודעה על תזרימים חדשים מהמינויים</string>
-    <string name="enumeration_comma">,</string>
     <string name="streams_notification_channel_name">תזרימים חדשים</string>
     <string name="settings_category_player_notification_title">התראות נגן</string>
     <string name="any_network">רשת כלשהי</string>

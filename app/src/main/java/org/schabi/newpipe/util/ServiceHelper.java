@@ -27,8 +27,6 @@ import java.util.concurrent.TimeUnit;
 
 import static org.schabi.newpipe.extractor.ServiceList.NicoNico;
 import static org.schabi.newpipe.extractor.ServiceList.SoundCloud;
-import static org.schabi.newpipe.util.Localization.getPreferredLocalization;
-
 public final class ServiceHelper {
     private static final StreamingService DEFAULT_FALLBACK_SERVICE = ServiceList.YouTube;
 
@@ -99,6 +97,12 @@ public final class ServiceHelper {
                 return c.getString(R.string.sortorder);
             case "features":
                 return c.getString(R.string.features);
+            case "latest":
+                return c.getString(R.string.newest_first);
+            case "popular":
+                return c.getString(R.string.sort_popular);
+            case "oldest":
+                return c.getString(R.string.oldest_first);
             case "sort_popular":
                 return c.getString(R.string.sort_popular);
             case "sort_view":
@@ -127,6 +131,38 @@ public final class ServiceHelper {
                 return c.getString(R.string.sort_rating);
             case "sort_ascending":
                 return c.getString(R.string.sort_ascending);
+            case "past_hour":
+                return c.getString(R.string.past_hour);
+            case "past_day":
+                return c.getString(R.string.past_day);
+            case "past_week":
+                return c.getString(R.string.past_week);
+            case "past_month":
+                return c.getString(R.string.past_month);
+            case "past_year":
+                return c.getString(R.string.past_year);
+            case "short_video":
+                return c.getString(R.string.short_video);
+            case "medium_length":
+                return c.getString(R.string.medium_length);
+            case "long_video":
+                return c.getString(R.string.long_video);
+            case "extra_long":
+                return c.getString(R.string.extra_long);
+            case "upload_date":
+                return c.getString(R.string.upload_date);
+            case "duration":
+                return c.getString(R.string.duration);
+            case "license":
+                return c.getString(R.string.license);
+            case "published":
+                return c.getString(R.string.published);
+            case "name":
+                return c.getString(R.string.name);
+            case "yes":
+                return c.getString(R.string.yes);
+            case "no":
+                return c.getString(R.string.no);
             default:
                 return filter;
         }
@@ -281,12 +317,8 @@ public final class ServiceHelper {
                     R.string.youtube_cookies_key), null);
             final String audioLanguage = sharedPreferences.getString(context.getString(
                     R.string.preferred_audio_language_key),"original");
-            final boolean showAutoTranslatedSubtitles = sharedPreferences.getBoolean(context.getString(
-                    R.string.show_auto_translated_subtitles_key), true);
             ServiceList.YouTube.setTokens(tokens);
-            ServiceList.YouTube.setContentLanguage(getPreferredLocalization(context));
             ServiceList.YouTube.setAudioLanguage(audioLanguage);
-            ServiceList.YouTube.setShowAutoTranslatedSubtitles(showAutoTranslatedSubtitles);
             final String pot = sharedPreferences.getString(context.getString(R.string.youtube_po_token_key), null);
             ServiceList.YouTube.setAdditionalTokens(pot);
 //            if(sharedPreferences.getBoolean(context.getString(R.string.override_cookies_youtube_key), false)) {
@@ -311,6 +343,7 @@ public final class ServiceHelper {
         SponsorBlockApiSettings sponsorBlockApiSettings = buildSponsorBlockApiSettings(context);
         int loadingTimeoutInt = Integer.parseInt(sharedPreferences.getString("loading_timeout_key", "10"));
         boolean fetchFullPlaylist = sharedPreferences.getBoolean(context.getString(R.string.fetch_full_playlist_key), false);
+        boolean fetchDislike = sharedPreferences.getBoolean(context.getString(R.string.show_dislike_key), true);
         Set<String> blockingFields = sharedPreferences.getStringSet(context.getString(R.string.filter_type_key), new HashSet<>());
         
         for (final StreamingService s : ServiceList.all()) {
@@ -320,6 +353,7 @@ public final class ServiceHelper {
             s.setSponsorBlockApiSettings(sponsorBlockApiSettings);
             s.setLoadingTimeout(loadingTimeoutInt);
             s.setFetchFullPlaylist(fetchFullPlaylist);
+            s.setFetchDislike(fetchDislike);
         }
     }
 
@@ -328,7 +362,7 @@ public final class ServiceHelper {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         final boolean isSponsorBlockEnabled = prefs.getBoolean(context
-                .getString(R.string.sponsor_block_enable_key), false);
+                .getString(R.string.sponsor_block_enable_key), true);
 
         if (!isSponsorBlockEnabled) {
             return null;

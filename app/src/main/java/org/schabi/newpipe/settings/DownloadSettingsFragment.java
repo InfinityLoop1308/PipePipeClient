@@ -66,12 +66,12 @@ public class DownloadSettingsFragment extends BasePreferenceFragment {
         prefStorageAsk = findPreference(downloadStorageAsk);
 
         final SwitchPreferenceCompat prefUseSaf = findPreference(storageUseSafPreference);
-        prefUseSaf.setDefaultValue(true);
-        prefUseSaf.setChecked(NewPipeSettings.useStorageAccessFramework(ctx));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            prefUseSaf.setEnabled(false);
-            prefUseSaf.setSummary(R.string.downloads_storage_use_saf_summary_api_29);
+            getPreferenceScreen().removePreference(prefUseSaf);
             prefStorageAsk.setSummary(R.string.downloads_storage_ask_summary_no_saf_notice);
+        } else {
+            prefUseSaf.setDefaultValue(true);
+            prefUseSaf.setChecked(NewPipeSettings.useStorageAccessFramework(ctx));
         }
 
         updatePreferencesSummary();

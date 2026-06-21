@@ -17,21 +17,13 @@
     <string name="default_resolution_title">Alapértelmezett felbontás</string>
     <string name="play_with_kodi_title">Lejátszás Kodival</string>
     <string name="kore_not_found">Telepíti a hiányzó Kore alkalmazást\?</string>
-    <string name="show_play_with_kodi_title">A „Lejátszás Kodival” lehetőség megjelenítése</string>
-    <string name="show_play_with_kodi_summary">A videók Kodi médiaközponttal történő lejátszásának megjelenítése</string>
     <string name="play_audio">Hang</string>
-    <string name="default_audio_format_title">Alapértelmezett hangformátum</string>
     <string name="download_dialog_title">Letöltés</string>
     <string name="unsupported_url">Nem támogatott webcím</string>
-    <string name="use_external_video_player_title">Külső videólejátszó használata</string>
-    <string name="use_external_audio_player_title">Külső hanglejátszó használata</string>
     <string name="download_path_audio_dialog_title">Válassza ki a hangfájlok letöltési helyét</string>
     <string name="network_error">Hálózati hiba</string>
     <string name="background_player_playing_toast">Lejátszás a háttérben</string>
-    <string name="settings_category_video_audio_title">Videó és hang</string>
     <string name="settings_category_appearance_title">Megjelenés</string>
-    <string name="content_language_title">Tartalom alapértelmezett nyelve</string>
-    <string name="show_next_and_similar_title">„Következő” és „Hasonló” videók megjelenítése</string>
     <string name="dark_theme_title">Sötét</string>
     <string name="light_theme_title">Világos</string>
     <string name="theme_title">Téma</string>
@@ -42,7 +34,6 @@
     <string name="detail_thumbnail_view_description">Videó lejátszása, hossz:</string>
     <string name="detail_uploader_thumbnail_view_description">Feltöltő profilképének bélyegképe</string>
     <string name="content">Tartalom</string>
-    <string name="show_age_restricted_content_title">Korhatáros tartalom megjelenítése</string>
     <string name="general_error">Hiba</string>
     <string name="content_not_available">A tartalom nem érhető el</string>
     <string name="duration_live">Élő</string>
@@ -88,17 +79,11 @@
     <string name="controls_popup_title">Felugró ablak</string>
     <string name="no_player_found_toast">Nem található lejátszó a közvetítéshez (telepítse a VLC alkalmazást a lejátszáshoz).</string>
     <string name="open_in_popup_mode">Megnyitás felugró módban</string>
-    <string name="use_external_video_player_summary">Néhány felbontásnál eltávolítja a hangot</string>
     <string name="subscribe_button_title">Feliratkozás</string>
     <string name="subscribed_button_title">Feliratkozva</string>
     <string name="show_info">További információ</string>
     <string name="default_popup_resolution_title">Felugró ablak alapértelmezett felbontása</string>
-    <string name="show_higher_resolutions_title">Magasabb felbontások megjelenítése</string>
-    <string name="show_higher_resolutions_summary">Csak bizonyos eszközök tudnak 2K/4K-s videókat lejátszani</string>
-    <string name="default_video_format_title">Alapértelmezett videóformátum</string>
     <string name="black_theme_title">Fekete</string>
-    <string name="popup_remember_size_pos_title">Felugró ablak tulajdonságainak megjegyzése</string>
-    <string name="popup_remember_size_pos_summary">Felugró ablak előző helyének és méretének megjegyzése</string>
     <string name="show_search_suggestions_title">Keresési javaslatok</string>
     <string name="show_search_suggestions_summary">Válassza ki a keresési javaslatokat keresés közben</string>
     <string name="enable_search_history_title">Keresési előzmények</string>
@@ -106,7 +91,6 @@
     <string name="enable_watch_history_summary">Megtekintett videók nyomon követése</string>
     <string name="resume_on_audio_focus_gain_summary">Lejátszás folytatása félbeszakítások után (például telefonhívás)</string>
     <string name="settings_category_player_title">Lejátszó</string>
-    <string name="settings_category_player_behavior_title">Működés</string>
     <string name="settings_category_history_title">Előzmények és gyorsítótár</string>
     <string name="settings_category_debug_title">Hibaelhárítás</string>
     <string name="popup_playing_toast">Lejátszás felugró ablakban</string>
@@ -196,27 +180,22 @@
     <string name="recaptcha_request_toast">reCAPTCHA rejtvény kérve</string>
     <string name="settings_category_downloads_title">Letöltés</string>
     <string name="settings_file_charset_title">Fájlnevekben engedélyezett karakterek</string>
-    <string name="settings_file_replacement_character_summary">Az érvénytelen karakterek erre az értékre lesznek lecserélve</string>
-    <string name="settings_file_replacement_character_title">Csere karakter</string>
     <string name="charset_letters_and_digits">Betűk és számok</string>
     <string name="charset_most_special_characters">Legtöbb speciális karakter</string>
     <string name="toast_no_player">Nincs a fájl lejátszásához szükséges alkalmazás telepítve</string>
     <string name="title_activity_about">A PipePipe névjegye</string>
     <string name="tab_about">Névjegy</string>
-    <string name="tab_licenses">Licencek</string>
     <string name="app_description">Szabad, egyszerű közvetítésnézés Androidon.</string>
     <string name="contribution_title">Közreműködés</string>
     <string name="contribution_encouragement">Legyen ötleted a fordítással, a dizájnnal, a forráskód tisztításával vagy egy komolyabb átszervezésével kapcsolatban, bármilyen segítséget szívesen fogadunk. Minél több minden készül el, annál jobb lesz!</string>
     <string name="view_on_github">Megtekintés a GitHubon</string>
     <string name="donation_title">Adományozás</string>
     <string name="donation_encouragement">A PipePipe alkalmazást önkéntesek fejlesztik a szabadidejükben, hogy a lehető legjobb felhasználói élményt nyújtsák. Járuljon hozzá, hogy a fejlesztők még jobbá tegyék alkalmazást, miközben egy csésze kávét szürcsölnek.</string>
-    <string name="give_back">Hozzájárulás</string>
     <string name="website_title">Honlap</string>
     <string name="website_encouragement">Látogassa meg a PipePipe honlapját a további információkért és hírekért.</string>
     <string name="privacy_policy_title">A PipePipe adatvédelmi irányelvei</string>
     <string name="privacy_policy_encouragement">A PipePipe projekt komolyan veszi az adatvédelmét. Az alkalmazás nem gyűjt semmilyen adatot a beleegyezése nélkül.
 \nA PipePipe adatvédelmi irányelve részletesen elmagyarázza, mely adatok kerülnek elküldésre és tárolásra az alkalmazás összeomlásának jelentésekor.</string>
-    <string name="read_privacy_policy">Adatvédelmi irányelvek elolvasása</string>
     <string name="app_license_title">A PipePipe licence</string>
     <string name="read_full_license">Licenc elolvasása</string>
     <string name="title_activity_history">Előzmények</string>
@@ -300,8 +279,6 @@
     <string name="skip_silence_checkbox">Előrepörgetés csend alatt</string>
     <string name="playback_step">Lépés</string>
     <string name="playback_reset">Visszaállítás</string>
-    <string name="accept">Elfogadás</string>
-    <string name="decline">Elutasítás</string>
     <string name="limit_data_usage_none_description">Nincs korlát</string>
     <string name="limit_mobile_data_usage_title">Felbontás korlátozása mobiladatforgalom használata esetén</string>
     <string name="minimize_on_exit_summary">A fő videólejátszóról más alkalmazásra történő váltáskor teendő művelet — %s</string>
@@ -309,11 +286,8 @@
     <string name="minimize_on_exit_background_description">Lejátszás folytatása a háttérben</string>
     <string name="minimize_on_exit_popup_description">Lejátszás folytatása felugró ablakban</string>
     <string name="resume_on_audio_focus_gain_title">Lejátszás folytatása</string>
-    <string name="show_hold_to_append_title">A „Tartsa lenyomva a sorba állításhoz\" tipp megjelenítése</string>
     <string name="unsubscribe">Leiratkozás</string>
     <string name="tab_choose">Válasszon lapot</string>
-    <string name="show_comments_title">Megjegyzések megjelenítése</string>
-    <string name="show_comments_summary">Kapcsolja ki a megjegyzések elrejtéséhez</string>
     <string name="default_content_country_title">Tartalom alapértelmezett országa</string>
     <string name="switch_to_main">Folytatás főnézetben</string>
     <string name="dismiss">Eltüntetés</string>
@@ -328,11 +302,8 @@
     <string name="app_update_notification_channel_name">Alkalmazásfrissítés értesítése</string>
     <string name="file_deleted">Fájl törölve</string>
     <string name="settings_category_updates_title">Frissítések</string>
-    <string name="show_hold_to_append_summary">Tipp megjelenítése, ha megnyomja a hátteret vagy a felugró gombot a videó részleteinél</string>
     <string name="autoplay_title">Automatikus lejátszás</string>
     <string name="settings_category_clear_data_title">Adatok törlése</string>
-    <string name="enable_playback_state_lists_summary">Lejátszási pozíciók megjelenítése a listákban</string>
-    <string name="enable_playback_state_lists_title">Pozíciók a listákban</string>
     <string name="brightness_gesture_control_summary">Gesztusok használata a fényerő szabályozásához</string>
     <string name="brightness_gesture_control_title">Fényerő gesztus</string>
     <string name="volume_gesture_control_summary">Gesztusok használata a lejátszó hangerejének szabályzásához</string>
@@ -400,12 +371,10 @@
     <string name="notification_action_nothing">Semmi</string>
     <string name="notification_action_shuffle">Keverés</string>
     <string name="notification_action_repeat">Ismétlés</string>
-    <string name="show_description_title">Leírás megjelenítése</string>
     <string name="notification_action_buffering">Pufferelés</string>
     <string name="open_with">Megnyitás ezzel</string>
     <string name="unsupported_url_dialog_message">Az webcímet nem lehetett felismerni. Megnyitja másik alkalmazással\?</string>
     <string name="auto_queue_toggle">Automatikus sorba állítás</string>
-    <string name="show_description_summary">Kapcsolja ki, hogy elrejtse a videó leírását és a további információkat</string>
     <string name="restore_defaults_confirmation">Visszaállítja az alapértelmezéseket\?</string>
     <string name="restricted_video_no_stream">Ez a videó korhatáros.
 \nAz új, korhatáros videókkal kapcsolatos YouTube irányelvek miatt a PipePipe nem férhet hozzá a videóhoz, így nem tudja lejátszani.</string>
@@ -427,7 +396,6 @@
     <string name="night_theme_summary">Válassza ki a kedvenc éjszakai témáját — %s</string>
     <string name="select_night_theme_toast">Lent kiválaszthatja a kedvenc éjszakai témáját</string>
     <string name="recently_added">Nemrég hozzáadott</string>
-    <string name="new_seek_duration_toast">Az ExoPlayer korlátai miatt az előre- és visszatekerés időtartama %d másodpercre lett állítva</string>
     <string name="feed_groups_header_title">Csatornacsoportok</string>
     <string name="systems_language">Rendszer alapértelmezése</string>
     <string name="start_accept_privacy_policy">Az Általános adatvédelmi rendeletnek (GDPR) való megfelelés érdekében felhívjuk figyelmét a PipePipe adatvédelmi nyilatkozatára. Olvassa el figyelmesen.
@@ -484,7 +452,6 @@
     <string name="restricted_video">Ez a videó korhatáros.
 \n
 \nEngedélyezze a(z) „%1$s” beállítást, ha meg szeretné tekinteni.</string>
-    <string name="show_age_restricted_content_summary">Gyermekek számára esetlegesen nem megfelelő, korhatáros tartalom megjelenítése (például 18+)</string>
     <string name="peertube_instance_add_https_only">Csak a HTTPS webcímek támogatottak</string>
     <string name="show_meta_info_title">Metainformációk megjelenítése</string>
     <string name="clear_queue_confirmation_description">A jelenleg aktív lejátszási sor le lesz cserélve</string>
@@ -543,8 +510,6 @@
     <string name="saved_tabs_invalid_json">Nem sikerült a mentett lapok olvasása, alapértelmezettek használata</string>
     <string name="hash_channel_description">Értesítések a videók ujjlenyomat-készítési folyamatához</string>
     <string name="hash_channel_name">Videó ujjlenyomat-készítési értesítése</string>
-    <string name="youtube_restricted_mode_enabled_summary">A YouTube biztosít egy „Korlátozott módot”, amely elrejti a lehetséges felnőtteknek szóló tartalmat</string>
-    <string name="youtube_restricted_mode_enabled_title">A YouTube „Korlátozott módjának” bekapcsolása</string>
     <string name="peertube_instance_add_exists">A példány már létezik</string>
     <string name="peertube_instance_add_fail">A példány érvényesítése nem sikerült</string>
     <string name="peertube_instance_add_help">Adja meg a példány webcímét</string>
@@ -630,7 +595,6 @@
     <string name="account_terminated">Fiók eltávolítva</string>
     <string name="mark_as_watched">Megjelölés megtekintettként</string>
     <string name="no_dir_yet">Még nincs letöltési mappa beállítva, válassza ki az alapértelmezett letöltési mappát most</string>
-    <string name="seekbar_preview_thumbnail_title">Tekerősáv bélyegkép-előnézete</string>
     <string name="high_quality_larger">Magas minőségű (nagyobb)</string>
     <string name="feed_load_error">Hiba a lista betöltésekor</string>
     <string name="feed_toggle_show_played_items">Megnézett elemek megjelenítése</string>
@@ -638,7 +602,6 @@
     <string name="metadata_support">Támogatás</string>
     <string name="open_website_license">Weboldal megnyitása</string>
     <string name="tablet_mode_title">Táblagép mód</string>
-    <string name="downloads_storage_use_saf_summary_api_29">Az Android 10-től kezdve, csak a „Storage Access Framework” támogatott</string>
     <string name="feed_new_items">Új listaelemek</string>
     <string name="metadata_privacy_private">Privát</string>
     <string name="metadata_privacy_internal">Belső</string>

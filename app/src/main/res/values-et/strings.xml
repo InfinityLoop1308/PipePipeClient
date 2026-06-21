@@ -15,9 +15,6 @@
     <string name="settings">Seaded</string>
     <string name="did_you_mean">Kas mõtlesid: \"%1$s\"\?</string>
     <string name="share_dialog_title">Jaga</string>
-    <string name="use_external_video_player_title">Kasuta välist videopleierit</string>
-    <string name="use_external_video_player_summary">Eemaldab audio mõnedel lahutustel</string>
-    <string name="use_external_audio_player_title">Kasuta välist audiopleierit</string>
     <string name="subscribe_button_title">Telli</string>
     <string name="subscribed_button_title">Tellitud</string>
     <string name="channel_unsubscribed">Kanali tellimus tühistatud</string>
@@ -38,21 +35,13 @@
     <string name="download_path_audio_dialog_title">Vali alla laaditud audiofailide kaust</string>
     <string name="default_resolution_title">Vaikelahutus</string>
     <string name="default_popup_resolution_title">Hüpikakna vaikelahutus</string>
-    <string name="show_higher_resolutions_title">Kuva kõrgemaid lahutusi</string>
-    <string name="show_higher_resolutions_summary">Ainult mõned seadmed suudavad esitada 2K/4K videoid</string>
     <string name="play_with_kodi_title">Esita Kodi abil</string>
     <string name="kore_not_found">Kas paigaldada puuduv Kore rakendus\?</string>
-    <string name="show_play_with_kodi_title">Kuva valik \"Esita Kodi abil\"</string>
-    <string name="show_play_with_kodi_summary">Kuva valik video esitamiseks Kodi meediakeskuse kaudu</string>
     <string name="play_audio">Heli</string>
-    <string name="default_audio_format_title">Heli vaikevorming</string>
-    <string name="default_video_format_title">Video vaikevorming</string>
     <string name="theme_title">Teema</string>
     <string name="light_theme_title">Hele</string>
     <string name="dark_theme_title">Tume</string>
     <string name="black_theme_title">Must</string>
-    <string name="popup_remember_size_pos_title">Pea hüpikakna suurus ja asukoht meeles</string>
-    <string name="popup_remember_size_pos_summary">Pea hüpikakna viimane suurus ja asukoht meeles</string>
     <string name="use_inexact_seek_title">Kasuta ebatäpset kerimist</string>
     <string name="use_inexact_seek_summary">Ebatäpne kerimine lubab meediamängijal otsida asukohta kiiremini täpsuse arvel. Sellega ei tööta 5, 15 või 25 sekundi kaupa kerimine</string>
     <string name="download_thumbnail_title">Laadi pisipildid</string>
@@ -72,22 +61,15 @@
     <string name="resume_on_audio_focus_gain_title">Jätka taasesitust</string>
     <string name="resume_on_audio_focus_gain_summary">Jätka taasesitust pärast katkestamist (nt. telefonikõne)</string>
     <string name="download_dialog_title">Laadi alla</string>
-    <string name="show_next_and_similar_title">Kuva \'järgmine\' ja \'sarnased\' videod</string>
-    <string name="show_hold_to_append_title">Kuva vihjet \"lisamiseks hoia\"</string>
-    <string name="show_hold_to_append_summary">Kuva vihje, kui videoandmete lehel vajutatakse tausta või hüpikakna nupule \"Täpsemalt:\"</string>
     <string name="unsupported_url">Mitte toetatud URL</string>
     <string name="default_content_country_title">Sisu vaikimisi riik</string>
-    <string name="content_language_title">Sisu vaikimisi keel</string>
     <string name="settings_category_player_title">Pleier</string>
-    <string name="settings_category_player_behavior_title">Käitumine</string>
-    <string name="settings_category_video_audio_title">Pilt ja heli</string>
     <string name="settings_category_history_title">Ajalugu ja vahemälu</string>
     <string name="settings_category_appearance_title">Välimus</string>
     <string name="settings_category_debug_title">Silumine</string>
     <string name="background_player_playing_toast">Taasesitus taustal</string>
     <string name="popup_playing_toast">Taasesitus hüpikaknas</string>
     <string name="content">Sisu</string>
-    <string name="show_age_restricted_content_title">Kuva vanusepiiranguga sisu</string>
     <string name="duration_live">Otse</string>
     <string name="downloads">Allalaadimised</string>
     <string name="downloads_title">Allalaadimised</string>
@@ -196,22 +178,18 @@
     <string name="one_item_deleted">Kustutati 1 element.</string>
     <string name="settings_category_downloads_title">Laadi alla</string>
     <string name="settings_file_charset_title">Lubatud tähemärgid failinimedes</string>
-    <string name="settings_file_replacement_character_summary">Vigased tähemärgid asendatakse selle väärtusega</string>
-    <string name="settings_file_replacement_character_title">Asendustähemärk</string>
     <string name="charset_letters_and_digits">Tähed ja numbrid</string>
     <string name="charset_most_special_characters">Erimärgid</string>
     <string name="toast_no_player">Selle faili esitamiseks puudub rakendus</string>
     <string name="title_activity_about">NewPipe rakendusest</string>
     <string name="title_licenses">Kolmanda osapoole litsentsid</string>
     <string name="tab_about">Programmist</string>
-    <string name="tab_licenses">Litsentsid</string>
     <string name="contribution_title">Panusta</string>
     <string name="view_on_github">Vaata GitHubis</string>
     <string name="donation_title">Anneta</string>
     <string name="website_title">Veebileht</string>
     <string name="website_encouragement">Enama info saamiseks külasta NewPipe veebilehte.</string>
     <string name="privacy_policy_title">NewPipe privaatsuspoliitika</string>
-    <string name="read_privacy_policy">Loe privaatsuspoliitikat</string>
     <string name="app_license_title">NewPipe litsents</string>
     <string name="read_full_license">Loe litsentsi</string>
     <string name="title_activity_history">Ajalugu</string>
@@ -293,8 +271,6 @@
 \nKas jätkata?</string>
     <string name="playback_speed_control">Taasesituse kiiruse juhtimine</string>
     <string name="playback_tempo">Tempo</string>
-    <string name="accept">Nõustu</string>
-    <string name="decline">Keeldu</string>
     <string name="limit_data_usage_none_description">Piiranguta</string>
     <string name="limit_mobile_data_usage_title">Piira lahutust mobiilse andmeside kasutamisel</string>
     <string name="channels">Kanalid</string>
@@ -308,7 +284,6 @@
     <string name="app_description">Vaba kergekaaluline Androidi voogesitus.</string>
     <string name="contribution_encouragement">Kui sul on ideid kujunduse muutmisest, koodi puhastamisest või suurtest koodi muudatustest - abi on alati teretulnud. Mida rohkem tehtud, seda paremaks läheb!</string>
     <string name="donation_encouragement">NewPipe arendajad on vabatahtlikud, kes kulutavad oma vaba aega, toomaks sulle parimat kasutamise kogemust. On aeg anda tagasi aidates arendajaid ja muuta NewPipe veel paremaks, nautides ise tassi kohvi.</string>
-    <string name="give_back">Anneta</string>
     <string name="privacy_policy_encouragement">NewPipe võtab privaatsust väga tõsiselt. Seetõttu ei kogu rakendus ilma nõusolekuta mingeid andmeid.
 \nNewPipe privaatsuspoliitika selgitab üksikasjalikult, milliseid andmeid saadetakse ja kogutakse veateate saatmisel.</string>
     <string name="app_license">NewPipe vaba avatud koodiga tarkvara. Seada võid kasutada, uurida, jagada ja parandada nii, nagu õigemaks pead. Täpsemalt - seda võid levitada ja/või muuta vastavalt Vaba Tarkvara Sihtasutuse avaldatud GNU Üldise Avaliku Litsentsi v.3 (või sinu valikul hilisema versiooni) tingimustele.</string>
@@ -398,17 +373,11 @@
     <string name="unsupported_url_dialog_message">URLi tuvastamine nurjus. Kas avada mõne teise rakendusega\?</string>
     <string name="autoplay_title">Automaatesitus</string>
     <string name="settings_category_clear_data_title">Puhasta andmed</string>
-    <string name="enable_playback_state_lists_summary">Kuva esituskohtade indikaatorid esitusloendites</string>
-    <string name="enable_playback_state_lists_title">Kohad esitusloendites</string>
     <string name="enable_playback_resume_summary">Taasa viimane esituskoht</string>
     <string name="enable_playback_resume_title">Jätka mängimisega</string>
     <string name="auto_queue_toggle">Lisa automaatselt esitusloendisse</string>
     <string name="show_meta_info_summary">Lülita välja, et peita metateabe kastid lisateabega voo looja, sisu või otsingu päringuga</string>
     <string name="show_meta_info_title">Kuva metateave</string>
-    <string name="show_description_summary">Lülita välja, et peita video kirjeldus ja lisateave</string>
-    <string name="show_description_title">Kuva kirjeldus</string>
-    <string name="show_comments_summary">Lülita välja, et peita kommentaarid</string>
-    <string name="show_comments_title">Kuva kommentaarid</string>
     <string name="clear_queue_confirmation_description">Aktiivse mängija esitusloend asendatakse</string>
     <string name="clear_queue_confirmation_title">Küsi enne esitusloendi tühjendamist kinnitust</string>
     <string name="clear_queue_confirmation_summary">Lülitamine ühelt mängijalt teisele võib asendada su esitusloendi</string>
@@ -462,7 +431,6 @@
         <item quantity="other">%s kuulajat</item>
     </plurals>
     <string name="hash_channel_description">Teavitused video räsimise edenemise kohta</string>
-    <string name="youtube_restricted_mode_enabled_title">Võta kasutusele YouTube\'i „Piiratud režiim“</string>
     <string name="missing_file">Faili asukoht on muutunud või on ta kustutatud</string>
     <string name="watch_history_states_deleted">Taasesituste asukohad on kustutatud</string>
     <string name="help">Abiteave</string>
@@ -482,8 +450,6 @@
     <string name="restricted_video">Sellel videol on vanusepiirang.
 \n
 \nKui sa soovid seda näha, siis lülita seadistustest „%1$s“ sisse.</string>
-    <string name="youtube_restricted_mode_enabled_summary">YouTube\'is leiduv „Piiratud režiim“ peidab võimaliku täiskasvanutele mõeldud sisu</string>
-    <string name="show_age_restricted_content_summary">Näita sisu, mis vanusepiirangu tõttu ilmselt ei sobi lastele (näiteks 18+)</string>
     <string name="peertube_instance_add_https_only">Sa saad kasutada vaid HTTPS-urle</string>
     <string name="night_theme_title">Öine teema</string>
     <string name="never">Ei iialgi</string>
@@ -562,7 +528,6 @@
     <string name="feed_group_show_only_ungrouped_subscriptions">Näita vaid rühmitamata tellimus</string>
     <string name="feed_group_dialog_delete_message">Kas sa soovid selle kanalite rühma kustutada\?</string>
     <string name="feed_group_dialog_empty_name">Rühmal puudub nimi</string>
-    <string name="new_seek_duration_toast">ExoPlayer\'i piirangute tõttu seadistasime otsingusammu %d sekundile</string>
     <string name="enable_queue_limit_desc">Luba korraga vaid üks allalaadimine</string>
     <string name="enable_queue_limit">Piira allalaadimiste järjekorda</string>
     <string name="error_progress_lost">Faili kustutamisega läks ka tööjärg kautsi</string>
@@ -606,7 +571,6 @@
     <string name="dont_show">Ära kuva</string>
     <string name="low_quality_smaller">Madalam kvaliteet (väiksem)</string>
     <string name="high_quality_larger">Parem kvaliteet (suurem)</string>
-    <string name="seekbar_preview_thumbnail_title">Otsinguriba pisipildivaates</string>
     <string name="show_original_time_ago_summary">Teenuste algne tekstid on nähtavad voo elementides</string>
     <string name="show_original_time_ago_title">Kuva elementide algupärane aeg</string>
     <string name="comments_are_disabled">Kommentaarid on välja lülitatud</string>
@@ -631,7 +595,6 @@
     <string name="feed_update_threshold_title">Voo värskendamise künnis</string>
     <string name="settings_category_feed_title">Voog</string>
     <string name="choose_instance_prompt">Vali eksemplar</string>
-    <string name="downloads_storage_use_saf_summary_api_29">Android 10st alates on toetatud ainult salvestusjuurdepääsu raamistik \'Storage Access Framework\'</string>
     <string name="downloads_storage_use_saf_summary_api_19">Android KitKat ja vanemad versioonid ei toeta salvestusjuurdepääsu raamistikku \'Storage Access Framework\'</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Sinult küsitakse iga kord, kuhu alla laadimine salvestada</string>
     <string name="detail_heart_img_view_description">Südamlik autor</string>
@@ -706,6 +669,5 @@
     <string name="any_network">Mis tahes võrk</string>
     <string name="get_notified">Saa teavitusi</string>
     <string name="you_successfully_subscribed">Sa oled nüüd selle kanali tellija</string>
-    <string name="enumeration_comma">,</string>
     <string name="toggle_all">Lülita kõik sisse</string>
 </resources>

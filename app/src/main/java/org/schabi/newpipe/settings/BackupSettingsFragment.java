@@ -29,7 +29,9 @@ import org.schabi.newpipe.util.ZipHelper;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
 
 import static org.schabi.newpipe.extractor.utils.Utils.isBlank;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
@@ -175,14 +177,6 @@ public class BackupSettingsFragment extends BasePreferenceFragment {
                     SharedPreferences sharedPreferences = PreferenceManager
                             .getDefaultSharedPreferences(requireContext());
                     manager.loadSharedPreferences(sharedPreferences);
-                    final Set<String> enabledTabs = sharedPreferences.getStringSet(
-                            requireContext().getString(R.string.show_channel_tabs_key), new HashSet<>());
-                    Set<String> newSet = new HashSet<>(enabledTabs);
-                    if (newSet.contains("show_channel_tabs_livestreams")) {
-                        newSet.remove("show_channel_tabs_livestreams");
-                        newSet.add("show_channel_tabs_live");
-                        sharedPreferences.edit().putStringSet(requireContext().getString(R.string.show_channel_tabs_key), newSet).apply();
-                    }
                     finishImport(importDataUri);
                 });
                 alert.show();

@@ -15,8 +15,8 @@ import androidx.media.AudioFocusRequestCompat;
 import androidx.media.AudioManagerCompat;
 
 import androidx.preference.PreferenceManager;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.analytics.AnalyticsListener;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.analytics.AnalyticsListener;
 import org.schabi.newpipe.R;
 
 public class AudioReactor implements AudioManager.OnAudioFocusChangeListener, AnalyticsListener {

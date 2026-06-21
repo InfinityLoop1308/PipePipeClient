@@ -46,7 +46,7 @@ public class LocalPlaylistStreamItemHolder extends LocalItemHolder {
 
     public LocalPlaylistStreamItemHolder(final LocalItemBuilder infoItemBuilder,
                                          final ViewGroup parent) {
-        this(infoItemBuilder, R.layout.list_stream_item, parent);
+        this(infoItemBuilder, R.layout.list_stream_playlist_item, parent);
     }
 
     @Override
@@ -103,7 +103,6 @@ public class LocalPlaylistStreamItemHolder extends LocalItemHolder {
             return true;
         });
 
-        itemHandleView.setVisibility(View.VISIBLE);
         itemHandleView.setOnTouchListener(getOnTouchListener(item));
     }
 

@@ -5,8 +5,6 @@
     <string name="light_theme_title">પ્રકાશ</string>
     <string name="night_theme_title">નાઇટ થીમ</string>
     <string name="theme_title">થીમ</string>
-    <string name="default_video_format_title">ડિફોલ્ટ વિડિઓ ફોર્મેટ</string>
-    <string name="default_audio_format_title">ડિફોલ્ટ ઓડિયો ફોર્મેટ</string>
     <string name="play_audio">ઓડિયો</string>
     <string name="notification_colorize_summary">થંબનેલના મુખ્ય રંગ અનુસાર, Android ને સૂચનાના રંગને કસ્ટમાઇઝ કરો (નોંધો કે આ બધા ઉપકરણો પર ઉપલબ્ધ નથી)</string>
     <string name="notification_colorize_title">સૂચનાને રંગીન બનાવો</string>
@@ -23,10 +21,7 @@
     <string name="notification_action_0_title">પ્રથમ ક્રિયા બટન</string>
     <string name="notification_scale_to_square_image_summary">સૂચનામાં 16: 9 થી 1: 1 અસ્પેક્ટ રેશિયોમાં બતાવેલ વિડિઓ થંબનેલને સ્કેલ કરો (વિકૃતિ રજૂ કરી શકે છે)</string>
     <string name="notification_scale_to_square_image_title">સ્કેલ થંબનેલથી 1: 1 પાસા રેશિયો</string>
-    <string name="show_play_with_kodi_summary">કોડી મીડિયા સેન્ટર દ્વારા વિડિઓ ચલાવવાનો વિકલ્પ દર્શાવો</string>
     <string name="kore_not_found">અનુપસ્થિત Kore એપ્લિકેશન ઇન્સ્ટોલ કરીએ\?</string>
-    <string name="show_higher_resolutions_summary">ફક્ત થોડા ઉપકરણો 2K / 4K વિડિઓઝ ચલાવી શકે છે</string>
-    <string name="show_higher_resolutions_title">ઉચ્ચ રીઝોલ્યુશન બતાવો</string>
     <string name="default_popup_resolution_title">ડિફોલ્ટ પોપઅપ રીઝોલ્યુશન</string>
     <string name="default_resolution_title">ડિફોલ્ટ રીઝોલ્યુશન</string>
     <string name="download_path_audio_dialog_title">ઓડિયો ફાઇલો માટે ડાઉનલોડ ફોલ્ડર પસંદ કરો</string>
@@ -48,9 +43,6 @@
     <string name="unsubscribe">અનસબ્સ્ક્રાઇબ કરો</string>
     <string name="subscribed_button_title">સબ્સ્ક્રાઇબ કર્યું</string>
     <string name="subscribe_button_title">સબ્સ્ક્રાઇબ કરો</string>
-    <string name="use_external_audio_player_title">બાહ્ય ઓડિયો પ્લેયરનો ઉપયોગ કરો</string>
-    <string name="use_external_video_player_summary">કેટલાક ઠરાવો પર ઓડિયો દૂર કરે છે</string>
-    <string name="use_external_video_player_title">બાહ્ય વિડિઓ પ્લેયરનો ઉપયોગ કરો</string>
     <string name="share_dialog_title">સાથે શેર કરો</string>
     <string name="search_showing_result_for">%s માટે પરિણામો બતાવી રહ્યું છે</string>
     <string name="did_you_mean">શું તમારો મતલબ %1$s છે\?</string>

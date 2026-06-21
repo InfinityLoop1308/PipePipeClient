@@ -15,16 +15,6 @@
 
     <ListPreference
         android:defaultValue="@string/default_localization_key"
-        android:entries="@array/language_names"
-        android:entryValues="@array/language_codes"
-        android:key="@string/content_language_key"
-        android:summary="%s"
-        android:title="@string/content_language_title"
-        app:singleLineTitle="false"
-        app:iconSpaceReserved="false" />
-
-    <ListPreference
-        android:defaultValue="@string/default_localization_key"
         android:entries="@array/country_names"
         android:entryValues="@array/country_codes"
         android:key="@string/content_country_key"
@@ -43,32 +33,6 @@
         app:singleLineTitle="false"
         app:iconSpaceReserved="false" />
 
-    <SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:key="@string/show_auto_translated_subtitles_key"
-        android:summary="@string/show_auto_translated_subtitles_summary"
-        android:title="@string/show_auto_translated_subtitles_title"
-        app:singleLineTitle="false"
-        app:iconSpaceReserved="false" />
-
-    <PreferenceScreen
-        android:fragment="org.schabi.newpipe.settings.tabs.ChooseTabsFragment"
-        android:key="@string/main_page_content_key"
-        android:summary="@string/main_page_content_summary"
-        android:title="@string/main_page_content"
-        app:singleLineTitle="false"
-        app:iconSpaceReserved="false" />
-
-    <MultiSelectListPreference
-        android:key="@string/show_channel_tabs_key"
-        android:summary="@string/show_channel_tabs_summary"
-        android:title="@string/show_channel_tabs"
-        android:entries="@array/show_channel_tabs_description_list"
-        android:entryValues="@array/show_channel_tabs_value_list"
-        android:defaultValue="@array/show_channel_tabs_value_list"
-        app:iconSpaceReserved="false"
-        app:singleLineTitle="false" />
-
     <PreferenceScreen
         android:fragment="org.schabi.newpipe.settings.PeertubeInstanceListFragment"
         android:key="@string/peertube_instance_setup_key"
@@ -76,77 +40,4 @@
         android:title="@string/peertube_instance_url_title"
         app:singleLineTitle="false"
         app:iconSpaceReserved="false" />
-
-    <MultiSelectListPreference
-        android:key="@string/show_search_suggestions_key"
-        android:summary="@string/show_search_suggestions_summary"
-        android:title="@string/show_search_suggestions_title"
-        android:entries="@array/show_search_suggestions_description_list"
-        android:entryValues="@array/show_search_suggestions_value_list"
-        android:defaultValue="@array/show_search_suggestions_value_list"
-        app:singleLineTitle="false"
-        app:iconSpaceReserved="false" />
-
-    <EditTextPreference
-        android:key="@string/search_suggestions_count_key"
-        android:title="@string/search_suggestions_count_title"
-        android:summary="@string/search_suggestions_count_summary"
-        android:defaultValue="25"
-        android:inputType="number"
-        app:singleLineTitle="false"
-        app:iconSpaceReserved="false" />
-
-    <SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:key="@string/download_thumbnail_key"
-        android:summary="@string/download_thumbnail_summary"
-        android:title="@string/download_thumbnail_title"
-        app:singleLineTitle="false"
-        app:iconSpaceReserved="false" />
-
-    <SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:key="@string/show_comments_key"
-        android:summary="@string/show_comments_summary"
-        android:title="@string/show_comments_title"
-        app:singleLineTitle="false"
-        app:iconSpaceReserved="false" />
-
-    <SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:key="@string/show_next_video_key"
-        android:title="@string/show_next_and_similar_title"
-        app:singleLineTitle="false"
-        app:iconSpaceReserved="false" />
-
-    <SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:key="@string/show_description_key"
-        android:summary="@string/show_description_summary"
-        android:title="@string/show_description_title"
-        app:singleLineTitle="false"
-        app:iconSpaceReserved="false" />
-
-    <SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:key="@string/show_meta_info_key"
-        android:summary="@string/show_meta_info_summary"
-        android:title="@string/show_meta_info_title"
-        app:singleLineTitle="false"
-        app:iconSpaceReserved="false" />
-
-    <SwitchPreference
-            android:defaultValue="false"
-            android:key="@string/show_dislike_key"
-            android:title="@string/show_dislike_title"
-            app:singleLineTitle="false"
-            app:iconSpaceReserved="false"/>
-
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="@string/toggle_show_future_items_key"
-        android:title="@string/feed_toggle_show_future_items"
-        app:singleLineTitle="false"
-        app:iconSpaceReserved="false"/>
-
 </PreferenceScreen>

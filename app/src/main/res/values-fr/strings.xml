@@ -22,9 +22,6 @@
 <string name="did_you_mean">Vouliez-vous dire \"%1$s\" ?</string>
 <string name="search_showing_result_for">Affichage des résultats pour : %s</string>
 <string name="share_dialog_title">Partager avec</string>
-<string name="use_external_video_player_title">Utiliser un lecteur vidéo externe</string>
-<string name="use_external_video_player_summary">Supprime l\'audio à certaines résolutions</string>
-<string name="use_external_audio_player_title">Utiliser un lecteur audio externe</string>
 <string name="subscribe_button_title">S\'abonner</string>
 <string name="subscribed_button_title">Abonné</string>
 <string name="unsubscribe">Se désabonner</string>
@@ -48,12 +45,8 @@
 <string name="download_path_audio_dialog_title">Choisissez le dossier de téléchargement pour les fichiers audio</string>
 <string name="default_resolution_title">Résolution par défaut</string>
 <string name="default_popup_resolution_title">Résolution popup par défaut</string>
-<string name="show_higher_resolutions_title">Afficher des résolutions plus élevées</string>
-<string name="show_higher_resolutions_summary">Seuls certains appareils peuvent lire des vidéos en 2K/4K</string>
 <string name="play_with_kodi_title">Lire avec Kodi</string>
 <string name="kore_not_found">Installer l\'application Kore manquante ?</string>
-<string name="show_play_with_kodi_title">Afficher l\'option \"Lire avec Kodi\"</string>
-<string name="show_play_with_kodi_summary">Afficher une option pour lire une vidéo via le centre multimédia Kodi</string>
 <string name="crash_the_player">Faire planter le lecteur</string>
 <string name="notification_scale_to_square_image_title">Recadrer la miniature au format 1:1</string>
 <string name="notification_scale_to_square_image_summary">Recadrer la miniature vidéo affichée dans la notification du format 16:9 au format 1:1</string>
@@ -71,15 +64,11 @@
 <string name="notification_colorize_title">Coloriser la notification</string>
 <string name="notification_colorize_summary">Laissez Android personnaliser la couleur de la notification selon la couleur principale de la miniature (notez que cela n\'est pas disponible sur tous les appareils)</string>
 <string name="play_audio">Audio</string>
-<string name="default_audio_format_title">Format audio par défaut</string>
-<string name="default_video_format_title">Format vidéo par défaut</string>
 <string name="theme_title">Thème</string>
 <string name="night_theme_title">Thème de nuit</string>
 <string name="light_theme_title">Clair</string>
 <string name="dark_theme_title">Sombre</string>
 <string name="black_theme_title">Noir</string>
-<string name="popup_remember_size_pos_title">Mémoriser les propriétés du popup</string>
-<string name="popup_remember_size_pos_summary">Se souvenir de la dernière taille et position du popup</string>
 <string name="use_inexact_seek_title">Utiliser la recherche approximative rapide</string>
 <string name="use_inexact_seek_summary">La recherche approximative permet au lecteur de rechercher plus rapidement des positions avec moins de précision. La recherche pendant 5, 15 ou 25 secondes ne fonctionne pas avec cela</string>
 <string name="seek_duration_title">Durée d\'avance rapide/retour rapide</string>
@@ -90,11 +79,6 @@
 <string name="clear_queue_confirmation_description">La file d\'attente du lecteur actif sera remplacée</string>
 <string name="download_thumbnail_title">Charger les miniatures</string>
 <string name="download_thumbnail_summary">Désactiver pour éviter le chargement de miniatures, en économisant des données et de l\'utilisation mémoire. Les modifications effacent le cache d\'image en mémoire et sur disque</string>
-<string name="show_comments_title">Afficher les commentaires</string>
-<string name="show_comments_summary">Désactiver pour masquer les commentaires</string>
-<string name="show_next_and_similar_title">Afficher les vidéos \'Suivantes\' et \'Similaires\'</string>
-<string name="show_description_title">Afficher la description</string>
-<string name="show_description_summary">Désactiver pour masquer la description de la vidéo et les informations supplémentaires</string>
 <string name="show_meta_info_title">Afficher les informations méta</string>
 <string name="show_meta_info_summary">Désactiver pour masquer les boîtes d\'informations méta avec des informations supplémentaires sur le créateur du flux, le contenu du flux ou une demande de recherche</string>
 <string name="thumbnail_cache_wipe_complete_notice">Cache d\'image effacé</string>
@@ -117,8 +101,6 @@
 <string name="enable_watch_history_title">Historique de visionnage</string>
 <string name="enable_playback_resume_title">Reprendre la lecture</string>
 <string name="enable_playback_resume_summary">Restaurer la dernière position de lecture</string>
-<string name="enable_playback_state_lists_title">Positions dans les listes</string>
-<string name="enable_playback_state_lists_summary">Afficher les indicateurs de position de lecture dans les listes</string>
 <string name="settings_category_clear_data_title">Effacer les données</string>
 <string name="enable_watch_history_summary">Suivre les vidéos visionnées</string>
 <string name="resume_on_audio_focus_gain_title">Reprendre la lecture</string>
@@ -127,12 +109,9 @@
 <string name="start_main_player_fullscreen_title">Démarrer le lecteur principal en plein écran</string>
 <string name="start_main_player_fullscreen_summary">Ne pas démarrer les vidéos dans le mini-lecteur mais passer directement en mode plein écran si la rotation automatique est verrouillée. Vous pouvez toujours accéder au mini-lecteur en quittant le plein écran</string>
 <string name="autoplay_title">Lecture automatique</string>
-<string name="show_hold_to_append_title">Afficher la suggestion "Maintenir pour mettre en file d\'attente"</string>
-<string name="show_hold_to_append_summary">Afficher la suggestion lors de l\'appui sur le fond ou sur le bouton contextuel dans "Détails de la vidéo"</string>
 <string name="unsupported_url">URL non supportée</string>
 <string name="unsupported_url_dialog_message">Impossible de reconnaître l\'URL. Ouvrir avec une autre application ?</string>
 <string name="default_content_country_title">Pays de contenu par défaut</string>
-<string name="content_language_title">Langue de contenu par défaut</string>
 <string name="peertube_instance_url_title">Instances PeerTube</string>
 <string name="peertube_instance_url_summary">Sélectionnez vos instances PeerTube préférées</string>
 <string name="peertube_instance_url_help">Trouvez les instances que vous aimez sur %s</string>
@@ -142,8 +121,6 @@
 <string name="peertube_instance_add_https_only">Seules les URLs HTTPS sont prises en charge</string>
 <string name="peertube_instance_add_exists">L\'instance existe déjà</string>
 <string name="settings_category_player_title">Lecteur</string>
-<string name="settings_category_player_behavior_title">Comportement</string>
-<string name="settings_category_video_audio_title">Vidéo et audio</string>
 <string name="settings_category_history_title">Historique et cache</string>
 <string name="settings_category_appearance_title">Apparence</string>
 <string name="settings_category_debug_title">Débogage</string>
@@ -167,10 +144,6 @@
 <string name="background_player_playing_toast">Lecture en arrière-plan</string>
 <string name="popup_playing_toast">Lecture en mode popup</string>
 <string name="content">Contenu</string>
-<string name="show_age_restricted_content_title">Afficher le contenu avec restriction d\'âge</string>
-<string name="show_age_restricted_content_summary">Afficher le contenu potentiellement inapproprié pour les enfants car il est soumis à une limite d\'âge (comme 18+)</string>
-<string name="youtube_restricted_mode_enabled_title">Activer le "Mode restreint" de YouTube</string>
-<string name="youtube_restricted_mode_enabled_summary">YouTube propose un "Mode restreint" qui masque le contenu potentiellement mature</string>
 <string name="restricted_video">Cette vidéo est soumise à une restriction d\'âge.\n\nActivez "%1$s" dans les paramètres si vous souhaitez la voir.</string>
 <string name="restricted_video_no_stream_new">Cette vidéo est soumise à des restrictions d\'âge. \nConnectez-vous via les paramètres si vous souhaitez la voir.</string>
 <string name="duration_live">En direct</string>
@@ -407,11 +380,6 @@ Voulez-vous continuer?</string>
 <string name="playback_reset">Réinitialiser</string>
 <string name="percent">Pourcent</string>
 <string name="semitone">Demi-ton</string>
-<string name="start_accept_privacy_policy_new">Afin de se conformer au Règlement général sur la protection des données (RGPD) européen, nous attirons votre attention sur la politique de confidentialité de PipePipe. Veuillez la lire attentivement.
-
-Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
-<string name="accept">Accepter</string>
-<string name="decline">Refuser</string>
 <string name="limit_data_usage_none_description">Aucune limite</string>
 <string name="limit_mobile_data_usage_title">Limiter la résolution lors de l\'utilisation des données mobiles</string>
 <string name="enable_streams_notifications_title">Notifications de nouveaux flux</string>
@@ -435,7 +403,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="list">Liste</string>
 <string name="grid">Grille</string>
 <string name="auto">Auto</string>
-<string name="seekbar_preview_thumbnail_title">Aperçu des miniatures de la barre de progression</string>
 <string name="high_quality_larger">Haute qualité (plus grand)</string>
 <string name="low_quality_smaller">Basse qualité (plus petit)</string>
 <string name="dont_show">Ne pas afficher</string>
@@ -493,7 +460,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="downloads_storage_ask_summary_no_saf_notice">Vous serez invité à choisir où enregistrer chaque téléchargement</string>
 <string name="downloads_storage_use_saf_title">Utiliser le sélecteur de dossier système (SAF)</string>
 <string name="downloads_storage_use_saf_summary">Le \'Storage Access Framework\' permet des téléchargements vers une carte SD externe</string>
-<string name="downloads_storage_use_saf_summary_api_29">À partir d\'Android 10, seul le \'Storage Access Framework\' est pris en charge</string>
 <string name="choose_instance_prompt">Choisir une instance</string>
 <string name="app_language_title">Langue de l\'application</string>
 <string name="systems_language">Langue par défaut du système</string>
@@ -502,7 +468,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="remove_watched_popup_warning">Les vidéos qui ont été visionnées avant et après avoir été ajoutées à la liste de lecture seront supprimées.
 \nÊtes-vous sûr\? Cette action est irréversible !</string>
 <string name="remove_watched_popup_yes_and_partially_watched_videos">Oui, et les vidéos partiellement visionnées</string>
-<string name="new_seek_duration_toast">En raison des contraintes d\'ExoPlayer, la durée de recherche a été définie sur %d secondes</string>
 <string name="fragment_feed_title">Quoi de neuf</string>
 <string name="feed_groups_header_title">Groupes de chaînes</string>
 <string name="feed_oldest_subscription_update">Dernière mise à jour du flux : %s</string>
@@ -540,7 +505,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 \n
 \nDonc le choix se résume à ce que vous préférez : rapidité ou informations précises.</string>
 <string name="feed_toggle_show_played_items">Afficher les éléments visionnés</string>
-<string name="feed_toggle_hide_played_items">Masquer les éléments visionnés</string>
 <string name="feed_fetch_channel_tabs">Récupérer les onglets de chaînes</string>
 <string name="feed_fetch_channel_tabs_summary">Onglets à récupérer lors de la mise à jour du flux. Cette option n\'a aucun effet si un canal est mis à jour en mode rapide.</string>
 <string name="sponsor_block">SponsorBlock</string>
@@ -549,7 +513,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="sponsor_block_enable_title">Passer les sponsors</string>
 <string name="sponsor_block_enable_summary">Ignorer automatiquement les sponsors dans les vidéos. Fonctionne pour YouTube et BiliBili.</string>
 <string name="sponsor_block_api_url_title">URL de l\'API</string>
-<string name="sponsor_block_api_url_summary">L\'URL à utiliser lors de l\'interrogation de l\'API SponsorBlock. Cela doit être défini pour que SponsorBlock fonctionne.</string>
 <string name="sponsor_block_notifications_title">Notifier lors du passage des sponsors</string>
 <string name="sponsor_block_notifications_summary">Afficher une notification toast lorsqu\'un sponsor est automatiquement ignoré.</string>
 <string name="sponsor_block_privacy_title">Voir la politique de confidentialité</string>
@@ -564,15 +527,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="sponsor_block_skip_non_music_toast">Non-musique ignorée</string>
 <string name="sponsor_block_skip_preview_toast">Aperçu/récapitulatif ignoré</string>
 <string name="sponsor_block_skip_filler_toast">Contenu de remplissage ignoré</string>
-<string name="sponsor_block_toggle_skipping">Activer/Désactiver le passage des sponsors</string>
-<string name="sponsor_block_clear_whitelist_title">Effacer la liste blanche</string>
-<string name="sponsor_block_clear_whitelist_summary">Effacer la liste des téléverseurs que SponsorBlock ignorera.</string>
-<string name="sponsor_block_enabled_toast">SponsorBlock activé</string>
-<string name="sponsor_block_disabled_toast">SponsorBlock désactivé</string>
-<string name="sponsor_block_whitelist_cleared_toast">Liste blanche effacée</string>
-<string name="sponsor_block_uploader_added_to_whitelist_toast">Téléverseur ajouté à la liste blanche</string>
-<string name="sponsor_block_uploader_removed_from_whitelist_toast">Téléverseur supprimé de la liste blanche</string>
-<string name="sponsor_block_confirm_clear_whitelist">Êtes-vous sûr de vouloir effacer la liste blanche ?</string>
 <string name="sponsor_block_confirm_reset_colors">Êtes-vous sûr de vouloir réinitialiser les couleurs de catégorie ?</string>
 <string name="content_not_supported_new">Ce contenu n\'est pas encore pris en charge par PipePipe.\n\nIl sera espéré qu\'il soit pris en charge dans une future version.</string>
 <string name="detail_sub_channel_thumbnail_view_description">Vignette de l\'avatar du canal</string>
@@ -614,11 +568,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="metadata_support">Assistance</string>
 <string name="metadata_host">Hôte</string>
 <string name="metadata_thumbnail_url">URL de la vignette</string>
-<string name="metadata_thumbnails">Vignettes</string>
-<string name="metadata_uploader_avatars">Avatars des téléverseurs</string>
-<string name="metadata_subchannel_avatars">Avatars des sous-channels</string>
-<string name="metadata_avatars">Avatars</string>
-<string name="metadata_banners">Bannières</string>
 <string name="metadata_privacy_public">Public</string>
 <string name="metadata_privacy_unlisted">Non répertorié</string>
 <string name="metadata_privacy_private">Privé</string>
@@ -634,21 +583,10 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="notifications_disabled">Les notifications sont désactivées</string>
 <string name="get_notified">Recevoir une notification</string>
 <string name="you_successfully_subscribed">Vous êtes maintenant abonné à ce canal</string>
-<string name="enumeration_comma">,</string>
 <string name="toggle_all">Activer/Désactiver tout</string>
-<string name="show_replies">Afficher les réponses</string>
 <string name="remove_duplicates">Supprimer les doublons</string>
 <string name="remove_duplicates_popup_title">Supprimer les flux en double ?</string>
 <string name="remove_duplicates_popup_warning">Les flux en double dans la liste de lecture seront supprimés.\n\nÊtes-vous sûr ? Cela ne peut pas être annulé !</string>
-<string name="streams_not_yet_supported_removed">Les flux qui ne sont pas encore pris en charge par le téléchargeur ne sont pas affichés</string>
-<string name="selected_stream_external_player_not_supported">Le flux sélectionné n\'est pas pris en charge par les lecteurs externes</string>
-<string name="no_audio_streams_available_for_external_players">Aucun flux audio n\'est disponible pour les lecteurs externes</string>
-<string name="no_video_streams_available_for_external_players">Aucun flux vidéo n\'est disponible pour les lecteurs externes</string>
-<string name="select_quality_external_players">Sélectionner la qualité pour les lecteurs externes</string>
-<string name="unknown_format">Format inconnu</string>
-<string name="unknown_quality">Qualité inconnue</string>
-<string name="feed_toggle_show_future_items">Afficher les éléments futurs</string>
-<string name="feed_toggle_hide_future_items">Masquer les éléments futurs</string>
 <string name="channel_tab_videos">Vidéos</string>
 <string name="channel_tab_tracks">Pistes</string>
 <string name="channel_tab_livestreams">En direct</string>
@@ -659,10 +597,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="channel_tab_info">Info</string>
 <string name="show_channel_tabs">Onglets de chaîne</string>
 <string name="show_channel_tabs_summary">Quels onglets sont affichés sur les pages des chaînes</string>
-<string name="image_quality_title">Qualité de l\'image</string>
-<string name="image_quality_summary">Choisissez la qualité des images et si vous voulez les charger,
-    pour réduire l\'utilisation des données et de la mémoire.
-    Les changements effacent le cache des images en mémoire et sur disque — %s</string>
 <string name="image_quality_none">Ne pas charger les images</string>
 <string name="image_quality_low">Basse qualité</string>
 <string name="image_quality_medium">Qualité moyenne</string>
@@ -720,20 +654,9 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="sort_relevance">Pertinence</string>
 <string name="sort_rating">Évaluation</string>
 <string name="sort_ascending">Ascendant</string>
-<string name="auto_queue_partition_summary">Toujours essayer de mettre en file d\'attente la partition suivante</string>
-<string name="auto_queue_partition_title">Auto-mise en file d\'attente partition suivante</string>
-<string name="feed_show_watched">Complètement regardé</string>
-<string name="feed_show_partially_watched">Partiellement regardé</string>
-<string name="feed_show_upcoming">À venir</string>
 <string name="sort">Trier</string>
 <string name="settings_category_exoplayer_title">Paramètres ExoPlayer</string>
 <string name="settings_category_exoplayer_summary">Gérer certains paramètres ExoPlayer. Ces changements nécessitent un redémarrage du lecteur pour prendre effet</string>
-<string name="use_exoplayer_decoder_fallback_title">Utiliser la fonction de remplacement de décodeur d\'ExoPlayer</string>
-<string name="use_exoplayer_decoder_fallback_summary">Activer cette option si vous avez des problèmes d\'initialisation du décodeur,
-    ce qui permet de passer à des décodeurs de priorité inférieure si
-    l\'initialisation des décodeurs principaux échoue.
-    Cela peut entraîner une performance de lecture inférieure par rapport
-    à l\'utilisation des décodeurs principaux</string>
 <string name="always_use_exoplayer_set_output_surface_workaround_title">Toujours utiliser le contournement de
     réglage de la surface de sortie vidéo d\'ExoPlayer</string>
 <string name="always_use_exoplayer_set_output_surface_workaround_summary">Ce contournement libère et réinstancie les codecs vidéo
@@ -770,10 +693,7 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="stat_dislike">Ne pas aimer</string>
 <string name="stat_evaluation">Évaluation</string>
 <string name="button_view_pictures">Voir les images (%d)</string>
-<string name="next">Suivant</string>
 <string name="previous">Précédent</string>
-<string name="warning">Avertissement</string>
-<string name="download_temp_warning">Le téléchargement de listes de lecture est toujours en version bêta. NE JAMAIS l\'utiliser pour télécharger des listes de lecture avec plus de 50 éléments.</string>
 <string name="error_priority_notice">Priorité : Problèmes sur GitHub/CodeBerg &gt; E-mails avec titre clair, contenu poli et rapport de bogue &gt; E-mails uniquement de rapport de bogue. \nLes e-mails uniquement de rapport de bogue ne recevront pas de réponses.</string>
 <string name="sleep_timer_length_title">Minuterie de mise en veille</string>
 <string name="error_match_notification_title">Un problème correspondant à l\'erreur rencontrée a été trouvé</string>
@@ -781,25 +701,23 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="oldest_first">Le plus ancien d\'abord</string>
 <string name="newest_first">Le plus récent d\'abord</string>
 <string name="same_as_item_mode">Le même que les éléments</string>
-<string name="playlist_sorting_mode_title">Mode de tri de la liste de lecture</string>
 <string name="dont_auto_queue_long_title">Ne pas mettre automatiquement en file d\'attente les longues vidéos</string>
 <string name="dont_auto_queue_long_description">Mettre automatiquement en file d\'attente uniquement les vidéos de moins de 6 minutes</string>
 <string name="enable_notification_text">Veuillez activer les notifications pour cette application pour vous assurer qu\'elle fonctionne normalement. Nous vous alerterons uniquement lorsqu\'il sera nécessaire.</string>
 <string name="enable_notification_title">Activer la notification</string>
-<string name="sponsor_promote">Soutenez-nous sur Ko-fi</string>
+<string name="sponsor_promote">Devenez un supporter</string>
 <string name="random_play_order_title">Ordre aléatoire</string>
 <string name="random_play_order_summary">Mélangez automatiquement vos listes de lecture locales lorsque vous jouez en arrière-plan</string>
-<string name="update_log">### Nouvelles fonctionnalités\n\n- L\'interface a été légèrement améliorée pour rendre PipePipe plus moderne\n- Le menu de filtre de recherche a été repensé \n\n### Corrections de bugs\n\n- Échec de la lecture des vidéos YouTube si connecté dans certaines conditions (YouTube)\n- Les résultats de recherche affichent des noms d\'uploader incorrects dans certaines conditions (YouTube) \n- Erreur d\'analyse dans certaines conditions (YouTube)\n- Échec de l\'extraction des uploaders de chaînes parfois (BiliBili)\n- Échec de l\'extraction des détails de chaîne parfois en raison du contrôle des risques (BiliBili)\n- Plantage dans certaines conditions \n\n### Autres\n\n- Améliorer la stabilité</string>
+<string name="update_log">Correction : erreur \"This content is not supported by PipePipe\" sur toutes les vidéos (YouTube)\n\nYouTube se met à jour fréquemment ces derniers temps, veuillez vous assurer d\'activer la vérification des mises à jour pour recevoir nos derniers correctifs rapidement.</string>
 <string name="speeding_playback_title">Appuyer longuement pour accélérer la lecture</string>
 <string name="view_on_github">Voir sur GitHub</string>
-<string name="donation_dialog_title">Vous appréciez PipePipe ?</string>
-<string name="donation_dialog_message">Soutenez-nous sur Ko-fi et aidez-nous à garder le visionnage de vidéos ouvert et sans pistage.</string>
+<string name="donation_dialog_title">Soutenez le projet</string>
+<string name="donation_dialog_message">Merci d\'utiliser PipePipe ! Si vous le trouvez utile, envisagez de devenir un supporter sur Ko-Fi. Votre soutien est important pour moi et m\'aide à ajouter de nouvelles fonctionnalités passionnantes. Chaque contribution compte ! 😇</string>
 <string name="fullscreen_gesture_control_summary">Utilisez des gestes pour entrer / sortir du plein écran</string>
 <string name="fullscreen_gesture_control_title">Contrôle gestuel en plein écran</string>
 <string name="require_audio_focus_summary">Assurez-vous que seul PipePipe joue de l\'audio</string>
 <string name="require_audio_focus_title">Nécessiter l\'accent audio</string>
 <string name="decoder_init_failure">Échec de l\'initialisation du décodeur</string>
-<string name="go_to_settings">Aller aux paramètres</string>
 <string name="unable_to_decode_summary">Votre appareil ne dispose pas des décodeurs matériels requis, donc vous ne pouvez pas lire cette vidéo dans PipePipe.\nVeuillez la télécharger et la lire dans VLC.</string>
 <string name="settings_category_gestures_summary">Paramètres des gestes</string>
 <string name="settings_category_bullet_comments_summary">Paramètres des commentaires défilants</string>
@@ -809,8 +727,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="advanced_formats_summary">Si votre appareil est compatible, l\'activation des formats avancés peut réduire la consommation de données et offrir des résolutions plus élevées. \nWEBM ou AV1 doivent être activés pour afficher des contenus en 2k/4k sur YouTube. \nUtiliser un format que votre appareil ne prend pas en charge entraînera un écran noir ou un plantage.</string>
 <string name="advanced_formats_title">Activer les formats avancés</string>
 <string name="preferred_audio_language_title">Langue audio préférée</string>
-<string name="comments_inner_scroll_title">Défilement intérieur des commentaires</string>
-<string name="comments_inner_scroll_summary">Rendre le positionnement de la vidéo fixe lors du défilement des commentaires</string>
 <string name="ip_blocked_summary">Votre IP a été temporairement bloquée par YouTube. Pendant un certain temps, vous rencontrerez des problèmes lors de la lecture de certaines vidéos. Si l\'erreur persiste, veuillez vous connecter via les Paramètres pour continuer.</string>
 <string name="settings_category_filter_title">Filtre de contenu</string>
 <string name="filter_by_keyword_title">Filtrer par mots-clés</string>
@@ -856,7 +772,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="sponsor_block_clear_segment">Effacer le segment</string>
 <string name="sponsor_block_submit_segment">Soumettre le segment</string>
 <string name="sponsor_block_skip_marked_segments">Ignorer les segments marqués</string>
-<string name="sponsor_block_whitelist_channel">Liste blanche du canal</string>
 <string name="settings_category_sponsor_block_categories_quick_actions">Actions rapides</string>
 <string name="settings_category_sponsor_block_categories_all_colors_on_title">Tous activés</string>
 <string name="settings_category_sponsor_block_categories_all_colors_off_title">Tous désactivés</string>
@@ -913,8 +828,6 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="enable_max_rows_customization_summary">Activer pour personnaliser le nombre maximal de lignes pour les commentaires</string>
 <string name="always_list_mode_for_bookmark_title">Toujours utiliser le mode liste pour les Favoris</string>
 <string name="select_channel_group_prompt">Sélectionnez un groupe de chaînes</string>
-<string name="feed_groups_grid_layout_title">Utiliser la disposition en grille pour la liste des groupes de chaînes</string>
-<string name="feed_groups_grid_layout_summary">Dans la page des abonnements, afficher les groupes de chaînes dans une grille au lieu d\'un défilement horizontal</string>
 <string name="press_back_again_to_exit">Appuyez à nouveau sur retour pour quitter</string>
 <string name="need_login_hint">Ce contenu nécessite un compte pour être consulté. Connectez-vous via les paramètres pour continuer.</string>
 <string name="exit_app_confirmation_message">Afficher un message "appuyez à nouveau sur retour pour quitter" pour éviter de quitter accidentellement</string>
@@ -936,24 +849,16 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="recaptcha_done_button">Terminé</string>
 <string name="settings_category_downloads_title">Télécharger</string>
 <string name="settings_file_charset_title">Caractères autorisés dans les noms de fichiers</string>
-<string name="settings_file_replacement_character_summary">Les caractères non valides sont remplacés par cette valeur</string>
-<string name="settings_file_replacement_character_title">Caractère de remplacement</string>
 <string name="charset_letters_and_digits">Lettres et chiffres</string>
 <string name="charset_most_special_characters">La plupart des caractères spéciaux</string>
 <string name="toast_no_player">Aucune application installée pour lire ce fichier</string>
 <string name="title_licenses">Licences tierces</string>
 <string name="copyright">© %1$s par %2$s sous %3$s</string>
 <string name="tab_about">À propos</string>
-<string name="tab_licenses">Licences</string>
 <string name="app_description_new">Une application Android FLOSS pour vous permettre de naviguer librement sur YouTube, NicoNico et BiliBili</string>
 <string name="contribution_title">Contribuer</string>
 <string name="contribution_encouragement">Que vous ayez des idées de traduction, de changements de design, de nettoyage de code ou de modifications de code importantes, l\'aide est toujours la bienvenue. Plus il y en a, mieux c\'est !</string>
-<string name="view_on_codeberg">Voir sur CodeBerg</string>
 <string name="donation_title">Faire un don</string>
-<string name="donation_encouragement_new">J\'ai fait de mon mieux pour vous offrir la meilleure expérience utilisateur, mais vous avez la possibilité de rendre PipePipe encore meilleur en faisant un don. Avec suffisamment de dons, je pourrai consacrer plus de temps au développement du projet.</string>
-<string name="give_back">Rendre la pareille</string>
-<string name="website_title_new">Site web (amont)</string>
-<string name="read_privacy_policy">Lire la politique de confidentialité</string>
 <string name="app_license_title_new">Licence de NewPipe (amont)</string>
 <string name="app_license">NewPipe est un logiciel libre copyleft : Vous pouvez l\'utiliser, l\'étudier, le partager et l\'améliorer à votre guise. Plus précisément, vous pouvez le redistribuer et/ou le modifier selon les termes de la Licence Publique Générale GNU telle que publiée par la Free Software Foundation, soit la version 3 de la Licence, soit (à votre discrétion) toute version ultérieure.</string>
 <string name="read_full_license">Lire la licence</string>
@@ -1012,32 +917,48 @@ Vous devez l\'accepter pour nous envoyer le rapport de bug.</string>
 <string name="clear_webview_cookies">Effacer les cookies WebView</string>
 <string name="clear_webview_cookies_summary">Effacer tous les cookies stockés par les composants WebView afin de pouvoir utiliser un nouveau compte</string>
 <string name="webview_cookies_cleared">Les cookies WebView ont été effacés</string>
-<string name="webview_cookies_clear_failed">Échec de l\'effacement des cookies WebView</string>
 <string name="import_urls_from_file">Importer des URL depuis un fichier</string>
 <string name="import_urls_error">Erreur lors de l\'importation des URL : %s</string>
 <string name="import_urls_no_valid_urls">Aucune URL valide trouvée dans le fichier sélectionné</string>
 <string name="remove_from_playlist_confirmation">Supprimer cet élément de la playlist ?</string>
 <string name="filter_paid_contents_title">Filtrer les contenus payants</string>
 <string name="filter_paid_contents_summary">Supprimer les contenus payants des résultats</string>
-<string name="show_auto_translated_subtitles_title">Afficher les sous-titres traduits automatiquement</string>
-<string name="show_auto_translated_subtitles_summary">Si activé, PipePipe essaiera d\'ajouter une piste de sous-titres traduits automatiquement dans votre langue de contenu par défaut. Cela rend le chargement des vidéos légèrement plus lent.</string>
 <string name="local_playlist_swipe_action_title">Action de balayage vers la droite dans les playlists locales</string>
 <string name="search_suggestions_count_title">Nombre de suggestions de recherche</string>
 <string name="search_suggestions_count_summary">Nombre de suggestions de recherche passées à afficher</string>
 <string name="disable_android_auto_title">Désactiver Android Auto</string>
 <string name="disable_android_auto_summary">Désactiver la connexion Android Auto pour éviter les problèmes de notifications sur Android 12 et les versions antérieures.\n\nAprès avoir réactivé cette option, vous devez redémarrer l\'application et reconnecter la voiture pour que le changement prenne effet.</string>
-<string name="youtube_account_temporarily_disabled">Temporairement désactivé</string>
-<string name="beta_test_dialog_title">Participez au test Beta-2 de PipePipe 5.0.0 !</string>
-<string name="beta_test_dialog_message">Merci pour votre soutien continu ! Nous sommes ravis de publier PipePipe 5.0.0 Beta-2, une étape majeure dans la refonte complète de l\'application.\n\nCette version se concentre sur des améliorations significatives de la stabilité et de la complétude des fonctionnalités, basées sur les premiers retours. Même si nous nous rapprochons beaucoup de la version finale, il s\'agit toujours d\'une bêta, et vos retours sont précieux.\n\nRappel : ceci sera installé sous le nom "PipePipe Beta" et n\'affectera pas votre application ou vos données actuelles.\n\nSi vous rencontrez des bugs ou avez des suggestions, merci de nous en informer en ouvrant une issue sur notre dépôt GitHub !</string>
-<string name="trending_replaced">YouTube a récemment supprimé la fonctionnalité Tendances, nous avons donc mis à jour notre onglet YouTube Tendances par défaut pour afficher à la place des diffusions en direct recommandées. Si vous ne souhaitez pas voir cela, vous pouvez supprimer l\'onglet dans Paramètres et en définir un autre comme page d\'accueil.</string>
 <string name="youtube_login_warning_title">Connexion uniquement si nécessaire</string>
 <string name="youtube_login_warning_message">En raison du chiffrement de YouTube, la lecture lorsque vous êtes connecté ne fournit que des formats AVC ; les téléchargements audio uniquement ne sont pas disponibles, les diffusions en direct en cours ne peuvent pas être rembobinées, et l’extraction est moins stable. \n\nVous ne devriez vous connecter que si :\n1. Vous ne pouvez pas regarder les vidéos anonymement à cause de blocages IP\n2. Vous devez regarder des vidéos soumises à une restriction d’âge\n3. Vous êtes membre d’une chaîne et devez regarder ses vidéos réservées aux membres\n\nSi l’extraction ou la lecture de la vidéo échoue lorsque vous êtes connecté, veuillez essayer de vous déconnecter et signaler le problème sur GitHub.</string>
 <string name="filter">Filtrer</string>
 <string name="search_type">Type de recherche</string>
-<string name="select_service">Sélectionner un service</string>
 <string name="perform_search">Effectuer la recherche</string>
 <string name="done">Terminé</string>
 <string name="expand">Développer</string>
 <string name="collapse">Réduire</string>
-<string name="sponsor_promote_later">Peut-être plus tard</string>
+<string name="grid_layout_title">Disposition en grille</string>
+<string name="grid_layout_summary">Afficher les listes prises en charge dans une grille au lieu d\'une liste à colonne unique</string>
+<string name="grid_columns_title">Colonnes de la grille</string>
+<string name="grid_columns_landscape_title">Colonnes de la grille (paysage)</string>
+<string name="channel_tab_podcasts">Podcasts</string>
+<string name="video_tabs_title">Onglets vidéo</string>
+<string name="video_tabs_summary">Configurer les onglets à afficher sur l\'écran de détails de la vidéo</string>
+<string name="filter_future_items_title">Filtrer les éléments futurs</string>
+<string name="filter_future_items_summary">Supprimer les éléments programmés pour une sortie future</string>
+<string name="pin_video_to_top_title">Épingler la vidéo en haut</string>
+<string name="pin_video_to_top_summary">Garder la vidéo épinglée en haut lors du défilement de la page de détails de la vidéo</string>
+<string name="settings_category_behavior_title">Comportement</string>
+<string name="use_experimental_new_ui_title">Utiliser la nouvelle interface utilisateur expérimentale</string>
+<string name="use_experimental_new_ui_summary">Utilisez la nouvelle interface utilisateur basée sur Compose, toujours en cours d\'optimisation. La modification de ce paramètre redémarrera l\'application.</string>
+<string name="force_end_on_overtime_title">Forcer l\'arrêt en cas de dépassement</string>
+<string name="force_end_on_overtime_summary">Forcer l\'arrêt de la lecture lorsque la position actuelle dépasse la durée du flux, comme solution de contournement pour les flux qui ne s\'arrêtent pas naturellement</string>
+<string name="use_old_search_filter_title">Utiliser l\'ancien filtre de recherche</string>
+<string name="use_old_search_filter_summary">Utiliser l\'ancien filtre de recherche basé sur un menu au lieu de la nouvelle interface de dialogue</string>
+<string name="main_tabs_position_summary">Déplacer le sélecteur d\'onglets principaux vers le bas</string>
+<string name="main_tabs_position_title">Position des onglets principaux</string>
+<string name="disable_exoplayer_media_codec_async_queueing_title">Désactiver la mise en file d\'attente asynchrone de MediaCodec</string>
+<string name="disable_exoplayer_media_codec_async_queueing_summary">Solution de contournement pour les erreurs de lecture causées par la mise en file d\'attente asynchrone de MediaCodec sur certains appareils. Activer cette option peut améliorer la compatibilité, mais peut réduire les performances de lecture.</string>
+<string name="media_codec_workaround_hint_title">La lecture MediaCodec a échoué</string>
+<string name="media_codec_async_workaround_hint">Cet échec peut être causé par la file d\'attente asynchrone de MediaCodec. Essayez d\'activer « Désactiver la file d\'attente asynchrone MediaCodec » dans les paramètres d\'ExoPlayer, puis redémarrez la lecture.</string>
+<string name="media_codec_surface_workaround_hint">Cet échec s\'est produit lors du changement de la surface de sortie vidéo. Essayez d\'activer « Toujours utiliser le contournement du paramètre de surface de sortie vidéo d\'ExoPlayer » dans les paramètres d\'ExoPlayer, puis redémarrez la lecture.</string>
 </resources>

@@ -20,7 +20,6 @@
     <string name="black_theme_title">ब्लैक</string>
     <string name="enable_watch_history_title">देखे हुए विडियोज का इतिहास</string>
     <string name="download_dialog_title">डाउनलोड करे</string>
-    <string name="settings_category_video_audio_title">वीडियो और ऑडियो</string>
     <string name="settings_category_history_title">History and cache</string>
     <string name="background_player_playing_toast">बैकग्राउंड में चल रहा है</string>
     <string name="no_views">कोई दर्शक नहीं</string>
@@ -28,7 +27,6 @@
     <string name="title_activity_about">न्यूपाइप के बारे में जाने</string>
     <string name="title_licenses">तृतीय-पक्ष लाइसेंस</string>
     <string name="tab_about">इसके बारे में</string>
-    <string name="tab_licenses">लाइसेंस</string>
     <string name="view_on_github">GitHub में देखें</string>
     <string name="app_license_title">न्यूपाइप का लाइसेंस</string>
     <string name="read_full_license">लाइसेंस पढ़ें</string>
@@ -41,9 +39,6 @@
     <string name="cancel">कैंसल करे</string>
     <string name="did_you_mean">क्या आप का मतलब \"%1$s\" था\?</string>
     <string name="share_dialog_title">के साथ शेयर करे</string>
-    <string name="use_external_video_player_title">कोई दूसरा विडियो प्लेयर इस्तेमाल करें</string>
-    <string name="use_external_video_player_summary">कुछ विडियो रिजॉल्यूशनस पर ऑडियो हट सकती है</string>
-    <string name="use_external_audio_player_title">कोई दूसरा ऑडियो प्लेयर उपयोग करें</string>
     <string name="subscription_change_failed">सब्सक्रिप्शन बदला नहीं जा सका</string>
     <string name="subscription_update_failed">सब्सक्रिप्शन अपडेट नहीं किया जा सका</string>
     <string name="fragment_feed_title">देखे की क्या नया है</string>
@@ -55,18 +50,10 @@
     <string name="download_path_audio_dialog_title">ऑडियो फ़ाइलों के लिए डाउनलोड फ़ोल्डर चुनें</string>
     <string name="default_resolution_title">डिफ़ॉल्ट रिज़ॉल्यूशन</string>
     <string name="default_popup_resolution_title">पॉपअप का डिफ़ॉल्ट रिज़ॉल्यूशन</string>
-    <string name="show_higher_resolutions_title">उच्च रिज़ॉल्यूशनस दिखाएं</string>
-    <string name="show_higher_resolutions_summary">केवल कुछ ही डिवाइस 2K/4K मे विडियो चला सकते हैं</string>
     <string name="play_with_kodi_title">Kodi से चलायें</string>
     <string name="kore_not_found">Kore ऐप नहीं मिली, इसे इनस्टॉल करें\?</string>
-    <string name="show_play_with_kodi_title">\"Kodi से चलायें\" वाला विकल्प दिखाएँ</string>
-    <string name="show_play_with_kodi_summary">Kodi मीडिया सेंटर से विडियो चलाने के लिए विकल्प प्रदर्शित करें</string>
-    <string name="default_audio_format_title">डिफ़ॉल्ट ऑडियो फॉर्मेट</string>
-    <string name="default_video_format_title">डिफ़ॉल्ट विडियो फॉर्मेट</string>
     <string name="theme_title">ऐप थीम</string>
     <string name="dark_theme_title">डार्क</string>
-    <string name="popup_remember_size_pos_title">विडियो पॉपअप का आकर और उसकी स्थति को याद रखे</string>
-    <string name="popup_remember_size_pos_summary">विडियो पॉपअप की आखिरी स्थिति और आकर को याद रखे</string>
     <string name="show_search_suggestions_title">खोज के सुझाव</string>
     <string name="show_search_suggestions_summary">खोज के दौरान सुझाव दिखाये</string>
     <string name="enable_search_history_title">खोज का इतिहास</string>
@@ -74,17 +61,11 @@
     <string name="enable_watch_history_summary">देखे गए विडियोज की सूची रखे</string>
     <string name="resume_on_audio_focus_gain_title">वीडियो</string>
     <string name="resume_on_audio_focus_gain_summary">रूकावटे खत्म होने के बाद विडियो प्ले करे (जैसे - फ़ोन कॉल)</string>
-    <string name="show_next_and_similar_title">\'अगला\' और \'समान\' वीडियो दिखाए</string>
-    <string name="show_hold_to_append_title">\"जोड़ने के लिए पकड़ें रहे\" दिखाए</string>
-    <string name="show_hold_to_append_summary">जब बैकग्राउंड और पॉपअप बटन विडियो के विवरण पन्ने में दबाई जाए तो tip को दिखाए</string>
     <string name="unsupported_url">असमर्थित URL</string>
-    <string name="content_language_title">डिफ़ॉल्ट विषय की भाषा</string>
     <string name="settings_category_player_title">प्लेयर</string>
-    <string name="settings_category_player_behavior_title">चाल चलन</string>
     <string name="settings_category_appearance_title">दिखावट</string>
     <string name="popup_playing_toast">विडियो पॉपअप के अंदाज में चल रहा</string>
     <string name="content">विषयवस्तु</string>
-    <string name="show_age_restricted_content_title">आयु प्रतिबंधित सामग्री दिखाएं</string>
     <string name="duration_live">लाइव</string>
     <string name="downloads">डाउनलोड</string>
     <string name="downloads_title">डाउनलोड</string>
@@ -161,8 +142,6 @@
     <string name="recaptcha_request_toast">reCAPTCHA चुनौती का अनुरोध किया</string>
     <string name="settings_category_downloads_title">डाउनलोड</string>
     <string name="settings_file_charset_title">फाइल के नाम के लिए आवश्यक characters(जैसे - १२३, abc) की अनुमति है</string>
-    <string name="settings_file_replacement_character_summary">अमान्य characters इस value से बदल जायेंगे</string>
-    <string name="settings_file_replacement_character_title">रिप्लेसमेंट करैक्टर</string>
     <string name="charset_letters_and_digits">वर्ण और अंक</string>
     <string name="charset_most_special_characters">विशेष वर्ण</string>
     <string name="copyright" formatted="true">%2$s के द्वारा © %1$s जो %3$s के अधीन आते है</string>
@@ -207,7 +186,6 @@
     <string name="rename">नाम बदलें</string>
     <string name="donation_title">दान करें</string>
     <string name="donation_encouragement">NewPipe स्वयंसेवकों द्वारा विकसित किया जाता है जो आपको अच्छा अनुभव देने के लिए अपना खाली समय व्यतीत करते हैं। स्वयंसेवको को मदद भेजे, ताकि वह NewPipe को और अच्छा बना सके।</string>
-    <string name="give_back">वापस दे</string>
     <string name="website_title">वेबसाइट</string>
     <string name="website_encouragement">अधिक जानकारी और खबरों के लिए न्यूपाइप की वेबसाइट पर जाएं।</string>
     <string name="title_last_played">पिछला चलाया गया</string>
@@ -278,7 +256,6 @@
     <string name="privacy_policy_title">न्यूपाइप की गोपनीयता नीति</string>
     <string name="privacy_policy_encouragement">न्यूपाइप परियोजना आपकी गोपनीयता को बहोत गंभीर रूप से लेता है। इसलिए, ऐप आपकी अनुमति के बिना कोई डेटा जमा नही करता। 
 \nन्यूपाइप की गोपनीयता नीति विस्तार से समज़ाती है कि कोनसा डेटा भेजा या संग्रह किया जाता है जब आप क्रेश विवरण भेजते है।</string>
-    <string name="read_privacy_policy">गोपनीयता नीति पढ़े</string>
     <string name="import_settings">क्या आप सेटिंग्स भी आयात करना चाहते है?</string>
     <string name="preferred_open_action_settings_title">पसंदीदा \'खोलने\' कि प्रक्रिया</string>
     <string name="preferred_open_action_settings_summary">सामग्री खोलते समय डिफ़ॉल्ट कारवाही — %s</string>
@@ -309,8 +286,6 @@
     <string name="skip_silence_checkbox">खामोशी के समय तेज़ी से आगे बढ़े</string>
     <string name="playback_step">कदम</string>
     <string name="playback_reset">रिसेट</string>
-    <string name="accept">स्वीकारे</string>
-    <string name="decline">अस्वीकार करे</string>
     <string name="limit_data_usage_none_description">असीमित</string>
     <string name="limit_mobile_data_usage_title">मोबाइल डेटा उपयोग करते समय रेसॉल्युसेन को सिमित करे</string>
     <string name="minimize_on_exit_title">ऐप बदलते समय उसे मिनिमाइज करे</string>
@@ -365,16 +340,12 @@
     <string name="pause_downloads_on_mobile_desc">मोबाइल डाटा का इस्तेमाल करते समय उपयोगी है, परन्तु कुछ डौन्लोडस रोके नहीं जा सकते है</string>
     <string name="events">घटनायें</string>
     <string name="conferences">सम्मेलनों</string>
-    <string name="show_comments_title">कॉमेंट्स दिखाएं</string>
-    <string name="show_comments_summary">कॉमेंट्स छिपाने के लिए इसे बंद करे</string>
     <string name="autoplay_title">ऑटोप्ले करे</string>
     <string name="no_comments">कोई टिपण्णी नहीं</string>
     <string name="error_unable_to_load_comments">टिप्पणियाँ लोड नहीं कर सका</string>
     <string name="close">बंद करे</string>
     <string name="enable_playback_resume_title">प्लेबैक वापस चालू करें</string>
     <string name="enable_playback_resume_summary">आखिरी प्लेबैक पोजिशन पर वापस लौटे</string>
-    <string name="enable_playback_state_lists_title">सूचियों में स्थान</string>
-    <string name="enable_playback_state_lists_summary">प्लेबैक पोजिशन के निशान सूचियों में दिखाए</string>
     <string name="settings_category_clear_data_title">डाटा मिटायें</string>
     <string name="watch_history_states_deleted">प्लेबैक स्थान मिटा दिए गए|</string>
     <string name="missing_file">फाइल की जगह बदली गयी या फिर फाइल मिटा दी गयी</string>
@@ -460,9 +431,6 @@
     <string name="restricted_video">यह वीडियो उम्र प्रतिबंधित है।
 \n
 \nयदि आप इसे देखना चाहते हैं तो सेटिंग में \"%1$s\" चालू करें।</string>
-    <string name="youtube_restricted_mode_enabled_summary">यूट्यूब एक \"प्रतिबंधित मोड\" प्रदान करता है जो संभावित रूप से परिपक्व सामग्री को छुपाता है</string>
-    <string name="youtube_restricted_mode_enabled_title">यूट्यूब का \"प्रतिबंधित मोड\" चालू करें</string>
-    <string name="show_age_restricted_content_summary">बच्चों के लिए अनुपयुक्त सामग्री दिखाएं क्योंकि इसकी आयु सीमा है (जैसे 18)</string>
     <string name="peertube_instance_add_https_only">केवल HTTPS यूआरएल ही समर्थित हैं</string>
     <string name="unsupported_url_dialog_message">URL की पहचान नहीं हो सकी। दूसरे ऐप से खोलें\?</string>
     <string name="auto_queue_toggle">ऑटोमैटिकली कतार करे</string>
@@ -519,8 +487,6 @@
     <string name="hash_channel_name">वीडियो हैश अधिसूचना</string>
     <string name="show_meta_info_summary">स्ट्रीम निर्माता, स्ट्रीम विषय सूची या खोज अनुरोध के बारे में अतिरिक्त जानकारी के साथ मेटा जानकारी बक्से को छिपाने के लिए बंद करें.</string>
     <string name="show_meta_info_title">मेटा जानकारी दिखाएँ</string>
-    <string name="show_description_summary">वीडियो का विवरण और अतिरिक्त जानकारी छिपाने के लिए इसे बंद करें</string>
-    <string name="show_description_title">विवरण दिखाएं</string>
     <string name="clear_queue_confirmation_description">सक्रिय प्लेअर की क़तार बदल दी जाएगी</string>
     <string name="clear_queue_confirmation_summary">एक प्लेअर से दूसरे प्लेअर में जाने से आपकी कतार बदल सकती है</string>
     <string name="open_with">मे खोलें</string>

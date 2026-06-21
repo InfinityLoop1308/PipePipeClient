@@ -1,6 +1,7 @@
 package org.schabi.newpipe.fragments.list.search
 
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -35,6 +36,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
@@ -53,17 +56,20 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.DialogFragment
+import androidx.preference.PreferenceManager
 import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.search.filter.FilterGroup
 import org.schabi.newpipe.extractor.search.filter.FilterItem
 import org.schabi.newpipe.util.ServiceHelper
+import org.schabi.newpipe.util.ThemeHelper
 
 class SearchFilterDialog : DialogFragment() {
 
@@ -91,19 +97,19 @@ class SearchFilterDialog : DialogFragment() {
             .getIntegerArrayList(ARG_SELECTED_SORT_FILTER_IDS) ?: arrayListOf()
         val searchQuery = requireArguments().getString(ARG_SEARCH_QUERY).orEmpty()
         val callback = parentFragment as? Callback ?: activity as? Callback
-        val appContext = requireContext().applicationContext
+        val context = requireContext()
 
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                MaterialTheme {
+                SearchFilterTheme(context) {
                     FilterCard(
                         serviceIds = serviceIds,
                         initialServiceId = selectedServiceId,
                         initialContentFilterId = selectedContentFilterId,
                         initialSortFilterIds = selectedSortFilterIds,
                         searchQuery = searchQuery,
-                        appContext = appContext,
+                        context = context,
                         onApply = { serviceId, contentFilterId, sortFilterIds ->
                             callback?.onSearchFilterSelected(
                                 serviceId,
@@ -149,6 +155,71 @@ class SearchFilterDialog : DialogFragment() {
         }
     }
 }
+
+@Composable
+private fun SearchFilterTheme(
+    context: Context,
+    content: @Composable () -> Unit
+) {
+    val colorScheme = remember(context) {
+        when (resolveSearchFilterThemeMode(context)) {
+            SearchFilterThemeMode.LIGHT -> SearchFilterLightColorScheme
+            SearchFilterThemeMode.DARK -> SearchFilterDarkColorScheme
+            SearchFilterThemeMode.BLACK -> SearchFilterBlackColorScheme
+        }
+    }
+
+    MaterialTheme(colorScheme = colorScheme, content = content)
+}
+
+private enum class SearchFilterThemeMode {
+    LIGHT,
+    DARK,
+    BLACK
+}
+
+private fun resolveSearchFilterThemeMode(context: Context): SearchFilterThemeMode {
+    val resources = context.resources
+    val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+    val selectedTheme = preferences.getString(
+        context.getString(R.string.theme_key),
+        resources.getString(R.string.default_theme_value)
+    )
+
+    return when (selectedTheme) {
+        resources.getString(R.string.light_theme_key) -> SearchFilterThemeMode.LIGHT
+        resources.getString(R.string.black_theme_key) -> SearchFilterThemeMode.BLACK
+        resources.getString(R.string.auto_device_theme_key) -> {
+            if (!ThemeHelper.isDeviceDarkThemeEnabled(context)) {
+                SearchFilterThemeMode.LIGHT
+            } else {
+                val selectedNightTheme = preferences.getString(
+                    context.getString(R.string.night_theme_key),
+                    resources.getString(R.string.default_night_theme_value)
+                )
+                if (selectedNightTheme == resources.getString(R.string.black_theme_key)) {
+                    SearchFilterThemeMode.BLACK
+                } else {
+                    SearchFilterThemeMode.DARK
+                }
+            }
+        }
+        else -> SearchFilterThemeMode.DARK
+    }
+}
+
+private val SearchFilterLightColorScheme = lightColorScheme()
+
+private val SearchFilterDarkColorScheme = darkColorScheme()
+
+private val SearchFilterBlackColorScheme = darkColorScheme(
+    background = Color(0xFF000000),
+    surface = Color(0xFF000000),
+    surfaceVariant = Color(0xFF1A1A1A),
+    primaryContainer = Color(0xFF1F1F1F),
+    secondaryContainer = Color(0xFF1F1F1F),
+    outline = Color(0xFF3A3A3A)
+)
 
 private data class FilterUiState(
     val serviceId: Int,
@@ -227,7 +298,7 @@ private fun FilterCard(
     initialContentFilterId: Int,
     initialSortFilterIds: List<Int>,
     searchQuery: String,
-    appContext: android.content.Context,
+    context: android.content.Context,
     onApply: (Int, Int, Set<Int>) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -279,7 +350,7 @@ private fun FilterCard(
                 ) {
                     FilterContent(
                         state = state,
-                        appContext = appContext,
+                        context = context,
                         onContentFilterChange = { filterId ->
                             state = createState(state.serviceId, filterId, emptySet())
                         },
@@ -448,7 +519,7 @@ private fun isYouTubeMusicFilter(filterItem: FilterItem): Boolean {
 @Composable
 private fun FilterContent(
     state: FilterUiState,
-    appContext: android.content.Context,
+    context: android.content.Context,
     onContentFilterChange: (Int) -> Unit,
     onSortFilterToggle: (FilterGroup, FilterItem) -> Unit
 ) {
@@ -493,7 +564,7 @@ private fun FilterContent(
                         onClick = { onContentFilterChange(contentFilter.identifier) }
                     )
                     Text(
-                        text = ServiceHelper.getTranslatedFilterString(contentFilter.name, appContext),
+                        text = ServiceHelper.getTranslatedFilterString(contentFilter.name, context),
                         style = MaterialTheme.typography.bodyMedium,
                         color = if (isSelected) {
                             MaterialTheme.colorScheme.onPrimaryContainer
@@ -529,7 +600,7 @@ private fun FilterContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = ServiceHelper.getTranslatedFilterString(groupName, appContext),
+                        text = ServiceHelper.getTranslatedFilterString(groupName, context),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -565,7 +636,7 @@ private fun FilterContent(
                                         Text(
                                             text = ServiceHelper.getTranslatedFilterString(
                                                 filterItem.name,
-                                                appContext
+                                                context
                                             ),
                                             style = MaterialTheme.typography.bodyMedium
                                         )

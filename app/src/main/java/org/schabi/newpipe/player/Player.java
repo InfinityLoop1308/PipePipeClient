@@ -1,18 +1,18 @@
 package org.schabi.newpipe.player;
 
-import static com.google.android.exoplayer2.PlaybackException.*;
-import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_AUTO_TRANSITION;
-import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_INTERNAL;
-import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_REMOVE;
-import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_SEEK;
-import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT;
-import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_SKIP;
-import static com.google.android.exoplayer2.Player.DiscontinuityReason;
-import static com.google.android.exoplayer2.Player.Listener;
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_ONE;
-import static com.google.android.exoplayer2.Player.RepeatMode;
+import static androidx.media3.common.PlaybackException.*;
+import static androidx.media3.common.Player.DISCONTINUITY_REASON_AUTO_TRANSITION;
+import static androidx.media3.common.Player.DISCONTINUITY_REASON_INTERNAL;
+import static androidx.media3.common.Player.DISCONTINUITY_REASON_REMOVE;
+import static androidx.media3.common.Player.DISCONTINUITY_REASON_SEEK;
+import static androidx.media3.common.Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT;
+import static androidx.media3.common.Player.DISCONTINUITY_REASON_SKIP;
+import static androidx.media3.common.Player.DiscontinuityReason;
+import static androidx.media3.common.Player.Listener;
+import static androidx.media3.common.Player.REPEAT_MODE_ALL;
+import static androidx.media3.common.Player.REPEAT_MODE_OFF;
+import static androidx.media3.common.Player.REPEAT_MODE_ONE;
+import static androidx.media3.common.Player.RepeatMode;
 import static org.schabi.newpipe.QueueItemMenuUtil.openPopupMenu;
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 import static org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty;
@@ -45,6 +45,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
+import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -71,6 +72,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GestureDetectorCompat;
+import androidx.core.view.MenuCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentManager;
@@ -78,22 +80,24 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.exoplayer2.*;
-import com.google.android.exoplayer2.Player.PositionInfo;
-import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.Tracks;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroup;
-import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.text.CueGroup;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.ui.CaptionStyleCompat;
-import com.google.android.exoplayer2.ui.SubtitleView;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.util.Util;
-import com.google.android.exoplayer2.video.VideoSize;
+import androidx.media3.common.*;
+import androidx.media3.exoplayer.*;
+import androidx.media3.common.Player.PositionInfo;
+import androidx.media3.common.Timeline;
+import androidx.media3.common.Tracks;
+import androidx.media3.exoplayer.source.MediaSource;
+import androidx.media3.common.TrackGroup;
+import androidx.media3.exoplayer.source.TrackGroupArray;
+import androidx.media3.common.text.Cue;
+import androidx.media3.common.text.CueGroup;
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
+import androidx.media3.exoplayer.trackselection.MappingTrackSelector;
+import androidx.media3.ui.AspectRatioFrameLayout;
+import androidx.media3.ui.CaptionStyleCompat;
+import androidx.media3.ui.SubtitleView;
+import androidx.media3.exoplayer.upstream.DefaultBandwidthMeter;
+import androidx.media3.common.util.Util;
+import androidx.media3.common.VideoSize;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -126,6 +130,7 @@ import org.schabi.newpipe.player.event.PlayerGestureListener;
 import org.schabi.newpipe.player.event.PlayerServiceEventListener;
 import org.schabi.newpipe.player.helper.AudioReactor;
 import org.schabi.newpipe.player.helper.CustomRenderersFactory;
+import org.schabi.newpipe.player.helper.LegacySubtitleRenderersFactory;
 import org.schabi.newpipe.player.helper.LoadController;
 import org.schabi.newpipe.player.helper.MediaSessionManager;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
@@ -258,8 +263,8 @@ public final class Player implements
     private PlayerMediaSession playerMediaSession;
     @Nullable private SurfaceHolderCallback surfaceHolderCallback;
 
-    @NonNull private final DefaultTrackSelector trackSelector;
-    @NonNull private final LoadController loadController;
+    @NonNull private DefaultTrackSelector trackSelector;
+    @NonNull private LoadController loadController;
     @NonNull private final DefaultRenderersFactory renderFactory;
 
     @NonNull private final VideoPlaybackResolver videoResolver;
@@ -310,12 +315,19 @@ public final class Player implements
     private static final int POPUP_MENU_ID_PLAYBACK_SPEED = 79;
     private static final int POPUP_MENU_ID_CAPTION = 89;
     private static final int POPUP_MENU_ID_AUDIO_TRACK = 99;
+    private static final int POPUP_MENU_ID_DISPLAY_MODE = 109;
+    private static final int POPUP_MENU_ID_ASPECT_RATIO = 119;
 
     private boolean isSomePopupMenuVisible = false;
     private PopupMenu qualityPopupMenu;
     private PopupMenu playbackSpeedPopupMenu;
     private PopupMenu captionPopupMenu;
     private PopupMenu audioTrackPopupMenu;
+    private PopupMenu displayModePopupMenu;
+
+    // Aspect ratio forced by the user, 0 means "auto" (use the video's own aspect ratio)
+    private float forcedAspectRatio;
+    private float videoNaturalAspectRatio;
 
     /*//////////////////////////////////////////////////////////////////////////
     // Popup player
@@ -408,7 +420,7 @@ public final class Player implements
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         final boolean isSponsorBlockEnabled = prefs.getBoolean(
-                context.getString(R.string.sponsor_block_enable_key), false);
+                context.getString(R.string.sponsor_block_enable_key), true);
 
         setSponsorBlockMode(isSponsorBlockEnabled
                 ? SponsorBlockMode.ENABLED
@@ -417,7 +429,7 @@ public final class Player implements
         preferenceChangeListener =
                 (sharedPreferences, key) -> {
                     if (context.getString(R.string.sponsor_block_enable_key).equals(key)) {
-                        setSponsorBlockMode(sharedPreferences.getBoolean(key, false)
+                        setSponsorBlockMode(sharedPreferences.getBoolean(key, true)
                                 ? SponsorBlockMode.ENABLED
                                 : SponsorBlockMode.DISABLED);
                     }
@@ -429,7 +441,7 @@ public final class Player implements
 
         setupBroadcastReceiver();
 
-        trackSelector = new DefaultTrackSelector(context, PlayerHelper.getQualitySelector());
+        trackSelector = createTrackSelector();
         dataSource = new PlayerDataSource(context, DownloaderImpl.USER_AGENT,
                 new DefaultBandwidthMeter.Builder(context).build());
         loadController = new LoadController();
@@ -437,8 +449,13 @@ public final class Player implements
         renderFactory = prefs.getBoolean(
                 context.getString(
                         R.string.always_use_exoplayer_set_output_surface_workaround_key), false)
-                ? new CustomRenderersFactory(context) : new DefaultRenderersFactory(context);
+                ? new CustomRenderersFactory(context)
+                : new LegacySubtitleRenderersFactory(context);
 
+        if (prefs.getBoolean(context.getString(
+                R.string.disable_exoplayer_media_codec_async_queueing_key), false)) {
+            renderFactory.forceDisableMediaCodecAsynchronousQueueing();
+        }
         renderFactory.setEnableDecoderFallback(true);
 
         videoResolver = new VideoPlaybackResolver(context, dataSource, getQualityResolver());
@@ -494,8 +511,7 @@ public final class Player implements
         binding = playerBinding;
         setupSubtitleView();
 
-        binding.resizeTextView
-                .setText(PlayerHelper.resizeTypeOf(context, binding.surfaceView.getResizeMode()));
+        updateDisplayModeButtonText();
 
         binding.playbackSeekBar.getThumb()
                 .setColorFilter(new PorterDuffColorFilter(Color.RED, PorterDuff.Mode.SRC_IN));
@@ -509,6 +525,7 @@ public final class Player implements
         playbackSpeedPopupMenu = new PopupMenu(context, binding.playbackSpeed);
         captionPopupMenu = new PopupMenu(themeWrapper, binding.captionTextView);
         audioTrackPopupMenu = new PopupMenu(themeWrapper, binding.audioTrackTextView);
+        displayModePopupMenu = new PopupMenu(themeWrapper, binding.resizeTextView);
 
         binding.progressBarLoadingPanel.getIndeterminateDrawable()
                 .setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY));
@@ -524,6 +541,9 @@ public final class Player implements
         if (DEBUG) {
             Log.d(TAG, "initPlayer() called with: playOnReady = [" + playOnReady + "]");
         }
+
+        trackSelector = createTrackSelector();
+        loadController = new LoadController();
 
         simpleExoPlayer = new ExoPlayer.Builder(context, renderFactory)
                 .setTrackSelector(trackSelector)
@@ -558,6 +578,10 @@ public final class Player implements
         } else {
             Log.d(TAG, "[" + Util.DEVICE_DEBUG_INFO + "] does not support media tunneling");
         }
+    }
+
+    private DefaultTrackSelector createTrackSelector() {
+        return new DefaultTrackSelector(context, PlayerHelper.getQualitySelector());
     }
 
     private void initListeners() {
@@ -794,7 +818,7 @@ public final class Player implements
             // Player can have state = IDLE when playback is stopped or failed
             // and we should retry in this case
             if (simpleExoPlayer.getPlaybackState()
-                    == com.google.android.exoplayer2.Player.STATE_IDLE) {
+                    == androidx.media3.common.Player.STATE_IDLE) {
                 simpleExoPlayer.prepare();
             }
             if (shouldSeek()) {
@@ -811,7 +835,7 @@ public final class Player implements
             // Player can have state = IDLE when playback is stopped or failed
             // and we should retry in this case
             if (simpleExoPlayer.getPlaybackState()
-                    == com.google.android.exoplayer2.Player.STATE_IDLE) {
+                    == androidx.media3.common.Player.STATE_IDLE) {
                 simpleExoPlayer.prepare();
             }
             simpleExoPlayer.setPlayWhenReady(playWhenReady);
@@ -1398,7 +1422,11 @@ public final class Player implements
     private void registerBroadcastReceiver() {
         // Try to unregister current first
         unregisterBroadcastReceiver();
-        context.registerReceiver(broadcastReceiver, intentFilter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.registerReceiver(broadcastReceiver, intentFilter, Context.RECEIVER_EXPORTED);
+        } else {
+            context.registerReceiver(broadcastReceiver, intentFilter);
+        }
     }
 
     private void unregisterBroadcastReceiver() {
@@ -1853,6 +1881,18 @@ public final class Player implements
         }
         final int currentProgress = Math.max((int) simpleExoPlayer.getCurrentPosition(), 0);
 
+        if (prefs.getBoolean(context.getString(R.string.force_end_on_overtime_key), false)
+                && currentItem != null
+                && currentItem.getStreamType() == StreamType.VIDEO_STREAM
+                && currentState != STATE_COMPLETED
+                && duration > 0
+                && currentProgress > duration + 3000) {
+            changeState(STATE_COMPLETED);
+            saveStreamProgressStateCompleted();
+            isPrepared = false;
+            return;
+        }
+
         onUpdateProgress(
                 currentProgress,
                 (int) simpleExoPlayer.getDuration(),
@@ -2249,7 +2289,7 @@ public final class Player implements
                     + "reason = [" + reason + "]");
         }
         final int playbackState = exoPlayerIsNull()
-                ? com.google.android.exoplayer2.Player.STATE_IDLE
+                ? androidx.media3.common.Player.STATE_IDLE
                 : simpleExoPlayer.getPlaybackState();
         updatePlaybackState(playWhenReady, playbackState);
     }
@@ -2278,22 +2318,22 @@ public final class Player implements
         }
 
         switch (playbackState) {
-            case com.google.android.exoplayer2.Player.STATE_IDLE: // 1
+            case androidx.media3.common.Player.STATE_IDLE: // 1
                 isPrepared = false;
                 break;
-            case com.google.android.exoplayer2.Player.STATE_BUFFERING: // 2
+            case androidx.media3.common.Player.STATE_BUFFERING: // 2
                 if (isPrepared) {
                     changeState(STATE_BUFFERING);
                 }
                 break;
-            case com.google.android.exoplayer2.Player.STATE_READY: //3
+            case androidx.media3.common.Player.STATE_READY: //3
                 if (!isPrepared) {
                     isPrepared = true;
                     onPrepared(playWhenReady);
                 }
                 changeState(playWhenReady ? STATE_PLAYING : STATE_PAUSED);
                 break;
-            case com.google.android.exoplayer2.Player.STATE_ENDED: // 4
+            case androidx.media3.common.Player.STATE_ENDED: // 4
                 changeState(STATE_COMPLETED);
                 saveStreamProgressStateCompleted();
                 isPrepared = false;
@@ -2810,13 +2850,13 @@ public final class Player implements
                                      @RepeatMode final int repeatMode) {
         switch (repeatMode) {
             case REPEAT_MODE_OFF:
-                imageButton.setImageResource(R.drawable.exo_controls_repeat_off);
+                imageButton.setImageResource(R.drawable.exo_icon_repeat_off);
                 break;
             case REPEAT_MODE_ONE:
-                imageButton.setImageResource(R.drawable.exo_controls_repeat_one);
+                imageButton.setImageResource(R.drawable.exo_icon_repeat_one);
                 break;
             case REPEAT_MODE_ALL:
-                imageButton.setImageResource(R.drawable.exo_controls_repeat_all);
+                imageButton.setImageResource(R.drawable.exo_icon_repeat_all);
                 break;
         }
     }
@@ -2904,13 +2944,13 @@ public final class Player implements
      * This is done because not all source resolution errors are {@link PlaybackException}, which
      * are also captured by {@link ExoPlayer} and stops the playback.</p>
      *
-     * @param player The {@link com.google.android.exoplayer2.Player} whose state changed.
-     * @param events The {@link com.google.android.exoplayer2.Player.Events} that has triggered
+     * @param player The {@link androidx.media3.common.Player} whose state changed.
+     * @param events The {@link androidx.media3.common.Player.Events} that has triggered
      *               the player state changes.
      **/
     @Override
-    public void onEvents(@NonNull final com.google.android.exoplayer2.Player player,
-                         @NonNull final com.google.android.exoplayer2.Player.Events events) {
+    public void onEvents(@NonNull final androidx.media3.common.Player player,
+                         @NonNull final androidx.media3.common.Player.Events events) {
         Listener.super.onEvents(player, events);
         MediaItemTag.from(player.getCurrentMediaItem()).ifPresent(tag -> {
             if (tag == currentMetadata) {
@@ -3019,7 +3059,32 @@ public final class Player implements
 
     @Override
     public void onCues(@NonNull final CueGroup cueGroup) {
-        binding.subtitleView.setCues(cueGroup.cues);
+        binding.subtitleView.setCues(normalizeCuePositions(cueGroup.cues));
+    }
+
+    /**
+     * YouTube auto-captions can carry an explicit top line (e.g. line=0.05), so media3 draws them
+     * over the video instead of at the bottom. Drop a top-half fractional line so the SubtitleView
+     * falls back to its default bottom placement; cues that are already low or unpositioned are left
+     * untouched.
+     */
+    private static List<Cue> normalizeCuePositions(@NonNull final List<Cue> cues) {
+        List<Cue> out = null;
+        for (int i = 0; i < cues.size(); i++) {
+            final Cue cue = cues.get(i);
+            final boolean topAnchored = cue.lineType == Cue.LINE_TYPE_FRACTION
+                    && cue.line != Cue.DIMEN_UNSET && cue.line < 0.5f;
+            if (topAnchored) {
+                if (out == null) {
+                    out = new ArrayList<>(cues);
+                }
+                out.set(i, cue.buildUpon()
+                        .setLine(Cue.DIMEN_UNSET, Cue.TYPE_UNSET)
+                        .setLineAnchor(Cue.TYPE_UNSET)
+                        .build());
+            }
+        }
+        return out != null ? out : cues;
     }
 
     public void onPrepare() {
@@ -3037,7 +3102,7 @@ public final class Player implements
     //region Errors
 
     /**
-     * Process exceptions produced by {@link com.google.android.exoplayer2.ExoPlayer ExoPlayer}.
+     * Process exceptions produced by {@link androidx.media3.exoplayer.ExoPlayer ExoPlayer}.
      * <p>There are multiple types of errors:</p>
      * <ul>
      * <li>{@link PlaybackException#ERROR_CODE_BEHIND_LIVE_WINDOW BEHIND_LIVE_WINDOW}:
@@ -3062,7 +3127,7 @@ public final class Player implements
      * For any error above that is <b>not</b> explicitly <b>catchable</b>, the player will
      * create a notification so users are aware.
      * </ul>
-     * @see com.google.android.exoplayer2.Player.Listener#onPlayerError(PlaybackException)
+     * @see androidx.media3.common.Player.Listener#onPlayerError(PlaybackException)
      * */
     // Any error code not explicitly covered here are either unrelated to NewPipe use case
     // (e.g. DRM) or not recoverable (e.g. Decoder error). In both cases, the player should
@@ -3140,11 +3205,44 @@ public final class Player implements
         }
 
         if (!isCatchableException) {
+            showMediaCodecWorkaroundHint(error);
             createErrorNotification(error);
         }
 
         if (fragmentListener != null) {
             fragmentListener.onPlayerError(error, isCatchableException);
+        }
+    }
+
+    private void showMediaCodecWorkaroundHint(@NonNull final PlaybackException error) {
+        if (error.errorCode != ERROR_CODE_DECODING_FAILED
+                && error.errorCode != ERROR_CODE_FAILED_RUNTIME_CHECK) {
+            return;
+        }
+        try {
+            final String stackTrace = Log.getStackTraceString(error);
+            final boolean hasSetOutputSurface = stackTrace.contains("setOutputSurface");
+            final boolean hasAsyncCodecAdapter =
+                    stackTrace.contains("AsynchronousMediaCodecAdapter")
+                            || stackTrace.contains("AsynchronousMediaCodecBufferEnqueuer");
+            final int message;
+            if (hasSetOutputSurface && !prefs.getBoolean(context.getString(
+                    R.string.always_use_exoplayer_set_output_surface_workaround_key), false)) {
+                message = R.string.media_codec_surface_workaround_hint;
+            } else if (hasAsyncCodecAdapter && !prefs.getBoolean(context.getString(
+                    R.string.disable_exoplayer_media_codec_async_queueing_key), false)) {
+                message = R.string.media_codec_async_workaround_hint;
+            } else {
+                return;
+            }
+
+            new AlertDialog.Builder(getParentActivity())
+                    .setTitle(R.string.media_codec_workaround_hint_title)
+                    .setMessage(message)
+                    .setPositiveButton(R.string.ok, null)
+                    .show();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -3513,6 +3611,13 @@ public final class Player implements
             Log.d(TAG, "Playback - onMetadataChanged() called, playing: " + info.getName());
         }
 
+        // a forced aspect ratio is a per-video correction, don't carry it over to the next one;
+        // it temporarily forced the resize mode to Fit, so restore the persisted resize mode
+        if (forcedAspectRatio > 0) {
+            forcedAspectRatio = 0.0f;
+            setResizeMode(PlayerHelper.retrieveResizeModeFromPrefs(this));
+        }
+
         initThumbnail(info.getThumbnailUrl());
         registerStreamViewed();
         updateStreamRelatedViews();
@@ -3610,7 +3715,7 @@ public final class Player implements
             return;
         }
         List<StreamInfoItem> partitions = info.getPartitions();
-        if(partitions.size() > 1 && prefs.getBoolean(context.getString(R.string.auto_queue_partition_key), true)
+        if(partitions.size() > 1
                 && playQueue.getStreams().stream()
                 .map(result -> result.getUrl().split("p="))
                 .filter(parts -> parts.length == 2)
@@ -4162,6 +4267,9 @@ public final class Player implements
         if (captionPopupMenu != null) {
             captionPopupMenu.dismiss();
         }
+        if (displayModePopupMenu != null) {
+            displayModePopupMenu.dismiss();
+        }
         isSomePopupMenuVisible = false;
     }
     //endregion
@@ -4346,7 +4454,7 @@ public final class Player implements
             Log.d(TAG, "onClick() called with: v = [" + v + "]");
         }
         if (v.getId() == binding.resizeTextView.getId()) {
-            onResizeClicked();
+            onDisplayModeClicked();
         } else if (v.getId() == binding.captionTextView.getId()) {
             onCaptionClicked();
         } else if (v.getId() == binding.audioTrackTextView.getId()) {
@@ -4577,13 +4685,149 @@ public final class Player implements
 
     private void setResizeMode(@AspectRatioFrameLayout.ResizeMode final int resizeMode) {
         binding.surfaceView.setResizeMode(resizeMode);
-        binding.resizeTextView.setText(PlayerHelper.resizeTypeOf(context, resizeMode));
+        updateDisplayModeButtonText();
     }
 
-    void onResizeClicked() {
-        if (binding != null) {
-            setResizeMode(nextResizeModeAndSaveToPrefs(this, binding.surfaceView.getResizeMode()));
+    /**
+     * Updates the display-mode button label: the forced aspect ratio takes precedence over the
+     * resize mode, since selecting an aspect ratio is what the user sees applied.
+     */
+    private void updateDisplayModeButtonText() {
+        binding.resizeTextView.setText(forcedAspectRatio > 0
+                ? PlayerHelper.aspectRatioNameOf(forcedAspectRatio)
+                : PlayerHelper.resizeTypeOf(context, binding.surfaceView.getResizeMode()));
+    }
+
+    void onDisplayModeClicked() {
+        if (DEBUG) {
+            Log.d(TAG, "onDisplayModeClicked() called");
         }
+        if (displayModePopupMenu == null) {
+            return;
+        }
+        // rebuild on every open so the checkmark reflects the current resize mode / forced ratio
+        buildDisplayModeMenu();
+        displayModePopupMenu.show();
+        isSomePopupMenuVisible = true;
+    }
+
+    /**
+     * Builds the single display-mode menu that combines the resize modes (Fit / Fill / Zoom) with
+     * the forced aspect ratios (1:1 / 4:3 / ... / Custom). Picking a resize mode clears any forced
+     * aspect ratio; picking an aspect ratio applies it with the resize mode set to Fit.
+     */
+    private void buildDisplayModeMenu() {
+        if (displayModePopupMenu == null) {
+            return;
+        }
+        final Menu menu = displayModePopupMenu.getMenu();
+        menu.removeGroup(POPUP_MENU_ID_DISPLAY_MODE);
+        menu.removeGroup(POPUP_MENU_ID_ASPECT_RATIO);
+        // draw a divider between the resize-mode group and the aspect-ratio group
+        MenuCompat.setGroupDividerEnabled(menu, true);
+        displayModePopupMenu.setOnDismissListener(this);
+
+        // a forced aspect ratio takes precedence: when active, no resize mode is the "current" one
+        final boolean ratioActive = forcedAspectRatio > 0;
+        final int currentResizeMode = binding.surfaceView.getResizeMode();
+        MenuItem activeItem = null;
+
+        int order = 0;
+        for (final int resizeMode : new int[]{
+                AspectRatioFrameLayout.RESIZE_MODE_FIT,
+                AspectRatioFrameLayout.RESIZE_MODE_FILL,
+                AspectRatioFrameLayout.RESIZE_MODE_ZOOM}) {
+            final MenuItem resizeItem = menu.add(POPUP_MENU_ID_DISPLAY_MODE, order, order,
+                    PlayerHelper.resizeTypeOf(context, resizeMode));
+            resizeItem.setOnMenuItemClickListener(menuItem -> {
+                onResizeModeSelected(resizeMode);
+                return true;
+            });
+            if (!ratioActive && resizeMode == currentResizeMode) {
+                activeItem = resizeItem;
+            }
+            order++;
+        }
+
+        for (int i = 0; i < PlayerHelper.ASPECT_RATIO_VALUES.length; i++) {
+            final float ratio = PlayerHelper.ASPECT_RATIO_VALUES[i];
+            final MenuItem ratioItem = menu.add(POPUP_MENU_ID_ASPECT_RATIO, order, order,
+                    PlayerHelper.ASPECT_RATIO_LABELS[i]);
+            ratioItem.setOnMenuItemClickListener(menuItem -> {
+                setForcedAspectRatio(ratio);
+                return true;
+            });
+            if (ratioActive && Math.abs(forcedAspectRatio - ratio) < 0.001f) {
+                activeItem = ratioItem;
+            }
+            order++;
+        }
+
+        final MenuItem customItem = menu.add(POPUP_MENU_ID_ASPECT_RATIO, order, order,
+                R.string.aspect_ratio_custom);
+        customItem.setOnMenuItemClickListener(menuItem -> {
+            openCustomAspectRatioDialog();
+            return true;
+        });
+        // a forced ratio that matches none of the presets is a custom value
+        if (ratioActive && activeItem == null) {
+            activeItem = customItem;
+        }
+
+        menu.setGroupCheckable(POPUP_MENU_ID_DISPLAY_MODE, true, true);
+        menu.setGroupCheckable(POPUP_MENU_ID_ASPECT_RATIO, true, true);
+        if (activeItem != null) {
+            activeItem.setChecked(true);
+        }
+    }
+
+    private void onResizeModeSelected(@AspectRatioFrameLayout.ResizeMode final int resizeMode) {
+        // a resize mode supersedes any forced aspect ratio, which would otherwise have no effect
+        forcedAspectRatio = 0.0f;
+        if (videoNaturalAspectRatio > 0) {
+            binding.surfaceView.setAspectRatio(videoNaturalAspectRatio);
+        }
+        setResizeMode(resizeMode);
+        PlayerHelper.saveResizeMode(this, resizeMode);
+    }
+
+    private void setForcedAspectRatio(final float aspectRatio) {
+        forcedAspectRatio = aspectRatio;
+        // a forced aspect ratio is only meaningful with Fit; this resize mode change is per-video
+        // and is intentionally not persisted, so the saved resize mode is restored on the next video
+        setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+
+        final float effectiveRatio = aspectRatio > 0 ? aspectRatio : videoNaturalAspectRatio;
+        if (effectiveRatio > 0) {
+            binding.surfaceView.setAspectRatio(effectiveRatio);
+        }
+    }
+
+    private void openCustomAspectRatioDialog() {
+        final AppCompatActivity activity = getParentActivity();
+        if (activity == null) {
+            return;
+        }
+        final EditText input = new EditText(activity);
+        input.setHint(R.string.aspect_ratio_custom_hint);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        if (forcedAspectRatio > 0) {
+            input.setText(PlayerHelper.aspectRatioNameOf(forcedAspectRatio));
+        }
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.aspect_ratio_custom_title)
+                .setView(input)
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
+                    final float ratio = PlayerHelper.parseAspectRatio(input.getText().toString());
+                    if (ratio > 0) {
+                        setForcedAspectRatio(ratio);
+                    } else {
+                        Toast.makeText(context, R.string.aspect_ratio_invalid, Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     @Override // exoplayer listener
@@ -4596,7 +4840,9 @@ public final class Player implements
                     + "pixelWidthHeightRatio = [" + videoSize.pixelWidthHeightRatio + "]");
         }
 
-        binding.surfaceView.setAspectRatio(((float) videoSize.width) / videoSize.height);
+        videoNaturalAspectRatio = ((float) videoSize.width) / videoSize.height;
+        binding.surfaceView.setAspectRatio(forcedAspectRatio > 0
+                ? forcedAspectRatio : videoNaturalAspectRatio);
         isVerticalVideo = videoSize.width < videoSize.height;
 
         if (globalScreenOrientationLocked(context)

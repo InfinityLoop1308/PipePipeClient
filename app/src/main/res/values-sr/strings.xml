@@ -17,21 +17,13 @@
     <string name="default_resolution_title">Подразумевана резолуција</string>
     <string name="play_with_kodi_title">Пусти помоћу Кодија</string>
     <string name="kore_not_found">Инсталирати даљински за Коди\?</string>
-    <string name="show_play_with_kodi_title">Прикажи „Пусти помоћу Кодија“</string>
-    <string name="show_play_with_kodi_summary">Приказ опције за пуштање видеа у Коди медија центру</string>
     <string name="play_audio">Аудио</string>
-    <string name="default_audio_format_title">Подразумевани формат звука</string>
     <string name="download_dialog_title">Преузимање</string>
     <string name="unsupported_url">УРЛ није подржан</string>
-    <string name="show_next_and_similar_title">Прикажи „следећи“ и „слични“ видео</string>
-    <string name="content_language_title">Подразумевани језик садржаја</string>
-    <string name="settings_category_video_audio_title">Видео и аудио</string>
     <string name="detail_thumbnail_view_description">Пусти видео, трајање:</string>
     <string name="detail_uploader_thumbnail_view_description">Аватар пошиљаоца</string>
     <string name="detail_dislikes_img_view_description">Несвиђања</string>
     <string name="detail_likes_img_view_description">Свиђања</string>
-    <string name="use_external_video_player_title">Користи спољашњи видео плејер</string>
-    <string name="use_external_audio_player_title">Користи спољашњи аудио плејер</string>
     <string name="background_player_playing_toast">Пуштам у позадини</string>
     <string name="theme_title">Тема</string>
     <string name="dark_theme_title">тамна</string>
@@ -47,7 +39,6 @@
     <string name="parsing_error">Не могу да рашчланим веб-сајт</string>
     <string name="content_not_available">Садржај је недоступан</string>
     <string name="content">Садржај</string>
-    <string name="show_age_restricted_content_title">Прикажи старосно-ограничени садржај</string>
     <string name="could_not_setup_download_menu">Не могу да поставим мени преузимања</string>
     <string name="sorry_string">Нажалост, ово не би требало да се деси.</string>
     <string name="error_report_button_text">Пријавите ову грешку е-поштом</string>
@@ -92,16 +83,10 @@
 \nотварање у искачућем режиму</string>
     <string name="popup_playing_toast">Пуштање у режиму прозорчета</string>
     <string name="disabled">Искључено</string>
-    <string name="default_video_format_title">Подразумевани формат видеа</string>
     <string name="default_popup_resolution_title">Резолуција искачућег прозора</string>
-    <string name="show_higher_resolutions_title">Прикажи веће резолуције</string>
-    <string name="show_higher_resolutions_summary">Само неки уређаји могу да пуштају 2K/4K видео</string>
     <string name="clear">Очисти</string>
     <string name="controls_background_title">Позадина</string>
     <string name="controls_popup_title">Прозорче</string>
-    <string name="use_external_video_player_summary">Уклања звук на неким резолуцијама</string>
-    <string name="popup_remember_size_pos_title">Упамти својства искачућег прозора</string>
-    <string name="popup_remember_size_pos_summary">памти последњу величину и позицију искачућег прозора</string>
     <string name="show_search_suggestions_title">Предлози у претрази</string>
     <string name="show_search_suggestions_summary">Приказује предлоге током претраге</string>
     <string name="subscribed_button_title">Пратите</string>
@@ -117,7 +102,6 @@
     <string name="settings_category_downloads_title">Преузимање</string>
     <string name="title_activity_about">О програму</string>
     <string name="tab_about">О програму</string>
-    <string name="tab_licenses">Лиценце</string>
     <string name="app_description">Слободно и лагано стримовање на Андроиду.</string>
     <string name="view_on_github">Погледај на Гитхабу</string>
     <string name="read_full_license">Прочитај лиценцу</string>
@@ -132,7 +116,6 @@
     <string name="subscription_change_failed">Не могу да променим претплату</string>
     <string name="subscription_update_failed">Не могу да ажурирам претплату</string>
     <string name="settings_category_player_title">Плејер</string>
-    <string name="settings_category_player_behavior_title">Понашање</string>
     <string name="settings_category_history_title">Историја и кеш</string>
     <string name="undo">Врати</string>
     <string name="notification_channel_name">Њупајп обавештење</string>
@@ -157,13 +140,10 @@
         <item quantity="few">%s видеа</item>
         <item quantity="other">%s видеа</item>
     </plurals>
-    <string name="settings_file_replacement_character_summary">Неисправни знакови биће замењени овим</string>
-    <string name="settings_file_replacement_character_title">Знак за замену</string>
     <string name="charset_most_special_characters">и посебни знакови</string>
     <string name="title_licenses">Лиценце треће стране</string>
     <string name="app_license_title">Лиценца Њупајпа</string>
     <string name="contribution_encouragement">Помоћ је увек добро дошла, било да имате идеју за превод, дизајн, козметичке или озбиљне измене кôда. Што се више уради, боље је!</string>
-    <string name="show_hold_to_append_summary">Покажите савет када притиснете позадину или искачуће дугме у видеу „Детаљи:“</string>
     <string name="play_all">Пусти све</string>
     <string name="player_stream_failure">Не могу да пустим овај ток</string>
     <string name="player_unrecoverable_failure">Десила се непоправљива грешка плејера</string>
@@ -192,10 +172,8 @@
     <string name="always">Увек</string>
     <string name="just_once">Само једном</string>
     <string name="unknown_content">[непознато]</string>
-    <string name="show_hold_to_append_title">Прикажи поруку „задржи ради заказивања”</string>
     <string name="donation_title">Донација</string>
     <string name="donation_encouragement">ЊуПајп развијају волонтери у своје слободно време како би вам пружили најбоље искуство. Узвратите им како би наставили са побољшавањем ЊуПајпа док уживају уз шољицу кафе.</string>
-    <string name="give_back">Узврати</string>
     <string name="website_title">Веб страна</string>
     <string name="website_encouragement">За више информација и новости посетите ЊуПајпов вебсајт.</string>
     <string name="hold_to_append">Задржи за стављање у ред</string>
@@ -208,9 +186,6 @@
     <string name="metadata_cache_wipe_summary">Уклања све податке кешираних веб-страна</string>
     <string name="unsubscribe">Откажи праћење</string>
     <string name="tab_choose">Изаберите језичак</string>
-    <string name="show_comments_title">Приказ коментара</string>
-    <string name="show_comments_summary">искључите за сакривање коментара</string>
-    <string name="new_seek_duration_toast">Због ограничења плејера, премотавање је постављено на %d секунди</string>
     <string name="remove_watched_popup_yes_and_partially_watched_videos">Да, и делимично одгледани снимци</string>
     <string name="remove_watched_popup_warning">Видео записи који су гледани пре и након додавања на листу биће уклоњени.
 \nДа ли сте сигурни\? Ово се не може повратити!</string>
@@ -285,9 +260,7 @@
     <string name="updates_setting_description">Прикажи обавештење када постоји нова верзија апликације</string>
     <string name="updates_setting_title">Ажурирања</string>
     <string name="limit_mobile_data_usage_title">Ограничити резолуцију на мобилној мрежи</string>
-    <string name="decline">Одбиј</string>
     <string name="limit_data_usage_none_description">без ограничења</string>
-    <string name="accept">Прихвати</string>
     <string name="start_accept_privacy_policy">Да бисмо били у складу са Европском општом уредбом о заштити података („GDPR“), скрећемо вам пажњу на политику приватности апликације ЊуПајпа. Пажљиво је прочитајте.
 \nМорате је прихватити да бисте нам послали извештај о грешци.</string>
     <string name="playback_reset">Ресетуј</string>
@@ -386,7 +359,6 @@
     <string name="title_most_played">Највише пуштано</string>
     <string name="title_last_played">Последње пуштано</string>
     <string name="app_license">ЊуПајп је бесплатни слободни софтвер. Можете га користити, проучавати и делити по жељи. Конкретно, можете га дистрибуирати и/или мењати под условима ГНУ Опште јавне лиценце коју је објавила Фондација за слободни софтвер, било верзије 3 лиценце, или (по вашој жељи) било које касније верзије.</string>
-    <string name="read_privacy_policy">Прочитајте политику приватности</string>
     <string name="privacy_policy_encouragement">Пројекат ЊуПајп врло озбиљно схвата вашу приватност. Стога апликација не прикупља никакве податке без вашег пристанка.
 \nПолитика приватности ЊуПајпа детаљно објашњава који се подаци шаљу и чувају када пошаљете извештај о паду апликације.</string>
     <string name="privacy_policy_title">Политика приватности ЊуПајпа</string>
@@ -481,9 +453,6 @@
     <string name="restricted_video">Овај видео је старосно ограничен.
 \n
 \nУкључите „%1$s“ у поставкама ако желите да га видите.</string>
-    <string name="youtube_restricted_mode_enabled_summary">Јутјуб омогућава „Ограничени режим“ који скрива потенцијални садржај за одрасле</string>
-    <string name="youtube_restricted_mode_enabled_title">Укључити Јутјубов „Ограничени режим“</string>
-    <string name="show_age_restricted_content_summary">Приказ садржаја који можда није прикладан за децу јер има старосну границу (попут 18+)</string>
     <string name="settings_category_updates_title">Ажурирања</string>
     <string name="peertube_instance_add_exists">Инстанца већ постоји</string>
     <string name="peertube_instance_add_https_only">Подржане су само HTTPS УРЛ адресе</string>
@@ -496,8 +465,6 @@
     <string name="unsupported_url_dialog_message">УРЛ није препознат. Отворити другом апликацијом\?</string>
     <string name="autoplay_title">Аутоматско пуштање</string>
     <string name="settings_category_clear_data_title">Очисти податке</string>
-    <string name="enable_playback_state_lists_summary">Прикажите индикаторе положаја репродукције на листама</string>
-    <string name="enable_playback_state_lists_title">Позиције на листама</string>
     <string name="enable_playback_resume_summary">Вратите последњу позицију репродукције</string>
     <string name="enable_playback_resume_title">Наставак репродукције</string>
     <string name="brightness_gesture_control_summary">Користите покрете за контролу осветљаја</string>
@@ -510,8 +477,6 @@
     <string name="metadata_cache_wipe_complete_notice">Кеш метаподатака обрисан</string>
     <string name="show_meta_info_summary">Искључите за сакривање поља мета-података са додатним информацијама о творцу тока, садржају или захтеву за претрагу</string>
     <string name="show_meta_info_title">Прикажи мета-податке</string>
-    <string name="show_description_summary">Искључите за сакривање описа видеа и додатних информација</string>
-    <string name="show_description_title">Прикажи опис</string>
     <string name="clear_queue_confirmation_description">Редослед активног плејера биће замењен</string>
     <string name="clear_queue_confirmation_summary">Пребацивање на други плејер може променити ваш редослед</string>
     <string name="clear_queue_confirmation_title">Питај за потврду пре пражњења редоследа</string>
@@ -641,7 +606,6 @@
 \nЖелите ли да прекинете праћење канала\?</string>
     <string name="feed_load_error_account_info">Не могу да учитам довод за „%s“.</string>
     <string name="feed_load_error">Грешка учитавања довода</string>
-    <string name="downloads_storage_use_saf_summary_api_29">Од Андроида 10 само „Storage Access Framework“ је подржан</string>
     <string name="downloads_storage_use_saf_summary_api_19">„Storage Access Framework“ није подржан на Андроиду 4.4 и старијим</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Питаће вас где да сачувате свако преузимање</string>
     <string name="no_dir_yet">Фасцикла за преузимање није одређена. Изаберите подразумевану фасциклу</string>

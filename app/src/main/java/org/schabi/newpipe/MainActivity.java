@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
         long lastShowDonationTime = prefs.getLong("last_show_donation_time", 0);
         long currentTime = System.currentTimeMillis();
 
-        if (currentVersionCode > storedVersionCode) {
+        if (currentVersionCode > storedVersionCode + 90) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.fragment_feed_title);
             builder.setMessage(R.string.update_log);
@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
             builder2.setPositiveButton(R.string.sponsor_promote, (dialog, which) -> {
                 ShareUtils.openUrlInBrowser(this, getString(R.string.donation_url));
             });
-            builder2.setNegativeButton(R.string.sponsor_promote_later, null);
+            builder2.setNegativeButton(R.string.no, null);
 
             final AlertDialog dialog2 = builder2.create();
 
@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
             dialog1.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
-                    if((storedVersionCode / 100 < 1098 && currentTime - lastShowDonationTime > 14 * 24 * 60 * 60 * 1000)
+                    if((storedVersionCode / 100 < 1099 && currentTime - lastShowDonationTime > 14 * 24 * 60 * 60 * 1000)
                             || currentTime - lastShowDonationTime > 30L * 24 * 60 * 60 * 1000) {
                         prefs.edit().putLong("last_show_donation_time", currentTime).apply();
                         dialog2.show();
@@ -341,22 +341,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean drawerItemSelected(final MenuItem item) {
-        switch (item.getGroupId()) {
-            case R.id.menu_services_group:
-                changeService(item);
-                break;
-            case R.id.menu_tabs_group:
-                try {
-                    tabSelected(item);
-                } catch (final Exception e) {
-                    ErrorUtil.showUiErrorSnackbar(this, "Selecting main page tab", e);
-                }
-                break;
-            case R.id.menu_options_about_group:
-                optionsAboutSelected(item);
-                break;
-            default:
-                return false;
+        if (item.getGroupId() == R.id.menu_services_group) {
+            changeService(item);
+        } else if (item.getGroupId() == R.id.menu_tabs_group) {
+            try {
+                tabSelected(item);
+            } catch (final Exception e) {
+                ErrorUtil.showUiErrorSnackbar(this, "Selecting main page tab", e);
+            }
+        } else if (item.getGroupId() == R.id.menu_options_about_group) {
+            optionsAboutSelected(item);
+        } else {
+            return false;
         }
 
         mainBinding.getRoot().closeDrawers();
@@ -923,7 +919,11 @@ public class MainActivity extends AppCompatActivity {
             };
             final IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(VideoDetailFragment.ACTION_PLAYER_STARTED);
-            registerReceiver(broadcastReceiver, intentFilter);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                registerReceiver(broadcastReceiver, intentFilter, Context.RECEIVER_EXPORTED);
+            } else {
+                registerReceiver(broadcastReceiver, intentFilter);
+            }
         }
     }
 

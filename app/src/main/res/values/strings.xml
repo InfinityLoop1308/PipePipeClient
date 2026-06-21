@@ -22,9 +22,6 @@
 <string name="did_you_mean">Did you mean \"%1$s\"?</string>
 <string name="search_showing_result_for">Showing results for: %s</string>
 <string name="share_dialog_title">Share with</string>
-<string name="use_external_video_player_title">Use external video player</string>
-<string name="use_external_video_player_summary">Removes audio at some resolutions</string>
-<string name="use_external_audio_player_title">Use external audio player</string>
 <string name="subscribe_button_title">Subscribe</string>
 <string name="subscribed_button_title">Subscribed</string>
 <string name="unsubscribe">Unsubscribe</string>
@@ -48,12 +45,8 @@
 <string name="download_path_audio_dialog_title">Choose download folder for audio files</string>
 <string name="default_resolution_title">Default resolution</string>
 <string name="default_popup_resolution_title">Default popup resolution</string>
-<string name="show_higher_resolutions_title">Show higher resolutions</string>
-<string name="show_higher_resolutions_summary">Only some devices can play 2K/4K videos</string>
 <string name="play_with_kodi_title">Play with Kodi</string>
 <string name="kore_not_found">Install missing Kore app?</string>
-<string name="show_play_with_kodi_title">Show \"Play with Kodi\" option</string>
-<string name="show_play_with_kodi_summary">Display an option to play a video via Kodi media center</string>
 <string name="crash_the_player">Crash the player</string>
 <string name="notification_scale_to_square_image_title">Crop thumbnail to 1:1 aspect ratio</string>
 <string name="notification_scale_to_square_image_summary">Crop the video thumbnail shown in the notification from 16:9 to 1:1 aspect ratio</string>
@@ -71,15 +64,11 @@
 <string name="notification_colorize_title">Colorize notification</string>
 <string name="notification_colorize_summary">Have Android customize the notification\'s color according to the main color in the thumbnail (note that this is not available on all devices)</string>
 <string name="play_audio">Audio</string>
-<string name="default_audio_format_title">Default audio format</string>
-<string name="default_video_format_title">Default video format</string>
 <string name="theme_title">Theme</string>
 <string name="night_theme_title">Night Theme</string>
 <string name="light_theme_title">Light</string>
 <string name="dark_theme_title">Dark</string>
 <string name="black_theme_title">Black</string>
-<string name="popup_remember_size_pos_title">Remember popup properties</string>
-<string name="popup_remember_size_pos_summary">Remember last size and position of popup</string>
 <string name="use_inexact_seek_title">Use fast inexact seek</string>
 <string name="use_inexact_seek_summary">Inexact seek allows the player to seek to positions faster with reduced precision. Seeking for 5, 15 or 25 seconds doesn\'t work with this</string>
 <string name="disable_android_auto_title">Disable Android Auto</string>
@@ -92,11 +81,6 @@
 <string name="clear_queue_confirmation_description">The active player queue will be replaced</string>
 <string name="download_thumbnail_title">Load thumbnails</string>
 <string name="download_thumbnail_summary">Turn off to prevent loading thumbnails, saving data and memory usage. Changes clear both in-memory and on-disk image cache</string>
-<string name="show_comments_title">Show comments</string>
-<string name="show_comments_summary">Turn off to hide comments</string>
-<string name="show_next_and_similar_title">Show \'Next\' and \'Similar\' videos</string>
-<string name="show_description_title">Show description</string>
-<string name="show_description_summary">Turn off to hide video description and additional information</string>
 <string name="show_meta_info_title">Show meta info</string>
 <string name="show_meta_info_summary">Turn off to hide meta info boxes with additional information about the stream creator, stream content or a search request</string>
 <string name="thumbnail_cache_wipe_complete_notice">Image cache wiped</string>
@@ -123,8 +107,6 @@
 <string name="enable_watch_history_title">Watch history</string>
 <string name="enable_playback_resume_title">Resume playback</string>
 <string name="enable_playback_resume_summary">Restore last playback position</string>
-<string name="enable_playback_state_lists_title">Positions in lists</string>
-<string name="enable_playback_state_lists_summary">Show playback position indicators in lists</string>
 <string name="settings_category_clear_data_title">Clear data</string>
 <string name="enable_watch_history_summary">Keep track of watched videos</string>
 <string name="resume_on_audio_focus_gain_title">Resume playing</string>
@@ -133,14 +115,9 @@
 <string name="start_main_player_fullscreen_title">Start main player in fullscreen</string>
 <string name="start_main_player_fullscreen_summary">Do not start videos in the mini player, but turn to fullscreen mode directly, if auto rotation is locked. You can still access the mini player by exiting fullscreen</string>
 <string name="autoplay_title">Autoplay</string>
-<string name="show_hold_to_append_title">Show \"Hold to enqueue\" tip</string>
-<string name="show_hold_to_append_summary">Show tip when pressing the background or the popup button in video \"Details:\"</string>
 <string name="unsupported_url">Unsupported URL</string>
 <string name="unsupported_url_dialog_message">Could not recognize the URL. Open with another app?</string>
 <string name="default_content_country_title">Default content country</string>
-<string name="content_language_title">Default content language</string>
-<string name="show_auto_translated_subtitles_title">Show auto-translated subtitles</string>
-<string name="show_auto_translated_subtitles_summary">If enabled, PipePipe will try to add an auto-translated subtitle track in your default content language. This makes video loading slightly slower.</string>
 <plurals name="replies">
 <item quantity="one">%s reply</item>
 <item quantity="other">%s replies</item>
@@ -154,8 +131,6 @@
 <string name="peertube_instance_add_https_only">Only HTTPS URLs are supported</string>
 <string name="peertube_instance_add_exists">Instance already exists</string>
 <string name="settings_category_player_title">Player</string>
-<string name="settings_category_player_behavior_title">Behavior</string>
-<string name="settings_category_video_audio_title">Video and audio</string>
 <string name="settings_category_history_title">History and cache</string>
 <string name="settings_category_appearance_title">Appearance</string>
 <string name="settings_category_debug_title">Debug</string>
@@ -165,10 +140,6 @@
 <string name="background_player_playing_toast">Playing in background</string>
 <string name="popup_playing_toast">Playing in popup mode</string>
 <string name="content">Content</string>
-<string name="show_age_restricted_content_title">Show age restricted content</string>
-<string name="show_age_restricted_content_summary">Show content possibly unsuitable for children because it has an age limit (like 18+)</string>
-<string name="youtube_restricted_mode_enabled_title">Turn on YouTube\'s \"Restricted Mode\"</string>
-<string name="youtube_restricted_mode_enabled_summary">YouTube provides a \"Restricted Mode\" which hides potentially mature content</string>
 <string name="restricted_video">This video is age restricted.\n\nTurn on \"%1$s\" in the settings if you want to see it.</string>
 <string name="restricted_video_no_stream_new">This video is age-restricted. \nLog in through Settings if you want to see it.</string>
 <string name="duration_live">Live</string>
@@ -355,8 +326,6 @@
 <!-- Downloads -->
 <string name="settings_category_downloads_title">Download</string>
 <string name="settings_file_charset_title">Allowed characters in filenames</string>
-<string name="settings_file_replacement_character_summary">Invalid characters are replaced with this value</string>
-<string name="settings_file_replacement_character_title">Replacement character</string>
 <string name="charset_letters_and_digits">Letters and digits</string>
 <string name="charset_most_special_characters">Most special characters</string>
 <string name="toast_no_player">No app installed to play this file</string>
@@ -365,16 +334,10 @@
 <string name="title_licenses">Third-party Licenses</string>
 <string name="copyright">© %1$s by %2$s under %3$s</string>
 <string name="tab_about">About</string>
-<string name="tab_licenses">Licenses</string>
 <string name="app_description_new">A FLOSS Android app to let you browse YouTube, NicoNico and BiliBili freely </string>
 <string name="contribution_title">Contribute</string>
 <string name="contribution_encouragement">Whether you have ideas of; translation, design changes, code cleaning, or real heavy code changes—help is always welcome. The more is done the better it gets!</string>
-<string name="view_on_codeberg">View on CodeBerg</string>
 <string name="donation_title">Donate</string>
-<string name="donation_encouragement_new">I have put in my best effort to provide you with the best user experience, but you have the opportunity to make PipePipe even better by donating. With sufficient donations, I can dedicate more time to developing the project. </string>
-<string name="give_back">Give back</string>
-<string name="website_title_new">Website (Upstream)</string>
-<string name="read_privacy_policy">Read privacy policy</string>
 <string name="app_license_title_new">NewPipe\'s License (Upstream)</string>
 <string name="app_license">NewPipe is copyleft libre software: You can use, study, share, and improve it at will. Specifically you can redistribute and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>
 <string name="read_full_license">Read license</string>
@@ -462,6 +425,10 @@
 <string name="resize_fit">Fit</string>
 <string name="resize_fill">Fill</string>
 <string name="resize_zoom">Zoom</string>
+<string name="aspect_ratio_custom">Custom…</string>
+<string name="aspect_ratio_custom_title">Custom aspect ratio</string>
+<string name="aspect_ratio_custom_hint">e.g. 16:9 or 1.78</string>
+<string name="aspect_ratio_invalid">Invalid aspect ratio</string>
 <string name="caption_auto_generated">Auto-generated</string>
 <!-- Caption Settings -->
 <string name="caption_setting_title">Captions</string>
@@ -519,10 +486,6 @@
 <string name="percent">Percent</string>
 <string name="semitone">Semitone</string>
 <!-- GDPR dialog -->
-<string name="start_accept_privacy_policy_new">In order to comply with the European General Data Protection Regulation (GDPR), we hereby draw your attention to PipePipe\'s privacy policy. Please read it carefully.
-\nYou must accept it to send us the bug report.</string>
-<string name="accept">Accept</string>
-<string name="decline">Decline</string>
 <!-- Limit mobile data usage  -->
 <string name="limit_data_usage_none_description">No limit</string>
 <string name="limit_mobile_data_usage_title">Limit resolution when using mobile data</string>
@@ -565,7 +528,6 @@
 <string name="card">Card</string>
 <string name="auto">Auto</string>
 <!-- Seekbar Preview Thumbnail-->
-<string name="seekbar_preview_thumbnail_title">Seekbar thumbnail preview</string>
 <string name="high_quality_larger">High quality (larger)</string>
 <string name="low_quality_smaller">Low quality (smaller)</string>
 <string name="dont_show">Don\'t show</string>
@@ -635,7 +597,6 @@
 <string name="downloads_storage_ask_summary_no_saf_notice">You will be asked where to save each download</string>
 <string name="downloads_storage_use_saf_title">Use system folder picker (SAF)</string>
 <string name="downloads_storage_use_saf_summary">The \'Storage Access Framework\' allows downloads to an external SD card</string>
-<string name="downloads_storage_use_saf_summary_api_29">Starting from Android 10 only \'Storage Access Framework\' is supported</string>
 <string name="choose_instance_prompt">Choose an instance</string>
 <string name="app_language_title">App language</string>
 <string name="systems_language">System default</string>
@@ -644,7 +605,6 @@
 <string name="remove_watched_popup_warning">Videos that have been watched before and after being added to the playlist will be removed.
 \nAre you sure\? This cannot be undone!</string>
 <string name="remove_watched_popup_yes_and_partially_watched_videos">Yes, and partially watched videos</string>
-<string name="new_seek_duration_toast">Due to ExoPlayer constraints the seek duration was set to %d seconds</string>
 <!-- Time duration plurals -->
 <plurals name="seconds">
 <item quantity="one">%d second</item>
@@ -704,7 +664,6 @@
 \n
 \nSo the choice boils down to what you prefer: speed or precise information.</string>
 <string name="feed_toggle_show_played_items">Show watched items</string>
-<string name="feed_toggle_hide_played_items">Hide watched items</string>
 <string name="feed_fetch_channel_tabs">Fetch channel tabs</string>
 <string name="feed_fetch_channel_tabs_summary">Tabs to fetch when updating the feed. This option has no effect if a channel is updated using fast mode.</string>
 <string name="sponsor_block">SponsorBlock</string>
@@ -723,7 +682,6 @@
 <string name="sponsor_block_enable_title">Enable SponsorBlock</string>
 <string name="sponsor_block_enable_summary">Automatically skip sponsors in videos. Works for YouTube and BiliBili.</string>
 <string name="sponsor_block_api_url_title">API Url</string>
-<string name="sponsor_block_api_url_summary">The url to use when querying the SponsorBlock API. This must be set for SponsorBlock to work.</string>
 <string name="sponsor_block_notifications_title">Notify when sponsors are skipped</string>
 <string name="sponsor_block_notifications_summary">Show a toast notification when a sponsor is automatically skipped.</string>
 <string name="sponsor_block_privacy_title">View Privacy Policy</string>
@@ -739,15 +697,6 @@
 <string name="sponsor_block_skip_preview_toast">Skipped preview/recap</string>
 <string name="sponsor_block_skip_filler_toast">Skipped filler</string>
 <string name="sponsor_block_skip_pending_toast">Skipped pending segment</string>
-<string name="sponsor_block_toggle_skipping">Toggle skipping sponsors</string>
-<string name="sponsor_block_clear_whitelist_title">Clear Whitelist</string>
-<string name="sponsor_block_clear_whitelist_summary">Clear the list of uploaders SponsorBlock will ignore.</string>
-<string name="sponsor_block_enabled_toast">SponsorBlock enabled</string>
-<string name="sponsor_block_disabled_toast">SponsorBlock disabled</string>
-<string name="sponsor_block_whitelist_cleared_toast">Whitelist cleared</string>
-<string name="sponsor_block_uploader_added_to_whitelist_toast">Channel added to whitelist</string>
-<string name="sponsor_block_uploader_removed_from_whitelist_toast">Channel removed from whitelist</string>
-<string name="sponsor_block_confirm_clear_whitelist">Are you sure you want to clear the whitelist?</string>
 <string name="sponsor_block_confirm_reset_colors">Are you sure you want to reset the category colors?</string>
 <string name="sponsor_block_segment_voted_up_toast">Up-voted segment</string>
 <string name="sponsor_block_segment_voted_down_toast">Down-voted segment</string>
@@ -765,7 +714,6 @@
 <string name="sponsor_block_clear_segment">Clear segment</string>
 <string name="sponsor_block_submit_segment">Submit segment</string>
 <string name="sponsor_block_skip_marked_segments">Skip marked segments</string>
-<string name="sponsor_block_whitelist_channel">Whitelist channel</string>
 <string name="settings_category_sponsor_block_categories_quick_actions">Quick Actions</string>
 <string name="settings_category_sponsor_block_categories_title">SponsorBlock Categories</string>
 <string name="settings_category_sponsor_block_categories_summary">Customize which video segments to skip, along with their color markings on the seek bar.</string>
@@ -840,11 +788,6 @@
 <string name="metadata_support">Support</string>
 <string name="metadata_host">Host</string>
 <string name="metadata_thumbnail_url">Thumbnail URL</string>
-<string name="metadata_thumbnails">Thumbnails</string>
-<string name="metadata_uploader_avatars">Uploader avatars</string>
-<string name="metadata_subchannel_avatars">Sub-channel avatars</string>
-<string name="metadata_avatars">Avatars</string>
-<string name="metadata_banners">Banners</string>
 <string name="metadata_privacy_public">Public</string>
 <string name="metadata_privacy_unlisted">Unlisted</string>
 <string name="metadata_privacy_private">Private</string>
@@ -862,21 +805,10 @@
 <string name="notifications_disabled">Notifications are disabled</string>
 <string name="get_notified">Get notified</string>
 <string name="you_successfully_subscribed">You now subscribed to this channel</string>
-<string name="enumeration_comma">,</string>
 <string name="toggle_all">Toggle all</string>
-<string name="show_replies">Show Replies</string>
 <string name="remove_duplicates">Remove duplicates</string>
 <string name="remove_duplicates_popup_title">Remove duplicate streams?</string>
 <string name="remove_duplicates_popup_warning">Duplicate streams in the playlist will be removed.\n\nAre you sure? This cannot be undone!</string>
-<string name="streams_not_yet_supported_removed">Streams which are not yet supported by the downloader are not shown</string>
-<string name="selected_stream_external_player_not_supported">The selected stream is not supported by external players</string>
-<string name="no_audio_streams_available_for_external_players">No audio streams are available for external players</string>
-<string name="no_video_streams_available_for_external_players">No video streams are available for external players</string>
-<string name="select_quality_external_players">Select quality for external players</string>
-<string name="unknown_format">Unknown format</string>
-<string name="unknown_quality">Unknown quality</string>
-<string name="feed_toggle_show_future_items">Show future items</string>
-<string name="feed_toggle_hide_future_items">Hide future items</string>
 <string name="channel_tab_videos">Videos</string>
 <string name="channel_tab_tracks">Tracks</string>
 <string name="channel_tab_livestreams">Live</string>
@@ -887,8 +819,6 @@
 <string name="channel_tab_info">Info</string>
 <string name="show_channel_tabs">Channel tabs</string>
 <string name="show_channel_tabs_summary">What tabs are shown on the channel pages</string>
-<string name="image_quality_title">Image quality</string>
-<string name="image_quality_summary">Choose the quality of images and whether to load images at all, to reduce data and memory usage. Changes clear both in-memory and on-disk image cache — %s</string>
 <string name="image_quality_none">Do not load images</string>
 <string name="image_quality_low">Low quality</string>
 <string name="image_quality_medium">Medium quality</string>
@@ -946,16 +876,9 @@
 <string name="sort_relevance">Relevance</string>
 <string name="sort_rating">Rating</string>
 <string name="sort_ascending">Ascending</string>
-<string name="auto_queue_partition_summary">Always try to enqueue next partition</string>
-<string name="auto_queue_partition_title">Auto-enqueue next partition</string>
-<string name="feed_show_watched">Fully watched</string>
-<string name="feed_show_partially_watched">Partially watched</string>
-<string name="feed_show_upcoming">Upcoming</string>
 <string name="sort">Sort</string>
 <string name="settings_category_exoplayer_title">ExoPlayer settings</string>
 <string name="settings_category_exoplayer_summary">Manage some ExoPlayer settings. These changes require a player restart to take effect</string>
-<string name="use_exoplayer_decoder_fallback_title">Use ExoPlayer\'s decoder fallback feature</string>
-<string name="use_exoplayer_decoder_fallback_summary">Enable this option if you have decoder initialization issues, which falls back to lower-priority decoders if primary decoders initialization fail. This may result in poor playback performance than when using primary decoders</string>
 <string name="always_use_exoplayer_set_output_surface_workaround_title">Always use ExoPlayer\'s video output surface setting workaround</string>
 <string name="always_use_exoplayer_set_output_surface_workaround_summary">This workaround releases and re-instantiates video codecs when a surface change occurs, instead of setting the surface to the codec directly. Already used by ExoPlayer on some devices with this issue, this setting has only an effect on Android 6 and higher\n\nEnabling this option may prevent playback errors when switching the current video player or switching to fullscreen</string>
 <string name="high_res">Play &amp; download(for premium contents / higher video resolutions &amp; audio qualities)</string>
@@ -982,10 +905,7 @@
 <string name="stat_dislike">Dislike</string>
 <string name="stat_evaluation">Evaluation</string>
 <string name="button_view_pictures">View Images (%d)</string>
-<string name="next">Next</string>
 <string name="previous">Previous</string>
-<string name="warning">Warning</string>
-<string name="download_temp_warning">Playlist downloading is still in beta. NEVER use it to download playlists with 50+ items.</string>
 <string name="error_priority_notice">Priority: Issues on GitHub/CodeBerg &gt; Emails with clear title, polite content and bug report &gt; Bug report only emails. \nBug report only emails will not receive replies.</string>
 <string name="sleep_timer_length_title">Sleep Timer</string>
 <string name="error_match_notification_title">Found a match for the error you encountered</string>
@@ -993,28 +913,25 @@
 <string name="oldest_first">Oldest first</string>
 <string name="newest_first">Newest first</string>
 <string name="same_as_item_mode">Same as items</string>
-<string name="playlist_sorting_mode_title">Playlist sorting mode</string>
 <string name="dont_auto_queue_long_title">Don\'t auto queue long videos</string>
 <string name="dont_auto_queue_long_description">Only auto queue videos shorter than 6 min</string>
 <string name="enable_notification_text">Please enable notifications for this app to ensure it functions normally. We will only alert you when necessary.</string>
 <string name="enable_notification_title">Enable notification</string>
-<string name="sponsor_promote">Support on Ko-fi</string>
-<string name="sponsor_promote_later">Maybe later</string>
+<string name="sponsor_promote">Become a supporter</string>
 <string name="random_play_order_title">Random Order</string>
 <string name="random_play_order_summary">Automatically shuffle your local playlists when playing in the background</string>
-<string name="update_log">### New Features\n\n- Slightly improved the UI to make PipePipe looks more modern\n- Redesigned the search filter menu \n\n### Bug Fixes\n\n- Failed to play YT videos if logged in under certain conditions (YouTube)\n- Search results have wrong uploader names under certain conditions (YouTube) \n- Parse error under certain conditions (YouTube)\n- Failed to extract channel uploaders sometimes (BiliBili)\n- Failed to extract channel details sometimes due to risk control (BiliBili)\n- Crash under certain conditions \n\n### Others\n\n- Improve stability</string>
+<string name="update_log">Fix: \"This content is not supported by PipePipe\" error on all videos (YouTube)\n\nYouTube has been updating frequently lately, please make sure to turn on updates checking to receive our latest patches promptly.</string>
 <string name="speeding_playback_title">Long-press to speeding the playback</string>
 <string name="view_on_github">View on GitHub</string>
-<string name="donation_dialog_title">Enjoying PipePipe?</string>
-<string name="donation_dialog_message">Support us on Ko‑fi and help keep video watching open and tracking-free.</string>
+<string name="donation_dialog_title">Support the Project</string>
+<string name="donation_dialog_message">Thank you for using PipePipe! If you find it useful, please consider becoming a supporter on Ko-Fi. Your support is important to me and helps me add more exciting new features. Every bit counts! 😇</string>
 <string name="fullscreen_gesture_control_summary">Use gestures to enter / exit fullscreen</string>
 <string name="fullscreen_gesture_control_title">Fullscreen gesture control</string>
 <string name="require_audio_focus_summary">Make sure only PipePipe is playing audio</string>
 <string name="require_audio_focus_title">Require audio focus</string>
 <string name="decoder_init_failure">Decoder initialization failed</string>
-<string name="go_to_settings">Go to settings</string>
 <string name="unable_to_decode_summary">Your device lacks the required hardware decoders, so you cannot play this video in PipePipe.\nPlease download and play it in VLC.</string>
-<string name="settings_category_gestures_summary">Gesture Settings</string>
+<string name="settings_category_gestures_summary">Gestures</string>
 <string name="settings_category_bullet_comments_summary">Bullet Comment Settings</string>
 <string name="settings_category_backup_title">Backup</string>
 <string name="settings_category_advanced_title">Advanced</string>
@@ -1022,8 +939,6 @@
 <string name="advanced_formats_summary">If your device has support, enabling advanced formats can reduce data consumption and provide higher resolutions. \nWEBM or AV1 must be enabled to show 2k/4k contents on YouTube. \nUse a format that your device doesn\'t support will result in a black screen or crash.</string>
 <string name="advanced_formats_title">Enable advanced formats</string>
 <string name="preferred_audio_language_title">Preferred audio language</string>
-<string name="comments_inner_scroll_title">Comments inner scroll</string>
-<string name="comments_inner_scroll_summary">Make video position fixed when scrolling comments</string>
 <string name="ip_blocked_summary">Your IP has been temporarily blocked by YouTube. For a period of time, you will experience issues when playing certain videos. If the error persists, please log in through Settings to continue.</string>
 <string name="settings_category_filter_title">Content Filter</string>
 <string name="filter_by_keyword_title">Filter by keywords</string>
@@ -1088,8 +1003,6 @@
 <string name="always_list_mode_for_bookmark_title">Always use list mode for Bookmarks</string>
 <string name="select_channel_group_prompt">Select a channel group</string>
 <string name="channel_group_tab_summary">Channel Group</string>
-<string name="feed_groups_grid_layout_title">Use grid layout for channel group list</string>
-<string name="feed_groups_grid_layout_summary">In the Subscriptions page, show channel groups in a grid instead of horizontal scroll</string>
 <string name="need_login_hint"> This content requires an account to view. Login through settings to continue.</string>
 <string name="exit_app_confirmation_message">Show a "press back again to quit" toast to avoid accidental quiting</string>
 <string name="exit_app_confirmation_title">Exit app confirmation</string>
@@ -1100,18 +1013,12 @@
 <string name="clear_webview_cookies">Clear WebView cookies</string>
 <string name="clear_webview_cookies_summary">Clear all cookies stored by WebView components so you can use a new account</string>
 <string name="webview_cookies_cleared">WebView cookies have been cleared</string>
-<string name="webview_cookies_clear_failed">Failed to clear WebView cookies</string>
 <string name="remove_from_playlist_confirmation">Remove this item from playlist?</string>
 <string name="local_playlist_swipe_action_title">Right swipe action in local playlists</string>
-<string name="youtube_account_temporarily_disabled">Temporarily disabled</string>
-<string name="beta_test_dialog_title">Join the PipePipe 5.0.0 Beta-2 Test!</string>
-<string name="beta_test_dialog_message">Thank you for your continued support! We\'re excited to release PipePipe 5.0.0 Beta-2, a major step forward in our ground-up rebuild of the app.\n\nThis version focuses on significant improvements in stability and feature completeness, based on early feedback. While we\'re getting much closer to a final release, it\'s still a beta, and your feedback is invaluable.\n\nReminder: This will be installed as \"PipePipe Beta\" and won\'t affect your current app or data.\n\nIf you encounter any bugs or have suggestions, please let us know by opening an issue on our GitHub repository!</string>
-<string name="trending_replaced">YouTube has recently removed the Trending Videos feature, so we\'ve updated our default YouTube trending tab to show Recommended Lives instead. If you don\'t want to see this, you can remove the tab in Settings and set another one as your homepage.</string>
 <string name="youtube_login_warning_title">Log in only when needed</string>
 <string name="youtube_login_warning_message">Due to YouTube\'s encryption, logged-in playback only provides AVC formats, audio-only downloads are unavailable, in-progress live streams cannot be rewound, and extraction is less stable. \n\nYou should log in only if:\n1. You cannot watch videos anonymously because of IP blocks\n2. You need to watch age-restricted videos\n3. You are a member of a channel and need to watch its member-only videos\n\nIf video extraction or playback fails while logged in, please try logging out and report the issue on GitHub.</string>
 <string name="filter">Filter</string>
 <string name="search_type">Search type</string>
-<string name="select_service">Select service</string>
 <string name="perform_search">Perform search</string>
 <string name="done">Done</string>
 <string name="expand">Expand</string>
@@ -1121,4 +1028,37 @@
 <string name="grid_columns_title">Grid columns</string>
 <string name="grid_columns_landscape_title">Grid columns (landscape)</string>
 <string name="channel_tab_podcasts">Podcasts</string>
+<string name="video_tabs_title">Video Tabs</string>
+<string name="video_tabs_summary">Configure which tabs to show on video detail screen</string>
+<string name="filter_future_items_title">Filter future items</string>
+<string name="filter_future_items_summary">Remove items scheduled for a future release</string>
+<string name="pin_video_to_top_title">Pin video to top</string>
+<string name="pin_video_to_top_summary">Keep the video pinned to the top while scrolling the video detail page</string>
+<string name="settings_category_behavior_title">Behavior</string>
+<string name="use_experimental_new_ui_title">Use experimental new UI</string>
+<string name="use_experimental_new_ui_summary">Use the new Compose-based UI, still being optimized. Changing this will restart the app.</string>
+<string name="force_end_on_overtime_title">Force end on overtime</string>
+<string name="force_end_on_overtime_summary">Force end playback when current position exceeds stream duration, as a workaround for streams that do not stop naturally</string>
+<string name="use_old_search_filter_title">Use old search filter</string>
+<string name="use_old_search_filter_summary">Use the old menu-based search filter instead of the new dialog UI</string>
+<string name="main_tabs_position_summary">Move main tab selector to the bottom</string>
+<string name="main_tabs_position_title">Main tabs position</string>
+<string name="past_hour">Past hour</string>
+<string name="past_day">Past day</string>
+<string name="past_week">Past week</string>
+<string name="past_month">Past month</string>
+<string name="past_year">Past year</string>
+<string name="short_video">Short</string>
+<string name="medium_length">Medium</string>
+<string name="long_video">Long</string>
+<string name="extra_long">Extra long</string>
+<string name="upload_date">Upload Date</string>
+<string name="duration">Duration</string>
+<string name="license">License</string>
+<string name="published">Published</string>
+<string name="disable_exoplayer_media_codec_async_queueing_title">Disable MediaCodec asynchronous queueing</string>
+<string name="disable_exoplayer_media_codec_async_queueing_summary">Workaround for playback errors caused by MediaCodec asynchronous queueing on some devices. Enabling this may improve compatibility, but can reduce playback performance.</string>
+<string name="media_codec_workaround_hint_title">MediaCodec playback failed</string>
+<string name="media_codec_async_workaround_hint">This failure may be caused by MediaCodec asynchronous queueing. Try enabling \"Disable MediaCodec asynchronous queueing\" in ExoPlayer settings, then restart playback.</string>
+<string name="media_codec_surface_workaround_hint">This failure happened while changing the video output surface. Try enabling \"Always use ExoPlayer\'s video output surface setting workaround\" in ExoPlayer settings, then restart playback.</string>
 </resources>

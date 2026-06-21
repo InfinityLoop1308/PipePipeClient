@@ -20,9 +20,6 @@
     <string name="did_you_mean">Você quis dizer &quot;%1$s&quot;?</string>
     <string name="search_showing_result_for">Exibindo resultados para: %s</string>
     <string name="share_dialog_title">Compartilhar com</string>
-    <string name="use_external_video_player_title">Usar reprodutor de vídeo externo</string>
-    <string name="use_external_video_player_summary">Pode remover o áudio em algumas resoluções</string>
-    <string name="use_external_audio_player_title">Usar reprodutor de áudio externo</string>
     <string name="subscribe_button_title">Inscrever-se</string>
     <string name="subscribed_button_title">Inscrito</string>
     <string name="unsubscribe">Cancelar Inscrição</string>
@@ -46,12 +43,8 @@
     <string name="download_path_audio_dialog_title">Escolha uma pasta para áudios baixados</string>
     <string name="default_resolution_title">Resolução padrão</string>
     <string name="default_popup_resolution_title">Resolução padrão de pop-up</string>
-    <string name="show_higher_resolutions_title">Exibir resoluções mais altas</string>
-    <string name="show_higher_resolutions_summary">Apenas alguns dispositivos podem reproduzir vídeos em 2K/4K</string>
     <string name="play_with_kodi_title">Reproduzir com Kodi</string>
     <string name="kore_not_found">Deseja instalar o aplicativo Kore?</string>
-    <string name="show_play_with_kodi_title">Exibir opção de &quot;Reproduzir com Kodi&quot;</string>
-    <string name="show_play_with_kodi_summary">Exibir a opção de reproduzir um vídeo via centro de mídia Kodi</string>
     <string name="crash_the_player">Parar o reprodutor</string>
     <string name="notification_scale_to_square_image_title">Cortar miniatura para a proporção 1:1</string>
     <string name="notification_scale_to_square_image_summary">Cortar a miniatura do vídeo mostrada na notificação da proporção 16:9 para 1:1</string>
@@ -69,15 +62,11 @@
     <string name="notification_colorize_title">Colorir notificação</string>
     <string name="notification_colorize_summary">Faça com que o Android customize a cor da notificação de acordo com a cor principal da miniatura (não disponível em todos os dispositivos)</string>
     <string name="play_audio">Áudio</string>
-    <string name="default_audio_format_title">Formato de áudio padrão</string>
-    <string name="default_video_format_title">Formato de vídeo padrão</string>
     <string name="theme_title">Tema</string>
     <string name="night_theme_title">Tema noturno</string>
     <string name="light_theme_title">Claro</string>
     <string name="dark_theme_title">Escuro</string>
     <string name="black_theme_title">Auto contraste</string>
-    <string name="popup_remember_size_pos_title">Salvar propriedades de pop-up</string>
-    <string name="popup_remember_size_pos_summary">Salvar tamanho e posição do pop-up da última sessão</string>
     <string name="use_inexact_seek_title">Usar procura rápida e inexata</string>
     <string name="use_inexact_seek_summary">Procura inexata permite que o reprodutor ache posições mais rapidamente, com precisão reduzida. Avançar/retroceder por 5, 15 ou 25 segundos não funciona com essa função</string>
     <string name="seek_duration_title">Procura em intervalos</string>
@@ -88,11 +77,6 @@
     <string name="clear_queue_confirmation_description">A fila do reprodutor ativo será sobrescrita</string>
     <string name="download_thumbnail_title">Carregar miniaturas</string>
     <string name="download_thumbnail_summary">Desligue para previnir o carregamento de miniaturas, economizando o uso de memória. Mudanças limpam tanto o cache de imagens em memória quanto em disco</string>
-    <string name="show_comments_title">Exibir comentários</string>
-    <string name="show_comments_summary">Desligue para esconder comentários</string>
-    <string name="show_next_and_similar_title">Exibir &quot;Próximo&quot; e vídeos &quot;Similares&quot;</string>
-    <string name="show_description_title">Exibir descrição</string>
-    <string name="show_description_summary">Deslique para esconder a descrição do vídeo e informação adicional</string>
     <string name="show_meta_info_title">Exibir metadados</string>
     <string name="show_meta_info_summary">Desligue para esconder caixas de metadados com informações adicionais sobre o criador, conteúdo e parâmetros de busca</string>
     <string name="thumbnail_cache_wipe_complete_notice">Cache de imagem limpo</string>
@@ -115,8 +99,6 @@
     <string name="enable_watch_history_title">Histórico de exibição</string>
     <string name="enable_playback_resume_title">Retomar reprodução</string>
     <string name="enable_playback_resume_summary">Retomar reprodução da última sessão</string>
-    <string name="enable_playback_state_lists_title">Andamento da reprodução em listas</string>
-    <string name="enable_playback_state_lists_summary">Exibir indicador de andamento da reprodução em listas</string>
     <string name="settings_category_clear_data_title">Limpar dados</string>
     <string name="enable_watch_history_summary">Registrar vídeos assistidos</string>
     <string name="resume_on_audio_focus_gain_title">Retomar reprodução</string>
@@ -125,12 +107,9 @@
     <string name="start_main_player_fullscreen_title">Iniciar reprodutor principal em tela cheia</string>
     <string name="start_main_player_fullscreen_summary">Não iniciar vídeos no mini reprodutor, mas mudar para tela cheia diretamente, caso a rotação automática esteja travada. Você ainda pode acessar o mini reprodutor ao sair da tela cheia</string>
     <string name="autoplay_title">Autorreproduzir</string>
-    <string name="show_hold_to_append_title">Exibir dica &quot;Segure para adicionar à fila&quot;</string>
-    <string name="show_hold_to_append_summary">Exibir dicas ao pressionar o plano de fundo ou o bottão de pop-up no vídeo &quot;Detalhes:&quot;</string>
     <string name="unsupported_url">URL não suportado</string>
     <string name="unsupported_url_dialog_message">Não foi possível reconhecer o URL Deseja abrir com outro app?</string>
     <string name="default_content_country_title">Local padrão do conteúdo</string>
-    <string name="content_language_title">Idioma padrão do conteúdo</string>
     <plurals name="replies">
         <item quantity="one">%s resposta</item>
         <item quantity="other">%s respostas</item>
@@ -144,8 +123,6 @@
     <string name="peertube_instance_add_https_only">Apenas URLs HTTPS são suportados</string>
     <string name="peertube_instance_add_exists">A instância já existe</string>
     <string name="settings_category_player_title">Reprodutor</string>
-    <string name="settings_category_player_behavior_title">Comportamento</string>
-    <string name="settings_category_video_audio_title">Vídeo e áudio</string>
     <string name="settings_category_history_title">Histórico de cache</string>
     <string name="settings_category_appearance_title">Aparência</string>
     <string name="settings_category_debug_title">Debug</string>
@@ -155,10 +132,6 @@
     <string name="background_player_playing_toast">Reproduzir em segundo plano</string>
     <string name="popup_playing_toast">Reproduzindo em modo pop-up</string>
     <string name="content">Conteúdo</string>
-    <string name="show_age_restricted_content_title">Exibir conteúdo com restrição</string>
-    <string name="show_age_restricted_content_summary">Exibir conteúdo possivelmente não adequado para menores de 18 anos</string>
-    <string name="youtube_restricted_mode_enabled_title">Habilitar o &quot;Modo Restrito&quot; do YouTube</string>
-    <string name="youtube_restricted_mode_enabled_summary">YouTube fornece um &quot;Modo Restrito&quot; que esconde conteúdo potencialmente maduro</string>
     <string name="restricted_video">Esse vídeo tem restrição de idade.\n\nDesabilite em &quot;%1$s&quot; nas configurações caso queira reproduzi-lo.</string>
     <string name="restricted_video_no_stream">Esse vídeo tem restrição de idade. \nDevido às novas políticas de vídeos com restrição de idade do YouTube, o PipePipe não pode acessar esse vídeo, e logo não pode reproduzi-lo.</string>
     <string name="duration_live">Ao vivo</string>
@@ -345,8 +318,6 @@
     <!-- Downloads -->
     <string name="settings_category_downloads_title">Baixar</string>
     <string name="settings_file_charset_title">Caracteres permitidos no nome de arquivos</string>
-    <string name="settings_file_replacement_character_summary">Caracteres inválidos são substituídos por esse</string>
-    <string name="settings_file_replacement_character_title">Caracter de substituição</string>
     <string name="charset_letters_and_digits">Letras e dígitos</string>
     <string name="charset_most_special_characters">Caracteres mais especiais</string>
     <string name="toast_no_player">Sem app instalado para reproduzir tal arquivo</string>
@@ -355,19 +326,14 @@
     <string name="title_licenses">Licenças de Terceiros</string>
     <string name="copyright">© %1$s por %2$s sob %3$s</string>
     <string name="tab_about">Sobre</string>
-    <string name="tab_licenses">Licenças</string>
     <string name="app_description_new">Front-end alternativo de streaming para Android do BiliBili, NicoNico, YouTube e muito mais</string>
     <string name="contribution_title">Contribua</string>
     <string name="contribution_encouragement">Caso tenha ideias de tradução, mudanças de design, otimização de código, ou mudanças pesadas de código - ajuda é sempre bem-vinda. O quanto mais é feito, melhor o app fica!</string>
-    <string name="view_on_codeberg">Ver no CodeBerg</string>
     <string name="donation_title_new">Doações (Upstream)</string>
     <string name="donation_encouragement">NewPipe é desenvolvido por voluntários em seu tempo livre, lhe trazendo a melhor experiência do usuário. Dê de volta para os desenvolvedores, faça o NewPipe ainda melhor enquanto eles apreciam uma xícara de café.</string>
-    <string name="give_back">Dê de volta</string>
-    <string name="website_title_new">Página Web (Upstream)</string>
     <string name="website_encouragement">Visite o Site NewPipe para mais informações e notícias.</string>
     <string name="privacy_policy_title_new">Política de Privacidade do NewPipe (Upstream)</string>
     <string name="privacy_policy_encouragement">O projeto NewPipe leva a sua privacidade à sério. Logo, o aplicativo não coleta nenhum dado sem seu consentimento.\nA política de privacidade explica em detalhes quais dados são mandados e armazenados quando você manda um relatório de erro.</string>
-    <string name="read_privacy_policy">Leia a política de privacidade</string>
     <string name="app_license_title_new">Licença do NewPipe (Upstream)</string>
     <string name="app_license">NewPipe é um software livre com copyleft: Você pode usá-lo, estudá-lo, compartilhá-lo e melhorá-lo como quiser. Especificamente, você pode redistribuir ou/e modificá-lo dentro dos termos da GNU General Public License como publicada pela Free Software Foundation, tanto a versão 3 da Licença, ou (a seu critério) qualquer versão superior.</string>
     <string name="read_full_license">Ler licença</string>
@@ -504,9 +470,6 @@
     <string name="percent">Porcentagem</string>
     <string name="semitone">Semitom</string>
     <!-- GDPR dialog -->
-    <string name="start_accept_privacy_policy_new">Para cumprir com a Regulação Européia Geral de Proteção de Dados (GDPR), nós chamamos sua atenção à política de privacidade do PipePipe. Favor, leia com cuidado. \nVocê deve aceitá-la para nos mandar um relatório de erro.</string>
-    <string name="accept">Aceito</string>
-    <string name="decline">Recuso</string>
     <!-- Limit mobile data usage  -->
     <string name="limit_data_usage_none_description">Sem limite</string>
     <string name="limit_mobile_data_usage_title">Limitar resolução ao usar dados móveis</string>
@@ -547,7 +510,6 @@
     <string name="grid">Grade</string>
     <string name="auto">Automático</string>
     <!-- Seekbar Preview Thumbnail-->
-    <string name="seekbar_preview_thumbnail_title">Visualizar progresso de reprodução na miniatura</string>
     <string name="high_quality_larger">Alta qualidade (maior)</string>
     <string name="low_quality_smaller">Baixa qualidade (menor)</string>
     <string name="dont_show">Não exibir</string>
@@ -617,7 +579,6 @@
     <string name="downloads_storage_ask_summary_no_saf_notice">Você será perguntado onde salvar cada transferência</string>
     <string name="downloads_storage_use_saf_title">Usar navegador de arquivos (SAF)</string>
     <string name="downloads_storage_use_saf_summary">O &quot;Framework de Acesso ao Armazenamento&quot; permite transferências para um card SD externo</string>
-    <string name="downloads_storage_use_saf_summary_api_29">&quot;Framework de Acesso ao Armazenamento&quot; está disponível apenas para Android 10 e superior</string>
     <string name="choose_instance_prompt">Escolha uma instância</string>
     <string name="app_language_title">Idioma do aplicativo</string>
     <string name="systems_language">Padrão do Sistema</string>
@@ -625,7 +586,6 @@
     <string name="remove_watched_popup_title">Deseja remover vídeos assistidos?</string>
     <string name="remove_watched_popup_warning">Vídeos que foram assistidos anteriormente e após serem adicionados à uma lista de reprodução serão removidos. \nVocê tem certeza\? Isso não pode ser desfeito!</string>
     <string name="remove_watched_popup_yes_and_partially_watched_videos">Sim, e vídeos parcialmente assistidos</string>
-    <string name="new_seek_duration_toast">Devido à restrições do ExoPlayer o intervalo de procura foi definido para %d segundos</string>
     <!-- Time duration plurals -->
     <plurals name="seconds">
         <item quantity="one">%d segundo</item>
@@ -675,7 +635,6 @@
     <string name="feed_use_dedicated_fetch_method_disable_button">Desabilitar modo rápido</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Você acha que o feed está carregando lento demais? Se acha, tente habilitar o carregamento rápido (você pode habilitá-lo ou desabilitá-lo nas configurações ou presisonando o botão abaixo). \n \nPipePipe oferece duas estratégias de carregamento do feed: \n• Pegando o canal de inscrição completo, que é mais lento porém completo. \n• Usando um serviço dedicado, que é mais rápido mas usualmente não completo. \n \nA diferença entre os dois é que o mais rápido não recebe algumas informações, como a duração do item e seu tipo (não consegue discernir transmissões ao vivo e vídeos comuns) e também pode retornar menos itens. \n \nYouTube é um exemplo de serviço que oferece esse método rápido com seu feed RSS. \n \Então é sua preferência escolher entre: velocidade ou precisão da informação.</string>
     <string name="feed_toggle_show_played_items">Exibir itens assistidos</string>
-    <string name="feed_toggle_hide_played_items">Esconder itens assistidos</string>
     <string name="content_not_supported_new">Esse conteúdo ainda não é suportado pelo PipePipe.\n\nEsperamos que seja suportado em uma versão futura.</string>
     <string name="detail_sub_channel_thumbnail_view_description">Miniatura de avatar do canal</string>
     <string name="channel_created_by">Criado por %s</string>
@@ -731,21 +690,10 @@
     <string name="notifications_disabled">Notificações estão desabilitadas</string>
     <string name="get_notified">Receber notificações</string>
     <string name="you_successfully_subscribed">Você se inscreveu nesse canal</string>
-    <string name="enumeration_comma">,</string>
     <string name="toggle_all">Mudar todos</string>
-    <string name="show_replies">Exibir respostas</string>
     <string name="remove_duplicates">Remover duplicatas</string>
     <string name="remove_duplicates_popup_title">Remover duplicatas de origem?</string>
     <string name="remove_duplicates_popup_warning">Duplicatas em listas de reprodução serão removidas.\n\nVocê tem certeza? Isso não pode ser desfeito!</string>
-    <string name="streams_not_yet_supported_removed">Fontes ainda não suportadas não são exibidas</string>
-    <string name="selected_stream_external_player_not_supported">A fonte selecionada não é suportada por reprodutores externos</string>
-    <string name="no_audio_streams_available_for_external_players">Fontes sem áudio estão disponívels para reprodutores externos</string>
-    <string name="no_video_streams_available_for_external_players">Fontes sem vídeo estão disponíveis para reprodutores externos</string>
-    <string name="select_quality_external_players">Selecione a qualidade para reprodutores externos</string>
-    <string name="unknown_format">Formato desconhecido</string>
-    <string name="unknown_quality">Qualidade desconhecida</string>
-    <string name="feed_toggle_show_future_items">Exibir itens futuros</string>
-    <string name="feed_toggle_hide_future_items">Esconder itens futuros</string>
     <string name="channel_tab_videos">Vídeos</string>
     <string name="channel_tab_livestreams">Ao vivo</string>
     <string name="channel_tab_shorts">Shorts</string>

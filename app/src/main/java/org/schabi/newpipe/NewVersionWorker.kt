@@ -157,18 +157,21 @@ class NewVersionWorker(
 
     private fun findCompatibleApkUrl(release: JsonObject, abis: Array<String>): String? {
         val assets = release.getArray("assets")
-        var universalUrl: String? = null
-        for (i in 0 until assets.size) {
-            val asset = assets.getObject(i)
-            val name = asset.getString("name")
-            if (name.endsWith(".apk")) {
-                when {
-                    name.contains("universal") -> universalUrl = asset.getString("browser_download_url")
-                    abis.any { name.contains(it) } -> return asset.getString("browser_download_url")
-                }
+        val apkAssets = (0 until assets.size)
+            .map { assets.getObject(it) }
+            .filter { it.getString("name").endsWith(".apk") }
+
+        abis.forEach { abi ->
+            val compatibleAsset = apkAssets.firstOrNull { asset ->
+                getReleaseApkAbi(asset.getString("name")) == abi
+            }
+            if (compatibleAsset != null) {
+                return compatibleAsset.getString("browser_download_url")
             }
         }
-        return universalUrl
+
+        return apkAssets.firstOrNull { it.getString("name").contains("universal") }
+            ?.getString("browser_download_url")
     }
 
 
@@ -189,8 +192,13 @@ class NewVersionWorker(
     companion object {
         private val DEBUG = MainActivity.DEBUG
         private val TAG = NewVersionWorker::class.java.simpleName
+        private val RELEASE_APK_ABIS = listOf("armeabi-v7a", "arm64-v8a", "x86_64", "x86")
         private const val NEWPIPE_API_URL = "https://api.github.com/repositories/490984887/releases"
         private const val IS_MANUAL = "isManual"
+
+        private fun getReleaseApkAbi(name: String): String? {
+            return RELEASE_APK_ABIS.firstOrNull { name.contains("-$it-") }
+        }
         /**
          * Start a new worker which checks if all conditions for performing a version check are met,
          * fetches the API endpoint [.NEWPIPE_API_URL] containing info about the latest NewPipe

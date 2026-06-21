@@ -13,9 +13,6 @@
     <string name="settings">Inställningar</string>
     <string name="did_you_mean">Menade du: %1$s\?</string>
     <string name="share_dialog_title">Dela med</string>
-    <string name="use_external_video_player_title">Använd extern videospelare</string>
-    <string name="use_external_video_player_summary">Tar bort ljud vid vissa upplösningar</string>
-    <string name="use_external_audio_player_title">Använd extern ljudspelare</string>
     <string name="controls_background_title">Bakgrund</string>
     <string name="controls_popup_title">Extrafönster</string>
     <string name="download_path_title">Mapp för hämtning av video</string>
@@ -26,33 +23,21 @@
     <string name="download_path_audio_dialog_title">Välj hämtningsmapp för ljudfiler</string>
     <string name="default_resolution_title">Standardupplösning</string>
     <string name="default_popup_resolution_title">Standardupplösning för popup</string>
-    <string name="show_higher_resolutions_title">Visa högre upplösningar</string>
-    <string name="show_higher_resolutions_summary">Endast ett fåtal enheter har stöd för uppspelning av 2K/4K-videor</string>
     <string name="play_with_kodi_title">Spela upp med Kodi</string>
     <string name="kore_not_found">Kore-appen hittades inte. Installera den?</string>
-    <string name="show_play_with_kodi_title">Visa alternativet \"Spela upp med Kodi\"</string>
-    <string name="show_play_with_kodi_summary">Visa ett alternativ för att spela upp en video med mediacentret Kodi</string>
     <string name="play_audio">Ljud</string>
-    <string name="default_audio_format_title">Standardformat för ljud</string>
-    <string name="default_video_format_title">Videoformat som föredras</string>
     <string name="theme_title">Tema</string>
     <string name="light_theme_title">Ljust</string>
     <string name="dark_theme_title">Mörkt</string>
     <string name="black_theme_title">Svart</string>
-    <string name="popup_remember_size_pos_title">Kom ihåg popupstorlek och position</string>
-    <string name="popup_remember_size_pos_summary">Kom ihåg popup-rutans senaste storlek och position</string>
     <string name="show_search_suggestions_title">Sökförslag</string>
     <string name="show_search_suggestions_summary">Välj förslag att visa i samband med sökning</string>
     <string name="download_dialog_title">Hämta</string>
-    <string name="show_next_and_similar_title">Visa \'Nästa\' och \'Liknande\' videor</string>
     <string name="unsupported_url">Webbadressen stöds inte</string>
-    <string name="content_language_title">Standard innehållsspråk</string>
-    <string name="settings_category_video_audio_title">Video och ljud</string>
     <string name="settings_category_appearance_title">Utseende</string>
     <string name="background_player_playing_toast">Spelar upp i bakgrunden</string>
     <string name="popup_playing_toast">Spelar upp i popup-läge</string>
     <string name="content">Innehåll</string>
-    <string name="show_age_restricted_content_title">Visa åldersbegränsat innehåll</string>
     <string name="duration_live">Live</string>
     <string name="downloads">Hämtningar</string>
     <string name="downloads_title">Hämtningar</string>
@@ -90,10 +75,7 @@
     <string name="enable_watch_history_summary">Håll koll på videor som du tittat på</string>
     <string name="resume_on_audio_focus_gain_title">Återuppta uppspelning</string>
     <string name="resume_on_audio_focus_gain_summary">Fortsätt uppspelning efter avbrott (t.ex. telefonsamtal)</string>
-    <string name="show_hold_to_append_title">Visa \"Håll för att placera i kön\"-tips</string>
-    <string name="show_hold_to_append_summary">Visa tips när bakgrunds- eller popup-knappen trycks på sidan för videodetaljer</string>
     <string name="settings_category_player_title">Spelare</string>
-    <string name="settings_category_player_behavior_title">Beteende</string>
     <string name="settings_category_history_title">Historik och cacheminne</string>
     <string name="undo">Ångra</string>
     <string name="play_all">Spela alla</string>
@@ -150,15 +132,12 @@
     <string name="recaptcha_request_toast">reCAPTCHA utmaning begärd</string>
     <string name="settings_category_downloads_title">Hämta</string>
     <string name="settings_file_charset_title">Tillåtna tecken i filnamn</string>
-    <string name="settings_file_replacement_character_summary">Ogiltiga tecken ersätts med detta värde</string>
-    <string name="settings_file_replacement_character_title">Ersättningstecknet</string>
     <string name="charset_letters_and_digits">Bokstäver och siffror</string>
     <string name="charset_most_special_characters">De flesta specialtecken</string>
     <string name="title_activity_about">Om NewPipe</string>
     <string name="title_licenses">Tredjepartslicenser</string>
     <string name="copyright" formatted="true">© %1$s av %2$s under %3$s</string>
     <string name="tab_about">Om</string>
-    <string name="tab_licenses">Licenser</string>
     <string name="app_description">Öppen och enkel Android-app för mediastreaming.</string>
     <string name="view_on_github">Visa på GitHub</string>
     <string name="app_license_title">NewPipes licens</string>
@@ -186,7 +165,6 @@
     <string name="start_here_on_popup">Börja spela i en popup</string>
     <string name="donation_title">Donera</string>
     <string name="donation_encouragement">NewPipe utvecklas av frivilliga som spenderar sin fritid på att ge dig den bästa användarupplevelsen. Nu är det tid att ge tillbaka för att säkerställa att utvecklarna kan göra NewPipe ännu bättre medan de njuter av en kopp kaffe.</string>
-    <string name="give_back">Ge tillbaka</string>
     <string name="website_title">Webbplats</string>
     <string name="website_encouragement">För att få mer information och de senaste nyheterna om NewPipe, besök vår webbplats.</string>
     <string name="show_info">Visa info</string>
@@ -246,7 +224,6 @@
     <string name="privacy_policy_title">NewPipes sekretesspolicy</string>
     <string name="privacy_policy_encouragement">NewPipe-projektet tar din integritet på största allvar. Appen samlar därför inte in några uppgifter utan ditt medgivande.
 \nNewPipes sekretesspolicy förklarar i detalj vad för data som skickas och lagras när du skickar en kraschrapport.</string>
-    <string name="read_privacy_policy">Läs sekretesspolicy</string>
     <string name="app_license">NewPipe är copyleft fri programvara: Du kan använda, studera, dela och förbättra den som du vill. Specifikt kan du distribuera och/eller modifiera det under villkoren för GNU General Public License som publicerats av Free Software Foundation, antingen version 3 av licensen, eller (om du så önskar) en senare version.</string>
     <string name="title_last_played">Senast spelade</string>
     <string name="title_most_played">Mest spelade</string>
@@ -324,8 +301,6 @@
     <string name="playback_reset">Återställ</string>
     <string name="start_accept_privacy_policy">För att uppfylla den Europeiska dataskyddsförordningen (GDPR), uppmärksammar vi härmed NewPipes sekretesspolicy. Var god och läs den noggrant.
 \nDu måste acceptera den för att kunna skicka felrapporten.</string>
-    <string name="accept">Acceptera</string>
-    <string name="decline">Avböj</string>
     <string name="limit_data_usage_none_description">Ingen gräns</string>
     <string name="limit_mobile_data_usage_title">Begränsa upplösningen när du använder mobil data</string>
     <string name="minimize_on_exit_title">Minimera vid växling av applikationen</string>
@@ -380,15 +355,11 @@
     <string name="max_retry_desc">Maximalt antal försök innan hämtningen avbryts</string>
     <string name="events">Händelser</string>
     <string name="conferences">Konferenser</string>
-    <string name="show_comments_title">Visa kommentarer</string>
-    <string name="show_comments_summary">Inaktivera för att dölja kommentarer</string>
     <string name="enable_playback_resume_title">Återuppta uppspelning</string>
     <string name="enable_playback_resume_summary">Återställ den senaste uppspelningspositionen</string>
-    <string name="enable_playback_state_lists_title">Positioner i listor</string>
     <string name="autoplay_title">Spela automatiskt</string>
     <string name="settings_category_clear_data_title">Rensa data</string>
     <string name="seek_duration_title">Spola framåt/bakåt sökvaraktighet</string>
-    <string name="enable_playback_state_lists_summary">Visa indikatorer för uppspelningsposition i listor</string>
     <string name="clear_playback_states_title">Ta bort uppspelningspositioner</string>
     <string name="peertube_instance_url_title">PeerTube-instanser</string>
     <string name="peertube_instance_url_summary">Välj dina favoritpeertube-instanser</string>
@@ -445,7 +416,6 @@
     <string name="recently_added">Nyligen tillagd</string>
     <string name="local">Lokala</string>
     <string name="recaptcha_done_button">Klar</string>
-    <string name="youtube_restricted_mode_enabled_title">Slå på YouTubes \"Begränsat läge\"</string>
     <string name="localization_changes_requires_app_restart">Språket ändras när appen startas om</string>
     <string name="error_unable_to_load_comments">Det gick inte att läsa in kommentarerna</string>
     <string name="feed_use_dedicated_fetch_method_disable_button">Inaktivera snabbläge</string>
@@ -486,7 +456,6 @@
         <item quantity="one">%d sekund</item>
         <item quantity="other">%d sekunder</item>
     </plurals>
-    <string name="new_seek_duration_toast">På grund av ExoPlayer-begränsningar sattes söktiden till %d sekunder</string>
     <string name="remove_watched_popup_yes_and_partially_watched_videos">Ja, och delvis tittade videor</string>
     <string name="remove_watched_popup_warning">Videor som har spelats före och efter att de har lagts till i spellistan kommer att tas bort.
 \nÄr du säker\? Detta kan inte ångras!</string>
@@ -550,11 +519,9 @@
     <string name="clear_cookie_summary">Rensar kakor som NewPipe lagrar när du löser en reCAPTCHA</string>
     <string name="recaptcha_cookies_cleared">reCAPTCHA-kakor har tagits bort</string>
     <string name="clear_cookie_title">Rensa reCAPTCHA-kakor</string>
-    <string name="youtube_restricted_mode_enabled_summary">YouTube erbjuder ett \"Begränsat läge\" som döljer material som potentiellt är olämpligt för barn</string>
     <string name="auto_device_theme_title">Automatiskt (enhetens tema)</string>
     <string name="notification_action_shuffle">Blanda</string>
     <string name="enqueued">Köad</string>
-    <string name="downloads_storage_use_saf_summary_api_29">Från och med Android 10 stöds bara \"Storage Access Framework\"</string>
     <string name="soundcloud_go_plus_content">Det här är ett SoundCloud Go+-spår, åtminstone i ditt land, så det kan inte strömmas eller hämtas via NewPipe.</string>
     <string name="metadata_host">Värd</string>
     <string name="open_website_license">Öppna webbplats</string>
@@ -574,7 +541,6 @@
 \n
 \nSå valet handlar i grunden om vad du föredrar: hastighet eller precis information.</string>
     <string name="show_meta_info_summary">Inaktivera för att dölja rutor med metainformation som ytterligare information om strömmens skapare, strömmens innehåll eller sökord</string>
-    <string name="show_description_summary">Inaktivera för att dölja videobeskrivning och ytterligare information</string>
     <string name="show_meta_info_title">Visa meta-information</string>
     <string name="show_thumbnail_summary">Använd miniatyrbild som bakgrund till både låsskärm och aviseringar</string>
     <string name="notification_actions_summary">Redigera varje aviseringshandling nedan genom att trycka på den. Välj upp till tre av dem som ska visas i den kompakta aviseringen genom att använda kryssrutorna till höger</string>
@@ -625,8 +591,6 @@
     <string name="comments_tab_description">Kommentarer</string>
     <string name="restricted_video_no_stream">Denna video här en åldersgräns.
 \nPå grund av nya YouTube-regler med åldersgräns för vissa videor kan NewPipe inte komma åt någon av dess videoströmmar och kan därmed inte spela upp den.</string>
-    <string name="show_age_restricted_content_summary">Visa innehåll som pga sin åldersgräns (ex 18+) kan vara olämpligt för barn</string>
-    <string name="show_description_title">Visa beskrivning</string>
     <string name="open_with">Öppna med</string>
     <string name="show_thumbnail_title">Visa miniatyrer</string>
     <string name="detail_sub_channel_thumbnail_view_description">Kanalens visningsminiatyr</string>
@@ -645,7 +609,6 @@
     <string name="detail_heart_img_view_description">Hjärtmärkt av innehållsskaparen</string>
     <string name="select_night_theme_toast">Du kan välja det natt-tema du föredrar nedan</string>
     <string name="night_theme_summary">Välj det natt-tema du föredrar — %s</string>
-    <string name="seekbar_preview_thumbnail_title">Sökradens förhandsvisningsminiatyr</string>
     <string name="show_image_indicators_title">Visa bildindikatorer</string>
     <string name="local_search_suggestions">Lokala sökningsförslag</string>
     <plurals name="deleted_downloads_toast">
@@ -705,7 +668,6 @@
     <string name="streams_notification_channel_name">Nya strömmar</string>
     <string name="loading_stream_details">Laddar strömdetaljer…</string>
     <string name="enable_streams_notifications_title">Nya strömmnings notifikationer</string>
-    <string name="enumeration_comma">,</string>
     <string name="settings_category_player_notification_title">Spelaravisering</string>
     <string name="toggle_all">Växla alla</string>
 </resources>

@@ -10,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import icepick.Icepick;
-import icepick.State;
 import leakcanary.AppWatcher;
 
 public abstract class BaseFragment extends Fragment {
@@ -19,7 +17,6 @@ public abstract class BaseFragment extends Fragment {
     protected static final boolean DEBUG = MainActivity.DEBUG;
     protected AppCompatActivity activity;
     //These values are used for controlling fragments when they are part of the frontpage
-    @State
     protected boolean useAsFrontPage = false;
 
     public void useAsFrontPage(final boolean value) {
@@ -49,8 +46,8 @@ public abstract class BaseFragment extends Fragment {
                     + "savedInstanceState = [" + savedInstanceState + "]");
         }
         super.onCreate(savedInstanceState);
-        Icepick.restoreInstanceState(this, savedInstanceState);
         if (savedInstanceState != null) {
+            useAsFrontPage = savedInstanceState.getBoolean("useAsFrontPage", false);
             onRestoreInstanceState(savedInstanceState);
         }
     }
@@ -71,7 +68,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
-        Icepick.saveInstanceState(this, outState);
+        outState.putBoolean("useAsFrontPage", useAsFrontPage);
     }
 
     protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {

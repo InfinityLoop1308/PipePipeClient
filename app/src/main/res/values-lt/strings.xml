@@ -13,9 +13,6 @@
     <string name="settings">Nustatymai</string>
     <string name="did_you_mean">Ar turėjote omenyje %1$s ?</string>
     <string name="share_dialog_title">Dalintis su</string>
-    <string name="use_external_video_player_title">Naudoti išorinį vaizdo grotuvą</string>
-    <string name="use_external_video_player_summary">Kai kurios raiškos nepalaiko garso, kai ši parinktis įgalinta</string>
-    <string name="use_external_audio_player_title">Naudoti išorinį audio grotuvą</string>
     <string name="controls_background_title">Groti fone</string>
     <string name="controls_popup_title">Groti iššokančiame lange</string>
     <string name="download_path_title">Vaizdo įrašų parsisiuntimo aplankas</string>
@@ -26,33 +23,21 @@
     <string name="download_path_audio_dialog_title">Pasirinkite atsisiuntimų aplankalą garso įrašams</string>
     <string name="default_resolution_title">Numatytoji raiška</string>
     <string name="default_popup_resolution_title">Numatytoji išokančiojo lango raiška</string>
-    <string name="show_higher_resolutions_title">Rodyti didesnes raiškas</string>
-    <string name="show_higher_resolutions_summary">Tik kai kurie įrenginiai palaiko 2K/4K vaizdo įrašų peržiūrą</string>
     <string name="play_with_kodi_title">Groti su Kodi</string>
     <string name="kore_not_found">Įdiegti nereastą Kore programėlę\?</string>
-    <string name="show_play_with_kodi_title">Rodyti „Peržiūra su Kodi“ pasirinkimą</string>
-    <string name="show_play_with_kodi_summary">Rodyti pasirinkimą peržiūrėti vaizdo įrašus per Kodi mediacentrą</string>
     <string name="play_audio">Garso įrašas</string>
-    <string name="default_audio_format_title">Numatytasis garso formatas</string>
-    <string name="default_video_format_title">Numatytasis vaizdo formatas</string>
     <string name="theme_title">Tema</string>
     <string name="light_theme_title">Šviesi</string>
     <string name="dark_theme_title">Tamsi</string>
     <string name="black_theme_title">Juoda</string>
-    <string name="popup_remember_size_pos_title">Prisiminti iššokančio lango dydį ir vietą</string>
-    <string name="popup_remember_size_pos_summary">Prisiminti paskutinį iššokančio lango dydį ir vietą</string>
     <string name="show_search_suggestions_title">Paieškos nuspėjimai</string>
     <string name="show_search_suggestions_summary">Pasirinkite pasiūlymus, kurie bus rodomi ieškant</string>
     <string name="download_dialog_title">Atsisiųsti</string>
-    <string name="show_next_and_similar_title">Rodyti „Kitas” ir „Panašūs” vaizdo įrašus</string>
     <string name="unsupported_url">URL nepalaikoma</string>
-    <string name="content_language_title">Numatytoji turinio kalba</string>
-    <string name="settings_category_video_audio_title">Vaizdas ir garsas</string>
     <string name="settings_category_appearance_title">Išvaizda</string>
     <string name="background_player_playing_toast">Groja fone</string>
     <string name="popup_playing_toast">Grojama iššokančiojo lango rėžime</string>
     <string name="content">Turinys</string>
-    <string name="show_age_restricted_content_title">Rodyti amžiumi apribotą turinį</string>
     <string name="duration_live">Gyvai</string>
     <string name="downloads">Atsisiuntimai</string>
     <string name="downloads_title">Atsisiuntimai</string>
@@ -125,10 +110,7 @@
     <string name="enable_watch_history_summary">Sekite peržiūrėtus vaizdo įrašus</string>
     <string name="resume_on_audio_focus_gain_title">Paleisti</string>
     <string name="resume_on_audio_focus_gain_summary">Tęsti grojimą po pertraukimo (pvz. po skambučių)</string>
-    <string name="show_hold_to_append_title">Rodyti „Laikykite, kad pridėtumėte“ patarimą</string>
-    <string name="show_hold_to_append_summary">Rodyti patarimą, kai vaizdo įraše „Išsami informacija“ paspausite foną arba iššokantįjį mygtuką</string>
     <string name="settings_category_player_title">Grotuvas</string>
-    <string name="settings_category_player_behavior_title">Elgsena</string>
     <string name="settings_category_history_title">Istorija ir podėlis</string>
     <string name="undo">Atgal</string>
     <string name="play_all">Groti viską</string>
@@ -153,22 +135,18 @@
     <string name="no_videos">Nėra vaizdo įrašų</string>
     <string name="settings_category_downloads_title">Parsisiuntimai</string>
     <string name="settings_file_charset_title">Leidžiami simboliai failų varduose</string>
-    <string name="settings_file_replacement_character_summary">Neleistini simboliai yra pakeičiami šia reikšme</string>
-    <string name="settings_file_replacement_character_title">Pakaitinis simbolis</string>
     <string name="charset_letters_and_digits">Raidės ir skaičiai</string>
     <string name="charset_most_special_characters">Ypatingieji simboliai</string>
     <string name="title_activity_about">Apie NewPipe</string>
     <string name="title_licenses">Trečiųjų šalių licencijos</string>
     <string name="copyright" formatted="true">© %1$s %2$s pagal %3$s</string>
     <string name="tab_about">Apie</string>
-    <string name="tab_licenses">Licencijos</string>
     <string name="app_description">Nemokama, atviro kodo transliacijų peržiūros programėlė Android sistemai.</string>
     <string name="contribution_title">Prisidėti</string>
     <string name="contribution_encouragement">Jei turite idėjų dėl: vertimų, išvaizdos pakeitimų, kodo supaprastinimo, arba rimtų kodo pakeitimų - pagalba visada laukiama!</string>
     <string name="view_on_github">Peržiūrėti per GitHub</string>
     <string name="donation_title">Paremti</string>
     <string name="donation_encouragement">NewPipe yra vystoma savanorių, kurie skiria savo laisvą laiką, kad sukurtų geriausią patirtį Jums. Dabar yra laikas paremti juos, kad kūrėjai galėtų NewPipe paversti dar geresne programėle.</string>
-    <string name="give_back">Duokite grąžos</string>
     <string name="website_title">Interneto puslapis</string>
     <string name="website_encouragement">Kad sužinotumėte daugiau apie NewPipe apsilankykite mūsų interneto puslapyje.</string>
     <string name="app_license_title">NewPipe licencija</string>
@@ -249,8 +227,6 @@
     <string name="enable_leak_canary_summary">Atminties nutekėjimo stebėjimas gali padaryti programėlę nestabilią</string>
     <string name="enable_disposed_exceptions_title">Pranešti apie Out-of-Lifecycle klaidas</string>
     <string name="enable_disposed_exceptions_summary">Priverstinai pranešti apie \"undeliverable Rx exceptions outside of fragment or activity lifecycle after disposal\"</string>
-    <string name="show_comments_summary">Išjungti, kad būtų paslėpti komentarai</string>
-    <string name="show_comments_title">Rodyti komentarus</string>
     <string name="tab_choose">Pasirinkti skirtuką</string>
     <string name="unsubscribe">Atsisakyti prenumeratos</string>
     <string name="search_showing_result_for">Rodomi rezultatai užklausai: %s</string>
@@ -327,9 +303,6 @@
     <string name="restricted_video">Šiam video taikomas amžiaus apribojimas
 \n
 \nĮjunkite \"%1$s\" norėdami peržiūrėti.</string>
-    <string name="youtube_restricted_mode_enabled_summary">Youtube turi „apribotą režimą“ kuriame slepiamas galimai suaugusiems skirtas turinys</string>
-    <string name="youtube_restricted_mode_enabled_title">Įjungti YouTube „apribotą režimą“</string>
-    <string name="show_age_restricted_content_summary">Rodyti turinį kuris gali būti netinkamas vaikams (18+)</string>
     <string name="settings_category_updates_title">Atnaujinimai</string>
     <string name="peertube_instance_add_exists">Kopija jau yra</string>
     <string name="peertube_instance_add_https_only">Palaikomi tik HTTPS adresai</string>
@@ -340,8 +313,6 @@
     <string name="unsupported_url_dialog_message">URL neatpažintas. Atverti kita programa\?</string>
     <string name="autoplay_title">Automatinis atkūrimas</string>
     <string name="settings_category_clear_data_title">Išvalyti duomenis</string>
-    <string name="enable_playback_state_lists_summary">Sąraše rodyti atkūrimo vietos indikatorių</string>
-    <string name="enable_playback_state_lists_title">Vietos sąraše</string>
     <string name="brightness_gesture_control_summary">Naudoti gestus ryškumo valdymui</string>
     <string name="brightness_gesture_control_title">Ryškumo gesto valdymas</string>
     <string name="volume_gesture_control_summary">Naudoti gestus garsumo valdymui</string>
@@ -355,7 +326,6 @@
     <string name="thumbnail_cache_wipe_complete_notice">Paveikslėlių saugykla išvalyta</string>
     <string name="show_meta_info_summary">Išjunkite, kad paslėptumėte meta duomenis langeliuose su papildoma informacija apie srauto autorius ir turinį</string>
     <string name="show_meta_info_title">Rodyti meta duomenis</string>
-    <string name="show_description_summary">Išjunkite norėdami paslėpti video aprašymą ir papildomą informaciją</string>
     <string name="use_inexact_seek_title">Naudoti greitą netikslų prasukimą</string>
     <string name="night_theme_title">Naktinė tema</string>
     <string name="notification_colorize_summary">Leisti Android priderinti pranešimo spalvą prie pagrindinės miniatiūros spalvos (prieinama ne visuose įrenginiuose)</string>
@@ -378,7 +348,6 @@
     <string name="peertube_instance_add_help">Įveskite kopijos URL</string>
     <string name="enable_playback_resume_summary">Atstatyti paskutinį atkūrimo laiką</string>
     <string name="enable_playback_resume_title">Tęsti atkūrimą</string>
-    <string name="show_description_title">Rodyti aprašymą</string>
     <string name="download_thumbnail_summary">Norėdami taupyti duomenų srautą, atminties naudojimą išjunkite. Pakeitimai išvalys duomenis atmintyje ir diske</string>
     <string name="download_thumbnail_title">Įkelti miniatiūras</string>
     <string name="clear_queue_confirmation_description">Aktyvaus grotuvo eilė bus pakeista</string>
@@ -481,8 +450,6 @@
     <string name="playback_reset">Atstatyti</string>
     <string name="playback_step">Žingsnis</string>
     <string name="minimize_on_exit_none_description">Nieko</string>
-    <string name="decline">Atmesti</string>
-    <string name="accept">Priimti</string>
     <string name="playback_pitch">Pikas</string>
     <string name="playback_tempo">Tempas</string>
     <string name="export_ongoing">Eksportuojama…</string>
@@ -509,7 +476,6 @@
     <string name="select_a_playlist">Pasirinkite grojaraštį</string>
     <string name="default_kiosk_page_summary">Numatytasis režimas</string>
     <string name="main_page_content_summary">Kokios kortelės rodomos pagrindiniame puslapyje</string>
-    <string name="read_privacy_policy">Skaityti privatumo politiką</string>
     <string name="privacy_policy_encouragement">NewPipe į jūsų privatumą žiūri labai rimtai. Programa be jūsų sutikimo nerenka jokių duomenų.
 \nNewPipe privatumo politika išsamiai parodo kokie duomenys siunčiami ir saugomi pranešant apie problemą.</string>
     <string name="privacy_policy_title">NewPipe privatumo politika</string>
@@ -543,7 +509,6 @@
 \n
 \nAr norite tęsti\?</string>
     <string name="updates_setting_description">Rodyti pranešimą, kuriame raginama atnaujinti programą, kai yra nauja versija</string>
-    <string name="new_seek_duration_toast">Dėl ExoPlayer apribojimų prasukimo trukmė buvo nustatyta %d sekundės</string>
     <string name="pause_downloads_on_mobile_desc">Naudinga pereinant prie mobiliųjų duomenų, nors kai kurių atsisiuntimų sustabdyti negalima</string>
     <string name="minimize_on_exit_summary">Veiksmas, kai iš pagrindinio vaizdo įrašų grotuvo pereinama į kitą programą — %s</string>
     <string name="show_original_time_ago_summary">Srauto elementuose bus matomi orginalūs tekstai iš paslaugų</string>
@@ -646,14 +611,12 @@
 \n„NewPipe“ negalės įkelti šio kanalo ateityje.
 \nAr norite atsisakyti šio kanalo prenumeratos\?</string>
     <string name="feed_load_error">Klaida įkeliant srautą</string>
-    <string name="downloads_storage_use_saf_summary_api_29">Pradedant Android 10 palaikoma tik \'Storage Access Framework\'</string>
     <string name="downloads_storage_use_saf_summary_api_19">\'Storage Access Framework\' nėra palaikomas Android KitKat ir žemesnėse versijose</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Jūsų bus paklausta, kur išsaugoti kiekvieną atsiuntimą</string>
     <string name="no_dir_yet">Atsiuntimo aplankas dar nenustatytas, pasirinkite numatytąjį atsiuntimų aplanką dabar</string>
     <string name="comments_are_disabled">Komentarai yra išjungti</string>
     <string name="low_quality_smaller">Žema kokybė (mažesnės)</string>
     <string name="high_quality_larger">Aukšta kokybė (didesnės)</string>
-    <string name="seekbar_preview_thumbnail_title">Miniatiūrų peržiūra naudojant slinkties juostą</string>
     <string name="dont_show">Nerodyti</string>
     <string name="detail_heart_img_view_description">Širdelė nuo kurėjo</string>
     <string name="mark_as_watched">Pažymėti kaip peržiūrėtą</string>

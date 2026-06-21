@@ -30,6 +30,7 @@ import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 
 import android.widget.Toast;
 import androidx.annotation.AttrRes;
@@ -45,8 +46,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.exoplayer2.PlaybackException;
-import com.google.android.exoplayer2.PlaybackParameters;
+import androidx.media3.common.PlaybackException;
+import androidx.media3.common.PlaybackParameters;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.tabs.TabLayout;
@@ -103,7 +104,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import icepick.State;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
@@ -156,6 +156,10 @@ public final class VideoDetailFragment
     private static final String DESCRIPTION_TAB_TAG = "DESCRIPTION TAB";
     private static final String SPONSOR_BLOCK_TAB_TAG = "SPONSOR_BLOCK TAB";
     private static final String EMPTY_TAB_TAG = "EMPTY TAB";
+    private static final String VIDEO_TAB_COMMENTS = "comments";
+    private static final String VIDEO_TAB_RELATED = "related";
+    private static final String VIDEO_TAB_DESCRIPTION = "description";
+    private static final String VIDEO_TAB_SPONSORBLOCK = "sponsorblock";
 
     private static final String PICASSO_VIDEO_DETAILS_TAG = "PICASSO_VIDEO_DETAILS_TAG";
 
@@ -173,41 +177,38 @@ public final class VideoDetailFragment
     final List<Integer> tabContentDescriptions = new ArrayList<>();
     private boolean tabSettingsChanged = false;
     private int lastAppBarVerticalOffset = Integer.MAX_VALUE;
+    private boolean stickyPlayerEnabled;
     private final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener =
             this::onSharedPreferencesChanged;
 
     private void onSharedPreferencesChanged(final SharedPreferences sharedPreferences,
                                             final String key) {
-        if (getString(R.string.show_comments_key).equals(key)) {
-            showComments = sharedPreferences.getBoolean(key, true);
-            tabSettingsChanged = true;
-        } else if (getString(R.string.show_next_video_key).equals(key)) {
-            showRelatedItems = sharedPreferences.getBoolean(key, true);
-            tabSettingsChanged = true;
-        } else if (getString(R.string.show_description_key).equals(key)) {
-            showDescription = sharedPreferences.getBoolean(key, true);
+        if (getString(R.string.video_tabs_key).equals(key)) {
+            final Set<String> videoTabs = getVideoTabs(sharedPreferences);
+            showComments = videoTabs.contains(VIDEO_TAB_COMMENTS);
+            showRelatedItems = videoTabs.contains(VIDEO_TAB_RELATED);
+            showDescription = videoTabs.contains(VIDEO_TAB_DESCRIPTION);
+            showSponsorBlock = videoTabs.contains(VIDEO_TAB_SPONSORBLOCK)
+                    && sharedPreferences.getBoolean(getString(R.string.sponsor_block_enable_key), true);
             tabSettingsChanged = true;
         } else if (getString(R.string.sponsor_block_enable_key).equals(key)) {
-            showSponsorBlock = sharedPreferences.getBoolean(key, false);
+            showSponsorBlock = getVideoTabs(sharedPreferences).contains(VIDEO_TAB_SPONSORBLOCK)
+                    && sharedPreferences.getBoolean(key, true);
             tabSettingsChanged = true;
+        } else if (getString(R.string.pin_video_to_top_key).equals(key)) {
+            updateStickyPlayerMode();
         }
     }
 
-    @State
     protected int serviceId = Constants.NO_SERVICE_ID;
-    @State
     @NonNull
     protected String title = "";
-    @State
     @Nullable
     protected String url = null;
     @Nullable
     protected PlayQueue playQueue = null;
-    @State
     int bottomSheetState = BottomSheetBehavior.STATE_EXPANDED;
-    @State
     protected boolean autoPlayEnabled = true;
-    @State
     SponsorBlockMode currentSponsorBlockMode = null;
 
     @Nullable
@@ -317,10 +318,12 @@ public final class VideoDetailFragment
         super.onCreate(savedInstanceState);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        showComments = prefs.getBoolean(getString(R.string.show_comments_key), true);
-        showRelatedItems = prefs.getBoolean(getString(R.string.show_next_video_key), true);
-        showDescription = prefs.getBoolean(getString(R.string.show_description_key), true);
-        showSponsorBlock = prefs.getBoolean(getString(R.string.sponsor_block_enable_key), false);
+        final Set<String> videoTabs = getVideoTabs(prefs);
+        showComments = videoTabs.contains(VIDEO_TAB_COMMENTS);
+        showRelatedItems = videoTabs.contains(VIDEO_TAB_RELATED);
+        showDescription = videoTabs.contains(VIDEO_TAB_DESCRIPTION);
+        showSponsorBlock = videoTabs.contains(VIDEO_TAB_SPONSORBLOCK)
+                && prefs.getBoolean(getString(R.string.sponsor_block_enable_key), true);
         selectedTabTag = prefs.getString(
                 getString(R.string.stream_info_selected_tab_key), COMMENTS_TAB_TAG);
         prefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
@@ -345,6 +348,29 @@ public final class VideoDetailFragment
                              final Bundle savedInstanceState) {
         binding = FragmentVideoDetailBinding.inflate(inflater, container, false);
         return binding.getRoot();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("serviceId", serviceId);
+        outState.putString("title", title);
+        outState.putString("url", url);
+        outState.putInt("bottomSheetState", bottomSheetState);
+        outState.putBoolean("autoPlayEnabled", autoPlayEnabled);
+        outState.putString("currentSponsorBlockMode", currentSponsorBlockMode != null ? currentSponsorBlockMode.name() : null);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        serviceId = savedInstanceState.getInt("serviceId", Constants.NO_SERVICE_ID);
+        title = savedInstanceState.getString("title", "");
+        url = savedInstanceState.getString("url");
+        bottomSheetState = savedInstanceState.getInt("bottomSheetState", BottomSheetBehavior.STATE_EXPANDED);
+        autoPlayEnabled = savedInstanceState.getBoolean("autoPlayEnabled", true);
+        String modeStr = savedInstanceState.getString("currentSponsorBlockMode");
+        currentSponsorBlockMode = modeStr != null ? SponsorBlockMode.valueOf(modeStr) : null;
     }
 
     @Override
@@ -376,6 +402,8 @@ public final class VideoDetailFragment
             }
             updateTabs(currentInfo);
         }
+
+        updateStickyPlayerMode();
 
         // Check if it was loading when the fragment was stopped/paused
         if (wasLoading.getAndSet(false) && !wasCleared()) {
@@ -432,6 +460,7 @@ public final class VideoDetailFragment
 
     @Override
     public void onDestroyView() {
+        moveThumbnailToContainer(binding.detailThumbnailContainer);
         super.onDestroyView();
         binding = null;
     }
@@ -468,15 +497,20 @@ public final class VideoDetailFragment
         if(key == null){
             return ;
         }
-        if (key.equals(getString(R.string.show_comments_key))) {
-            showComments = sharedPreferences.getBoolean(key, true);
+        if (key.equals(getString(R.string.video_tabs_key))) {
+            final Set<String> videoTabs = getVideoTabs(sharedPreferences);
+            showComments = videoTabs.contains(VIDEO_TAB_COMMENTS);
+            showRelatedItems = videoTabs.contains(VIDEO_TAB_RELATED);
+            showDescription = videoTabs.contains(VIDEO_TAB_DESCRIPTION);
+            showSponsorBlock = videoTabs.contains(VIDEO_TAB_SPONSORBLOCK)
+                    && sharedPreferences.getBoolean(getString(R.string.sponsor_block_enable_key), true);
             tabSettingsChanged = true;
-        } else if (key.equals(getString(R.string.show_next_video_key))) {
-            showRelatedItems = sharedPreferences.getBoolean(key, true);
+        } else if (key.equals(getString(R.string.sponsor_block_enable_key))) {
+            showSponsorBlock = getVideoTabs(sharedPreferences).contains(VIDEO_TAB_SPONSORBLOCK)
+                    && sharedPreferences.getBoolean(key, true);
             tabSettingsChanged = true;
-        } else if (key.equals(getString(R.string.show_description_key))) {
-            showDescription = sharedPreferences.getBoolean(key, true);
-            tabSettingsChanged = true;
+        } else if (key.equals(getString(R.string.pin_video_to_top_key))) {
+            updateStickyPlayerMode();
         }
     }
 
@@ -486,117 +520,100 @@ public final class VideoDetailFragment
 
     @Override
     public void onClick(final View v) {
-        switch (v.getId()) {
-            case R.id.detail_controls_background:
-                openBackgroundPlayer(false);
-                break;
-            case R.id.detail_controls_popup:
-                openPopupPlayer(false);
-                break;
-            case R.id.detail_controls_playlist_append:
-                if (getFM() != null && currentInfo != null) {
-                    disposables.add(
-                            PlaylistDialog.createCorrespondingDialog(
-                                    getContext(),
-                                    Collections.singletonList(new StreamEntity(currentInfo)),
-                                    dialog -> dialog.show(getFM(), TAG)
-                            )
-                    );
-                }
-                break;
-            case R.id.detail_controls_download:
-                if (PermissionHelper.checkStoragePermissions(activity,
-                        PermissionHelper.DOWNLOAD_DIALOG_REQUEST_CODE)) {
-                    this.openDownloadDialog();
-                }
-                break;
-            case R.id.detail_controls_share:
-                if (currentInfo != null) {
-                    ShareUtils.shareText(requireContext(), currentInfo.getName(),
-                            currentInfo.getUrl(), currentInfo.getThumbnailUrl());
-                }
-                break;
-            case R.id.detail_controls_open_in_browser:
-                if (currentInfo != null) {
-                    ShareUtils.openUrlInBrowser(requireContext(), currentInfo.getUrl());
-                }
-                break;
-            case R.id.detail_controls_start_sleep_timer:
-                if (currentInfo != null) {
-                    Intent serviceIntent = new Intent(requireContext(), SleepTimerService.class);
-                    serviceIntent.setAction(SleepTimerService.ACTION_START_TIMER);
-                    // get time from shared preferences
-                    int time = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(activity).getString(
-                            getString(R.string.sleep_timer_length_key), String.valueOf(15)
-                    ));
-                    serviceIntent.putExtra("timeInMillis", time * 60000); // 60 seconds
-                    activity.startService(serviceIntent);
-                }
-                break;
-            case R.id.detail_controls_play_with_kodi:
-                if (currentInfo != null) {
-                    try {
-                        NavigationHelper.playWithKore(
-                                requireContext(), Uri.parse(currentInfo.getUrl()));
-                    } catch (final Exception e) {
-                        if (DEBUG) {
-                            Log.i(TAG, "Failed to start kore", e);
-                        }
-                        KoreUtils.showInstallKoreDialog(requireContext());
-                    }
-                }
-                break;
-            case R.id.detail_uploader_root_layout:
-                if (isEmpty(currentInfo.getSubChannelUrl())) {
-                    if (!isEmpty(currentInfo.getUploaderUrl())) {
-                        openChannel(currentInfo.getUploaderUrl(), currentInfo.getUploaderName());
-                    }
-
+        final int id = v.getId();
+        if (id == R.id.detail_controls_background) {
+            openBackgroundPlayer(false);
+        } else if (id == R.id.detail_controls_popup) {
+            openPopupPlayer(false);
+        } else if (id == R.id.detail_controls_playlist_append) {
+            if (getFM() != null && currentInfo != null) {
+                disposables.add(
+                        PlaylistDialog.createCorrespondingDialog(
+                                getContext(),
+                                Collections.singletonList(new StreamEntity(currentInfo)),
+                                dialog -> dialog.show(getFM(), TAG)
+                        )
+                );
+            }
+        } else if (id == R.id.detail_controls_download) {
+            if (PermissionHelper.checkStoragePermissions(activity,
+                    PermissionHelper.DOWNLOAD_DIALOG_REQUEST_CODE)) {
+                this.openDownloadDialog();
+            }
+        } else if (id == R.id.detail_controls_share) {
+            if (currentInfo != null) {
+                ShareUtils.shareText(requireContext(), currentInfo.getName(),
+                        currentInfo.getUrl(), currentInfo.getThumbnailUrl());
+            }
+        } else if (id == R.id.detail_controls_open_in_browser) {
+            if (currentInfo != null) {
+                ShareUtils.openUrlInBrowser(requireContext(), currentInfo.getUrl());
+            }
+        } else if (id == R.id.detail_controls_start_sleep_timer) {
+            if (currentInfo != null) {
+                Intent serviceIntent = new Intent(requireContext(), SleepTimerService.class);
+                serviceIntent.setAction(SleepTimerService.ACTION_START_TIMER);
+                // get time from shared preferences
+                int time = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(activity).getString(
+                        getString(R.string.sleep_timer_length_key), String.valueOf(15)
+                ));
+                serviceIntent.putExtra("timeInMillis", time * 60000); // 60 seconds
+                activity.startService(serviceIntent);
+            }
+        } else if (id == R.id.detail_controls_play_with_kodi) {
+            if (currentInfo != null) {
+                try {
+                    NavigationHelper.playWithKore(
+                            requireContext(), Uri.parse(currentInfo.getUrl()));
+                } catch (final Exception e) {
                     if (DEBUG) {
-                        Log.i(TAG, "Can't open sub-channel because we got no channel URL");
+                        Log.i(TAG, "Failed to start kore", e);
                     }
-                } else {
-                    openChannel(currentInfo.getSubChannelUrl(),
-                            currentInfo.getSubChannelName());
+                    KoreUtils.showInstallKoreDialog(requireContext());
                 }
-                break;
-            case R.id.detail_thumbnail_root_layout:
-                autoPlayEnabled = true; // forcefully start playing
-                // FIXME Workaround #7427
-                if (isPlayerAvailable()) {
-                    player.setRecovery();
-                }
-                openVideoPlayerAutoFullscreen();
-                break;
-            case R.id.detail_toggle_secondary_controls_view:
-                toggleTitleAndSecondaryControls();
-                break;
-            case R.id.overlay_thumbnail:
-            case R.id.overlay_metadata_layout:
-            case R.id.overlay_buttons_layout:
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                break;
-            case R.id.overlay_play_pause_button:
-                if (playerIsNotStopped()) {
-                    player.playPause();
-                    player.hideControls(0, 0);
-                    showSystemUi();
-                } else {
-                    autoPlayEnabled = true; // forcefully start playing
-                    openVideoPlayer(false);
+            }
+        } else if (id == R.id.detail_uploader_root_layout) {
+            if (isEmpty(currentInfo.getSubChannelUrl())) {
+                if (!isEmpty(currentInfo.getUploaderUrl())) {
+                    openChannel(currentInfo.getUploaderUrl(), currentInfo.getUploaderName());
                 }
 
-                setOverlayPlayPauseImage(isPlayerAvailable() && player.isPlaying());
-                break;
-            case R.id.overlay_close_button:
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                break;
-            case R.id.overlay_play_queue_button:
-                if (isPlayerAvailable()) {
-                    Intent queueActivityIntent = NavigationHelper.getPlayQueueActivityIntent(activity);
-                    activity.startActivity(queueActivityIntent);
+                if (DEBUG) {
+                    Log.i(TAG, "Can't open sub-channel because we got no channel URL");
                 }
-                break;
+            } else {
+                openChannel(currentInfo.getSubChannelUrl(),
+                        currentInfo.getSubChannelName());
+            }
+        } else if (id == R.id.detail_thumbnail_root_layout) {
+            autoPlayEnabled = true; // forcefully start playing
+            // FIXME Workaround #7427
+            if (isPlayerAvailable()) {
+                player.setRecovery();
+            }
+            openVideoPlayerAutoFullscreen();
+        } else if (id == R.id.detail_toggle_secondary_controls_view) {
+            toggleTitleAndSecondaryControls();
+        } else if (id == R.id.overlay_thumbnail || id == R.id.overlay_metadata_layout || id == R.id.overlay_buttons_layout) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        } else if (id == R.id.overlay_play_pause_button) {
+            if (playerIsNotStopped()) {
+                player.playPause();
+                player.hideControls(0, 0);
+                showSystemUi();
+            } else {
+                autoPlayEnabled = true; // forcefully start playing
+                openVideoPlayer(false);
+            }
+
+            setOverlayPlayPauseImage(isPlayerAvailable() && player.isPlaying());
+        } else if (id == R.id.overlay_close_button) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        } else if (id == R.id.overlay_play_queue_button) {
+            if (isPlayerAvailable()) {
+                Intent queueActivityIntent = NavigationHelper.getPlayQueueActivityIntent(activity);
+                activity.startActivity(queueActivityIntent);
+            }
         }
     }
 
@@ -615,50 +632,41 @@ public final class VideoDetailFragment
             return false;
         }
 
-        switch (v.getId()) {
-            case R.id.detail_controls_background:
-                openBackgroundPlayer(true);
-                break;
-            case R.id.detail_controls_popup:
-                openPopupPlayer(true);
-                break;
-            case R.id.detail_controls_download:
-                NavigationHelper.openDownloads(activity);
-                break;
-            case R.id.overlay_thumbnail:
-            case R.id.overlay_metadata_layout:
+        final int id = v.getId();
+        if (id == R.id.detail_controls_background) {
+            openBackgroundPlayer(true);
+        } else if (id == R.id.detail_controls_popup) {
+            openPopupPlayer(true);
+        } else if (id == R.id.detail_controls_download) {
+            NavigationHelper.openDownloads(activity);
+        } else if (id == R.id.overlay_thumbnail || id == R.id.overlay_metadata_layout) {
+            openChannel(currentInfo.getUploaderUrl(), currentInfo.getUploaderName());
+        } else if (id == R.id.detail_uploader_root_layout) {
+            if (isEmpty(currentInfo.getSubChannelUrl())) {
+                Log.w(TAG,
+                        "Can't open parent channel because we got no parent channel URL");
+            } else {
                 openChannel(currentInfo.getUploaderUrl(), currentInfo.getUploaderName());
-                break;
-            case R.id.detail_uploader_root_layout:
-                if (isEmpty(currentInfo.getSubChannelUrl())) {
-                    Log.w(TAG,
-                            "Can't open parent channel because we got no parent channel URL");
-                } else {
-                    openChannel(currentInfo.getUploaderUrl(), currentInfo.getUploaderName());
-                }
-                break;
-            case R.id.detail_video_title_view:
-                ShareUtils.copyToClipboard(requireContext(),
-                        binding.detailVideoTitleView.getText().toString());
-                break;
-            case R.id.detail_toggle_secondary_controls_view:
-                hideTitleAndSecondaryControls();
-                break;
-            case R.id.detail_controls_playlist_append:
-                if (getFM() != null && currentInfo != null) {
-                    disposables.add(
-                            PlaylistDialog.createCorrespondingDialog(
-                                    getContext(),
-                                    currentInfo.getRelatedItems().stream()
-                                            .filter(x -> x instanceof StreamInfoItem)
-                                            .filter(x -> ((StreamInfoItem) x).getUploaderName() != null)
-                                            .map(x -> new StreamEntity((StreamInfoItem)x))
-                                            .collect(Collectors.toList()),
-                                    dialog -> dialog.show(getFM(), TAG)
-                            )
-                    );
-                }
-                break;
+            }
+        } else if (id == R.id.detail_video_title_view) {
+            ShareUtils.copyToClipboard(requireContext(),
+                    binding.detailVideoTitleView.getText().toString());
+        } else if (id == R.id.detail_toggle_secondary_controls_view) {
+            hideTitleAndSecondaryControls();
+        } else if (id == R.id.detail_controls_playlist_append) {
+            if (getFM() != null && currentInfo != null) {
+                disposables.add(
+                        PlaylistDialog.createCorrespondingDialog(
+                                getContext(),
+                                currentInfo.getRelatedItems().stream()
+                                        .filter(x -> x instanceof StreamInfoItem)
+                                        .filter(x -> ((StreamInfoItem) x).getUploaderName() != null)
+                                        .map(x -> new StreamEntity((StreamInfoItem)x))
+                                        .collect(Collectors.toList()),
+                                dialog -> dialog.show(getFM(), TAG)
+                        )
+                );
+            }
         }
 
         return true;
@@ -710,6 +718,7 @@ public final class VideoDetailFragment
         pageAdapter = new TabAdapter(getChildFragmentManager());
         binding.viewPager.setAdapter(pageAdapter);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
+        updateStickyPlayerMode();
 
         binding.detailThumbnailRootLayout.requestFocus();
 
@@ -897,17 +906,15 @@ public final class VideoDetailFragment
     }
 
     private boolean callCommentFragmentOnBack() {
-        final String currentPage = pageAdapter.getItemTitle(binding.viewPager.getCurrentItem());
+        final int currentItem = binding.viewPager.getCurrentItem();
+        final String currentPage = pageAdapter.getItemTitle(currentItem);
         if (COMMENTS_TAB_TAG.equals(currentPage)) {
-            final FragmentManager fm = getFM();
-            final Fragment fragment = fm
-                    .findFragmentById(R.id.fragment_container_view);
-            if (fragment instanceof BackPressable) {
-                if (fm.getBackStackEntryCount() > 1) {
-                    fm.popBackStack();
-                    return true;
-                }
-                return ((BackPressable) fragment).onBackPressed();
+            // Delegate to the comments tab itself: it owns the replies in its child FragmentManager
+            // and pops them on back. (Previously this popped the parent FM directly, which could
+            // recreate a comment fragment in a destroyed container -> crash when going to pop-up.)
+            final Fragment tab = pageAdapter.getItem(currentItem);
+            if (tab instanceof BackPressable) {
+                return ((BackPressable) tab).onBackPressed();
             }
         }
         return false;
@@ -1103,7 +1110,7 @@ public final class VideoDetailFragment
                 Log.e(TAG, "initTabs() error adding description tab", e);
             }
         }
-        if (shouldShowSponsorBlock() && currentInfo != null && currentInfo.getStreamType() != StreamType.LIVE_STREAM) {
+        if (shouldShowSponsorBlock()) {
             // temp empty fragment. will be updated in handleResult
             pageAdapter.addFragment(EmptyFragment.newInstance(false), SPONSOR_BLOCK_TAB_TAG);
             tabIcons.add(R.drawable.ic_sponsor_block_enable);
@@ -1190,8 +1197,11 @@ public final class VideoDetailFragment
         }
 
         if (shouldShowSponsorBlock()) {
-            if (info.getServiceId() == ServiceList.BiliBili.getServiceId() && !isFirstP(info.getId())) {
-                // exclude for BiliBili multi-part videos since it needs to deal with cid
+            final boolean isLiveStream = info.getStreamType() == StreamType.LIVE_STREAM;
+            if (isLiveStream
+                    || (info.getServiceId() == ServiceList.BiliBili.getServiceId()
+                            && !isFirstP(info.getId()))) {
+                // exclude for live streams or BiliBili multi-part videos
                 int index = pageAdapter.getItemPositionByTitle(SPONSOR_BLOCK_TAB_TAG);
                 if(index != -1){
                     pageAdapter.removeItem(index);
@@ -1238,6 +1248,16 @@ public final class VideoDetailFragment
         } catch (final ExtractionException e) {
             return false;
         }
+    }
+
+    private Set<String> getVideoTabs(final SharedPreferences sharedPreferences) {
+        return sharedPreferences.getStringSet(getString(R.string.video_tabs_key),
+                new HashSet<>(Arrays.asList(
+                        VIDEO_TAB_COMMENTS,
+                        VIDEO_TAB_RELATED,
+                        VIDEO_TAB_SPONSORBLOCK,
+                        VIDEO_TAB_DESCRIPTION
+                )));
     }
 
     public void updateTabLayoutVisibility() {
@@ -1301,9 +1321,7 @@ public final class VideoDetailFragment
 
     private void openBackgroundPlayer(final boolean append) {
 
-        final boolean useExternalAudioPlayer = PreferenceManager
-                .getDefaultSharedPreferences(activity)
-                .getBoolean(activity.getString(R.string.use_external_audio_player_key), false);
+        final boolean useExternalAudioPlayer = false;
 
         toggleFullscreenIfInFullscreenMode();
 
@@ -1577,10 +1595,73 @@ public final class VideoDetailFragment
                 new FrameLayout.LayoutParams(
                         RelativeLayout.LayoutParams.MATCH_PARENT, newHeight));
         binding.detailThumbnailImageView.setMinimumHeight(newHeight);
+        updateStickyPlayerLayout(newHeight);
         if (isPlayerAvailable()) {
             final int maxHeight = (int) (metrics.heightPixels * MAX_PLAYER_HEIGHT);
             player.getSurfaceView()
                     .setHeights(newHeight, player.isFullscreen() ? newHeight : maxHeight);
+        }
+    }
+
+    private void updateStickyPlayerMode() {
+        if (binding == null || activity == null) {
+            return;
+        }
+
+        final SharedPreferences preferences = PreferenceManager
+                .getDefaultSharedPreferences(requireContext());
+        final boolean enableStickyPlayer = preferences.getBoolean(
+                getString(R.string.pin_video_to_top_key), true)
+                && !DeviceUtils.isLandscape(requireContext())
+                && bottomSheetState == BottomSheetBehavior.STATE_EXPANDED;
+        if (stickyPlayerEnabled == enableStickyPlayer) {
+            updateStickyPlayerLayout(binding.detailThumbnailRootLayout.getHeight());
+            return;
+        }
+
+        stickyPlayerEnabled = enableStickyPlayer;
+        moveThumbnailToContainer(enableStickyPlayer
+                ? binding.stickyPlayerContainer
+                : binding.detailThumbnailContainer);
+        binding.stickyPlayerContainer.setVisibility(enableStickyPlayer ? View.VISIBLE : View.GONE);
+        updateStickyPlayerLayout(binding.detailThumbnailRootLayout.getHeight());
+    }
+
+    private void moveThumbnailToContainer(@NonNull final ViewGroup targetParent) {
+        final ViewGroup currentParent = (ViewGroup) binding.detailThumbnailRootLayout.getParent();
+        if (currentParent == targetParent) {
+            return;
+        }
+        if (currentParent != null) {
+            currentParent.removeView(binding.detailThumbnailRootLayout);
+        }
+        targetParent.addView(binding.detailThumbnailRootLayout);
+    }
+
+    private void updateStickyPlayerLayout(final int playerHeight) {
+        if (binding == null) {
+            return;
+        }
+
+        final int height = Math.max(playerHeight, binding.detailThumbnailImageView.getMinimumHeight());
+        final ViewGroup.LayoutParams stickyParams = binding.stickyPlayerContainer.getLayoutParams();
+        if (stickyParams != null) {
+            stickyParams.height = stickyPlayerEnabled ? height : 0;
+            binding.stickyPlayerContainer.setLayoutParams(stickyParams);
+        }
+
+        final ViewGroup.LayoutParams mainContentParams = binding.detailMainContent.getLayoutParams();
+        if (mainContentParams instanceof FrameLayout.LayoutParams) {
+            final FrameLayout.LayoutParams frameLayoutParams = (FrameLayout.LayoutParams) mainContentParams;
+            final int topMargin = stickyPlayerEnabled ? height : 0;
+            if (frameLayoutParams.topMargin != topMargin) {
+                frameLayoutParams.topMargin = topMargin;
+                binding.detailMainContent.setLayoutParams(frameLayoutParams);
+            }
+        } else if (mainContentParams instanceof LinearLayout.LayoutParams) {
+            final LinearLayout.LayoutParams linearLayoutParams = (LinearLayout.LayoutParams) mainContentParams;
+            linearLayoutParams.topMargin = 0;
+            binding.detailMainContent.setLayoutParams(linearLayoutParams);
         }
     }
 
@@ -1668,7 +1749,11 @@ public final class VideoDetailFragment
         intentFilter.addAction(ACTION_HIDE_MAIN_PLAYER);
         intentFilter.addAction(ACTION_PLAYER_STARTED);
         intentFilter.addAction(ACTION_ENTER_FULLSCREEN);
-        activity.registerReceiver(broadcastReceiver, intentFilter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            activity.registerReceiver(broadcastReceiver, intentFilter, Context.RECEIVER_EXPORTED);
+        } else {
+            activity.registerReceiver(broadcastReceiver, intentFilter);
+        }
     }
 
 
@@ -2087,7 +2172,7 @@ public final class VideoDetailFragment
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         final boolean isSponsorBlockEnabled =
-                prefs.getBoolean(getString(R.string.sponsor_block_enable_key), false);
+                prefs.getBoolean(getString(R.string.sponsor_block_enable_key), true);
 
         if (player != null && isSponsorBlockEnabled) {
             if (currentSponsorBlockMode == null) {
@@ -2524,6 +2609,7 @@ public final class VideoDetailFragment
                 try {
                     switch (newState) {
                         case BottomSheetBehavior.STATE_HIDDEN:
+                            updateStickyPlayerMode();
                             moveFocusToMainFragment(true);
                             manageSpaceAtTheBottom(true);
 
@@ -2531,6 +2617,7 @@ public final class VideoDetailFragment
                             cleanUp();
                             break;
                         case BottomSheetBehavior.STATE_EXPANDED:
+                            updateStickyPlayerMode();
                             moveFocusToMainFragment(false);
                             manageSpaceAtTheBottom(false);
 
@@ -2556,6 +2643,7 @@ public final class VideoDetailFragment
                             setOverlayLook(binding.appBarLayout, behavior, 1);
                             break;
                         case BottomSheetBehavior.STATE_COLLAPSED:
+                            updateStickyPlayerMode();
                             moveFocusToMainFragment(true);
                             manageSpaceAtTheBottom(false);
 
@@ -2571,6 +2659,7 @@ public final class VideoDetailFragment
                             break;
                         case BottomSheetBehavior.STATE_DRAGGING:
                         case BottomSheetBehavior.STATE_SETTLING:
+                            updateStickyPlayerMode();
                             if (isPlayerAvailable() && player.isFullscreen()) {
                                 showSystemUi();
                             }

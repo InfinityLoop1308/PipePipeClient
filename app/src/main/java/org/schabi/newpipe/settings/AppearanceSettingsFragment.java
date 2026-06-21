@@ -2,6 +2,7 @@ package org.schabi.newpipe.settings;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.Toast;
@@ -18,7 +19,9 @@ public class AppearanceSettingsFragment extends BasePreferenceFragment {
     @Override
     public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
         addPreferencesFromResourceRegistry();
-        ThemeHelper.migrateLegacyListViewMode(requireContext(), defaultPreferences);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            removePreference(getString(R.string.player_notification_screen_key));
+        }
 
         final String themeKey = getString(R.string.theme_key);
         // the key of the active theme when settings were opened (or recreated after theme change)

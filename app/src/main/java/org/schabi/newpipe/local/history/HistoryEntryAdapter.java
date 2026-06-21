@@ -32,7 +32,7 @@ public abstract class HistoryEntryAdapter<E, VH extends RecyclerView.ViewHolder>
         mContext = context;
         mEntries = new ArrayList<>();
         mDateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM,
-                Localization.getPreferredLocale(context));
+                Localization.getAppLocale(context));
     }
 
     public void setEntries(@NonNull final Collection<E> historyEntries) {

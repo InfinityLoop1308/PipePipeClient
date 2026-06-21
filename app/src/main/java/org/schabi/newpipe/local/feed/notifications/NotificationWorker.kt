@@ -1,6 +1,7 @@
 package org.schabi.newpipe.local.feed.notifications
 
 import android.content.Context
+import android.content.pm.ServiceInfo
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.work.Constraints
@@ -83,7 +84,8 @@ class NotificationWorker(
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setContentTitle(applicationContext.getString(R.string.feed_notification_loading))
             .build()
-        setForegroundAsync(ForegroundInfo(FeedLoadService.NOTIFICATION_ID, notification))
+        setForegroundAsync(ForegroundInfo(FeedLoadService.NOTIFICATION_ID, notification,
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC))
     }
 
     companion object {

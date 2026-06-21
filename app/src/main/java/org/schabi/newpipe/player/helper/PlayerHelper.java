@@ -1,8 +1,8 @@
 package org.schabi.newpipe.player.helper;
 
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_ONE;
+import static androidx.media3.common.Player.REPEAT_MODE_ALL;
+import static androidx.media3.common.Player.REPEAT_MODE_OFF;
+import static androidx.media3.common.Player.REPEAT_MODE_ONE;
 import static org.schabi.newpipe.extractor.stream.AudioStream.UNKNOWN_BITRATE;
 import static org.schabi.newpipe.extractor.stream.VideoStream.RESOLUTION_UNKNOWN;
 import static org.schabi.newpipe.player.Player.IDLE_WINDOW_FLAGS;
@@ -33,16 +33,16 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.exoplayer2.PlaybackParameters;
-import com.google.android.exoplayer2.Player.RepeatMode;
-import com.google.android.exoplayer2.SeekParameters;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.ExoTrackSelection;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout.ResizeMode;
-import com.google.android.exoplayer2.ui.CaptionStyleCompat;
-import com.google.android.exoplayer2.util.MimeTypes;
+import androidx.media3.common.PlaybackParameters;
+import androidx.media3.common.Player.RepeatMode;
+import androidx.media3.exoplayer.SeekParameters;
+import androidx.media3.exoplayer.source.ProgressiveMediaSource;
+import androidx.media3.exoplayer.trackselection.AdaptiveTrackSelection;
+import androidx.media3.exoplayer.trackselection.ExoTrackSelection;
+import androidx.media3.ui.AspectRatioFrameLayout;
+import androidx.media3.ui.AspectRatioFrameLayout.ResizeMode;
+import androidx.media3.ui.CaptionStyleCompat;
+import androidx.media3.common.MimeTypes;
 
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.InfoItem;
@@ -552,34 +552,65 @@ public final class PlayerHelper {
         }
     }
 
+    /**
+     * Aspect ratios selectable in the player. Indices in both arrays match.
+     */
+    public static final String[] ASPECT_RATIO_LABELS = {"1:1", "4:3", "16:9", "18:9", "21:9"};
+    public static final float[] ASPECT_RATIO_VALUES = {
+            1.0f, 4.0f / 3.0f, 16.0f / 9.0f, 18.0f / 9.0f, 21.0f / 9.0f};
+
+    public static String aspectRatioNameOf(final float aspectRatio) {
+        for (int i = 0; i < ASPECT_RATIO_VALUES.length; i++) {
+            if (Math.abs(ASPECT_RATIO_VALUES[i] - aspectRatio) < 0.001f) {
+                return ASPECT_RATIO_LABELS[i];
+            }
+        }
+        return String.format(Locale.US, "%.2f", aspectRatio);
+    }
+
+    /**
+     * Parses a user-entered aspect ratio like {@code "16:9"}, {@code "16/9"} or {@code "1.78"}.
+     *
+     * @return the ratio as a float, or {@code 0} if the input could not be parsed
+     */
+    public static float parseAspectRatio(@Nullable final String input) {
+        if (input == null) {
+            return 0.0f;
+        }
+        final String trimmed = input.trim();
+        try {
+            final String[] parts = trimmed.split("[:/]");
+            if (parts.length == 2) {
+                final float width = Float.parseFloat(parts[0].trim());
+                final float height = Float.parseFloat(parts[1].trim());
+                if (width > 0 && height > 0) {
+                    return width / height;
+                }
+            } else if (parts.length == 1) {
+                final float ratio = Float.parseFloat(trimmed.replace(',', '.'));
+                if (ratio > 0) {
+                    return ratio;
+                }
+            }
+        } catch (final NumberFormatException ignored) {
+            // fall through to invalid
+        }
+        return 0.0f;
+    }
+
     @ResizeMode
     public static int retrieveResizeModeFromPrefs(final Player player) {
         return player.getPrefs().getInt(player.getContext().getString(R.string.last_resize_mode),
                 AspectRatioFrameLayout.RESIZE_MODE_FIT);
     }
 
-    @SuppressLint("SwitchIntDef") // only fit, fill and zoom are supported by NewPipe
-    @ResizeMode
-    public static int nextResizeModeAndSaveToPrefs(final Player player,
-                                                   @ResizeMode final int resizeMode) {
-        final int newResizeMode;
-        switch (resizeMode) {
-            case AspectRatioFrameLayout.RESIZE_MODE_FIT:
-                newResizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL;
-                break;
-            case AspectRatioFrameLayout.RESIZE_MODE_FILL:
-                newResizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM;
-                break;
-            case AspectRatioFrameLayout.RESIZE_MODE_ZOOM:
-            default:
-                newResizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT;
-                break;
-        }
-
-        // save the new resize mode so it can be restored in a future session
+    /**
+     * Persists the given resize mode so it can be restored in a future session.
+     */
+    public static void saveResizeMode(final Player player,
+                                      @ResizeMode final int resizeMode) {
         player.getPrefs().edit().putInt(
-                player.getContext().getString(R.string.last_resize_mode), newResizeMode).apply();
-        return newResizeMode;
+                player.getContext().getString(R.string.last_resize_mode), resizeMode).apply();
     }
 
     public static PlaybackParameters retrievePlaybackParametersFromPrefs(final Player player) {
@@ -609,8 +640,7 @@ public final class PlayerHelper {
     @SuppressLint("RtlHardcoded")
     public static WindowManager.LayoutParams retrievePopupLayoutParamsFromPrefs(
             final Player player) {
-        final boolean popupRememberSizeAndPos = player.getPrefs().getBoolean(
-                player.getContext().getString(R.string.popup_remember_size_pos_key), true);
+        final boolean popupRememberSizeAndPos = true;
         final float defaultSize =
                 player.getContext().getResources().getDimension(R.dimen.popup_default_width);
         final float popupWidth = popupRememberSizeAndPos

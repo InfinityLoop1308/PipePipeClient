@@ -15,9 +15,6 @@
     <string name="settings">Поставки</string>
     <string name="did_you_mean">Мислеше на: %1$s\?</string>
     <string name="share_dialog_title">Сподели со</string>
-    <string name="use_external_video_player_title">Користи надворешен видео плеер</string>
-    <string name="use_external_video_player_summary">Се губи звукот на НЕКОИ резолуции</string>
-    <string name="use_external_audio_player_title">Користи надворешен аудио плеер</string>
     <string name="subscribe_button_title">Зачлени се</string>
     <string name="subscribed_button_title">Зачленет</string>
     <string name="channel_unsubscribed">Откажано е членството на каналот</string>
@@ -38,21 +35,13 @@
     <string name="download_path_audio_dialog_title">Одберете фолдер за зачувување на аудио</string>
     <string name="default_resolution_title">Стандардна резолуција</string>
     <string name="default_popup_resolution_title">Стандардна резолуција на малиот прозор</string>
-    <string name="show_higher_resolutions_title">Прикажи повисоки резолуции</string>
-    <string name="show_higher_resolutions_summary">Само одредени уреди поддржуваат 2К/4К видеа</string>
     <string name="play_with_kodi_title">Пушти на Kodi</string>
     <string name="kore_not_found">Апликацијата Kore не е најдена. Сакате да ја инсталирате\?</string>
-    <string name="show_play_with_kodi_title">Прикажи ја „Пушти со Kodi“ опцијата</string>
-    <string name="show_play_with_kodi_summary">Прикажи опција да се пушти видео со Kodi media center</string>
     <string name="play_audio">Звук</string>
-    <string name="default_audio_format_title">Стандарден аудио формат</string>
-    <string name="default_video_format_title">Стандарден видео формат</string>
     <string name="theme_title">Тема</string>
     <string name="light_theme_title">Светла</string>
     <string name="dark_theme_title">Темна</string>
     <string name="black_theme_title">Црна</string>
-    <string name="popup_remember_size_pos_title">Запамти го местото и големината на малиот прозорец</string>
-    <string name="popup_remember_size_pos_summary">Запамти ја последната големина и место на прозорчето</string>
     <string name="use_inexact_seek_title">Брзо, непрецизно премотување</string>
     <string name="use_inexact_seek_summary">Со непрецизното премотување се пребарува побрзо, но со намалена презицност.</string>
     <string name="download_thumbnail_title">Прочитај мали видео-сликички</string>
@@ -72,22 +61,15 @@
     <string name="resume_on_audio_focus_gain_title">Продолжете со репродукција</string>
     <string name="resume_on_audio_focus_gain_summary">Продолжете со репродукција на видеото по прекини (пр. телефонски повик)</string>
     <string name="download_dialog_title">Преземи</string>
-    <string name="show_next_and_similar_title">Прикажи „следни“ и „слични“ видеа</string>
-    <string name="show_hold_to_append_title">Прикажи „задржи за прикачување“</string>
-    <string name="show_hold_to_append_summary">Покажи совет при притискање на позадината или кога скок копчето е притиснато на видео \"Детали:\"</string>
     <string name="unsupported_url">Неподдржана URL врска</string>
     <string name="default_content_country_title">Земја на прикажани видеа</string>
-    <string name="content_language_title">Стандарден јазик на содржина</string>
     <string name="settings_category_player_title">Плеер</string>
-    <string name="settings_category_player_behavior_title">Однесување</string>
-    <string name="settings_category_video_audio_title">Видео и Звук</string>
     <string name="settings_category_history_title">Историја</string>
     <string name="settings_category_appearance_title">Изглед</string>
     <string name="settings_category_debug_title">Дебагирање</string>
     <string name="background_player_playing_toast">Пуштено во позадина</string>
     <string name="popup_playing_toast">Пуштено во прозорче</string>
     <string name="content">Содржина</string>
-    <string name="show_age_restricted_content_title">Покажи видеа со граница на возрастта</string>
     <string name="duration_live">во живо</string>
     <string name="downloads">Превземања</string>
     <string name="downloads_title">Превземања</string>
@@ -189,22 +171,18 @@
     <string name="recaptcha_request_toast">Потребен е reCAPTCHA предизвик</string>
     <string name="settings_category_downloads_title">Превземања</string>
     <string name="settings_file_charset_title">Дозволени знаци во имињата на датотеките</string>
-    <string name="settings_file_replacement_character_summary">Невалидните знаци се менуваат со оваа вредност</string>
-    <string name="settings_file_replacement_character_title">Знак за замена</string>
     <string name="charset_letters_and_digits">Букви и броеви</string>
     <string name="charset_most_special_characters">Повеќето посебни знаци</string>
     <string name="title_activity_about">За NewPipe</string>
     <string name="title_licenses">Лиценци од трети страни</string>
     <string name="copyright" formatted="true">© %1$s од %2$s под %3$s</string>
     <string name="tab_about">За апликацијата</string>
-    <string name="tab_licenses">Лиценци</string>
     <string name="app_description">Слободна, лесна YouTube апликација за Андроид.</string>
     <string name="contribution_title">Допринеси</string>
     <string name="contribution_encouragement">Ако имаш идеи за; превод, дизајн, чистење или големи промени во кодот - помошта е секогаш добредојдена. Што повеќе се работи, подобра е апликацијата!</string>
     <string name="view_on_github">Види на GitHub</string>
     <string name="donation_title">Донирај</string>
     <string name="donation_encouragement">NewPipe се гради од волонтери кои го вложуваат слободното време за важето задоволство. Време е да им возвратиме за тие да можат да ја подобрат апликацијата, уживајќи во топло кафе.</string>
-    <string name="give_back">Возврати</string>
     <string name="website_title">Вебсајт</string>
     <string name="website_encouragement">За повеќе информации и новости за NewPipe посети ја вебстраната.</string>
     <string name="app_license_title">Лиценцата на NewPipe</string>
@@ -310,11 +288,8 @@
     <string name="privacy_policy_title">NewPipe - политика за приватност</string>
     <string name="privacy_policy_encouragement">Проектот NewPipe сериозно ја сфаќа вашата приватност. Затоа апликацијата не собира ваши податоци без ваша дозвола.
 \nПолитиката за приватност на NewPipe детално објаснува кои податоци се зачувани и пратени кога праќате извештај за грешка во апликацијата.</string>
-    <string name="read_privacy_policy">Прочитај ја политиката за приватност</string>
     <string name="start_accept_privacy_policy">За да постапуваме соодветно со регулацијата за заштита на податоци (GDPR) на ЕУ, вараме да обрнете внимание на политиката за приватност на NewPipe.
 \nВе молиме прочитајте ја внимателно. Мора да ја прифатите за да ни го испратите извештајот за грешка во апликацијата.</string>
-    <string name="accept">Прифати</string>
-    <string name="decline">Отфрли</string>
     <string name="limit_data_usage_none_description">Неограничено</string>
     <string name="limit_mobile_data_usage_title">Ограничи резолуција при користење мобилен интернет</string>
     <string name="channels">Канали</string>
@@ -376,7 +351,6 @@
     <string name="pause_downloads_on_mobile_desc">Корисно при префрлување на мобилни податоци, иако некои преземања не можат да бидат прекинати</string>
     <string name="events">Настани</string>
     <string name="conferences">Конференции</string>
-    <string name="show_comments_title">Прикажи коментари</string>
     <string name="autoplay_title">Автоматско пуштање</string>
     <string name="no_comments">Нема коментари</string>
     <string name="error_unable_to_load_comments">Не може да се вчитаат коментарите</string>
@@ -399,9 +373,6 @@
     <string name="downloads_storage_use_saf_title">Користи SAF</string>
     <string name="downloads_storage_use_saf_summary">Рамката за пристап до складирање овозможува преземања во надворешна SD-картичка.
 \nЗабелешка: некои уреди не се поддржани.</string>
-    <string name="show_comments_summary">Исклучете за да ги скриете коментарите</string>
-    <string name="enable_playback_state_lists_title">Позиции во листите</string>
-    <string name="enable_playback_state_lists_summary">Покажете ги индикаторите за позиција за репродукција во листите</string>
     <string name="seek_duration_title">Брзо премотување напред</string>
     <string name="peertube_instance_url_title">Примери на PeerTube</string>
     <string name="peertube_instance_url_summary">Одберете ги вашите омилени PeerTube пример</string>

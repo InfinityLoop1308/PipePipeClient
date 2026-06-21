@@ -11,12 +11,17 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -31,9 +36,17 @@ import org.schabi.newpipe.databinding.PlaylistControlBinding;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
+import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.ListExtractor;
+import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.channel.ChannelInfo;
+import org.schabi.newpipe.extractor.channel.ChannelTabInfo;
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException;
+import org.schabi.newpipe.extractor.linkhandler.ChannelTabs;
+import org.schabi.newpipe.extractor.linkhandler.ListLinkHandler;
+import org.schabi.newpipe.extractor.search.filter.Filter;
+import org.schabi.newpipe.extractor.search.filter.FilterGroup;
+import org.schabi.newpipe.extractor.search.filter.FilterItem;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.fragments.list.BaseListInfoFragment;
 import org.schabi.newpipe.ktx.AnimationType;
@@ -47,8 +60,11 @@ import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.PicassoHelper;
+import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.ThemeHelper;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -64,8 +80,6 @@ import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.functions.Function;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-import android.widget.ImageButton;
-
 public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, ChannelInfo>
         implements View.OnClickListener {
 
@@ -74,6 +88,9 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
 
     private final CompositeDisposable disposables = new CompositeDisposable();
     private Disposable subscribeButtonMonitor;
+    private MenuItem menuSortButton;
+
+    protected int selectedSortFilterId = Filter.ITEM_IDENTIFIER_UNKNOWN;
 
     private boolean channelContentNotSupported = false;
 
@@ -109,6 +126,18 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("selectedSortFilterId", selectedSortFilterId);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        selectedSortFilterId = savedInstanceState.getInt("selectedSortFilterId", Filter.ITEM_IDENTIFIER_UNKNOWN);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         if (activity != null && useAsFrontPage) {
@@ -123,7 +152,31 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(false);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull final Menu menu,
+                                    @NonNull final MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_channel_videos, menu);
+        menuSortButton = menu.findItem(R.id.menu_item_sort);
+        updateSortButton();
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(@NonNull final Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        updateSortButton();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
+        if (item.getItemId() == R.id.menu_item_sort) {
+            showSortDialog();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -378,12 +431,165 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
 
     @Override
     protected Single<ListExtractor.InfoItemsPage<StreamInfoItem>> loadMoreItemsLogic() {
+        if (selectedSortFilterId != Filter.ITEM_IDENTIFIER_UNKNOWN && currentInfo != null) {
+            return Single.fromCallable(() -> getSortedVideosTabHandler(currentInfo))
+                    .flatMap(handler -> handler == null
+                            ? ExtractorHelper.getMoreChannelItems(serviceId, url, currentNextPage)
+                            : ExtractorHelper.getMoreChannelTabItems(serviceId, handler,
+                                    currentNextPage).map(this::toStreamItemsPage));
+        }
         return ExtractorHelper.getMoreChannelItems(serviceId, url, currentNextPage);
     }
 
     @Override
     protected Single<ChannelInfo> loadResult(final boolean forceLoad) {
-        return ExtractorHelper.getChannelInfo(serviceId, url, forceLoad);
+        if (selectedSortFilterId == Filter.ITEM_IDENTIFIER_UNKNOWN) {
+            return ExtractorHelper.getChannelInfo(serviceId, url, forceLoad);
+        }
+
+        return Single.fromCallable(() -> ChannelInfo.getInfo(NewPipe.getService(serviceId), url))
+                .flatMap(channelInfo -> loadSortedChannelInfo(channelInfo, forceLoad));
+    }
+
+    private Single<ChannelInfo> loadSortedChannelInfo(final ChannelInfo channelInfo,
+                                                      final boolean forceLoad) {
+        return Single.fromCallable(() -> getSortedVideosTabHandler(channelInfo))
+                .flatMap(handler -> handler == null
+                        ? Single.just(channelInfo)
+                        : ExtractorHelper.getChannelTab(serviceId, handler, forceLoad)
+                                .map(channelTabInfo -> applyChannelTabInfo(
+                                        channelInfo, channelTabInfo)));
+    }
+
+    private ChannelInfo applyChannelTabInfo(final ChannelInfo channelInfo,
+                                            final ChannelTabInfo channelTabInfo) {
+        channelInfo.setRelatedItems(channelTabInfo.getRelatedItems().stream()
+                .filter(StreamInfoItem.class::isInstance)
+                .map(StreamInfoItem.class::cast)
+                .collect(Collectors.toList()));
+        channelInfo.setNextPage(channelTabInfo.getNextPage());
+        return channelInfo;
+    }
+
+    private ListExtractor.InfoItemsPage<StreamInfoItem> toStreamItemsPage(
+            final ListExtractor.InfoItemsPage<InfoItem> infoItemsPage) {
+        final List<StreamInfoItem> streamItems = infoItemsPage.getItems().stream()
+                .filter(StreamInfoItem.class::isInstance)
+                .map(StreamInfoItem.class::cast)
+                .collect(Collectors.toList());
+
+        return new ListExtractor.InfoItemsPage<>(streamItems,
+                infoItemsPage.getNextPage(), infoItemsPage.getErrors());
+    }
+
+    @Nullable
+    private ListLinkHandler getSortedVideosTabHandler(final ChannelInfo channelInfo)
+            throws Exception {
+        final ListLinkHandler videosTabHandler = getVideosTabHandler(channelInfo);
+        final FilterItem selectedSortFilter = getSelectedSortFilterItem();
+        if (videosTabHandler == null || selectedSortFilter == null) {
+            return null;
+        }
+
+        return NewPipe.getService(serviceId).getChannelTabLHFactory().fromQuery(
+                videosTabHandler.getId(),
+                videosTabHandler.getContentFilters(),
+                Collections.singletonList(selectedSortFilter));
+    }
+
+    @Nullable
+    private ListLinkHandler getVideosTabHandler(@Nullable final ChannelInfo channelInfo) {
+        if (channelInfo == null) {
+            return null;
+        }
+
+        for (final ListLinkHandler linkHandler : channelInfo.getTabs()) {
+            if (!linkHandler.getContentFilters().isEmpty()
+                    && ChannelTabs.VIDEOS.equals(linkHandler.getContentFilters().get(0).getName())) {
+                return linkHandler;
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private FilterItem getSelectedSortFilterItem() throws Exception {
+        for (final FilterItem sortFilterItem : getChannelTabSortFilterItems()) {
+            if (sortFilterItem.getIdentifier() == selectedSortFilterId) {
+                return sortFilterItem;
+            }
+        }
+
+        return null;
+    }
+
+    private List<FilterItem> getChannelTabSortFilterItems() {
+        try {
+            final Filter sortFilter = NewPipe.getService(serviceId)
+                    .getChannelTabLHFactory()
+                    .getAvailableSortFilter();
+            if (sortFilter == null || sortFilter.getFilterGroups() == null) {
+                return Collections.emptyList();
+            }
+
+            final List<FilterItem> sortFilterItems = new ArrayList<>();
+            for (final FilterGroup filterGroup : sortFilter.getFilterGroups()) {
+                Collections.addAll(sortFilterItems, filterGroup.filterItems);
+            }
+            return sortFilterItems;
+        } catch (final Exception e) {
+            return Collections.emptyList();
+        }
+    }
+
+    private void showSortDialog() {
+        final List<FilterItem> sortFilterItems = getChannelTabSortFilterItems();
+        if (sortFilterItems.isEmpty()) {
+            return;
+        }
+
+        final String[] sortFilterLabels = sortFilterItems.stream()
+                .map(filterItem -> ServiceHelper.getTranslatedFilterString(
+                        filterItem.getName(), requireContext()))
+                .toArray(String[]::new);
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.sort)
+                .setSingleChoiceItems(sortFilterLabels, getSelectedSortFilterIndex(sortFilterItems),
+                        (dialog, which) -> {
+                            final int selectedFilterId = getNormalizedSortFilterId(
+                                    sortFilterItems.get(which));
+                            dialog.dismiss();
+                            if (selectedFilterId == selectedSortFilterId) {
+                                return;
+                            }
+                            selectedSortFilterId = selectedFilterId;
+                            startLoading(true);
+                        })
+                .show();
+    }
+
+    private int getNormalizedSortFilterId(final FilterItem sortFilterItem) {
+        return "latest".equals(sortFilterItem.getName())
+                ? Filter.ITEM_IDENTIFIER_UNKNOWN
+                : sortFilterItem.getIdentifier();
+    }
+
+    private int getSelectedSortFilterIndex(final List<FilterItem> sortFilterItems) {
+        for (int i = 0; i < sortFilterItems.size(); i++) {
+            if (getNormalizedSortFilterId(sortFilterItems.get(i)) == selectedSortFilterId) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    private void updateSortButton() {
+        if (menuSortButton != null) {
+            menuSortButton.setVisible(getVideosTabHandler(currentInfo) != null
+                    && !getChannelTabSortFilterItems().isEmpty());
+        }
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -396,24 +602,20 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
             return;
         }
 
-        switch (v.getId()) {
-            case R.id.sub_channel_avatar_view:
-            case R.id.sub_channel_title_view:
-                if (!TextUtils.isEmpty(currentInfo.getParentChannelUrl())) {
-                    try {
-                        NavigationHelper.openChannelFragment(getFM(), currentInfo.getServiceId(),
-                                currentInfo.getParentChannelUrl(),
-                                currentInfo.getParentChannelName());
-                    } catch (final Exception e) {
-                        ErrorUtil.showUiErrorSnackbar(this, "Opening channel fragment", e);
-                    }
-                } else if (DEBUG) {
-                    Log.i(TAG, "Can't open parent channel because we got no channel URL");
+        if (v.getId() == R.id.sub_channel_avatar_view || v.getId() == R.id.sub_channel_title_view) {
+            if (!TextUtils.isEmpty(currentInfo.getParentChannelUrl())) {
+                try {
+                    NavigationHelper.openChannelFragment(getFM(), currentInfo.getServiceId(),
+                            currentInfo.getParentChannelUrl(),
+                            currentInfo.getParentChannelName());
+                } catch (final Exception e) {
+                    ErrorUtil.showUiErrorSnackbar(this, "Opening channel fragment", e);
                 }
-                break;
-            case R.id.channel_add_to_group_button:
-                showAddToGroupDialog();
-                break;
+            } else if (DEBUG) {
+                Log.i(TAG, "Can't open parent channel because we got no channel URL");
+            }
+        } else if (v.getId() == R.id.channel_add_to_group_button) {
+            showAddToGroupDialog();
         }
     }
 
@@ -433,6 +635,8 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
         super.handleResult(result);
 
         headerBinding.getRoot().setVisibility(View.VISIBLE);
+        updateSortButton();
+        activity.invalidateOptionsMenu();
         PicassoHelper.loadBanner(result.getBannerUrl()).tag(PICASSO_CHANNEL_TAG)
                 .into(headerBinding.channelBannerImage);
         PicassoHelper.loadAvatar(result.getAvatarUrl()).tag(PICASSO_CHANNEL_TAG)

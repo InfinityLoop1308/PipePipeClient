@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.SparseArray;
 import androidx.preference.PreferenceManager;
-import icepick.State;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.ServiceList;
@@ -28,15 +27,10 @@ import static org.schabi.newpipe.util.FilenameUtils.createFilename;
 public class DirectDownloader {
 
     Context context;
-    @State
     StreamInfo currentInfo;
-    @State
     StreamItemAdapter.StreamSizeWrapper<AudioStream> wrappedAudioStreams = StreamItemAdapter.StreamSizeWrapper.empty();
-    @State
     StreamItemAdapter.StreamSizeWrapper<VideoStream> wrappedVideoStreams = StreamItemAdapter.StreamSizeWrapper.empty();
-    @State
     int selectedVideoIndex = 0;
-    @State
     int selectedAudioIndex = 0;
 
     private StreamItemAdapter<AudioStream, Stream> audioStreamsAdapter;
@@ -58,10 +52,14 @@ public class DirectDownloader {
                         info.getAudioStreams());
         final int selectedStreamIndex = ListHelper.getDefaultResolutionIndex(
                 context, filteredVideoStreams);
+        HlsDownloadStreamHelper.addManifestFallbackIfNeeded(filteredVideoStreams, info);
 
         this.setVideoStreams(filteredVideoStreams);
-        this.setSelectedVideoStream(selectedStreamIndex);
-        this.setAudioStreams(ListHelper.filterDownloadableAudioStreams(info.getAudioStreams()));
+        this.setSelectedVideoStream(selectedStreamIndex >= 0 ? selectedStreamIndex : 0);
+        final List<AudioStream> downloadableAudio = ListHelper
+                .filterDownloadableAudioStreams(info.getAudioStreams());
+        HlsDownloadStreamHelper.addAudioFallbackIfNeeded(downloadableAudio, info);
+        this.setAudioStreams(downloadableAudio);
         this.setInfo(info);
         this.type = type;
         this.context = context;
@@ -193,6 +191,9 @@ public class DirectDownloader {
         int threads = 4;
         final String[] urls;
         final MissionRecoveryInfo[] recoveryInfo;
+        final String[] resourceDeliveryMethods;
+        final String[] resourceManifestUrls;
+        final boolean[] resourceIsUrls;
         String psName = null;
         String[] psArgs = null;
         long nearLength = 0;
@@ -262,7 +263,20 @@ public class DirectDownloader {
                     new MissionRecoveryInfo(secondaryStream)};
         }
 
+        resourceDeliveryMethods = HlsDownloadStreamHelper
+                .buildResourceDeliveryMethods(selectedStream, secondaryStream);
+        resourceManifestUrls = HlsDownloadStreamHelper
+                .buildResourceManifestUrls(selectedStream, secondaryStream);
+        resourceIsUrls = HlsDownloadStreamHelper
+                .buildResourceIsUrls(selectedStream, secondaryStream);
+        if (HlsDownloadStreamHelper.containsHlsResource(resourceDeliveryMethods,
+                resourceManifestUrls, urls)) {
+            psName = null;
+            psArgs = null;
+        }
+
         DownloadManagerService.startMission(context, urls, storage, kind, threads,
-                currentInfo.getUrl(), psName, psArgs, nearLength, recoveryInfo);
+                currentInfo.getUrl(), psName, psArgs, nearLength, recoveryInfo,
+                resourceDeliveryMethods, resourceManifestUrls, resourceIsUrls);
     }
 }

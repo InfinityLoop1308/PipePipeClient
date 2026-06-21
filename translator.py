@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 import tempfile
 import subprocess
 import os
+import time
 
 def filter_list(self, func):
     """
@@ -70,9 +71,15 @@ class Translator:
             ],
             temperature=0,
         )
-        print(response.choices[0].message.content.strip())
-        translated_text = response.choices[0].message.content.strip()
-        # print(translated_text)
+        raw = response.choices[0].message.content.strip()
+        if raw.startswith("```json"):
+            raw = raw[len("```json"):]
+        elif raw.startswith("```"):
+            raw = raw[len("```"):]
+        if raw.endswith("```"):
+            raw = raw[:-len("```")]
+        translated_text = raw.strip()
+        print(translated_text)
         return translated_text
 
     def get_translated_dict(self, content, language):
@@ -299,6 +306,64 @@ class StringTranslator:
         with ThreadPoolExecutor() as executor:
             executor.map(translate_and_update_target, self.targets)
 
+    def _translate_with_retry(self, updates, language, retries=3, retry_delay=2):
+        last_error = None
+        for attempt in range(retries):
+            try:
+                return self.translator.get_translated_dict(updates, language)
+            except Exception as e:
+                last_error = e
+                print(f"Translation failed for {language} (attempt {attempt + 1}/{retries}): {str(e)}")
+                if attempt < retries - 1:
+                    time.sleep(retry_delay * (attempt + 1))
+        raise last_error
+
+    def translate_missing_entries_only(self, chunk_size=100, chunk_workers=4):
+        base_strings = self.base.load_strings_to_dict()
+
+        def translate_and_add_missing(target):
+            existing_strings = target.load_strings_to_dict()
+            missing_keys = [k for k in base_strings.keys() if k not in existing_strings]
+
+            if not missing_keys:
+                print(f"No missing entries for {target.file_path}")
+                return
+
+            language = target.file_path.split('/')[-2][7:]
+            chunked_missing_keys = [
+                missing_keys[i:i + chunk_size]
+                for i in range(0, len(missing_keys), chunk_size)
+            ]
+            total_chunks = len(chunked_missing_keys)
+
+            def translate_chunk(index_and_keys):
+                idx, chunk = index_and_keys
+                missing_entries = {k: base_strings[k] for k in chunk}
+                result = self._translate_with_retry(missing_entries, language)
+                print(
+                    f"{target.file_path}: translated chunk "
+                    f"{idx + 1}/{total_chunks} ({len(chunk)} entries)"
+                )
+                return idx, result
+
+            translated_chunks = {}
+            with ThreadPoolExecutor(max_workers=chunk_workers) as chunk_executor:
+                for idx, result in chunk_executor.map(translate_chunk, enumerate(chunked_missing_keys)):
+                    translated_chunks[idx] = result
+
+            for idx in range(total_chunks):
+                result = translated_chunks[idx]
+                for key, value in result.items():
+                    try:
+                        target.update_entry(f'string[name="{key}"]', escape(value))
+                    except:
+                        target.add_entry('resources', 'string', {'name': key}, escape(value))
+
+            target.write_to_file()
+            print(f"Added {len(missing_keys)} missing entries to {target.file_path}")
+
+        with ThreadPoolExecutor() as executor:
+            executor.map(translate_and_add_missing, self.targets)
 
     def add_new_entry(self, name, value):
         self.base.add_entry('resources', 'string', {'name': name}, escape(value))
@@ -485,6 +550,13 @@ if __name__ == '__main__':
             translator.update_with_replace(args[2], get_user_input_from_vim())
         elif len(args) == 4:
             translator.update_with_replace(args[2], args[3])
+    elif args[1] == 'sync' or args[1] == 'sync_missing':
+        chunk_size = int(args[2]) if len(args) >= 3 else 100
+        chunk_workers = int(args[3]) if len(args) >= 4 else 4
+        translator.translate_missing_entries_only(
+            chunk_size=chunk_size,
+            chunk_workers=chunk_workers
+        )
     elif args[1] == 'compare':
         if len(args) == 3:
             diff = translator.compare_xml_strings(xml_b_path=int(args[2]))

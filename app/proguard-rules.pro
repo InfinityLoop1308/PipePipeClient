@@ -30,14 +30,6 @@
 -dontwarn android.arch.persistence.room.paging.LimitOffsetDataSource
 
 
-# Rules for icepick. Copy paste from https://github.com/frankiesardo/icepick
--dontwarn icepick.**
--keep class icepick.** { *; }
--keep class **$$Icepick { *; }
--keepclasseswithmembernames class * {
-    @icepick.* <fields>;
-}
--keepnames class * { @icepick.State *;}
 
 # Rules for OkHttp. Copy paste from https://github.com/square/okhttp
 -dontwarn okhttp3.**
@@ -54,3 +46,12 @@
 
 # for some reason NotificationModeConfigFragment wasn't kept (only referenced in a preference xml)
 -keep class org.schabi.newpipe.settings.notifications.** { *; }
+
+-dontwarn org.slf4j.impl.StaticLoggerBinder
+
+-keep class * extends androidx.room.RoomDatabase { *; }
+-keep @androidx.room.Database class * { *; }
+-keep class androidx.work.impl.WorkDatabase_Impl { *; }
+-dontwarn androidx.room.paging.**
+
+-keep class org.json.JSONException { *; }

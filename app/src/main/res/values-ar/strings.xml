@@ -3,7 +3,6 @@
     <string name="background_player_playing_toast">يتم التشغيل في الخلفية</string>
     <string name="cancel">إلغاء</string>
     <string name="dark_theme_title">داكن</string>
-    <string name="default_audio_format_title">صيغة الصوت الافتراضية</string>
     <string name="default_resolution_title">الدقة الافتراضية</string>
     <string name="detail_dislikes_img_view_description">عدم الإعجاب</string>
     <string name="detail_likes_img_view_description">الإعجابات</string>
@@ -27,20 +26,13 @@
     <string name="play_audio">الصوت</string>
     <string name="play_with_kodi_title">تشغيل بواسطة كودي</string>
     <string name="search">البحث</string>
-    <string name="content_language_title">اللغة الإفتراضية للمحتوى</string>
     <string name="settings">الإعدادات</string>
     <string name="settings_category_appearance_title">المظهر</string>
-    <string name="settings_category_video_audio_title">الفيديو والصوت</string>
     <string name="share">مشاركة</string>
     <string name="share_dialog_title">مشاركة بواسطة</string>
-    <string name="show_next_and_similar_title">عرض مقاطع الفيديو \"التالية\" و \"المشابهة\"</string>
-    <string name="show_play_with_kodi_summary">اعرض خيار لتشغيل الفيديو عبر مركز وسائط Kodi</string>
-    <string name="show_play_with_kodi_title">عرض خيار التشغيل بواسطة كودي</string>
     <string name="theme_title">السمة</string>
     <string name="upload_date_text">تم النشر بتاريخ %1$s</string>
     <string name="unsupported_url">رابط غير مدعوم</string>
-    <string name="use_external_audio_player_title">استخدام مشغل صوت خارجي</string>
-    <string name="use_external_video_player_title">استخدام مشغل فيديو خارجي</string>
     <string name="content_not_available">المحتوى غير متوفر</string>
     <string name="could_not_load_thumbnails">تعذر تحميل كافة الصور المصغرة</string>
     <string name="general_error">خطأ</string>
@@ -65,17 +57,11 @@
     <string name="title_activity_history">التاريخ</string>
     <string name="action_history">التاريخ</string>
     <string name="open_in_popup_mode">فتح في وضع منبثق</string>
-    <string name="use_external_video_player_summary">يزيل الصوت في بعض الجودات</string>
     <string name="channel_unsubscribed">تم إلغاء الاشتراك في القناة</string>
     <string name="subscription_change_failed">تعذر تغيير حالة الاشتراك</string>
     <string name="subscription_update_failed">تعذر تحديث الاشتراك</string>
     <string name="controls_popup_title">نافذة منبثقة</string>
     <string name="default_popup_resolution_title">الدقة الافتراضية للنوافذ المنبثقة</string>
-    <string name="show_higher_resolutions_title">عرض دقّات أعلى</string>
-    <string name="show_higher_resolutions_summary">فقط بعض الأجهزة تدعم تشغيل مقاطع فيديو 2K/4K</string>
-    <string name="default_video_format_title">صيغة الفيديو الافتراضية</string>
-    <string name="popup_remember_size_pos_title">تذكر خصائص النوافذ المنبثقة</string>
-    <string name="popup_remember_size_pos_summary">تذكر آخر مكان وحجم للنافذة المنبثقة</string>
     <string name="show_search_suggestions_title">اقتراحات البحث</string>
     <string name="show_search_suggestions_summary">اختر الاقتراحات التي تريد إظهارها عند البحث</string>
     <string name="enable_search_history_title">سجل البحث</string>
@@ -83,12 +69,8 @@
     <string name="enable_watch_history_summary">تتبّع مقاطع الفيديو التي تمّت مشاهدتها</string>
     <string name="resume_on_audio_focus_gain_title">استئناف التشغيل</string>
     <string name="resume_on_audio_focus_gain_summary">متابعة التشغيل بعد المقاطعات (مثل المكالمات الهاتفية)</string>
-    <string name="show_hold_to_append_title">إظهار تلميح \"اضغط للفتح\"</string>
-    <string name="show_hold_to_append_summary">عرض تلميح عند الضغط على زر استخدام المشغل الخلفي أو النافذة المنبثقة في صفحة تفاصيل الفديو</string>
     <string name="settings_category_player_title">المشغل</string>
-    <string name="settings_category_player_behavior_title">السلوك</string>
     <string name="popup_playing_toast">تشغيل في وضع منبثق</string>
-    <string name="show_age_restricted_content_title">محتوى مقيد للبالغين</string>
     <string name="duration_live">بث مباشر</string>
     <string name="error_report_title">تقرير عن المشكلة</string>
     <string name="disabled">متوقف</string>
@@ -147,20 +129,16 @@
     <string name="msg_popup_permission">هذا الإذن مطلوب
 \nللفتح في وضع النافذة المنبثقة</string>
     <string name="settings_file_charset_title">السماح بالرموز في أسماء الملفات</string>
-    <string name="settings_file_replacement_character_summary">يتم استبدال الرموز غير المسموح بها بهذه القيمة</string>
-    <string name="settings_file_replacement_character_title">استبدال الحرف</string>
     <string name="charset_letters_and_digits">الحروف والأرقام</string>
     <string name="charset_most_special_characters">معظم الأحرف الخاصة</string>
     <string name="title_activity_about">عن تطبيق نيوپايپ</string>
     <string name="title_licenses">تراخيص الجهات الخارجية</string>
-    <string name="tab_licenses">التراخيص</string>
     <string name="app_description">تطبيق مجاني خفيف البث على أندرويد.</string>
     <string name="contribution_title">ساهم</string>
     <string name="contribution_encouragement">إذا كانت لديك أفكار؛ أو ترجمة، أو تغييرات تخص التصميم، أو تنظيف و تحسين الشفرة البرمجية، أو تعديلات عميقة عليها، فتذكر أنّ مساعدتك دائما موضع ترحيب. وكلما أتممنا شيئا كلما كان ذلك أفضل!</string>
     <string name="view_on_github">عرض على GitHub</string>
     <string name="donation_title">تبرع</string>
     <string name="donation_encouragement">يتم تطوير NewPipe من قبل متطوعين يقضون وقت فراغهم لتقديم أفضل تجربة لك. حان الوقت لرد المساعدة مع المطورين وجعل NewPipe أكثر و أفضل بينما يستمتعون بفنجان من القهوة.</string>
-    <string name="give_back">تبرع</string>
     <string name="website_title">موقع الويب</string>
     <string name="website_encouragement">قم بزيارة موقع NewPipe لمزيد من المعلومات والمستجدات.</string>
     <string name="app_license_title">تراخيص NewPipe</string>
@@ -326,11 +304,8 @@
     <string name="privacy_policy_title">سياسة خصوصية NewPipe</string>
     <string name="privacy_policy_encouragement">يأخذ مشروع NewPipe خصوصيتك على محمل الجد. لذلك، لا يجمع التطبيق أي بيانات دون موافقتك.
 \nتوضح سياسة خصوصية NewPipe بالتفصيل البيانات التي يتم إرسالها وتخزينها عند إرسال تقرير الأعطال.</string>
-    <string name="read_privacy_policy">الإطلاع على سياسة الخصوصية</string>
     <string name="start_accept_privacy_policy">من أجل الامتثال للائحة الأوروبية العامة لحماية البيانات (GDPR)، فإننا نلفت انتباهك إلى سياسة خصوصية NewPipe. يرجى قراءتها بعناية.
 \nويجب عليك قبولها لإرسال تقرير الأخطاء إلينا.</string>
-    <string name="accept">قبول</string>
-    <string name="decline">رفض</string>
     <string name="limit_data_usage_none_description">لا حدود</string>
     <string name="limit_mobile_data_usage_title">الحد من جودة الفيديو عند استخدام بيانات الهاتف المحمول</string>
     <string name="skip_silence_checkbox">تسريع إلى الأمام أثناء الصمت</string>
@@ -399,16 +374,12 @@
     <string name="max_retry_desc">الحد الأقصى لعدد المحاولات قبل إلغاء التحميل</string>
     <string name="pause_downloads_on_mobile">المقاطعة على الشبكات المقيسة</string>
     <string name="pause_downloads_on_mobile_desc">مفيد عند التبديل إلى بيانات الجوال، ولكن لا يمكن تعليق بعض التنزيلات</string>
-    <string name="show_comments_title">إظهار التعليقات</string>
-    <string name="show_comments_summary">عطّله لإخفاء التعليقات</string>
     <string name="autoplay_title">تشغيل تلقائي</string>
     <string name="no_comments">لا توجد تعليقات</string>
     <string name="error_unable_to_load_comments">تعذر تحميل التعليقات</string>
     <string name="close">إغلاق</string>
     <string name="enable_playback_resume_title">استئناف التشغيل</string>
     <string name="enable_playback_resume_summary">استعادة آخر موقف تشغيل</string>
-    <string name="enable_playback_state_lists_title">المواضع في القوائم</string>
-    <string name="enable_playback_state_lists_summary">إظهار مؤشّرات وضع التشغيل في القوائم</string>
     <string name="settings_category_clear_data_title">امسح البيانات</string>
     <string name="watch_history_states_deleted">تم حذف كل مواقف التشغيل</string>
     <string name="missing_file">نقل الملف أو حذفه</string>
@@ -546,7 +517,6 @@
         <item quantity="many">%d دقيقة</item>
         <item quantity="other">%d دقيقة</item>
     </plurals>
-    <string name="new_seek_duration_toast">نظرا لقيود مشغل ExoPlayer مدة التقديم تم ضبطها الى %d ثانية</string>
     <string name="unmute">إلغاء كتم الصوت</string>
     <string name="mute">كتم الصوت</string>
     <string name="help">مساعدة</string>
@@ -568,7 +538,6 @@
     <string name="remove_watched">إزالة ما تمت مشاهدته</string>
     <string name="show_original_time_ago_summary">ستكون النصوص الأصلية من الخدمات مرئية في عناصر البث</string>
     <string name="show_original_time_ago_title">عرض الوقت الأصلي على العناصر</string>
-    <string name="youtube_restricted_mode_enabled_title">قم بتشغيل \"وضع تقييد المحتوى\" في يوتيوب</string>
     <string name="video_detail_by">بواسطة %s</string>
     <string name="channel_created_by">أنشأها %s</string>
     <string name="detail_sub_channel_thumbnail_view_description">الصورة الرمزية للقناة</string>
@@ -605,8 +574,6 @@
     <string name="clear_cookie_summary">امسح ملفات تعريف الارتباط التي يخزنها NewPipe عند حل reCAPTCHA</string>
     <string name="recaptcha_cookies_cleared">تم مسح ملفات تعريف الارتباط reCAPTCHA</string>
     <string name="clear_cookie_title">امسح ملفات تعريف الارتباط reCAPTCHA</string>
-    <string name="youtube_restricted_mode_enabled_summary">يوفر YouTube \"وضع تقييد المحتوى\" الذي يخفي المحتوى المحتمل للكبار</string>
-    <string name="show_age_restricted_content_summary">عرض المحتوى الذي يُحتمل أن يكون غير مناسب للأطفال لأن له حدًا عمريًا (مثل 18+)</string>
     <string name="show_memory_leaks">إظهار تسرب الذاكرة</string>
     <string name="enqueued">قائمة الانتظار</string>
     <string name="enqueue_stream">قائمة الانتظار</string>
@@ -625,8 +592,6 @@
     <string name="description_tab_description">وصف</string>
     <string name="related_items_tab_description">التيارات ذات الصلة</string>
     <string name="comments_tab_description">تعليقات</string>
-    <string name="show_description_summary">قم بإيقاف التشغيل لإخفاء وصف الفيديو والمعلومات الإضافية</string>
-    <string name="show_description_title">إظهار الوصف</string>
     <string name="open_with">فتح مع</string>
     <string name="paid_content">يتوفر هذا المحتوى فقط للمستخدمين الذين قاموا بالدفع، لذلك لا يمكن بثه أو تنزيله عبر NewPipe.</string>
     <string name="youtube_music_premium_content">يتوفر هذا الفيديو فقط لأعضاء YouTube Music Premium، لذلك لا يمكن بثه أو تنزيله من قبل NewPipe.</string>
@@ -672,7 +637,6 @@
 \nهل تريد إلغاء الاشتراك من هذه القناة؟</string>
     <string name="feed_load_error_account_info">تعذر تحميل تغذية لـ\'%s\'.</string>
     <string name="feed_load_error">خطأ في تحميل الخلاصة</string>
-    <string name="downloads_storage_use_saf_summary_api_29">بدءًا من Android 10، يتم دعم \"Storage Access Framework\" فقط</string>
     <string name="downloads_storage_use_saf_summary_api_19">\"Storage Access Framework\" غير مدعوم على Android KitKat والإصدارات الأقدم</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">سيتم سؤالك عن مكان حفظ كل تنزيل</string>
     <string name="no_dir_yet">لم يتم تعيين مجلد التحميل، الرجاء اختيار مجلد التحميل الافتراضي الآن</string>
@@ -684,7 +648,6 @@
     <string name="dont_show">لا تظهر</string>
     <string name="low_quality_smaller">جودة منخفضة (أصغر)</string>
     <string name="high_quality_larger">جودة عالية (أكبر)</string>
-    <string name="seekbar_preview_thumbnail_title">معاينة مصغرة على شريط التمرير</string>
     <string name="mark_as_watched">علّمه كفيديو تمت مشاهدته</string>
     <string name="detail_heart_img_view_description">أُعجب بها منشئ المحتوى</string>
     <string name="show_image_indicators_summary">أظهر أشرطة ملونة لبيكاسو أعلى الصور تشير إلى مصدرها: الأحمر للشبكة والأزرق للقرص والأخضر للذاكرة</string>
@@ -750,7 +713,6 @@
     <string name="any_network">أي شبكة</string>
     <string name="delete_downloaded_files_confirm">محو جميع الملفات التي تم تنزيلها من القرص؟</string>
     <string name="get_notified">الحصول على إشعار</string>
-    <string name="enumeration_comma">,</string>
     <string name="toggle_all">تبديل الكل</string>
     <plurals name="new_streams">
         <item quantity="zero">%s دفق جديد</item>

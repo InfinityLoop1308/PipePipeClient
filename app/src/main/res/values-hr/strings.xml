@@ -13,9 +13,6 @@
     <string name="settings">Postavke</string>
     <string name="did_you_mean">Jeste li mislili „%1$s”\?</string>
     <string name="share_dialog_title">Podijeli pomoću</string>
-    <string name="use_external_video_player_title">Koristi vanjski reproduktor videozapisa</string>
-    <string name="use_external_video_player_summary">Uklanja zvuk pri nekim rezolucijama</string>
-    <string name="use_external_audio_player_title">Koristi vanjski reproduktor za zvuk</string>
     <string name="subscribe_button_title">Pretplati se</string>
     <string name="subscribed_button_title">Pretplaćeno</string>
     <string name="channel_unsubscribed">Pretplata na kanalu otkazana</string>
@@ -33,21 +30,13 @@
     <string name="download_path_audio_dialog_title">Odaberi mapu za preuzimanje audio-datoteka</string>
     <string name="default_resolution_title">Standardna rezolucija</string>
     <string name="default_popup_resolution_title">Standardna rezolucija skočnog prozora</string>
-    <string name="show_higher_resolutions_title">Prikaži više rezolucije</string>
-    <string name="show_higher_resolutions_summary">Samo neki uređaji podržavaju reprodukciju 2K/4K videozapisa</string>
     <string name="play_with_kodi_title">Reproduciraj s Kodijem</string>
     <string name="kore_not_found">Instalirati nedostajući Kore program\?</string>
-    <string name="show_play_with_kodi_title">Prikaži opciju \"Reproduciraj putem Kodija\"</string>
-    <string name="show_play_with_kodi_summary">Prikaži opciju za reproduciranje videozapisa putem Kodija</string>
     <string name="play_audio">Zvuk</string>
-    <string name="default_audio_format_title">Zadani format zvuka</string>
-    <string name="default_video_format_title">Zadani format videozapisa</string>
     <string name="theme_title">Tema</string>
     <string name="light_theme_title">Svijetla</string>
     <string name="dark_theme_title">Tamna</string>
     <string name="black_theme_title">Crna</string>
-    <string name="popup_remember_size_pos_title">Zapamti veličinu i poziciju skočnog prozora</string>
-    <string name="popup_remember_size_pos_summary">Zapamti posljednju veličinu i poziciju skočnog prozora</string>
     <string name="show_search_suggestions_title">Prijedlozi pri traženju</string>
     <string name="show_search_suggestions_summary">Odaberi prijedloge koji se prikazuju pri traženju</string>
     <string name="enable_search_history_title">Povijest pretraživanja</string>
@@ -57,15 +46,11 @@
     <string name="resume_on_audio_focus_gain_title">Nastavi reprodukciju</string>
     <string name="resume_on_audio_focus_gain_summary">Nastavi reproducirati nakon prekidanja (npr. telefonski pozivi)</string>
     <string name="download_dialog_title">Preuzmi</string>
-    <string name="show_next_and_similar_title">Prikaži \'Sljedeće\' i \'Slične\' videozapise</string>
     <string name="unsupported_url">URL nije podržan</string>
-    <string name="content_language_title">Zadani jezik sadržaja</string>
-    <string name="settings_category_video_audio_title">Video i audio</string>
     <string name="settings_category_appearance_title">Izgled</string>
     <string name="background_player_playing_toast">Reprodukcija u pozadini</string>
     <string name="popup_playing_toast">Reprodukcija u skočnom prozoru</string>
     <string name="content">Sadržaj</string>
-    <string name="show_age_restricted_content_title">Prikaži dobno ograničeni sadržaj</string>
     <string name="duration_live">Uživo</string>
     <string name="downloads">Preuzimanja</string>
     <string name="downloads_title">Preuzimanja</string>
@@ -120,15 +105,12 @@
     <string name="recaptcha_request_toast">Traži se reCAPTCHA zadatak</string>
     <string name="settings_category_downloads_title">Preuzimanja</string>
     <string name="settings_file_charset_title">Dozvoljeni znakovi u nazivima datoteka</string>
-    <string name="settings_file_replacement_character_summary">Nedozvoljeni znakovi su zamjenjeni ovima</string>
-    <string name="settings_file_replacement_character_title">Znak za zamjenu</string>
     <string name="charset_letters_and_digits">Slova i brojevi</string>
     <string name="charset_most_special_characters">Posebni znakovi</string>
     <string name="title_activity_about">O NewPipeu</string>
     <string name="title_licenses">Licence treće strane</string>
     <string name="copyright" formatted="true">© %1$s od %2$s pod %3$s</string>
     <string name="tab_about">O aplikaciji</string>
-    <string name="tab_licenses">Licence</string>
     <string name="app_description">Slobodan i mali YouTube program za Android.</string>
     <string name="view_on_github">Pogledaj na GitHubu</string>
     <string name="app_license_title">Licenca za NewPipe</string>
@@ -140,7 +122,6 @@
     <string name="notification_channel_name">NewPipe obavijest</string>
     <string name="notification_channel_description">Obavijesti za NewPipe reproduktore</string>
     <string name="settings_category_player_title">Reproduktor</string>
-    <string name="settings_category_player_behavior_title">Ponašanje</string>
     <string name="settings_category_history_title">Povijest i predmemorija</string>
     <string name="undo">Poništi</string>
     <string name="search_no_results">Nema rezultata</string>
@@ -167,8 +148,6 @@
     <string name="player_stream_failure">Nije moguće reproducirati ovaj stream</string>
     <string name="player_unrecoverable_failure">Dogodila se neoporavljiva greška reproduktora</string>
     <string name="player_recoverable_failure">Oporavljanje od greške reproduktora</string>
-    <string name="show_hold_to_append_title">Prikaži savjet za držanje</string>
-    <string name="show_hold_to_append_summary">Prikaži savjet kad se pritisne gumb za pozadinsku ili skočni prozor u detaljima videa:</string>
     <string name="delete_item_search_history">Želite li izbrisati ovu stavku iz povijesti pretraživanja?</string>
     <string name="main_page_content">Sadržaj</string>
     <string name="blank_page_summary">Prazna stranica</string>
@@ -251,10 +230,8 @@
     <string name="rename">Preimenuj</string>
     <string name="one_item_deleted">1 stavka izbrisana.</string>
     <string name="toast_no_player">Nijedan program nije instaliran za reprodukciju ove datoteke</string>
-    <string name="give_back">Vrati</string>
     <string name="website_encouragement">Posjetite web stranicu NewPipe za više informacija i vijesti.</string>
     <string name="privacy_policy_title">NewPipeova pravila o privatnosti</string>
-    <string name="read_privacy_policy">Pročitajte pravila o privatnosti</string>
     <string name="title_last_played">Zadnje svirano</string>
     <string name="title_most_played">Najviše svirano</string>
     <string name="export_complete_toast">Izvezeno</string>
@@ -289,8 +266,6 @@
     <string name="skip_silence_checkbox">Premotaj naprijed tijekom šutnje</string>
     <string name="playback_step">Korak</string>
     <string name="playback_reset">Resetiraj</string>
-    <string name="accept">Prihvati</string>
-    <string name="decline">Odbij</string>
     <string name="limit_data_usage_none_description">Bez ograničenja</string>
     <string name="limit_mobile_data_usage_title">Ograniči rezoluciju tijekom korištenja mobilnih podataka</string>
     <string name="minimize_on_exit_none_description">Nijedan</string>
@@ -386,8 +361,6 @@
     <string name="max_retry_desc">Maksimalni broj pokušaja prije poništavanja preuzimanja</string>
     <string name="pause_downloads_on_mobile">Prekini na mrežama s ograničenim prometom</string>
     <string name="pause_downloads_on_mobile_desc">Korisno pri prelasku na mobilne podatke, iako se neka preuzimanja ne mogu obustaviti</string>
-    <string name="show_comments_title">Prikaži komentare</string>
-    <string name="show_comments_summary">Isključi, kako bi se komentari sakrili</string>
     <string name="autoplay_title">Automatska reprodukcija</string>
     <string name="no_comments">Nema komentara</string>
     <string name="error_unable_to_load_comments">Komentare nije moguće učitati</string>
@@ -399,8 +372,6 @@
 \nZa slanje izvješća o pogreškama potrebno je prihvatiti politiku privatnosti.</string>
     <string name="enable_playback_resume_title">Nastavi reprodukciju</string>
     <string name="enable_playback_resume_summary">Vrati zadnji položaj reprodukcije</string>
-    <string name="enable_playback_state_lists_title">Pozicije na popisima</string>
-    <string name="enable_playback_state_lists_summary">Prikaži poziciju reprodukcije na listi</string>
     <string name="settings_category_clear_data_title">Obriši podatke</string>
     <string name="watch_history_states_deleted">Pozicije reprodukcije su izbrisane</string>
     <string name="missing_file">Datoteka je premještena ili izbrisana</string>
@@ -545,9 +516,6 @@
     <string name="restricted_video">Ovaj video je dobno ograničen.
 \n
 \nZa prikaz sadržaja uključi „%1$s” u postavkama.</string>
-    <string name="youtube_restricted_mode_enabled_summary">YouTube nudi postavku „Ograničeni način rada”, čime se skriva sadržaj za odrasle</string>
-    <string name="youtube_restricted_mode_enabled_title">Uključi YouTube postavku „Ograničeni način rada”</string>
-    <string name="show_age_restricted_content_summary">Prikaži sadržaj koji vjerojatno nije prikladan za djecu, jer je dobno ograničen (kategorija 18)</string>
     <string name="peertube_instance_add_exists">Primjerak već postoji</string>
     <string name="peertube_instance_add_fail">Neuspjela provjera primjerka</string>
     <string name="peertube_instance_add_help">Upiši URL primjerka</string>
@@ -561,7 +529,6 @@
     <string name="notification_action_repeat">Ponovi</string>
     <string name="error_report_open_github_notice">Provjeri je li tvoj problem već postoji. Dupla pojava problema krade nam vrijeme koje bismo mogli utrošiti na ispravljanje same greške.</string>
     <string name="notification_actions_summary">Za uređivanje radnji u obavijestima, dodirni ih. Označi do tri radnje za prikaz u kompaktnoj obavijesti koristeći oznake na desnoj strani</string>
-    <string name="new_seek_duration_toast">Zbog ograničenja ExoPlayera, trajanje traženja postavljeno je na %d s</string>
     <string name="notification_colorize_summary">Neka Android prilagodi boju obavijesti prema glavnoj boji minijature (ovo nije dostupno na svim uređajima)</string>
     <string name="notification_colorize_title">Oboji obavijest</string>
     <string name="content_not_supported">NewPipe još ne podržava ovaj sadržaj.
@@ -595,8 +562,6 @@
     <string name="chapters">Poglavlja videozapisa</string>
     <string name="description_tab_description">Opis</string>
     <string name="comments_tab_description">Komentari</string>
-    <string name="show_description_summary">Isključi za skrivanje opisa videozapisa i dodatnih informacija</string>
-    <string name="show_description_title">Prikaži opis</string>
     <string name="open_with">Otvori pomoću</string>
     <string name="soundcloud_go_plus_content">Ovo je SoundCloud Go+ snimka (barem u tvojoj zemlji), stoga ga NewPipe ne može emitirati ili preuzeti.</string>
     <string name="restricted_video_no_stream">Ovaj je video dobno ograničen.
@@ -642,13 +607,11 @@
 \nŽelite li otkazati pretplatu na ovaj kanal\?</string>
     <string name="feed_load_error_account_info">Nije moguće učitati feed za \'%s\'.</string>
     <string name="feed_load_error">Pogreška pri učitavanju feeda</string>
-    <string name="downloads_storage_use_saf_summary_api_29">Počevši od Androida 10, podržan je samo \'Storage Access Framework\'</string>
     <string name="downloads_storage_use_saf_summary_api_19">„Storage Access Framework“ nije podržan na Androidu KitKat i starijim</string>
     <string name="downloads_storage_ask_summary_no_saf_notice">Od vas će se tražiti gdje spremiti svako preuzimanje</string>
     <string name="dont_show">Ne prikazuj</string>
     <string name="low_quality_smaller">Niska kvaliteta (manji)</string>
     <string name="high_quality_larger">Visoka kvaliteta (veća)</string>
-    <string name="seekbar_preview_thumbnail_title">Pregled sličica trake za pretraživanje</string>
     <string name="no_dir_yet">Mapa za preuzimanje još nije postavljena, odaberite zadanu mapu za preuzimanje</string>
     <string name="comments_are_disabled">Komentari su onemogućeni</string>
     <string name="mark_as_watched">Označi kao pogledano</string>
@@ -695,7 +658,6 @@
     <string name="delete_downloaded_files_confirm">Želite li izbrisati sve preuzete datoteke\?</string>
     <string name="notifications_disabled">Obavijesti su onemogućene</string>
     <string name="you_successfully_subscribed">Pretplatili ste se ovome kanalu</string>
-    <string name="enumeration_comma">,</string>
     <string name="toggle_all">Uključiti/isključiti sve</string>
     <string name="any_network">Bilo kakva mreža</string>
     <string name="streams_notification_channel_description">Obavijesti novih streamova pretplaćenih kanala</string>

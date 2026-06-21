@@ -61,6 +61,10 @@ public final class PlaylistAppendDialog extends PlaylistDialog {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if (getStreamEntities() == null || getStreamEntities().isEmpty()) {
+            dismissAllowingStateLoss();
+            return;
+        }
 
         final LocalPlaylistManager playlistManager =
                 new LocalPlaylistManager(NewPipeDatabase.getInstance(requireContext()));
@@ -119,7 +123,7 @@ public final class PlaylistAppendDialog extends PlaylistDialog {
 
     /** Display create playlist dialog. */
     public void openCreatePlaylistDialog() {
-        if (getStreamEntities() == null || !isAdded()) {
+        if (getStreamEntities() == null || getStreamEntities().isEmpty() || !isAdded()) {
             return;
         }
 
@@ -153,7 +157,7 @@ public final class PlaylistAppendDialog extends PlaylistDialog {
     private void onPlaylistSelected(@NonNull final LocalPlaylistManager manager,
                                     @NonNull final PlaylistDuplicatesEntry playlist,
                                     @NonNull final List<StreamEntity> streams) {
-        if (getStreamEntities() == null) {
+        if (getStreamEntities() == null || streams.isEmpty()) {
             return;
         }
         final String toastText;

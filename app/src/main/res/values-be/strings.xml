@@ -15,9 +15,6 @@
     <string name="settings">Налады</string>
     <string name="did_you_mean">Магчыма, вы мелі на ўвазе \"%1$s\"\?</string>
     <string name="share_dialog_title">Падзяліцца з дапамогай</string>
-    <string name="use_external_video_player_title">Знешні відэаплэер</string>
-    <string name="use_external_video_player_summary">Прыбірае гук у некаторых разрозненнях</string>
-    <string name="use_external_audio_player_title">Знешні аўдыяплэер</string>
     <string name="subscribe_button_title">Падпісацца</string>
     <string name="subscribed_button_title">Вы падпісаныя</string>
     <string name="channel_unsubscribed">Падпіска адменена</string>
@@ -38,21 +35,13 @@
     <string name="download_path_audio_dialog_title">Увядзіце шлях да папкі для спампавання аўдыя</string>
     <string name="default_resolution_title">Разрознянне па змаўчанні</string>
     <string name="default_popup_resolution_title">Разрозненне усплываючага акна</string>
-    <string name="show_higher_resolutions_title">Высокія разрозненні</string>
-    <string name="show_higher_resolutions_summary">Толькі некаторыя прылады могуць прайграваць відэа ў 2K/4K</string>
     <string name="play_with_kodi_title">Прайграць у Kodi</string>
     <string name="kore_not_found">Дадатак Kore не знойдзены. Усталяваць яго?</string>
-    <string name="show_play_with_kodi_title">\"Прайграць у Kodi\"</string>
-    <string name="show_play_with_kodi_summary">Паказаць опцыю прайгравання відэа праз медыяцэнтр Kodi</string>
     <string name="play_audio">Аўдыё</string>
-    <string name="default_audio_format_title">Фармат аўдыё па змаўчанні</string>
-    <string name="default_video_format_title">Фармат відэа па змаўчанні</string>
     <string name="theme_title">Тэма</string>
     <string name="light_theme_title">Светлая</string>
     <string name="dark_theme_title">Цёмная</string>
     <string name="black_theme_title">Чорная</string>
-    <string name="popup_remember_size_pos_title">Аднавіць акно</string>
-    <string name="popup_remember_size_pos_summary">Запамінаць памер і становішча ўсплываючага акна</string>
     <string name="use_inexact_seek_title">Хуткі пошук пазіцыі</string>
     <string name="use_inexact_seek_summary">Недакладны пошук дазваляе плэеру шукаць пазіцыю хутчэй, але менш дакладна. Не працуе для перамоткі на 5, 15 ці 25 секунд</string>
     <string name="download_thumbnail_title">Загружаць мініяцюры</string>
@@ -72,22 +61,15 @@
     <string name="resume_on_audio_focus_gain_title">Аднавіць пры фокусе</string>
     <string name="resume_on_audio_focus_gain_summary">Аднаўляць прайграванне пасля перапынкаў (напрыклад, тэлефонных званкоў)</string>
     <string name="download_dialog_title">Спампаваць</string>
-    <string name="show_next_and_similar_title">\"Наступнае\" и \"Прапанаванае\" відэа</string>
-    <string name="show_hold_to_append_title">\"Зацісніце, каб дадаць\"</string>
-    <string name="show_hold_to_append_summary">Паказаць падказку пры націсканні \"У акне\" ці \"У фоне\" на старонцы звестак аб відэа</string>
     <string name="unsupported_url">URL не падтрымліваецца</string>
     <string name="default_content_country_title">Краіна кантэнту па змаўчанні</string>
-    <string name="content_language_title">Мова кантэнту па змаўчанні</string>
     <string name="settings_category_player_title">Плэер</string>
-    <string name="settings_category_player_behavior_title">Павядзенне</string>
-    <string name="settings_category_video_audio_title">Відэа і аўдыё</string>
     <string name="settings_category_history_title">Гісторыя і кэш</string>
     <string name="settings_category_appearance_title">Знешні выгляд</string>
     <string name="settings_category_debug_title">Адладка</string>
     <string name="background_player_playing_toast">Прайграванне ў фонавым рэжыме</string>
     <string name="popup_playing_toast">Прайграванне ва ўсплываючым акне</string>
     <string name="content">Кантэнт</string>
-    <string name="show_age_restricted_content_title">Кантэнт 18+</string>
     <string name="duration_live">Трансляцыя</string>
     <string name="downloads">Загрузкі</string>
     <string name="downloads_title">Загрузкі</string>
@@ -206,8 +188,6 @@
     <string name="recaptcha_request_toast">Запытаны ўвод reCAPTCHA</string>
     <string name="settings_category_downloads_title">Загрузкі</string>
     <string name="settings_file_charset_title">Дапушчальныя сімвалы назвы файлаў</string>
-    <string name="settings_file_replacement_character_summary">Недапушчальныя сімвалы замяняюцца на гэтыя</string>
-    <string name="settings_file_replacement_character_title">Сімвал для замены</string>
     <string name="charset_letters_and_digits">Літары і лічбы</string>
     <string name="charset_most_special_characters">Большасць спецзнакаў</string>
     <string name="toast_no_player">Прыкладанне для прайгравання гэтага файла не ўстаноўлена</string>
@@ -215,20 +195,17 @@
     <string name="title_licenses">Іншыя ліцэнзіі</string>
     <string name="copyright" formatted="true">© %1$s %2$s пад ліцэнзіяй %3$s</string>
     <string name="tab_about">Аб дадатку</string>
-    <string name="tab_licenses">Ліцэнзіі</string>
     <string name="app_description">Свабоднае легкавагавае патокавае прайграванне на Android.</string>
     <string name="contribution_title">Дапамога праекту</string>
     <string name="contribution_encouragement">Вітаецца ўсё - ідэі, пераклад, змены дызайну, чыстка кода або велізарныя змены ў кодзе. Чым больш зроблена, тым лепш!</string>
     <string name="view_on_github">Адкрыць на GitHub</string>
     <string name="donation_title">Ахвяраваць</string>
     <string name="donation_encouragement">Распрацоўшчыкі NewPipe цаной свайго вольнага часу робяць ваша жыццё крышачку зручней. Адплаціце ім тым жа - атрымліваючы асалоду ад кубачка кавы, яны змогуць зрабіць NewPipe яшчэ лепей.</string>
-    <string name="give_back">Аддаць належнае</string>
     <string name="website_title">Вэб-сайт</string>
     <string name="website_encouragement">Дзеля атрымання больш падрабязнай інфармацыі і апошніх навін аб NewPipe наведайце наш вэб-сайт.</string>
     <string name="privacy_policy_title">Палітыка прыватнасці NewPipe</string>
     <string name="privacy_policy_encouragement">Праект NewPipe вельмі сур\'ёзна ставіцца да вашай прыватнасці. Таму прыкладанне не збірае ніякіх дадзеных без вашай згоды.
 \nПалітыка прыватнасці NewPipe падрабязна тлумачыць, якія дадзеныя адпраўляюцца і захоўваюцца пры адпраўцы справаздачы аб збоях.</string>
-    <string name="read_privacy_policy">Прачытаць палітыку</string>
     <string name="app_license_title">Ліцэнзія NewPipe</string>
     <string name="app_license">NewPipe - свабоднае праграмнае забеспячэнне: вы можаце выкарыстоўваць, вывучаць і паляпшаць яго па сваім меркаванні. У прыватнасці, вы можаце распаўсюджваць і / або змяняць яго ў адпаведнасці з умовамі GNU General Public License, апублікаванай Free Software Foundation, альбо версіі 3, альбо (па вашаму выбару) любой больш позняй версіі.</string>
     <string name="read_full_license">Прачытаць ліцэнзію</string>
@@ -323,8 +300,6 @@
     <string name="playback_reset">Скід</string>
     <string name="start_accept_privacy_policy">У адпаведнасці з Агульным рэгламентам па абароне дадзеных ЕС (GDPR), звяртаем вашу ўвагу на палітыку прыватнасці NewPipe. Калі ласка, уважліва азнаёмцеся з ёй.
 \nВам неабходна прыняць яе ўмовы, каб адправіць нам справаздачу пра памылку.</string>
-    <string name="accept">Прыняць</string>
-    <string name="decline">Адмовіцца</string>
     <string name="limit_data_usage_none_description">Без абмежаванняў</string>
     <string name="limit_mobile_data_usage_title">Ліміт разрознення ў мабільнай сетцы</string>
     <string name="minimize_on_exit_title">Пры згортванні плэера</string>
@@ -385,16 +360,12 @@
     <string name="pause_downloads_on_mobile_desc">Карысна пры пераключэнні на мабільную сетку, хоць некаторыя загрузкі не могуць быць прыпыненыя</string>
     <string name="events">Падзеі</string>
     <string name="conferences">Канферэнцыі</string>
-    <string name="show_comments_title">Паказаць каментарыі</string>
-    <string name="show_comments_summary">Адключыце, каб схаваць каментарыі</string>
     <string name="autoplay_title">Аўтазапуск</string>
     <string name="no_comments">Каментарыі адсутнічаюць</string>
     <string name="error_unable_to_load_comments">Каментарыі не атрымалася загрузіць</string>
     <string name="close">Зачыніць</string>
     <string name="enable_playback_resume_title">Працягваць прайграванне</string>
     <string name="enable_playback_resume_summary">Аднаўляць з апошняй пазіцыі</string>
-    <string name="enable_playback_state_lists_title">Пазіцыі ў спісах</string>
-    <string name="enable_playback_state_lists_summary">Адлюстроўваць індыкатары пазіцый прагляду ў спісах</string>
     <string name="settings_category_clear_data_title">Ачысціць дадзеныя</string>
     <string name="watch_history_states_deleted">Пазіцыі прайгравання выдалены</string>
     <string name="missing_file">Файл перамешчаны ці выдалены</string>
@@ -418,7 +389,6 @@
 \nПадтрымліваецца не ўсімі прыладамі</string>
     <string name="drawer_header_description">Пераключыць службу, выбраную ў дадзены момант:</string>
     <string name="clear_playback_states_summary">Выдаліць ўсе пазіцыі прайгравання</string>
-    <string name="youtube_restricted_mode_enabled_title">Абмежаваны рэжым YouTube</string>
     <string name="peertube_instance_add_https_only">Падтрымліваюцца толькі адрасы URL HTTPS</string>
     <string name="peertube_instance_add_title">Дадаць экзэмпляр</string>
     <string name="peertube_instance_url_title">Экзэмпляры PeerTube</string>
