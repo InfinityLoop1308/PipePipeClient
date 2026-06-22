@@ -2,7 +2,6 @@ package org.schabi.newpipe.player.resolver;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,7 +34,6 @@ import static androidx.media3.common.C.TIME_UNSET;
 import static org.schabi.newpipe.util.ListHelper.*;
 
 public class VideoPlaybackResolver implements PlaybackResolver {
-    private static final String TAG = VideoPlaybackResolver.class.getSimpleName();
 
     @NonNull
     private final Context context;
@@ -136,7 +134,15 @@ public class VideoPlaybackResolver implements PlaybackResolver {
                         dataSource, video, info, PlayerHelper.cacheKeyOf(info, video), tag);
                 mediaSources.add(streamSource);
             } catch (final IOException e) {
-                Log.e(TAG, "Unable to create video source:", e);
+                // For SABR, surface the real failure (probe / session creation) with its cause
+                // instead of swallowing it into a generic "Unable to resolve source from stream info"
+                // downstream where you can't tell where it came from. Non-SABR keeps returning null
+                // (sourceOf then falls back to the audio source), so that path is unchanged.
+                if (video.getDeliveryMethod()
+                        == org.schabi.newpipe.extractor.stream.DeliveryMethod.SABR) {
+                    throw new IllegalStateException(
+                            "Unable to create SABR video source for " + info.getUrl(), e);
+                }
                 return null;
             }
         }
@@ -165,7 +171,6 @@ public class VideoPlaybackResolver implements PlaybackResolver {
                 mediaSources.add(audioSource);
                 streamSourceType = SourceType.VIDEO_WITH_SEPARATED_AUDIO;
             } catch (final IOException e) {
-                Log.e(TAG, "Unable to create audio source:", e);
                 return null;
             }
         } else {
