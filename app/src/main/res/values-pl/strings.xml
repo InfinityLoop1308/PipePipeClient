@@ -256,6 +256,10 @@
     <string name="resize_fit">Dopasuj</string>
     <string name="resize_fill">Wypełnij</string>
     <string name="resize_zoom">Powiększ</string>
+    <string name="aspect_ratio_custom">Niestandardowe…</string>
+    <string name="aspect_ratio_custom_title">Niestandardowe proporcje ekranu</string>
+    <string name="aspect_ratio_custom_hint">np. 16:9 lub 1.78</string>
+    <string name="aspect_ratio_invalid">Nieprawidłowe proporcje ekranu</string>
     <string name="caption_auto_generated">Wygenerowane automatycznie</string>
     <string name="enable_leak_canary_summary">Monitorowanie wycieków pamięci może powodować niestabilność aplikacji podczas zrzutu pamięci</string>
     <string name="enable_disposed_exceptions_title">Zgłaszaj błędy spoza cyklu życia</string>
