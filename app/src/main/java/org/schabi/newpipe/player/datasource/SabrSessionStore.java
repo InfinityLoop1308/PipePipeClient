@@ -1,8 +1,6 @@
 package org.schabi.newpipe.player.datasource;
 
 import android.content.Context;
-import android.media.MediaCodecInfo;
-import android.media.MediaCodecList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -152,11 +150,10 @@ public final class SabrSessionStore {
     }
 
     // <=0 = audio-only / no preference -> any cached session is fine. Otherwise the session matches
-    // when the requested itag RESOLVES to the same format the session already holds. Comparing the
-    // raw itag is wrong: pickVideoFormat falls back when the requested itag isn't hw-decodable, so
-    // the session's format legitimately differs from the requested itag and we'd rebuild on every
-    // normal resolve (-> evict/rebuild loop -> endless buffering). Only a real quality change, which
-    // resolves to a different format, triggers a rebuild.
+    // when the requested itag RESOLVES to the same format the session already holds. We resolve both
+    // sides through pickVideoFormat so an itag the probe doesn't carry (which both map to the same
+    // fallback) doesn't trigger a needless rebuild on every resolve. Only a real quality change,
+    // which resolves to a different format, triggers a rebuild.
     private static boolean sessionMatchesItag(@NonNull final Holder holder,
                                               final int preferredVideoItag) {
         if (preferredVideoItag <= 0) {
@@ -339,118 +336,24 @@ public final class SabrSessionStore {
 
     /** Honour the user-selected quality when that format is present and hardware-decodable;
      * otherwise fall back to the best hardware-friendly one. */
+    /**
+     * Map the resolver's chosen video itag to a SABR format. The format-selection policy (the
+     * "Enable advanced formats" preference, codec ordering, resolution, etc.) is already applied
+     * upstream by the normal resolver path, so SABR just honors that pick: match the requested itag,
+     * and fall back to the probe's overall best only if it doesn't carry that itag. No independent
+     * decoder filtering here: Android codec capabilities are unreliable, so the user preference is
+     * the single source of truth (same as the non-SABR playback path).
+     */
     private static YoutubeSabrFormat pickVideoFormat(@NonNull final YoutubeSabrInfo info,
                                                      final int preferredItag) {
-        final boolean hwVp9 = hasHardwareDecoder("video/x-vnd.on2.vp9");
-        final boolean hwAv1 = hasHardwareDecoder("video/av01");
-        int preferredHeight = 0;
         if (preferredItag > 0) {
             for (final YoutubeSabrFormat f : info.getFormats()) {
                 if (f.isVideo() && f.getItag() == preferredItag) {
-                    if (isDecodable(f, hwVp9, hwAv1)) {
-                        return f;
-                    }
-                    // Right resolution, wrong codec for this device (e.g. AV1 1080p with no HW AV1):
-                    // remember the height so we fall back to a decodable codec at the SAME resolution.
-                    preferredHeight = f.getHeight();
-                    break;
+                    return f;
                 }
             }
         }
-        // Fall back to the highest decodable format AT the user's chosen resolution, not the absolute
-        // highest: otherwise an undecodable AV1 1080p pick would jump to VP9 4K (heavier, and on the
-        // Pixel it claims HW it can't sustain). preferredHeight 0 (no preference) = no cap.
-        final YoutubeSabrFormat capped = pickHardwareFriendlyVideo(info, preferredHeight);
-        if (capped != null) {
-            return capped;
-        }
-        // Nothing decodable at/under the chosen resolution: rather than return null (which makes
-        // getOrCreate throw -> StreamInfoLoadException + a resolve retry loop on every quality change),
-        // drop the height cap and take the best decodable format there is.
-        return pickHardwareFriendlyVideo(info, 0);
-    }
-
-    private static boolean isDecodable(@NonNull final YoutubeSabrFormat f,
-                                       final boolean hwVp9, final boolean hwAv1) {
-        final String codec = codecFamily(f.getMimeType());
-        return "avc".equals(codec)
-                || ("vp9".equals(codec) && hwVp9)
-                || ("av1".equals(codec) && hwAv1);
-    }
-
-    /**
-     * Pick the highest-resolution video format the device can decode in HARDWARE. The decoder is
-     * chosen by ExoPlayer from the container bytes, so a codec the device only decodes in software
-     * (e.g. AV1 on most phones, or VP9 where there's no HW VP9) melts the CPU and overheats. So we
-     * allow AVC always (universally HW), VP9 only when a HW VP9 decoder exists, AV1 only when a HW
-     * AV1 decoder exists; otherwise fall back to the overall best (better some playback than none).
-     */
-    private static YoutubeSabrFormat pickHardwareFriendlyVideo(@NonNull final YoutubeSabrInfo info,
-                                                               final int maxHeight) {
-        final boolean hwVp9 = hasHardwareDecoder("video/x-vnd.on2.vp9");
-        final boolean hwAv1 = hasHardwareDecoder("video/av01");
-        YoutubeSabrFormat best = null;
-        for (final YoutubeSabrFormat f : info.getFormats()) {
-            if (!f.isVideo()) {
-                continue;
-            }
-            if (!isDecodable(f, hwVp9, hwAv1)) {
-                continue;
-            }
-            if (maxHeight > 0 && f.getHeight() > maxHeight) {
-                continue; // don't exceed the user's chosen resolution
-            }
-            if (best == null || f.getHeight() > best.getHeight()
-                    || (f.getHeight() == best.getHeight() && f.getBitrate() > best.getBitrate())) {
-                best = f;
-            }
-        }
-        return best != null ? best : info.findBestVideoFormat();
-    }
-
-    /** Normalise a SABR format mimeType ({@code codecs="..."}) to a codec family, or null. */
-    @NonNull
-    private static String codecFamily(final String mimeType) {
-        if (mimeType == null) {
-            return "";
-        }
-        if (mimeType.contains("avc1") || mimeType.contains("avc3")) {
-            return "avc";
-        }
-        if (mimeType.contains("vp9") || mimeType.contains("vp09")) {
-            return "vp9";
-        }
-        if (mimeType.contains("av01")) {
-            return "av1";
-        }
-        return "";
-    }
-
-    /** True if the device exposes a non-software (hardware) decoder for the given mime type. */
-    private static boolean hasHardwareDecoder(@NonNull final String mimeType) {
-        try {
-            for (final MediaCodecInfo codec
-                    : new MediaCodecList(MediaCodecList.ALL_CODECS).getCodecInfos()) {
-                if (codec.isEncoder()) {
-                    continue;
-                }
-                final String name = codec.getName().toLowerCase();
-                // Software decoders on Android are named c2.android.* / c2.google.* / omx.google.*.
-                if (name.startsWith("c2.android.") || name.startsWith("c2.google.")
-                        || name.startsWith("omx.google.")) {
-                    continue;
-                }
-                for (final String type : codec.getSupportedTypes()) {
-                    if (type.equalsIgnoreCase(mimeType)) {
-                        return true;
-                    }
-                }
-            }
-        } catch (final Exception e) {
-            // If capability probing fails, be conservative (treat as no HW decoder).
-            return false;
-        }
-        return false;
+        return info.findBestVideoFormat();
     }
 
     /** Evict a cached session, stopping its pump so the thread + buffers are released. */
