@@ -893,6 +893,12 @@ public final class Player implements
         }
 
         if (oldPlayerType != playerType && playQueue != null) {
+            // Keep the position across an audio<->video player TYPE switch. This reload otherwise
+            // drops it: it doesn't save recovery, and shouldSeek() rejects a SABR recovery seek
+            // unless seekOnNextSabrReload is set, so SABR restarts at 0. The session is warm here
+            // (already playing, init metadata loaded), so the recovery seek maps to the right segment.
+            setRecovery();
+            seekOnNextSabrReload = true;
             reloadPlayQueueManager();
         }
 
