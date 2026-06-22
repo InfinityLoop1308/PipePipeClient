@@ -360,7 +360,14 @@ public final class SabrSessionStore {
         // Fall back to the highest decodable format AT the user's chosen resolution, not the absolute
         // highest: otherwise an undecodable AV1 1080p pick would jump to VP9 4K (heavier, and on the
         // Pixel it claims HW it can't sustain). preferredHeight 0 (no preference) = no cap.
-        return pickHardwareFriendlyVideo(info, preferredHeight);
+        final YoutubeSabrFormat capped = pickHardwareFriendlyVideo(info, preferredHeight);
+        if (capped != null) {
+            return capped;
+        }
+        // Nothing decodable at/under the chosen resolution: rather than return null (which makes
+        // getOrCreate throw -> StreamInfoLoadException + a resolve retry loop on every quality change),
+        // drop the height cap and take the best decodable format there is.
+        return pickHardwareFriendlyVideo(info, 0);
     }
 
     private static boolean isDecodable(@NonNull final YoutubeSabrFormat f,
