@@ -122,7 +122,13 @@ final class SabrChunkSource implements ChunkSource {
         return new ContainerMediaChunk(
                 new SabrSegmentDataSource(holder, format, localization, /* prependInit= */ true),
                 spec, trackFormat, C.SELECTION_REASON_UNKNOWN, null,
-                startUs, endUs, /* clippedStartTimeUs= */ startUs, /* clippedEndTimeUs= */ endUs,
+                startUs, endUs, /* clippedStartTimeUs= */ startUs,
+                // No end clip, on purpose. The first chunk's declared end is basically a rumor: we
+                // compute it before the init metadata shows up to admit audio segments are ~10s, not 5s.
+                // Clip to that rumor and you toss the real 5-10s of audio out the window, so the player
+                // faceplants from 0:04 straight to 0:10. A SABR chunk is one whole segment with honest,
+                // non-overlapping absolute timestamps, so we shut up and let the container have the last word.
+                /* clippedEndTimeUs= */ C.TIME_UNSET,
                 /* chunkIndex= */ seq, /* chunkCount= */ 1, /* sampleOffsetUs= */ 0L,
                 extractor);
     }
