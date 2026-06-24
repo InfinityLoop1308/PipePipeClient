@@ -515,9 +515,6 @@
     <string name="title_activity_play_queue">Lista e luajtjes</string>
     <string name="unsupported_url_dialog_message">Nuk u njoh URL. Të hapet me një aplikacion tjetër\?</string>
     <string name="auto_queue_toggle">Listë automatike luajtjeje</string>
-    <string name="clear_queue_confirmation_description">Lista aktive e luajtjes do të zëvendësohet</string>
-    <string name="clear_queue_confirmation_summary">Kalimi nga një luajtës në një tjetër mund të zëvendësojë listën tuaj të luajtjes</string>
-    <string name="clear_queue_confirmation_title">Pyet për konfirmim para se të boshatiset një rradhë luajtjeje</string>
     <string name="notification_action_nothing">Asgjë</string>
     <string name="notification_action_buffering">Ngarkimi</string>
     <string name="notification_action_shuffle">Trazo</string>

@@ -346,6 +346,17 @@ public final class NavigationHelper {
                 .commit();
     }
 
+    public static void openChannelSearchFragment(final FragmentManager fragmentManager,
+                                                 final int serviceId,
+                                                 final String channelUrl,
+                                                 final String channelName) {
+        defaultTransaction(fragmentManager)
+                .replace(R.id.fragment_holder,
+                        SearchFragment.getChannelInstance(serviceId, channelUrl, channelName))
+                .addToBackStack(SEARCH_FRAGMENT_TAG)
+                .commit();
+    }
+
     public static void expandMainPlayer(final Context context) {
         context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_SHOW_MAIN_PLAYER));
     }

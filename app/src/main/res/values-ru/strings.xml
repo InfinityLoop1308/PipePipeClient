@@ -534,9 +534,6 @@
     <string name="title_activity_play_queue">Очередь воспроизведения</string>
     <string name="unsupported_url_dialog_message">Не удалось распознать URL. Открыть в другом приложении\?</string>
     <string name="auto_queue_toggle">Авто-очередь</string>
-    <string name="clear_queue_confirmation_description">Очередь активного плеера будет заменена</string>
-    <string name="clear_queue_confirmation_title">Подтверждать очистку очереди</string>
-    <string name="clear_queue_confirmation_summary">Переход от одного плеера к другому может заменить вашу очередь</string>
     <string name="settings_category_player_notification_summary">Настроить уведомление о воспроизводимом сейчас потоке</string>
     <string name="notification_action_nothing">Ничего</string>
     <string name="notification_action_buffering">Буферизация</string>

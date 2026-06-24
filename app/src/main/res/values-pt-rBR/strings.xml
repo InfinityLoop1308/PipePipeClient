@@ -72,9 +72,6 @@
     <string name="seek_duration_title">Procura em intervalos</string>
     <string name="progressive_load_interval_title">Intervalo de carregamento da reprodução</string>
     <string name="progressive_load_interval_summary">Mudar o intervalo de carregamento da reprodução (atualmente %s). Um valor menor pode acelerar o carregamento inicial do vídeo. O reprodutor precisa ser reiniciado para incorporar as mudanças</string>
-    <string name="clear_queue_confirmation_title">Pedir por confirmação antes de limpar uma fila</string>
-    <string name="clear_queue_confirmation_summary">Mudar de um reprodutor a outro pode sobrescrever sua fila</string>
-    <string name="clear_queue_confirmation_description">A fila do reprodutor ativo será sobrescrita</string>
     <string name="download_thumbnail_title">Carregar miniaturas</string>
     <string name="download_thumbnail_summary">Desligue para previnir o carregamento de miniaturas, economizando o uso de memória. Mudanças limpam tanto o cache de imagens em memória quanto em disco</string>
     <string name="show_meta_info_title">Exibir metadados</string>

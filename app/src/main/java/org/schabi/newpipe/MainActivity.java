@@ -364,6 +364,7 @@ public class MainActivity extends AppCompatActivity {
                 .getItem(ServiceHelper.getSelectedServiceId(this))
                 .setChecked(false);
         ServiceHelper.setSelectedServiceId(this, item.getItemId());
+        SearchFragment.setPersistedSearchServiceId(this, item.getItemId());
         drawerLayoutBinding.navigation.getMenu()
                 .getItem(ServiceHelper.getSelectedServiceId(this))
                 .setChecked(true);

@@ -30,7 +30,6 @@ public final class CustomRenderersFactory extends LegacySubtitleRenderersFactory
         super(context);
     }
 
-    @SuppressWarnings("checkstyle:ParameterNumber")
     @Override
     protected void buildVideoRenderers(final Context context,
                                        @ExtensionRendererMode final int extensionRendererMode,

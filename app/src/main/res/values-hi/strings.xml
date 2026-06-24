@@ -434,7 +434,6 @@
     <string name="peertube_instance_add_https_only">केवल HTTPS यूआरएल ही समर्थित हैं</string>
     <string name="unsupported_url_dialog_message">URL की पहचान नहीं हो सकी। दूसरे ऐप से खोलें\?</string>
     <string name="auto_queue_toggle">ऑटोमैटिकली कतार करे</string>
-    <string name="clear_queue_confirmation_title">कतार को मिटाने से पहले सत्यापन के लिए पूछें</string>
     <string name="seek_duration_title">तलाश अवधि फास्ट-फ़ॉरवर्ड /- रिवाइंड करे</string>
     <string name="notification_colorize_summary">एंड्रॉइड को थंबनेल में मुख्य रंग के अनुसार अधिसूचना रंग को अनुकूलित करें (ध्यान दें कि यह सभी उपकरणों पर उपलब्ध नहीं है)</string>
     <string name="notification_colorize_title">नोटीफिकेशन को रंगीन करें</string>
@@ -487,8 +486,6 @@
     <string name="hash_channel_name">वीडियो हैश अधिसूचना</string>
     <string name="show_meta_info_summary">स्ट्रीम निर्माता, स्ट्रीम विषय सूची या खोज अनुरोध के बारे में अतिरिक्त जानकारी के साथ मेटा जानकारी बक्से को छिपाने के लिए बंद करें.</string>
     <string name="show_meta_info_title">मेटा जानकारी दिखाएँ</string>
-    <string name="clear_queue_confirmation_description">सक्रिय प्लेअर की क़तार बदल दी जाएगी</string>
-    <string name="clear_queue_confirmation_summary">एक प्लेअर से दूसरे प्लेअर में जाने से आपकी कतार बदल सकती है</string>
     <string name="open_with">मे खोलें</string>
     <string name="show_thumbnail_title">थंबनेल दिखाएं</string>
     <string name="show_thumbnail_summary">लॉक स्क्रीन और नोटिफिकेशन दोनों के लिए थंबनेल का इस्तेमाल करे</string>

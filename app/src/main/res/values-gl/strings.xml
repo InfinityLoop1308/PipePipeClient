@@ -564,7 +564,6 @@
 \nDebido ás novas políticas de Youtube cos vídeos con restrición de idade, NewPipe non pode acceder ás transmisións do vídeo, polo que non pode reproducilo.</string>
     <string name="unsupported_url_dialog_message">URL non recoñecido. Abrir con outra aplicación\?</string>
     <string name="show_meta_info_title">Mostrar metainformación</string>
-    <string name="clear_queue_confirmation_title">Pedir confirmación antes de baleirar unha cola</string>
     <string name="night_theme_title">Tema Escuro</string>
     <string name="notification_action_nothing">Nada</string>
     <string name="open_with">Abrir con</string>
@@ -613,8 +612,6 @@
     <string name="hash_channel_description">Notificacións sobre o progreso do hashing do vídeo</string>
     <string name="local_search_suggestions">Suxestións de procura locais</string>
     <string name="remote_search_suggestions">Suxestións de procura remotas</string>
-    <string name="clear_queue_confirmation_description">A cola de reprodución activa será substituída</string>
-    <string name="clear_queue_confirmation_summary">Cambiar dun reprodutor a outro pode substituír a súa cola</string>
     <string name="notification_action_shuffle">Barallar</string>
     <string name="notification_actions_summary">Edite cada acción da notificación premendo nela. Seleccione ata tres delas para seren mostradas na notificación compacta usando as checkboxes da dereita</string>
     <string name="enqueue_next_stream">Enfileirar o seguinte vídeo</string>

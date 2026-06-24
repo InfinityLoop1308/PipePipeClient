@@ -525,9 +525,6 @@
     <string name="error_report_open_github_notice">Skontrolujte prosím, či rovnaká chyba už nie je nahlásená. Vytváranie duplicitných hlásení komplikuje prácu vývojárov.</string>
     <string name="unsupported_url_dialog_message">Nemožno rozpoznať URL. Otvoriť pomocou inej aplikácie\?</string>
     <string name="auto_queue_toggle">Automatický rad</string>
-    <string name="clear_queue_confirmation_description">Zoznam aktuálneho prehrávača bude prepísaný</string>
-    <string name="clear_queue_confirmation_summary">Prepnutie prehrávača môže vymazať zoznam</string>
-    <string name="clear_queue_confirmation_title">Vyžadovať povolenie pred vyčistením zoznamu</string>
     <string name="notification_action_nothing">Nič</string>
     <string name="notification_action_buffering">Bufferuje</string>
     <string name="notification_action_shuffle">Náhodné</string>

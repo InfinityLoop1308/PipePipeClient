@@ -63,9 +63,6 @@
     <string name="default_resolution_title">Panimulang linaw</string>
     <string name="notification_action_4_title">Panlimang action button</string>
     <string name="notification_colorize_title">Kulayan ang abiso</string>
-    <string name="clear_queue_confirmation_title">Kumpirmahin muna bago linisin ang pila</string>
-    <string name="clear_queue_confirmation_summary">Maaaring mapalitan ang pila mo kung magpapalit ka ng player</string>
-    <string name="clear_queue_confirmation_description">Papalitan ang aktibong pila sa player</string>
     <string name="download_thumbnail_title">I-load ang mga thumbnail</string>
     <string name="show_meta_info_title">Ipakita ang meta info</string>
     <string name="show_meta_info_summary">Patayin para itago ang mga meta infobox na may karagdagang impormasyon tungkol sa creator ng stream, laman nito o ng hinanap</string>

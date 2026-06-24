@@ -210,7 +210,7 @@ public class ErrorActivity extends AppCompatActivity {
     private void openPrivacyPolicyDialog(final Context context, final String action) {
         if (action.equals("EMAIL")) { // send on email
             final Intent i = new Intent(Intent.ACTION_SENDTO)
-                    .setData(Uri.parse("mailto:")) // only email apps should handle this
+                    .setData(Uri.parse("mailto:" + ERROR_EMAIL_ADDRESS)) // only email apps should handle this
                     .putExtra(Intent.EXTRA_EMAIL, new String[]{ERROR_EMAIL_ADDRESS})
                     .putExtra(Intent.EXTRA_SUBJECT, ERROR_EMAIL_SUBJECT
                             + getString(R.string.app_name) + " "

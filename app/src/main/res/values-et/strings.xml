@@ -378,9 +378,6 @@
     <string name="auto_queue_toggle">Lisa automaatselt esitusloendisse</string>
     <string name="show_meta_info_summary">Lülita välja, et peita metateabe kastid lisateabega voo looja, sisu või otsingu päringuga</string>
     <string name="show_meta_info_title">Kuva metateave</string>
-    <string name="clear_queue_confirmation_description">Aktiivse mängija esitusloend asendatakse</string>
-    <string name="clear_queue_confirmation_title">Küsi enne esitusloendi tühjendamist kinnitust</string>
-    <string name="clear_queue_confirmation_summary">Lülitamine ühelt mängijalt teisele võib asendada su esitusloendi</string>
     <string name="seek_duration_title">Kiire edasi- ja tagasikerimise sammu pikkus</string>
     <string name="notification_colorize_summary">Lase Androidil kohandada teavituse värvi vastavalt pisipildi peamisele värvile (igal seademel ei pruugi see olla saadaval)</string>
     <string name="notification_colorize_title">Teavituse värvimine</string>

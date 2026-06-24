@@ -500,9 +500,6 @@
     <string name="show_meta_info_title">Rādīt papildus informāciju</string>
     <string name="download_thumbnail_summary">Izslēdziet, ja vēlaties nelādēt video attēlus, ietaupot datus un atmiņu. Opcija notīra kešatmiņu, izdzēšot visus saglabātos video attēlus</string>
     <string name="download_thumbnail_title">Ielādēt video attēlus</string>
-    <string name="clear_queue_confirmation_description">Tagadējā atskaņošanas rinda tiks aizvietota</string>
-    <string name="clear_queue_confirmation_summary">Mainoties vienam video uz citu, iespējams notīrīsies jūsu atskaņošanas rinda</string>
-    <string name="clear_queue_confirmation_title">Prasīt apstiprinājumu, pirms notīrīt atskaņošanas rindu</string>
     <string name="seek_duration_title">Uz priekšu/ uz atpakaļu, meklētāja ilgums</string>
     <string name="use_inexact_seek_summary">Neprecīzs meklētājs atļauj video atskaņotājam atrast pozīciju atrāk, bet ar zemāku precizitāti. Meklēšana 5, 15 vai 25 sekundes uz priekšu vai atpakaļ, nestrādā ar šo opciju</string>
     <string name="use_inexact_seek_title">Izmantot ātru, neprecīzu meklētāju</string>

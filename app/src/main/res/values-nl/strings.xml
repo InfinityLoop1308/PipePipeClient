@@ -514,9 +514,6 @@
     <string name="autoplay_summary">Start automatisch met afspelen — %s</string>
     <string name="title_activity_play_queue">Speel wachtrij af</string>
     <string name="unsupported_url_dialog_message">Kon de URL niet herkennen. In een andere app openen\?</string>
-    <string name="clear_queue_confirmation_description">De actieve spelerswachtrij wordt vervangen</string>
-    <string name="clear_queue_confirmation_summary">Veranderen van één speler naar een andere kan jouw wachtrij vervangen</string>
-    <string name="clear_queue_confirmation_title">Vraag bevestiging alvorens de wachtrij te wissen</string>
     <string name="notification_action_nothing">Niets</string>
     <string name="notification_action_buffering">Aan het bufferen</string>
     <string name="notification_action_shuffle">Willekeurig afspelen</string>

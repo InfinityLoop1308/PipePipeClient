@@ -429,9 +429,6 @@
     <string name="show_original_time_ago_title">Afișați timpul inițial pe articole</string>
     <string name="enable_disposed_exceptions_summary">Forțarea raportării excepțiilor de Rx nedistribuibile în afara ciclului de viață al fragmentului sau al activității după eliminare</string>
     <string name="auto_queue_toggle">Coadă automată</string>
-    <string name="clear_queue_confirmation_description">Coada de redare activă va fi înlocuită</string>
-    <string name="clear_queue_confirmation_summary">Trecerea de la un player la altul vă poate înlocui coada de redare</string>
-    <string name="clear_queue_confirmation_title">Solicitați confirmarea înainte de a șterge o listă de redare</string>
     <plurals name="minutes">
         <item quantity="one">%d minut</item>
         <item quantity="few">%d minute</item>

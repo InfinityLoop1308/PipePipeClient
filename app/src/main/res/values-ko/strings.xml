@@ -469,7 +469,6 @@
     <string name="remove_watched">시청 기록 지우기</string>
     <string name="title_activity_play_queue">재생목록 실행</string>
     <string name="unsupported_url_dialog_message">URL을 인식할 수 없습니다. 다른 앱으로 여시겠습니까\?</string>
-    <string name="clear_queue_confirmation_title">대기열을 비우기 전 확인하도록 합니다.</string>
     <string name="notification_colorize_summary">안드로이드에서 썸네일의 색상에 따라 알림 색상을 조절합니다. (지원되지 않는 기기가 있을 수 있습니다.)</string>
     <string name="notification_action_buffering">버퍼링</string>
     <string name="notification_action_4_title">다섯번째 버튼</string>
@@ -479,10 +478,8 @@
     <string name="permission_display_over_apps">다른 앱 위에 표시되는 권한 부여</string>
     <string name="show_meta_info_title">메타 정보 표시</string>
     <string name="notification_colorize_title">색상화된 알림</string>
-    <string name="clear_queue_confirmation_description">활성화된 플레이어 대기열이 교체됩니다.</string>
     <string name="open_with">으로(로) 열기</string>
     <string name="mark_as_watched">시청한 것으로 처리</string>
-    <string name="clear_queue_confirmation_summary">원래 플레이어에서 다른 플레이어로 바꾸면 대기열이 지워집니다</string>
     <string name="night_theme_title">어두운 테마</string>
     <string name="notification_actions_at_most_three">최대 3개까지 축소 알림에 표시될 항목을 고를 수 있습니다!</string>
     <string name="notification_actions_summary">아래 항목을 터치해서 편집하세요. 위에서부터 체크된 3개 항목은 축소 알림일 때도 표시됩니다</string>

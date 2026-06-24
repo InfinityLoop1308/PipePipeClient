@@ -34,7 +34,7 @@ import androidx.media3.exoplayer.video.VideoRendererEventListener;
  */
 public final class CustomMediaCodecVideoRenderer extends MediaCodecVideoRenderer {
 
-    @SuppressWarnings({"checkstyle:ParameterNumber", "squid:S107"})
+    @SuppressWarnings("squid:S107")
     public CustomMediaCodecVideoRenderer(final Context context,
                                          final MediaCodecAdapter.Factory codecAdapterFactory,
                                          final MediaCodecSelector mediaCodecSelector,

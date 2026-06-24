@@ -286,9 +286,6 @@
     <string name="metadata_cache_wipe_complete_notice">Predpomnjeni metapodatki so bili odstranjeni</string>
     <string name="show_meta_info_title">Prikaži meta informacije</string>
     <string name="download_thumbnail_summary">Izklopite, če želite preprečiti nalaganje sličic, s tem bo varčeval na podatkih in uporabi spomina. Spremembe bodo izbrisale predpomnilnik v spominu in na disku.</string>
-    <string name="clear_queue_confirmation_description">Dejavna vrsta bo zamenjana</string>
-    <string name="clear_queue_confirmation_summary">Preklop na drugi predvajanik lahko zamenja vašo čakalno vrsto</string>
-    <string name="clear_queue_confirmation_title">Vprašaj za potrditev pred čiščenjem vrste</string>
     <string name="notification_colorize_summary">Prepustite, da Android izbere barvo obvestila na podlagi glavne barve v sličici (upoštevajte, da to ni na voljo v vseh napravah)</string>
     <string name="notification_colorize_title">Obarvajte obvestilo</string>
     <string name="notification_action_nothing">Nič</string>

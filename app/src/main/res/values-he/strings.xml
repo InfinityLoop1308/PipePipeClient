@@ -535,9 +535,6 @@
     <string name="title_activity_play_queue">לנגן את התור</string>
     <string name="unsupported_url_dialog_message">לא ניתן לזהות את הכתובת. לפתוח אותה ביישומון אחר\?</string>
     <string name="auto_queue_toggle">סידור אוטומטי בתור</string>
-    <string name="clear_queue_confirmation_description">התור מהנגן הפעיל יוחלף</string>
-    <string name="clear_queue_confirmation_summary">מעבר מנגן אחד למשנהו עלול להחליף את התור שלך</string>
-    <string name="clear_queue_confirmation_title">לבקש אישור לפני מחיקת התור</string>
     <string name="notification_action_nothing">כלום</string>
     <string name="notification_action_buffering">איסוף</string>
     <string name="notification_action_shuffle">ערבוב</string>

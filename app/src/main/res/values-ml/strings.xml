@@ -558,9 +558,6 @@
     <string name="auto_queue_toggle">യാന്ത്രിക-ക്യൂ</string>
     <string name="show_meta_info_summary">സ്ട്രീം സ്രഷ്ടാവ്, സ്ട്രീം ഉള്ളടക്കം അല്ലെങ്കിൽ ഒരു തിരയൽ അഭ്യർത്ഥന എന്നിവയെക്കുറിച്ചുള്ള കൂടുതൽ വിവരങ്ങൾ ഉൾക്കൊള്ളുന്ന മെറ്റാ വിവര ബോക്സുകൾ മറയ്ക്കുന്നതിന് ഓഫാക്കുക</string>
     <string name="show_meta_info_title">മെറ്റാഇൻഫോ കാണിക്കുക</string>
-    <string name="clear_queue_confirmation_description">സജീവ പ്ലെയർ ക്യൂ മാറ്റിസ്ഥാപിക്കും</string>
-    <string name="clear_queue_confirmation_summary">ഒരു പ്ലെയറിൽ നിന്ന് മറ്റൊന്നിലേക്ക് മാറുന്നത് നിങ്ങളുടെ ക്യൂവിനെ പുനഃസ്ഥാപിച്ചേക്കാം</string>
-    <string name="clear_queue_confirmation_title">ഒരു ക്യൂ മായ്‌ക്കുന്നതിന് മുമ്പ് സ്ഥിരീകരണത്തിനായി ആവശ്യപ്പെടുക</string>
     <string name="night_theme_title">രാത്രി തീം</string>
     <string name="notification_action_buffering">ബഫറിംഗ്</string>
     <string name="notification_actions_summary">ചുവടെയുള്ള ഓരോ അറിയിപ്പ് പ്രവർത്തനവും ടാപ്പുചെയ്ത് എഡിറ്റുചെയ്യുക. വലതുവശത്തുള്ള ചെക്ക്ബോക്സുകൾ ഉപയോഗിച്ച് കോംപാക്റ്റ് അറിയിപ്പിൽ കാണിക്കുന്നതിന് അവയിൽ മൂന്നെണ്ണം വരെ തിരഞ്ഞെടുക്കുക</string>

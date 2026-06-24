@@ -425,7 +425,6 @@
     <string name="select_a_playlist">Válasszon egy lejátszási listát</string>
     <string name="autoplay_summary">Lejátszás automatikus indítása — %s</string>
     <string name="playback_speed_control">Lejátszás sebességének beállítása</string>
-    <string name="clear_queue_confirmation_summary">Az egyik lejátszóról a másikra váltás törölheti a lejátszási sort</string>
     <string name="wifi_only">Csak Wi-Fi-hálózaton</string>
     <string name="downloads_storage_use_saf_title">Rendszermappa-választó (SAF) használata</string>
     <string name="downloads_storage_use_saf_summary">A „Storage Access Framework” lehetővé teszi a letöltések külső SD-kártyára történő mentését</string>
@@ -454,8 +453,6 @@
 \nEngedélyezze a(z) „%1$s” beállítást, ha meg szeretné tekinteni.</string>
     <string name="peertube_instance_add_https_only">Csak a HTTPS webcímek támogatottak</string>
     <string name="show_meta_info_title">Metainformációk megjelenítése</string>
-    <string name="clear_queue_confirmation_description">A jelenleg aktív lejátszási sor le lesz cserélve</string>
-    <string name="clear_queue_confirmation_title">Megerősítés kérése a lejátszási sor törlése előtt</string>
     <string name="night_theme_title">Éjszakai téma</string>
     <string name="updates_setting_description">Frissítési értesítés megjelenítése, amikor egy új verzió érhető el</string>
     <string name="updates_setting_title">Frissítések</string>

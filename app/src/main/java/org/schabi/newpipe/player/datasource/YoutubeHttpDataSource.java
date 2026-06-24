@@ -324,7 +324,6 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
 
     private boolean shouldRefetch = false;
 
-    @SuppressWarnings("checkstyle:ParameterNumber")
     private YoutubeHttpDataSource(@Nullable final String userAgent,
                                   final int connectTimeoutMillis,
                                   final int readTimeoutMillis,
@@ -705,7 +704,6 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
      * @param requestParameters parameters (HTTP headers) to include in request.
      * @return the connection opened
      */
-    @SuppressWarnings("checkstyle:ParameterNumber")
     @NonNull
     private HttpURLConnection makeConnection(
             @NonNull final URL url,
@@ -874,7 +872,6 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
      * @throws IOException If the thread is interrupted during the operation, or if the data ended
      * before skipping the specified number of bytes.
      */
-    @SuppressWarnings("checkstyle:FinalParameters")
     private void skipFully(long bytesToSkip, final DataSpec dataSpecToUse) throws IOException {
         if (bytesToSkip == 0) {
             return;
@@ -920,7 +917,6 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
      * range is reached.
      * @throws IOException If an error occurs reading from the source.
      */
-    @SuppressWarnings("checkstyle:FinalParameters")
     private int readInternal(final byte[] buffer, final int offset, int readLength)
             throws IOException {
         if (readLength == 0) {
@@ -1107,4 +1103,3 @@ public final class YoutubeHttpDataSource extends BaseDataSource implements HttpD
         }
     }
 }
-

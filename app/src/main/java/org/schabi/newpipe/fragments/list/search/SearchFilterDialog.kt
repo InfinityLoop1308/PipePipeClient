@@ -229,6 +229,21 @@ private data class FilterUiState(
     val selectedSortFilterIds: Set<Int>
 )
 
+private data class PersistedFilterSelection(
+    val contentFilterId: Int,
+    val sortFilterIds: Set<Int>
+)
+
+private fun getPersistedFilterSelection(
+    context: Context,
+    serviceId: Int
+): PersistedFilterSelection {
+    return PersistedFilterSelection(
+        contentFilterId = SearchFragment.getPersistedSearchContentFilterId(context, serviceId, -1),
+        sortFilterIds = SearchFragment.getPersistedSearchSortFilterIds(context, serviceId).toSet()
+    )
+}
+
 private fun createState(
     serviceId: Int,
     selectedContentFilterId: Int,
@@ -335,7 +350,12 @@ private fun FilterCard(
                     serviceIds = serviceIds,
                     selectedServiceId = state.serviceId,
                     onServiceChange = { serviceId ->
-                        state = createState(serviceId, -1, emptySet())
+                        val persistedSelection = getPersistedFilterSelection(context, serviceId)
+                        state = createState(
+                            serviceId,
+                            persistedSelection.contentFilterId,
+                            persistedSelection.sortFilterIds
+                        )
                     }
                 )
 

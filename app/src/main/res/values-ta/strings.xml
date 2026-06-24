@@ -162,15 +162,12 @@
         <item quantity="other">%s பார்க்கிறார்கள்</item>
     </plurals>
     <string name="seek_duration_title">வேகமாக முன்னோக்கி / திரும்பத் தேடும் காலம்</string>
-    <string name="clear_queue_confirmation_title">வரிசையை அழிக்கும் முன் உறுதிப்படுத்தலைக் கேள்</string>
     <string name="confirm_prompt">உங்கள் பதிவிறக்க வரலாற்றை அழிக்க வேண்டுமா அ எல்லா பதிவிறக்கிய கோப்புகளையும் நீக்க வேண்டுமா\?</string>
     <string name="clear_download_history">பதிவிறக்க வரலாற்றை அழி</string>
     <string name="delete_item_search_history">தேடல் வரலாற்றிலிருந்து இந்த உருப்படியை நீக்கவா\?</string>
     <string name="action_history">வரலாறு</string>
     <string name="title_activity_history">வரலாறு</string>
     <string name="show_meta_info_title">மேனிலை தகவல் காட்டு</string>
-    <string name="clear_queue_confirmation_description">செயலிலுள்ள இயக்கி வரிசை மாற்றப்படும்</string>
-    <string name="clear_queue_confirmation_summary">ஒரு இயக்கி விட்டு மறு இயக்கி மாறுதல் உங்கள் வரிசையை மாற்றக்கூடும்</string>
     <string name="use_inexact_seek_summary">துல்லியமற்ற நாடல் குறைந்த துல்லியத்துடன் விரைவாக நாட இயக்கியை அனுமதிக்கிறது. 5, 15 அ 25 நொடிகள் நாடுவது இதனுடன் செயல்படாது</string>
     <string name="night_theme_title">இரவு தோற்றம்</string>
     <string name="notification_colorize_summary">சிறுபடத்திலுள்ள முதன்மை நிறத்திற்கேற்ப அறிவிப்பின் நிறத்தை Androidஐ தனிப்பயனாக்கச் செய் (இது எல்லா சாதனங்களிலும் கிடைக்காதென்பதை குறித்துக்கொள்)</string>

@@ -515,9 +515,6 @@
     <string name="title_activity_play_queue">Toistojono</string>
     <string name="unsupported_url_dialog_message">Ei tunnistettu URL:ää. Avataanko toisessa sovelluksessa\?</string>
     <string name="auto_queue_toggle">Automaattinen jonoon lisääminen</string>
-    <string name="clear_queue_confirmation_description">Aktiivisen soittimen jono korvataan</string>
-    <string name="clear_queue_confirmation_summary">Soittimesta toiseen vaihtaminen saattaa korvata jonosi</string>
-    <string name="clear_queue_confirmation_title">Kysy vahvistusta ennen jonon tyhjentämistä</string>
     <string name="notification_action_nothing">Ei mitään</string>
     <string name="notification_action_buffering">Puskurointi</string>
     <string name="notification_action_shuffle">Sekoita</string>

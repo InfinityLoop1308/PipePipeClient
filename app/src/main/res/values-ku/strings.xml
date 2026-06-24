@@ -498,8 +498,6 @@
     <string name="error_report_open_issue_button_text">سکاڵا لەسەر GitHub</string>
     <string name="copy_for_github">لەبەرگرتنەوەی سکاڵا</string>
     <string name="search_showing_result_for">پیشاندانی ئەنجامەکان بۆ: %s</string>
-    <string name="clear_queue_confirmation_summary">گۆڕینی لێدەری یەکەم بۆ دانەیەکیتر ڕەنگە ڕیزەکانت تێکەڵ بن</string>
-    <string name="clear_queue_confirmation_title">پرس بکرێ بۆ دڵنیابوونەوە پێش سڕینەوەی ڕیزێک</string>
     <string name="playlist_page_summary">پەڕەی لیستەلێدان</string>
     <string name="feed_group_show_only_ungrouped_subscriptions">تەنها بەشدارییە کۆمەڵە نەکراوەکان پیشاندرێ</string>
     <string name="never">هەرگیز</string>
@@ -509,7 +507,6 @@
     <string name="no_playlist_bookmarked_yet">هیچ لیستەلێدانێک نیشانە نەکراوە</string>
     <string name="unsupported_url_dialog_message">بەستەرەکە نەناسرایەوە. لە ئەپێکیتردا بکرێتەوە؟</string>
     <string name="auto_queue_toggle">ڕیزبوونی خۆکار</string>
-    <string name="clear_queue_confirmation_description">ڕیزی لێدەری چالاک جێیدەگیرێتەوە</string>
     <string name="notification_action_nothing">هیچێک</string>
     <string name="notification_action_shuffle">تێکەڵاو</string>
     <string name="notification_action_repeat">لێدانەوە</string>

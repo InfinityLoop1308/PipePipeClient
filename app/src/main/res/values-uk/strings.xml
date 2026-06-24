@@ -574,9 +574,6 @@
     <string name="restricted_video_no_stream">Це відео має вікові обмеження.
 \nЗгідно з новою політикою YouTube щодо відео з віковими обмеженнями NewPipe не може мати доступ до жодного потоку цього відео і, таким чином, не має можливості відтворити його.</string>
     <string name="show_meta_info_summary">Вимкніть, щоб приховати поля метаданих (автор потоку, вміст потоку або пошуковий запит)</string>
-    <string name="clear_queue_confirmation_description">Черга активного програвача буде замінена</string>
-    <string name="clear_queue_confirmation_summary">Перехід від одного програвача до іншого може замінити вашу чергу</string>
-    <string name="clear_queue_confirmation_title">Підтверджувати очищення черги</string>
     <string name="notification_colorize_summary">Кольорувати повідомлення основним кольором мініатюри. Підтримується не всіма пристроями</string>
     <string name="notification_colorize_title">Кольорове сповіщення</string>
     <string name="notification_actions_at_most_three">У компактному сповіщенні є не більше трьох дій!</string>

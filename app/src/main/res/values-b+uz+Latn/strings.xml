@@ -29,9 +29,6 @@
     <string name="thumbnail_cache_wipe_complete_notice">Rasm keshi o\'chirildi</string>
     <string name="download_thumbnail_summary">Eskizlarni yuklash, ma\'lumotlarni tejash va xotiradan foydalanishni oldini olish uchun o\'chirib qo\'ying. O\'zgarishlar xotiradagi va diskdagi rasm keshini tozalaydi.</string>
     <string name="download_thumbnail_title">Eskizlarni yuklang</string>
-    <string name="clear_queue_confirmation_description">Aktiv ijro etish navbati almashtiriladi</string>
-    <string name="clear_queue_confirmation_summary">Bir ijro etishdan boshqasiga o\'tish sizning navbatingizni almashtirishi mumkin</string>
-    <string name="clear_queue_confirmation_title">Navbatni tozalashdan oldin tasdiqlashni so\'rash</string>
     <string name="seek_duration_title">Oldinga tez / oldinga siljish davomiyligini qidirish</string>
     <string name="use_inexact_seek_summary">Noto\'g\'ri izlash ijro etuvchiga aniqlikni pasayishi bilan tezroq pozitsiyalarni qidirishga imkon beradi. 5, 15 yoki 25 soniyani qidirish bu bilan ishlamaydi.</string>
     <string name="use_inexact_seek_title">Tez aniq bo\'lmagan izlashdan foydalanish</string>

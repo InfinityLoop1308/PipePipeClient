@@ -460,9 +460,6 @@
     <string name="enqueue_stream">Dodaj u popis izvođenja</string>
     <string name="title_activity_play_queue">Popis izvođenja</string>
     <string name="auto_queue_toggle">Automatski popis izvođenja</string>
-    <string name="clear_queue_confirmation_description">Popis izvođenja aktivnog reproduktora će se zamijeniti</string>
-    <string name="clear_queue_confirmation_summary">Prebacivanje s jednog reproduktora na drugi može zamijeniti popisa izvođenja</string>
-    <string name="clear_queue_confirmation_title">Pitaj prije pražnjenja popisa izvođenja</string>
     <plurals name="listening">
         <item quantity="one">%s slušatelj</item>
         <item quantity="few">%s slušatelja</item>

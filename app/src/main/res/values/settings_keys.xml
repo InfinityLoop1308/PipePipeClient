@@ -30,8 +30,6 @@
     <string name="auto_queue_key">auto_queue_key</string>
     <string name="screen_brightness_key">screen_brightness_key</string>
     <string name="screen_brightness_timestamp_key">screen_brightness_timestamp_key</string>
-    <string name="clear_queue_confirmation_key">clear_queue_confirmation_key</string>
-
     <string name="popup_saved_width_key">popup_saved_width</string>
     <string name="popup_saved_x_key">popup_saved_x</string>
     <string name="popup_saved_y_key">popup_saved_y</string>
@@ -1730,7 +1728,45 @@
     <string name="filter_future_items_key">filter_future_items_key</string>
     <string name="use_experimental_new_ui_key">use_experimental_new_ui</string>
     <string name="force_end_on_overtime_key">force_end_on_overtime</string>
+    <string name="force_sabr_key">force_sabr</string>
     <string name="use_old_search_filter_key">use_old_search_filter</string>
     <string name="main_tabs_position_key">main_tabs_position</string>
     <string name="disable_exoplayer_media_codec_async_queueing_key">disable_exoplayer_media_codec_async_queueing_key</string>
+    <string name="auto_translated_subtitles_language_key">auto_translated_subtitles_language</string>
+    <string-array name="auto_translated_subtitles_language_names">
+        <item>English</item>
+        <item>Français</item>
+        <item>Deutsch</item>
+        <item>Español</item>
+        <item>Português</item>
+        <item>Русский</item>
+        <item>Türkçe</item>
+        <item>简体中文</item>
+        <item>日本語</item>
+        <item>हिन्दी</item>
+        <item>한국어</item>
+        <item>ไทย</item>
+        <item>Tiếng Việt</item>
+        <item>বাংলা</item>
+        <item>Bahasa Indonesia</item>
+        <item>العربية</item>
+    </string-array>
+    <string-array name="auto_translated_subtitles_language_values">
+        <item>en</item>
+        <item>fr</item>
+        <item>de</item>
+        <item>es</item>
+        <item>pt</item>
+        <item>ru</item>
+        <item>tr</item>
+        <item>zh</item>
+        <item>ja</item>
+        <item>hi</item>
+        <item>ko</item>
+        <item>th</item>
+        <item>vi</item>
+        <item>bn</item>
+        <item>id</item>
+        <item>ar</item>
+    </string-array>
 </resources>

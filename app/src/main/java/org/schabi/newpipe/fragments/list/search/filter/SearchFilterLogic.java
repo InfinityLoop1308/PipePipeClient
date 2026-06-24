@@ -248,7 +248,6 @@ public abstract class SearchFilterLogic implements CallbackOptions {
         }
     }
 
-    @SuppressWarnings("checkstyle:FinalParameters")
     private void createSortFilterMenuEntries(int lastUsedGroupId,
                                              final boolean isInit) {
         final Filter sortFilters = service.getSearchQHFactory().getAvailableSortFilter();

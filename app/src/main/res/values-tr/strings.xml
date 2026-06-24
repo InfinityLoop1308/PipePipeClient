@@ -76,9 +76,6 @@
 <string name="seek_duration_title">Hızlı ileri/geri sarma süresi</string>
 <string name="progressive_load_interval_title">Oynatma yükleme aralığı boyutu</string>
 <string name="progressive_load_interval_summary">Yükleme aralığı boyutunu değiştir (şu anda %s). Daha düşük bir değer ilk video yüklemesini hızlandırabilir. Değişiklikler oynatıcının yeniden başlatılmasını gerektirir</string>
-<string name="clear_queue_confirmation_title">Sırayı temizlemeden önce onay iste</string>
-<string name="clear_queue_confirmation_summary">Bir oynatıcıdan diğerine geçmek sıranızı değiştirebilir</string>
-<string name="clear_queue_confirmation_description">Aktif oynatıcı sırası değiştirilecek</string>
 <string name="download_thumbnail_title">Küçük resimleri yükle</string>
 <string name="download_thumbnail_summary">Küçük resimlerin yüklenmesini engelleyerek veri ve bellek kullanımından tasarruf etmek için kapatın. Değişiklikler hem bellek içi hem de disk üzerindeki resim önbelleğini temizler</string>
 <string name="show_meta_info_title">Meta bilgilerini göster</string>

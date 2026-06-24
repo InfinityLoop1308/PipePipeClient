@@ -519,9 +519,6 @@
     <string name="enable_playback_resume_summary">Verder afspelen vanaf laatste positie</string>
     <string name="enable_playback_resume_title">Afspelen hervatten</string>
     <string name="auto_queue_toggle">Volgende stream automatisch in wachtrij plaatsen</string>
-    <string name="clear_queue_confirmation_description">De actieve wachtrij wordt vervangen</string>
-    <string name="clear_queue_confirmation_summary">Veranderen van één speler naar een andere kan jouw wachtrij vervangen</string>
-    <string name="clear_queue_confirmation_title">Vraag bevestiging om wachtrij te wissen</string>
     <string name="seek_duration_title">Duur voor-/achteruit spoelen</string>
     <string name="notification_action_nothing">Niets</string>
     <string name="notification_action_buffering">Aan het bufferen</string>

@@ -76,9 +76,6 @@
 <string name="seek_duration_title">Fast-forward/-rewind seek duration</string>
 <string name="progressive_load_interval_title">Playback load interval size</string>
 <string name="progressive_load_interval_summary">Change the load interval size (currently %s). A lower value may speed up initial video loading. Changes require a player restart</string>
-<string name="clear_queue_confirmation_title">Ask for confirmation before clearing a queue</string>
-<string name="clear_queue_confirmation_summary">Switching from one player to another may replace your queue</string>
-<string name="clear_queue_confirmation_description">The active player queue will be replaced</string>
 <string name="download_thumbnail_title">Load thumbnails</string>
 <string name="download_thumbnail_summary">Turn off to prevent loading thumbnails, saving data and memory usage. Changes clear both in-memory and on-disk image cache</string>
 <string name="show_meta_info_title">Show meta info</string>
@@ -1039,6 +1036,8 @@
 <string name="use_experimental_new_ui_summary">Use the new Compose-based UI, still being optimized. Changing this will restart the app.</string>
 <string name="force_end_on_overtime_title">Force end on overtime</string>
 <string name="force_end_on_overtime_summary">Force end playback when current position exceeds stream duration, as a workaround for streams that do not stop naturally</string>
+<string name="force_sabr_title">Force SABR</string>
+<string name="force_sabr_summary">Route all YouTube videos through the SABR pipeline instead of DASH/HLS. Experimental: may cause playback failures on some devices or videos</string>
 <string name="use_old_search_filter_title">Use old search filter</string>
 <string name="use_old_search_filter_summary">Use the old menu-based search filter instead of the new dialog UI</string>
 <string name="main_tabs_position_summary">Move main tab selector to the bottom</string>
@@ -1061,4 +1060,9 @@
 <string name="media_codec_workaround_hint_title">MediaCodec playback failed</string>
 <string name="media_codec_async_workaround_hint">This failure may be caused by MediaCodec asynchronous queueing. Try enabling \"Disable MediaCodec asynchronous queueing\" in ExoPlayer settings, then restart playback.</string>
 <string name="media_codec_surface_workaround_hint">This failure happened while changing the video output surface. Try enabling \"Always use ExoPlayer\'s video output surface setting workaround\" in ExoPlayer settings, then restart playback.</string>
+<string name="search_inside_channel">Search inside %s</string>
+<string name="show_auto_translated_subtitles_title">Show auto-translated subtitles</string>
+<string name="show_auto_translated_subtitles_summary">Show YouTube auto-translated subtitles. Requires YouTube login.</string>
+<string name="show_auto_translated_subtitles_login_required_summary">Disabled because YouTube login is required for auto-translated subtitles.</string>
+<string name="auto_translated_subtitles_language_title">Auto-translate subtitles to</string>
 </resources>
