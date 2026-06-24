@@ -13,6 +13,7 @@ import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreferenceCompat;
 
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.PicassoHelper;
@@ -94,6 +95,8 @@ public class AdvancedSettingsFragment extends BasePreferenceFragment implements 
             ServiceHelper.initServices(this.getContext());
         } else if (key.equals(getString(R.string.auto_translated_subtitles_language_key))) {
             ServiceHelper.initServices(this.getContext());
+        } else if (key.equals(getString(R.string.force_sabr_key))) {
+            NewPipe.setForceSabr(sharedPreferences.getBoolean(key, false));
         }
     }
 
