@@ -6,6 +6,7 @@ import android.text.format.DateUtils;
 
 import androidx.annotation.Nullable;
 import androidx.preference.ListPreference;
+import androidx.preference.SwitchPreferenceCompat;
 
 import org.schabi.newpipe.R;
 
@@ -19,6 +20,32 @@ public class GestureSettingsFragment extends BasePreferenceFragment {
                                     @Nullable final String rootKey) {
         addPreferencesFromResourceRegistry();
         updateSeekOptions();
+        setupSpeedGestureMutualExclusion();
+    }
+
+    private void setupSpeedGestureMutualExclusion() {
+        final SwitchPreferenceCompat fullscreenPref = findPreference(
+                getString(R.string.fullscreen_gesture_control_key));
+        final SwitchPreferenceCompat speedPref = findPreference(
+                getString(R.string.playback_speed_gesture_control_key));
+
+        if (fullscreenPref == null || speedPref == null) {
+            return;
+        }
+
+        fullscreenPref.setOnPreferenceChangeListener((pref, newValue) -> {
+            if (Boolean.TRUE.equals(newValue)) {
+                speedPref.setChecked(false);
+            }
+            return true;
+        });
+
+        speedPref.setOnPreferenceChangeListener((pref, newValue) -> {
+            if (Boolean.TRUE.equals(newValue)) {
+                fullscreenPref.setChecked(false);
+            }
+            return true;
+        });
     }
 
     private void updateSeekOptions() {

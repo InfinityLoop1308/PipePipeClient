@@ -334,6 +334,11 @@ public final class PlayerHelper {
                 .getBoolean(context.getString(R.string.swipe_seek_gesture_control_key), true);
     }
 
+    public static boolean isPlaybackSpeedGestureEnabled(@NonNull final Context context) {
+        return getPreferences(context)
+                .getBoolean(context.getString(R.string.playback_speed_gesture_control_key), false);
+    }
+
     public static boolean isStartMainPlayerFullscreenEnabled(@NonNull final Context context) {
         return getPreferences(context)
                 .getBoolean(context.getString(R.string.start_main_player_fullscreen_key), false);

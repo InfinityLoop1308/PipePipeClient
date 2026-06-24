@@ -93,6 +93,8 @@
 <string name="brightness_gesture_control_summary">Use gestures to control player brightness</string>
 <string name="swipe_seek_gesture_control_title">Swipe to seek gesture</string>
 <string name="swipe_seek_gesture_control_summary">Swipe right to fast-forward, and left to rewind</string>
+<string name="playback_speed_gesture_control_title">Swipe to control playback speed</string>
+<string name="playback_speed_gesture_control_summary">Use gestures to control playback speed. Disables fullscreen gesture control</string>
 <string name="show_search_suggestions_title">Search suggestions</string>
 <string name="show_search_suggestions_summary">Choose the suggestions to show when searching</string>
 <string name="local_search_suggestions">Local search suggestions</string>
@@ -922,7 +924,7 @@
 <string name="view_on_github">View on GitHub</string>
 <string name="donation_dialog_title">Support the Project</string>
 <string name="donation_dialog_message">Thank you for using PipePipe! If you find it useful, please consider becoming a supporter on Ko-Fi. Your support is important to me and helps me add more exciting new features. Every bit counts! 😇</string>
-<string name="fullscreen_gesture_control_summary">Use gestures to enter / exit fullscreen</string>
+<string name="fullscreen_gesture_control_summary">Use gestures to enter / exit fullscreen. Disables playback speed gesture control</string>
 <string name="fullscreen_gesture_control_title">Fullscreen gesture control</string>
 <string name="require_audio_focus_summary">Make sure only PipePipe is playing audio</string>
 <string name="require_audio_focus_title">Require audio focus</string>
