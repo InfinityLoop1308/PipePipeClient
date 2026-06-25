@@ -803,7 +803,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在背景播放時自動隨機播放您的本地播放列表</string>
-<string name="update_log">修復：所有影片上出現「This content is not supported by PipePipe」的錯誤 (YouTube)\n\nYouTube 最近更新頻繁，請務必開啟更新檢查，以便即時接收我們的最新修補程式。</string>
+<string name="update_log">### 新功能\n\n- 新增對 YouTube SABR 協定的實驗性支援，並在「進階設定」中提供強制啟用的選項 (YouTube)\n- 支援在登入帳號的狀態下下載影片 (YouTube)\n- 重新加入對自動翻譯字幕的支援（僅在登入帳號時可用）(YouTube)\n- 支援在特定頻道內搜尋影片 (YouTube)\n- 支援在頻道內對影片進行排序 (YouTube)\n- 記住上次選擇的搜尋過濾條件\n- 支援在影片播放器中自訂長寬比\n- 支援將首頁的分頁列放置於底部\n- 支援主題圖示\n\n### 問題修復\n\n- 修復部分影片解析失敗並顯示內容無法使用的錯誤 (YouTube)\n- 修復所有播放清單顯示為空的錯誤 (YouTube)\n- 修復影片頁面上「相關影片」缺少上傳日期的問題 (YouTube)\n- 修復當影片的最低可用畫質低於預設設定時，應用程式會錯誤地自動選擇最高畫質的問題\n- 修復在同一播放佇列中切換影片時，SponsorBlock 片段標記無法正確更新的問題\n- 修復「傳送電子郵件」功能無法正確識別裝置上電子郵件應用程式的問題\n- 修復播放清單中的所有影片錯誤地將播放清單建立者顯示為上傳者的問題 (YouTube)\n- 修復導致部分影片意外停止的播放錯誤 (Bilibili)\n- 修復在 armv7 和 x86 架構上無法下載的問題 (Bilibili, Niconico)\n- 修復 `b23.tv` 短連結無法正確解析的問題 (Bilibili)\n- 修復連結中的時間戳記被忽略的問題 (Niconico)\n- 修復啟用實驗性新 UI 時評論無法正確顯示的問題\n- 修復在特定情況下發生的崩潰問題\n\n### 使用者介面\n\n- 移除啟用專屬動態消息的建議，並將相關設定移至「進階設定」\n- 更新主分頁上搜尋歷史按鈕的顯示，以避免出現重複的圖示\n- 更新俄語翻譯\n- 更新波蘭語翻譯\n\n### 其他\n\n- 全面支援 16KB 頁面大小，稍微提升在 Android 16+ 上的效能\n- 升級目標 SDK 至 36\n- 提升穩定性</string>
 <string name="speeding_playback_title">按住以加速播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這項計畫</string>
