@@ -1107,6 +1107,6 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="settings_category_behavior_title">Поведение</string>
     <string name="show_auto_translated_subtitles_title">Автоматический перевод субтитров</string>
     <string name="show_auto_translated_subtitles_summary">Показывать автоматически переведенные субтитры YouTube. Требуется вход в аккаунт YouTube.</string>
-    <string name="show_auto_translated_subtitles_login_required_summary">Отключено, так как для автоматического перевода субтитров требуется вход в аккаунт YouTube.</string>
+    <string name="show_auto_translated_subtitles_login_required_summary">Отключено, так как для автоматического перевода субтитров необходим вход в аккаунт YouTube.</string>
     <string name="auto_translated_subtitles_language_title">Язык автоматического перевода субтитров</string>
 </resources>
