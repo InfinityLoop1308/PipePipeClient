@@ -547,9 +547,6 @@
     <string name="title_activity_play_queue">Kolejka odtwarzania</string>
     <string name="unsupported_url_dialog_message">Nie udało się rozpoznać adresu URL. Otworzyć za pomocą innej aplikacji\?</string>
     <string name="auto_queue_toggle">Automatyczna kolejka</string>
-    <string name="clear_queue_confirmation_description">Kolejka aktywnego odtwarzacza zostanie zastąpiona</string>
-    <string name="clear_queue_confirmation_summary">Przejście z jednego odtwarzacza na inny może zastąpić kolejkę</string>
-    <string name="clear_queue_confirmation_title">Poproś o potwierdzenie przed wyczyszczeniem kolejki</string>
     <string name="notification_action_nothing">Nic</string>
     <string name="notification_action_buffering">Buforowanie</string>
     <string name="notification_action_shuffle">Losuj</string>

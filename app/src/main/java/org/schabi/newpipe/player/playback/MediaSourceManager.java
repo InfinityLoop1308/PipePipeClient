@@ -444,7 +444,12 @@ public class MediaSourceManager {
                     + ServiceHelper.getCacheExpirationMillis(streamInfo.getServiceId());
             return new LoadedMediaSource(source, tag, stream, expiration);
         }).onErrorReturn(throwable -> {
-            if (throwable instanceof ExtractionException) {
+            // ExtractionException = stream info load failure; IllegalStateException = a resolver
+            // source-build failure (e.g. SABR probe / session creation), thrown by sourceOf. Both are
+            // source errors: keep the real cause so the report says where it came from, and don't
+            // auto-retry them as if they were transient (which would loop on a permanent failure).
+            if (throwable instanceof ExtractionException
+                    || throwable instanceof IllegalStateException) {
                 return FailedMediaSource.of(stream, new StreamInfoLoadException(throwable));
             }
             // Non-source related error expected here (e.g. network),

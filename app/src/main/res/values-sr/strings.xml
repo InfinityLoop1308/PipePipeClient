@@ -477,9 +477,6 @@
     <string name="metadata_cache_wipe_complete_notice">Кеш метаподатака обрисан</string>
     <string name="show_meta_info_summary">Искључите за сакривање поља мета-података са додатним информацијама о творцу тока, садржају или захтеву за претрагу</string>
     <string name="show_meta_info_title">Прикажи мета-податке</string>
-    <string name="clear_queue_confirmation_description">Редослед активног плејера биће замењен</string>
-    <string name="clear_queue_confirmation_summary">Пребацивање на други плејер може променити ваш редослед</string>
-    <string name="clear_queue_confirmation_title">Питај за потврду пре пражњења редоследа</string>
     <string name="seek_duration_title">Време за премотавања напред/назад</string>
     <string name="night_theme_title">ноћна тема</string>
     <string name="notification_colorize_summary">Андроид ће прилагодити боју обавештења према главној боји на сличици (није доступно на свим уређајима)</string>

@@ -74,9 +74,6 @@
 <string name="seek_duration_title">Dauer des schnellen Vor-/-Zurückspulens</string>
 <string name="progressive_load_interval_title">Intervallgröße des Ladevorgangs</string>
 <string name="progressive_load_interval_summary">Ändern Sie die Größe des Ladeintervalls (derzeit %s). Ein niedrigerer Wert kann das initiale Laden des Videos beschleunigen. Änderungen erfordern einen Neustart des Players</string>
-<string name="clear_queue_confirmation_title">Bestätigung zum Löschen einer Warteschlange anfordern</string>
-<string name="clear_queue_confirmation_summary">Das Wechseln von einem Player zum nächsten könnte Ihre Warteschlange ersetzen</string>
-<string name="clear_queue_confirmation_description">Die aktive Player-Warteschlange wird ersetzt</string>
 <string name="download_thumbnail_title">Miniaturbilder laden</string>
 <string name="download_thumbnail_summary">Deaktivieren, um das Laden von Miniaturbildern zu verhindern, und somit Daten- und Speichernutzung zu sparen. Änderungen leeren sowohl den im Speicher als auch auf der Festplatte gespeicherten Bildcache</string>
 <string name="show_meta_info_title">Meta-Informationen anzeigen</string>
@@ -753,7 +750,7 @@
 <string name="sponsor_promote">Unterstützer werden</string>
 <string name="random_play_order_title">Zufällige Reihenfolge</string>
 <string name="random_play_order_summary">Automatisch Ihre lokalen Wiedergabelisten mischen, wenn sie im Hintergrund abgespielt werden</string>
-<string name="update_log">Fix: \"Dieser Inhalt wird von PipePipe nicht unterstützt\" Fehler bei allen Videos (YouTube)\n\nYouTube wurde in letzter Zeit häufig aktualisiert. Bitte stellen Sie sicher, dass die Update-Überprüfung aktiviert ist, um unsere neuesten Patches zeitnah zu erhalten.</string>
+<string name="update_log">### Neue Funktionen\n\n- Experimentelle Unterstützung für das YouTube-SABR-Protokoll hinzugefügt, mit einer Option, es in den Erweiterten Einstellungen (YouTube) zwangsweise zu aktivieren\n- Unterstützung für das Herunterladen von Videos, während man in einem Konto angemeldet ist (YouTube)\n- Unterstützung für automatisch übersetzte Untertitel wieder hinzugefügt (funktioniert nur, wenn man in einem Konto angemeldet ist) (YouTube)\n- Unterstützung für die Suche nach Videos innerhalb eines bestimmten Kanals (YouTube)\n- Unterstützung für das Sortieren von Videos innerhalb eines Kanals (YouTube)\n- Die zuletzt ausgewählten Suchfilter werden beibehalten\n- Unterstützung für benutzerdefinierte Seitenverhältnisse im Videoplayer\n- Unterstützung für die Positionierung der Tab-Leiste am unteren Rand der Startseite\n- Unterstützung für Themed Icons\n\n### Fehlerbehebungen\n\n- Behebung eines Fehlers, bei dem einige Videos nicht verarbeitet werden konnten und \"Inhalt nicht verfügbar\"-Fehler anzeigten (YouTube)\n- Behebung eines Fehlers, bei dem alle Playlists als leer angezeigt wurden (YouTube)\n- Behebung eines Fehlers, bei dem das Upload-Datum bei \"Ähnliche Videos\" auf der Videoseite fehlte (YouTube)\n- Behebung eines Fehlers, bei dem die App fälschlicherweise automatisch die höchste Auflösung auswählte, wenn die niedrigste verfügbare Auflösung des Videos unter der Standardeinstellung lag\n- Behebung eines Fehlers, bei dem SponsorBlock-Segmentmarkierungen beim Wechseln von Videos in derselben Warteschlange nicht korrekt aktualisiert wurden\n- Behebung eines Fehlers, bei dem die Funktion \"E-Mail senden\" E-Mail-Apps auf dem Gerät nicht korrekt erkannte\n- Behebung eines Problems, bei dem alle Videos in einer Playlist fälschlicherweise den Ersteller der Playlist als Uploader anzeigten (YouTube)\n- Behebung von Wiedergabefehlern, die dazu führten, dass einige Videos unerwartet stoppten (Bilibili)\n- Behebung eines Fehlers, bei dem das Herunterladen auf armv7- und x86-Architekturen nicht funktionierte (Bilibili, Niconico)\n- Behebung eines Fehlers, bei dem `b23.tv`-Kurzlinks nicht korrekt verarbeitet wurden (Bilibili)\n- Behebung eines Fehlers, bei dem Zeitstempel in Links ignoriert wurden (Niconico)\n- Behebung eines Fehlers, bei dem Kommentare nicht korrekt angezeigt wurden, wenn die experimentelle neue Benutzeroberfläche aktiviert war\n- Behebung von Abstürzen, die in bestimmten Szenarien auftraten\n\n### UI\n\n- Entfernung der Empfehlung zur Aktivierung des dedizierten Feeds und Verschieben der zugehörigen Einstellung in die Erweiterten Einstellungen\n- Aktualisierung der Anzeige des Suchverlauf-Buttons im Haupt-Tab, um doppelte Symbole zu vermeiden\n- Russische Übersetzungen aktualisiert\n- Polnische Übersetzungen aktualisiert\n\n### Sonstiges\n\n- Vollständige Unterstützung für 16KB Seitengröße, was die Leistung auf Android 16+ leicht verbessert\n- Ziel-SDK auf 36 aktualisiert\n- Stabilität verbessert</string>
 <string name="speeding_playback_title">Langes Drücken, um die Wiedergabe zu beschleunigen</string>
 <string name="view_on_github">Auf GitHub ansehen</string>
 <string name="donation_dialog_title">Projekt unterstützen</string>
@@ -944,4 +941,28 @@
 <string name="media_codec_workaround_hint_title">MediaCodec-Wiedergabe fehlgeschlagen</string>
 <string name="media_codec_async_workaround_hint">Dieser Fehler wird möglicherweise durch asynchrones MediaCodec-Queueing verursacht. Versuchen Sie, \"Asynchrones MediaCodec-Queueing deaktivieren\" in den ExoPlayer-Einstellungen zu aktivieren, und starten Sie die Wiedergabe anschließend neu.</string>
 <string name="media_codec_surface_workaround_hint">Dieser Fehler trat beim Ändern der Videoausgabeoberfläche auf. Versuchen Sie, \"Immer den Workaround für die Videoausgabe-Oberflächeneinstellung von ExoPlayer verwenden\" in den ExoPlayer-Einstellungen zu aktivieren, und starten Sie die Wiedergabe anschließend neu.</string>
+<string name="aspect_ratio_custom">Benutzerdefiniert…</string>
+<string name="aspect_ratio_custom_title">Benutzerdefiniertes Seitenverhältnis</string>
+<string name="aspect_ratio_custom_hint">z. B. 16:9 oder 1.78</string>
+<string name="aspect_ratio_invalid">Ungültiges Seitenverhältnis</string>
+<string name="past_hour">Letzte Stunde</string>
+<string name="past_day">Letzter Tag</string>
+<string name="past_week">Letzte Woche</string>
+<string name="past_month">Letzter Monat</string>
+<string name="past_year">Letztes Jahr</string>
+<string name="short_video">Kurz</string>
+<string name="medium_length">Mittel</string>
+<string name="long_video">Lang</string>
+<string name="extra_long">Extra lang</string>
+<string name="upload_date">Upload-Datum</string>
+<string name="duration">Dauer</string>
+<string name="license">Lizenz</string>
+<string name="published">Veröffentlicht</string>
+<string name="search_inside_channel">In %s suchen</string>
+<string name="show_auto_translated_subtitles_title">Automatisch übersetzte Untertitel anzeigen</string>
+<string name="show_auto_translated_subtitles_summary">Zeigt automatisch von YouTube übersetzte Untertitel an. Erfordert eine YouTube-Anmeldung.</string>
+<string name="show_auto_translated_subtitles_login_required_summary">Deaktiviert, da für automatisch übersetzte Untertitel eine YouTube-Anmeldung erforderlich ist.</string>
+<string name="auto_translated_subtitles_language_title">Untertitel automatisch übersetzen in</string>
+<string name="force_sabr_title">SABR erzwingen</string>
+<string name="force_sabr_summary">Alle YouTube-Videos anstelle von DASH/HLS über die SABR-Pipeline leiten. Experimentell: Kann auf einigen Geräten oder bei einigen Videos zu Wiedergabefehlern führen.</string>
 </resources>

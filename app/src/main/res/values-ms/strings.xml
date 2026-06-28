@@ -393,9 +393,6 @@
     <string name="night_theme_title">Tema Malam</string>
     <string name="notification_actions_at_most_three">Anda hanya boleh pilih hingga tiga aksi untuk dipapar dalam pemberitahuan padat!</string>
     <string name="notification_actions_summary">Tekan untuk menyunting setiap aksi pemberitahuan di bawah. Pilih hingga tiga di antaranya untuk tunjukkannya di dalam pemberitahuan padat dengan menggunakan kotak pilihan di sebelah kanan</string>
-    <string name="clear_queue_confirmation_description">Baris gilir daripada pemain yang aktif akan digantikan</string>
-    <string name="clear_queue_confirmation_summary">Menukar ke pemain yang lain mungkin akan menggantikan baris gilir anda</string>
-    <string name="clear_queue_confirmation_title">Minta untuk pengesahan sebelum mengosongkan baris gilir</string>
     <string name="notification_colorize_title">Mewarnai pemberitahuan</string>
     <string name="notification_action_nothing">Tiada</string>
     <string name="notification_action_shuffle">Ocok</string>

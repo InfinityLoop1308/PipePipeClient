@@ -382,9 +382,6 @@
     <string name="thumbnail_cache_wipe_complete_notice">kaydkii kumeelgaadhka ahaa ee sawirka waa la tirtiray</string>
     <string name="download_thumbnail_summary">Xidh si aad u joojiso soo bandhiga galka muuqaalada, adigoo yaraynaya isticmalka khadka iyo maskaxda aalada. Wax ka baddalkan wuxuu nadiifin doonaa waxa kaydka hore iyo ka caadiga ah kumeelgaadh ahaan ugu jira</string>
     <string name="download_thumbnail_title">Soodhig galalka</string>
-    <string name="clear_queue_confirmation_description">Hormada daareha hadda wax shidaya waa la baddali doonaa</string>
-    <string name="clear_queue_confirmation_summary">Kala baddalka daareha waxay badali kartaa hormada sidaas darteed waydii in la xaqiijiyo intaan hormada la tirtirin</string>
-    <string name="clear_queue_confirmation_title">Xaqiijinta tirtirka hormada</string>
     <string name="seek_duration_title">Wakhtiga horay udhaafinta/dibucelinta</string>
     <string name="black_theme_title">Mugdi</string>
     <string name="light_theme_title">Caddaan</string>

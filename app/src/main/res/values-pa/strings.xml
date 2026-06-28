@@ -562,9 +562,6 @@
     <string name="auto_queue_toggle">ਆਪ-ਮੁਖ਼ਤਾਰ ਕਤਾਰ</string>
     <string name="show_meta_info_summary">ਸਟ੍ਰੀਮ ਦੇ ਕਰਤਾ, ਸਮੱਗਰੀ ਜਾਂ ਖੋਜ ਬੇਨਤੀ ਵਾਲੇ ਵਾਧੂ ਜਾਣਕਾਰੀ ਬਕਸਿਆਂ ਵਾਲ਼ੀ ਮੈਟਾ ਜਾਣਕਾਰੀ ਲੁਕਾਉਣ ਲਈ ਇਸਨੂੰ ਬੰਦ ਕਰ ਦਿਓ।</string>
     <string name="show_meta_info_title">ਮੈਟਾ ਜਾਣਕਾਰੀ ਦਿਖਾਓ</string>
-    <string name="clear_queue_confirmation_description">ਸਰਗਰਮ ਪਲੇਅਰ ਕਤਾਰ ਬਦਲ ਜਾਵੇਗੀ</string>
-    <string name="clear_queue_confirmation_summary">ਪਲੇਅਰ ਬਦਲਣ ਨਾਲ ਤੁਹਾਡੀ ਕਤਾਰ ਬਦਲ ਸਕਦੀ ਹੈ</string>
-    <string name="clear_queue_confirmation_title">ਕਤਾਰ ਨੂੰ ਖ਼ਾਲੀ ਕਰਨ ਤੋਂ ਪਹਿਲਾਂ ਤਸਦੀਕ ਕਰਨ ਲਈ ਪੁੱਛੋ</string>
     <string name="seek_duration_title">ਅੱਗੇ ਲੰਘਾਉਣ/ਪਿੱਛੇ ਕਰਨ ਦੀ ਸਮਾਂ ਮਿਆਦ</string>
     <string name="night_theme_title">ਰਾਤ ਵਾਲੀ ਥੀਮ</string>
     <string name="notification_colorize_summary">ਐਂਡਰਾਇਡ ਨੂੰ ਥਮਨੇਲ ਦੇ ਮੁੱਖ ਰੰਗ ਮੁਤਾਬਕ ਇਲਤਾਹ ਦਾ ਰੰਗ ਬਦਲਣ ਦਿਓ (ਧਿਆਨ ਦਿਓ ਕਿ ਇਹ ਹਰੇਕ ਡਿਵਾਈਸ \'ਤੇ ਉਪਲਬਧ ਨਹੀਂ ਹੈ)</string>

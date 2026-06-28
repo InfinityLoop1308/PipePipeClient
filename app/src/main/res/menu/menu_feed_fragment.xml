@@ -19,12 +19,6 @@
         app:showAsAction="collapseActionView" />
 
     <item
-        android:id="@+id/menu_item_feed_help"
-        android:icon="@drawable/ic_help"
-        android:title="@string/help"
-        app:showAsAction="collapseActionView" />
-
-    <item
             android:id="@+id/menu_item_feed_channel_list"
             android:icon="@drawable/ic_channels"
             android:title="@string/channels"

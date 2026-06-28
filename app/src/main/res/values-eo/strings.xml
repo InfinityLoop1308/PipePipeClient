@@ -513,9 +513,6 @@
     <string name="show_meta_info_title">Montri metadatumojn</string>
     <string name="mark_as_watched">Marki spektita</string>
     <string name="show_meta_info_summary">Malŝatu por kaŝi metadatumujojn kio havas aldonajn informojn pri la elsendfluisto, enhavo de la fluo, aŭ serĉpto</string>
-    <string name="clear_queue_confirmation_title">Peti por konfirmo antaŭ vakigado atendvico</string>
-    <string name="clear_queue_confirmation_summary">Via atendvico povas anstataŭigi se vi ŝanĝi al malsama ludilo</string>
-    <string name="clear_queue_confirmation_description">La aktiva ludila atendvico anstataŭigos</string>
     <string name="notification_action_4_title">Kvina agobutono</string>
     <string name="notification_action_0_title">Unua agobutono</string>
     <string name="notification_action_1_title">Dua agobutono</string>

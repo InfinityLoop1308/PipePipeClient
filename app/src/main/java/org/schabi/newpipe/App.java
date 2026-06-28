@@ -122,6 +122,7 @@ public class App extends MultiDexApplication {
 
         // Initialize image loader
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        NewPipe.setForceSabr(prefs.getBoolean(getString(R.string.force_sabr_key), false));
         PicassoHelper.init(this);
         PicassoHelper.setShouldLoadImages(
                 prefs.getBoolean(getString(R.string.download_thumbnail_key), true));

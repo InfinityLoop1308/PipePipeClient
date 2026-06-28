@@ -444,9 +444,6 @@
     <string name="auto_queue_toggle">ازخود قطار</string>
     <string name="show_meta_info_summary">اسٹریم کے موجد، اسٹریم مواد یا تلاش کی درخواست کے بارے میں اضافی معلومات والے میٹا انفارمیشن بکسوں کو چھپانے کیلئے بند کریں۔</string>
     <string name="show_meta_info_title">میٹا معلومات دکھائیں</string>
-    <string name="clear_queue_confirmation_description">فعال پلیئر کی قطار تبدیل کردی جائے گی</string>
-    <string name="clear_queue_confirmation_summary">ایک پلئیر سے دوسرے میں تبدیل ہونا آپ کی قطار بدل سکتا ہے</string>
-    <string name="clear_queue_confirmation_title">قطار صاف کرنے سے پہلے تصدیق کے لئے پوچھیں</string>
     <string name="notification_colorize_summary">تھمب نیل میں مرکزی رنگ کے مطابق اینڈروئیڈ کی اطلاع کے رنگ کو حسب منشا بنائیں (واضح ہو کہ یہ تمام آلات پر دستیاب نہیں ہے)</string>
     <string name="notification_colorize_title">نوٹیفکیشن کو رنگین بنائیں</string>
     <string name="notification_action_nothing">کچھ نہیں</string>

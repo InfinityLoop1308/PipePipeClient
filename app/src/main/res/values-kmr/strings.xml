@@ -233,9 +233,6 @@
     <string name="show_meta_info_title">Agahdariya meta nîşan bide</string>
     <string name="download_thumbnail_summary">Ji bo pêşîgirtina li barkirina nîgarkêşan, daneya daneyê û karanîna bîranînê xilas bibe vemirînin. Guherandinên kaşeya wêneyê hem di bîra û hem jî li ser dîskê paqij dikin.</string>
     <string name="download_thumbnail_title">Nîgarên barkêş</string>
-    <string name="clear_queue_confirmation_description">Dê rêza lîstikvanê çalak were guhertin</string>
-    <string name="clear_queue_confirmation_summary">Guhertina ji lîstikvanek bi yeke din dibe ku dewsa dorê we bigire</string>
-    <string name="clear_queue_confirmation_title">Berî paqijkirina dorê ji pejirandinê bipirsin</string>
     <string name="seek_duration_title">Zû-zû/-vejîn li dûvçûnê digerin</string>
     <string name="use_inexact_seek_summary">Lêgerîna nerast destûrê dide lîstikvan ku bi rastbûna kêmkirî zûtir li helwestan bigere. 5, 15 an 25 saniyeyan lêgerîn bi vê yekê re kar nake.</string>
     <string name="use_inexact_seek_title">Lêgerîna nerast ya zû bikar bînin</string>

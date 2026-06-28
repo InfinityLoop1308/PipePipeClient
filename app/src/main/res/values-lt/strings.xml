@@ -350,9 +350,6 @@
     <string name="enable_playback_resume_title">Tęsti atkūrimą</string>
     <string name="download_thumbnail_summary">Norėdami taupyti duomenų srautą, atminties naudojimą išjunkite. Pakeitimai išvalys duomenis atmintyje ir diske</string>
     <string name="download_thumbnail_title">Įkelti miniatiūras</string>
-    <string name="clear_queue_confirmation_description">Aktyvaus grotuvo eilė bus pakeista</string>
-    <string name="clear_queue_confirmation_summary">Perjungimas iš vieno grotuvo į kitą gali pakeisti jūsų eilę</string>
-    <string name="clear_queue_confirmation_title">Prieš išvalant eilę prašyti patvirtinimo</string>
     <string name="seek_duration_title">Greito prasukimo trukmė</string>
     <string name="use_inexact_seek_summary">Netikslus prasukimas leidžia grotuvui greitai peršokti į kitą vietą su sumažintu tikslumu. 5, 15 ar 25 sekundės to nenaudoja</string>
     <string name="import_youtube_instructions">Importuokite „YouTube“ prenumeratas iš „Google Takeout“:

@@ -344,11 +344,6 @@ public final class PlayerHelper {
                 .getBoolean(context.getString(R.string.auto_queue_key), false);
     }
 
-    public static boolean isClearingQueueConfirmationRequired(@NonNull final Context context) {
-        return getPreferences(context)
-                .getBoolean(context.getString(R.string.clear_queue_confirmation_key), false);
-    }
-
     @MinimizeMode
     public static int getMinimizeOnExitAction(@NonNull final Context context) {
         final String action = getPreferences(context)

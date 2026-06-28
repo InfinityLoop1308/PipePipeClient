@@ -74,9 +74,6 @@
 <string name="seek_duration_title">Thời lượng tua nhanh tới/lui</string>
 <string name="progressive_load_interval_title">Kích thước khoảng thời gian tải phát lại</string>
 <string name="progressive_load_interval_summary">Thay đổi kích thước khoảng thời gian tải (hiện tại là %s). Giá trị thấp hơn có thể tăng tốc độ tải băng hình ban đầu. Các thay đổi yêu cầu trình phát khởi động lại</string>
-<string name="clear_queue_confirmation_title">Yêu cầu xác nhận trước khi xóa hàng chờ</string>
-<string name="clear_queue_confirmation_summary">Chuyển từ trình phát này sang trình phát khác có thể thay thế hàng chờ của bạn</string>
-<string name="clear_queue_confirmation_description">Hàng chờ trình phát đang hoạt động sẽ được thay thế</string>
 <string name="download_thumbnail_title">Tải hình thu nhỏ</string>
 <string name="download_thumbnail_summary">Tắt để tránh tải hình thu nhỏ, tiết kiệm dữ liệu và sử dụng bộ nhớ. Các thay đổi sẽ xóa cả bộ nhớ đệm hình ảnh trong bộ nhớ và trên đĩa</string>
 <string name="show_meta_info_title">Hiển thị siêu dữ liệu</string>
@@ -863,7 +860,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sponsor_promote">Trở thành người ủng hộ</string>
 <string name="random_play_order_title">Trình tự ngẫu nhiên</string>
 <string name="random_play_order_summary">Tự động xáo trộn danh sách phát cục bộ của bạn khi phát trong nền</string>
-<string name="update_log">Sửa lỗi: Lỗi \"This content is not supported by PipePipe\" trên tất cả các video (YouTube)\n\nYouTube gần đây cập nhật rất thường xuyên, vui lòng đảm bảo bật kiểm tra cập nhật để nhận các bản vá mới nhất của chúng tôi kịp thời.</string>
+<string name="update_log">### Tính năng mới\n\n- Thêm hỗ trợ thử nghiệm cho giao thức YouTube SABR, với tùy chọn bắt buộc bật trong Cài đặt nâng cao (YouTube)\n- Hỗ trợ tải xuống video khi đang đăng nhập tài khoản (YouTube)\n- Hỗ trợ trở lại phụ đề tự động dịch (chỉ hoạt động khi đang đăng nhập tài khoản) (YouTube)\n- Hỗ trợ tìm kiếm video trong một kênh cụ thể (YouTube)\n- Hỗ trợ sắp xếp video trong một kênh (YouTube)\n- Giữ lại các bộ lọc tìm kiếm được chọn lần cuối\n- Hỗ trợ tỷ lệ khung hình tùy chỉnh trong trình phát video\n- Hỗ trợ đặt thanh tab ở dưới cùng của trang chủ\n- Hỗ trợ biểu tượng theo chủ đề\n\n### Sửa lỗi\n\n- Sửa lỗi một số video không thể phân tích cú pháp và hiển thị lỗi nội dung không khả dụng (YouTube)\n- Sửa lỗi tất cả danh sách phát hiển thị trống (YouTube)\n- Sửa lỗi \"Video liên quan\" bị thiếu ngày tải lên trên trang video (YouTube)\n- Sửa lỗi ứng dụng tự động chọn sai độ phân giải cao nhất khi độ phân giải khả dụng thấp nhất của video thấp hơn cài đặt mặc định\n- Sửa lỗi các điểm đánh dấu phân đoạn SponsorBlock không cập nhật chính xác khi chuyển đổi video trong cùng một hàng đợi\n- Sửa lỗi chức năng \"Gửi Email\" không xác định chính xác các ứng dụng email trên thiết bị\n- Sửa sự cố trong đó tất cả video trong một danh sách phát hiển thị sai người tạo danh sách phát thành người tải video lên (YouTube)\n- Sửa lỗi phát lại khiến một số video bị dừng đột ngột (Bilibili)\n- Sửa lỗi tính năng tải xuống không hoạt động trên kiến trúc armv7 và x86 (Bilibili, Niconico)\n- Sửa lỗi liên kết ngắn `b23.tv` không được phân tích cú pháp chính xác (Bilibili)\n- Sửa lỗi dấu thời gian trong liên kết bị bỏ qua (Niconico)\n- Sửa lỗi bình luận không hiển thị chính xác khi bật giao diện người dùng mới thử nghiệm\n- Sửa các lỗi sập ứng dụng (crash) xảy ra trong các trường hợp cụ thể\n\n### Giao diện\n\n- Xóa đề xuất bật nguồn cấp dữ liệu chuyên dụng và chuyển cài đặt liên quan vào Cài đặt nâng cao\n- Cập nhật hiển thị của nút lịch sử tìm kiếm trên tab chính để tránh trùng lặp biểu tượng\n- Cập nhật bản dịch tiếng Nga\n- Cập nhật bản dịch tiếng Ba Lan\n\n### Khác\n\n- Hỗ trợ đầy đủ kích thước trang 16KB, cải thiện một chút hiệu suất trên Android 16+\n- Nâng cấp SDK mục tiêu lên 36\n- Cải thiện độ ổn định</string>
 <string name="speeding_playback_title">Nhấn và giữ để tăng tốc độ phát lại</string>
 <string name="view_on_github">Xem trên GitHub</string>
 <string name="donation_dialog_title">Hỗ trợ Dự án</string>
@@ -1053,4 +1050,28 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="media_codec_workaround_hint_title">Phát lại MediaCodec thất bại</string>
 <string name="media_codec_async_workaround_hint">Lỗi này có thể do việc xếp hàng đợi không đồng bộ của MediaCodec. Hãy thử bật \"Tắt xếp hàng đợi không đồng bộ MediaCodec\" trong cài đặt ExoPlayer, sau đó khởi động lại quá trình phát.</string>
 <string name="media_codec_surface_workaround_hint">Lỗi này xảy ra trong khi thay đổi bề mặt đầu ra video. Hãy thử bật \"Luôn sử dụng giải pháp thay thế cài đặt bề mặt đầu ra video của ExoPlayer\" trong cài đặt ExoPlayer, sau đó khởi động lại quá trình phát.</string>
+<string name="aspect_ratio_custom">Tùy chỉnh…</string>
+<string name="aspect_ratio_custom_title">Tỷ lệ khung hình tùy chỉnh</string>
+<string name="aspect_ratio_custom_hint">Ví dụ: 16:9 hoặc 1.78</string>
+<string name="aspect_ratio_invalid">Tỷ lệ khung hình không hợp lệ</string>
+<string name="past_hour">Trong giờ qua</string>
+<string name="past_day">Trong ngày qua</string>
+<string name="past_week">Trong tuần qua</string>
+<string name="past_month">Trong tháng qua</string>
+<string name="past_year">Trong năm qua</string>
+<string name="short_video">Ngắn</string>
+<string name="medium_length">Trung bình</string>
+<string name="long_video">Dài</string>
+<string name="extra_long">Rất dài</string>
+<string name="upload_date">Ngày tải lên</string>
+<string name="duration">Thời lượng</string>
+<string name="license">Giấy phép</string>
+<string name="published">Đã xuất bản</string>
+<string name="search_inside_channel">Tìm kiếm trong %s</string>
+<string name="show_auto_translated_subtitles_title">Hiển thị phụ đề tự động dịch</string>
+<string name="show_auto_translated_subtitles_summary">Hiển thị phụ đề tự động dịch của YouTube. Yêu cầu đăng nhập YouTube.</string>
+<string name="show_auto_translated_subtitles_login_required_summary">Bị vô hiệu hóa vì yêu cầu đăng nhập YouTube để hiển thị phụ đề tự động dịch.</string>
+<string name="auto_translated_subtitles_language_title">Tự động dịch phụ đề sang</string>
+<string name="force_sabr_title">Bắt buộc SABR</string>
+<string name="force_sabr_summary">Định tuyến tất cả video YouTube qua luồng SABR thay vì DASH/HLS. Thử nghiệm: có thể gây lỗi phát trên một số thiết bị hoặc video</string>
 </resources>

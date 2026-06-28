@@ -519,14 +519,11 @@
     <string name="title_activity_play_queue">Reproduzir fila</string>
     <string name="never">Nunca</string>
     <string name="notification_action_buffering">Carregando</string>
-    <string name="clear_queue_confirmation_description">A fila do reprodutor ativo será substituída</string>
     <string name="unsupported_url_dialog_message">URL não reconhecido. Abrir com outra aplicação\?</string>
     <string name="auto_queue_toggle">Enfileiramento automático</string>
     <string name="notification_action_shuffle">Embaralhar</string>
     <string name="wifi_only">Apenas em Wi-Fi</string>
     <string name="notification_action_nothing">Nada</string>
-    <string name="clear_queue_confirmation_summary">Mudar de um reprodutor para outro pode substituir a sua fila</string>
-    <string name="clear_queue_confirmation_title">Pedir confirmação antes de limpar uma fila</string>
     <string name="notification_actions_summary">Edite cada ação de notificação abaixo tocando nela. Selecione até três delas para serem mostrados na notificação compacta a usar as caixas de seleção à direita</string>
     <string name="notification_actions_at_most_three">Pode selecionar, no máximo, três ações para mostrar na notificação compacta!</string>
     <string name="notification_action_repeat">Repetir</string>

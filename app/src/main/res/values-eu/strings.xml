@@ -516,9 +516,6 @@
     <string name="clear_cookie_title">Ezabatu reCAPTCHA-ren kookiak</string>
     <string name="unsupported_url_dialog_message">Ezin izan da URL-a ezagutu. Beste aplikazio batekin ireki\?</string>
     <string name="auto_queue_toggle">Auto-ilara</string>
-    <string name="clear_queue_confirmation_description">Erreprodukzio ilara aktiboa ordezkatuko da</string>
-    <string name="clear_queue_confirmation_summary">Erreproduzitzaile batetik beste batera aldatzeak ilara ordezkatu dezake</string>
-    <string name="clear_queue_confirmation_title">Konfirmazioa eskatu ilaratik ezabatu baino lehenago</string>
     <string name="notification_action_nothing">Ezer ez</string>
     <string name="notification_action_buffering">Buferreratzen</string>
     <string name="notification_action_shuffle">Aleatorio</string>

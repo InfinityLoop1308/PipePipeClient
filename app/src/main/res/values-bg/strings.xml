@@ -364,7 +364,6 @@
     <string name="notification_action_2_title">Трето действие</string>
     <string name="notification_action_4_title">Пето действие</string>
     <string name="notification_actions_at_most_three">Изберете до три действия за компактното известие!</string>
-    <string name="clear_queue_confirmation_title">Потвърждение за изтриване на опашката</string>
     <string name="auto">Автоматично</string>
     <string name="wifi_only">Само при Wi-Fi</string>
     <string name="list_view_mode">Вид на списъка</string>

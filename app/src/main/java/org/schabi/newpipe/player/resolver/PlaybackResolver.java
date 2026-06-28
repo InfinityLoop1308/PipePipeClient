@@ -47,6 +47,13 @@ import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.player.mediaitem.MediaItemTag;
 import org.schabi.newpipe.player.mediaitem.StreamInfoTag;
 import org.schabi.newpipe.util.StreamTypeUtil;
+import org.schabi.newpipe.App;
+import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.extractor.localization.Localization;
+import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat;
+import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
+import org.schabi.newpipe.player.datasource.SabrMediaSource;
+import org.schabi.newpipe.player.datasource.SabrSessionStore;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -55,7 +62,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
     String TAG = PlaybackResolver.class.getSimpleName();
@@ -437,9 +447,79 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                                 .setUri(Uri.parse(stream.getContent()))
                                 .setCustomCacheKey(cacheKey)
                                 .build());
+            case SABR:
+                return buildSabrMediaSource(stream, streamInfo, cacheKey, metadata);
             default:
                 throw new IOException("Unsupported delivery method for YouTube contents: "
                         + deliveryMethod);
+        }
+    }
+
+    @NonNull
+    private static MediaSource buildSabrMediaSource(@NonNull final Stream stream,
+                                                    @NonNull final StreamInfo streamInfo,
+                                                    @NonNull final String cacheKey,
+                                                    @NonNull final MediaItemTag metadata)
+            throws IOException {
+        final String videoId = streamInfo.getId();
+        // Honour the user-selected video quality instead of forcing the highest (4K is heavy and
+        // hits the device VP9 decoder wall); audio-only playback passes 0 and keeps the best audio.
+        final int preferredVideoItag =
+                (stream instanceof VideoStream) ? ((VideoStream) stream).getItag() : 0;
+        final SabrSessionStore.Holder holder;
+        try {
+            holder = SabrSessionStore.getOrCreate(App.getApp(), videoId, preferredVideoItag);
+        } catch (final ExtractionException e) {
+            throw new IOException("Could not start SABR session for " + videoId, e);
+        }
+        enrichSabrAudioTracks(streamInfo, holder.info);
+        // One source carries both tracks; media3 track selection picks audio-only when there's no
+        // video renderer (background/popup). Seeking is real because it's chunk-based, not a byte
+        // stream. The audio resolver path skips its own SABR source (see VideoPlaybackResolver).
+        final MediaItem mediaItem = new MediaItem.Builder()
+                .setTag(metadata)
+                .setUri(Uri.parse("sabr://" + videoId))
+                .setCustomCacheKey(cacheKey)
+                .build();
+        return new SabrMediaSource(mediaItem, holder, new Localization("en", "US"));
+    }
+
+    /**
+     * SABR's main player response only carries the original-language audio; the dubbed tracks live
+     * in the probe's {@link YoutubeSabrInfo}. Add the missing tracks (one {@link AudioStream} per
+     * audioTrackId) to the shared {@link StreamInfo} so the generic audio-track selector (also used
+     * by HLS) lists them. The added streams are UI markers; SABR playback still picks the format via
+     * the session, so they clone the original stream's content/format and only swap the track info.
+     */
+    private static void enrichSabrAudioTracks(@NonNull final StreamInfo streamInfo,
+                                              @NonNull final YoutubeSabrInfo info) {
+        final List<AudioStream> audioStreams = streamInfo.getAudioStreams();
+        if (audioStreams.isEmpty()) {
+            return;
+        }
+        final AudioStream template = audioStreams.get(0);
+        final Set<String> present = new HashSet<>();
+        for (final AudioStream a : audioStreams) {
+            present.add(Objects.toString(a.getAudioTrackId(), ""));
+        }
+        for (final YoutubeSabrFormat f : info.getFormats()) {
+            final String trackId = f.getAudioTrackId();
+            if (!f.isAudio() || trackId == null || !present.add(trackId)) {
+                continue;
+            }
+            final String langPart = trackId.split("\\.")[0];
+            final String displayName = f.getAudioTrackDisplayName();
+            audioStreams.add(new AudioStream.Builder()
+                    .setId(template.getId() + "-" + trackId)
+                    .setContent(template.getContent(), template.isUrl())
+                    .setMediaFormat(template.getFormat())
+                    .setAverageBitrate(f.getBitrate())
+                    .setItagItem(template.getItagItem())
+                    .setDeliveryMethod(DeliveryMethod.SABR)
+                    .setAudioTrackId(trackId)
+                    .setAudioTrackName(displayName != null ? displayName : langPart)
+                    .setAudioLocale(langPart.split("-")[0])
+                    .build());
         }
     }
 

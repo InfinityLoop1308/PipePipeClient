@@ -525,9 +525,6 @@
     <string name="title_activity_play_queue">Přehrát frontu</string>
     <string name="unsupported_url_dialog_message">Nelze rozpoznat zadané URL. Otevřít pomocí jiné aplikace\?</string>
     <string name="auto_queue_toggle">Auto-fronta</string>
-    <string name="clear_queue_confirmation_description">Fronta aktivního přehrávače bude smazána</string>
-    <string name="clear_queue_confirmation_summary">Při přechodu z jednoho přehrávače do druhého může dojít k smazání fronty</string>
-    <string name="clear_queue_confirmation_title">Žádat potvrzení před vyklizením fronty</string>
     <string name="notification_action_nothing">Nic</string>
     <string name="notification_action_buffering">Bufferovat</string>
     <string name="notification_action_shuffle">Promíchat</string>

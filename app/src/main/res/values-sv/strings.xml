@@ -500,9 +500,6 @@
     <string name="title_activity_play_queue">Uppspelningskö</string>
     <string name="unsupported_url_dialog_message">Kunde inte känna igen URL:en. Vill du öppna med annan app\?</string>
     <string name="auto_queue_toggle">Köa automatiskt</string>
-    <string name="clear_queue_confirmation_description">Den aktiva spellistan kommer att ersättas</string>
-    <string name="clear_queue_confirmation_summary">Att byta från en spelare till en annan kan ersätta din kö</string>
-    <string name="clear_queue_confirmation_title">Fråga om bekräftelse innan en kö töms</string>
     <string name="notification_action_buffering">Buffring</string>
     <string name="notification_action_repeat">Upprepa</string>
     <string name="notification_action_4_title">Femte åtgärdsknappen</string>

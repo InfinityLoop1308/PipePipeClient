@@ -410,9 +410,6 @@
     <string name="peertube_instance_add_fail">Немагчыма праверыць экзэмпляр</string>
     <string name="peertube_instance_add_help">Увесці URL экзэмпляра</string>
     <string name="peertube_instance_url_summary">Абярыце любімыя экзэмпляры PeerTube</string>
-    <string name="clear_queue_confirmation_description">Актыўны плэер быў зменены</string>
-    <string name="clear_queue_confirmation_summary">Змена плэера можа замяніць вашу чаргу</string>
-    <string name="clear_queue_confirmation_title">Запытаць, перш чым ачысціць чаргу</string>
     <string name="never">Ніколі</string>
     <string name="wifi_only">Толькі па Wi-Fi</string>
     <string name="show_original_time_ago_title">Паказаць арыгінальны час на элементах</string>

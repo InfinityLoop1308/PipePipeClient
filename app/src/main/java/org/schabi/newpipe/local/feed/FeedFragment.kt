@@ -388,28 +388,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.menu_item_feed_help) {
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
-
-            val usingDedicatedMethod = sharedPreferences
-                .getBoolean(getString(R.string.feed_use_dedicated_fetch_method_key), false)
-            val enableDisableButtonText = when {
-                usingDedicatedMethod -> R.string.feed_use_dedicated_fetch_method_disable_button
-                else -> R.string.feed_use_dedicated_fetch_method_enable_button
-            }
-
-            AlertDialog.Builder(requireContext())
-                .setMessage(R.string.feed_use_dedicated_fetch_method_help_text_new)
-                .setNeutralButton(enableDisableButtonText) { _, _ ->
-                    sharedPreferences.edit {
-                        putBoolean(getString(R.string.feed_use_dedicated_fetch_method_key), !usingDedicatedMethod)
-                    }
-                }
-                .setPositiveButton(resources.getString(R.string.ok), null)
-                .create()
-                .show()
-            return true
-        } else if (item.itemId == R.id.menu_item_feed_toggle_played_items) {
+        if (item.itemId == R.id.menu_item_feed_toggle_played_items) {
             showPlayedItems = !item.isChecked
             updateTogglePlayedItemsButton(item)
             viewModel.togglePlayedItems(showPlayedItems)

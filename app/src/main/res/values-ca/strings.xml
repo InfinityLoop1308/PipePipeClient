@@ -528,9 +528,6 @@
     <string name="auto_queue_toggle">Posa a la cua automàticament</string>
     <string name="show_meta_info_summary">Desactiveu-ho per deixar de mostrar les metadades, que contenen informació addicional sobre el creador del directe, el contingut o una sol·licitud de cerca</string>
     <string name="show_meta_info_title">Mostra les metadades</string>
-    <string name="clear_queue_confirmation_description">La cua de reproducció activa serà sobreescrita</string>
-    <string name="clear_queue_confirmation_summary">Canviar de reproductor podria sobreescriure la vostra cua de reproducció</string>
-    <string name="clear_queue_confirmation_title">Demana confirmació abans de buidar una cua de reproducció</string>
     <string name="notification_colorize_summary">Deixa que el sistema acoloreixi la notificació segons el color de la miniatura (això pot no estar disponible a tots els dispositius)</string>
     <string name="notification_colorize_title">Acoloreix la notificació</string>
     <string name="notification_action_nothing">Res</string>

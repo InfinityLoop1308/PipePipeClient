@@ -555,9 +555,6 @@
     <string name="title_activity_play_queue">تشغيل قائمة الانتظار</string>
     <string name="unsupported_url_dialog_message">تعذر التعرف على الرابط. فتح باستخدام تطبيق آخر؟</string>
     <string name="auto_queue_toggle">قائمة انتظار تلقائيّة</string>
-    <string name="clear_queue_confirmation_description">سيتم استبدال قائمة انتظار للمشغل النشط</string>
-    <string name="clear_queue_confirmation_summary">قد يؤدي التبديل من مشغل إلى آخر إلى استبدال قائمة الانتظار الخاصة بك</string>
-    <string name="clear_queue_confirmation_title">طلب تأكيد قبل مسح قائمة الانتظار</string>
     <string name="notification_action_nothing">لا شيء</string>
     <string name="notification_action_buffering">جارٍ التحميل</string>
     <string name="notification_action_shuffle">خلط</string>

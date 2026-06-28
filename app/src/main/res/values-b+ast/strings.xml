@@ -503,9 +503,6 @@
     <string name="auto_queue_toggle">Cola automática</string>
     <string name="auto_queue_summary">Amiesta un videu rellacionáu a la cola cuando se repoduz l\'últimu videu a una cola ensin repitición</string>
     <string name="auto_queue_title">Meter les tresmisiones siguientes a cola automática</string>
-    <string name="clear_queue_confirmation_description">Va trocase la cola del reproductor activu</string>
-    <string name="clear_queue_confirmation_summary">Cambiar d\'un reproductor a otru pue trocar la cola</string>
-    <string name="clear_queue_confirmation_title">Confirmar la llimpieza de les coles</string>
     <string name="seek_duration_title">Duración de la gueta del avance/rebobináu rápidu</string>
     <string name="use_inexact_seek_summary">La gueta imprecisa permite al reproductor que guete les posiciones más rápido con menos precisión. La gueta de 5, 15 ó 25 segundos nun funciona con esti axuste.</string>
     <string name="use_inexact_seek_title">Usar la gueta rápida imprecisa</string>

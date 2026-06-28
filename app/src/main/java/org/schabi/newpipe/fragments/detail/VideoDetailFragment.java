@@ -116,7 +116,6 @@ import static org.schabi.newpipe.extractor.services.bilibili.utils.isFirstP;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.ktx.ViewUtils.animateRotation;
 import static org.schabi.newpipe.player.helper.PlayerHelper.globalScreenOrientationLocked;
-import static org.schabi.newpipe.player.helper.PlayerHelper.isClearingQueueConfirmationRequired;
 import static org.schabi.newpipe.player.playqueue.PlayQueueItem.RECOVERY_UNSET;
 import static org.schabi.newpipe.util.ExtractorHelper.showMetaInfoInTextView;
 
@@ -395,11 +394,12 @@ public final class VideoDetailFragment
 
         setupBrightness();
 
-        if (currentInfo != null) {
-            if (tabSettingsChanged) {
-                tabSettingsChanged = false;
-                initTabs();
-            }
+        // Only rebuild the tabs when the tab settings actually changed. Doing it on every resume
+        // recreated the related-items (and description) fragments each time, so returning from the
+        // share sheet / Home reloaded the related videos. A new video goes through handleResult().
+        if (currentInfo != null && tabSettingsChanged) {
+            tabSettingsChanged = false;
+            initTabs();
             updateTabs(currentInfo);
         }
 
@@ -1359,8 +1359,7 @@ public final class VideoDetailFragment
         if (append) { //resumePlayback: false
             NavigationHelper.enqueueOnPlayer(activity, queue, PlayerType.POPUP);
         } else {
-            replaceQueueIfUserConfirms(() -> NavigationHelper
-                    .playOnPopupPlayer(activity, queue, true));
+            NavigationHelper.playOnPopupPlayer(activity, queue, true);
         }
     }
 
@@ -1387,7 +1386,7 @@ public final class VideoDetailFragment
             onScreenRotationButtonClicked();
         }
 
-        replaceQueueIfUserConfirms(this::openMainPlayer);
+        openMainPlayer();
     }
 
     /**
@@ -1412,8 +1411,7 @@ public final class VideoDetailFragment
         if (append) {
             NavigationHelper.enqueueOnPlayer(activity, queue, PlayerType.AUDIO);
         } else {
-            replaceQueueIfUserConfirms(() -> NavigationHelper
-                    .playOnBackgroundPlayer(activity, queue, true));
+            NavigationHelper.playOnBackgroundPlayer(activity, queue, true);
         }
     }
 
@@ -2455,30 +2453,6 @@ public final class VideoDetailFragment
             }
         }
         return item;
-    }
-
-    private void replaceQueueIfUserConfirms(final Runnable onAllow) {
-        @Nullable final PlayQueue activeQueue = isPlayerAvailable() ? player.getPlayQueue() : null;
-
-        // Player will have STATE_IDLE when a user pressed back button
-        if (isClearingQueueConfirmationRequired(activity)
-                && playerIsNotStopped()
-                && activeQueue != null
-                && !activeQueue.equals(playQueue)) {
-            showClearingQueueConfirmation(onAllow);
-        } else {
-            onAllow.run();
-        }
-    }
-
-    private void showClearingQueueConfirmation(final Runnable onAllow) {
-        new AlertDialog.Builder(activity)
-                .setTitle(R.string.clear_queue_confirmation_description)
-                .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton(R.string.ok, (dialog, which) -> {
-                    onAllow.run();
-                    dialog.dismiss();
-                }).show();
     }
 
     private void showExternalPlaybackDialog() {

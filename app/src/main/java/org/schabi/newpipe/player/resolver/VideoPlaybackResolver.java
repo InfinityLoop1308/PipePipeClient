@@ -2,7 +2,6 @@ package org.schabi.newpipe.player.resolver;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +17,7 @@ import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.SubtitlesStream;
 import org.schabi.newpipe.extractor.stream.VideoStream;
+import org.schabi.newpipe.player.datasource.SabrSessionStore;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.mediaitem.MediaItemTag;
@@ -34,7 +34,6 @@ import static androidx.media3.common.C.TIME_UNSET;
 import static org.schabi.newpipe.util.ListHelper.*;
 
 public class VideoPlaybackResolver implements PlaybackResolver {
-    private static final String TAG = VideoPlaybackResolver.class.getSimpleName();
 
     @NonNull
     private final Context context;
@@ -72,6 +71,10 @@ public class VideoPlaybackResolver implements PlaybackResolver {
             streamSourceType = SourceType.LIVE_STREAM;
             return liveSource;
         }
+
+        // Hand the user-selected audio language to the SABR session store before it (re)builds the
+        // session for this video, so the switch actually changes the streamed track.
+        SabrSessionStore.setPreferredAudioTrack(info.getId(), audioTrack);
 
         final List<MediaSource> mediaSources = new ArrayList<>();
         final List<VideoStream> videoStreams = new ArrayList<>(info.getVideoStreams());
@@ -131,7 +134,15 @@ public class VideoPlaybackResolver implements PlaybackResolver {
                         dataSource, video, info, PlayerHelper.cacheKeyOf(info, video), tag);
                 mediaSources.add(streamSource);
             } catch (final IOException e) {
-                Log.e(TAG, "Unable to create video source:", e);
+                // For SABR, surface the real failure (probe / session creation) with its cause
+                // instead of swallowing it into a generic "Unable to resolve source from stream info"
+                // downstream where you can't tell where it came from. Non-SABR keeps returning null
+                // (sourceOf then falls back to the audio source), so that path is unchanged.
+                if (video.getDeliveryMethod()
+                        == org.schabi.newpipe.extractor.stream.DeliveryMethod.SABR) {
+                    throw new IllegalStateException(
+                            "Unable to create SABR video source for " + info.getUrl(), e);
+                }
                 return null;
             }
         }
@@ -147,9 +158,12 @@ public class VideoPlaybackResolver implements PlaybackResolver {
 
         // Use the audio stream if there is no video stream, or
         // merge with audio stream in case if video does not contain audio
+        // SABR carries audio + video in one MediaSource, so don't add a separate audio source.
+        final boolean videoIsSabr = video != null && video.getDeliveryMethod()
+                == org.schabi.newpipe.extractor.stream.DeliveryMethod.SABR;
         final boolean videoHasMatchingAudio = video != null && !video.isVideoOnly()
                 && audioTrack != null && audioTrack.equals(video.getAudioTrackId());
-        if (audio != null && !videoHasMatchingAudio
+        if (audio != null && !videoHasMatchingAudio && !videoIsSabr
                 && (video == null || video.isVideoOnly() || audioTrack != null)) {
             try {
                 final MediaSource audioSource = PlaybackResolver.buildMediaSource(
@@ -157,7 +171,6 @@ public class VideoPlaybackResolver implements PlaybackResolver {
                 mediaSources.add(audioSource);
                 streamSourceType = SourceType.VIDEO_WITH_SEPARATED_AUDIO;
             } catch (final IOException e) {
-                Log.e(TAG, "Unable to create audio source:", e);
                 return null;
             }
         } else {

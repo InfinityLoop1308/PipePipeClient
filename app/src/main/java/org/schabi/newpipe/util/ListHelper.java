@@ -426,12 +426,44 @@ public final class ListHelper {
             }
         }
 
-        // 5. No candidates: fall back to highest available
         if (bucket.isEmpty()) {
-            return 0;
+            String fallbackResolution = null;
+            for (final VideoStream stream : streams) {
+                final String resolution = normalizeResolutionKey(stream.getResolution());
+                if (compareVideoStreamResolution(resolution, normalizedTarget) < 0
+                        && (fallbackResolution == null || compareVideoStreamResolution(
+                        resolution, fallbackResolution) > 0)) {
+                    fallbackResolution = resolution;
+                }
+            }
+
+            if (fallbackResolution == null) {
+                for (final VideoStream stream : streams) {
+                    final String resolution = normalizeResolutionKey(stream.getResolution());
+                    if (fallbackResolution == null || compareVideoStreamResolution(
+                            resolution, fallbackResolution) < 0) {
+                        fallbackResolution = resolution;
+                    }
+                }
+            }
+
+            for (final VideoStream stream : streams) {
+                if (fallbackResolution.equals(normalizeResolutionKey(stream.getResolution()))
+                        && (filterFormat == null || stream.getFormat() == filterFormat)) {
+                    bucket.add(stream);
+                }
+            }
+
+            if (bucket.isEmpty() && filterFormat != null) {
+                for (final VideoStream stream : streams) {
+                    if (fallbackResolution.equals(
+                            normalizeResolutionKey(stream.getResolution()))) {
+                        bucket.add(stream);
+                    }
+                }
+            }
         }
 
-        // 6. Highest quality in the bucket
         bucket.sort(ListHelper::compareVideoStreamResolution);
         final VideoStream best = bucket.get(bucket.size() - 1);
         return streams.indexOf(best);

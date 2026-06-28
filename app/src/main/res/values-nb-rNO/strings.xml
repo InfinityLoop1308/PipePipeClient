@@ -481,9 +481,6 @@
     <string name="select_a_playlist">Velg en spilleliste</string>
     <string name="error_report_open_issue_button_text">Innrapporter på GitHub</string>
     <string name="auto_queue_toggle">Legg i kø automatisk</string>
-    <string name="clear_queue_confirmation_description">Den aktive spillerkøen blir erstattet</string>
-    <string name="clear_queue_confirmation_summary">Bytte fra en spiller til en annen kan erstatte køen din</string>
-    <string name="clear_queue_confirmation_title">Be om bekreftelse før du tømmer køen</string>
     <string name="search_showing_result_for">Viser resultater for: %s</string>
     <string name="show_original_time_ago_title">Vis opprinnelig tidsforskjell for elementer</string>
     <string name="notification_action_buffering">Bygger mellomlager</string>

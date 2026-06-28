@@ -37,6 +37,7 @@ import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.FragmentMainBinding;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.fragments.list.search.SearchFragment;
 import org.schabi.newpipe.settings.tabs.Tab;
 import org.schabi.newpipe.settings.tabs.TabsManager;
 import org.schabi.newpipe.util.NavigationHelper;
@@ -158,8 +159,10 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
     public boolean onOptionsItemSelected(final MenuItem item) {
         if (item.getItemId() == R.id.action_search) {
             try {
+                final int selectedServiceId = ServiceHelper.getSelectedServiceId(activity);
                 NavigationHelper.openSearchFragment(getFM(),
-                        ServiceHelper.getSelectedServiceId(activity), "");
+                        SearchFragment.getPersistedSearchServiceId(activity, selectedServiceId),
+                        "");
             } catch (final Exception e) {
                 ErrorUtil.showUiErrorSnackbar(this, "Opening search fragment", e);
             }

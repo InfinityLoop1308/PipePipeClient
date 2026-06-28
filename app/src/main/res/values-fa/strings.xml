@@ -513,9 +513,6 @@
     <string name="title_activity_play_queue">پخش صف</string>
     <string name="unsupported_url_dialog_message">نشانی قابل تشخیص نبود. با برنامه دیگری باز شود؟</string>
     <string name="auto_queue_toggle">صف‌گذاری خودکار</string>
-    <string name="clear_queue_confirmation_description">صف پخش‌کنندهٔ فعال جایگزین می‌شود</string>
-    <string name="clear_queue_confirmation_summary">تغییر پخش کننده می‌تواند باعث جایگزین شدن صف شود</string>
-    <string name="clear_queue_confirmation_title">پیش از پاک کردن صف، سوال شود</string>
     <string name="notification_action_nothing">هیچ</string>
     <string name="notification_action_shuffle">بُرزنی</string>
     <string name="notification_action_repeat">تکرار</string>

@@ -136,12 +136,11 @@ public class PlayerService extends Service implements PlayerServiceInterface {
             player = new Player(this);
         }
 
+        player.handleIntent(intent);
         if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())
                 || intent.getStringExtra(Player.PLAY_QUEUE_KEY) != null) {
             NotificationUtil.getInstance().createNotificationAndStartForeground(player, this);
         }
-
-        player.handleIntent(intent);
         if (player.getMediaSessionManager() != null) {
             player.getMediaSessionManager().handleMediaButtonIntent(intent);
         }
