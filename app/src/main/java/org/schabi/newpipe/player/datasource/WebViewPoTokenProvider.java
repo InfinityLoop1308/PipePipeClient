@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -112,11 +113,20 @@ public final class WebViewPoTokenProvider implements SabrPoTokenProvider {
             if (cached != null && now - cached.mintedAtMs < TOKEN_TTL_MS) {
                 return cached.token;
             }
+            if (Thread.currentThread().isInterrupted()) {
+                return null;
+            }
             // One retry: the BotGuard mint occasionally times out, and a single null killed playback.
             String tokenB64 = mintBlocking(videoId);
+            if (Thread.currentThread().isInterrupted()) {
+                return null;
+            }
             if (tokenB64 == null || tokenB64.isEmpty()) {
                 Log.w(TAG, "PO token mint returned null, retrying once for " + videoId);
                 tokenB64 = mintBlocking(videoId);
+                if (Thread.currentThread().isInterrupted()) {
+                    return null;
+                }
             }
             if (tokenB64 == null || tokenB64.isEmpty()) {
                 return null;
@@ -178,12 +188,23 @@ public final class WebViewPoTokenProvider implements SabrPoTokenProvider {
     @Nullable
     private String mintBlocking(final String videoId) {
         final CountDownLatch latch = new CountDownLatch(1);
+        final AtomicBoolean canceled = new AtomicBoolean(false);
         final AtomicReference<String> tokenRef = new AtomicReference<>();
         final AtomicReference<WebView> webViewRef = new AtomicReference<>();
 
         mainHandler.post(() -> {
+            if (canceled.get()) {
+                latch.countDown();
+                return;
+            }
             try {
-                webViewRef.set(createWebView(videoId, tokenRef, latch));
+                final WebView webView = createWebView(videoId, tokenRef, latch, canceled);
+                if (canceled.get()) {
+                    destroyWebView(webView);
+                    latch.countDown();
+                } else {
+                    webViewRef.set(webView);
+                }
             } catch (final Exception e) {
                 Log.e(TAG, "failed to start WebView pipeline", e);
                 latch.countDown();
@@ -197,6 +218,7 @@ public final class WebViewPoTokenProvider implements SabrPoTokenProvider {
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
+            canceled.set(true);
             mainHandler.post(() -> destroyWebView(webViewRef.getAndSet(null)));
         }
         return tokenRef.get();
@@ -205,13 +227,14 @@ public final class WebViewPoTokenProvider implements SabrPoTokenProvider {
     @SuppressLint("SetJavaScriptEnabled")
     private WebView createWebView(final String videoId,
                                   final AtomicReference<String> tokenRef,
-                                  final CountDownLatch latch) {
+                                  final CountDownLatch latch,
+                                  final AtomicBoolean canceled) {
         final WebView webView = new WebView(appContext);
         final WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setUserAgentString(DESKTOP_UA);
-        webView.addJavascriptInterface(new Bridge(tokenRef, latch), "SabrPocBridge");
+        webView.addJavascriptInterface(new Bridge(tokenRef, latch, canceled), "SabrPocBridge");
         webView.setWebViewClient(new WebViewClient() {
             private boolean injected = false;
 
@@ -228,19 +251,26 @@ public final class WebViewPoTokenProvider implements SabrPoTokenProvider {
             @Override
             public void onPageFinished(final WebView view, final String url) {
                 super.onPageFinished(view, url);
-                if (injected || url == null || !url.contains("youtube.com")) {
+                if (canceled.get() || injected || url == null || !url.contains("youtube.com")) {
                     return;
                 }
                 injected = true;
-                waitForReadyThenInject(view, videoId, 0);
+                waitForReadyThenInject(view, videoId, 0, canceled);
             }
         });
         webView.loadUrl("https://www.youtube.com/");
         return webView;
     }
 
-    private void waitForReadyThenInject(final WebView view, final String videoId, final int attempt) {
+    private void waitForReadyThenInject(final WebView view, final String videoId, final int attempt,
+                                        final AtomicBoolean canceled) {
+        if (canceled.get()) {
+            return;
+        }
         view.evaluateJavascript("document.readyState", value -> {
+            if (canceled.get()) {
+                return;
+            }
             final boolean complete = value != null && value.contains("complete");
             if (complete || attempt >= READY_RETRIES) {
                 view.evaluateJavascript(
@@ -248,7 +278,8 @@ public final class WebViewPoTokenProvider implements SabrPoTokenProvider {
                 view.evaluateJavascript(loadPipelineScript(), null);
             } else {
                 mainHandler.postDelayed(
-                        () -> waitForReadyThenInject(view, videoId, attempt + 1), READY_POLL_MS);
+                        () -> waitForReadyThenInject(view, videoId, attempt + 1, canceled),
+                        READY_POLL_MS);
             }
         });
     }
@@ -317,15 +348,21 @@ public final class WebViewPoTokenProvider implements SabrPoTokenProvider {
     private static final class Bridge {
         private final AtomicReference<String> tokenRef;
         private final CountDownLatch latch;
+        private final AtomicBoolean canceled;
 
-        Bridge(final AtomicReference<String> tokenRef, final CountDownLatch latch) {
+        Bridge(final AtomicReference<String> tokenRef, final CountDownLatch latch,
+               final AtomicBoolean canceled) {
             this.tokenRef = tokenRef;
             this.latch = latch;
+            this.canceled = canceled;
         }
 
         @JavascriptInterface
         public void onResult(final String json) {
             try {
+                if (canceled.get()) {
+                    return;
+                }
                 final JSONObject obj = new JSONObject(json);
                 if (obj.optBoolean("ok", false)) {
                     tokenRef.set(obj.optString("poToken", null));
