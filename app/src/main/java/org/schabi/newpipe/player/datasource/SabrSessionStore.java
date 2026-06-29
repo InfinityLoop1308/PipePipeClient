@@ -281,7 +281,9 @@ public final class SabrSessionStore {
     // with the way we chunk it, and i still have no fucking idea how to fix it. AAC (itag 140) is
     // mp4, hardware-decoded, ~same bitrate (130 vs 136 kbps) and plays perfectly smooth. so: AAC
     // until someone cracks the Opus path. (audio codec isn't user-facing, so this isn't a band-aid
-    // on a user setting, just an internal pick.)
+    // on a user setting, just an internal pick.) Prefer the plain AAC variant: YouTube can expose
+    // extra xtags variants (e.g. voice-boost) and DRC for the same itag; a tiny bitrate difference
+    // must not make gameplay/music sound compressed, warped, or volume-pumped.
     private static YoutubeSabrFormat pickAudioFormat(@NonNull final YoutubeSabrInfo info,
                                                      @Nullable final String preferredTrackId) {
         YoutubeSabrFormat aac = null;
@@ -304,19 +306,27 @@ public final class SabrSessionStore {
                         + " name=" + f.getAudioTrackDisplayName()
                         + " default=" + f.isAudioDefault()
                         + " original=" + f.isOriginalAudio()
+                        + " drc=" + f.isDrc()
+                        + " xtags=" + f.getXtags()
                         + " bitrate=" + f.getBitrate());
             }
             if (aac == null) {
                 aac = f;
                 continue;
             }
-            // Prefer the original-language track over an auto-dub, then the highest bitrate, so a
-            // dubbed default doesn't override the source audio. Falls back to plain highest-bitrate
-            // when no track is marked original (single-track videos).
+            // Prefer the original-language track over an auto-dub, then the plain/non-DRC stream,
+            // then bitrate. Voice-boost/DRC variants are speech-oriented and can be bad for music/SFX.
             final boolean preferForTrack = f.isOriginalAudio() && !aac.isOriginalAudio();
+            final boolean preferForPlain = f.isOriginalAudio() == aac.isOriginalAudio()
+                    && isPlainAudioVariant(f) && !isPlainAudioVariant(aac);
+            final boolean preferForDrc = f.isOriginalAudio() == aac.isOriginalAudio()
+                    && isPlainAudioVariant(f) == isPlainAudioVariant(aac)
+                    && !f.isDrc() && aac.isDrc();
             final boolean preferForBitrate = f.isOriginalAudio() == aac.isOriginalAudio()
+                    && isPlainAudioVariant(f) == isPlainAudioVariant(aac)
+                    && f.isDrc() == aac.isDrc()
                     && f.getBitrate() > aac.getBitrate();
-            if (preferForTrack || preferForBitrate) {
+            if (preferForTrack || preferForPlain || preferForDrc || preferForBitrate) {
                 aac = f;
             }
         }
@@ -325,6 +335,8 @@ public final class SabrSessionStore {
                     + " itag=" + aac.getItag()
                     + " trackId=" + aac.getAudioTrackId()
                     + " name=" + aac.getAudioTrackDisplayName()
+                    + " drc=" + aac.isDrc()
+                    + " xtags=" + aac.getXtags()
                     + " original=" + aac.isOriginalAudio());
         }
         if (aac == null && preferredTrackId != null) {
@@ -332,6 +344,11 @@ public final class SabrSessionStore {
             return pickAudioFormat(info, null);
         }
         return aac != null ? aac : info.findBestAudioFormat();
+    }
+
+    private static boolean isPlainAudioVariant(@NonNull final YoutubeSabrFormat format) {
+        final String xtags = format.getXtags();
+        return xtags == null || xtags.isEmpty();
     }
 
     /** Honour the user-selected quality when that format is present and hardware-decodable;
