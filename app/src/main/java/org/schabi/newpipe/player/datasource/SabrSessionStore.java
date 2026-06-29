@@ -15,7 +15,9 @@ import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -76,6 +78,10 @@ public final class SabrSessionStore {
         // and eviction run on: it never goes stale (a stalled reader sits on its last segment, so the
         // pump sees edge ~= readerHead and keeps feeding instead of pacing off a frozen play head).
         private final Map<Integer, Long> readerPositions = new ConcurrentHashMap<>();
+        // Tracks currently selected by ExoPlayer. Background/audio-only playback disables the video
+        // renderer, so requiring a video reader position there pins the SABR cache at the beginning.
+        private final Set<Integer> activeReaderItags =
+                Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
         private volatile SabrStreamPump pump;
 
         Holder(@NonNull final String videoId,
@@ -103,29 +109,47 @@ public final class SabrSessionStore {
             readerPositions.put(itag, ms);
         }
 
-        /** Furthest-read track: the pump keeps the buffered edge a cushion ahead of THIS. */
+        void setActiveTracks(final boolean videoActive, final boolean audioActive) {
+            setTrackActive(videoFormat.getItag(), videoActive);
+            setTrackActive(audioFormat.getItag(), audioActive);
+        }
+
+        private void setTrackActive(final int itag, final boolean active) {
+            if (active) {
+                activeReaderItags.add(itag);
+            } else {
+                activeReaderItags.remove(itag);
+                readerPositions.remove(itag);
+            }
+        }
+
+        /** Furthest-read selected track: the pump keeps the buffered edge a cushion ahead of THIS. */
         public long getReaderHeadMs() {
             long head = 0;
-            final Long a = readerPositions.get(audioFormat.getItag());
-            final Long v = readerPositions.get(videoFormat.getItag());
-            if (a != null) {
-                head = Math.max(head, a);
-            }
-            if (v != null) {
-                head = Math.max(head, v);
+            for (final int itag : activeReaderItags) {
+                final Long position = readerPositions.get(itag);
+                if (position != null) {
+                    head = Math.max(head, position);
+                }
             }
             return head;
         }
 
-        /** Slowest-read track: nothing before this is needed any more, so eviction starts here. Zero
-         * until BOTH tracks have read something (else we'd evict the other track's unread segments). */
+        /** Slowest-read selected track: nothing before this is needed any more, so eviction starts here.
+         * Zero until every selected track has read something (else we'd evict unread segments). */
         public long getReaderTailMs() {
-            final Long a = readerPositions.get(audioFormat.getItag());
-            final Long v = readerPositions.get(videoFormat.getItag());
-            if (a == null || v == null) {
+            if (activeReaderItags.isEmpty()) {
                 return 0;
             }
-            return Math.min(a, v);
+            long tail = Long.MAX_VALUE;
+            for (final int itag : activeReaderItags) {
+                final Long position = readerPositions.get(itag);
+                if (position == null) {
+                    return 0;
+                }
+                tail = Math.min(tail, position);
+            }
+            return tail == Long.MAX_VALUE ? 0 : tail;
         }
 
         /** Lazily create the single background pump that feeds both data sources for this video. */

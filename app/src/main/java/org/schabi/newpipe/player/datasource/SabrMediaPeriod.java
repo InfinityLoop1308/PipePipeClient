@@ -114,8 +114,29 @@ final class SabrMediaPeriod implements MediaPeriod,
                 streamResetFlags[i] = true;
             }
         }
+        updateActiveTracks(selections);
         rebuildCompositeLoader();
         return positionUs;
+    }
+
+    private void updateActiveTracks(final ExoTrackSelection[] selections) {
+        boolean videoActive = false;
+        boolean audioActive = false;
+        for (final ExoTrackSelection selection : selections) {
+            if (selection == null) {
+                continue;
+            }
+            final int groupIndex = trackGroups.indexOf(selection.getTrackGroup());
+            if (groupIndex < 0) {
+                continue;
+            }
+            if (trackTypes[groupIndex] == C.TRACK_TYPE_VIDEO) {
+                videoActive = true;
+            } else if (trackTypes[groupIndex] == C.TRACK_TYPE_AUDIO) {
+                audioActive = true;
+            }
+        }
+        holder.setActiveTracks(videoActive, audioActive);
     }
 
     private ChunkSampleStream<SabrChunkSource> buildStream(final ExoTrackSelection selection,
@@ -256,6 +277,7 @@ final class SabrMediaPeriod implements MediaPeriod,
             s.release();
         }
         streams.clear();
+        holder.setActiveTracks(false, false);
     }
 
     /** No-op loader used before any track is selected. */
