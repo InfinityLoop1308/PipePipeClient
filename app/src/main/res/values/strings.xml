@@ -773,6 +773,7 @@
 <string name="night_theme_summary">Select your favorite night theme — %s</string>
 <string name="select_night_theme_toast">You can select your favorite night theme below</string>
 <string name="download_has_started">Download has started</string>
+<string name="sabr_download_not_supported">SABR streams cannot be downloaded yet. Disable Force SABR, reopen the video, and try again.</string>
 <string name="description_select_note">You can now select text inside the description. Note that the page may flicker and links may not be clickable while in selection mode.</string>
 <string name="description_select_enable">Enable selecting text in the description</string>
 <string name="description_select_disable">Disable selecting text in the description</string>

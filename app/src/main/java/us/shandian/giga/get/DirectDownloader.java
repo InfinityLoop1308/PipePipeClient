@@ -263,6 +263,17 @@ public class DirectDownloader {
                     new MissionRecoveryInfo(secondaryStream)};
         }
 
+        // SABR streams carry a serverAbrStreamingUrl as their "content", which is a POST endpoint
+        // for session-based playback, not a downloadable file. GET on it returns UMP or 4xx, and
+        // the resulting garbage fails WebMReader/Mp4DashReader during post-processing (issue
+        // #2569). Refuse the download so the caller (StreamProcessor) reports a clean failure
+        // instead of a stack trace mid-download.
+        if (selectedStream.getDeliveryMethod() == DeliveryMethod.SABR
+                || (secondaryStream != null
+                && secondaryStream.getDeliveryMethod() == DeliveryMethod.SABR)) {
+            throw new RuntimeException(context.getString(R.string.sabr_download_not_supported));
+        }
+
         resourceDeliveryMethods = HlsDownloadStreamHelper
                 .buildResourceDeliveryMethods(selectedStream, secondaryStream);
         resourceManifestUrls = HlsDownloadStreamHelper

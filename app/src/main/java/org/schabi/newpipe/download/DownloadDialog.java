@@ -52,6 +52,7 @@ import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
 import org.schabi.newpipe.extractor.localization.Localization;
 import org.schabi.newpipe.extractor.stream.AudioStream;
+import org.schabi.newpipe.extractor.stream.DeliveryMethod;
 import org.schabi.newpipe.extractor.stream.Stream;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.SubtitlesStream;
@@ -1098,6 +1099,17 @@ public class DownloadDialog extends DialogFragment
             return;
         }
 
+        // SABR streams carry a serverAbrStreamingUrl as their "content", which is a POST endpoint
+        // for session-based playback, not a downloadable file. GET on it returns UMP or 4xx, and
+        // the resulting garbage fails WebMReader/Mp4DashReader during post-processing (#2569).
+        // Refuse cleanly so the user gets a clear message instead of a hard crash.
+        if (isSabrStream(selectedStream)
+                || (secondaryStream != null && isSabrStream(secondaryStream))) {
+            Toast.makeText(context, R.string.sabr_download_not_supported,
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
         if (secondaryStream == null) {
             urls = new String[]{
                     selectedStream.getContent()
@@ -1134,5 +1146,14 @@ public class DownloadDialog extends DialogFragment
                 Toast.LENGTH_SHORT).show();
 
         dismiss();
+    }
+
+    /**
+     * Returns true when the stream uses SABR delivery, which the downloader can't handle
+     * (issue #2569). SABR streams carry a {@code serverAbrStreamingUrl} as their "content",
+     * which is the SABR POST endpoint for session-based playback, not a downloadable file.
+     */
+    private static boolean isSabrStream(@NonNull final Stream stream) {
+        return stream.getDeliveryMethod() == DeliveryMethod.SABR;
     }
 }
