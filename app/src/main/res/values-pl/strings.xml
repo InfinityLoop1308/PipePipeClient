@@ -1034,4 +1034,7 @@
     <string name="duration">Długość</string>
     <string name="license">Licencja</string>
     <string name="published">Opublikowano</string>
+    <string name="export_data_to_newpipe_title">Eksportuj do NewPipe</string>
+    <string name="export_data_to_newpipe_summary">Eksportuj kopię zapasową do formatu kompatybilnego z NewPipe</string>
+    <string name="settings_category_other_platforms_title">Inne platformy</string>
 </resources>
