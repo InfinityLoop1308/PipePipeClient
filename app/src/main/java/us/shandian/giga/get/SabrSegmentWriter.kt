@@ -60,17 +60,6 @@ internal class SabrSegmentWriter(
     }
 
     @Throws(IOException::class)
-    fun writeFetchedSegment(target: SabrDownloadTarget, segment: SabrMediaSegment) {
-        if (segment.header.isInitSegment) {
-            return
-        }
-        val request = SabrSegmentRequest.media(target.format, segment.header.sequenceNumber)
-        writeMediaSegment(target, outputs.getValue(target.resourceIndex), segment)
-        session.discardCachedSegment(request)
-        logWrittenSegment(target, segment)
-    }
-
-    @Throws(IOException::class)
     private fun writeDirectInitializationIfAvailable(
         target: SabrDownloadTarget,
         output: OutputStream,

@@ -121,42 +121,22 @@ internal class SabrDownloader(
         var emptyResponses = 0
         while (true) {
             ensureRunning()
-            var allComplete = true
             var wroteSegment = writer.drainCachedInitializations()
             wroteSegment = writer.drainCachedSegments() || wroteSegment
 
-            for (target in targets) {
-                ensureRunning()
-                val request = SabrSegmentRequest.media(target.format, target.nextRequestSequence)
-                if (session.isBeyondEnd(request) || session.streamState.isComplete(target.format)) {
-                    continue
-                }
-
-                allComplete = false
-                session.streamState.setPlayerTimeMs(session.streamState.minBufferedEndMs)
-                val segment = try {
-                    session.fetchSegment(request, localization)
-                } catch (error: SabrProtocolException) {
-                    if (isRetryablePolicyOnly(error)) {
-                        Log.d(TAG, "local-sabr-policy-idle itag=${target.format.itag}"
-                            + " seq=${target.nextRequestSequence}: ${error.message}")
-                        continue
-                    }
-                    throw error
-                }
-
-                writer.writeFetchedSegment(target, segment)
-                wroteSegment = true
-                wroteSegment = writer.drainCachedInitializations() || wroteSegment
-                wroteSegment = writer.drainCachedSegments() || wroteSegment
-            }
-
-            if ((allComplete || targets.all { session.streamState.isComplete(it.format) })
-                && targets.all { it.pending.isEmpty() }
-            ) {
+            if (isDownloadComplete(session, targets)) {
                 break
             }
-            if (wroteSegment) {
+
+            session.streamState.setPlayerTimeMs(session.streamState.minBufferedEndMs)
+            val segments = session.pumpOnce(localization)
+            wroteSegment = writer.drainCachedInitializations() || wroteSegment
+            wroteSegment = writer.drainCachedSegments() || wroteSegment
+
+            if (isDownloadComplete(session, targets)) {
+                break
+            }
+            if (wroteSegment || segments.isNotEmpty()) {
                 emptyResponses = 0
             } else {
                 emptyResponses++
@@ -168,8 +148,15 @@ internal class SabrDownloader(
         }
     }
 
-    private fun isRetryablePolicyOnly(error: SabrProtocolException): Boolean {
-        return error.message?.contains("repeated policy-only responses") == true
+    private fun isDownloadComplete(
+        session: YoutubeSabrSession,
+        targets: List<SabrDownloadTarget>,
+    ): Boolean {
+        return targets.all { target ->
+            target.pending.isEmpty() &&
+                (session.streamState.isComplete(target.format) ||
+                    session.isBeyondEnd(SabrSegmentRequest.media(target.format, target.nextWriteSequence)))
+        }
     }
 
     private fun completeMission(finalBytes: Long) {
