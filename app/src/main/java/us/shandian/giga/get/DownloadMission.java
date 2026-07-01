@@ -47,6 +47,7 @@ public class DownloadMission extends Mission {
     public static final int ERROR_PROGRESS_LOST = 1011;
     public static final int ERROR_TIMEOUT = 1012;
     public static final int ERROR_RESOURCE_GONE = 1013;
+    public static final int ERROR_SABR_DOWNLOAD = 1014;
     public static final int ERROR_HTTP_NO_CONTENT = 204;
     static final int ERROR_HTTP_FORBIDDEN = 403;
     static final int ERROR_HTTP_AUTH = 401;
@@ -319,6 +320,8 @@ public class DownloadMission extends Mission {
             notifyError(ERROR_UNKNOWN_HOST, null);
         } else if (err instanceof SocketTimeoutException) {
             notifyError(ERROR_TIMEOUT, null);
+        } else if (err instanceof SabrDownloadException) {
+            notifyError(ERROR_SABR_DOWNLOAD, err);
         } else {
             notifyError(ERROR_UNKNOWN_EXCEPTION, err);
         }

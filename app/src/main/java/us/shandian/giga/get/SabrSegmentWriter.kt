@@ -1,6 +1,7 @@
 package us.shandian.giga.get
 
 import org.schabi.newpipe.extractor.NewPipe
+import org.schabi.newpipe.extractor.localization.Localization
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrMediaSegment
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrSegmentRequest
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat
@@ -67,6 +68,22 @@ internal class SabrSegmentWriter(
     }
 
     @Throws(IOException::class)
+    fun fetchMissingInitializations(localization: Localization): Boolean {
+        var wroteInitialization = false
+        for (target in targets) {
+            if (target.initializationWritten || target.pending.isEmpty()) {
+                continue
+            }
+            val request = SabrSegmentRequest.initialization(target.format)
+            val segment = session.fetchSegment(request, localization)
+            writeInitializationSegment(target, outputs.getValue(target.resourceIndex), segment.data)
+            session.discardCachedSegment(request)
+            wroteInitialization = true
+        }
+        return wroteInitialization
+    }
+
+    @Throws(IOException::class)
     private fun writeDirectInitializationIfAvailable(
         target: SabrDownloadTarget,
         output: OutputStream,
@@ -104,10 +121,22 @@ internal class SabrSegmentWriter(
         val response = NewPipe.getDownloader().get(url, mapOf("Range" to listOf(range)))
         val data = response.rawResponseBody()
         if (response.responseCode() != 206 && response.responseCode() != 200) {
-            throw IOException("Could not fetch SABR init for itag=${format.itag}: HTTP ${response.responseCode()}")
+            if (response.responseCode() >= 500) {
+                throw IOException(
+                    "SABR initialization request failed: HTTP ${response.responseCode()}",
+                )
+            }
+            throw SabrDownloadException(
+                SabrDownloadException.Reason.INITIALIZATION,
+                "SABR download failed: could not fetch initialization for itag ${format.itag}"
+                    + " (HTTP ${response.responseCode()})",
+            )
         }
         if (data == null || data.isEmpty()) {
-            throw IOException("Empty SABR init for itag=${format.itag}")
+            throw SabrDownloadException(
+                SabrDownloadException.Reason.INITIALIZATION,
+                "SABR download failed: empty initialization for itag ${format.itag}",
+            )
         }
         return data
     }
@@ -123,11 +152,11 @@ internal class SabrSegmentWriter(
             return
         }
         if (!target.initializationWritten) {
-            target.pending[sequence] = segment.data
+            cachePendingMedia(target, sequence, segment.data, "waiting for initialization")
             return
         }
         if (sequence > target.nextWriteSequence) {
-            target.pending[sequence] = segment.data
+            cachePendingMedia(target, sequence, segment.data, "waiting for sequence ${target.nextWriteSequence}")
             return
         }
         writeMediaBytes(target, output, segment.data)
@@ -137,7 +166,30 @@ internal class SabrSegmentWriter(
     private fun flushPendingMedia(target: SabrDownloadTarget, output: OutputStream) {
         while (true) {
             val pending = target.pending.remove(target.nextWriteSequence) ?: return
+            target.pendingBytes = (target.pendingBytes - pending.size).coerceAtLeast(0)
             writeMediaBytes(target, output, pending)
+        }
+    }
+
+    private fun cachePendingMedia(
+        target: SabrDownloadTarget,
+        sequence: Int,
+        data: ByteArray,
+        reason: String,
+    ) {
+        val previous = target.pending.put(sequence, data)
+        if (previous != null) {
+            target.pendingBytes -= previous.size.toLong()
+        }
+        target.pendingBytes += data.size.toLong()
+        if (target.pending.size > MAX_PENDING_SEGMENTS
+            || target.pendingBytes > MAX_PENDING_BYTES
+        ) {
+            throw SabrDownloadException(
+                SabrDownloadException.Reason.STALLED,
+                "SABR download stalled while writing itag ${target.format.itag}: $reason"
+                    + " (${target.pending.size} pending segments, ${target.pendingBytes} bytes)",
+            )
         }
     }
 
@@ -147,4 +199,8 @@ internal class SabrSegmentWriter(
         mission.notifyProgress(data.size.toLong())
     }
 
+    private companion object {
+        private const val MAX_PENDING_SEGMENTS = 64
+        private const val MAX_PENDING_BYTES = 24L * 1024L * 1024L
+    }
 }

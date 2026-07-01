@@ -20,8 +20,16 @@ internal object SabrDownloadFormatResolver {
     ): YoutubeSabrFormat {
         val audioRecovery = recoveries.firstOrNull { it.kind == 'a' }
         return audioRecovery?.let { findAudioFormat(info, it) }
+            ?: if (recoveries.any { it.kind == 'v' }) {
+                findLightweightAudioFormat(info)
+            } else {
+                null
+            }
             ?: info.findBestAudioFormat()
-            ?: throw IOException("Missing SABR audio format")
+            ?: throw SabrDownloadException(
+                SabrDownloadException.Reason.FORMAT,
+                "SABR download failed: missing audio format",
+            )
     }
 
     @Throws(IOException::class)
@@ -31,8 +39,16 @@ internal object SabrDownloadFormatResolver {
     ): YoutubeSabrFormat {
         val videoRecovery = recoveries.firstOrNull { it.kind == 'v' }
         return videoRecovery?.let { findVideoFormat(info, it) }
+            ?: if (recoveries.any { it.kind == 'a' }) {
+                findLightweightVideoFormat(info)
+            } else {
+                null
+            }
             ?: info.findBestVideoFormat()
-            ?: throw IOException("Missing SABR video format")
+            ?: throw SabrDownloadException(
+                SabrDownloadException.Reason.FORMAT,
+                "SABR download failed: missing video format",
+            )
     }
 
     @Throws(IOException::class)
@@ -45,7 +61,10 @@ internal object SabrDownloadFormatResolver {
             val format = when (recovery.kind) {
                 'a' -> findAudioFormat(info, recovery)
                 'v' -> findVideoFormat(info, recovery)
-                else -> throw IOException("Unsupported SABR resource kind: ${recovery.kind}")
+                else -> throw SabrDownloadException(
+                    SabrDownloadException.Reason.FORMAT,
+                    "SABR download failed: unsupported resource kind ${recovery.kind}",
+                )
             }
             SabrDownloadTarget(index, recovery, format, File(workDir, "input-$index.media"))
         }
@@ -60,7 +79,10 @@ internal object SabrDownloadFormatResolver {
             format.isAudio &&
                 (recovery.itag <= 0 || format.itag == recovery.itag) &&
                 (recovery.audioTrackId == null || recovery.audioTrackId == format.audioTrackId)
-        } ?: throw IOException("Could not resolve SABR audio format: itag=${recovery.itag}")
+        } ?: throw SabrDownloadException(
+            SabrDownloadException.Reason.FORMAT,
+            "SABR download failed: could not resolve audio itag ${recovery.itag}",
+        )
     }
 
     @Throws(IOException::class)
@@ -70,6 +92,38 @@ internal object SabrDownloadFormatResolver {
     ): YoutubeSabrFormat {
         return info.formats.firstOrNull { format ->
             format.isVideo && (recovery.itag <= 0 || format.itag == recovery.itag)
-        } ?: throw IOException("Could not resolve SABR video format: itag=${recovery.itag}")
+        } ?: throw SabrDownloadException(
+            SabrDownloadException.Reason.FORMAT,
+            "SABR download failed: could not resolve video itag ${recovery.itag}",
+        )
+    }
+
+    private fun findLightweightAudioFormat(info: YoutubeSabrInfo): YoutubeSabrFormat? {
+        return info.formats
+            .filter { it.isAudio }
+            .sortedWith(
+                compareBy<YoutubeSabrFormat> { !it.isOriginalAudio }
+                    .thenBy { it.isDrc }
+                    .thenBy { normalizedBitrate(it) },
+            )
+            .firstOrNull()
+    }
+
+    private fun findLightweightVideoFormat(info: YoutubeSabrInfo): YoutubeSabrFormat? {
+        return info.formats
+            .filter { it.isVideo }
+            .sortedWith(
+                compareBy<YoutubeSabrFormat> { normalizedHeight(it) }
+                    .thenBy { normalizedBitrate(it) },
+            )
+            .firstOrNull()
+    }
+
+    private fun normalizedBitrate(format: YoutubeSabrFormat): Int {
+        return format.bitrate.takeIf { it > 0 } ?: Int.MAX_VALUE
+    }
+
+    private fun normalizedHeight(format: YoutubeSabrFormat): Int {
+        return format.height.takeIf { it > 0 } ?: Int.MAX_VALUE
     }
 }

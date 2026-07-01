@@ -14,4 +14,5 @@ internal data class SabrDownloadTarget(
     var initializationObserved: Boolean = false,
     var initializationData: ByteArray? = null,
     val pending: TreeMap<Int, ByteArray> = TreeMap(),
+    var pendingBytes: Long = 0,
 )

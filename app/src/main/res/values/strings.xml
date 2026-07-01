@@ -571,6 +571,15 @@
 <string name="error_progress_lost">Progress lost, because the file was deleted</string>
 <string name="error_timeout">Connection timeout</string>
 <string name="error_download_resource_gone">Cannot recover this download</string>
+<string name="error_sabr_download_failed">SABR download failed</string>
+<string name="error_sabr_download_format">This SABR format cannot be downloaded</string>
+<string name="error_sabr_download_initialization">SABR initialization failed</string>
+<string name="error_sabr_download_protected">This SABR stream needs attestation</string>
+<string name="error_sabr_download_stalled">SABR stopped returning media</string>
+<string name="error_sabr_download_network">SABR download failed because of the network</string>
+<string name="error_sabr_download_muxing">Could not mux SABR media</string>
+<string name="error_sabr_download_storage">Could not write the SABR download</string>
+<string name="error_sabr_download_protocol">SABR protocol error</string>
 <string name="clear_download_history">Clear download history</string>
 <string name="confirm_prompt">Do you want to clear your download history or delete all downloaded files?</string>
 <string name="delete_downloaded_files">Delete downloaded files</string>
