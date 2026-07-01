@@ -19,13 +19,11 @@ internal class SabrDownloader(
             prepareMission()
 
             val info = SabrDownloadFormatResolver.resolveInfo(recoveries)
-            val audioRecovery = recoveries.firstOrNull { it.kind == 'a' }
-            val videoRecovery = recoveries.firstOrNull { it.kind == 'v' }
 
             var attempts = 0
             while (true) {
                 try {
-                    runSessionAttempt(info, recoveries, audioRecovery, videoRecovery)
+                    runSessionAttempt(info, recoveries)
                     break
                 } catch (error: RetryColdStartException) {
                     attempts++
@@ -38,13 +36,9 @@ internal class SabrDownloader(
         } catch (error: InterruptedException) {
             Thread.currentThread().interrupt()
         } catch (error: SabrProtocolException) {
-            if (mission.running) {
-                mission.notifyError(IOException(error))
-            }
+            notifyErrorAndCleanup(IOException(error))
         } catch (error: Exception) {
-            if (mission.running) {
-                mission.notifyError(error)
-            }
+            notifyErrorAndCleanup(error)
         }
     }
 
@@ -52,8 +46,6 @@ internal class SabrDownloader(
     private fun runSessionAttempt(
         info: YoutubeSabrInfo,
         recoveries: Array<MissionRecoveryInfo>,
-        audioRecovery: MissionRecoveryInfo?,
-        videoRecovery: MissionRecoveryInfo?,
     ) {
         val session = YoutubeSabrSession(
             info,
@@ -61,7 +53,7 @@ internal class SabrDownloader(
             SabrDownloadFormatResolver.selectedVideoFormat(info, recoveries),
             WebViewPoTokenProvider(mission.context),
         )
-        configureRequestMode(session, audioRecovery, videoRecovery)
+        configureRequestMode(session)
 
         val workDir = prepareWorkDirectory()
         val targets = SabrDownloadFormatResolver.buildTargets(info, recoveries, workDir)
@@ -107,11 +99,9 @@ internal class SabrDownloader(
         mission.writeThisToFile()
     }
 
-    private fun configureRequestMode(
-        session: YoutubeSabrSession,
-        audioRecovery: MissionRecoveryInfo?,
-        videoRecovery: MissionRecoveryInfo?,
-    ) {
+    private fun configureRequestMode(session: YoutubeSabrSession) {
+        // Cold starts are most reliable in the normal two-track mode; for single-track downloads we
+        // switch to audio-only/video-only once the selected track initialization has been written.
         session.streamState.setVideoAndAudioRequestMode()
     }
 
@@ -228,6 +218,13 @@ internal class SabrDownloader(
     private fun ensureRunning() {
         if (!mission.running || Thread.currentThread().isInterrupted) {
             throw InterruptedException()
+        }
+    }
+
+    private fun notifyErrorAndCleanup(error: Exception) {
+        cleanup(mission)
+        if (mission.running) {
+            mission.notifyError(error)
         }
     }
 

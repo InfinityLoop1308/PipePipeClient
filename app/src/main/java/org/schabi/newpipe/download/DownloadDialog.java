@@ -341,7 +341,6 @@ public class DownloadDialog extends DialogFragment
 
         initToolbar(dialogBinding.toolbarLayout.toolbar);
         setupDownloadOptions();
-        dumpDownloadStreamsForLocalTest();
 
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
 
@@ -360,30 +359,6 @@ public class DownloadDialog extends DialogFragment
         });
 
         fetchStreamsSize();
-    }
-
-    private void dumpDownloadStreamsForLocalTest() {
-        for (int i = 0; i < wrappedVideoStreams.getStreamsList().size(); i++) {
-            final VideoStream stream = wrappedVideoStreams.getStreamsList().get(i);
-            Log.d(TAG, "local-download-stream video index=" + i
-                    + " delivery=" + stream.getDeliveryMethod()
-                    + " format=" + stream.getFormat()
-                    + " codec=" + stream.getCodec()
-                    + " resolution=" + stream.getResolution()
-                    + " itag=" + stream.getItag()
-                    + " videoOnly=" + stream.isVideoOnly()
-                    + " audioTrackId=" + stream.getAudioTrackId());
-        }
-        for (int i = 0; i < wrappedAudioStreams.getStreamsList().size(); i++) {
-            final AudioStream stream = wrappedAudioStreams.getStreamsList().get(i);
-            Log.d(TAG, "local-download-stream audio index=" + i
-                    + " delivery=" + stream.getDeliveryMethod()
-                    + " format=" + stream.getFormat()
-                    + " codec=" + stream.getCodec()
-                    + " quality=" + stream.getQuality()
-                    + " itag=" + stream.getItag()
-                    + " audioTrackId=" + stream.getAudioTrackId());
-        }
     }
 
     private void initToolbar(final Toolbar toolbar) {

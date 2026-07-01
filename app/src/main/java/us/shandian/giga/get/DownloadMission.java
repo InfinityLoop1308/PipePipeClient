@@ -438,13 +438,6 @@ public class DownloadMission extends Mission {
      * Start downloading with multiple threads.
      */
     public void start() {
-        Log.d(TAG, "local-download-start running=" + running
-                + " finished=" + isFinished()
-                + " urls=" + urls.length
-                + " current=" + current
-                + " hasSabr=" + hasSabrResource()
-                + " hasHls=" + hasHlsResource()
-                + " sabrStarted=" + sabrStarted);
         if (running || isFinished() || urls.length < 1) return;
 
         // ensure that the previous state is completely paused.
@@ -471,13 +464,11 @@ public class DownloadMission extends Mission {
         }
 
         if (hasSabrResource()) {
-            Log.d(TAG, "local-download-route SABR");
             init = runAsync(DownloadInitializer.mId, new SabrDownloader(this));
             return;
         }
 
         if (hasHlsResource()) {
-            Log.d(TAG, "local-download-route HLS");
             init = runAsync(DownloadInitializer.mId, new HlsDownloader(this));
             return;
         }
