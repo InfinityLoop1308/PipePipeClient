@@ -1,6 +1,5 @@
 package us.shandian.giga.get
 
-import android.util.Log
 import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrMediaSegment
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrSegmentRequest
@@ -22,6 +21,16 @@ internal class SabrSegmentWriter(
         }
     }
 
+    fun observeWrittenInitializations() {
+        for (target in targets) {
+            val data = target.initializationData ?: continue
+            if (!target.initializationObserved) {
+                target.initializationObserved =
+                    session.streamState.ingestInitializationData(target.format, data)
+            }
+        }
+    }
+
     @Throws(IOException::class)
     fun drainCachedInitializations(): Boolean {
         var wroteInitialization = false
@@ -33,7 +42,6 @@ internal class SabrSegmentWriter(
             val segment = session.getCachedSegment(request) ?: continue
             writeInitializationSegment(target, outputs.getValue(target.resourceIndex), segment.data)
             session.discardCachedSegment(request)
-            Log.d(TAG, "local-sabr-init itag=${target.format.itag} bytes=${segment.data.size}")
             wroteInitialization = true
         }
         return wroteInitialization
@@ -52,7 +60,6 @@ internal class SabrSegmentWriter(
                 }
                 writeMediaSegment(target, outputs.getValue(target.resourceIndex), segment)
                 session.discardCachedSegment(request)
-                logWrittenSegment(target, segment)
                 wroteSegment = true
             }
         }
@@ -79,6 +86,7 @@ internal class SabrSegmentWriter(
         }
         output.write(data)
         target.initializationWritten = true
+        target.initializationData = data
         mission.notifyProgress(data.size.toLong())
         flushPendingMedia(target, output)
         return true
@@ -139,17 +147,4 @@ internal class SabrSegmentWriter(
         mission.notifyProgress(data.size.toLong())
     }
 
-    private fun logWrittenSegment(target: SabrDownloadTarget, segment: SabrMediaSegment) {
-        val sequence = segment.header.sequenceNumber
-        if (sequence <= 3 || sequence % LOG_EVERY_SEGMENTS == 0) {
-            Log.d(TAG, "local-sabr-write itag=${target.format.itag}"
-                + " seq=$sequence"
-                + " bytes=${segment.data.size}")
-        }
-    }
-
-    private companion object {
-        private const val TAG = "SabrSegmentWriter"
-        private const val LOG_EVERY_SEGMENTS = 50
-    }
 }
