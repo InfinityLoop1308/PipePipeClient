@@ -44,7 +44,7 @@ internal class SabrSegmentWriter(
         var wroteSegment = false
         for (target in targets) {
             while (true) {
-                val request = SabrSegmentRequest.media(target.format, target.nextRequestSequence)
+                val request = SabrSegmentRequest.media(target.format, target.nextWriteSequence)
                 val segment = session.getCachedSegment(request) ?: break
                 if (segment.header.isInitSegment) {
                     session.discardCachedSegment(request)
@@ -116,12 +116,10 @@ internal class SabrSegmentWriter(
         }
         if (!target.initializationWritten) {
             target.pending[sequence] = segment.data
-            advanceNextRequestSequence(target, sequence)
             return
         }
         if (sequence > target.nextWriteSequence) {
             target.pending[sequence] = segment.data
-            advanceNextRequestSequence(target, sequence)
             return
         }
         writeMediaBytes(target, output, segment.data)
@@ -138,9 +136,6 @@ internal class SabrSegmentWriter(
     private fun writeMediaBytes(target: SabrDownloadTarget, output: OutputStream, data: ByteArray) {
         output.write(data)
         target.nextWriteSequence++
-        if (target.nextRequestSequence < target.nextWriteSequence) {
-            target.nextRequestSequence = target.nextWriteSequence
-        }
         mission.notifyProgress(data.size.toLong())
     }
 
@@ -150,12 +145,6 @@ internal class SabrSegmentWriter(
             Log.d(TAG, "local-sabr-write itag=${target.format.itag}"
                 + " seq=$sequence"
                 + " bytes=${segment.data.size}")
-        }
-    }
-
-    private fun advanceNextRequestSequence(target: SabrDownloadTarget, observedSequence: Int) {
-        if (observedSequence >= target.nextRequestSequence) {
-            target.nextRequestSequence = observedSequence + 1
         }
     }
 
