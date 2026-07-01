@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Caches one shared {@link YoutubeSabrSession} per videoId so the audio and video
@@ -28,9 +29,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>v1: uses the best audio/video formats from the player response and a fixed en/US locale.</p>
  */
 public final class SabrSessionStore {
-
-    // Debug: log the AAC audio-track candidates + the chosen one. Keep false outside debugging.
-    private static final boolean DIAG_AUDIO = false;
 
     private static final Map<String, Holder> SESSIONS = new ConcurrentHashMap<>();
     // The user-selected audio track id per video, applied on the next (re)build of its session.
@@ -78,10 +76,12 @@ public final class SabrSessionStore {
         // and eviction run on: it never goes stale (a stalled reader sits on its last segment, so the
         // pump sees edge ~= readerHead and keeps feeding instead of pacing off a frozen play head).
         private final Map<Integer, Long> readerPositions = new ConcurrentHashMap<>();
+        private final Map<Integer, byte[]> initializationData = new ConcurrentHashMap<>();
         // Tracks currently selected by ExoPlayer. Background/audio-only playback disables the video
         // renderer, so requiring a video reader position there pins the SABR cache at the beginning.
         private final Set<Integer> activeReaderItags =
                 Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
+        private final AtomicInteger sourceReferences = new AtomicInteger();
         private volatile SabrStreamPump pump;
         private volatile Thread warmThread;
 
@@ -113,6 +113,25 @@ public final class SabrSessionStore {
         void setActiveTracks(final boolean videoActive, final boolean audioActive) {
             setTrackActive(videoFormat.getItag(), videoActive);
             setTrackActive(audioFormat.getItag(), audioActive);
+        }
+
+        byte[] getInitializationData(final int itag) {
+            return initializationData.get(itag);
+        }
+
+        void setInitializationData(final int itag, @NonNull final byte[] data) {
+            initializationData.put(itag, data);
+        }
+
+        void retainSource() {
+            sourceReferences.incrementAndGet();
+        }
+
+        void releaseSource() {
+            final int refs = sourceReferences.decrementAndGet();
+            if (refs <= 0) {
+                evict(videoId, this);
+            }
         }
 
         private void setTrackActive(final int itag, final boolean active) {
@@ -178,8 +197,11 @@ public final class SabrSessionStore {
                 warm.interrupt();
             }
             final SabrStreamPump streamPump = pump;
+            pump = null;
             if (streamPump != null) {
                 streamPump.stop();
+            } else {
+                session.clearCache();
             }
         }
 
@@ -226,9 +248,6 @@ public final class SabrSessionStore {
      */
     public static void setPreferredAudioTrack(@NonNull final String videoId,
                                               @Nullable final String audioTrackId) {
-        if (DIAG_AUDIO) {
-            System.out.println("SABR-AUDIO setPreferred video=" + videoId + " track=" + audioTrackId);
-        }
         if (audioTrackId == null) {
             PREFERRED_AUDIO.remove(videoId);
         } else {
@@ -239,6 +258,14 @@ public final class SabrSessionStore {
     public static Holder getOrCreate(@NonNull final Context context,
                                      @NonNull final String videoId,
                                      final int preferredVideoItag)
+            throws IOException, ExtractionException {
+        return getOrCreate(context, videoId, preferredVideoItag, null);
+    }
+
+    public static Holder getOrCreate(@NonNull final Context context,
+                                     @NonNull final String videoId,
+                                     final int preferredVideoItag,
+                                     @Nullable final YoutubeSabrInfo extractorInfo)
             throws IOException, ExtractionException {
         final String preferredAudioTrackId = PREFERRED_AUDIO.get(videoId);
         final Holder existing = SESSIONS.get(videoId);
@@ -261,7 +288,9 @@ public final class SabrSessionStore {
             }
             final Localization localization = new Localization("en", "US");
             final ContentCountry contentCountry = new ContentCountry("US");
-            final YoutubeSabrInfo info = YoutubeSabrProbeFetch(videoId, localization, contentCountry);
+            final YoutubeSabrInfo info = isUsableExtractorInfo(extractorInfo, videoId)
+                    ? extractorInfo
+                    : YoutubeSabrProbeFetch(videoId, localization, contentCountry);
             final YoutubeSabrFormat audioFormat = pickAudioFormat(info, preferredAudioTrackId);
             final YoutubeSabrFormat videoFormat = pickVideoFormat(info, preferredVideoItag);
             if (audioFormat == null || videoFormat == null) {
@@ -318,6 +347,15 @@ public final class SabrSessionStore {
         }
     }
 
+    private static boolean isUsableExtractorInfo(@Nullable final YoutubeSabrInfo info,
+                                                 @NonNull final String videoId) {
+        return info != null
+                && videoId.equals(info.getVideoId())
+                && info.getServerAbrStreamingUrl() != null
+                && !info.getServerAbrStreamingUrl().isEmpty()
+                && !info.getFormats().isEmpty();
+    }
+
     @NonNull
     private static YoutubeSabrInfo YoutubeSabrProbeFetch(@NonNull final String videoId,
                                                         @NonNull final Localization localization,
@@ -327,18 +365,11 @@ public final class SabrSessionStore {
                 videoId, YoutubeSabrClientProfile.WEB, localization, contentCountry);
     }
 
-    // Force AAC (mp4) audio instead of the "best" (Opus/webm). honestly: Opus/webm audio just does
-    // NOT work through this chunk pipeline. it under-supplies the audio renderer -> AudioTrack
-    // underruns -> constant rebuffering (hundreds vs ~2 on AAC, phone cooks). re-confirmed on media3
-    // 1.10 AFTER fixing the separate ~2min pump false-stall, so it's its own bug, not that one. i
-    // spent ~2h on it: ruled out fetch, cache, chunk timing, the media3 loading contract, buffer
-    // size... the data IS cached fine, so it's somewhere inside media3's Opus/webm extract->render
-    // with the way we chunk it, and i still have no fucking idea how to fix it. AAC (itag 140) is
-    // mp4, hardware-decoded, ~same bitrate (130 vs 136 kbps) and plays perfectly smooth. so: AAC
-    // until someone cracks the Opus path. (audio codec isn't user-facing, so this isn't a band-aid
-    // on a user setting, just an internal pick.) Prefer the plain AAC variant: YouTube can expose
-    // extra xtags variants (e.g. voice-boost) and DRC for the same itag; a tiny bitrate difference
-    // must not make gameplay/music sound compressed, warped, or volume-pumped.
+    // Force AAC (mp4) audio instead of the "best" Opus/webm stream. With the current chunked SABR
+    // pipeline, Opus/webm can under-supply the audio renderer and cause repeated rebuffering even
+    // when the segment data is cached correctly. Prefer the plain AAC variant: YouTube can expose
+    // extra xtags variants (for example voice-boost) and DRC for the same itag; a tiny bitrate
+    // difference must not make music or mixed content sound compressed, warped, or volume-pumped.
     private static YoutubeSabrFormat pickAudioFormat(@NonNull final YoutubeSabrInfo info,
                                                      @Nullable final String preferredTrackId) {
         YoutubeSabrFormat aac = null;
@@ -354,16 +385,6 @@ public final class SabrSessionStore {
             // the original-language preference below.
             if (preferredTrackId != null && !preferredTrackId.equals(f.getAudioTrackId())) {
                 continue;
-            }
-            if (DIAG_AUDIO) {
-                System.out.println("SABR-AUDIO candidate itag=" + f.getItag()
-                        + " trackId=" + f.getAudioTrackId()
-                        + " name=" + f.getAudioTrackDisplayName()
-                        + " default=" + f.isAudioDefault()
-                        + " original=" + f.isOriginalAudio()
-                        + " drc=" + f.isDrc()
-                        + " xtags=" + f.getXtags()
-                        + " bitrate=" + f.getBitrate());
             }
             if (aac == null) {
                 aac = f;
@@ -384,15 +405,6 @@ public final class SabrSessionStore {
             if (preferForTrack || preferForPlain || preferForDrc || preferForBitrate) {
                 aac = f;
             }
-        }
-        if (DIAG_AUDIO && aac != null) {
-            System.out.println("SABR-AUDIO chosen video=" + info.getVideoId()
-                    + " itag=" + aac.getItag()
-                    + " trackId=" + aac.getAudioTrackId()
-                    + " name=" + aac.getAudioTrackDisplayName()
-                    + " drc=" + aac.isDrc()
-                    + " xtags=" + aac.getXtags()
-                    + " original=" + aac.isOriginalAudio());
         }
         if (aac == null && preferredTrackId != null) {
             // The requested track has no mp4/AAC variant: fall back to the default original pick.
@@ -430,9 +442,18 @@ public final class SabrSessionStore {
 
     /** Evict a cached session, stopping its pump so the thread + buffers are released. */
     public static void evict(@NonNull final String videoId) {
+        evict(videoId, null);
+    }
+
+    private static void evict(@NonNull final String videoId,
+                              @Nullable final Holder expectedHolder) {
         final Holder holder;
         synchronized (SabrSessionStore.class) {
-            holder = SESSIONS.remove(videoId);
+            holder = SESSIONS.get(videoId);
+            if (holder == null || (expectedHolder != null && holder != expectedHolder)) {
+                return;
+            }
+            SESSIONS.remove(videoId);
             ORDER.remove(videoId);
         }
         if (holder != null) {

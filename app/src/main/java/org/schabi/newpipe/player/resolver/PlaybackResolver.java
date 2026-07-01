@@ -60,6 +60,7 @@ import androidx.annotation.Nullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
@@ -466,9 +467,11 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
         // hits the device VP9 decoder wall); audio-only playback passes 0 and keeps the best audio.
         final int preferredVideoItag =
                 (stream instanceof VideoStream) ? ((VideoStream) stream).getItag() : 0;
+        final YoutubeSabrInfo sabrInfo = getSabrInfo(stream);
         final SabrSessionStore.Holder holder;
         try {
-            holder = SabrSessionStore.getOrCreate(App.getApp(), videoId, preferredVideoItag);
+            holder = SabrSessionStore.getOrCreate(App.getApp(), videoId, preferredVideoItag,
+                    sabrInfo);
         } catch (final ExtractionException e) {
             throw new IOException("Could not start SABR session for " + videoId, e);
         }
@@ -482,6 +485,12 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                 .setCustomCacheKey(cacheKey)
                 .build();
         return new SabrMediaSource(mediaItem, holder, new Localization("en", "US"));
+    }
+
+    @Nullable
+    private static YoutubeSabrInfo getSabrInfo(@NonNull final Stream stream) {
+        final Serializable info = stream.getDeliveryMethodInfo();
+        return info instanceof YoutubeSabrInfo ? (YoutubeSabrInfo) info : null;
     }
 
     /**

@@ -1,5 +1,7 @@
 package org.schabi.newpipe.player.datasource;
 
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 
 import androidx.media3.common.Format;
@@ -22,6 +24,7 @@ import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat;
  * time-based and lands correctly. The session is created by the resolver and handed in.
  */
 public final class SabrMediaSource extends BaseMediaSource {
+    private static final String TAG = "SabrMediaSource";
 
     private final MediaItem mediaItem;
     private final SabrSessionStore.Holder holder;
@@ -29,6 +32,7 @@ public final class SabrMediaSource extends BaseMediaSource {
     private final Format audioFormat;
     private final Format videoFormat;
     private final long durationUs;
+    private boolean released;
 
     public SabrMediaSource(final MediaItem mediaItem,
                            final SabrSessionStore.Holder holder,
@@ -36,6 +40,8 @@ public final class SabrMediaSource extends BaseMediaSource {
         this.mediaItem = mediaItem;
         this.holder = holder;
         this.localization = localization;
+        this.holder.retainSource();
+        Log.d(TAG, "create source video=" + holder.videoId);
         this.audioFormat = toMedia3Format(holder.audioFormat);
         this.videoFormat = toMedia3Format(holder.videoFormat);
         this.durationUs = Math.max(holder.audioFormat.getApproxDurationMs(),
@@ -61,6 +67,7 @@ public final class SabrMediaSource extends BaseMediaSource {
     @Override
     public MediaPeriod createPeriod(final MediaPeriodId id, final Allocator allocator,
                                     final long startPositionUs) {
+        Log.d(TAG, "createPeriod video=" + holder.videoId + " startUs=" + startPositionUs);
         return new SabrMediaPeriod(holder, audioFormat, videoFormat, durationUs, allocator,
                 DrmSessionManager.DRM_UNSUPPORTED, createDrmEventDispatcher(id),
                 createEventDispatcher(id), localization);
@@ -68,11 +75,17 @@ public final class SabrMediaSource extends BaseMediaSource {
 
     @Override
     public void releasePeriod(final MediaPeriod mediaPeriod) {
+        Log.d(TAG, "releasePeriod video=" + holder.videoId);
         ((SabrMediaPeriod) mediaPeriod).release();
     }
 
     @Override
     protected void releaseSourceInternal() {
+        if (!released) {
+            released = true;
+            Log.d(TAG, "release source video=" + holder.videoId);
+            holder.releaseSource();
+        }
     }
 
     private static Format toMedia3Format(final YoutubeSabrFormat f) {
