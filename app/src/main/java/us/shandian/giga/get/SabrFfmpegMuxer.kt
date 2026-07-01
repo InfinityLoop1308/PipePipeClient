@@ -38,7 +38,7 @@ internal class SabrFfmpegMuxer(
             add("-hide_banner")
             add("-nostats")
             add("-loglevel")
-            add("error")
+            add("fatal")
             add("-y")
             inputs.forEach { input ->
                 add("-i")

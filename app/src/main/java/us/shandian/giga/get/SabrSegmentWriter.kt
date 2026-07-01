@@ -69,9 +69,28 @@ internal class SabrSegmentWriter(
 
     @Throws(IOException::class)
     fun fetchMissingInitializations(localization: Localization): Boolean {
+        return fetchInitializations(localization, onlyWhenMediaIsPending = true)
+    }
+
+    @Throws(IOException::class)
+    fun fetchUnwrittenInitializations(localization: Localization): Boolean {
+        return fetchInitializations(localization, onlyWhenMediaIsPending = false)
+    }
+
+    @Throws(IOException::class)
+    private fun fetchInitializations(
+        localization: Localization,
+        onlyWhenMediaIsPending: Boolean,
+    ): Boolean {
         var wroteInitialization = false
         for (target in targets) {
-            if (target.initializationWritten || target.pending.isEmpty()) {
+            if (target.initializationWritten ||
+                (onlyWhenMediaIsPending && target.pending.isEmpty())
+            ) {
+                continue
+            }
+            if (writeDirectInitializationIfAvailable(target, outputs.getValue(target.resourceIndex))) {
+                wroteInitialization = true
                 continue
             }
             val request = SabrSegmentRequest.initialization(target.format)
@@ -87,9 +106,9 @@ internal class SabrSegmentWriter(
     private fun writeDirectInitializationIfAvailable(
         target: SabrDownloadTarget,
         output: OutputStream,
-    ) {
-        val data = fetchDirectInitializationData(target.format) ?: return
-        writeInitializationSegment(target, output, data)
+    ): Boolean {
+        val data = fetchDirectInitializationData(target.format) ?: return false
+        return writeInitializationSegment(target, output, data)
     }
 
     @Throws(IOException::class)

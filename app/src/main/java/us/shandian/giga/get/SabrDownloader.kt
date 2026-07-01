@@ -28,7 +28,7 @@ internal class SabrDownloader(
             while (true) {
                 try {
                     prepareMission()
-                    runSessionAttempt(info, recoveries)
+                    runSessionAttempt(info, recoveries, coldStartAttempts)
                     break
                 } catch (error: RetryColdStartException) {
                     coldStartAttempts++
@@ -71,6 +71,7 @@ internal class SabrDownloader(
     private fun runSessionAttempt(
         info: YoutubeSabrInfo,
         recoveries: Array<MissionRecoveryInfo>,
+        coldStartAttempt: Int,
     ) {
         val session = YoutubeSabrSession(
             info,
@@ -78,10 +79,9 @@ internal class SabrDownloader(
             SabrDownloadFormatResolver.selectedVideoFormat(info, recoveries),
             WebViewPoTokenProvider(mission.context),
         )
-        configureRequestMode(session)
-
         val workDir = prepareWorkDirectory()
         val targets = SabrDownloadFormatResolver.buildTargets(info, recoveries, workDir)
+        configureRequestMode(session, targets, coldStartAttempt)
         val outputs = targets.associate { target -> target.resourceIndex to target.file.outputStream() }
 
         try {
@@ -130,10 +130,21 @@ internal class SabrDownloader(
         mission.writeThisToFile()
     }
 
-    private fun configureRequestMode(session: YoutubeSabrSession) {
-        // Cold starts are most reliable in the normal two-track mode; for single-track downloads we
-        // switch to audio-only/video-only once the selected track initialization has been written.
-        session.streamState.setVideoAndAudioRequestMode()
+    private fun configureRequestMode(
+        session: YoutubeSabrSession,
+        targets: List<SabrDownloadTarget>,
+        coldStartAttempt: Int,
+    ) {
+        val useCompanionWarmup = targets.size == 1 && coldStartAttempt % 2 == 1
+        if (useCompanionWarmup) {
+            session.streamState.setVideoAndAudioRequestMode()
+        } else if (targets.size == 1 && targets.first().format.isAudio) {
+            session.streamState.setAudioOnlyRequestMode()
+        } else if (targets.size == 1 && targets.first().format.isVideo) {
+            session.streamState.setVideoOnlyRequestMode()
+        } else {
+            session.streamState.setVideoAndAudioRequestMode()
+        }
     }
 
     @Throws(IOException::class)
@@ -155,6 +166,11 @@ internal class SabrDownloader(
         val localization = Localization("en", "US")
         writer.writeDirectInitializations()
         writer.observeWrittenInitializations()
+        if (targets.size == 1 && !targets.first().initializationWritten) {
+            fetchInitializationsOrRetry(writer, localization)
+            writer.observeWrittenInitializations()
+            writer.drainCachedInitializations()
+        }
 
         var emptyResponses = 0
         while (true) {
@@ -177,7 +193,7 @@ internal class SabrDownloader(
             enforceSessionCacheLimit(session, writer)
             configureInitializedSingleTargetMode(session, targets)
             if (hasMediaWaitingForInitialization(targets)) {
-                writer.fetchMissingInitializations(localization)
+                fetchMissingInitializationsOrRetry(writer, localization)
                 writer.observeWrittenInitializations()
                 wroteSegment = writer.drainCachedInitializations() || wroteSegment
                 wroteSegment = writer.drainCachedSegments() || wroteSegment
@@ -202,6 +218,36 @@ internal class SabrDownloader(
                 }
                 Thread.sleep(IDLE_POLL_MS)
             }
+        }
+    }
+
+    @Throws(IOException::class)
+    private fun fetchInitializationsOrRetry(
+        writer: SabrSegmentWriter,
+        localization: Localization,
+    ) {
+        try {
+            writer.fetchUnwrittenInitializations(localization)
+        } catch (error: SabrProtocolException) {
+            if (isRetryableInitializationProtocolError(error)) {
+                throw RetryColdStartException(error)
+            }
+            throw error
+        }
+    }
+
+    @Throws(IOException::class)
+    private fun fetchMissingInitializationsOrRetry(
+        writer: SabrSegmentWriter,
+        localization: Localization,
+    ) {
+        try {
+            writer.fetchMissingInitializations(localization)
+        } catch (error: SabrProtocolException) {
+            if (isRetryableInitializationProtocolError(error)) {
+                throw RetryColdStartException(error)
+            }
+            throw error
         }
     }
 
@@ -326,6 +372,15 @@ internal class SabrDownloader(
         )
     }
 
+    private fun isRetryableInitializationProtocolError(error: SabrProtocolException): Boolean {
+        val message = error.message.orEmpty()
+        if (!message.contains(":init")) {
+            return false
+        }
+        return message.contains("policy-only", ignoreCase = true) ||
+            message.contains("not returned", ignoreCase = true)
+    }
+
     private fun logDebug(message: String) {
         if (BuildConfig.DEBUG) {
             Log.d(TAG, message)
@@ -337,8 +392,8 @@ internal class SabrDownloader(
         private const val IDLE_POLL_MS = 250L
         private const val MAX_EMPTY_RESPONSES = 60
         private const val MAX_COLD_START_RETRIES = 3
-        private const val MAX_TRANSIENT_RETRIES = 2
-        private const val MAX_TRANSIENT_RETRY_DELAY_MS = 2_000L
+        private const val MAX_TRANSIENT_RETRIES = 5
+        private const val MAX_TRANSIENT_RETRY_DELAY_MS = 5_000L
         private const val MAX_SESSION_CACHE_BYTES = 48L * 1024L * 1024L
 
         @JvmStatic
@@ -361,5 +416,5 @@ internal class SabrDownloader(
         }
     }
 
-    private class RetryColdStartException : IOException()
+    private class RetryColdStartException(cause: Throwable? = null) : IOException(cause)
 }
