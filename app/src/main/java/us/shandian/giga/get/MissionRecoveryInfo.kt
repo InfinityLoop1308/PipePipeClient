@@ -19,22 +19,29 @@ class MissionRecoveryInfo(
     var kind: Char = Char.MIN_VALUE,
     var validateCondition: String? = null,
     var audioTrackId: String? = null,
-    var isHls: Boolean = false
+    var isHls: Boolean = false,
+    var isSabr: Boolean = false,
+    var itag: Int = -1,
+    var deliveryMethodInfo: Serializable? = null
 ) : Serializable, Parcelable {
     constructor(stream: Stream) : this(format = stream.getFormat()!!) {
         isHls = stream.getDeliveryMethod() == DeliveryMethod.HLS
+        isSabr = stream.getDeliveryMethod() == DeliveryMethod.SABR
+        deliveryMethodInfo = stream.deliveryMethodInfo
         when (stream) {
             is AudioStream -> {
                 desiredBitrate = stream.averageBitrate
                 isDesired2 = false
                 kind = 'a'
                 audioTrackId = stream.audioTrackId
+                itag = stream.itag
             }
             is VideoStream -> {
                 desired = stream.resolution
                 isDesired2 = stream.isVideoOnly
                 kind = 'v'
                 audioTrackId = stream.audioTrackId
+                itag = stream.itag
             }
             is SubtitlesStream -> {
                 desired = stream.languageTag

@@ -128,12 +128,14 @@ public class DownloadMission extends Mission {
     public MissionRecoveryInfo[] recoveryInfo;
 
     /**
-     * Optional typed metadata for resources. Used only to route HLS resources to the HLS downloader.
+     * Optional typed metadata for resources. Used to route session/manifest resources to their
+     * dedicated downloaders instead of the direct HTTP range downloader.
      */
     public String[] resourceDeliveryMethods;
     public String[] resourceManifestUrls;
     public boolean[] resourceIsUrls;
     public HlsDownloadCheckpoint hlsCheckpoint;
+    public boolean sabrStarted;
 
     private transient int finishCount;
     public transient volatile boolean running;
@@ -436,6 +438,13 @@ public class DownloadMission extends Mission {
      * Start downloading with multiple threads.
      */
     public void start() {
+        Log.d(TAG, "local-download-start running=" + running
+                + " finished=" + isFinished()
+                + " urls=" + urls.length
+                + " current=" + current
+                + " hasSabr=" + hasSabrResource()
+                + " hasHls=" + hasHlsResource()
+                + " sabrStarted=" + sabrStarted);
         if (running || isFinished() || urls.length < 1) return;
 
         // ensure that the previous state is completely paused.
@@ -461,7 +470,14 @@ public class DownloadMission extends Mission {
             return;
         }
 
+        if (hasSabrResource()) {
+            Log.d(TAG, "local-download-route SABR");
+            init = runAsync(DownloadInitializer.mId, new SabrDownloader(this));
+            return;
+        }
+
         if (hasHlsResource()) {
+            Log.d(TAG, "local-download-route HLS");
             init = runAsync(DownloadInitializer.mId, new HlsDownloader(this));
             return;
         }
@@ -540,6 +556,7 @@ public class DownloadMission extends Mission {
     public boolean delete() {
         if (psAlgorithm != null) psAlgorithm.cleanupTemporalDir();
         HlsDownloader.cleanup(this);
+        SabrDownloader.cleanup(this);
 
         notify(DownloadManagerService.MESSAGE_DELETED);
 
@@ -565,7 +582,10 @@ public class DownloadMission extends Mission {
         fallbackResumeOffset = 0;
         blocks = null;
         blockAcquired = null;
-        if (rollback) hlsCheckpoint = null;
+        if (rollback) {
+            hlsCheckpoint = null;
+            sabrStarted = false;
+        }
 
         if (rollback) current = 0;
         if (persistChanges) writeThisToFile();
@@ -630,12 +650,16 @@ public class DownloadMission extends Mission {
      * @return true, otherwise, false
      */
     public boolean isInitialized() {
-        return blocks != null || hlsCheckpoint != null; // DownloadMissionInitializer or HLS downloader was executed
+        return blocks != null || hlsCheckpoint != null || sabrStarted;
     }
 
     boolean hasHlsResource() {
         return HlsDownloadStreamHelper.containsHlsResource(resourceDeliveryMethods,
                 resourceManifestUrls, urls);
+    }
+
+    boolean hasSabrResource() {
+        return SabrDownloadStreamHelper.containsSabrResource(resourceDeliveryMethods, recoveryInfo);
     }
 
     /**

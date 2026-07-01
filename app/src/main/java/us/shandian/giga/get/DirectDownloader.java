@@ -105,9 +105,11 @@ public class DirectDownloader {
                 continue;
             }
             final AudioStream audioStream = SecondaryStreamHelper
-                    .getAudioStreamFor(context, wrappedAudioStreams.getStreamsList(), videoStreams.get(i));
+                    .getAudioStreamFor(context, SabrDownloadStreamHelper.audioStreamsForVideo(
+                            wrappedAudioStreams.getStreamsList(), videoStreams.get(i)), videoStreams.get(i));
 
-            if (audioStream != null) {
+            if (audioStream != null && SabrDownloadStreamHelper
+                    .isCompatibleSecondaryStream(videoStreams.get(i), audioStream)) {
                 secondaryStreams
                         .append(i, new SecondaryStreamHelper<>(wrappedAudioStreams, audioStream));
             }
@@ -270,7 +272,8 @@ public class DirectDownloader {
         resourceIsUrls = HlsDownloadStreamHelper
                 .buildResourceIsUrls(selectedStream, secondaryStream);
         if (HlsDownloadStreamHelper.containsHlsResource(resourceDeliveryMethods,
-                resourceManifestUrls, urls)) {
+                resourceManifestUrls, urls)
+                || SabrDownloadStreamHelper.containsSabrStream(selectedStream, secondaryStream)) {
             psName = null;
             psArgs = null;
         }

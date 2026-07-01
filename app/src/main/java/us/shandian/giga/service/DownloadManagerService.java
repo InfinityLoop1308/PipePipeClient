@@ -49,6 +49,7 @@ import java.util.Objects;
 import us.shandian.giga.get.DownloadMission;
 import us.shandian.giga.get.HlsDownloadStreamHelper;
 import us.shandian.giga.get.MissionRecoveryInfo;
+import us.shandian.giga.get.SabrDownloadStreamHelper;
 import org.schabi.newpipe.streams.io.StoredDirectoryHelper;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
 import org.schabi.newpipe.util.Localization;
@@ -452,7 +453,9 @@ public class DownloadManagerService extends Service {
 
         if (DEBUG && ps == null && urls != null && urls.length > 1
                 && !HlsDownloadStreamHelper.containsHlsResource(mission.resourceDeliveryMethods,
-                mission.resourceManifestUrls, urls)) {
+                mission.resourceManifestUrls, urls)
+                && !SabrDownloadStreamHelper.containsSabrResource(mission.resourceDeliveryMethods,
+                mission.recoveryInfo)) {
             Log.w(TAG, "mission created with multiple urls ¿missing post-processing algorithm?");
         }
 

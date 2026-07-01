@@ -259,7 +259,8 @@ public class StreamItemAdapter<T extends Stream, U extends Stream> extends BaseA
                     if (streamsWrapper.getSizeInBytes(stream) > -2) {
                         continue;
                     }
-                    if (stream.getDeliveryMethod() == DeliveryMethod.HLS) {
+                    if (stream.getDeliveryMethod() == DeliveryMethod.HLS
+                            || stream.getDeliveryMethod() == DeliveryMethod.SABR) {
                         streamsWrapper.setSize(stream, -1);
                         hasChanged = true;
                         continue;

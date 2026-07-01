@@ -52,7 +52,6 @@ import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
 import org.schabi.newpipe.extractor.localization.Localization;
 import org.schabi.newpipe.extractor.stream.AudioStream;
-import org.schabi.newpipe.extractor.stream.DeliveryMethod;
 import org.schabi.newpipe.extractor.stream.Stream;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.SubtitlesStream;
@@ -88,6 +87,7 @@ import java.util.stream.Collectors;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import us.shandian.giga.get.HlsDownloadStreamHelper;
 import us.shandian.giga.get.MissionRecoveryInfo;
+import us.shandian.giga.get.SabrDownloadStreamHelper;
 import us.shandian.giga.postprocessing.Postprocessing;
 import us.shandian.giga.service.DownloadManager;
 import us.shandian.giga.service.DownloadManagerService;
@@ -157,29 +157,20 @@ public class DownloadDialog extends DialogFragment
     }
 
     public static DownloadDialog newInstance(final Context context, final StreamInfo info) {
-        final List<VideoStream> videoStreams = info.getVideoStreams().stream()
-                .filter(stream -> stream.getDeliveryMethod() != DeliveryMethod.SABR)
-                .collect(Collectors.toList());
-        final List<VideoStream> videoOnlyStreams = info.getVideoOnlyStreams().stream()
-                .filter(stream -> stream.getDeliveryMethod() != DeliveryMethod.SABR)
-                .collect(Collectors.toList());
-        final List<AudioStream> audioStreams = info.getAudioStreams().stream()
-                .filter(stream -> stream.getDeliveryMethod() != DeliveryMethod.SABR)
-                .collect(Collectors.toList());
         final ArrayList<VideoStream> streamsList = new ArrayList<>(ListHelper
-                .getSortedStreamVideosList(context, videoStreams,
-                        videoOnlyStreams, false, false));
+                .getSortedStreamVideosList(context, info.getVideoStreams(),
+                        info.getVideoOnlyStreams(), false, false));
 
         final List<VideoStream> filteredVideoStreams = ListHelper
                 .filterVideoStreamsByPreferredLanguage(context, streamsList,
-                        audioStreams);
+                        info.getAudioStreams());
 
         final int selectedStreamIndex = ListHelper.getDefaultResolutionIndex(
                 context, filteredVideoStreams);
         HlsDownloadStreamHelper.addManifestFallbackIfNeeded(filteredVideoStreams, info);
 
         final List<AudioStream> downloadableAudio = ListHelper
-                .filterDownloadableAudioStreams(audioStreams);
+                .filterDownloadableAudioStreams(info.getAudioStreams());
         HlsDownloadStreamHelper.addAudioFallbackIfNeeded(downloadableAudio, info);
 
         final DownloadDialog instance = newInstance(info);
@@ -278,9 +269,11 @@ public class DownloadDialog extends DialogFragment
                 continue;
             }
             final AudioStream audioStream = SecondaryStreamHelper
-                    .getAudioStreamFor(getContext(), wrappedAudioStreams.getStreamsList(), videoStreams.get(i));
+                    .getAudioStreamFor(getContext(), SabrDownloadStreamHelper.audioStreamsForVideo(
+                            wrappedAudioStreams.getStreamsList(), videoStreams.get(i)), videoStreams.get(i));
 
-            if (audioStream != null) {
+            if (audioStream != null && SabrDownloadStreamHelper
+                    .isCompatibleSecondaryStream(videoStreams.get(i), audioStream)) {
                 secondaryStreams
                         .append(i, new SecondaryStreamHelper<>(wrappedAudioStreams, audioStream));
             } else if (DEBUG) {
@@ -348,6 +341,7 @@ public class DownloadDialog extends DialogFragment
 
         initToolbar(dialogBinding.toolbarLayout.toolbar);
         setupDownloadOptions();
+        dumpDownloadStreamsForLocalTest();
 
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
 
@@ -366,6 +360,30 @@ public class DownloadDialog extends DialogFragment
         });
 
         fetchStreamsSize();
+    }
+
+    private void dumpDownloadStreamsForLocalTest() {
+        for (int i = 0; i < wrappedVideoStreams.getStreamsList().size(); i++) {
+            final VideoStream stream = wrappedVideoStreams.getStreamsList().get(i);
+            Log.d(TAG, "local-download-stream video index=" + i
+                    + " delivery=" + stream.getDeliveryMethod()
+                    + " format=" + stream.getFormat()
+                    + " codec=" + stream.getCodec()
+                    + " resolution=" + stream.getResolution()
+                    + " itag=" + stream.getItag()
+                    + " videoOnly=" + stream.isVideoOnly()
+                    + " audioTrackId=" + stream.getAudioTrackId());
+        }
+        for (int i = 0; i < wrappedAudioStreams.getStreamsList().size(); i++) {
+            final AudioStream stream = wrappedAudioStreams.getStreamsList().get(i);
+            Log.d(TAG, "local-download-stream audio index=" + i
+                    + " delivery=" + stream.getDeliveryMethod()
+                    + " format=" + stream.getFormat()
+                    + " codec=" + stream.getCodec()
+                    + " quality=" + stream.getQuality()
+                    + " itag=" + stream.getItag()
+                    + " audioTrackId=" + stream.getAudioTrackId());
+        }
     }
 
     private void initToolbar(final Toolbar toolbar) {
@@ -1154,7 +1172,8 @@ public class DownloadDialog extends DialogFragment
         resourceIsUrls = HlsDownloadStreamHelper
                 .buildResourceIsUrls(selectedStream, secondaryStream);
         if (HlsDownloadStreamHelper.containsHlsResource(resourceDeliveryMethods,
-                resourceManifestUrls, urls)) {
+                resourceManifestUrls, urls)
+                || SabrDownloadStreamHelper.containsSabrStream(selectedStream, secondaryStream)) {
             psName = null;
             psArgs = null;
         }
