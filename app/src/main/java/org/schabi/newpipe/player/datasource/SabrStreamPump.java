@@ -58,6 +58,7 @@ final class SabrStreamPump {
 
     private volatile boolean started;
     private volatile boolean stopped;
+    private volatile boolean clearCacheOnStop;
     private volatile boolean fatal;
     private volatile long lastReadMs;
     // Set by a reader blocked on an evicted segment behind the edge (backward seek); the loop
@@ -99,6 +100,7 @@ final class SabrStreamPump {
     void stop() {
         synchronized (this) {
             stopped = true;
+            clearCacheOnStop = true;
             // Don't self-interrupt: stop() is also reached from the pump thread itself via
             // evict-on-fatal, and setting our own interrupt flag could break a later blocking call.
             if (thread != null && thread != Thread.currentThread()) {
@@ -209,9 +211,17 @@ final class SabrStreamPump {
                     // Drop the dead session so a re-open rebuilds a fresh one (new token, new state).
                     SabrSessionStore.evict(holder.videoId);
                     break;
+                } catch (final OutOfMemoryError e) {
+                    Log.e(TAG, "SABR pump OOM; evicting session " + holder.videoId, e);
+                    fatal = true;
+                    SabrSessionStore.evict(holder.videoId);
+                    break;
                 }
             }
         } finally {
+            if (clearCacheOnStop) {
+                session.clearCache();
+            }
             synchronized (this) {
                 stopped = true;
             }

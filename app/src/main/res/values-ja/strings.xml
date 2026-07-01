@@ -986,8 +986,6 @@
 <string name="show_auto_translated_subtitles_summary">YouTubeの自動翻訳字幕を表示します。YouTubeへのログインが必要です。</string>
 <string name="show_auto_translated_subtitles_login_required_summary">自動翻訳字幕にはYouTubeへのログインが必要なため、無効化されています。</string>
 <string name="auto_translated_subtitles_language_title">字幕の自動翻訳先</string>
-<string name="force_sabr_title">SABR を強制</string>
-<string name="force_sabr_summary">DASH/HLS の代わりに、すべての YouTube 動画を SABR パイプライン経由でルーティングします。実験的機能：一部の端末や動画で再生に失敗する場合があります。</string>
 <string name="export_data_to_newpipe_title">NewPipeへエクスポート</string>
 <string name="export_data_to_newpipe_summary">NewPipe互換形式でバックアップをエクスポート</string>
 <string name="settings_category_other_platforms_title">その他のプラットフォーム</string>

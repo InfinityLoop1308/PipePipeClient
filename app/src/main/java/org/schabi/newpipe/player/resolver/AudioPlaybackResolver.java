@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.media3.exoplayer.source.MediaSource;
 
 import org.schabi.newpipe.extractor.stream.AudioStream;
+import org.schabi.newpipe.extractor.stream.DeliveryMethod;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.player.helper.PlayerHelper;
@@ -51,15 +52,19 @@ public class AudioPlaybackResolver implements PlaybackResolver {
 
         List<AudioStream> audioStreams = info.getAudioStreams()
                 .stream().filter(s -> !blacklistUrls.contains(s.getContent())).collect(Collectors.toList());
+        if (audioStreams.stream().anyMatch(
+                stream -> stream.getDeliveryMethod() == DeliveryMethod.SABR)) {
+            audioStreams.removeIf(stream -> stream.getDeliveryMethod() == DeliveryMethod.HLS);
+        }
         removeTorrentStreams(audioStreams);
         audioStreams = filterUnsupportedFormats(audioStreams, context);
 
         final int index = ListHelper.getAudioFormatIndex(context, audioStreams, audioTrack);
-        if (index < 0 || index >= info.getAudioStreams().size()) {
+        if (index < 0 || index >= audioStreams.size()) {
             return null;
         }
 
-        final AudioStream audio = info.getAudioStreams().get(index);
+        final AudioStream audio = audioStreams.get(index);
         final MediaItemTag tag = StreamInfoTag.of(info);
 
         try {

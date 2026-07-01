@@ -1,6 +1,7 @@
 package org.schabi.newpipe.player.datasource;
 
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -15,6 +16,7 @@ import androidx.media3.exoplayer.source.chunk.ChunkExtractor;
 import androidx.media3.exoplayer.source.chunk.ChunkHolder;
 import androidx.media3.exoplayer.source.chunk.ChunkSource;
 import androidx.media3.exoplayer.source.chunk.ContainerMediaChunk;
+import androidx.media3.exoplayer.source.chunk.InitializationChunk;
 import androidx.media3.exoplayer.source.chunk.MediaChunk;
 import androidx.media3.exoplayer.upstream.LoadErrorHandlingPolicy;
 import androidx.media3.extractor.Extractor;
@@ -36,12 +38,14 @@ import java.util.List;
  * then each media segment is a {@link ContainerMediaChunk}.
  */
 final class SabrChunkSource implements ChunkSource {
+    private static final String TAG = "SabrChunkSource";
 
     private final SabrSessionStore.Holder holder;
     private final YoutubeSabrFormat format;
     private final Format trackFormat;
     private final int trackType;
     private final Localization localization;
+    private final ChunkExtractor extractor;
 
     @Nullable
     private IOException fatalError;
@@ -56,6 +60,11 @@ final class SabrChunkSource implements ChunkSource {
         this.trackFormat = trackFormat;
         this.trackType = trackType;
         this.localization = localization;
+        final String mime = format.getMimeType();
+        final Extractor extractorImpl = mime != null && mime.contains("webm")
+                ? new MatroskaExtractor(SubtitleParser.Factory.UNSUPPORTED)
+                : new FragmentedMp4Extractor(SubtitleParser.Factory.UNSUPPORTED);
+        this.extractor = new BundledChunkExtractor(extractorImpl, trackType, trackFormat);
     }
 
     @Override
@@ -89,6 +98,16 @@ final class SabrChunkSource implements ChunkSource {
     @Override
     public void getNextChunk(final LoadingInfo loadingInfo, final long loadPositionUs,
                              final List<? extends MediaChunk> queue, final ChunkHolder out) {
+        if (extractor.getSampleFormats() == null) {
+            Log.d(TAG, "nextInit video=" + holder.videoId
+                    + " itag=" + format.getItag());
+            out.chunk = new InitializationChunk(
+                    new SabrSegmentDataSource(holder, format, localization,
+                            /* prependInit= */ false),
+                    new DataSpec(Uri.parse("sabrseg://" + format.getItag() + "/init")),
+                    trackFormat, C.SELECTION_REASON_UNKNOWN, null, extractor);
+            return;
+        }
         final int nextSeq;
         if (queue.isEmpty()) {
             nextSeq = holder.session.getStreamState()
@@ -98,9 +117,16 @@ final class SabrChunkSource implements ChunkSource {
         }
         final long endSeq = holder.session.getStreamState().getEndSegment(format);
         if (endSeq > 0 && nextSeq > endSeq) {
+            Log.d(TAG, "endOfStream video=" + holder.videoId
+                    + " itag=" + format.getItag() + " seq=" + nextSeq);
             out.endOfStream = true;
             return;
         }
+        Log.d(TAG, "nextChunk video=" + holder.videoId
+                + " itag=" + format.getItag()
+                + " seq=" + nextSeq
+                + " loadPositionUs=" + loadPositionUs
+                + " queue=" + queue.size());
         out.chunk = newMediaChunk(nextSeq);
     }
 
@@ -110,17 +136,8 @@ final class SabrChunkSource implements ChunkSource {
         final long startUs = Math.max(0, startMs) * 1000;
         final long endUs = (endMs > 0 ? endMs : startMs) * 1000;
         final DataSpec spec = new DataSpec(Uri.parse("sabrseg://" + format.getItag() + "/" + seq));
-        // Fresh extractor per chunk: the data source prepends the init, so each chunk is a complete
-        // init + one fragment. Absolute fragment timestamps -> sampleOffsetUs = 0. Pick the container
-        // by mime: YouTube ships VP9/Opus in WebM (Matroska) and AVC/AAC in fragmented mp4.
-        final String mime = format.getMimeType();
-        final Extractor extractorImpl = mime != null && mime.contains("webm")
-                ? new MatroskaExtractor(SubtitleParser.Factory.UNSUPPORTED)
-                : new FragmentedMp4Extractor(SubtitleParser.Factory.UNSUPPORTED);
-        final ChunkExtractor extractor = new BundledChunkExtractor(
-                extractorImpl, trackType, trackFormat);
         return new ContainerMediaChunk(
-                new SabrSegmentDataSource(holder, format, localization, /* prependInit= */ true),
+                new SabrSegmentDataSource(holder, format, localization, /* prependInit= */ false),
                 spec, trackFormat, C.SELECTION_REASON_UNKNOWN, null,
                 startUs, endUs, /* clippedStartTimeUs= */ startUs,
                 // No end clip, on purpose. The first chunk's declared end is basically a rumor: we

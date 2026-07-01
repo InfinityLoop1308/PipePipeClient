@@ -52,6 +52,7 @@ import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
 import org.schabi.newpipe.extractor.localization.Localization;
 import org.schabi.newpipe.extractor.stream.AudioStream;
+import org.schabi.newpipe.extractor.stream.DeliveryMethod;
 import org.schabi.newpipe.extractor.stream.Stream;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.SubtitlesStream;
@@ -80,6 +81,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import us.shandian.giga.get.HlsDownloadStreamHelper;
@@ -151,20 +153,29 @@ public class DownloadDialog extends DialogFragment
     }
 
     public static DownloadDialog newInstance(final Context context, final StreamInfo info) {
+        final List<VideoStream> videoStreams = info.getVideoStreams().stream()
+                .filter(stream -> stream.getDeliveryMethod() != DeliveryMethod.SABR)
+                .collect(Collectors.toList());
+        final List<VideoStream> videoOnlyStreams = info.getVideoOnlyStreams().stream()
+                .filter(stream -> stream.getDeliveryMethod() != DeliveryMethod.SABR)
+                .collect(Collectors.toList());
+        final List<AudioStream> audioStreams = info.getAudioStreams().stream()
+                .filter(stream -> stream.getDeliveryMethod() != DeliveryMethod.SABR)
+                .collect(Collectors.toList());
         final ArrayList<VideoStream> streamsList = new ArrayList<>(ListHelper
-                .getSortedStreamVideosList(context, info.getVideoStreams(),
-                        info.getVideoOnlyStreams(), false, false));
+                .getSortedStreamVideosList(context, videoStreams,
+                        videoOnlyStreams, false, false));
 
         final List<VideoStream> filteredVideoStreams = ListHelper
                 .filterVideoStreamsByPreferredLanguage(context, streamsList,
-                        info.getAudioStreams());
+                        audioStreams);
 
         final int selectedStreamIndex = ListHelper.getDefaultResolutionIndex(
                 context, filteredVideoStreams);
         HlsDownloadStreamHelper.addManifestFallbackIfNeeded(filteredVideoStreams, info);
 
         final List<AudioStream> downloadableAudio = ListHelper
-                .filterDownloadableAudioStreams(info.getAudioStreams());
+                .filterDownloadableAudioStreams(audioStreams);
         HlsDownloadStreamHelper.addAudioFallbackIfNeeded(downloadableAudio, info);
 
         final DownloadDialog instance = newInstance(info);

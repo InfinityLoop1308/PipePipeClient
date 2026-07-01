@@ -1,6 +1,7 @@
 package org.schabi.newpipe.player.datasource;
 
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -9,12 +10,17 @@ import androidx.media3.datasource.DataSource;
 import androidx.media3.datasource.DataSpec;
 import androidx.media3.datasource.TransferListener;
 
+import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.downloader.Response;
 import org.schabi.newpipe.extractor.localization.Localization;
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrMediaSegment;
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrSegmentRequest;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Tier-2 chunk source helper: a {@link DataSource} that serves exactly ONE SABR segment (the init
@@ -27,6 +33,7 @@ import java.io.IOException;
  * {@code sabrseg://<itag>/<sequenceNumber>}.</p>
  */
 public final class SabrSegmentDataSource implements DataSource {
+    private static final String TAG = "SabrSegmentDataSource";
 
     private static final long WAIT_MS = 250;
     private static final long STALL_MS = 120_000;
@@ -75,8 +82,14 @@ public final class SabrSegmentDataSource implements DataSource {
         this.canceled = false;
         this.pos = (int) Math.max(0, dataSpec.position);
         final SabrSegmentRequest request = requestFromUri(dataSpec.uri);
-        if (prependInit && !request.isInitializationSegment()) {
-            final byte[] init = awaitSegment(SabrSegmentRequest.initialization(format));
+        Log.d(TAG, "open video=" + holder.videoId
+                + " itag=" + format.getItag()
+                + " uri=" + dataSpec.uri
+                + " prependInit=" + prependInit);
+        if (request.isInitializationSegment()) {
+            this.data = getInitializationData();
+        } else if (prependInit) {
+            final byte[] init = getInitializationData();
             final byte[] media = awaitSegment(request);
             final byte[] both = new byte[init.length + media.length];
             System.arraycopy(init, 0, both, 0, init.length);
@@ -87,7 +100,60 @@ public final class SabrSegmentDataSource implements DataSource {
         }
         this.opened = true;
         final int remaining = data.length - pos;
+        Log.d(TAG, "opened video=" + holder.videoId
+                + " itag=" + format.getItag()
+                + " bytes=" + data.length
+                + " remaining=" + remaining);
         return dataSpec.length == C.LENGTH_UNSET ? remaining : Math.min(dataSpec.length, remaining);
+    }
+
+    private byte[] getInitializationData() throws IOException {
+        final int itag = format.getItag();
+        final byte[] cached = holder.getInitializationData(itag);
+        if (cached != null) {
+            return cached;
+        }
+        final SabrMediaSegment segment =
+                holder.session.getCachedSegment(SabrSegmentRequest.initialization(format));
+        if (segment != null) {
+            final byte[] data = segment.getData();
+            holder.setInitializationData(itag, data);
+            return data;
+        }
+        final String url = format.getInitializationUrl();
+        final long start = format.getInitRangeStart();
+        final long end = format.getInitRangeEnd();
+        if (url == null || url.isEmpty() || start < 0 || end < start) {
+            return awaitSegment(SabrSegmentRequest.initialization(format));
+        }
+
+        final String range = "bytes=" + start + "-" + end;
+        final Response response;
+        try {
+            response = NewPipe.getDownloader().get(url,
+                    Collections.singletonMap("Range", Collections.singletonList(range)));
+        } catch (final Exception e) {
+            throw new IOException("Could not fetch SABR init for itag=" + itag, e);
+        }
+        final byte[] data = response.rawResponseBody();
+        if (response.responseCode() != 206 && response.responseCode() != 200) {
+            throw new IOException("Could not fetch SABR init for itag=" + itag
+                    + ": HTTP " + response.responseCode());
+        }
+        if (data == null || data.length == 0) {
+            throw new IOException("Empty SABR init for itag=" + itag);
+        }
+        final long expectedLength = end - start + 1;
+        if (data.length > Math.max(expectedLength * 2, 1024 * 1024)) {
+            throw new IOException("Unexpectedly large SABR init for itag=" + itag
+                    + ": " + data.length + " bytes");
+        }
+        Log.d(TAG, "fetched init video=" + holder.videoId
+                + " itag=" + itag
+                + " bytes=" + data.length
+                + " range=" + range);
+        holder.setInitializationData(itag, data);
+        return data;
     }
 
     @Override
@@ -125,6 +191,7 @@ public final class SabrSegmentDataSource implements DataSource {
         final SabrStreamPump pump = holder.getPump(localization);
         final long waitStart = System.currentTimeMillis();
         long lastRefetchMs = 0;
+        boolean loggedWait = false;
         while (true) {
             if (canceled) {
                 throw new IOException("SABR segment read canceled");
@@ -132,6 +199,11 @@ public final class SabrSegmentDataSource implements DataSource {
             pump.ensureStarted();
             final SabrMediaSegment segment = pump.getCached(request);
             if (segment != null) {
+                Log.d(TAG, "cache hit video=" + holder.videoId
+                        + " itag=" + format.getItag()
+                        + " init=" + request.isInitializationSegment()
+                        + " seq=" + request.getSequenceNumber()
+                        + " bytes=" + segment.getData().length);
                 if (!segment.getHeader().isInitSegment()) {
                     // Tell the pump how far this track has been loaded so it keeps feeding ahead
                     // (and repositions after a seek). Without this readerHead stayed 0 and the pump
@@ -143,6 +215,15 @@ public final class SabrSegmentDataSource implements DataSource {
             }
             if (pump.isFatal()) {
                 throw new IOException("SABR pump fatal for itag=" + format.getItag());
+            }
+            if (!loggedWait && System.currentTimeMillis() - waitStart > 1000) {
+                loggedWait = true;
+                Log.d(TAG, "waiting video=" + holder.videoId
+                        + " itag=" + format.getItag()
+                        + " init=" + request.isInitializationSegment()
+                        + " seq=" + request.getSequenceNumber()
+                        + " edgeMs=" + holder.session.getStreamState().getMinBufferedEndMs()
+                        + " readerHeadMs=" + holder.getReaderHeadMs());
             }
             // Backward seek to an evicted segment behind the buffered edge: the forward pump never
             // re-fetches it, so it would never arrive. Drop our read position onto it (so eviction +

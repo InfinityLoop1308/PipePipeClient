@@ -980,8 +980,6 @@ Voulez-vous continuer?</string>
 <string name="show_auto_translated_subtitles_summary">Afficher les sous-titres YouTube traduits automatiquement. Nécessite une connexion YouTube.</string>
 <string name="show_auto_translated_subtitles_login_required_summary">Désactivé car la connexion YouTube est requise pour les sous-titres traduits automatiquement.</string>
 <string name="auto_translated_subtitles_language_title">Traduire automatiquement les sous-titres en</string>
-<string name="force_sabr_title">Forcer SABR</string>
-<string name="force_sabr_summary">Router toutes les vidéos YouTube via le pipeline SABR au lieu de DASH/HLS. Expérimental : peut entraîner des échecs de lecture sur certains appareils ou vidéos</string>
 <string name="export_data_to_newpipe_title">Exporter vers NewPipe</string>
 <string name="export_data_to_newpipe_summary">Exporter la sauvegarde dans un format compatible avec NewPipe</string>
 <string name="settings_category_other_platforms_title">Autres plateformes</string>

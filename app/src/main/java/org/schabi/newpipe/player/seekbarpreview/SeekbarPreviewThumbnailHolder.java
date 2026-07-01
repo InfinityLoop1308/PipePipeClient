@@ -31,6 +31,8 @@ public class SeekbarPreviewThumbnailHolder {
     // https://stackoverflow.com/a/54744028
     public static final String TAG = "SeekbarPrevThumbHolder";
 
+    private static final int MAX_STORYBOARD_BITMAP_PAGES = 48;
+
     // Key = Position of the picture in milliseconds
     // Supplier = Supplies the bitmap for that position
     private final SparseArrayCompat<Supplier<Bitmap>> seekbarPreviewData =
@@ -108,13 +110,18 @@ public class SeekbarPreviewThumbnailHolder {
         Log.d(TAG, "Starting generation of seekbarPreviewData");
         final Stopwatch sw = Log.isLoggable(TAG, Log.DEBUG) ? Stopwatch.createStarted() : null;
 
-        int currentPosMs = 0;
-        int pos = 1;
-
         final int urlFrameCount = frameset.getFramesPerPageX() * frameset.getFramesPerPageY();
+        final List<String> urls = frameset.getUrls();
+        final int pageStep = Math.max(1,
+                (int) Math.ceil((double) urls.size() / MAX_STORYBOARD_BITMAP_PAGES));
+        if (pageStep > 1) {
+            Log.d(TAG, "Sampling seekbarPreviewData storyboards: pages=" + urls.size()
+                    + ", step=" + pageStep);
+        }
 
         // Process each url in the frameset
-        for (final String url : frameset.getUrls()) {
+        for (int pageIndex = 0; pageIndex < urls.size(); pageIndex += pageStep) {
+            final String url = urls.get(pageIndex);
             // get the bitmap
             final Bitmap srcBitMap = getBitMapFrom(url);
 
@@ -122,17 +129,20 @@ public class SeekbarPreviewThumbnailHolder {
             // concurrency and checks for "updateRequestIdentifier"
             final var generatedDataForUrl = new SparseArrayCompat<Supplier<Bitmap>>(urlFrameCount);
 
+            long currentPosMs = (long) pageIndex * urlFrameCount * frameset.getDurationPerFrame();
+            int pos = pageIndex * urlFrameCount + 1;
+
             // The bitmap consists of several images, which we process here
             // foreach frame in the returned bitmap
             for (int i = 0; i < urlFrameCount; i++) {
                 // Frames outside the video length are skipped
-                if (pos > frameset.getTotalCount()) {
+                if (pos > frameset.getTotalCount() || currentPosMs > Integer.MAX_VALUE) {
                     break;
                 }
 
                 // Get the bounds where the frame is found
                 final int[] bounds = frameset.getFrameBoundsAt(currentPosMs);
-                generatedDataForUrl.put(currentPosMs,
+                generatedDataForUrl.put((int) currentPosMs,
                                         createBitmapSupplier(srcBitMap, bounds, frameset));
 
                 currentPosMs += frameset.getDurationPerFrame();

@@ -1015,8 +1015,6 @@
     <string name="use_experimental_new_ui_summary"> Używaj nowego interfejsu bazowanego na ComposeU, interfejs jest dalej optymalizowany. Zmienienie tego zrestartuje aplikację.</string>
     <string name="force_end_on_overtime_title">Wymuś koniec po wyznaczonym czasie</string>
     <string name="force_end_on_overtime_summary">Wymuś koniec odtwarzania gdy aktualna pozycja jest większa niż długość strumienia, stosowane jako obejście dla strumieni które nie zatrzymują się naturalnie</string>
-    <string name="force_sabr_title">Wymuś SABR</string>
-    <string name="force_sabr_summary">Przekierowywuj wszystkie filmy z YouTube przez SABR zamiast DASH/HLS. Eksperymentalne: może powodować niepowodzenie odtwarzania na niektórych urządzeniach lub filmach</string>
     <string name="use_old_search_filter_title">Używaj starych filtrów wyszukiwarki</string>
     <string name="use_old_search_filter_summary">Używaj starych bazowanych na menu filtrów wyszukiwarki zamiast nowego interfejsu</string>
     <string name="main_tabs_position_summary">Przenieś główny wybierak kart na dół</string>

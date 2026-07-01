@@ -1036,8 +1036,6 @@
 <string name="use_experimental_new_ui_summary">Use the new Compose-based UI, still being optimized. Changing this will restart the app.</string>
 <string name="force_end_on_overtime_title">Force end on overtime</string>
 <string name="force_end_on_overtime_summary">Force end playback when current position exceeds stream duration, as a workaround for streams that do not stop naturally</string>
-<string name="force_sabr_title">Force SABR</string>
-<string name="force_sabr_summary">Route all YouTube videos through the SABR pipeline instead of DASH/HLS. Experimental: may cause playback failures on some devices or videos</string>
 <string name="use_old_search_filter_title">Use old search filter</string>
 <string name="use_old_search_filter_summary">Use the old menu-based search filter instead of the new dialog UI</string>
 <string name="main_tabs_position_summary">Move main tab selector to the bottom</string>

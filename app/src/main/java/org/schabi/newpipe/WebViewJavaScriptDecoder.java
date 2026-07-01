@@ -167,8 +167,10 @@ public final class WebViewJavaScriptDecoder implements YoutubeJavaScriptDecoder 
 
             return local;
         } catch (final ParsingException e) {
+            Log.e(TAG, "decode failed for player=" + playerId, e);
             throw e;
         } catch (final Exception e) {
+            Log.e(TAG, "decode failed for player=" + playerId, e);
             throw new ParsingException("Local V8 decoding failed", e);
         }
     }
@@ -177,6 +179,7 @@ public final class WebViewJavaScriptDecoder implements YoutubeJavaScriptDecoder 
         if (ready) {
             return;
         }
+        Log.i(TAG, "initializing V8");
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicReference<Throwable> error = new AtomicReference<>();
         mainHandler.post(() -> {
@@ -203,6 +206,7 @@ public final class WebViewJavaScriptDecoder implements YoutubeJavaScriptDecoder 
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(final WebView view, final String url) {
+                Log.i(TAG, "V8 page loaded");
                 view.evaluateJavascript("if(!Object.hasOwn){Object.hasOwn=function(o,p){"
                                 + "return Object.prototype.hasOwnProperty.call(o,p)}};"
                                 + "if(!Array.prototype.at){Array.prototype.at=function(i){"
@@ -216,6 +220,8 @@ public final class WebViewJavaScriptDecoder implements YoutubeJavaScriptDecoder 
                                             if (!"true".equals(value)) {
                                                 error.set(new IllegalStateException(
                                                         "EJS initialization returned " + value));
+                                            } else {
+                                                Log.i(TAG, "V8 initialized");
                                             }
                                             latch.countDown();
                                         })));
@@ -397,10 +403,12 @@ public final class WebViewJavaScriptDecoder implements YoutubeJavaScriptDecoder 
             throws ParsingException {
         try {
             if (!latch.await(TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
+                Log.e(TAG, operation + " timed out after " + TIMEOUT_MS + "ms");
                 throw new ParsingException(operation + " timed out");
             }
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
+            Log.e(TAG, operation + " interrupted", e);
             throw new ParsingException(operation + " interrupted", e);
         }
     }

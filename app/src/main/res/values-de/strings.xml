@@ -963,8 +963,6 @@
 <string name="show_auto_translated_subtitles_summary">Zeigt automatisch von YouTube übersetzte Untertitel an. Erfordert eine YouTube-Anmeldung.</string>
 <string name="show_auto_translated_subtitles_login_required_summary">Deaktiviert, da für automatisch übersetzte Untertitel eine YouTube-Anmeldung erforderlich ist.</string>
 <string name="auto_translated_subtitles_language_title">Untertitel automatisch übersetzen in</string>
-<string name="force_sabr_title">SABR erzwingen</string>
-<string name="force_sabr_summary">Alle YouTube-Videos anstelle von DASH/HLS über die SABR-Pipeline leiten. Experimentell: Kann auf einigen Geräten oder bei einigen Videos zu Wiedergabefehlern führen.</string>
 <string name="export_data_to_newpipe_title">Nach NewPipe exportieren</string>
 <string name="export_data_to_newpipe_summary">Backup in einem NewPipe-kompatiblen Format exportieren</string>
 <string name="settings_category_other_platforms_title">Andere Plattformen</string>

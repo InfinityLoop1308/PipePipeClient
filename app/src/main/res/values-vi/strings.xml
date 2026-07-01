@@ -1072,8 +1072,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="show_auto_translated_subtitles_summary">Hiển thị phụ đề tự động dịch của YouTube. Yêu cầu đăng nhập YouTube.</string>
 <string name="show_auto_translated_subtitles_login_required_summary">Bị vô hiệu hóa vì yêu cầu đăng nhập YouTube để hiển thị phụ đề tự động dịch.</string>
 <string name="auto_translated_subtitles_language_title">Tự động dịch phụ đề sang</string>
-<string name="force_sabr_title">Bắt buộc SABR</string>
-<string name="force_sabr_summary">Định tuyến tất cả video YouTube qua luồng SABR thay vì DASH/HLS. Thử nghiệm: có thể gây lỗi phát trên một số thiết bị hoặc video</string>
 <string name="export_data_to_newpipe_title">Xuất sang NewPipe</string>
 <string name="export_data_to_newpipe_summary">Xuất bản sao lưu ở định dạng tương thích với NewPipe</string>
 <string name="settings_category_other_platforms_title">Các nền tảng khác</string>

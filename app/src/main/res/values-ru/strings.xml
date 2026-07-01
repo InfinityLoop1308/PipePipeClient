@@ -1098,8 +1098,6 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="filter_future_items_summary">Скрывать из списка видео, запланированные на будущее</string>
     <string name="force_end_on_overtime_title">Принудительное завершение при превышении времени</string>
     <string name="force_end_on_overtime_summary">Принудительно останавливать воспроизведение, если текущая позиция превышает длительность потока. Используется для обхода проблемы со стримами, которые не завершаются сами.</string>
-    <string name="force_sabr_title">Принудительный SABR</string>
-    <string name="force_sabr_summary">Направлять все видео YouTube через конвейер SABR вместо DASH/HLS. Экспериментальная функция: может вызвать проблемы с воспроизведением на некоторых устройствах или видео</string>
     <string name="use_old_search_filter_title">Старый фильтр поиска</string>
     <string name="use_old_search_filter_summary">Использовать старый фильтр поиска на основе меню вместо нового всплывающего окна</string>
     <string name="settings_category_behavior_title">Поведение</string>

@@ -1017,8 +1017,6 @@
 <string name="show_auto_translated_subtitles_summary">顯示 YouTube 自動翻譯字幕。需要登入 YouTube。</string>
 <string name="show_auto_translated_subtitles_login_required_summary">已停用，因為自動翻譯字幕需要登入 YouTube。</string>
 <string name="auto_translated_subtitles_language_title">將字幕自動翻譯為</string>
-<string name="force_sabr_title">強制使用 SABR</string>
-<string name="force_sabr_summary">將所有 YouTube 影片透過 SABR 管道傳送，而非 DASH/HLS。實驗性功能：在某些裝置或影片上可能會導致播放失敗。</string>
 <string name="export_data_to_newpipe_title">匯出至 NewPipe</string>
 <string name="export_data_to_newpipe_summary">以 NewPipe 相容格式匯出備份</string>
 <string name="settings_category_other_platforms_title">其他平台</string>

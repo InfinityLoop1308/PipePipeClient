@@ -374,7 +374,7 @@ public final class NavigationHelper {
     }
 
     private interface RunnableWithVideoDetailFragment {
-        void run(VideoDetailFragment detailFragment);
+        void run(VideoDetailFragment detailFragment, boolean loadVideo);
     }
 
     public static void openVideoDetailFragment(@NonNull final Context context,
@@ -401,7 +401,8 @@ public final class NavigationHelper {
             autoPlay = false;
         }
 
-        final RunnableWithVideoDetailFragment onVideoDetailFragmentReady = detailFragment -> {
+        final RunnableWithVideoDetailFragment onVideoDetailFragmentReady = (detailFragment,
+                                                                            loadVideo) -> {
             expandMainPlayer(detailFragment.requireActivity());
             detailFragment.setAutoPlay(autoPlay);
             if (switchingPlayers) {
@@ -410,7 +411,7 @@ public final class NavigationHelper {
                 // Starting directly in fullscreen if the previous player type was popup.
                 detailFragment.openVideoPlayer(playerType == PlayerService.PlayerType.POPUP
                         || PlayerHelper.isStartMainPlayerFullscreenEnabled(context));
-            } else {
+            } else if (loadVideo) {
                 detailFragment.selectAndLoadVideo(serviceId, url, title, playQueue);
             }
             detailFragment.scrollToTop();
@@ -418,7 +419,7 @@ public final class NavigationHelper {
 
         final Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_player_holder);
         if (fragment instanceof VideoDetailFragment && fragment.isVisible()) {
-            onVideoDetailFragmentReady.run((VideoDetailFragment) fragment);
+            onVideoDetailFragmentReady.run((VideoDetailFragment) fragment, true);
         } else {
             final VideoDetailFragment instance = VideoDetailFragment
                     .getInstance(serviceId, url, title, playQueue);
@@ -426,7 +427,7 @@ public final class NavigationHelper {
 
             defaultTransaction(fragmentManager)
                     .replace(R.id.fragment_player_holder, instance)
-                    .runOnCommit(() -> onVideoDetailFragmentReady.run(instance))
+                    .runOnCommit(() -> onVideoDetailFragmentReady.run(instance, false))
                     .commit();
         }
     }

@@ -957,8 +957,6 @@
 <string name="show_auto_translated_subtitles_summary">Mostra i sottotitoli tradotti automaticamente da YouTube. Richiede l\'accesso a YouTube.</string>
 <string name="show_auto_translated_subtitles_login_required_summary">Disabilitato perché per i sottotitoli tradotti automaticamente è richiesto l\'accesso a YouTube.</string>
 <string name="auto_translated_subtitles_language_title">Traduci automaticamente i sottotitoli in</string>
-<string name="force_sabr_title">Forza SABR</string>
-<string name="force_sabr_summary">Instrada tutti i video di YouTube attraverso la pipeline SABR invece di DASH/HLS. Sperimentale: potrebbe causare errori di riproduzione su alcuni dispositivi o video</string>
 <string name="export_data_to_newpipe_title">Esporta su NewPipe</string>
 <string name="export_data_to_newpipe_summary">Esporta il backup in un formato compatibile con NewPipe</string>
 <string name="settings_category_other_platforms_title">Altre piattaforme</string>
