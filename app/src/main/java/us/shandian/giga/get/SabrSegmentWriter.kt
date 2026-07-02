@@ -13,7 +13,7 @@ internal class SabrSegmentWriter(
     private val session: YoutubeSabrSession,
     private val targets: List<SabrDownloadTarget>,
     private val outputs: Map<Int, OutputStream>,
-    private val onBytesWritten: (Long) -> Unit,
+    private val onBytesWritten: (SabrDownloadTarget, Long) -> Unit,
 ) {
     @Throws(IOException::class)
     fun writeDirectInitializations() {
@@ -123,7 +123,7 @@ internal class SabrSegmentWriter(
         output.write(data)
         target.initializationWritten = true
         target.initializationData = data
-        onBytesWritten(data.size.toLong())
+        onBytesWritten(target, data.size.toLong())
         flushPendingMedia(target, output)
         return true
     }
@@ -215,7 +215,7 @@ internal class SabrSegmentWriter(
     private fun writeMediaBytes(target: SabrDownloadTarget, output: OutputStream, data: ByteArray) {
         output.write(data)
         target.nextWriteSequence++
-        onBytesWritten(data.size.toLong())
+        onBytesWritten(target, data.size.toLong())
     }
 
     private companion object {

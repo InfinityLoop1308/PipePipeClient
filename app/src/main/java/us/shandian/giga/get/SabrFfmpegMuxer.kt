@@ -14,15 +14,10 @@ internal class SabrFfmpegMuxer(
     fun remuxAndCopy(inputs: List<File>, targets: List<SabrDownloadTarget>, workDir: File): Long {
         if (canCopySingleInputDirectly(inputs, targets)) {
             logDebug("copySingleInputDirectly input=${inputs.first().length()}")
-            return try {
-                copyOutputToStorage(inputs.first())
-            } finally {
-                deleteQuietly(inputs.first())
-            }
+            return copyOutputToStorage(inputs.first())
         }
         val output = File(workDir, "output.${outputExtension()}")
         remuxWithFfmpeg(inputs, output)
-        inputs.forEach(::deleteQuietly)
         return try {
             copyOutputToStorage(output)
         } finally {

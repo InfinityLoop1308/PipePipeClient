@@ -9,7 +9,9 @@ import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
 import org.schabi.newpipe.player.datasource.WebViewPoTokenProvider
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
+import java.io.RandomAccessFile
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -17,25 +19,30 @@ import java.net.UnknownHostException
 internal class SabrDownloader(
     private val mission: DownloadMission,
 ) : Runnable {
-    private var progressFloor = 0L
-    private var attemptBytesWritten = 0L
-
     override fun run() {
         try {
             ensureRunning()
             val recoveries = validateRecoveryInfo()
             val info = SabrDownloadFormatResolver.resolveInfo(recoveries)
 
+            val expectedLength = recoveries.map { recovery ->
+                when (recovery.kind) {
+                    'a' -> SabrDownloadFormatResolver.selectedAudioFormat(info, arrayOf(recovery))
+                    'v' -> SabrDownloadFormatResolver.selectedVideoFormat(info, arrayOf(recovery))
+                    else -> null
+                }
+            }.takeIf { formats -> formats.all { it != null && it.contentLength > 0 } }
+                ?.sumOf { it!!.contentLength }
+                ?: 0L
+            prepareMission(expectedLength)
             var coldStartAttempts = 0
             var transientAttempts = 0
             while (true) {
                 try {
-                    prepareMission()
                     runSessionAttempt(info, recoveries, coldStartAttempts)
                     break
                 } catch (error: RetryColdStartException) {
                     coldStartAttempts++
-                    cleanup(mission)
                     if (coldStartAttempts > MAX_COLD_START_RETRIES) {
                         throw SabrDownloadException(
                             SabrDownloadException.Reason.INITIALIZATION,
@@ -56,7 +63,6 @@ internal class SabrDownloader(
                         )
                     }
                     transientAttempts++
-                    cleanup(mission)
                     logDebug("retry transient attempt=$transientAttempts error=${error.javaClass.simpleName}")
                     Thread.sleep(transientRetryDelayMs(transientAttempts))
                 }
@@ -84,8 +90,14 @@ internal class SabrDownloader(
         )
         val workDir = prepareWorkDirectory()
         val targets = SabrDownloadFormatResolver.buildTargets(info, recoveries, workDir)
+        restoreTargets(targets)
+        targets.forEach { target ->
+            session.streamState.jumpBufferedTo(target.format, target.nextWriteSequence)
+        }
         configureRequestMode(session, targets, coldStartAttempt)
-        val outputs = targets.associate { target -> target.resourceIndex to target.file.outputStream() }
+        val outputs = targets.associate { target ->
+            target.resourceIndex to FileOutputStream(target.file, true)
+        }
 
         try {
             downloadSegments(
@@ -125,39 +137,36 @@ internal class SabrDownloader(
         return recoveries
     }
 
-    private fun prepareMission() {
-        // SABR currently restarts the temp transfer on retry/resume. Keep the previous visible
-        // progress as a floor, then count again once the restarted transfer catches up.
-        progressFloor = mission.done.coerceAtLeast(0L)
-        attemptBytesWritten = 0L
+    private fun prepareMission(expectedLength: Long) {
+        if (mission.sabrCheckpoint?.version != SabrDownloadCheckpoint.VERSION) {
+            mission.sabrCheckpoint = null
+            cleanup(mission)
+        }
+        mission.done = restoredProgress()
+        mission.nearLength = expectedLength.coerceAtLeast(mission.nearLength)
         mission.unknownLength = mission.nearLength <= 0
         mission.sabrStarted = true
         if (mission.nearLength > 0) {
             mission.length = mission.length
                 .coerceAtLeast(mission.nearLength)
-                .coerceAtLeast(progressFloor)
+                .coerceAtLeast(mission.done)
         }
         mission.current = 0
         mission.writeThisToFile()
     }
 
-    private fun reportBytesWritten(delta: Long) {
+    private fun reportBytesWritten(target: SabrDownloadTarget, delta: Long) {
         if (delta <= 0) {
             return
         }
-        attemptBytesWritten += delta
-        val visibleProgress = attemptBytesWritten.coerceAtLeast(progressFloor)
-        val visibleDelta = visibleProgress - mission.done
-        if (visibleDelta <= 0) {
-            return
-        }
+        updateCheckpoint(target)
         if (mission.nearLength > 0) {
             mission.length = mission.length
                 .coerceAtLeast(mission.nearLength)
-                .coerceAtLeast(visibleProgress)
+                .coerceAtLeast(mission.done + delta)
             mission.unknownLength = false
         }
-        mission.notifyProgress(visibleDelta)
+        mission.notifyProgress(delta)
     }
 
     private fun configureRequestMode(
@@ -180,11 +189,74 @@ internal class SabrDownloader(
     @Throws(IOException::class)
     private fun prepareWorkDirectory(): File {
         val workDir = workDirectory(mission)
-        cleanup(mission)
-        if (!workDir.mkdirs()) {
+        if (!workDir.exists() && !workDir.mkdirs()) {
             throw IOException("Cannot create SABR work directory: $workDir")
         }
         return workDir
+    }
+
+    private fun restoreTargets(targets: List<SabrDownloadTarget>) {
+        targets.forEach { target ->
+            val checkpoint = mission.sabrCheckpoint?.resources?.firstOrNull {
+                it.resourceIndex == target.resourceIndex &&
+                    it.itag == target.format.itag &&
+                    it.tempFilePath == target.file.absolutePath &&
+                    it.nextWriteSequence > 0 &&
+                    it.bytesWritten >= it.initializationBytes &&
+                    it.initializationBytes >= 0 &&
+                    it.initializationBytes <= MAX_INITIALIZATION_BYTES &&
+                    target.file.exists() &&
+                    target.file.length() >= it.bytesWritten
+            }
+            if (checkpoint == null) {
+                target.file.delete()
+                return@forEach
+            }
+            RandomAccessFile(target.file, "rw").use { file ->
+                file.setLength(checkpoint.bytesWritten)
+                if (checkpoint.initializationBytes > 0) {
+                    val initialization = ByteArray(checkpoint.initializationBytes)
+                    file.seek(0)
+                    file.readFully(initialization)
+                    target.initializationData = initialization
+                    target.initializationWritten = true
+                }
+            }
+            target.nextWriteSequence = checkpoint.nextWriteSequence
+        }
+    }
+
+    private fun updateCheckpoint(target: SabrDownloadTarget) {
+        val current = mission.sabrCheckpoint ?: SabrDownloadCheckpoint()
+        val resources = current.resources
+            .filterNot { it.resourceIndex == target.resourceIndex }
+            .toMutableList()
+        val previousInitializationBytes = current.resources
+            .firstOrNull { it.resourceIndex == target.resourceIndex }
+            ?.initializationBytes
+            ?: 0
+        resources += SabrResourceCheckpoint(
+            resourceIndex = target.resourceIndex,
+            itag = target.format.itag,
+            tempFilePath = target.file.absolutePath,
+            nextWriteSequence = target.nextWriteSequence,
+            bytesWritten = target.file.length(),
+            initializationBytes = if (target.initializationWritten && previousInitializationBytes == 0) {
+                target.initializationData?.size ?: 0
+            } else {
+                previousInitializationBytes
+            },
+        )
+        mission.sabrCheckpoint = current.copy(resources = resources.sortedBy { it.resourceIndex })
+    }
+
+    private fun restoredProgress(): Long {
+        return mission.sabrCheckpoint?.resources
+            ?.filter { checkpoint ->
+                File(checkpoint.tempFilePath).let { it.exists() && it.length() >= checkpoint.bytesWritten }
+            }
+            ?.sumOf { it.bytesWritten }
+            ?: 0L
     }
 
     @Throws(IOException::class, InterruptedException::class)
@@ -345,6 +417,7 @@ internal class SabrDownloader(
         }
         mission.current = mission.urls.size
         mission.psState = 2
+        mission.sabrCheckpoint = null
         cleanup(mission)
         mission.unknownLength = false
         mission.notifyFinished()
@@ -358,7 +431,6 @@ internal class SabrDownloader(
     }
 
     private fun notifyErrorAndCleanup(error: Exception) {
-        cleanup(mission)
         if (mission.running) {
             mission.notifyError(error)
         }
@@ -425,6 +497,7 @@ internal class SabrDownloader(
         private const val MAX_TRANSIENT_RETRIES = 5
         private const val MAX_TRANSIENT_RETRY_DELAY_MS = 5_000L
         private const val MAX_SESSION_CACHE_BYTES = 48L * 1024L * 1024L
+        private const val MAX_INITIALIZATION_BYTES = 16 * 1024 * 1024
 
         @JvmStatic
         fun cleanup(mission: DownloadMission) {

@@ -136,6 +136,7 @@ public class DownloadMission extends Mission {
     public String[] resourceManifestUrls;
     public boolean[] resourceIsUrls;
     public HlsDownloadCheckpoint hlsCheckpoint;
+    public SabrDownloadCheckpoint sabrCheckpoint;
     public boolean sabrStarted;
 
     private transient int finishCount;
@@ -578,6 +579,7 @@ public class DownloadMission extends Mission {
         blockAcquired = null;
         if (rollback) {
             hlsCheckpoint = null;
+            sabrCheckpoint = null;
             sabrStarted = false;
         }
 
