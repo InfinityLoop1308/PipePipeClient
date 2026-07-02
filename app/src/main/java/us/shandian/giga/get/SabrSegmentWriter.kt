@@ -10,10 +10,10 @@ import java.io.IOException
 import java.io.OutputStream
 
 internal class SabrSegmentWriter(
-    private val mission: DownloadMission,
     private val session: YoutubeSabrSession,
     private val targets: List<SabrDownloadTarget>,
     private val outputs: Map<Int, OutputStream>,
+    private val onBytesWritten: (Long) -> Unit,
 ) {
     @Throws(IOException::class)
     fun writeDirectInitializations() {
@@ -123,7 +123,7 @@ internal class SabrSegmentWriter(
         output.write(data)
         target.initializationWritten = true
         target.initializationData = data
-        mission.notifyProgress(data.size.toLong())
+        onBytesWritten(data.size.toLong())
         flushPendingMedia(target, output)
         return true
     }
@@ -215,7 +215,7 @@ internal class SabrSegmentWriter(
     private fun writeMediaBytes(target: SabrDownloadTarget, output: OutputStream, data: ByteArray) {
         output.write(data)
         target.nextWriteSequence++
-        mission.notifyProgress(data.size.toLong())
+        onBytesWritten(data.size.toLong())
     }
 
     private companion object {

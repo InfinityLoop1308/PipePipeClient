@@ -17,6 +17,9 @@ import java.net.UnknownHostException
 internal class SabrDownloader(
     private val mission: DownloadMission,
 ) : Runnable {
+    private var progressFloor = 0L
+    private var attemptBytesWritten = 0L
+
     override fun run() {
         try {
             ensureRunning()
@@ -85,7 +88,11 @@ internal class SabrDownloader(
         val outputs = targets.associate { target -> target.resourceIndex to target.file.outputStream() }
 
         try {
-            downloadSegments(session, targets, SabrSegmentWriter(mission, session, targets, outputs))
+            downloadSegments(
+                session,
+                targets,
+                SabrSegmentWriter(session, targets, outputs, ::reportBytesWritten),
+            )
         } finally {
             outputs.values.forEach { output ->
                 try {
@@ -119,15 +126,38 @@ internal class SabrDownloader(
     }
 
     private fun prepareMission() {
-        mission.unknownLength = true
+        // SABR currently restarts the temp transfer on retry/resume. Keep the previous visible
+        // progress as a floor, then count again once the restarted transfer catches up.
+        progressFloor = mission.done.coerceAtLeast(0L)
+        attemptBytesWritten = 0L
+        mission.unknownLength = mission.nearLength <= 0
         mission.sabrStarted = true
-        if (mission.done > 0) {
-            mission.notifyProgress(-mission.done)
+        if (mission.nearLength > 0) {
+            mission.length = mission.length
+                .coerceAtLeast(mission.nearLength)
+                .coerceAtLeast(progressFloor)
         }
-        mission.done = 0
         mission.current = 0
-        mission.length = mission.nearLength
         mission.writeThisToFile()
+    }
+
+    private fun reportBytesWritten(delta: Long) {
+        if (delta <= 0) {
+            return
+        }
+        attemptBytesWritten += delta
+        val visibleProgress = attemptBytesWritten.coerceAtLeast(progressFloor)
+        val visibleDelta = visibleProgress - mission.done
+        if (visibleDelta <= 0) {
+            return
+        }
+        if (mission.nearLength > 0) {
+            mission.length = mission.length
+                .coerceAtLeast(mission.nearLength)
+                .coerceAtLeast(visibleProgress)
+            mission.unknownLength = false
+        }
+        mission.notifyProgress(visibleDelta)
     }
 
     private fun configureRequestMode(
