@@ -13,6 +13,8 @@ import android.widget.TextView;
 import org.schabi.newpipe.DownloaderImpl;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.MediaFormat;
+import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat;
+import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.DeliveryMethod;
 import org.schabi.newpipe.extractor.stream.Stream;
@@ -264,6 +266,11 @@ public class StreamItemAdapter<T extends Stream, U extends Stream> extends BaseA
                         hasChanged = true;
                         continue;
                     }
+                    if (stream.getDeliveryMethod() == DeliveryMethod.SABR) {
+                        streamsWrapper.setSize(stream, getSabrContentLength(stream));
+                        hasChanged = true;
+                        continue;
+                    }
 
                     final long contentLength = DownloaderImpl.getInstance().getContentLength(
                             stream.getUrl());
@@ -277,6 +284,24 @@ public class StreamItemAdapter<T extends Stream, U extends Stream> extends BaseA
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .onErrorReturnItem(true);
+        }
+
+        private static long getSabrContentLength(final Stream stream) {
+            if (!(stream.getDeliveryMethodInfo() instanceof YoutubeSabrInfo)) {
+                return -1;
+            }
+            final int itag;
+            if (stream instanceof AudioStream) {
+                itag = ((AudioStream) stream).getItag();
+            } else if (stream instanceof VideoStream) {
+                itag = ((VideoStream) stream).getItag();
+            } else {
+                return -1;
+            }
+            final YoutubeSabrFormat format = ((YoutubeSabrInfo) stream.getDeliveryMethodInfo())
+                    .findFormatByItag(itag);
+            return format != null && format.getContentLength() > 0
+                    ? format.getContentLength() : -1;
         }
 
         public static <X extends Stream> StreamSizeWrapper<X> empty() {

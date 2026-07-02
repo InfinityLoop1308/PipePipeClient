@@ -152,6 +152,7 @@ public final class SabrSegmentDataSource implements DataSource {
                 + " itag=" + itag
                 + " bytes=" + data.length
                 + " range=" + range);
+        holder.session.getStreamState().ingestInitializationData(format, data);
         holder.setInitializationData(itag, data);
         return data;
     }
@@ -188,6 +189,9 @@ public final class SabrSegmentDataSource implements DataSource {
 
     /** Block until the pump has cached this segment, or give up on a real stall / cancellation. */
     private byte[] awaitSegment(final SabrSegmentRequest request) throws IOException {
+        if (holder.isInvalidated()) {
+            throw new IOException("SABR session invalidated for itag=" + format.getItag());
+        }
         final SabrStreamPump pump = holder.getPump(localization);
         final long waitStart = System.currentTimeMillis();
         long lastRefetchMs = 0;
@@ -195,6 +199,9 @@ public final class SabrSegmentDataSource implements DataSource {
         while (true) {
             if (canceled) {
                 throw new IOException("SABR segment read canceled");
+            }
+            if (holder.isInvalidated()) {
+                throw new IOException("SABR session invalidated for itag=" + format.getItag());
             }
             pump.ensureStarted();
             final SabrMediaSegment segment = pump.getCached(request);

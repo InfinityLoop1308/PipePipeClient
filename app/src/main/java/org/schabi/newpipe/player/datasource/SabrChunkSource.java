@@ -69,11 +69,7 @@ final class SabrChunkSource implements ChunkSource {
 
     @Override
     public long getAdjustedSeekPositionUs(final long positionUs, final SeekParameters seekParameters) {
-        // Snap to the start of the segment that contains positionUs.
-        final int seq = holder.session.getStreamState()
-                .getSegmentNumberAtOrAfterTimeMs(format, positionUs / 1000);
-        final long startMs = holder.session.getStreamState().getSegmentStartMs(format, seq);
-        return Math.max(0, startMs) * 1000;
+        return positionUs;
     }
 
     @Override

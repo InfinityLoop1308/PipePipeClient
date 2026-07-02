@@ -401,9 +401,6 @@ class HlsSegmentFileTransferEngine(
         if (playlist.segments.any { it.encryptionKey != null && it.byteRange != null }) {
             throw UnsupportedHlsPlaylistException("Encrypted HLS byte ranges are not supported yet")
         }
-        if (playlist.hasDiscontinuity) {
-            throw UnsupportedHlsPlaylistException("HLS discontinuities are not supported yet")
-        }
     }
 
     @Throws(IOException::class)

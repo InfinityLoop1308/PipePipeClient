@@ -18,6 +18,8 @@ import org.schabi.newpipe.fragments.list.BaseListInfoFragment;
 import org.schabi.newpipe.util.Constants;
 import org.schabi.newpipe.util.ExtractorHelper;
 
+import java.util.Queue;
+
 import io.reactivex.rxjava3.core.Single;
 
 public class ChannelTabFragment extends BaseListInfoFragment<InfoItem, ChannelTabInfo> {
@@ -46,7 +48,6 @@ public class ChannelTabFragment extends BaseListInfoFragment<InfoItem, ChannelTa
     public void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("serviceId", serviceId);
-        outState.putSerializable("tabHandler", tabHandler);
         outState.putString("channelName", channelName);
     }
 
@@ -54,8 +55,19 @@ public class ChannelTabFragment extends BaseListInfoFragment<InfoItem, ChannelTa
     protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         serviceId = savedInstanceState.getInt("serviceId", Constants.NO_SERVICE_ID);
-        tabHandler = (ListLinkHandler) savedInstanceState.getSerializable("tabHandler");
         channelName = savedInstanceState.getString("channelName");
+    }
+
+    @Override
+    public void writeTo(final Queue<Object> objectsToSave) {
+        super.writeTo(objectsToSave);
+        objectsToSave.add(tabHandler);
+    }
+
+    @Override
+    public void readFrom(@NonNull final Queue<Object> savedObjects) throws Exception {
+        super.readFrom(savedObjects);
+        tabHandler = (ListLinkHandler) savedObjects.poll();
     }
 
     /*//////////////////////////////////////////////////////////////////////////

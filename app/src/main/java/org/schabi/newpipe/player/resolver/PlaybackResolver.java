@@ -361,6 +361,9 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             return createYoutubeMediaSourceOfVideoStreamType(dataSource, stream, streamInfo,
                     cacheKey, metadata);
         } else if (streamType == StreamType.POST_LIVE_STREAM) {
+            if (stream.getDeliveryMethod() == DeliveryMethod.HLS) {
+                return buildHlsMediaSource(dataSource, stream, cacheKey, metadata);
+            }
             // If the content is not an URL, uses the DASH delivery method and if the stream type
             // of the stream is a post live stream, it means that the content is an ended
             // livestream so we need to generate the manifest corresponding to the content

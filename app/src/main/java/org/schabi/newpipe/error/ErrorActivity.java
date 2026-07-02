@@ -18,6 +18,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
+import androidx.preference.PreferenceManager;
 import com.grack.nanojson.JsonWriter;
 import org.schabi.newpipe.BuildConfig;
 import org.schabi.newpipe.MainActivity;
@@ -282,6 +283,7 @@ public class ErrorActivity extends AppCompatActivity {
                     .value("content_country", getContentCountryString())
                     .value("app_language", getAppLanguage())
                     .value("service", errorInfo.getServiceName())
+                    .value("endpoint", getEndpoint())
                     .value("package", getPackageName())
                     .value("version", BuildConfig.VERSION_NAME)
                     .value("os", getOsString())
@@ -318,6 +320,7 @@ public class ErrorActivity extends AppCompatActivity {
                     .append("\n* __Content Language:__ ").append(getContentLanguageString())
                     .append("\n* __App Language:__ ").append(getAppLanguage())
                     .append("\n* __Service:__ ").append(errorInfo.getServiceName())
+                    .append("\n* __Endpoint:__ ").append(getEndpoint())
                     .append("\n* __Version:__ ").append(BuildConfig.VERSION_NAME)
                     .append("\n* __OS:__ ").append(getOsString()).append("\n");
 
@@ -374,6 +377,11 @@ public class ErrorActivity extends AppCompatActivity {
 
     private String getAppLanguage() {
         return Localization.getAppLocale(getApplicationContext()).toString();
+    }
+
+    private String getEndpoint() {
+        return PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(getString(R.string.youtube_player_client_key), "mweb");
     }
 
     private String getOsString() {

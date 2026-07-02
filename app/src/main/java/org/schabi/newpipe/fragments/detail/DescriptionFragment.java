@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
 
-import org.schabi.newpipe.BaseFragment;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.FragmentDescriptionBinding;
 import org.schabi.newpipe.databinding.ItemMetadataBinding;
@@ -30,6 +29,7 @@ import org.schabi.newpipe.extractor.channel.ChannelInfoItem;
 import org.schabi.newpipe.extractor.channel.StaffInfoItem;
 import org.schabi.newpipe.extractor.stream.Description;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
+import org.schabi.newpipe.fragments.StateSaverFragment;
 import org.schabi.newpipe.info_list.InfoListAdapter;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
@@ -43,7 +43,7 @@ import java.util.*;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
-public class DescriptionFragment extends BaseFragment {
+public class DescriptionFragment extends StateSaverFragment {
 
     StreamInfo streamInfo = null;
     final CompositeDisposable descriptionDisposables = new CompositeDisposable();
@@ -53,15 +53,18 @@ public class DescriptionFragment extends BaseFragment {
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull final Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable("streamInfo", streamInfo);
+    public String generateSuffix() {
+        return "." + System.nanoTime() + ".description";
     }
 
     @Override
-    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        streamInfo = (StreamInfo) savedInstanceState.getSerializable("streamInfo");
+    public void writeTo(final Queue<Object> objectsToSave) {
+        objectsToSave.add(streamInfo);
+    }
+
+    @Override
+    public void readFrom(@NonNull final Queue<Object> savedObjects) {
+        streamInfo = (StreamInfo) savedObjects.poll();
     }
 
     public DescriptionFragment(final StreamInfo streamInfo) {

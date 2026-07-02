@@ -1821,8 +1821,10 @@ public final class Player implements
         }
 
         // Feed the real play head to any live SABR session (no-op otherwise).
-        getCurrentStreamInfo().ifPresent(info ->
-                SabrSessionStore.updatePlayerTime(info.getId(), currentProgress));
+        getCurrentStreamInfo().ifPresent(info -> {
+            SabrSessionStore.updatePlayerTime(info.getId(), currentProgress);
+            SabrSessionStore.updatePlaybackRate(info.getId(), getPlaybackSpeed());
+        });
 
         if (duration != binding.playbackSeekBar.getMax()) {
             setVideoDurationToControls(duration);
@@ -3159,6 +3161,9 @@ public final class Player implements
 
         saveStreamProgressState();
         boolean isCatchableException = false;
+        final boolean sabrSessionInvalidated = error.getCause() != null
+                && error.getCause().getMessage() != null
+                && error.getCause().getMessage().startsWith("SABR session invalidated");
 
         switch (error.errorCode) {
             case ERROR_CODE_BEHIND_LIVE_WINDOW:
@@ -3204,6 +3209,9 @@ public final class Player implements
             case ERROR_CODE_IO_NETWORK_CONNECTION_FAILED:
             case ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT:
             case ERROR_CODE_UNSPECIFIED:
+                if (sabrSessionInvalidated) {
+                    isCatchableException = true;
+                }
                 setRecovery();
                 // SABR: recover at the saved position, not 0 (see shouldSeek).
                 seekOnNextSabrReload = true;
@@ -4179,19 +4187,13 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
 
         for (int i = 0; i < availableStreams.size(); i++) {
             final VideoStream videoStream = availableStreams.get(i);
-            qualityPopupMenu.getMenu().add(POPUP_MENU_ID_QUALITY, i, Menu.NONE, videoStream.getCodec().toUpperCase().split("\\.")[0] + " " + videoStream.resolution + sabrTag(videoStream));
+            qualityPopupMenu.getMenu().add(POPUP_MENU_ID_QUALITY, i, Menu.NONE, videoStream.getCodec().toUpperCase().split("\\.")[0] + " " + videoStream.resolution);
         }
         if (getSelectedVideoStream() != null) {
-            binding.qualityTextView.setText(getSelectedVideoStream().resolution + sabrTag(getSelectedVideoStream()));
+            binding.qualityTextView.setText(getSelectedVideoStream().resolution);
         }
         qualityPopupMenu.setOnMenuItemClickListener(this);
         qualityPopupMenu.setOnDismissListener(this);
-    }
-
-    // PoC marker: flag SABR-delivered streams in the quality UI
-    private static String sabrTag(final VideoStream stream) {
-        return stream != null && stream.getDeliveryMethod() == DeliveryMethod.SABR
-                ? " (SABR)" : "";
     }
 
     private void buildPlaybackSpeedMenu() {
@@ -4337,7 +4339,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         }
         isSomePopupMenuVisible = false; //TODO check if this works
         if (getSelectedVideoStream() != null) {
-            binding.qualityTextView.setText(getSelectedVideoStream().resolution + sabrTag(getSelectedVideoStream()));
+            binding.qualityTextView.setText(getSelectedVideoStream().resolution);
         }
         if (isPlaying()) {
             hideControls(DEFAULT_CONTROLS_DURATION, 0);

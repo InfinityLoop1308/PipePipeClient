@@ -479,12 +479,16 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     public void writeTo(final Queue<Object> objectsToSave) {
         super.writeTo(objectsToSave);
         objectsToSave.add(nextPage);
+        objectsToSave.add(metaInfo);
+        objectsToSave.add(channelSearchHandler);
     }
 
     @Override
     public void readFrom(@NonNull final Queue<Object> savedObjects) throws Exception {
         super.readFrom(savedObjects);
         nextPage = (Page) savedObjects.poll();
+        metaInfo = (MetaInfo[]) savedObjects.poll();
+        channelSearchHandler = (ListLinkHandler) savedObjects.poll();
     }
 
     @Override
@@ -514,11 +518,9 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         bundle.putString("lastSearchedString", lastSearchedString);
         bundle.putString("searchSuggestion", searchSuggestion);
         bundle.putBoolean("isCorrectedSearch", isCorrectedSearch);
-        bundle.putSerializable("metaInfo", metaInfo);
         bundle.putBoolean("channelSearchMode", channelSearchMode);
         bundle.putString("channelUrl", channelUrl);
         bundle.putString("channelName", channelName);
-        bundle.putSerializable("channelSearchHandler", channelSearchHandler);
         bundle.putBoolean("wasSearchFocused", wasSearchFocused);
         bundle.putIntegerArrayList("userSelectedContentFilterList", userSelectedContentFilterList);
         bundle.putIntegerArrayList("userSelectedSortFilterList", userSelectedSortFilterList);
@@ -532,12 +534,9 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         lastSearchedString = savedInstanceState.getString("lastSearchedString");
         searchSuggestion = savedInstanceState.getString("searchSuggestion");
         isCorrectedSearch = savedInstanceState.getBoolean("isCorrectedSearch", false);
-        metaInfo = (MetaInfo[]) savedInstanceState.getSerializable("metaInfo");
         channelSearchMode = savedInstanceState.getBoolean("channelSearchMode", false);
         channelUrl = savedInstanceState.getString("channelUrl");
         channelName = savedInstanceState.getString("channelName");
-        channelSearchHandler = (ListLinkHandler) savedInstanceState
-                .getSerializable("channelSearchHandler");
         wasSearchFocused = savedInstanceState.getBoolean("wasSearchFocused", false);
         userSelectedContentFilterList = savedInstanceState.getIntegerArrayList("userSelectedContentFilterList");
         userSelectedSortFilterList = savedInstanceState.getIntegerArrayList("userSelectedSortFilterList");

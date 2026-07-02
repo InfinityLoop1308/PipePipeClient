@@ -14,7 +14,6 @@ import androidx.media3.exoplayer.source.SingleSampleMediaSource;
 
 import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.stream.AudioStream;
-import org.schabi.newpipe.extractor.stream.DeliveryMethod;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.SubtitlesStream;
 import org.schabi.newpipe.extractor.stream.VideoStream;
@@ -80,20 +79,6 @@ public class VideoPlaybackResolver implements PlaybackResolver {
         final List<MediaSource> mediaSources = new ArrayList<>();
         final List<VideoStream> videoStreams = new ArrayList<>(info.getVideoStreams());
         final List<VideoStream> videoOnlyStreams = new ArrayList<>(info.getVideoOnlyStreams());
-        final List<AudioStream> playbackAudioStreams = new ArrayList<>(info.getAudioStreams());
-
-        final boolean hasSabr = videoStreams.stream().anyMatch(
-                stream -> stream.getDeliveryMethod() == DeliveryMethod.SABR)
-                || videoOnlyStreams.stream().anyMatch(
-                stream -> stream.getDeliveryMethod() == DeliveryMethod.SABR)
-                || playbackAudioStreams.stream().anyMatch(
-                stream -> stream.getDeliveryMethod() == DeliveryMethod.SABR);
-        if (hasSabr) {
-            videoStreams.removeIf(stream -> stream.getDeliveryMethod() == DeliveryMethod.HLS);
-            videoOnlyStreams.removeIf(stream -> stream.getDeliveryMethod() == DeliveryMethod.HLS);
-            playbackAudioStreams.removeIf(
-                    stream -> stream.getDeliveryMethod() == DeliveryMethod.HLS);
-        }
 
         removeTorrentStreams(videoStreams);
         removeTorrentStreams(videoOnlyStreams);
@@ -115,7 +100,7 @@ public class VideoPlaybackResolver implements PlaybackResolver {
                     .anyMatch(s -> s.getAudioTrackId() != null);
             if (hasVideoAudioTracks) {
                 final List<AudioStream> allAudioStreams = ListHelper.getFilteredAudioStreams(
-                        context, playbackAudioStreams);
+                        context, info.getAudioStreams());
                 final int defaultIdx = ListHelper.getDefaultAudioFormat(context, allAudioStreams);
                 if (defaultIdx >= 0 && defaultIdx < allAudioStreams.size()) {
                     final String defaultTrackId = allAudioStreams.get(defaultIdx).getAudioTrackId();
@@ -164,7 +149,7 @@ public class VideoPlaybackResolver implements PlaybackResolver {
 
         // Create optional audio stream source
         final List<AudioStream> audioStreams = ListHelper.getFilteredAudioStreams(context,
-                playbackAudioStreams
+                info.getAudioStreams()
                         .stream().filter(s -> !blacklistUrls.contains(s.getContent()))
                         .collect(Collectors.toList()));
         final int audioIndex = ListHelper.getAudioFormatIndex(context, audioStreams, audioTrack);

@@ -126,7 +126,7 @@ public class App extends MultiDexApplication {
         // Initialize image loader
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         NewPipe.setYoutubePlayerClient(prefs.getString(
-                getString(R.string.youtube_player_client_key), "web_safari"));
+                getString(R.string.youtube_player_client_key), "mweb"));
         PicassoHelper.init(this);
         PicassoHelper.setShouldLoadImages(
                 prefs.getBoolean(getString(R.string.download_thumbnail_key), true));

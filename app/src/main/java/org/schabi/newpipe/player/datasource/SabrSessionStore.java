@@ -33,11 +33,9 @@ public final class SabrSessionStore {
     private static final Map<String, Holder> SESSIONS = new ConcurrentHashMap<>();
     // The user-selected audio track id per video, applied on the next (re)build of its session.
     private static final Map<String, String> PREFERRED_AUDIO = new ConcurrentHashMap<>();
-    // Current video plus one (next-item prefetch). Keeping more let abandoned sessions' pump threads
-    // linger and bleed into the new playback on a switch, leaving the decoder with no usable frame
-    // (black screen). Evicting the superseded session promptly (and stopping its pump) fixes that.
+    // Previous, current, and next video, matching MediaSourceManager's playback window.
     // Mutated only under the class lock.
-    private static final int MAX_SESSIONS = 2;
+    private static final int MAX_SESSIONS = 3;
     private static final java.util.Deque<String> ORDER = new java.util.ArrayDeque<>();
     // Shared across videos so the PO-token cache (videoId-keyed, ~6h) is reused and a single
     // WebView is held instead of one per video.
@@ -84,6 +82,7 @@ public final class SabrSessionStore {
         private final AtomicInteger sourceReferences = new AtomicInteger();
         private volatile SabrStreamPump pump;
         private volatile Thread warmThread;
+        private volatile boolean invalidated;
 
         Holder(@NonNull final String videoId,
                @NonNull final YoutubeSabrInfo info,
@@ -113,6 +112,15 @@ public final class SabrSessionStore {
         void setActiveTracks(final boolean videoActive, final boolean audioActive) {
             setTrackActive(videoFormat.getItag(), videoActive);
             setTrackActive(audioFormat.getItag(), audioActive);
+            if (videoActive || audioActive) {
+                session.getStreamState().setActiveTrackTypes(videoActive, audioActive);
+            } else {
+                trimSessions(null);
+            }
+        }
+
+        private boolean hasActiveTracks() {
+            return !activeReaderItags.isEmpty();
         }
 
         byte[] getInitializationData(final int itag) {
@@ -180,6 +188,10 @@ public final class SabrSessionStore {
             return pump;
         }
 
+        boolean isInvalidated() {
+            return invalidated;
+        }
+
         void setWarmThread(@NonNull final Thread warmThread) {
             this.warmThread = warmThread;
         }
@@ -191,6 +203,7 @@ public final class SabrSessionStore {
         }
 
         void stop() {
+            invalidated = true;
             setActiveTracks(false, false);
             final Thread warm = warmThread;
             if (warm != null && warm != Thread.currentThread()) {
@@ -215,6 +228,13 @@ public final class SabrSessionStore {
         final Holder holder = SESSIONS.get(videoId);
         if (holder != null && playerTimeMs >= 0) {
             holder.setPlayerTimeMs(playerTimeMs);
+        }
+    }
+
+    public static void updatePlaybackRate(@NonNull final String videoId, final float playbackRate) {
+        final Holder holder = SESSIONS.get(videoId);
+        if (holder != null) {
+            holder.session.getStreamState().setPlaybackRate(playbackRate);
         }
     }
 
@@ -301,15 +321,9 @@ public final class SabrSessionStore {
                     new YoutubeSabrSession(info, audioFormat, videoFormat, provider);
             final Holder holder = new Holder(videoId, info, session, audioFormat, videoFormat);
             SESSIONS.put(videoId, holder);
-            // LRU bound: evict the oldest sessions (their pumps are stopped, caches freed).
             ORDER.remove(videoId);
             ORDER.addLast(videoId);
-            while (ORDER.size() > MAX_SESSIONS) {
-                final String old = ORDER.pollFirst();
-                if (old != null && !old.equals(videoId)) {
-                    evict(old);
-                }
-            }
+            trimSessions(videoId);
             // Pre-warm the PO token off-thread so the ~45s WebView mint overlaps the initial probe
             // and buffering instead of stalling the pump on its first protected response. Keep the
             // init preload off this creation path too: it is best-effort and can wait on the same
@@ -443,6 +457,34 @@ public final class SabrSessionStore {
     /** Evict a cached session, stopping its pump so the thread + buffers are released. */
     public static void evict(@NonNull final String videoId) {
         evict(videoId, null);
+    }
+
+    private static void trimSessions(@Nullable final String protectedVideoId) {
+        while (true) {
+            final Holder holder;
+            synchronized (SabrSessionStore.class) {
+                if (ORDER.size() <= MAX_SESSIONS) {
+                    return;
+                }
+                String candidate = null;
+                for (final String videoId : ORDER) {
+                    final Holder current = SESSIONS.get(videoId);
+                    if (!videoId.equals(protectedVideoId)
+                            && current != null && !current.hasActiveTracks()) {
+                        candidate = videoId;
+                        break;
+                    }
+                }
+                if (candidate == null) {
+                    return;
+                }
+                holder = SESSIONS.remove(candidate);
+                ORDER.remove(candidate);
+            }
+            if (holder != null) {
+                holder.stop();
+            }
+        }
     }
 
     private static void evict(@NonNull final String videoId,

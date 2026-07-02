@@ -26,6 +26,7 @@ final class SabrStreamPump {
     private static final String TAG = "SabrStreamPump";
     private static final long IDLE_POLL_MS = 400;     // server paced us / nothing new this round
     private static final long ERROR_RETRY_MS = 1000;  // transient network error
+    private static final int MAX_CONSECUTIVE_IO_ERRORS = 5;
     // no reads for this long -> playback is gone. MUST stay above READAHEAD_CUSHION_MS: once the
     // player buffer is full it stops reading us for ~cushion seconds, and killing the pump in that
     // window left the cache to drain dry -> periodic rebuffering.
@@ -136,6 +137,7 @@ final class SabrStreamPump {
     }
 
     private void loop() {
+        int consecutiveIoErrors = 0;
         try {
             while (!stopped) {
                 // Don't die on completion/idle while a reposition is pending: a backward seek after
@@ -172,6 +174,7 @@ final class SabrStreamPump {
                         pendingRefetch = null;
                         session.prepareForRewind(refetch);
                         session.pumpOnce(localization);
+                        consecutiveIoErrors = 0;
                         continue;
                     }
                     // Cold/forward seek (SponsorBlock skip, user seek far ahead): a reader is blocked
@@ -183,6 +186,7 @@ final class SabrStreamPump {
                         pendingForwardSeek = null;
                         session.prepareForForwardJump(forwardSeek);
                         session.pumpOnce(localization);
+                        consecutiveIoErrors = 0;
                         continue;
                     }
                     final boolean throttled = edgeMs - readerHeadMs > READAHEAD_CUSHION_MS
@@ -197,6 +201,7 @@ final class SabrStreamPump {
                     // report on edge.
                     session.getStreamState().setPlayerTimeMs(edgeMs);
                     final List<SabrMediaSegment> segments = session.pumpOnce(localization);
+                    consecutiveIoErrors = 0;
                     if (segments.isEmpty()) {
                         Thread.sleep(IDLE_POLL_MS);
                     }
@@ -204,6 +209,14 @@ final class SabrStreamPump {
                     Thread.currentThread().interrupt();
                     break;
                 } catch (final IOException e) {
+                    consecutiveIoErrors++;
+                    if (consecutiveIoErrors >= MAX_CONSECUTIVE_IO_ERRORS) {
+                        Log.w(TAG, "SABR pump network failure; evicting session "
+                                + holder.videoId, e);
+                        fatal = true;
+                        SabrSessionStore.evict(holder.videoId);
+                        break;
+                    }
                     sleepQuietly(ERROR_RETRY_MS);
                 } catch (final ExtractionException e) {
                     Log.i(TAG, "SABR pump fatal: " + e.getMessage());
