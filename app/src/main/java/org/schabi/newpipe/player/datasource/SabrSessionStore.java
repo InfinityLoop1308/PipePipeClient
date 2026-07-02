@@ -119,6 +119,32 @@ public final class SabrSessionStore {
             }
         }
 
+        void prepareForPlaybackPositionMs(final long positionMs,
+                                          final boolean videoActive,
+                                          final boolean audioActive) {
+            if (positionMs <= 0 || (!videoActive && !audioActive)) {
+                return;
+            }
+            if (videoActive) {
+                final int sequence = session.getStreamState()
+                        .getSegmentNumberAtOrAfterTimeMs(videoFormat, positionMs);
+                final long segmentStartMs = session.getStreamState()
+                        .getSegmentStartMs(videoFormat, sequence);
+                setReaderPositionMs(videoFormat.getItag(), segmentStartMs);
+                session.prepareForForwardJump(SabrSegmentRequest.media(videoFormat, sequence));
+            }
+            if (audioActive) {
+                final int sequence = session.getStreamState()
+                        .getSegmentNumberAtOrAfterTimeMs(audioFormat, positionMs);
+                final long segmentStartMs = session.getStreamState()
+                        .getSegmentStartMs(audioFormat, sequence);
+                setReaderPositionMs(audioFormat.getItag(), segmentStartMs);
+                if (!videoActive) {
+                    session.prepareForForwardJump(SabrSegmentRequest.media(audioFormat, sequence));
+                }
+            }
+        }
+
         private boolean hasActiveTracks() {
             return !activeReaderItags.isEmpty();
         }

@@ -56,6 +56,8 @@ final class SabrMediaPeriod implements MediaPeriod,
     private SequenceableLoader compositeLoader = new EmptyLoader();
     @Nullable
     private MediaPeriod.Callback callback;
+    private boolean videoActive;
+    private boolean audioActive;
 
     SabrMediaPeriod(final SabrSessionStore.Holder holder,
                     final Format audioFormat,
@@ -123,14 +125,14 @@ final class SabrMediaPeriod implements MediaPeriod,
                 streamResetFlags[i] = true;
             }
         }
-        updateActiveTracks(selections);
+        updateActiveTracks(selections, positionUs);
         rebuildCompositeLoader();
         return positionUs;
     }
 
-    private void updateActiveTracks(final ExoTrackSelection[] selections) {
-        boolean videoActive = false;
-        boolean audioActive = false;
+    private void updateActiveTracks(final ExoTrackSelection[] selections, final long positionUs) {
+        boolean selectedVideo = false;
+        boolean selectedAudio = false;
         for (final ExoTrackSelection selection : selections) {
             if (selection == null) {
                 continue;
@@ -140,14 +142,17 @@ final class SabrMediaPeriod implements MediaPeriod,
                 continue;
             }
             if (trackTypes[groupIndex] == C.TRACK_TYPE_VIDEO) {
-                videoActive = true;
+                selectedVideo = true;
             } else if (trackTypes[groupIndex] == C.TRACK_TYPE_AUDIO) {
-                audioActive = true;
+                selectedAudio = true;
             }
         }
-        holder.setActiveTracks(videoActive, audioActive);
+        videoActive = selectedVideo;
+        audioActive = selectedAudio;
+        holder.prepareForPlaybackPositionMs(positionUs / 1000, selectedVideo, selectedAudio);
+        holder.setActiveTracks(selectedVideo, selectedAudio);
         Log.d(TAG, "activeTracks video=" + holder.videoId
-                + " video=" + videoActive + " audio=" + audioActive);
+                + " video=" + selectedVideo + " audio=" + selectedAudio);
     }
 
     private ChunkSampleStream<SabrChunkSource> buildStream(final ExoTrackSelection selection,
@@ -242,6 +247,7 @@ final class SabrMediaPeriod implements MediaPeriod,
 
     @Override
     public long seekToUs(final long positionUs) {
+        holder.prepareForPlaybackPositionMs(positionUs / 1000, videoActive, audioActive);
         for (final ChunkSampleStream<SabrChunkSource> s : streams) {
             s.seekToUs(positionUs);
         }

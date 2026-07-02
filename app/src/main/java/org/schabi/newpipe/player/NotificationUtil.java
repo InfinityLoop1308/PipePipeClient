@@ -23,6 +23,7 @@ import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.util.NavigationHelper;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
@@ -54,6 +55,8 @@ public final class NotificationUtil {
 
     private NotificationManagerCompat notificationManager;
     private NotificationCompat.Builder notificationBuilder;
+    @Nullable
+    private WeakReference<Service> foregroundService;
 
     private NotificationUtil() {
     }
@@ -79,11 +82,16 @@ public final class NotificationUtil {
      */
     public synchronized void createNotificationIfNeededAndUpdate(final Player player,
                                                                  final boolean forceRecreate) {
+        final Service service = foregroundService == null ? null : foregroundService.get();
         if (forceRecreate || notificationBuilder == null) {
-            notificationBuilder = createNotification(player, null);
+            notificationBuilder = createNotification(player, service);
         }
         updateNotification(player);
-        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+        if (service != null) {
+            startForeground(service, notificationBuilder);
+        } else {
+            notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+        }
     }
 
     private synchronized NotificationCompat.Builder createNotification(final Player player, final Service service) {
@@ -192,16 +200,20 @@ public final class NotificationUtil {
 
 
     void createNotificationAndStartForeground(final Player player, final Service service) {
-        if (notificationBuilder == null) {
-            notificationBuilder = createNotification(player, service);
-        }
+        foregroundService = new WeakReference<>(service);
+        notificationBuilder = createNotification(player, service);
         updateNotification(player);
 
+        startForeground(service, notificationBuilder);
+    }
+
+    private void startForeground(final Service service,
+                                 final NotificationCompat.Builder builder) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            service.startForeground(NOTIFICATION_ID, notificationBuilder.build(),
+            service.startForeground(NOTIFICATION_ID, builder.build(),
                     ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
         } else {
-            service.startForeground(NOTIFICATION_ID, notificationBuilder.build());
+            service.startForeground(NOTIFICATION_ID, builder.build());
         }
     }
 
@@ -229,6 +241,7 @@ public final class NotificationUtil {
         }
         notificationManager = null;
         notificationBuilder = null;
+        foregroundService = null;
     }
 
 

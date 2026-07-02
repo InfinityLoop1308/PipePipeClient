@@ -968,6 +968,10 @@ public final class Player implements
         simpleExoPlayer.setVolume(isMuted ? 0 : 1);
         if (playQueue != null) {
             simpleExoPlayer.setShuffleModeEnabled(playQueue.isShuffled());
+            if (mediaSessionManager != null) {
+                mediaSessionManager.dispose();
+                mediaSessionManager = null;
+            }
             playerMediaSession = new PlayerMediaSession(this, simpleExoPlayer);
             mediaSessionManager = new MediaSessionManager(context, simpleExoPlayer,
                     playerMediaSession, service.getMediaSession(),
