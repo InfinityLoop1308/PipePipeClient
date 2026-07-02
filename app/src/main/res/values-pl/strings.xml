@@ -460,7 +460,16 @@
     <string name="most_liked">Najbardziej lubiane</string>
     <string name="playlist_no_uploader">Wygenerowana automatycznie (nie znaleziono przesyłającego)</string>
     <string name="recovering">odzyskiwanie</string>
-    <string name="error_download_resource_gone">Nie udało się odzyskać tego pobrania</string>
+    <string name="error_download_resource_gone">Nie udało się odzyskać tego pobrania</string>   
+   <string name="error_sabr_download_failed">Pobieranie SABR nieudane</string>
+   <string name="error_sabr_download_format">Ten format SABR nie może być pobierany</string>
+   <string name="error_sabr_download_initialization">Inicjalizacja SABR nieudana</string>
+   <string name="error_sabr_download_protected">Ten strumień SABR wymaga poświadczenia</string>
+   <string name="error_sabr_download_stalled">SABR przestał zwracać media</string>
+   <string name="error_sabr_download_network">Pobieranie SABR nieudane z powodu sieci</string>
+   <string name="error_sabr_download_muxing">Nie udało się zmuxować mediów SABR</string>
+   <string name="error_sabr_download_storage">Nie udało się zapisać pobrania SABR</string>
+   <string name="error_sabr_download_protocol">Błąd protokołu SABR</string>
     <string name="choose_instance_prompt">Wybierz serwer</string>
     <string name="clear_download_history">Wyczyść historię pobierania</string>
     <string name="delete_downloaded_files">Usuń pobrane pliki</string>
