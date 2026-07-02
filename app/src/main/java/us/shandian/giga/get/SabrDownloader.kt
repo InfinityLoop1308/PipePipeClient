@@ -95,8 +95,19 @@ internal class SabrDownloader(
             session.streamState.jumpBufferedTo(target.format, target.nextWriteSequence)
         }
         configureRequestMode(session, targets, coldStartAttempt)
-        val outputs = targets.associate { target ->
-            target.resourceIndex to FileOutputStream(target.file, true)
+        val outputs = mutableMapOf<Int, FileOutputStream>()
+        try {
+            targets.forEach { target ->
+                outputs[target.resourceIndex] = FileOutputStream(target.file, true)
+            }
+        } catch (error: IOException) {
+            outputs.values.forEach { output ->
+                try {
+                    output.close()
+                } catch (ignored: IOException) {
+                }
+            }
+            throw storageException("could not open temporary media", error)
         }
 
         try {
@@ -190,40 +201,54 @@ internal class SabrDownloader(
     private fun prepareWorkDirectory(): File {
         val workDir = workDirectory(mission)
         if (!workDir.exists() && !workDir.mkdirs()) {
-            throw IOException("Cannot create SABR work directory: $workDir")
+            throw storageException("could not create temporary directory", null)
         }
         return workDir
     }
 
     private fun restoreTargets(targets: List<SabrDownloadTarget>) {
-        targets.forEach { target ->
-            val checkpoint = mission.sabrCheckpoint?.resources?.firstOrNull {
-                it.resourceIndex == target.resourceIndex &&
-                    it.itag == target.format.itag &&
-                    it.tempFilePath == target.file.absolutePath &&
-                    it.nextWriteSequence > 0 &&
-                    it.bytesWritten >= it.initializationBytes &&
-                    it.initializationBytes >= 0 &&
-                    it.initializationBytes <= MAX_INITIALIZATION_BYTES &&
-                    target.file.exists() &&
-                    target.file.length() >= it.bytesWritten
-            }
-            if (checkpoint == null) {
-                target.file.delete()
-                return@forEach
-            }
-            RandomAccessFile(target.file, "rw").use { file ->
-                file.setLength(checkpoint.bytesWritten)
-                if (checkpoint.initializationBytes > 0) {
-                    val initialization = ByteArray(checkpoint.initializationBytes)
-                    file.seek(0)
-                    file.readFully(initialization)
-                    target.initializationData = initialization
-                    target.initializationWritten = true
+        try {
+            targets.forEach { target ->
+                val checkpoint = mission.sabrCheckpoint?.resources?.firstOrNull {
+                    it.resourceIndex == target.resourceIndex &&
+                        it.itag == target.format.itag &&
+                        it.tempFilePath == target.file.absolutePath &&
+                        it.nextWriteSequence > 0 &&
+                        it.bytesWritten >= it.initializationBytes &&
+                        it.initializationBytes >= 0 &&
+                        it.initializationBytes <= MAX_INITIALIZATION_BYTES &&
+                        target.file.exists() &&
+                        target.file.length() >= it.bytesWritten
                 }
+                if (checkpoint == null) {
+                    if (target.file.exists() && !target.file.delete()) {
+                        throw IOException("Could not reset ${target.file}")
+                    }
+                    return@forEach
+                }
+                RandomAccessFile(target.file, "rw").use { file ->
+                    file.setLength(checkpoint.bytesWritten)
+                    if (checkpoint.initializationBytes > 0) {
+                        val initialization = ByteArray(checkpoint.initializationBytes)
+                        file.seek(0)
+                        file.readFully(initialization)
+                        target.initializationData = initialization
+                        target.initializationWritten = true
+                    }
+                }
+                target.nextWriteSequence = checkpoint.nextWriteSequence
             }
-            target.nextWriteSequence = checkpoint.nextWriteSequence
+        } catch (error: IOException) {
+            throw storageException("could not restore temporary media", error)
         }
+    }
+
+    private fun storageException(message: String, cause: IOException?): SabrDownloadException {
+        return SabrDownloadException(
+            SabrDownloadException.Reason.STORAGE,
+            "SABR download failed: $message",
+            cause,
+        )
     }
 
     private fun updateCheckpoint(target: SabrDownloadTarget) {

@@ -120,7 +120,7 @@ internal class SabrSegmentWriter(
         if (target.initializationWritten) {
             return false
         }
-        output.write(data)
+        writeToStorage(output, data)
         target.initializationWritten = true
         target.initializationData = data
         onBytesWritten(target, data.size.toLong())
@@ -138,8 +138,7 @@ internal class SabrSegmentWriter(
         }
         val range = "bytes=$start-$end"
         val response = NewPipe.getDownloader().get(url, mapOf("Range" to listOf(range)))
-        val data = response.rawResponseBody()
-        if (response.responseCode() != 206 && response.responseCode() != 200) {
+        if (response.responseCode() != 206) {
             if (response.responseCode() >= 500) {
                 throw IOException(
                     "SABR initialization request failed: HTTP ${response.responseCode()}",
@@ -151,6 +150,7 @@ internal class SabrSegmentWriter(
                     + " (HTTP ${response.responseCode()})",
             )
         }
+        val data = response.rawResponseBody()
         if (data == null || data.isEmpty()) {
             throw SabrDownloadException(
                 SabrDownloadException.Reason.INITIALIZATION,
@@ -213,9 +213,21 @@ internal class SabrSegmentWriter(
     }
 
     private fun writeMediaBytes(target: SabrDownloadTarget, output: OutputStream, data: ByteArray) {
-        output.write(data)
+        writeToStorage(output, data)
         target.nextWriteSequence++
         onBytesWritten(target, data.size.toLong())
+    }
+
+    private fun writeToStorage(output: OutputStream, data: ByteArray) {
+        try {
+            output.write(data)
+        } catch (error: IOException) {
+            throw SabrDownloadException(
+                SabrDownloadException.Reason.STORAGE,
+                "SABR download failed: could not write temporary media",
+                error,
+            )
+        }
     }
 
     private companion object {
