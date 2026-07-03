@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,8 +40,10 @@ import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.StateSaver;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -396,6 +399,26 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
     @Override
     public void handleResult(@NonNull final ChannelInfo result) {
         super.handleResult(result);
+
+        // Safety net: if the channel is in the block list, prevent access
+        final String channelName = result.getName();
+        if (channelName != null && !channelName.isEmpty()) {
+            final SharedPreferences prefs = PreferenceManager
+                    .getDefaultSharedPreferences(requireContext());
+            final Set<String> blockedChannels = prefs.getStringSet(
+                    getString(R.string.filter_by_channel_key) + "_set",
+                    new HashSet<>());
+            if (blockedChannels.contains(channelName)) {
+                Toast.makeText(requireContext(),
+                        R.string.channel_is_blocked,
+                        Toast.LENGTH_SHORT).show();
+                if (getParentFragmentManager().getBackStackEntryCount() > 0) {
+                    getParentFragmentManager().popBackStack();
+                }
+                return;
+            }
+        }
+
         currentInfo = result;
         setInitialData(result.getServiceId(), result.getOriginalUrl(), result.getName());
 

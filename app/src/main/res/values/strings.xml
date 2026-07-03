@@ -954,6 +954,7 @@
 <string name="search_result">Search results</string>
 <string name="filter_field_summary">Apply Filter To</string>
 <string name="channel_videos">Channel videos</string>
+<string name="channel_is_blocked">This channel is in your block list</string>
 <string name="success">Success</string>
 <string name="settings_category_proxy_title">Proxy (Supporters)</string>
 <string name="proxy_token_title">Token</string>
