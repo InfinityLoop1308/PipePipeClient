@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 
 import org.json.JSONObject;
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrPoTokenProvider;
+import org.schabi.newpipe.extractor.services.youtube.sabr.SabrProtocolException;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrStreamState;
 
@@ -87,14 +88,15 @@ public final class WebViewPoTokenProvider implements SabrPoTokenProvider {
 
     @Nullable
     @Override
-    public byte[] getPoToken(final YoutubeSabrInfo info, final YoutubeSabrStreamState streamState) {
+    public byte[] getPoToken(final YoutubeSabrInfo info, final YoutubeSabrStreamState streamState)
+            throws SabrProtocolException {
         return getPoToken(info, streamState, false);
     }
 
     @Nullable
     @Override
     public byte[] getPoToken(final YoutubeSabrInfo info, final YoutubeSabrStreamState streamState,
-                             final boolean forceRefresh) {
+                             final boolean forceRefresh) throws SabrProtocolException {
         final String videoId = info.getVideoId();
         if (forceRefresh) {
             // Server rejected the cached token (expired): drop it (memory + disk) and mint fresh.
@@ -186,7 +188,7 @@ public final class WebViewPoTokenProvider implements SabrPoTokenProvider {
     }
 
     @Nullable
-    private String mintBlocking(final String videoId) {
+    private String mintBlocking(final String videoId) throws SabrProtocolException {
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicBoolean canceled = new AtomicBoolean(false);
         final AtomicReference<String> tokenRef = new AtomicReference<>();
@@ -213,7 +215,7 @@ public final class WebViewPoTokenProvider implements SabrPoTokenProvider {
 
         try {
             if (!latch.await(PIPELINE_TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
-                Log.w(TAG, "PO token pipeline timed out for " + videoId);
+                throw new SabrProtocolException("PO token pipeline timed out for " + videoId);
             }
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();

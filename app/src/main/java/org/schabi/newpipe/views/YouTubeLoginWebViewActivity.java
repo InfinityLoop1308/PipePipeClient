@@ -47,7 +47,7 @@ public class YouTubeLoginWebViewActivity extends BaseLoginWebViewActivity {
             String cookies = CookieManager.getInstance().getCookie(url);
             if (!hasLoaded && cookies != null && cookies.contains(getSuccessCookieIndicator())) {
                 hasLoaded = true;
-                webView.loadUrl("https://music.youtube.com/watch?v=09839DpTctU");
+                webView.loadUrl("https://www.youtube.com/watch?v=09839DpTctU");
             }
         }
 

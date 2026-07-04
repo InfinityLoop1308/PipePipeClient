@@ -815,7 +815,7 @@
 <string name="sponsor_promote">成为支持者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">在后台播放时自动随机播放您的本地播放列表</string>
-<string name="update_log">### 新功能\n\n- 新增对 YouTube SABR 协议的实验性支持，可在高级设置中强制启用 (YouTube)\n- 支持在登录账号的情况下下载视频 (YouTube)\n- 重新添加对自动翻译字幕的支持（仅限登录账号时可用）(YouTube)\n- 支持在指定频道内搜索视频 (YouTube)\n- 支持在频道内对视频进行排序 (YouTube)\n- 保留上次选择的搜索筛选条件\n- 支持在视频播放器中自定义宽高比\n- 支持将主页标签栏放置在底部\n- 支持主题图标\n\n### Bug 修复\n\n- 修复部分视频解析失败并显示内容不可用的错误 (YouTube)\n- 修复所有播放列表显示为空的问题 (YouTube)\n- 修复视频页面的“相关视频”缺少上传日期的问题 (YouTube)\n- 修复当视频的最低可用分辨率低于默认设置时，应用会错误地自动选择最高分辨率的问题\n- 修复在同一队列中切换视频时 SponsorBlock 片段标记无法正确更新的问题\n- 修复“发送邮件”功能无法正确识别设备上的邮件应用的问题\n- 修复播放列表中所有视频的上传者被错误显示为该播放列表创建者的问题 (YouTube)\n- 修复导致部分视频意外停止播放的错误 (Bilibili)\n- 修复在 armv7 和 x86 架构上下载功能无法使用的问题 (Bilibili, Niconico)\n- 修复 `b23.tv` 短链接无法正确解析的问题 (Bilibili)\n- 修复链接中的时间戳被忽略的问题 (Niconico)\n- 修复启用实验性新 UI 时评论无法正确显示的问题\n- 修复在特定场景下发生的崩溃问题\n\n### 界面\n\n- 移除启用独立动态（feed）的建议，并将相关设置移至高级设置\n- 更新主标签页上搜索历史按钮的显示，避免出现重复图标\n- 更新俄语翻译\n- 更新波兰语翻译\n\n### 其他\n\n- 全面支持 16KB 页面大小，略微提升在 Android 16+ 上的性能\n- 升级 target SDK 至 36\n- 提升稳定性</string>
+<string name="update_log">此版本修复了导致 YouTube 视频无法正常播放的问题。\n\nYouTube 最近停用了我们先前用于获取视频流的所有方法，这导致几乎所有用户（包括已在设置中登录 YouTube 的用户）的视频和直播都无法正常工作。经过紧急修复，我们现已迁移到 YouTube 的全新 SABR 协议以恢复播放。\n\nYouTube 经常发生变化，因此请务必定期检查更新，以确保一切持续正常运行。</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 <string name="donation_dialog_title">支持该项目</string>
@@ -1033,4 +1033,13 @@
 <string name="use_dns_over_https_fallback_title">使用 DNS over HTTPS 备用</string>
 <string name="use_dns_over_https_fallback_summary">使用 Cloudflare DNS over HTTPS 重试失败的系统 DNS 查询。更改此设置将重启应用。</string>
 <string name="youtube_player_client_title">YouTube提取端点</string>
+<string name="error_sabr_download_failed">SABR下载失败</string>
+<string name="error_sabr_download_format">该SABR格式无法下载</string>
+<string name="error_sabr_download_initialization">SABR初始化失败</string>
+<string name="error_sabr_download_protected">此SABR流需要认证</string>
+<string name="error_sabr_download_stalled">SABR停止返回媒体</string>
+<string name="error_sabr_download_network">由于网络原因，SABR下载失败</string>
+<string name="error_sabr_download_muxing">无法复用SABR媒体</string>
+<string name="error_sabr_download_storage">无法写入SABR下载内容</string>
+<string name="error_sabr_download_protocol">SABR协议错误</string>
 </resources>

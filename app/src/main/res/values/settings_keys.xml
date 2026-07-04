@@ -1773,12 +1773,10 @@
     <string name="youtube_player_client_key">youtube_player_client</string>
     <string-array name="youtube_player_client_entries">
         <item>MWEB</item>
-        <item>WEB Safari</item>
         <item>WEB</item>
     </string-array>
     <string-array name="youtube_player_client_values">
         <item>mweb</item>
-        <item>web_safari</item>
         <item>web</item>
     </string-array>
 </resources>

@@ -4,6 +4,7 @@ import android.util.Log
 import org.schabi.newpipe.BuildConfig
 import org.schabi.newpipe.extractor.localization.Localization
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrProtocolException
+import org.schabi.newpipe.extractor.services.youtube.sabr.SabrRecoverableException
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrSegmentRequest
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
@@ -23,7 +24,7 @@ internal class SabrDownloader(
         try {
             ensureRunning()
             val recoveries = validateRecoveryInfo()
-            val info = SabrDownloadFormatResolver.resolveInfo(recoveries)
+            var info = SabrDownloadFormatResolver.resolveInfo(recoveries)
 
             val expectedLength = recoveries.map { recovery ->
                 when (recovery.kind) {
@@ -37,8 +38,13 @@ internal class SabrDownloader(
             prepareMission(expectedLength)
             var coldStartAttempts = 0
             var transientAttempts = 0
+            var refreshInfo = false
             while (true) {
                 try {
+                    if (refreshInfo) {
+                        info = SabrDownloadFormatResolver.resolveInfo(recoveries)
+                        refreshInfo = false
+                    }
                     runSessionAttempt(info, recoveries, coldStartAttempts)
                     break
                 } catch (error: RetryColdStartException) {
@@ -51,6 +57,7 @@ internal class SabrDownloader(
                         )
                     }
                     logDebug("retry cold start attempt=$coldStartAttempts")
+                    refreshInfo = true
                 } catch (error: Exception) {
                     if (!isRetryableAttemptFailure(error)) {
                         throw error
@@ -65,6 +72,7 @@ internal class SabrDownloader(
                     transientAttempts++
                     logDebug("retry transient attempt=$transientAttempts error=${error.javaClass.simpleName}")
                     Thread.sleep(transientRetryDelayMs(transientAttempts))
+                    refreshInfo = true
                 }
             }
         } catch (error: InterruptedException) {
@@ -291,7 +299,6 @@ internal class SabrDownloader(
         writer: SabrSegmentWriter,
     ) {
         val localization = Localization("en", "US")
-        writer.writeDirectInitializations()
         writer.observeWrittenInitializations()
         if (targets.size == 1 && !targets.first().initializationWritten) {
             fetchInitializationsOrRetry(writer, localization)
@@ -464,6 +471,9 @@ internal class SabrDownloader(
     private fun isRetryableAttemptFailure(error: Exception): Boolean {
         if (error is RetryColdStartException || error is SabrDownloadException) {
             return false
+        }
+        if (error is SabrRecoverableException) {
+            return true
         }
         if (error is SabrProtocolException) {
             return false

@@ -41,25 +41,35 @@ final class SabrChunkSource implements ChunkSource {
     private static final String TAG = "SabrChunkSource";
 
     private final SabrSessionStore.Holder holder;
+    private final Object readerOwner;
     private final YoutubeSabrFormat format;
     private final Format trackFormat;
     private final int trackType;
     private final Localization localization;
+    private final long durationUs;
     private final ChunkExtractor extractor;
 
     @Nullable
     private IOException fatalError;
+    private int initializationRequests;
+    private int repeatedEmptyChunkRequests;
+    private int lastEmptySequence = -1;
+    private long lastEmptyLoadPositionUs = C.TIME_UNSET;
 
     SabrChunkSource(final SabrSessionStore.Holder holder,
+                    final Object readerOwner,
                     final YoutubeSabrFormat format,
                     final Format trackFormat,
                     final int trackType,
-                    final Localization localization) {
+                    final Localization localization,
+                    final long durationUs) {
         this.holder = holder;
+        this.readerOwner = readerOwner;
         this.format = format;
         this.trackFormat = trackFormat;
         this.trackType = trackType;
         this.localization = localization;
+        this.durationUs = durationUs;
         final String mime = format.getMimeType();
         final Extractor extractorImpl = mime != null && mime.contains("webm")
                 ? new MatroskaExtractor(SubtitleParser.Factory.UNSUPPORTED)
@@ -94,11 +104,20 @@ final class SabrChunkSource implements ChunkSource {
     @Override
     public void getNextChunk(final LoadingInfo loadingInfo, final long loadPositionUs,
                              final List<? extends MediaChunk> queue, final ChunkHolder out) {
+        if (durationUs != C.TIME_UNSET && loadPositionUs >= durationUs) {
+            out.endOfStream = true;
+            return;
+        }
         if (extractor.getSampleFormats() == null) {
+            initializationRequests++;
+            if (initializationRequests > 1) {
+                failTerminal("SABR initialization produced no sample format");
+                return;
+            }
             Log.d(TAG, "nextInit video=" + holder.videoId
                     + " itag=" + format.getItag());
             out.chunk = new InitializationChunk(
-                    new SabrSegmentDataSource(holder, format, localization,
+                    new SabrSegmentDataSource(holder, readerOwner, format, localization,
                             /* prependInit= */ false),
                     new DataSpec(Uri.parse("sabrseg://" + format.getItag() + "/init")),
                     trackFormat, C.SELECTION_REASON_UNKNOWN, null, extractor);
@@ -108,8 +127,22 @@ final class SabrChunkSource implements ChunkSource {
         if (queue.isEmpty()) {
             nextSeq = holder.session.getStreamState()
                     .getSegmentNumberAtOrAfterTimeMs(format, loadPositionUs / 1000);
+            if (nextSeq == lastEmptySequence && loadPositionUs == lastEmptyLoadPositionUs) {
+                repeatedEmptyChunkRequests++;
+                if (repeatedEmptyChunkRequests >= 2) {
+                    failTerminal("SABR media chunk produced no sample");
+                    return;
+                }
+            } else {
+                lastEmptySequence = nextSeq;
+                lastEmptyLoadPositionUs = loadPositionUs;
+                repeatedEmptyChunkRequests = 0;
+            }
         } else {
             nextSeq = (int) (queue.get(queue.size() - 1).getNextChunkIndex());
+            repeatedEmptyChunkRequests = 0;
+            lastEmptySequence = -1;
+            lastEmptyLoadPositionUs = C.TIME_UNSET;
         }
         final long endSeq = holder.session.getStreamState().getEndSegment(format);
         if (endSeq > 0 && nextSeq > endSeq) {
@@ -133,7 +166,8 @@ final class SabrChunkSource implements ChunkSource {
         final long endUs = (endMs > 0 ? endMs : startMs) * 1000;
         final DataSpec spec = new DataSpec(Uri.parse("sabrseg://" + format.getItag() + "/" + seq));
         return new ContainerMediaChunk(
-                new SabrSegmentDataSource(holder, format, localization, /* prependInit= */ false),
+                new SabrSegmentDataSource(holder, readerOwner, format, localization,
+                        /* prependInit= */ false),
                 spec, trackFormat, C.SELECTION_REASON_UNKNOWN, null,
                 startUs, endUs, /* clippedStartTimeUs= */ startUs,
                 // No end clip, on purpose. The first chunk's declared end is basically a rumor: we
@@ -148,6 +182,12 @@ final class SabrChunkSource implements ChunkSource {
 
     @Override
     public void onChunkLoadCompleted(final Chunk chunk) {
+    }
+
+    private void failTerminal(final String message) {
+        final SabrLogicException failure = new SabrLogicException(message);
+        fatalError = failure;
+        holder.failTerminal(failure);
     }
 
     @Override

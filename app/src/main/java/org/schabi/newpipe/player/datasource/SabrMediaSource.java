@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import androidx.media3.common.C;
 import androidx.media3.common.Format;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MimeTypes;
@@ -44,8 +45,9 @@ public final class SabrMediaSource extends BaseMediaSource {
         Log.d(TAG, "create source video=" + holder.videoId);
         this.audioFormat = toMedia3Format(holder.audioFormat);
         this.videoFormat = toMedia3Format(holder.videoFormat);
-        this.durationUs = Math.max(holder.audioFormat.getApproxDurationMs(),
-                holder.videoFormat.getApproxDurationMs()) * 1000L;
+        final long durationMs = Math.max(holder.audioFormat.getApproxDurationMs(),
+                holder.videoFormat.getApproxDurationMs());
+        this.durationUs = durationMs > 0 ? durationMs * 1000L : C.TIME_UNSET;
     }
 
     @Override

@@ -16,6 +16,7 @@ import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -74,15 +75,19 @@ public final class SabrSessionStore {
         // and eviction run on: it never goes stale (a stalled reader sits on its last segment, so the
         // pump sees edge ~= readerHead and keeps feeding instead of pacing off a frozen play head).
         private final Map<Integer, Long> readerPositions = new ConcurrentHashMap<>();
+        private final Map<Object, Integer> activeTrackModes = new IdentityHashMap<>();
         private final Map<Integer, byte[]> initializationData = new ConcurrentHashMap<>();
         // Tracks currently selected by ExoPlayer. Background/audio-only playback disables the video
         // renderer, so requiring a video reader position there pins the SABR cache at the beginning.
         private final Set<Integer> activeReaderItags =
                 Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
         private final AtomicInteger sourceReferences = new AtomicInteger();
+        private Object readerOwner;
+        private long readerGeneration;
         private volatile SabrStreamPump pump;
         private volatile Thread warmThread;
         private volatile boolean invalidated;
+        private volatile SabrLogicException terminalFailure;
 
         Holder(@NonNull final String videoId,
                @NonNull final YoutubeSabrInfo info,
@@ -105,22 +110,72 @@ public final class SabrSessionStore {
         }
 
         /** A data source reports how far it has read (last served segment end, ms). */
-        public void setReaderPositionMs(final int itag, final long ms) {
-            readerPositions.put(itag, ms);
+        public synchronized void setReaderPositionMs(@NonNull final Object owner,
+                                                     final long generation,
+                                                     final int itag,
+                                                     final long ms) {
+            if (readerOwner == owner && readerGeneration == generation) {
+                readerPositions.put(itag, ms);
+            }
         }
 
-        void setActiveTracks(final boolean videoActive, final boolean audioActive) {
-            setTrackActive(videoFormat.getItag(), videoActive);
-            setTrackActive(audioFormat.getItag(), audioActive);
-            if (videoActive || audioActive) {
-                session.getStreamState().setActiveTrackTypes(videoActive, audioActive);
-            } else {
+        void setActiveTracks(@NonNull final Object owner,
+                             final boolean videoActive,
+                             final boolean audioActive) {
+            final boolean trim;
+            synchronized (this) {
+                final int mode = (videoActive ? 1 : 0) | (audioActive ? 2 : 0);
+                if (mode == 0) {
+                    activeTrackModes.remove(owner);
+                    if (readerOwner == owner) {
+                        readerOwner = activeTrackModes.isEmpty() ? null
+                                : activeTrackModes.keySet().iterator().next();
+                        readerGeneration++;
+                        readerPositions.clear();
+                    }
+                } else {
+                    activeTrackModes.put(owner, mode);
+                    if (readerOwner != owner) {
+                        readerOwner = owner;
+                        readerGeneration++;
+                        readerPositions.clear();
+                    }
+                }
+                applyActiveTracks();
+                trim = activeTrackModes.isEmpty();
+            }
+            if (trim) {
                 trimSessions(null);
             }
         }
 
-        private boolean hasActiveTracks() {
-            return !activeReaderItags.isEmpty();
+        void releaseTracks(@NonNull final Object owner) {
+            synchronized (this) {
+                activeTrackModes.remove(owner);
+                if (readerOwner == owner) {
+                    readerOwner = activeTrackModes.isEmpty() ? null
+                            : activeTrackModes.keySet().iterator().next();
+                    readerGeneration++;
+                    readerPositions.clear();
+                }
+                applyActiveTracks();
+            }
+            trimSessions(null);
+        }
+
+        synchronized void advanceReaderGeneration(@NonNull final Object owner) {
+            if (readerOwner == owner) {
+                readerGeneration++;
+                readerPositions.clear();
+            }
+        }
+
+        synchronized long getReaderGeneration(@NonNull final Object owner) {
+            return readerOwner == owner ? readerGeneration : -1;
+        }
+
+        private synchronized boolean hasActiveTracks() {
+            return !activeTrackModes.isEmpty();
         }
 
         byte[] getInitializationData(final int itag) {
@@ -142,13 +197,27 @@ public final class SabrSessionStore {
             }
         }
 
+        private void applyActiveTracks() {
+            boolean videoActive = false;
+            boolean audioActive = false;
+            for (final int mode : activeTrackModes.values()) {
+                videoActive |= (mode & 1) != 0;
+                audioActive |= (mode & 2) != 0;
+            }
+            setTrackActive(videoFormat.getItag(), videoActive);
+            setTrackActive(audioFormat.getItag(), audioActive);
+            if (videoActive || audioActive) {
+                session.getStreamState().setActiveTrackTypes(videoActive, audioActive);
+            }
+        }
+
         private void setTrackActive(final int itag, final boolean active) {
             if (active) {
                 activeReaderItags.add(itag);
-            } else {
-                activeReaderItags.remove(itag);
-                readerPositions.remove(itag);
+                return;
             }
+            activeReaderItags.remove(itag);
+            readerPositions.remove(itag);
         }
 
         /** Furthest-read selected track: the pump keeps the buffered edge a cushion ahead of THIS. */
@@ -192,6 +261,17 @@ public final class SabrSessionStore {
             return invalidated;
         }
 
+        void failTerminal(@NonNull final SabrLogicException failure) {
+            terminalFailure = failure;
+            evict(videoId, this);
+        }
+
+        void throwIfTerminal() throws SabrLogicException {
+            if (terminalFailure != null) {
+                throw terminalFailure;
+            }
+        }
+
         void setWarmThread(@NonNull final Thread warmThread) {
             this.warmThread = warmThread;
         }
@@ -204,7 +284,13 @@ public final class SabrSessionStore {
 
         void stop() {
             invalidated = true;
-            setActiveTracks(false, false);
+            synchronized (this) {
+                activeTrackModes.clear();
+                readerOwner = null;
+                readerGeneration++;
+                readerPositions.clear();
+                applyActiveTracks();
+            }
             final Thread warm = warmThread;
             if (warm != null && warm != Thread.currentThread()) {
                 warm.interrupt();
@@ -325,29 +411,13 @@ public final class SabrSessionStore {
             ORDER.addLast(videoId);
             trimSessions(videoId);
             // Pre-warm the PO token off-thread so the ~45s WebView mint overlaps the initial probe
-            // and buffering instead of stalling the pump on its first protected response. Keep the
-            // init preload off this creation path too: it is best-effort and can wait on the same
-            // protected request, so doing it synchronously lets playback teardown cancel source
-            // resolution before a MediaSource is returned.
-            final boolean preloadInit = preferredAudioTrackId != null || provider.hasCachedToken(videoId);
+            // and buffering instead of stalling the pump on its first protected response.
             final Thread warm = new Thread(() -> {
                 try {
                     if (Thread.currentThread().isInterrupted() || !isCurrentHolder(videoId, holder)) {
                         return;
                     }
                     provider.getPoToken(info, session.getStreamState());
-                    if (Thread.currentThread().isInterrupted() || !isCurrentHolder(videoId, holder)) {
-                        return;
-                    }
-                    // Pre-load init metadata when a seek will follow (audio switch, or cold-restore:
-                    // a cached token means we played this recently). Else the seek maps with the
-                    // default 5000ms segment duration -> audio UnexpectedDiscontinuityException.
-                    if (preloadInit) {
-                        session.fetchSegment(SabrSegmentRequest.initialization(audioFormat),
-                                localization);
-                        session.fetchSegment(SabrSegmentRequest.initialization(videoFormat),
-                                localization);
-                    }
                 } catch (final Exception ignored) {
                     // Best-effort; the pump mints/fetches on demand if this fails.
                 } finally {

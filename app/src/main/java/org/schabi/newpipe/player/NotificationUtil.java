@@ -205,22 +205,6 @@ public final class NotificationUtil {
         }
     }
 
-    void startForeground(final Service service) {
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(service,
-                service.getString(R.string.notification_channel_id))
-                .setContentTitle(service.getString(R.string.app_name))
-                .setSmallIcon(R.drawable.ic_pipepipe)
-                .setCategory(NotificationCompat.CATEGORY_TRANSPORT)
-                .setOngoing(true);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            service.startForeground(NOTIFICATION_ID, builder.build(),
-                    ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
-        } else {
-            service.startForeground(NOTIFICATION_ID, builder.build());
-        }
-    }
-
     void cancelNotificationAndStopForeground(final Service service) {
         ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_REMOVE);
 

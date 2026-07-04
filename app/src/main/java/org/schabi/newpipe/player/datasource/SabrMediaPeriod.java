@@ -46,7 +46,20 @@ final class SabrMediaPeriod implements MediaPeriod,
     private final DrmSessionEventListener.EventDispatcher drmEventDispatcher;
     private final MediaSourceEventListener.EventDispatcher mediaSourceEventDispatcher;
     private final LoadErrorHandlingPolicy loadErrorHandlingPolicy =
-            new DefaultLoadErrorHandlingPolicy();
+            new DefaultLoadErrorHandlingPolicy() {
+                @Override
+                public long getRetryDelayMsFor(
+                        final LoadErrorHandlingPolicy.LoadErrorInfo loadErrorInfo) {
+                    Throwable cause = loadErrorInfo.exception;
+                    while (cause != null) {
+                        if (cause instanceof SabrLogicException) {
+                            return C.TIME_UNSET;
+                        }
+                        cause = cause.getCause();
+                    }
+                    return super.getRetryDelayMsFor(loadErrorInfo);
+                }
+            };
 
     private final TrackGroupArray trackGroups;
     private final YoutubeSabrFormat[] sabrFormats;
@@ -145,7 +158,7 @@ final class SabrMediaPeriod implements MediaPeriod,
                 audioActive = true;
             }
         }
-        holder.setActiveTracks(videoActive, audioActive);
+        holder.setActiveTracks(this, videoActive, audioActive);
         Log.d(TAG, "activeTracks video=" + holder.videoId
                 + " video=" + videoActive + " audio=" + audioActive);
     }
@@ -160,8 +173,9 @@ final class SabrMediaPeriod implements MediaPeriod,
                 + " trackType=" + trackTypes[groupIndex]
                 + " itag=" + sabrFormats[groupIndex].getItag()
                 + " positionUs=" + positionUs);
-        final SabrChunkSource chunkSource = new SabrChunkSource(holder, sabrFormats[groupIndex],
-                trackFormat, trackTypes[groupIndex], localization);
+        final SabrChunkSource chunkSource = new SabrChunkSource(holder, this,
+                sabrFormats[groupIndex], trackFormat, trackTypes[groupIndex], localization,
+                durationUs);
         // Last 3 args are new in media3 1.10 (handleInitialDiscontinuity, firstChunkStartTimeUs,
         // downloadExecutor); false / TIME_UNSET / null reproduces the pre-1.10 behaviour.
         return new ChunkSampleStream<>(trackTypes[groupIndex], null, null, chunkSource, this,
@@ -242,6 +256,7 @@ final class SabrMediaPeriod implements MediaPeriod,
 
     @Override
     public long seekToUs(final long positionUs) {
+        holder.advanceReaderGeneration(this);
         for (final ChunkSampleStream<SabrChunkSource> s : streams) {
             s.seekToUs(positionUs);
         }
@@ -294,7 +309,7 @@ final class SabrMediaPeriod implements MediaPeriod,
             s.release();
         }
         streams.clear();
-        holder.setActiveTracks(false, false);
+        holder.releaseTracks(this);
     }
 
     /** No-op loader used before any track is selected. */

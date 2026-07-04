@@ -455,8 +455,11 @@ public final class DownloaderImpl extends Downloader {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                cancellableCall.setFinished();
-                callback.onError(e);
+                try {
+                    callback.onError(e);
+                } finally {
+                    cancellableCall.setFinished();
+                }
             }
 
             @Override

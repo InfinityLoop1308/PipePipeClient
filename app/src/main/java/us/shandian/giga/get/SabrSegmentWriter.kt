@@ -1,10 +1,8 @@
 package us.shandian.giga.get
 
-import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.localization.Localization
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrMediaSegment
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrSegmentRequest
-import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
 import java.io.IOException
 import java.io.OutputStream
@@ -15,13 +13,6 @@ internal class SabrSegmentWriter(
     private val outputs: Map<Int, OutputStream>,
     private val onBytesWritten: (SabrDownloadTarget, Long) -> Unit,
 ) {
-    @Throws(IOException::class)
-    fun writeDirectInitializations() {
-        for (target in targets) {
-            writeDirectInitializationIfAvailable(target, outputs.getValue(target.resourceIndex))
-        }
-    }
-
     fun observeWrittenInitializations() {
         for (target in targets) {
             val data = target.initializationData ?: continue
@@ -89,10 +80,6 @@ internal class SabrSegmentWriter(
             ) {
                 continue
             }
-            if (writeDirectInitializationIfAvailable(target, outputs.getValue(target.resourceIndex))) {
-                wroteInitialization = true
-                continue
-            }
             val request = SabrSegmentRequest.initialization(target.format)
             val segment = session.fetchSegment(request, localization)
             writeInitializationSegment(target, outputs.getValue(target.resourceIndex), segment.data)
@@ -100,15 +87,6 @@ internal class SabrSegmentWriter(
             wroteInitialization = true
         }
         return wroteInitialization
-    }
-
-    @Throws(IOException::class)
-    private fun writeDirectInitializationIfAvailable(
-        target: SabrDownloadTarget,
-        output: OutputStream,
-    ): Boolean {
-        val data = fetchDirectInitializationData(target.format) ?: return false
-        return writeInitializationSegment(target, output, data)
     }
 
     @Throws(IOException::class)
@@ -126,38 +104,6 @@ internal class SabrSegmentWriter(
         onBytesWritten(target, data.size.toLong())
         flushPendingMedia(target, output)
         return true
-    }
-
-    @Throws(IOException::class)
-    private fun fetchDirectInitializationData(format: YoutubeSabrFormat): ByteArray? {
-        val url = format.initializationUrl
-        val start = format.initRangeStart
-        val end = format.initRangeEnd
-        if (url.isNullOrBlank() || start < 0 || end < start) {
-            return null
-        }
-        val range = "bytes=$start-$end"
-        val response = NewPipe.getDownloader().get(url, mapOf("Range" to listOf(range)))
-        if (response.responseCode() != 206) {
-            if (response.responseCode() >= 500) {
-                throw IOException(
-                    "SABR initialization request failed: HTTP ${response.responseCode()}",
-                )
-            }
-            throw SabrDownloadException(
-                SabrDownloadException.Reason.INITIALIZATION,
-                "SABR download failed: could not fetch initialization for itag ${format.itag}"
-                    + " (HTTP ${response.responseCode()})",
-            )
-        }
-        val data = response.rawResponseBody()
-        if (data == null || data.isEmpty()) {
-            throw SabrDownloadException(
-                SabrDownloadException.Reason.INITIALIZATION,
-                "SABR download failed: empty initialization for itag ${format.itag}",
-            )
-        }
-        return data
     }
 
     @Throws(IOException::class)
