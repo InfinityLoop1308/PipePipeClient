@@ -1772,11 +1772,19 @@
     <string name="use_dns_over_https_fallback_key">use_dns_over_https_fallback</string>
     <string name="youtube_player_client_key">youtube_player_client</string>
     <string-array name="youtube_player_client_entries">
-        <item>MWEB</item>
-        <item>WEB</item>
+        <item>MWEB (SABR)</item>
+        <item>WEB (SABR)</item>
+        <item>WEB Safari (HLS)</item>
+        <item>Android VR (DASH)</item>
+        <item>TV Simply (DASH)</item>
+        <item>TV Downgraded (DASH)</item>
     </string-array>
     <string-array name="youtube_player_client_values">
         <item>mweb</item>
         <item>web</item>
+        <item>web_safari</item>
+        <item>android_vr</item>
+        <item>tv_simply</item>
+        <item>tv_downgraded</item>
     </string-array>
 </resources>

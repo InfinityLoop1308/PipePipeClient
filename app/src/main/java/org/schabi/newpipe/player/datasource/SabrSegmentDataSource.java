@@ -159,7 +159,7 @@ public final class SabrSegmentDataSource implements DataSource {
     private byte[] awaitSegment(final SabrSegmentRequest request) throws IOException {
         holder.throwIfTerminal();
         if (holder.isInvalidated()) {
-            throw new SabrLogicException("SABR session invalidated for itag=" + format.getItag());
+            throw invalidatedException();
         }
         final SabrStreamPump pump = holder.getPump(localization);
         final long waitStart = System.currentTimeMillis();
@@ -171,8 +171,7 @@ public final class SabrSegmentDataSource implements DataSource {
             }
             holder.throwIfTerminal();
             if (holder.isInvalidated()) {
-                throw new SabrLogicException(
-                        "SABR session invalidated for itag=" + format.getItag());
+                throw invalidatedException();
             }
             final IOException networkFailure = pump.takeNetworkFailure();
             if (networkFailure != null) {
@@ -197,6 +196,14 @@ public final class SabrSegmentDataSource implements DataSource {
             }
             if (!loggedWait && System.currentTimeMillis() - waitStart > 1000) {
                 loggedWait = true;
+                holder.session.addDiagnosticEvent("wait itag=" + format.getItag()
+                        + " init=" + request.isInitializationSegment()
+                        + " seq=" + request.getSequenceNumber()
+                        + " pump=" + pump.getStateName()
+                        + " edgeMs=" + holder.session.getStreamState().getMinBufferedEndMs()
+                        + " readerHeadMs=" + holder.getReaderHeadMs()
+                        + " readerTailMs=" + holder.getReaderTailMs()
+                        + " cachedBytes=" + holder.session.getCachedBytes());
                 Log.d(TAG, "waiting video=" + holder.videoId
                         + " itag=" + format.getItag()
                         + " init=" + request.isInitializationSegment()
@@ -212,18 +219,22 @@ public final class SabrSegmentDataSource implements DataSource {
             final long now = System.currentTimeMillis();
             if (recoveryAtMs < 0 && now - waitStart > REFETCH_AFTER_MS
                     && pump.canRecover()) {
+                String recovery;
                 if (request.isInitializationSegment()) {
+                    recovery = "init";
                     pump.requestForwardSeekTo(request);
                 } else {
                     final long edgeMs = holder.session.getStreamState().getMinBufferedEndMs();
                     final long segStartMs = holder.session.getStreamState()
                             .getSegmentStartMs(format, request.getSequenceNumber());
                     if (segStartMs < edgeMs) {
+                        recovery = "rewind";
                         // Backward seek onto an evicted segment behind the edge.
                         holder.setReaderPositionMs(readerOwner, readerGeneration,
                                 format.getItag(), segStartMs);
                         pump.requestRefetchFrom(request);
                     } else if (segStartMs > edgeMs + FORWARD_SEEK_AHEAD_MS) {
+                        recovery = "forward";
                         // Cold/forward seek far ahead of where the pump is filling (SponsorBlock skip
                         // at start, resume-from-history): jump the session onto it instead of waiting
                         // for the forward pump to crawl there. A merely-slow normal fetch (target just
@@ -232,15 +243,32 @@ public final class SabrSegmentDataSource implements DataSource {
                                 format.getItag(), segStartMs);
                         pump.requestForwardSeekTo(request);
                     } else {
+                        recovery = "near_edge";
                         pump.requestForwardSeekTo(request);
                     }
                 }
+                holder.session.addDiagnosticEvent("recovery type=" + recovery
+                        + " itag=" + format.getItag()
+                        + " init=" + request.isInitializationSegment()
+                        + " seq=" + request.getSequenceNumber()
+                        + " pump=" + pump.getStateName()
+                        + " edgeMs=" + holder.session.getStreamState().getMinBufferedEndMs());
                 recoveryAtMs = now;
             }
             if (recoveryAtMs >= 0 && now - recoveryAtMs > RECOVERY_FAILURE_MS
                     && pump.canRecover()) {
                 final SabrLogicException failure = new SabrLogicException(
-                        "SABR made no progress after recovery for itag=" + format.getItag());
+                        "SABR made no progress after recovery for itag=" + format.getItag()
+                                + ", init=" + request.isInitializationSegment()
+                                + ", seq=" + request.getSequenceNumber()
+                                + ", waitMs=" + (now - waitStart)
+                                + ", pump=" + pump.getStateName()
+                                + ", edgeMs="
+                                + holder.session.getStreamState().getMinBufferedEndMs()
+                                + ", readerHeadMs=" + holder.getReaderHeadMs()
+                                + ", readerTailMs=" + holder.getReaderTailMs()
+                                + ", cachedBytes=" + holder.session.getCachedBytes()
+                                + ", trace=" + holder.session.getDiagnosticTrace());
                 holder.failTerminal(failure);
                 throw failure;
             }
@@ -251,6 +279,11 @@ public final class SabrSegmentDataSource implements DataSource {
                 throw new IOException("Interrupted awaiting SABR segment", ie);
             }
         }
+    }
+
+    private SabrLogicException invalidatedException() {
+        return new SabrLogicException("SABR session invalidated for video=" + holder.videoId
+                + ", itag=" + format.getItag() + ", " + holder.getInvalidationDetails());
     }
 
     @Nullable

@@ -815,7 +815,7 @@
 <string name="sponsor_promote">成为支持者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">在后台播放时自动随机播放您的本地播放列表</string>
-<string name="update_log">此版本修复了导致 YouTube 视频无法正常播放的问题。\n\nYouTube 最近停用了我们先前用于获取视频流的所有方法，这导致几乎所有用户（包括已在设置中登录 YouTube 的用户）的视频和直播都无法正常工作。经过紧急修复，我们现已迁移到 YouTube 的全新 SABR 协议以恢复播放。\n\nYouTube 经常发生变化，因此请务必定期检查更新，以确保一切持续正常运行。</string>
+<string name="update_log">本次发布修复了一个导致 YouTube 视频无法正常播放的问题。\n\nYouTube 最近关闭了我们之前用于获取视频流的所有方法，这导致几乎所有用户（包括在设置中已登录 YouTube 的用户）的视频和直播都无法播放。经过紧急修复，我们现已迁移到 YouTube 的全新 SABR 协议以恢复播放。\n\n5.2.2 版本新特性：我们添加了几个备用提取端点，作为用户在使用 SABR 协议时遇到不稳定的临时解决办法。如果您发现视频播放不够稳定，请前往“设置” → “高级设置” → “YouTube 提取端点”，尝试切换到其他端点，看看是否能解决该问题。\n\nYouTube 的变动十分频繁，因此请务必定期检查更新，以确保一切持续顺畅运行。</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 <string name="donation_dialog_title">支持该项目</string>

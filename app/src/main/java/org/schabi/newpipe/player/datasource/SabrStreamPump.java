@@ -141,6 +141,10 @@ final class SabrStreamPump {
                 && state != State.TERMINAL;
     }
 
+    String getStateName() {
+        return state.name();
+    }
+
     /** A reader is blocked on an evicted segment behind the buffered edge (backward seek). Ask the
      * loop to reposition the session onto it so the server re-sends from there. */
     void requestRefetchFrom(@NonNull final SabrSegmentRequest request) {
@@ -194,6 +198,9 @@ final class SabrStreamPump {
                     if (refetch != null) {
                         pendingRefetch = null;
                         state = State.REPOSITIONING;
+                        session.addDiagnosticEvent("pump_rewind itag="
+                                + refetch.getFormat().getItag()
+                                + " seq=" + refetch.getSequenceNumber());
                         session.prepareForRewind(refetch);
                         session.pumpOnce(localization);
                         state = State.IDLE;
@@ -208,6 +215,10 @@ final class SabrStreamPump {
                     if (forwardSeek != null) {
                         pendingForwardSeek = null;
                         state = State.REPOSITIONING;
+                        session.addDiagnosticEvent("pump_forward itag="
+                                + forwardSeek.getFormat().getItag()
+                                + " init=" + forwardSeek.isInitializationSegment()
+                                + " seq=" + forwardSeek.getSequenceNumber());
                         session.prepareForForwardJump(forwardSeek);
                         session.pumpOnce(localization);
                         state = State.IDLE;
@@ -252,6 +263,14 @@ final class SabrStreamPump {
                     holder.failTerminal(new SabrLogicException("SABR media failure", e));
                     break;
                 } catch (final ExtractionException e) {
+                    if (Thread.currentThread().isInterrupted() || holder.isInvalidated()) {
+                        Log.i(TAG, "SABR pump canceled video=" + holder.videoId
+                                + " invalidated=" + holder.isInvalidated()
+                                + " message=" + e.getMessage());
+                        holder.session.addDiagnosticEvent("pump_canceled invalidated="
+                                + holder.isInvalidated() + " message=" + e.getMessage());
+                        break;
+                    }
                     Log.i(TAG, "SABR pump fatal: " + e.getMessage());
                     state = State.TERMINAL;
                     holder.failTerminal(new SabrLogicException("SABR logic failure", e));

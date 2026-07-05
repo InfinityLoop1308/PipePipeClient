@@ -2360,8 +2360,10 @@ public final class Player implements
                     onPrepared(playWhenReady);
                 }
                 changeState(playWhenReady ? STATE_PLAYING : STATE_PAUSED);
-                NotificationUtil.getInstance()
-                        .createNotificationAndStartForeground(this, service.getInstance());
+                if (Build.VERSION.SDK_INT >= 37) {
+                    NotificationUtil.getInstance()
+                            .createNotificationAndStartForeground(this, service.getInstance());
+                }
                 break;
             case androidx.media3.common.Player.STATE_ENDED: // 4
                 changeState(STATE_COMPLETED);
@@ -3196,7 +3198,8 @@ public final class Player implements
                 }
                 break;
             case ERROR_CODE_IO_UNSPECIFIED:
-                if (error.getCause().getMessage() != null && error.getCause().getMessage().contains("403")) {
+                if (error.getCause().getMessage() != null
+                        && error.getCause().getMessage().contains("Response code: 403")) {
                     try {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity())
                                 .setTitle(R.string.network_error)

@@ -3,6 +3,7 @@ package org.schabi.newpipe;
 import android.content.*;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -128,8 +129,12 @@ public class App extends MultiDexApplication {
         final String youtubePlayerClientKey = getString(R.string.youtube_player_client_key);
         final String[] youtubePlayerClients = getResources()
                 .getStringArray(R.array.youtube_player_client_values);
+        final boolean hasYouTubeLogin = !TextUtils.isEmpty(prefs.getString(
+                getString(R.string.youtube_cookies_key), null));
+        final String defaultYoutubePlayerClient = hasYouTubeLogin
+                ? "tv_downgraded" : "mweb";
         String youtubePlayerClient = prefs.getString(youtubePlayerClientKey,
-                youtubePlayerClients[0]);
+                defaultYoutubePlayerClient);
         boolean isYoutubePlayerClientValid = false;
         for (final String client : youtubePlayerClients) {
             if (client.equals(youtubePlayerClient)) {
@@ -138,7 +143,12 @@ public class App extends MultiDexApplication {
             }
         }
         if (!isYoutubePlayerClientValid) {
-            youtubePlayerClient = youtubePlayerClients[0];
+            youtubePlayerClient = defaultYoutubePlayerClient;
+            prefs.edit().putString(youtubePlayerClientKey, youtubePlayerClient).apply();
+        }
+        if (hasYouTubeLogin && ("android_vr".equals(youtubePlayerClient)
+                || "tv_simply".equals(youtubePlayerClient))) {
+            youtubePlayerClient = defaultYoutubePlayerClient;
             prefs.edit().putString(youtubePlayerClientKey, youtubePlayerClient).apply();
         }
         NewPipe.setYoutubePlayerClient(youtubePlayerClient);

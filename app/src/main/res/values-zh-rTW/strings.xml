@@ -803,7 +803,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在背景播放時自動隨機播放您的本地播放列表</string>
-<string name="update_log">此版本修復了導致 YouTube 影片無法正常播放的問題。\n\nYouTube 最近關閉了我們先前用來取得影片串流的所有方法，導致幾乎所有使用者（包含在設定中已登入 YouTube 的使用者）的影片與直播均無法正常觀看。經過緊急修復，我們目前已遷移至 YouTube 的全新 SABR 協定以恢復播放功能。\n\nYouTube 經常發生變動，因此請務必定期檢查更新，以確保所有功能皆能順暢運作。</string>
+<string name="update_log">此版本修復了導致 YouTube 影片無法正常播放的問題。\n\nYouTube 最近關閉了我們之前用來獲取影片串流的所有方法，導致幾乎所有使用者（包括在設定中登入 YouTube 的使用者）的影片和直播都無法播放。經過緊急修復，我們現在已遷移至 YouTube 新的 SABR 協定以恢復播放。\n\n5.2.2 版本新功能：我們加入了幾個備用的提取端點，作為使用者遇到 SABR 協定不穩定時的臨時解決方案。如果您無法穩定播放影片，請前往「設定」→「進階設定」→「YouTube 提取端點」，嘗試切換至不同的端點，看看是否能解決問題。\n\nYouTube 的變動非常頻繁，請務必定期檢查更新，以確保一切能順利運作。</string>
 <string name="speeding_playback_title">按住以加速播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這項計畫</string>

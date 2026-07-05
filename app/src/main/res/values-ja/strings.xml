@@ -770,7 +770,7 @@
 <string name="sponsor_promote">サポーターになる</string>
 <string name="random_play_order_title">ランダムな順序</string>
 <string name="random_play_order_summary">バックグラウンドで再生する際にローカルプレイリストを自動的にシャッフルします</string>
-<string name="update_log">このリリースでは、YouTube動画が正常に再生されない問題を修正しました。\n\nYouTubeは最近、動画ストリームを取得するために従来使用していたすべての方法を終了しました。これにより、設定でYouTubeにサインインしているユーザーを含め、ほぼすべてのユーザーで動画とライブ配信の両方が機能しなくなりました。緊急の修正対応を行い、再生を復旧するためにYouTubeの新しいSABRプロトコルへと移行しました。\n\nYouTubeは頻繁に変更されるため、すべてがスムーズに機能し続けるよう、定期的にアップデートを確認してください。</string>
+<string name="update_log">このリリースでは、YouTube動画が正常に再生されない問題が修正されています。\n\nYouTubeは最近、これまで動画ストリームの取得に使用していたすべてのメソッドをシャットダウンしました。これにより、設定でYouTubeにサインインしているユーザーを含む、ほぼすべてのユーザーで動画とライブストリームの両方が機能しなくなりました。緊急の修正を経て、現在はYouTubeの新しいSABRプロトコルに移行し、再生を復旧させました。\n\n5.2.2の新機能: SABRで動作が不安定になるユーザー向けの一時的な回避策として、いくつかのフォールバック抽出エンドポイントを追加しました。動画が安定して再生されない場合は、[設定] → [詳細設定] → [YouTube抽出エンドポイント] に移動し、別のエンドポイントに切り替えて問題が解決するかどうかお試しください。\n\nYouTubeの仕様は頻繁に変更されるため、すべてが引き続きスムーズに機能するように、定期的にアップデートを確認してください。</string>
 <string name="speeding_playback_title">長時間押は再生速度を速めることができます</string>
 <string name="view_on_github">GitHubで表示</string>
 <string name="donation_dialog_title">プロジェクトをサポートする</string>

@@ -72,6 +72,7 @@ public class AdvancedSettingsFragment extends BasePreferenceFragment implements 
         }
 
         updateAutoTranslatedSubtitlesPreferences();
+        updateYoutubePlayerClientPreference();
     }
     
     private void initializeAndroidAutoPreference() {
@@ -105,6 +106,7 @@ public class AdvancedSettingsFragment extends BasePreferenceFragment implements 
         } else if (key.equals(getString(R.string.youtube_cookies_key))
                 || key.equals(getString(R.string.show_auto_translated_subtitles_key))) {
             updateAutoTranslatedSubtitlesPreferences();
+            updateYoutubePlayerClientPreference();
             ServiceHelper.initServices(this.getContext());
         } else if (key.equals(getString(R.string.auto_translated_subtitles_language_key))) {
             ServiceHelper.initServices(this.getContext());
@@ -137,10 +139,39 @@ public class AdvancedSettingsFragment extends BasePreferenceFragment implements 
                 && autoTranslatedSubtitlesEnabled);
     }
 
+    private void updateYoutubePlayerClientPreference() {
+        final ListPreference preference = findPreference(
+                getString(R.string.youtube_player_client_key));
+        if (preference == null) {
+            return;
+        }
+        final boolean loggedIn = !TextUtils.isEmpty(defaultPreferences.getString(
+                getString(R.string.youtube_cookies_key), null));
+        final String[] entries = getResources().getStringArray(
+                R.array.youtube_player_client_entries);
+        final String[] values = getResources().getStringArray(
+                R.array.youtube_player_client_values);
+        if (loggedIn) {
+            preference.setEntries(new CharSequence[]{entries[0], entries[1], entries[2], entries[5]});
+            preference.setEntryValues(new CharSequence[]{values[0], values[1], values[2], values[5]});
+            final String selected = preference.getValue();
+            if ("android_vr".equals(selected) || "tv_simply".equals(selected)) {
+                preference.setValue("tv_downgraded");
+                defaultPreferences.edit().putString(
+                        getString(R.string.youtube_player_client_key), "tv_downgraded").apply();
+                NewPipe.setYoutubePlayerClient("tv_downgraded");
+            }
+        } else {
+            preference.setEntries(entries);
+            preference.setEntryValues(values);
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         updateAutoTranslatedSubtitlesPreferences();
+        updateYoutubePlayerClientPreference();
         getPreferenceManager().getSharedPreferences()
                 .registerOnSharedPreferenceChangeListener(this);
     }
