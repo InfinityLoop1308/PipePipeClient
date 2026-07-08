@@ -995,4 +995,5 @@ Voulez-vous continuer?</string>
 <string name="error_sabr_download_muxing">Impossible de multiplexer le média SABR</string>
 <string name="error_sabr_download_storage">Impossible d\'écrire le téléchargement SABR</string>
 <string name="error_sabr_download_protocol">Erreur de protocole SABR</string>
+<string name="webview_unavailable_youtube_hint">WebView indisponible. Veuillez vous assurer que la version de votre WebView est supérieure à 80.\n\nAndroid 6 et 10 : Mettez à jour Android WebView dans le Play Store.\nAndroid 7, 8, 9 : Mettez à jour Chrome dans le Play Store.\nAutres versions : Cela ne devrait pas se produire. Veuillez le signaler sur notre GitHub.</string>
 </resources>

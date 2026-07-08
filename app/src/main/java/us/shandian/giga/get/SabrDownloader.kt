@@ -8,7 +8,7 @@ import org.schabi.newpipe.extractor.services.youtube.sabr.SabrRecoverableExcepti
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrSegmentRequest
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
-import org.schabi.newpipe.player.datasource.WebViewPoTokenProvider
+import org.schabi.newpipe.player.datasource.LocalDomPoTokenProvider
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -94,7 +94,7 @@ internal class SabrDownloader(
             info,
             SabrDownloadFormatResolver.selectedAudioFormat(info, recoveries),
             SabrDownloadFormatResolver.selectedVideoFormat(info, recoveries),
-            WebViewPoTokenProvider(mission.context),
+            LocalDomPoTokenProvider(mission.context),
         )
         val workDir = prepareWorkDirectory()
         val targets = SabrDownloadFormatResolver.buildTargets(info, recoveries, workDir)
@@ -320,7 +320,7 @@ internal class SabrDownloader(
 
             val playerTimeMs = downloadPlayerTimeMs(session, targets)
             session.streamState.setPlayerTimeMs(playerTimeMs)
-            val segments = session.pumpOnce(localization)
+            val segmentCount = session.pumpOnceStreaming(localization)
             writer.observeWrittenInitializations()
             wroteSegment = writer.drainCachedInitializations() || wroteSegment
             wroteSegment = writer.drainCachedSegments() || wroteSegment
@@ -340,7 +340,7 @@ internal class SabrDownloader(
             if (isDownloadComplete(session, targets)) {
                 break
             }
-            if (wroteSegment || segments.isNotEmpty()) {
+            if (wroteSegment || segmentCount > 0) {
                 emptyResponses = 0
             } else {
                 emptyResponses++

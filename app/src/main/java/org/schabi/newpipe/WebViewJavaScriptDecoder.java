@@ -1,15 +1,9 @@
 package org.schabi.newpipe;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,14 +15,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,9 +40,8 @@ public final class WebViewJavaScriptDecoder implements YoutubeJavaScriptDecoder 
             "signatureTimestamp\\s*[:=]\\s*(\\d+)");
 
     private final Context context;
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final SharedWebViewRuntime runtime;
     private final SharedPreferences preferences;
-    private WebView webView;
     private boolean ready;
     private String loadedPlayerId;
     private String preparedPlayerId;
@@ -60,6 +49,7 @@ public final class WebViewJavaScriptDecoder implements YoutubeJavaScriptDecoder 
 
     public WebViewJavaScriptDecoder(final Context context) {
         this.context = context.getApplicationContext();
+        runtime = SharedWebViewRuntime.get(this.context);
         preferences = this.context.getSharedPreferences(
                 PLAYER_CACHE_PREFS, Context.MODE_PRIVATE);
     }
@@ -180,61 +170,31 @@ public final class WebViewJavaScriptDecoder implements YoutubeJavaScriptDecoder 
             return;
         }
         Log.i(TAG, "initializing V8");
-        final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicReference<Throwable> error = new AtomicReference<>();
-        mainHandler.post(() -> {
-            try {
-                createWebView(latch, error);
-            } catch (final Throwable e) {
-                error.set(e);
-                latch.countDown();
+        try {
+            runtime.ensureReady(TIMEOUT_MS, "V8 initialization");
+            runtime.evaluateJavascriptBlocking("if(!Object.hasOwn){Object.hasOwn=function(o,p){"
+                            + "return Object.prototype.hasOwnProperty.call(o,p)}};"
+                            + "if(!Array.prototype.at){Array.prototype.at=function(i){"
+                            + "i=Math.trunc(i)||0;if(i<0)i+=this.length;return this[i]}};"
+                            + loadAsset("ejs/yt.solver.lib.min.js")
+                            + ";var meriyah=lib.meriyah,astring=lib.astring;true",
+                    TIMEOUT_MS, "V8 library initialization");
+            final String value = runtime.evaluateJavascriptBlocking(
+                    loadAsset("ejs/yt.solver.core.min.js") + ";typeof jsc==='function'",
+                    TIMEOUT_MS, "V8 core initialization");
+            if (!"true".equals(value)) {
+                throw new ParsingException("EJS initialization returned " + value);
             }
-        });
-        await(latch, "V8 initialization");
-        if (error.get() != null) {
-            throw new ParsingException("Could not initialize WebView V8", error.get());
+            Log.i(TAG, "V8 initialized");
+        } catch (final ParsingException e) {
+            throw e;
+        } catch (final Exception e) {
+            throw new ParsingException("Could not initialize WebView V8", e);
         }
         ready = true;
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
-    private void createWebView(final CountDownLatch latch,
-                               final AtomicReference<Throwable> error) {
-        webView = new WebView(context);
-        final WebSettings settings = webView.getSettings();
-        settings.setJavaScriptEnabled(true);
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(final WebView view, final String url) {
-                Log.i(TAG, "V8 page loaded");
-                view.evaluateJavascript("if(!Object.hasOwn){Object.hasOwn=function(o,p){"
-                                + "return Object.prototype.hasOwnProperty.call(o,p)}};"
-                                + "if(!Array.prototype.at){Array.prototype.at=function(i){"
-                                + "i=Math.trunc(i)||0;if(i<0)i+=this.length;return this[i]}};"
-                                + loadAsset("ejs/yt.solver.lib.min.js")
-                                + ";var meriyah=lib.meriyah,astring=lib.astring;",
-                        ignored -> view.evaluateJavascript(
-                                loadAsset("ejs/yt.solver.core.min.js"),
-                                ignoredCore -> view.evaluateJavascript(
-                                        "typeof jsc==='function'", value -> {
-                                            if (!"true".equals(value)) {
-                                                error.set(new IllegalStateException(
-                                                        "EJS initialization returned " + value));
-                                            } else {
-                                                Log.i(TAG, "V8 initialized");
-                                            }
-                                            latch.countDown();
-                                        })));
-            }
-        });
-        webView.loadDataWithBaseURL("https://localhost/", "<html></html>",
-                "text/html", "UTF-8", null);
-    }
-
     private JSONObject evaluate(final JSONObject request) throws Exception {
-        final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicReference<String> result = new AtomicReference<>();
-        final AtomicReference<Throwable> error = new AtomicReference<>();
         final String script = "(function(i){try{var s=performance.now(),cold="
                 + "window.__ejsPlayerId!==i.playerId;if(cold){var r=jsc({type:'player',"
                 + "player:window.__ejsPlayer,requests:i.requests,output_preprocessed:true});"
@@ -249,23 +209,12 @@ public final class WebViewJavaScriptDecoder implements YoutubeJavaScriptDecoder 
                 + "ok:true,cold:cold,elapsedMs:Math.round(performance.now()-s),result:r})}catch(e){"
                 + "return JSON.stringify({ok:false,error:String(e),stack:e&&e.stack})}})("
                 + request + ")";
-        mainHandler.post(() -> webView.evaluateJavascript(script, value -> {
-            try {
-                if (value == null || "null".equals(value)) {
-                    throw new IllegalStateException("V8 returned null");
-                }
-                result.set(new JSONArray("[" + value + "]").getString(0));
-            } catch (final Throwable e) {
-                error.set(e);
-            } finally {
-                latch.countDown();
-            }
-        }));
-        await(latch, "V8 decoding");
-        if (error.get() != null) {
-            throw new ParsingException("Could not read V8 result", error.get());
+        final String value = runtime.evaluateJavascriptBlocking(script, TIMEOUT_MS,
+                "V8 decoding");
+        if (value == null || "null".equals(value)) {
+            throw new IllegalStateException("V8 returned null");
         }
-        final JSONObject wrapper = new JSONObject(result.get());
+        final JSONObject wrapper = new JSONObject(new JSONArray("[" + value + "]").getString(0));
         if (!wrapper.optBoolean("ok")) {
             throw new ParsingException("V8 error: " + wrapper.optString("error")
                     + "\n" + wrapper.optString("stack"));
@@ -287,19 +236,11 @@ public final class WebViewJavaScriptDecoder implements YoutubeJavaScriptDecoder 
     }
 
     private void evaluateRaw(final String script) throws Exception {
-        final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicReference<String> error = new AtomicReference<>();
-        mainHandler.post(() -> webView.evaluateJavascript(
+        final String value = runtime.evaluateJavascriptBlocking(
                 "(function(){try{" + script + ";return ''}catch(e){return String(e)}})()",
-                value -> {
-                    if (value != null && !"\"\"".equals(value)) {
-                        error.set(value);
-                    }
-                    latch.countDown();
-                }));
-        await(latch, "V8 player upload");
-        if (error.get() != null) {
-            throw new ParsingException("Could not upload player to V8: " + error.get());
+                TIMEOUT_MS, "V8 player upload");
+        if (value != null && !"\"\"".equals(value)) {
+            throw new ParsingException("Could not upload player to V8: " + value);
         }
     }
 
@@ -386,31 +327,7 @@ public final class WebViewJavaScriptDecoder implements YoutubeJavaScriptDecoder 
     }
 
     private String loadAsset(final String path) {
-        try (InputStream in = context.getAssets().open(path);
-             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            final byte[] buffer = new byte[8192];
-            int read;
-            while ((read = in.read(buffer)) != -1) {
-                out.write(buffer, 0, read);
-            }
-            return out.toString(StandardCharsets.UTF_8.name());
-        } catch (final Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private static void await(final CountDownLatch latch, final String operation)
-            throws ParsingException {
-        try {
-            if (!latch.await(TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
-                Log.e(TAG, operation + " timed out after " + TIMEOUT_MS + "ms");
-                throw new ParsingException(operation + " timed out");
-            }
-        } catch (final InterruptedException e) {
-            Thread.currentThread().interrupt();
-            Log.e(TAG, operation + " interrupted", e);
-            throw new ParsingException(operation + " interrupted", e);
-        }
+        return runtime.loadAsset(path);
     }
 
 }

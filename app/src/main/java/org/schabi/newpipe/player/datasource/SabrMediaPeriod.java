@@ -257,6 +257,7 @@ final class SabrMediaPeriod implements MediaPeriod,
     @Override
     public long seekToUs(final long positionUs) {
         holder.advanceReaderGeneration(this);
+        holder.requestSeek(positionUs / 1000L, localization);
         for (final ChunkSampleStream<SabrChunkSource> s : streams) {
             s.seekToUs(positionUs);
         }

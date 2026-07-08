@@ -39,12 +39,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Generates YouTube SABR PO tokens through YouTube's WebPoClient in a headless WebView, then hands
- * the session-bound token to the extractor's SABR session via {@link SabrPoTokenProvider}.
+ * Legacy YouTube-page WebPoClient SABR PO-token provider.
  *
- * <p>The provider blocks the calling (loading) thread on a latch while the WebView, driven on the
- * main thread, runs the pipeline. Tokens are cached for each video session for six hours.</p>
+ * <p>The app no longer calls this provider. Normal playback and download use
+ * {@link LocalDomPoTokenProvider}, which avoids loading the YouTube page and reuses the shared local
+ * JavaScript runtime. This class is kept only as a legacy fallback/debug reference for the old
+ * page-loaded WebPoClient pipeline.</p>
  */
+@Deprecated
 public final class WebViewPoTokenProvider implements SabrPoTokenProvider {
 
     private static final String TAG = "WebViewPoToken";
@@ -76,7 +78,6 @@ public final class WebViewPoTokenProvider implements SabrPoTokenProvider {
     // one lock per videoId so two callers (pre-warm + pump) don't both fire the ~45s WebView mint
     // for the same video. second one just waits and takes the cached token.
     private final Map<String, Object> mintLocks = new ConcurrentHashMap<>();
-
     public WebViewPoTokenProvider(final Context context) {
         this.appContext = context.getApplicationContext();
         this.mainHandler = new Handler(Looper.getMainLooper());

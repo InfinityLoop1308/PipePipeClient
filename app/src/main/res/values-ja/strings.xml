@@ -1001,4 +1001,5 @@
 <string name="error_sabr_download_muxing">SABRメディアを多重化できませんでした</string>
 <string name="error_sabr_download_storage">SABRのダウンロードを書き込めませんでした</string>
 <string name="error_sabr_download_protocol">SABRプロトコルエラー</string>
+<string name="webview_unavailable_youtube_hint">WebViewが利用できません。WebViewのバージョンが80以上であることを確認してください。\n\nAndroid 6 および 10: PlayストアでAndroid WebViewを更新してください。\nAndroid 7、8、9: PlayストアでChromeを更新してください。\nその他のバージョン: 通常この問題は発生しません。GitHubにてご報告ください。</string>
 </resources>

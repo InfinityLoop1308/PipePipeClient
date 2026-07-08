@@ -1087,4 +1087,5 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="error_sabr_download_muxing">Không thể mux phương tiện SABR</string>
 <string name="error_sabr_download_storage">Không thể ghi dữ liệu tải xuống SABR</string>
 <string name="error_sabr_download_protocol">Lỗi giao thức SABR</string>
+<string name="webview_unavailable_youtube_hint">WebView không khả dụng. Vui lòng đảm bảo phiên bản WebView của bạn cao hơn 80.\n\nAndroid 6 và 10: Cập nhật Android WebView trên Play Store.\nAndroid 7, 8, 9: Cập nhật Chrome trên Play Store.\nCác phiên bản khác: Điều này đáng lẽ không nên xảy ra. Vui lòng báo cáo sự cố trên GitHub của chúng tôi.</string>
 </resources>

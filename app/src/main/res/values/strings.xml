@@ -1078,4 +1078,5 @@
 <string name="use_dns_over_https_fallback_title">Use DNS over HTTPS fallback</string>
 <string name="use_dns_over_https_fallback_summary">Retry failed system DNS lookups using Cloudflare DNS over HTTPS. Changing this will restart the app.</string>
 <string name="youtube_player_client_title">YouTube extraction endpoint</string>
+<string name="webview_unavailable_youtube_hint">WebView unavailable. Please make sure your WebView version is higher than 80.\n\nAndroid 6 and 10: Update Android WebView in Play Store.\nAndroid 7, 8, 9: Update Chrome in Play Store.\nOther versions: This should not happen. Please report it on our GitHub.</string>
 </resources>

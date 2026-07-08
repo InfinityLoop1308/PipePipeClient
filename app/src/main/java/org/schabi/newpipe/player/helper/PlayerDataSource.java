@@ -86,6 +86,11 @@ public class PlayerDataSource {
 
     private NicoWebSocketClient nicoWebSocketClient;
 
+    /** Clear only downloaded media while retaining fetched extractor responses in memory. */
+    public static void clearMediaCacheForBenchmark() throws IOException {
+        CacheFactory.clearMediaCache();
+    }
+
     public PlayerDataSource(@NonNull final Context context,
                             @NonNull final String userAgent,
                             @NonNull final TransferListener transferListener) {

@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.localization.ContentCountry;
 import org.schabi.newpipe.extractor.localization.Localization;
+import org.schabi.newpipe.extractor.services.youtube.sabr.SabrPoTokenProvider;
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrSegmentRequest;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrClientProfile;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat;
@@ -41,21 +42,21 @@ public final class SabrSessionStore {
     // Mutated only under the class lock.
     private static final int MAX_SESSIONS = 3;
     private static final java.util.Deque<String> ORDER = new java.util.ArrayDeque<>();
-    // Shared across videos so the PO-token cache (videoId-keyed, ~6h) is reused and a single
-    // WebView is held instead of one per video.
-    private static volatile WebViewPoTokenProvider sharedProvider;
+    // Shared across videos so the PO-token cache (videoId-keyed, ~6h), BotGuard minter, and shared
+    // WebView runtime are reused instead of reinitialized per video.
+    private static volatile LocalDomPoTokenProvider sharedProvider;
 
     private SabrSessionStore() {
     }
 
     @NonNull
-    private static WebViewPoTokenProvider provider(@NonNull final Context context) {
-        WebViewPoTokenProvider p = sharedProvider;
+    private static LocalDomPoTokenProvider provider(@NonNull final Context context) {
+        LocalDomPoTokenProvider p = sharedProvider;
         if (p == null) {
             synchronized (SabrSessionStore.class) {
                 p = sharedProvider;
                 if (p == null) {
-                    p = new WebViewPoTokenProvider(context.getApplicationContext());
+                    p = new LocalDomPoTokenProvider(context.getApplicationContext());
                     sharedProvider = p;
                 }
             }
@@ -88,7 +89,6 @@ public final class SabrSessionStore {
         private Object readerOwner;
         private long readerGeneration;
         private volatile SabrStreamPump pump;
-        private volatile Thread warmThread;
         private volatile boolean invalidated;
         private volatile String stopReason;
         private volatile SabrLogicException terminalFailure;
@@ -178,6 +178,49 @@ public final class SabrSessionStore {
             return readerOwner == owner ? readerGeneration : -1;
         }
 
+        synchronized boolean isReaderGenerationActive(@NonNull final Object owner,
+                                                      final long generation) {
+            return readerOwner == owner && readerGeneration == generation;
+        }
+
+        private synchronized void anchorReaderPositionMs(final long positionMs) {
+            if (readerOwner == null || activeReaderItags.isEmpty()) {
+                return;
+            }
+            for (final int itag : activeReaderItags) {
+                readerPositions.put(itag, positionMs);
+            }
+        }
+
+        void requestSeek(final long positionMs, @NonNull final Localization localization) {
+            final long previousPlayerTimeMs = playerTimeMs;
+            final boolean backward = positionMs < previousPlayerTimeMs;
+            setPlayerTimeMs(positionMs);
+            anchorReaderPositionMs(positionMs);
+            session.getStreamState().setSelectVideoFormatBeforeAudio(positionMs > 1_000);
+            if (positionMs <= 1_000 && previousPlayerTimeMs <= 1_000) {
+                return;
+            }
+            // Video segment boundaries are the seek timeline's sync points. Always notify the pump:
+            // Media3 can seek inside its sample queue without blocking on a missing SABR segment, but
+            // the server session still has to drop the old read-ahead span and continue from the new
+            // play head instead of filling bytes the user skipped over.
+            final YoutubeSabrFormat targetFormat = videoFormat;
+            final int sequence = session.getStreamState()
+                    .getSegmentNumberAtOrAfterTimeMs(targetFormat, positionMs);
+            final SabrSegmentRequest request = SabrSegmentRequest.media(targetFormat, sequence);
+            final int audioSequence = session.getStreamState()
+                    .getSegmentNumberAtOrAfterTimeMs(audioFormat, positionMs);
+            final SabrSegmentRequest audioRequest = SabrSegmentRequest.media(
+                    audioFormat, audioSequence);
+            if (session.getCachedSegment(request) == null
+                    || session.getCachedSegment(audioRequest) == null) {
+                getPump(localization).requestSeekTo(request, backward, positionMs);
+            } else {
+                getPump(localization).noteSeekWithinCache();
+            }
+        }
+
         private synchronized boolean hasActiveTracks() {
             return !activeTrackModes.isEmpty();
         }
@@ -253,6 +296,18 @@ public final class SabrSessionStore {
             return tail == Long.MAX_VALUE ? 0 : tail;
         }
 
+        public boolean hasUnstartedActiveReader() {
+            if (activeReaderItags.isEmpty()) {
+                return false;
+            }
+            for (final int itag : activeReaderItags) {
+                if (!readerPositions.containsKey(itag)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         /** Lazily create the single background pump that feeds both data sources for this video. */
         synchronized SabrStreamPump getPump(@NonNull final Localization localization) {
             if (pump == null) {
@@ -282,20 +337,9 @@ public final class SabrSessionStore {
             }
         }
 
-        void setWarmThread(@NonNull final Thread warmThread) {
-            this.warmThread = warmThread;
-        }
-
-        void clearWarmThread(final Thread thread) {
-            if (warmThread == thread) {
-                warmThread = null;
-            }
-        }
-
         void stop(@NonNull final String reason) {
             Log.w(TAG, "stop video=" + videoId + " reason=" + reason
                     + " refs=" + sourceReferences.get() + " activeTracks=" + hasActiveTracks()
-                    + " warm=" + (warmThread == null ? "none" : warmThread.getState())
                     + " pump=" + (pump == null ? "none" : pump.getStateName()));
             stopReason = reason;
             session.addDiagnosticEvent("session_stop reason=" + reason
@@ -307,10 +351,6 @@ public final class SabrSessionStore {
                 readerGeneration++;
                 readerPositions.clear();
                 applyActiveTracks();
-            }
-            final Thread warm = warmThread;
-            if (warm != null && warm != Thread.currentThread()) {
-                warm.interrupt();
             }
             final SabrStreamPump streamPump = pump;
             pump = null;
@@ -423,47 +463,43 @@ public final class SabrSessionStore {
             if (audioFormat == null || videoFormat == null) {
                 throw new IOException("SABR: could not select audio/video formats for " + videoId);
             }
-            final WebViewPoTokenProvider provider = provider(context);
+            final LocalDomPoTokenProvider provider = provider(context);
             final YoutubeSabrSession session =
                     new YoutubeSabrSession(info, audioFormat, videoFormat, provider);
+            attachPoToken(videoId, info, provider, session);
             final Holder holder = new Holder(videoId, info, session, audioFormat, videoFormat);
             SESSIONS.put(videoId, holder);
             ORDER.remove(videoId);
             ORDER.addLast(videoId);
             trimSessions(videoId);
-            // Pre-warm the PO token off-thread so the ~45s WebView mint overlaps the initial probe
-            // and buffering instead of stalling the pump on its first protected response.
-            final Thread warm = new Thread(() -> {
-                try {
-                    if (Thread.currentThread().isInterrupted() || !isCurrentHolder(videoId, holder)) {
-                        return;
-                    }
-                    final byte[] token = provider.getPoToken(info, session.getStreamState());
-                    session.addDiagnosticEvent("token_prewarm bytes="
-                            + (token == null ? -1 : token.length));
-                } catch (final Exception e) {
-                    if (Thread.currentThread().isInterrupted()) {
-                        Log.i(TAG, "PO token prewarm canceled video=" + videoId
-                                + " current=" + isCurrentHolder(videoId, holder)
-                                + " message=" + e.getMessage());
-                        session.addDiagnosticEvent("token_prewarm_canceled current="
-                                + isCurrentHolder(videoId, holder) + " message=" + e.getMessage());
-                        return;
-                    }
-                    Log.w(TAG, "PO token prewarm failed video=" + videoId, e);
-                    session.addDiagnosticEvent("token_prewarm_failed type="
-                            + e.getClass().getSimpleName() + " message=" + e.getMessage());
-                    holder.failTerminal(new SabrLogicException(
-                            "SABR PO token prewarm failed for video=" + videoId
-                                    + ": " + e.getMessage(), e));
-                } finally {
-                    holder.clearWarmThread(Thread.currentThread());
-                }
-            }, "SabrTokenPrewarm");
-            warm.setDaemon(true);
-            holder.setWarmThread(warm);
-            warm.start();
             return holder;
+        }
+    }
+
+    private static void attachPoToken(@NonNull final String videoId,
+                                      @NonNull final YoutubeSabrInfo info,
+                                      @NonNull final SabrPoTokenProvider provider,
+                                      @NonNull final YoutubeSabrSession session)
+            throws IOException, ExtractionException {
+        try {
+            final byte[] token = provider.getPoToken(info, session.getStreamState());
+            if (token == null || token.length == 0) {
+                throw new SabrLogicException("SABR PO token provider returned no token for video="
+                        + videoId);
+            }
+            session.getStreamState().setPoToken(token);
+            session.addDiagnosticEvent("token_attach bytes="
+                    + token.length);
+        } catch (final IOException | ExtractionException e) {
+            Log.w(TAG, "PO token attach failed video=" + videoId, e);
+            session.addDiagnosticEvent("token_attach_failed type="
+                    + e.getClass().getSimpleName() + " message=" + e.getMessage());
+            throw e;
+        } catch (final RuntimeException e) {
+            Log.w(TAG, "PO token attach failed video=" + videoId, e);
+            session.addDiagnosticEvent("token_attach_failed type="
+                    + e.getClass().getSimpleName() + " message=" + e.getMessage());
+            throw new SabrLogicException("SABR PO token attach failed for video=" + videoId, e);
         }
     }
 
@@ -608,10 +644,5 @@ public final class SabrSessionStore {
         if (holder != null) {
             holder.stop(reason);
         }
-    }
-
-    private static boolean isCurrentHolder(@NonNull final String videoId,
-                                           @NonNull final Holder holder) {
-        return SESSIONS.get(videoId) == holder;
     }
 }

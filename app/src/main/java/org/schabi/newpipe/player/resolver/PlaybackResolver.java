@@ -52,7 +52,7 @@ import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.localization.Localization;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
-import org.schabi.newpipe.player.datasource.SabrMediaSource;
+import org.schabi.newpipe.player.datasource.SabrDashMediaSource;
 import org.schabi.newpipe.player.datasource.SabrSessionStore;
 
 import androidx.annotation.NonNull;
@@ -487,7 +487,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                 .setUri(Uri.parse("sabr://" + videoId))
                 .setCustomCacheKey(cacheKey)
                 .build();
-        return new SabrMediaSource(mediaItem, holder, new Localization("en", "US"));
+        return new SabrDashMediaSource(mediaItem, holder, new Localization("en", "US"));
     }
 
     @Nullable

@@ -1042,4 +1042,5 @@
 <string name="error_sabr_download_muxing">无法复用SABR媒体</string>
 <string name="error_sabr_download_storage">无法写入SABR下载内容</string>
 <string name="error_sabr_download_protocol">SABR协议错误</string>
+<string name="webview_unavailable_youtube_hint">WebView 不可用。请确保 WebView 版本高于 80。\n\nAndroid 6 和 10：请在 Play Store 更新 Android WebView。\nAndroid 7、8、9：请在 Play Store 更新 Chrome。\n其他版本：这不应该发生，请到我们的 GitHub 反馈。</string>
 </resources>

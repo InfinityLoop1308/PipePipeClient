@@ -2,6 +2,7 @@ package us.shandian.giga.get
 
 import org.schabi.newpipe.extractor.localization.Localization
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrMediaSegment
+import org.schabi.newpipe.extractor.services.youtube.sabr.SabrProtocolException
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrSegmentRequest
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
 import java.io.IOException
@@ -81,12 +82,28 @@ internal class SabrSegmentWriter(
                 continue
             }
             val request = SabrSegmentRequest.initialization(target.format)
-            val segment = session.fetchSegment(request, localization)
-            writeInitializationSegment(target, outputs.getValue(target.resourceIndex), segment.data)
-            session.discardCachedSegment(request)
+            val data = try {
+                val segment = session.fetchSegment(request, localization)
+                session.discardCachedSegment(request)
+                segment.data
+            } catch (error: SabrProtocolException) {
+                fetchInitializationFallback(target, localization, error)
+            }
+            writeInitializationSegment(target, outputs.getValue(target.resourceIndex), data)
             wroteInitialization = true
         }
         return wroteInitialization
+    }
+
+    private fun fetchInitializationFallback(
+        target: SabrDownloadTarget,
+        localization: Localization,
+        sabrFailure: Exception,
+    ): ByteArray = try {
+        session.fetchInitializationDataFallback(target.format, localization)
+    } catch (fallbackFailure: IOException) {
+        sabrFailure.addSuppressed(fallbackFailure)
+        throw sabrFailure
     }
 
     @Throws(IOException::class)

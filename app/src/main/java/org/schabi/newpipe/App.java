@@ -114,6 +114,10 @@ public class App extends MultiDexApplication {
         NewPipe.init(getDownloader(),
             Localization.getPreferredLocalization(this),
             Localization.getPreferredContentCountry(this));
+        final AndroidWebViewAvailabilityChecker webViewAvailabilityChecker =
+                new AndroidWebViewAvailabilityChecker(this);
+        NewPipe.setWebViewAvailabilityChecker(webViewAvailabilityChecker);
+        webViewAvailabilityChecker.warmUp();
         final WebViewJavaScriptDecoder decoder = new WebViewJavaScriptDecoder(this);
         YoutubeApiDecoder.setLocalDecoder(decoder);
 

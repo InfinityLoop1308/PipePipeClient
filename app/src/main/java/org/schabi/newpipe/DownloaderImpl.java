@@ -26,6 +26,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.UnknownHostException;
@@ -54,6 +55,8 @@ public final class DownloaderImpl extends Downloader {
     private final OkHttpClient client;
     private final boolean dnsOverHttpsFallbackEnabled;
     private Integer customTimeout;
+    @Nullable
+    private volatile YoutubePlayerResponseCache youtubePlayerResponseCache;
 
     private DownloaderImpl(final OkHttpClient.Builder builder,
                            final boolean dnsOverHttpsFallbackEnabled) {
@@ -126,6 +129,17 @@ public final class DownloaderImpl extends Downloader {
     public boolean isDnsOverHttpsFallbackEnabled() {
         return dnsOverHttpsFallbackEnabled;
     }
+
+    /**
+     * Enable a persistent player-response cache for playback benchmarks. A missing response is
+     * fetched and stored; existing entries are only overwritten when {@code replace} is true.
+     */
+    public void configureYoutubePlayerResponseCacheForBenchmark(
+            @Nullable final File directory, final boolean replace) {
+        youtubePlayerResponseCache = directory == null
+                ? null : new YoutubePlayerResponseCache(directory, replace);
+    }
+
     public DownloaderImpl setCustomTimeout(final Integer value) {
         this.customTimeout = value;
         return this;
@@ -364,24 +378,42 @@ public final class DownloaderImpl extends Downloader {
      * was OOM-ing the 512MB heap). Mirrors execute()'s request building; caller closes the result.
      */
     @Override
+    public StreamingResponse getStreaming(final String url,
+                                          @Nullable final Map<String, List<String>> headers,
+                                          @Nullable final Localization localization)
+            throws IOException, ReCaptchaException {
+        return executeStreaming(Request.newBuilder().get(url).headers(headers)
+                .localization(localization).build());
+    }
+
+    @Override
     public StreamingResponse postStreaming(final String url,
                                            @Nullable final Map<String, List<String>> headers,
                                            @Nullable final byte[] dataToSend,
                                            @Nullable final Localization localization)
             throws IOException, ReCaptchaException {
-        final Map<String, List<String>> hdrs = headers == null ? Collections.emptyMap() : headers;
-        final RequestBody requestBody = RequestBody.create(null,
-                dataToSend == null ? new byte[0] : dataToSend);
+        return executeStreaming(Request.newBuilder().post(url, dataToSend).headers(headers)
+                .localization(localization).build());
+    }
+
+    private StreamingResponse executeStreaming(@NonNull final Request request)
+            throws IOException, ReCaptchaException {
+        final String url = request.url();
+        final Map<String, List<String>> headers = request.headers();
+        final byte[] data = request.dataToSend();
+        final RequestBody requestBody = data == null
+                ? ("POST".equals(request.httpMethod()) ? RequestBody.create(null, new byte[0]) : null)
+                : RequestBody.create(null, data);
         final okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder()
-                .method("POST", requestBody).url(url);
-        if (!hdrs.containsKey("User-Agent")) {
+                .method(request.httpMethod(), requestBody).url(url);
+        if (!headers.containsKey("User-Agent")) {
             requestBuilder.header("User-Agent", USER_AGENT);
         }
         final String cookies = getCookies(url);
-        if (!hdrs.containsKey("Cookie") && !cookies.isEmpty()) {
+        if (!headers.containsKey("Cookie") && !cookies.isEmpty()) {
             requestBuilder.header("Cookie", cookies);
         }
-        for (final Map.Entry<String, List<String>> pair : hdrs.entrySet()) {
+        for (final Map.Entry<String, List<String>> pair : headers.entrySet()) {
             final List<String> values = pair.getValue();
             if (values.size() > 1) {
                 requestBuilder.removeHeader(pair.getKey());
@@ -450,8 +482,23 @@ public final class DownloaderImpl extends Downloader {
             tmpClient = builder.build();
         }
 
-        Call call = tmpClient.newCall(requestBuilder.build());
-        CancellableCall cancellableCall = new CancellableCall(call);
+        final Call call = tmpClient.newCall(requestBuilder.build());
+        final CancellableCall cancellableCall = new CancellableCall(call);
+        final YoutubePlayerResponseCache responseCache = youtubePlayerResponseCache;
+        if (responseCache != null && responseCache.handles(url)) {
+            final byte[] cachedBody = responseCache.read(url, headers, dataToSend);
+            if (cachedBody != null) {
+                try {
+                    callback.onSuccess(new Response(200, "OK", Collections.emptyMap(),
+                            new String(cachedBody, StandardCharsets.UTF_8), cachedBody, url));
+                } catch (final Exception e) {
+                    callback.onError(e);
+                } finally {
+                    cancellableCall.setFinished();
+                }
+                return cancellableCall;
+            }
+        }
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -477,6 +524,11 @@ public final class DownloaderImpl extends Downloader {
                     if (body != null) {
                         rawBodyBytes = body.bytes();
                         responseBodyToReturn = new String(rawBodyBytes, StandardCharsets.UTF_8);
+                    }
+
+                    if (responseCache != null && responseCache.handles(url)
+                            && response.isSuccessful() && rawBodyBytes != null) {
+                        responseCache.write(url, headers, dataToSend, rawBodyBytes);
                     }
 
                     String latestUrl = response.request().url().toString();

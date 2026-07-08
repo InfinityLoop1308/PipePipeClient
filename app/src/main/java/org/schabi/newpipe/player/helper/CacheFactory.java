@@ -22,6 +22,7 @@ import org.schabi.newpipe.player.datasource.YoutubeHttpDataSource;
 import org.schabi.newpipe.DownloaderImpl;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 
 /* package-private */ final class CacheFactory implements DataSource.Factory {
@@ -135,6 +136,16 @@ import java.lang.reflect.Method;
             method.invoke(null, cacheDir);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /** Clears media entries without destroying the process; used by cold-cache benchmarks. */
+    static synchronized void clearMediaCache() throws IOException {
+        if (cache == null) {
+            return;
+        }
+        for (final String key : new java.util.HashSet<>(cache.getKeys())) {
+            cache.removeResource(key);
         }
     }
 }
