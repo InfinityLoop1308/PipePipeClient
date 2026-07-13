@@ -1041,6 +1041,17 @@
     <string name="duration">Długość</string>
     <string name="license">Licencja</string>
     <string name="published">Opublikowano</string>
+    <string name="disable_exoplayer_media_codec_async_queueing_title">Wyłącz asynchroniczne kolejkowanie MediaCodec</string>
+    <string name="disable_exoplayer_media_codec_async_queueing_summary">Obejście problemu spowodowanego przez asynchroniczne kolejkowanie MediaCodec na niektórych urządzeniach. Włączenie tego może zwiększyć kompatybilmość, ale może zmnniejszyć wydajność odtwarzania.</string>
+    <string name="media_codec_workaround_hint_title">Odtwarzanie MediaCodec nieudane</string>
+    <string name="media_codec_async_workaround_hint">To niepowodzenie może być spowodowane przez asynchroniczne kolejkowanie MediaCodec. Spróbuj włączyć \"Wyłącz asynchroniczne kolejkowanie MediaCodec\" w ustawieniach ExoPlayer, potem zrestartuj odtwarzanie.</string>
+    <string name="media_codec_surface_workaround_hint">To niepowodzenie może być spowodowane podczas zmieniania powierzchni wyjścia wideo. Spróbuj włączyć \"Zawsze używaj obejścia ustawiania powierzchni wideo ExoPlayer\'a\" w ustawieniach ExoPlayer, następnie zrestartuj odtwarzanie.</string>
+    <string name="search_inside_channel">Szukaj w %s</string>
+    <string name="show_auto_translated_subtitles_title">Pokaż automatycznie tłumaczone napisy</string>
+    <string name="show_auto_translated_subtitles_summary">Pokazuj napisy tłumaczone automatycznie YouTube. Wymaga zalogowania na YouTube.</string>
+    <string name="show_auto_translated_subtitles_login_required_summary">Wyłączone poniważ wymagane jest zalogowanie na YouTube dla automatycznie tłumaczonych napisów.</string>
+    <string name="auto_translated_subtitles_language_title">Automatycznie tłumacz napisy do</string>
+    <string name="settings_category_other_platforms_title">Inne platformy</string>
     <string name="export_data_to_newpipe_title">Eksportuj do NewPipe</string>
     <string name="export_data_to_newpipe_summary">Eksportuj kopię zapasową do formatu kompatybilnego z NewPipe</string>
     <string name="settings_category_other_platforms_title">Inne platformy</string>
