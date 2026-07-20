@@ -170,6 +170,19 @@ public final class DeviceUtils {
                 & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 
+    /**
+     * Whether the system ignores {@link android.app.Activity#setRequestedOrientation(int)}.
+     *
+     * <p>Since Android 12L, devices with a display at least 600dp wide (tablets, unfolded
+     * foldables) may ignore fixed-orientation requests; since Android 16 with targetSdk 36
+     * this is guaranteed. On such screens fullscreen has to be toggled without trying to
+     * change the screen orientation.</p>
+     */
+    public static boolean isOrientationRequestIgnored(@NonNull final Context context) {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S_V2
+                && context.getResources().getConfiguration().smallestScreenWidthDp >= 600;
+    }
+
     public static boolean isConfirmKey(final int keyCode) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_DPAD_CENTER:

@@ -5002,6 +5002,9 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                 && service.isLandscape() == isVerticalVideo
                 && !DeviceUtils.isTv(context)
                 && !DeviceUtils.isTablet(context)
+                // can't rotate large screens programmatically, and with the
+                // fallback to toggleFullscreen() this would exit fullscreen
+                && !DeviceUtils.isOrientationRequestIgnored(context)
                 && fragmentListener != null) {
             // set correct orientation
             fragmentListener.onScreenRotationButtonClicked();

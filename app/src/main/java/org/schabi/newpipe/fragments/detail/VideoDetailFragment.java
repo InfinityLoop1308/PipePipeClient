@@ -263,8 +263,10 @@ public final class VideoDetailFragment
             // let's make the video in fullscreen again
             checkLandscape();
         } else if (player.isFullscreen() && !player.isVerticalVideo()
-                // Tablet UI has orientation-independent fullscreen
-                && !DeviceUtils.isTablet(activity)) {
+                // Tablet UI has orientation-independent fullscreen,
+                // large screens can't be rotated programmatically anyway
+                && !DeviceUtils.isTablet(activity)
+                && !DeviceUtils.isOrientationRequestIgnored(activity)) {
             // Device is in portrait orientation after rotation but UI is in fullscreen.
             // Return back to non-fullscreen state
             player.toggleFullscreen();
@@ -2286,13 +2288,17 @@ public final class VideoDetailFragment
         final boolean isTablet    = DeviceUtils.isTablet(activity);
         final boolean autoLocked  = globalScreenOrientationLocked(activity);
 
-        // 1. 平板且（系统可自动旋转 或 当前已横），直接切播放器全屏/非全屏
-        if (isTablet && (!autoLocked || isLandscape)) {
+        // 1. Tablet with auto-rotate enabled (or already in landscape): toggle player
+        // fullscreen directly. On large screens (sw >= 600dp, e.g. unfolded foldables)
+        // the system ignores setRequestedOrientation(), so rotating programmatically
+        // is impossible — toggle fullscreen directly there as well
+        if (isTablet && (!autoLocked || isLandscape)
+                || DeviceUtils.isOrientationRequestIgnored(requireContext())) {
             player.toggleFullscreen();
             return;
         }
 
-        // 2. 手机 or 平板但系统锁定了自动旋转，就去真正设置屏幕方向
+        // 2. Phone (or tablet with auto-rotate locked): actually change screen orientation
         if (!autoLocked) {
             if (isLandscape) {
                 player.toggleFullscreen();
@@ -2300,7 +2306,7 @@ public final class VideoDetailFragment
                 activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
             }
         } else {
-            // 系统锁定时，再用“强制模式”来切
+            // Auto-rotate is locked, force the orientation change
             activity.setRequestedOrientation(
                     isLandscape
                             ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
