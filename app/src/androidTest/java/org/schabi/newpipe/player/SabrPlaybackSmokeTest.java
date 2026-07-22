@@ -11,7 +11,10 @@ import static org.junit.Assume.assumeTrue;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
+import android.media.MediaCodecInfo;
+import android.media.MediaCodecList;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.service.notification.StatusBarNotification;
@@ -32,6 +35,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.schabi.newpipe.App;
@@ -46,10 +50,18 @@ import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.localization.ContentCountry;
 import org.schabi.newpipe.extractor.localization.Localization;
+import org.schabi.newpipe.extractor.services.youtube.sabr.ProfiledSabrSessionPolicy;
+import org.schabi.newpipe.extractor.services.youtube.sabr.SabrCompatibilityProfileClient;
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrMediaSegment;
+import org.schabi.newpipe.extractor.services.youtube.sabr.SabrProfileRecovery;
+import org.schabi.newpipe.extractor.services.youtube.sabr.SabrProfileRequestField;
+import org.schabi.newpipe.extractor.services.youtube.sabr.SabrProfileResponseMapping;
+import org.schabi.newpipe.extractor.services.youtube.sabr.SabrProfileRule;
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrRequestDumper;
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrResponseDecoder;
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrSegmentRequest;
+import org.schabi.newpipe.extractor.services.youtube.sabr.SabrSessionPolicyHost;
+import org.schabi.newpipe.extractor.services.youtube.sabr.SabrSessionPolicyTranscript;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrClientProfile;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
@@ -59,6 +71,8 @@ import org.schabi.newpipe.extractor.stream.DeliveryMethod;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.player.datasource.SabrDashMediaSource;
+import org.schabi.newpipe.player.datasource.SabrProfileTestDocuments;
+import org.schabi.newpipe.player.datasource.SabrPolicyRuntime;
 import org.schabi.newpipe.player.datasource.SabrSegmentDataSource;
 import org.schabi.newpipe.player.helper.LegacySubtitleRenderersFactory;
 import org.schabi.newpipe.player.helper.LoadController;
@@ -79,6 +93,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -92,6 +107,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.zip.GZIPOutputStream;
 
@@ -125,10 +141,64 @@ public final class SabrPlaybackSmokeTest {
     private static final long DEFAULT_POST_REWIND_PLAYBACK_MS = 30_000;
     private static final long PREPARE_TIMEOUT_SECONDS = 150;
     private static final long PLAYBACK_TIMEOUT_SECONDS = 75;
+    private static final String ONLINE_PROFILE_CHANNEL = "online-smoke";
+    private static final String ONLINE_FALLBACK_CHANNEL = "online-fallback";
+    private static final String PARTIAL_PROFILE_CHANNEL = "partial-profile";
+    private static final long ONLINE_PROFILE_REVISION = 1;
 
     @Test
     public void extractorToMedia3PlaysAndSeeks() throws Exception {
         runSmokeCase(SmokeCase.playback());
+    }
+
+    @Test
+    public void signedCompatibilityProfilePlaysAndSeeks() throws Exception {
+        final Context context = InstrumentationRegistry.getInstrumentation()
+                .getTargetContext().getApplicationContext();
+        final Ed25519PrivateKeyParameters key =
+                new Ed25519PrivateKeyParameters(new SecureRandom());
+        final String publicKey = "online=" + java.util.Base64.getEncoder().encodeToString(
+                key.generatePublicKey().getEncoded());
+        final long now = System.currentTimeMillis();
+        clearProfileChannel(context, ONLINE_PROFILE_CHANNEL);
+        SabrPolicyRuntime.initialize(context, publicKey, ONLINE_PROFILE_CHANNEL, 0);
+        SabrPolicyRuntime.installDocument(SabrProfileTestDocuments.signed(
+                ONLINE_PROFILE_REVISION, now, "online", key, true), now);
+        SabrPolicyRuntime.setBenchmarkPolicyMode(SabrPolicyRuntime.BenchmarkPolicyMode.PROFILE);
+        try {
+            assertEquals(ONLINE_PROFILE_REVISION, SabrPolicyRuntime.currentRevision());
+            runSmokeCase(SmokeCase.playback());
+            assertEquals("The signed profile was disabled and playback fell back to builtin",
+                    ONLINE_PROFILE_REVISION, SabrPolicyRuntime.currentRevision());
+        } finally {
+            SabrPolicyRuntime.setBenchmarkPolicyMode(SabrPolicyRuntime.BenchmarkPolicyMode.AUTO);
+            SabrPolicyRuntime.initialize(context, "", ONLINE_PROFILE_CHANNEL, 0);
+            clearProfileChannel(context, ONLINE_PROFILE_CHANNEL);
+        }
+    }
+
+    @Test
+    public void signedBrokenProfileFallsBackToBuiltin() throws Exception {
+        final Context context = InstrumentationRegistry.getInstrumentation()
+                .getTargetContext().getApplicationContext();
+        final Ed25519PrivateKeyParameters key =
+                new Ed25519PrivateKeyParameters(new SecureRandom());
+        final String publicKey = "online=" + java.util.Base64.getEncoder().encodeToString(
+                key.generatePublicKey().getEncoded());
+        final long now = System.currentTimeMillis();
+        clearProfileChannel(context, ONLINE_FALLBACK_CHANNEL);
+        SabrPolicyRuntime.initialize(context, publicKey, ONLINE_FALLBACK_CHANNEL, 0);
+        SabrPolicyRuntime.installDocument(SabrProfileTestDocuments.signedWithFailingMediaMapping(
+                ONLINE_PROFILE_REVISION, now, "online", key), now);
+        try {
+            assertEquals(ONLINE_PROFILE_REVISION, SabrPolicyRuntime.currentRevision());
+            runSmokeCase(SmokeCase.playback());
+            assertEquals("The broken signed profile remained active",
+                    -1, SabrPolicyRuntime.currentRevision());
+        } finally {
+            SabrPolicyRuntime.initialize(context, "", ONLINE_FALLBACK_CHANNEL, 0);
+            clearProfileChannel(context, ONLINE_FALLBACK_CHANNEL);
+        }
     }
 
     @Test
@@ -159,6 +229,84 @@ public final class SabrPlaybackSmokeTest {
     @Test
     public void seekIntoSponsorBlockSkipsToDuration() throws Exception {
         runSmokeCase(SmokeCase.sponsorBlockSeek());
+    }
+
+    @Test
+    public void compatibilityProfileReplaysShiftedUmpSchema() throws Exception {
+        final SabrSessionPolicyHost host = shiftedProfileHost();
+        try (SabrSmokeHarness harness = SabrSmokeHarness.create(host)) {
+            harness.downloader.enqueue(new UmpFixture()
+                    .profiledSegment(2, SMOKE_VIDEO_ITAG, 1, 0, 5_000)
+                    .bytes());
+
+            harness.openMediaSegment(
+                    SabrSegmentRequest.media(harness.videoFormat, 1), 5_000);
+
+            assertEquals(1, harness.downloader.requestBodies.size());
+            final byte[] request = harness.downloader.requestBodies.get(0);
+            assertTrue("Profile request did not use shifted field 101", request.length > 1
+                    && (request[0] & 0xff) == 0xaa && (request[1] & 0xff) == 0x06);
+            assertTrue("Profile policy transcript did not observe the shifted request",
+                    host.snapshotTranscript().stream()
+                            .anyMatch(entry -> entry.contains("event=request")));
+        }
+    }
+
+    @Test
+    public void compatibilityProfileReplaysSabrDownloadPump() throws Exception {
+        final SabrSessionPolicyHost host = shiftedProfileHost();
+        try (SabrSmokeHarness harness = SabrSmokeHarness.create(host)) {
+            harness.downloader.enqueue(new UmpFixture()
+                    .profiledSegment(2, SMOKE_VIDEO_ITAG, 1, 0, 5_000)
+                    .bytes());
+            harness.downloader.enqueue(new UmpFixture()
+                    .profiledSegment(3, SMOKE_VIDEO_ITAG, 2, 5_000, 5_000)
+                    .bytes());
+
+            assertEquals(1, harness.holder.session.pumpOnceStreaming(
+                    new Localization("en", "US")));
+            assertEquals(1, harness.holder.session.pumpOnceStreaming(
+                    new Localization("en", "US")));
+
+            assertNotNull(harness.holder.session.getCachedSegment(
+                    SabrSegmentRequest.media(harness.videoFormat, 1)));
+            assertNotNull(harness.holder.session.getCachedSegment(
+                    SabrSegmentRequest.media(harness.videoFormat, 2)));
+            assertEquals(2, harness.downloader.requestBodies.size());
+            final byte[] following = harness.downloader.requestBodies.get(1);
+            assertTrue("Download pump did not use shifted following field 201",
+                    following.length > 1 && (following[0] & 0xff) == 0xca
+                            && (following[1] & 0xff) == 0x0c);
+        }
+    }
+
+    @Test
+    public void webOnlyProfileLeavesMwebReplayOnBuiltinPolicy() throws Exception {
+        final Context context = InstrumentationRegistry.getInstrumentation()
+                .getTargetContext().getApplicationContext();
+        final Ed25519PrivateKeyParameters key =
+                new Ed25519PrivateKeyParameters(new SecureRandom());
+        final String publicKey = "partial=" + java.util.Base64.getEncoder().encodeToString(
+                key.generatePublicKey().getEncoded());
+        final long now = System.currentTimeMillis();
+        clearProfileChannel(context, PARTIAL_PROFILE_CHANNEL);
+        SabrPolicyRuntime.initialize(context, publicKey, PARTIAL_PROFILE_CHANNEL, 0);
+        SabrPolicyRuntime.installDocument(SabrProfileTestDocuments.signed(
+                ONLINE_PROFILE_REVISION, now, "partial", key, false), now);
+        try (SabrSmokeHarness harness = SabrSmokeHarness.create(
+                SabrPolicyRuntime.createSessionHost())) {
+            harness.downloader.enqueue(new UmpFixture()
+                    .segment(1, SMOKE_VIDEO_ITAG, 1, 0, 5_000)
+                    .bytes());
+
+            harness.openMediaSegment(
+                    SabrSegmentRequest.media(harness.videoFormat, 1), 5_000);
+
+            assertEquals(ONLINE_PROFILE_REVISION, SabrPolicyRuntime.currentRevision());
+        } finally {
+            SabrPolicyRuntime.initialize(context, "", PARTIAL_PROFILE_CHANNEL, 0);
+            clearProfileChannel(context, PARTIAL_PROFILE_CHANNEL);
+        }
     }
 
     @Test
@@ -1597,11 +1745,16 @@ public final class SabrPlaybackSmokeTest {
         final CountDownLatch ready = new CountDownLatch(1);
         final CountDownLatch firstVideoFrame = new CountDownLatch(1);
         final CountDownLatch audioStarted = new CountDownLatch(1);
+        final CountDownLatch videoDecoderStarted = new CountDownLatch(1);
+        final CountDownLatch audioDecoderStarted = new CountDownLatch(1);
         final CountDownLatch ended = new CountDownLatch(1);
         final AtomicReference<CountDownLatch> seekProcessed =
                 new AtomicReference<>(new CountDownLatch(1));
         final AtomicReference<PlaybackException> playerError = new AtomicReference<>();
         final AtomicReference<Long> seekPositionReported = new AtomicReference<>();
+        final AtomicReference<String> videoDecoderName = new AtomicReference<>();
+        final AtomicReference<String> audioDecoderName = new AtomicReference<>();
+        final AtomicInteger droppedVideoFrames = new AtomicInteger();
         final AtomicBoolean endedEarly = new AtomicBoolean();
         final AtomicReference<ExoPlayer> playerRef = new AtomicReference<>();
         final AtomicReference<SurfaceTexture> textureRef = new AtomicReference<>();
@@ -1648,6 +1801,31 @@ public final class SabrPlaybackSmokeTest {
             });
             player.addAnalyticsListener(new AnalyticsListener() {
                 @Override
+                public void onVideoDecoderInitialized(final EventTime eventTime,
+                                                      final String decoderName,
+                                                      final long initializedTimestampMs,
+                                                      final long initializationDurationMs) {
+                    videoDecoderName.set(decoderName);
+                    videoDecoderStarted.countDown();
+                }
+
+                @Override
+                public void onAudioDecoderInitialized(final EventTime eventTime,
+                                                      final String decoderName,
+                                                      final long initializedTimestampMs,
+                                                      final long initializationDurationMs) {
+                    audioDecoderName.set(decoderName);
+                    audioDecoderStarted.countDown();
+                }
+
+                @Override
+                public void onDroppedVideoFrames(final EventTime eventTime,
+                                                 final int droppedFrames,
+                                                 final long elapsedMs) {
+                    droppedVideoFrames.addAndGet(droppedFrames);
+                }
+
+                @Override
                 public void onRenderedFirstFrame(final EventTime eventTime,
                                                  final Object output,
                                                  final long renderTimeMs) {
@@ -1683,6 +1861,21 @@ public final class SabrPlaybackSmokeTest {
             assertTrue("Audio output did not start",
                     audioStarted.await(PLAYBACK_TIMEOUT_SECONDS, TimeUnit.SECONDS));
             assertNull("Player failed while starting audio", playerError.get());
+            assertTrue("Media3 did not report the video decoder",
+                    videoDecoderStarted.await(5, TimeUnit.SECONDS));
+            assertTrue("Media3 did not report the audio decoder",
+                    audioDecoderStarted.await(5, TimeUnit.SECONDS));
+            final boolean hardwareVideoDecoder = isHardwareDecoder(videoDecoderName.get());
+            System.out.println("SABR_DECODERS client=" + client
+                    + " video=" + videoDecoderName.get()
+                    + " hardwareVideo=" + hardwareVideoDecoder
+                    + " audio=" + audioDecoderName.get()
+                    + " droppedVideoFrames=" + droppedVideoFrames.get());
+            if (Boolean.parseBoolean(arguments.getString(
+                    "requireHardwareVideoDecoder", "false"))) {
+                assertTrue("Expected a hardware video decoder, got " + videoDecoderName.get(),
+                        hardwareVideoDecoder);
+            }
             if (injectedHolder != null) {
                 verifyInitializationRecovery(injectedHolder);
             }
@@ -1696,7 +1889,8 @@ public final class SabrPlaybackSmokeTest {
                     "linearPlaybackMs", String.valueOf(DEFAULT_LINEAR_PLAYBACK_MS)));
             final long initialPositionMs = positionOf(playerRef.get());
             waitForPosition(playerRef.get(), initialPositionMs + linearPlaybackMs,
-                    PLAYBACK_TIMEOUT_SECONDS);
+                    Math.max(PLAYBACK_TIMEOUT_SECONDS,
+                            TimeUnit.MILLISECONDS.toSeconds(linearPlaybackMs) + 30));
             assertNull("Player failed during linear playback", playerError.get());
 
             final long postSeekPlaybackMs = Long.parseLong(arguments.getString(
@@ -1758,17 +1952,39 @@ public final class SabrPlaybackSmokeTest {
             }
             assertTrue("Content ended before playback and seek checks completed",
                     !endedEarly.get() || durationMs < 8_000);
+            final SabrSessionStore.Holder diagnosticHolder = getHolder(info.getId());
+            System.out.println("SABR_SESSION client=" + client
+                    + " audioItag=" + diagnosticHolder.audioFormat.getItag()
+                    + " videoItag=" + diagnosticHolder.videoFormat.getItag()
+                    + " requestNumber=" + diagnosticHolder.session.getRequestNumber()
+                    + " playerPositionMs=" + positionOf(playerRef.get())
+                    + " bufferedEdgeMs=" + diagnosticHolder.session.getStreamState()
+                    .getMinBufferedEndMs()
+                    + " cachedBytes=" + diagnosticHolder.session.getCachedBytes()
+                    + " peakCachedBytes=" + diagnosticHolder.session.getPeakCachedBytes()
+                    + " policyEvents=" + diagnosticHolder.session
+                    .getSessionPolicyTranscript().size());
             final String maxCachedBytesArgument = arguments.getString("maxCachedBytes");
             if (maxCachedBytesArgument != null) {
                 final long maximum = Long.parseLong(maxCachedBytesArgument);
-                final SabrSessionStore.Holder holder = getHolder(info.getId());
+                final SabrSessionStore.Holder holder = diagnosticHolder;
+                final long retained = holder.session.getCachedBytes();
                 final long observed = holder.session.getPeakCachedBytes();
+                final long maximumResponse = holder.session.getMaxResponseBytes();
+                final long transientMaximum = maximum + maximumResponse;
                 System.out.println("SABR_MEMORY height=" + holder.videoFormat.getHeight()
                         + " itag=" + holder.videoFormat.getItag()
+                        + " retainedCachedBytes=" + retained
                         + " peakCachedBytes=" + observed
-                        + " maxCachedBytes=" + maximum);
+                        + " maxCachedBytes=" + maximum
+                        + " maxResponseBytes=" + maximumResponse
+                        + " maxSegmentBytes=" + holder.session.getMaxSegmentBytes()
+                        + " transientMaxCachedBytes=" + transientMaximum);
+                assertTrue("SABR retained cache exceeded bound: observed=" + retained
+                        + " maximum=" + maximum, retained <= maximum);
                 assertTrue("SABR cache exceeded bound: observed=" + observed
-                        + " maximum=" + maximum, observed <= maximum);
+                        + " transientMaximum=" + transientMaximum,
+                        observed <= transientMaximum);
             }
         } finally {
             InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
@@ -1802,6 +2018,11 @@ public final class SabrPlaybackSmokeTest {
             }
             return new String(output.toByteArray(), StandardCharsets.UTF_8);
         }
+    }
+
+    private static void clearProfileChannel(final Context context, final String channel) {
+        context.getFileStreamPath("sabr-compatibility-" + channel + ".bin").delete();
+        context.getFileStreamPath("sabr-compatibility-" + channel + ".rev").delete();
     }
 
     private static boolean isSabr(final VideoStream stream) {
@@ -2115,6 +2336,22 @@ public final class SabrPlaybackSmokeTest {
         return seekPositionMs;
     }
 
+    private static boolean isHardwareDecoder(final String decoderName) {
+        if (decoderName == null) {
+            return false;
+        }
+        for (final MediaCodecInfo codec : new MediaCodecList(
+                MediaCodecList.ALL_CODECS).getCodecInfos()) {
+            if (decoderName.equals(codec.getName())) {
+                return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+                        ? codec.isHardwareAccelerated()
+                        : !decoderName.startsWith("OMX.google.")
+                        && !decoderName.startsWith("c2.android.");
+            }
+        }
+        return false;
+    }
+
     private static void waitForPosition(final ExoPlayer player, final long targetMs,
                                         final long timeoutSeconds) throws Exception {
         final long deadlineNs = System.nanoTime() + TimeUnit.SECONDS.toNanos(timeoutSeconds);
@@ -2339,6 +2576,51 @@ public final class SabrPlaybackSmokeTest {
         return constructor.newInstance(YoutubeSabrClientProfile.MWEB, "smoke-video", "cpn",
                 "2.20250122.04.00", "visitor", "https://sabr.test",
                 base64(new byte[]{1, 2, 3, 4}), Arrays.asList(audioFormat, videoFormat));
+    }
+
+    private static SabrSessionPolicyHost shiftedProfileHost() {
+        final List<SabrProfileRequestField> initialRequest = Arrays.asList(
+                profileRequestField(101, SabrProfileRequestField.Source.CLIENT_ABR_STATE),
+                profileRequestField(102, SabrProfileRequestField.Source.USTREAMER_CONFIG),
+                profileRequestField(103, SabrProfileRequestField.Source.CLIENT_CONTEXT));
+        final List<SabrProfileRequestField> followingRequest = Arrays.asList(
+                profileRequestField(201, SabrProfileRequestField.Source.CLIENT_ABR_STATE),
+                profileRequestField(202, SabrProfileRequestField.Source.USTREAMER_CONFIG),
+                profileRequestField(203, SabrProfileRequestField.Source.CLIENT_CONTEXT));
+        final List<SabrProfileResponseMapping> mappings = Arrays.asList(
+                profileMediaMapping(SabrProfileResponseMapping.Target.MEDIA_HEADER_ID, 17),
+                profileMediaMapping(SabrProfileResponseMapping.Target.MEDIA_HEADER_ITAG, 18),
+                profileMediaMapping(SabrProfileResponseMapping.Target.MEDIA_HEADER_COMPRESSION, 19),
+                profileMediaMapping(SabrProfileResponseMapping.Target.MEDIA_HEADER_IS_INIT, 20),
+                profileMediaMapping(SabrProfileResponseMapping.Target.MEDIA_HEADER_SEQUENCE, 21),
+                profileMediaMapping(SabrProfileResponseMapping.Target.MEDIA_HEADER_START_MS, 22),
+                profileMediaMapping(SabrProfileResponseMapping.Target.MEDIA_HEADER_DURATION_MS, 23),
+                profileMediaMapping(SabrProfileResponseMapping.Target.MEDIA_HEADER_CONTENT_LENGTH,
+                        24));
+        final SabrCompatibilityProfileClient client = new SabrCompatibilityProfileClient(
+                YoutubeSabrClientProfile.MWEB,
+                new SabrCompatibilityProfileClient.MediaParts(70, 71, 72),
+                initialRequest, followingRequest, mappings,
+                new SabrProfileRecovery(3, 30_000, 30_000, 0),
+                Collections.singletonList(new SabrProfileRule(Collections.emptyList(),
+                        Collections.singletonList(SabrProfileRule.Action.CONTINUE))));
+        return new SabrSessionPolicyHost(new ProfiledSabrSessionPolicy(client),
+                new SabrSessionPolicyTranscript(32));
+    }
+
+    private static SabrProfileRequestField profileRequestField(
+            final int field, final SabrProfileRequestField.Source source) {
+        return new SabrProfileRequestField(field, SabrProfileRequestField.WireType.BYTES,
+                source, true);
+    }
+
+    private static SabrProfileResponseMapping profileMediaMapping(
+            final SabrProfileResponseMapping.Target target, final int field) {
+        final SabrProfileResponseMapping.WireType wireType =
+                target == SabrProfileResponseMapping.Target.MEDIA_HEADER_IS_INIT
+                        ? SabrProfileResponseMapping.WireType.BOOL
+                        : SabrProfileResponseMapping.WireType.VARINT;
+        return new SabrProfileResponseMapping(70, target, new int[]{field}, wireType, true);
     }
 
     private static byte[] nextRequestPolicy(final int backoffMs) {
@@ -2680,11 +2962,25 @@ public final class SabrPlaybackSmokeTest {
 
         private static SabrSmokeHarness create() throws Exception {
             return create(smokeFormat(SMOKE_AUDIO_ITAG, true),
-                    smokeFormat(SMOKE_VIDEO_ITAG, false));
+                    smokeFormat(SMOKE_VIDEO_ITAG, false),
+                    SabrPolicyRuntime.createSessionHost());
+        }
+
+        private static SabrSmokeHarness create(final SabrSessionPolicyHost policyHost)
+                throws Exception {
+            return create(smokeFormat(SMOKE_AUDIO_ITAG, true),
+                    smokeFormat(SMOKE_VIDEO_ITAG, false), policyHost);
         }
 
         private static SabrSmokeHarness create(final YoutubeSabrFormat audioFormat,
                                                final YoutubeSabrFormat videoFormat)
+                throws Exception {
+            return create(audioFormat, videoFormat, SabrPolicyRuntime.createSessionHost());
+        }
+
+        private static SabrSmokeHarness create(final YoutubeSabrFormat audioFormat,
+                                               final YoutubeSabrFormat videoFormat,
+                                               final SabrSessionPolicyHost policyHost)
                 throws Exception {
             final Downloader previousDownloader = NewPipe.getDownloader();
             final Localization previousLocalization = NewPipe.getPreferredLocalization();
@@ -2696,7 +2992,8 @@ public final class SabrPlaybackSmokeTest {
                     InstrumentationRegistry.getInstrumentation().getTargetContext().getCacheDir(),
                     "sabr-smoke-" + System.nanoTime());
             final YoutubeSabrSession session =
-                    new YoutubeSabrSession(info, audioFormat, videoFormat, null, spoolDirectory);
+                    new YoutubeSabrSession(info, audioFormat, videoFormat, null, spoolDirectory,
+                            policyHost);
             session.getStreamState().setVideoOnlyRequestMode();
             final Constructor<SabrSessionStore.Holder> constructor =
                     SabrSessionStore.Holder.class.getDeclaredConstructor(Context.class,
@@ -3254,6 +3551,26 @@ public final class SabrPlaybackSmokeTest {
             return mediaHeader(headerId, itag, sequence, startMs, durationMs)
                     .media(headerId)
                     .mediaEnd(headerId);
+        }
+
+        private UmpFixture profiledSegment(final int headerId,
+                                           final int itag,
+                                           final int sequence,
+                                           final long startMs,
+                                           final long durationMs) {
+            final byte[] header = proto()
+                    .u64(17, headerId)
+                    .u64(18, itag)
+                    .u64(19, 0)
+                    .u64(20, 0)
+                    .u64(21, sequence)
+                    .u64(22, Math.max(0, startMs))
+                    .u64(23, Math.max(0, durationMs))
+                    .u64(24, 4)
+                    .bytes();
+            final byte[] media = new byte[]{(byte) headerId, 10, 11, 12, 13};
+            return part(70, header).part(71, media)
+                    .part(72, new byte[]{(byte) headerId});
         }
 
         private UmpFixture mediaHeader(final int headerId, final int itag, final int sequence) {

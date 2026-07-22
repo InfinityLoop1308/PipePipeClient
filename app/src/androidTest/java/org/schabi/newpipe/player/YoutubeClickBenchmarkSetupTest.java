@@ -28,16 +28,18 @@ public final class YoutubeClickBenchmarkSetupTest {
                 .getTargetContext().getApplicationContext();
         final Bundle arguments = InstrumentationRegistry.getArguments();
         final String client = arguments.getString("youtubeClient", "mweb");
-        final String cookieFile = arguments.getString("cookieFile", "");
         final SharedPreferences.Editor editor = PreferenceManager
                 .getDefaultSharedPreferences(context)
                 .edit()
                 .putString(context.getString(R.string.youtube_player_client_key), client);
-        if (cookieFile.isEmpty()) {
-            editor.remove(context.getString(R.string.youtube_cookies_key));
-        } else {
-            editor.putString(context.getString(R.string.youtube_cookies_key),
-                    readTextFile(new File(cookieFile)).trim());
+        if (arguments.containsKey("cookieFile")) {
+            final String cookieFile = arguments.getString("cookieFile", "");
+            if (cookieFile.isEmpty()) {
+                editor.remove(context.getString(R.string.youtube_cookies_key));
+            } else {
+                editor.putString(context.getString(R.string.youtube_cookies_key),
+                        readTextFile(new File(cookieFile)).trim());
+            }
         }
         assertTrue("Could not persist click benchmark inputs", editor.commit());
     }
