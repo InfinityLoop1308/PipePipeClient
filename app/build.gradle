@@ -10,8 +10,12 @@ def keyPath = System.getenv("KEY_PATH")
 def keyStorePassword = System.getenv("KEY_STORE_PASSWORD")
 def signingKeyAlias = System.getenv("KEY_ALIAS")
 def signingKeyPassword = System.getenv("KEY_PASSWORD")
-def sabrPolicyPublicKey = ""
-def sabrPolicyUrl = ""
+def pipePipeVersionName = "5.2.4"
+def sabrProfilePublicKeys = System.getenv("SABR_COMPATIBILITY_PROFILE_PUBLIC_KEYS") ?: ""
+def sabrProfileChannel = pipePipeVersionName.contains("-beta") ? "beta" : "stable"
+def sabrProfileUrl = System.getenv(sabrProfileChannel == "beta"
+        ? "SABR_COMPATIBILITY_PROFILE_BETA_URL"
+        : "SABR_COMPATIBILITY_PROFILE_STABLE_URL") ?: ""
 
 android {
     compileSdk 37
@@ -22,15 +26,17 @@ android {
         //noinspection OldTargetApi,ExpiredTargetSdkVersion
         targetSdk 36
         versionCode 1105
-        versionName "5.2.4"
+        versionName pipePipeVersionName
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
-        buildConfigField "String", "SABR_POLICY_PUBLIC_KEY_BASE64",
-                "\"${sabrPolicyPublicKey.replace('\\', '\\\\').replace('"', '\\"')}\""
-        buildConfigField "String", "SABR_POLICY_URL",
-                "\"${sabrPolicyUrl.replace('\\', '\\\\').replace('"', '\\"')}\""
+        buildConfigField "String", "SABR_COMPATIBILITY_PROFILE_PUBLIC_KEYS",
+                "\"${sabrProfilePublicKeys.replace('\\', '\\\\').replace('"', '\\"')}\""
+        buildConfigField "String", "SABR_COMPATIBILITY_PROFILE_URL",
+                "\"${sabrProfileUrl.replace('\\', '\\\\').replace('"', '\\"')}\""
+        buildConfigField "String", "SABR_COMPATIBILITY_PROFILE_CHANNEL",
+                "\"${sabrProfileChannel}\""
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
@@ -183,7 +189,6 @@ dependencies {
 /** NewPipe libraries **/
     implementation 'com.github.TeamNewPipe:nanojson:1d9e1aea9049fc9f85e68b43ba39fe7be1c1f751'
     implementation group: 'com.github.InfinityLoop1308.PipePipeExtractor', name: 'extractor'
-    implementation 'io.github.dokar3:quickjs-kt:1.0.5'
 
 /** Kotlin **/
     implementation "org.jetbrains.kotlin:kotlin-stdlib"

@@ -142,10 +142,11 @@ public class App extends MultiDexApplication {
         });
         try {
             SabrPolicyRuntime.initialize(this,
-                    BuildConfig.SABR_POLICY_PUBLIC_KEY_BASE64, 0);
+                    BuildConfig.SABR_COMPATIBILITY_PROFILE_PUBLIC_KEYS,
+                    BuildConfig.SABR_COMPATIBILITY_PROFILE_CHANNEL, 0);
             SabrPolicyUpdateWorker.initialize(this);
         } catch (final IllegalArgumentException error) {
-            Log.e(TAG, "Could not initialize SABR cloud policy; using builtin", error);
+            Log.e(TAG, "Could not initialize SABR compatibility profiles; using builtin", error);
         }
         final AndroidWebViewAvailabilityChecker webViewAvailabilityChecker =
                 new AndroidWebViewAvailabilityChecker(this);
