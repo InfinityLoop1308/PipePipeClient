@@ -26,6 +26,7 @@ import org.schabi.newpipe.util.ChannelTabHelper
 import org.schabi.newpipe.util.ExtractorHelper.getChannelInfo
 import org.schabi.newpipe.util.ExtractorHelper.getChannelTab
 import org.schabi.newpipe.util.ExtractorHelper.getMoreChannelTabItems
+import org.schabi.newpipe.util.StreamTypeUtil
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.concurrent.ConcurrentHashMap
@@ -80,6 +81,11 @@ class FeedLoadManager(private val context: Context) {
         val filterFutureItems = defaultSharedPreferences.getBoolean(
             context.getString(R.string.filter_future_items_key),
             true
+        )
+
+        val filterLivestreams = defaultSharedPreferences.getBoolean(
+            context.getString(R.string.filter_livestreams_key),
+            false
         )
 
         val outdatedThreshold = if (ignoreOutdatedThreshold) {
@@ -214,7 +220,7 @@ class FeedLoadManager(private val context: Context) {
                                         }
                                         .filterIsInstance<StreamInfoItem>()
                                 }
-                                streams = streams?.filterNot { it.isRoundPlayStream || (filterFutureItems && it.uploadDate != null && it.uploadDate!!.offsetDateTime().isAfter(OffsetDateTime.now())) }
+                                streams = streams?.filterNot { it.isRoundPlayStream || (filterFutureItems && it.uploadDate != null && it.uploadDate!!.offsetDateTime().isAfter(OffsetDateTime.now())) || (filterLivestreams && StreamTypeUtil.isLiveStream(it.streamType)) }
 
                                 return@defer Flowable.just(
                                     FeedUpdateInfo(

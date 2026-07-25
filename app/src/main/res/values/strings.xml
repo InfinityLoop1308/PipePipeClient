@@ -1038,6 +1038,8 @@
 <string name="video_tabs_summary">Configure which tabs to show on video detail screen</string>
 <string name="filter_future_items_title">Filter future items</string>
 <string name="filter_future_items_summary">Remove items scheduled for a future release</string>
+<string name="filter_livestreams_title">Filter livestreams</string>
+<string name="filter_livestreams_summary">Remove livestreams from the feed</string>
 <string name="pin_video_to_top_title">Pin video to top</string>
 <string name="pin_video_to_top_summary">Keep the video pinned to the top while scrolling the video detail page</string>
 <string name="settings_category_behavior_title">Behavior</string>
