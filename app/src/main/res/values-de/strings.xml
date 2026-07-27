@@ -875,7 +875,7 @@
 <string name="exit_app_confirmation_message">Zeigen Sie einen "Drücken Sie erneut zurück, um zu beenden" Toast, um versehentliches Beenden zu vermeiden</string>
 <string name="exit_app_confirmation_title">Bestätigung zum Beenden der App</string>
 <string name="try_again">Bitte versuchen Sie es erneut</string>
-<string name="swipe_seek_gesture_control_title">Wischgeste zum Suchen</string>
+<string name="swipe_seek_gesture_control_title">Wischen zum Spulen</string>
 <string name="swipe_seek_gesture_control_summary">Wischen Sie nach rechts zum Vorspulen und nach links zum Zurückspulen</string>
 <string name="large_grid">Großes Raster</string>
 <string name="card">Karte</string>
@@ -965,4 +965,6 @@
 <string name="auto_translated_subtitles_language_title">Untertitel automatisch übersetzen in</string>
 <string name="force_sabr_title">SABR erzwingen</string>
 <string name="force_sabr_summary">Alle YouTube-Videos anstelle von DASH/HLS über die SABR-Pipeline leiten. Experimentell: Kann auf einigen Geräten oder bei einigen Videos zu Wiedergabefehlern führen.</string>
+<string name="playback_speed_gesture_control_title">Wischen zur Steuerung der Wiedergabegeschwindigkeit</string>
+<string name="playback_speed_gesture_control_summary">In der Mitte wischen, um die Wiedergabegeschwindigkeit zu steuern. Deaktiviert die Vollbild-Gestensteuerung.</string>
 </resources>

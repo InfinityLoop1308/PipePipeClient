@@ -804,7 +804,7 @@
 <string name="exit_app_confirmation_message">Mostra un toast "premi di nuovo indietro per uscire" per evitare uscite accidentali</string>
 <string name="exit_app_confirmation_title">Conferma uscita dall\'app</string>
 <string name="try_again">Per favore riprova</string>
-<string name="swipe_seek_gesture_control_title">Scorri per cercare il gesto</string>
+<string name="swipe_seek_gesture_control_title">Scorri per cercare</string>
 <string name="swipe_seek_gesture_control_summary">Scorri verso destra per avanzare velocemente e verso sinistra per riavvolgere</string>
 <string name="large_grid">Griglia grande</string>
 <string name="card">Scheda</string>
@@ -959,4 +959,6 @@
 <string name="auto_translated_subtitles_language_title">Traduci automaticamente i sottotitoli in</string>
 <string name="force_sabr_title">Forza SABR</string>
 <string name="force_sabr_summary">Instrada tutti i video di YouTube attraverso la pipeline SABR invece di DASH/HLS. Sperimentale: potrebbe causare errori di riproduzione su alcuni dispositivi o video</string>
+<string name="playback_speed_gesture_control_title">Scorri per controllare la velocità di riproduzione</string>
+<string name="playback_speed_gesture_control_summary">Scorri al centro per controllare la velocità di riproduzione. Disabilita il controllo dei gesti a schermo intero</string>
 </resources>

@@ -985,7 +985,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="exit_app_confirmation_message">Hiển thị thông báo "nhấn quay lại lần nữa để thoát" để tránh thoát nhầm</string>
 <string name="exit_app_confirmation_title">Xác nhận thoát ứng dụng</string>
 <string name="try_again">Vui lòng thử lại</string>
-<string name="swipe_seek_gesture_control_title">Vuốt để tìm cử chỉ</string>
+<string name="swipe_seek_gesture_control_title">Vuốt để tua</string>
 <string name="swipe_seek_gesture_control_summary">Vuốt sang phải để tua nhanh, và sang trái để tua lại</string>
 <string name="large_grid">Lưới lớn</string>
 <string name="card">Thẻ</string>
@@ -1074,4 +1074,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="auto_translated_subtitles_language_title">Tự động dịch phụ đề sang</string>
 <string name="force_sabr_title">Bắt buộc SABR</string>
 <string name="force_sabr_summary">Định tuyến tất cả video YouTube qua luồng SABR thay vì DASH/HLS. Thử nghiệm: có thể gây lỗi phát trên một số thiết bị hoặc video</string>
+<string name="playback_speed_gesture_control_title">Vuốt để điều khiển tốc độ phát lại</string>
+<string name="playback_speed_gesture_control_summary">Vuốt ở giữa để điều khiển tốc độ phát. Vô hiệu hóa điều khiển bằng cử chỉ toàn màn hình</string>
 </resources>

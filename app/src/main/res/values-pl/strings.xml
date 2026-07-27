@@ -706,7 +706,7 @@
     <string name="no">Nie</string>
     <string name="back">Wstecz</string>
     <string name="disable_android_auto_title">Wyłącz Android Auto</string>
-    <string name="swipe_seek_gesture_control_title">Gest przesunięcia do przeszukiwania</string>
+    <string name="swipe_seek_gesture_control_title">Przesuń, aby przewinąć</string>
     <string name="search_suggestions_count_title">Liczba sugestii wyszukiwania</string>
     <string name="youtube_visitor_data_title">Dane odwiedzania YouTube</string>
     <string name="percent">Procent</string>
@@ -1028,4 +1028,6 @@
     <string name="duration">Długość</string>
     <string name="license">Licencja</string>
     <string name="published">Opublikowano</string>
+    <string name="playback_speed_gesture_control_title">Przesuń, aby sterować prędkością odtwarzania</string>
+    <string name="playback_speed_gesture_control_summary">Przesuń pośrodku, aby sterować prędkością odtwarzania. Wyłącza sterowanie gestami na pełnym ekranie</string>
 </resources>

@@ -928,7 +928,7 @@
 <string name="exit_app_confirmation_message">顯示“再次按返回退出”的提示，以避免意外退出</string>
 <string name="exit_app_confirmation_title">退出應用程式確認</string>
 <string name="try_again">請再試一次</string>
-<string name="swipe_seek_gesture_control_title">滑動搜尋手勢</string>
+<string name="swipe_seek_gesture_control_title">滑動以跳轉</string>
 <string name="swipe_seek_gesture_control_summary">向右滑動可快轉，向左滑動可倒轉</string>
 <string name="large_grid">大網格</string>
 <string name="card">卡片</string>
@@ -1019,4 +1019,6 @@
 <string name="auto_translated_subtitles_language_title">將字幕自動翻譯為</string>
 <string name="force_sabr_title">強制使用 SABR</string>
 <string name="force_sabr_summary">將所有 YouTube 影片透過 SABR 管道傳送，而非 DASH/HLS。實驗性功能：在某些裝置或影片上可能會導致播放失敗。</string>
+<string name="playback_speed_gesture_control_title">滑動以控制播放速度</string>
+<string name="playback_speed_gesture_control_summary">在中間滑動以控制播放速度。會停用全螢幕手勢控制。</string>
 </resources>

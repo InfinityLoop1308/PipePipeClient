@@ -830,7 +830,7 @@ Voulez-vous continuer?</string>
 <string name="exit_app_confirmation_message">Afficher un message "appuyez à nouveau sur retour pour quitter" pour éviter de quitter accidentellement</string>
 <string name="exit_app_confirmation_title">Confirmation de sortie de l\'application</string>
 <string name="try_again">Veuillez réessayer</string>
-<string name="swipe_seek_gesture_control_title">Geste de balayage pour la recherche</string>
+<string name="swipe_seek_gesture_control_title">Glisser pour chercher</string>
 <string name="swipe_seek_gesture_control_summary">Balayez vers la droite pour avancer rapidement et vers la gauche pour rembobiner</string>
 <string name="large_grid">Grande grille</string>
 <string name="card">Carte</string>
@@ -982,4 +982,6 @@ Voulez-vous continuer?</string>
 <string name="auto_translated_subtitles_language_title">Traduire automatiquement les sous-titres en</string>
 <string name="force_sabr_title">Forcer SABR</string>
 <string name="force_sabr_summary">Router toutes les vidéos YouTube via le pipeline SABR au lieu de DASH/HLS. Expérimental : peut entraîner des échecs de lecture sur certains appareils ou vidéos</string>
+<string name="playback_speed_gesture_control_title">Balayez pour contrôler la vitesse de lecture</string>
+<string name="playback_speed_gesture_control_summary">Glissez au milieu pour contrôler la vitesse de lecture. Désactive le contrôle gestuel en plein écran.</string>
 </resources>

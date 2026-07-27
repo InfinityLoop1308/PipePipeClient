@@ -895,7 +895,7 @@
 <string name="exit_app_confirmation_message">「もう一度戻るボタンを押すと終了します」というトーストを表示して、誤って終了するのを防ぎます</string>
 <string name="exit_app_confirmation_title">アプリ終了の確認</string>
 <string name="try_again">もう一度お試しください</string>
-<string name="swipe_seek_gesture_control_title">シークジェスチャーでスワイプ</string>
+<string name="swipe_seek_gesture_control_title">スワイプしてシーク</string>
 <string name="swipe_seek_gesture_control_summary">右にスワイプすると早送り、左にスワイプすると巻き戻し</string>
 <string name="sponsor_block_category_sponsor">スポンサー</string>
 <string name="sponsor_block_category_intro">幕間/イントロアニメーション</string>
@@ -988,4 +988,6 @@
 <string name="auto_translated_subtitles_language_title">字幕の自動翻訳先</string>
 <string name="force_sabr_title">SABR を強制</string>
 <string name="force_sabr_summary">DASH/HLS の代わりに、すべての YouTube 動画を SABR パイプライン経由でルーティングします。実験的機能：一部の端末や動画で再生に失敗する場合があります。</string>
+<string name="playback_speed_gesture_control_title">スワイプで再生速度を調整</string>
+<string name="playback_speed_gesture_control_summary">中央をスワイプして再生速度を調整します。フルスクリーンのジェスチャー操作は無効になります。</string>
 </resources>
