@@ -17,6 +17,7 @@ import com.squareup.picasso.Target;
 import com.squareup.picasso.Transformation;
 
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.DownloaderImpl;
 
 import java.io.File;
 import java.io.IOException;
@@ -88,6 +89,7 @@ public final class PicassoHelper {
     public static void init(final Context context) {
         picassoCache = new LruCache(512 * 1024 * 1024);
         picassoDownloaderClient = new OkHttpClient.Builder()
+                .dns(DownloaderImpl.getInstance().getClient().dns())
                 .cache(new okhttp3.Cache(new File(context.getExternalCacheDir(), "picasso"),
                         512 * 1024 * 1024))
                 // this should already be the default timeout in OkHttp3, but just to be sure...
@@ -162,10 +164,12 @@ public final class PicassoHelper {
         return loadScaledDownThumbnail(context, url, false);
     }
 
-    public static RequestCreator loadScaledDownThumbnail(final Context context, final String url, final boolean shouldSetTag) {
+    public static RequestCreator loadScaledDownThumbnail(final Context context, final String url,
+                                                         final boolean shouldSetTag) {
         // scale down the notification thumbnail for performance
-        return PicassoHelper.loadThumbnail(url)
+        final RequestCreator requestCreator = PicassoHelper.loadThumbnail(url)
                 .transform(transformation);
+        return shouldSetTag ? requestCreator.tag(PLAYER_THUMBNAIL_TAG) : requestCreator;
     }
 
     public static RequestCreator loadOrigin(final String url) {

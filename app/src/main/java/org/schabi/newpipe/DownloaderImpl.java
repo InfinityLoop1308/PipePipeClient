@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 import com.grack.nanojson.JsonParserException;
 import okhttp3.*;
+import okhttp3.dnsoverhttps.DnsOverHttps;
 import org.schabi.newpipe.error.ReCaptchaActivity;
 import org.schabi.newpipe.extractor.downloader.CancellableCall;
 import org.schabi.newpipe.extractor.downloader.Downloader;
@@ -25,9 +26,11 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.UnknownHostException;
+import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -50,14 +53,19 @@ public final class DownloaderImpl extends Downloader {
     private static DownloaderImpl instance;
     private final Map<String, String> mCookies;
     private final OkHttpClient client;
+    private final boolean dnsOverHttpsFallbackEnabled;
     private Integer customTimeout;
+    @Nullable
+    private volatile YoutubePlayerResponseCache youtubePlayerResponseCache;
 
-    private DownloaderImpl(final OkHttpClient.Builder builder) {
+    private DownloaderImpl(final OkHttpClient.Builder builder,
+                           final boolean dnsOverHttpsFallbackEnabled) {
         this.client = builder
                 .readTimeout(30, TimeUnit.SECONDS)
 //                .cache(new Cache(new File(context.getExternalCacheDir(), "okhttp"),
 //                        16 * 1024 * 1024))
                 .build();
+        this.dnsOverHttpsFallbackEnabled = dnsOverHttpsFallbackEnabled;
         this.mCookies = new HashMap<>();
     }
 
@@ -68,13 +76,68 @@ public final class DownloaderImpl extends Downloader {
      * @return a new instance of {@link DownloaderImpl}
      */
     public static DownloaderImpl init(@Nullable final OkHttpClient.Builder builder) {
+        return init(builder, false);
+    }
+
+    public static DownloaderImpl init(@Nullable final OkHttpClient.Builder builder,
+                                      final boolean useDnsOverHttpsFallback) {
+        final OkHttpClient.Builder clientBuilder = builder != null
+                ? builder : new OkHttpClient.Builder();
+        if (useDnsOverHttpsFallback) {
+            final Dns systemDns = Dns.SYSTEM;
+            final DnsOverHttps dnsOverHttps = new DnsOverHttps.Builder()
+                    .client(new OkHttpClient.Builder().build())
+                    .url(HttpUrl.get("https://cloudflare-dns.com/dns-query"))
+                    .bootstrapDnsHosts(
+                            ipAddress(new byte[]{1, 1, 1, 1}),
+                            ipAddress(new byte[]{1, 0, 0, 1}))
+                    .build();
+            clientBuilder.dns(hostname -> {
+                try {
+                    return systemDns.lookup(hostname);
+                } catch (final UnknownHostException systemException) {
+                    try {
+                        return dnsOverHttps.lookup(hostname);
+                    } catch (final UnknownHostException dohException) {
+                        dohException.addSuppressed(systemException);
+                        throw dohException;
+                    }
+                }
+            });
+        }
         instance = new DownloaderImpl(
-                builder != null ? builder : new OkHttpClient.Builder());
+                clientBuilder, useDnsOverHttpsFallback);
         return instance;
+    }
+
+    private static InetAddress ipAddress(final byte[] address) {
+        try {
+            return InetAddress.getByAddress(address);
+        } catch (final UnknownHostException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     public static DownloaderImpl getInstance() {
         return instance;
+    }
+
+    public OkHttpClient getClient() {
+        return client;
+    }
+
+    public boolean isDnsOverHttpsFallbackEnabled() {
+        return dnsOverHttpsFallbackEnabled;
+    }
+
+    /**
+     * Enable a persistent player-response cache for playback benchmarks. A missing response is
+     * fetched and stored; existing entries are only overwritten when {@code replace} is true.
+     */
+    public void configureYoutubePlayerResponseCacheForBenchmark(
+            @Nullable final File directory, final boolean replace) {
+        youtubePlayerResponseCache = directory == null
+                ? null : new YoutubePlayerResponseCache(directory, replace);
     }
 
     public DownloaderImpl setCustomTimeout(final Integer value) {
@@ -315,24 +378,64 @@ public final class DownloaderImpl extends Downloader {
      * was OOM-ing the 512MB heap). Mirrors execute()'s request building; caller closes the result.
      */
     @Override
+    public StreamingResponse getStreaming(final String url,
+                                          @Nullable final Map<String, List<String>> headers,
+                                          @Nullable final Localization localization)
+            throws IOException, ReCaptchaException {
+        return executeStreaming(Request.newBuilder().get(url).headers(headers)
+                .localization(localization).build());
+    }
+
+    @Override
+    public StreamingResponse getStreaming(final String url,
+                                          @Nullable final Map<String, List<String>> headers,
+                                          @Nullable final Localization localization,
+                                          final long timeoutMs)
+            throws IOException, ReCaptchaException {
+        final long boundedTimeoutMs = Math.max(1, timeoutMs);
+        final OkHttpClient boundedClient = client.newBuilder()
+                .callTimeout(boundedTimeoutMs, TimeUnit.MILLISECONDS)
+                .connectTimeout(boundedTimeoutMs, TimeUnit.MILLISECONDS)
+                .readTimeout(boundedTimeoutMs, TimeUnit.MILLISECONDS)
+                .build();
+        return executeStreaming(Request.newBuilder().get(url).headers(headers)
+                .localization(localization).build(), boundedClient);
+    }
+
+    @Override
     public StreamingResponse postStreaming(final String url,
                                            @Nullable final Map<String, List<String>> headers,
                                            @Nullable final byte[] dataToSend,
                                            @Nullable final Localization localization)
             throws IOException, ReCaptchaException {
-        final Map<String, List<String>> hdrs = headers == null ? Collections.emptyMap() : headers;
-        final RequestBody requestBody = RequestBody.create(null,
-                dataToSend == null ? new byte[0] : dataToSend);
+        return executeStreaming(Request.newBuilder().post(url, dataToSend).headers(headers)
+                .localization(localization).build());
+    }
+
+    private StreamingResponse executeStreaming(@NonNull final Request request)
+            throws IOException, ReCaptchaException {
+        return executeStreaming(request, client);
+    }
+
+    private StreamingResponse executeStreaming(@NonNull final Request request,
+                                                @NonNull final OkHttpClient requestClient)
+            throws IOException, ReCaptchaException {
+        final String url = request.url();
+        final Map<String, List<String>> headers = request.headers();
+        final byte[] data = request.dataToSend();
+        final RequestBody requestBody = data == null
+                ? ("POST".equals(request.httpMethod()) ? RequestBody.create(null, new byte[0]) : null)
+                : RequestBody.create(null, data);
         final okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder()
-                .method("POST", requestBody).url(url);
-        if (!hdrs.containsKey("User-Agent")) {
+                .method(request.httpMethod(), requestBody).url(url);
+        if (!headers.containsKey("User-Agent")) {
             requestBuilder.header("User-Agent", USER_AGENT);
         }
         final String cookies = getCookies(url);
-        if (!hdrs.containsKey("Cookie") && !cookies.isEmpty()) {
+        if (!headers.containsKey("Cookie") && !cookies.isEmpty()) {
             requestBuilder.header("Cookie", cookies);
         }
-        for (final Map.Entry<String, List<String>> pair : hdrs.entrySet()) {
+        for (final Map.Entry<String, List<String>> pair : headers.entrySet()) {
             final List<String> values = pair.getValue();
             if (values.size() > 1) {
                 requestBuilder.removeHeader(pair.getKey());
@@ -343,7 +446,7 @@ public final class DownloaderImpl extends Downloader {
                 requestBuilder.header(pair.getKey(), values.get(0));
             }
         }
-        final okhttp3.Response response = client.newCall(requestBuilder.build()).execute();
+        final okhttp3.Response response = requestClient.newCall(requestBuilder.build()).execute();
         if (response.code() == 429) {
             response.close();
             throw new ReCaptchaException("reCaptcha Challenge requested", url);
@@ -401,13 +504,31 @@ public final class DownloaderImpl extends Downloader {
             tmpClient = builder.build();
         }
 
-        Call call = tmpClient.newCall(requestBuilder.build());
-        CancellableCall cancellableCall = new CancellableCall(call);
+        final Call call = tmpClient.newCall(requestBuilder.build());
+        final CancellableCall cancellableCall = new CancellableCall(call);
+        final YoutubePlayerResponseCache responseCache = youtubePlayerResponseCache;
+        if (responseCache != null && responseCache.handles(url)) {
+            final byte[] cachedBody = responseCache.read(url, headers, dataToSend);
+            if (cachedBody != null) {
+                try {
+                    callback.onSuccess(new Response(200, "OK", Collections.emptyMap(),
+                            new String(cachedBody, StandardCharsets.UTF_8), cachedBody, url));
+                } catch (final Exception e) {
+                    callback.onError(e);
+                } finally {
+                    cancellableCall.setFinished();
+                }
+                return cancellableCall;
+            }
+        }
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                cancellableCall.setFinished();
-                callback.onError(e);
+                try {
+                    callback.onError(e);
+                } finally {
+                    cancellableCall.setFinished();
+                }
             }
 
             @Override
@@ -425,6 +546,11 @@ public final class DownloaderImpl extends Downloader {
                     if (body != null) {
                         rawBodyBytes = body.bytes();
                         responseBodyToReturn = new String(rawBodyBytes, StandardCharsets.UTF_8);
+                    }
+
+                    if (responseCache != null && responseCache.handles(url)
+                            && response.isSuccessful() && rawBodyBytes != null) {
+                        responseCache.write(url, headers, dataToSend, rawBodyBytes);
                     }
 
                     String latestUrl = response.request().url().toString();

@@ -12,16 +12,17 @@ import androidx.annotation.Nullable;
 
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
-import org.schabi.newpipe.BaseFragment;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.Page;
 import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
 import org.schabi.newpipe.fragments.BackPressable;
+import org.schabi.newpipe.fragments.StateSaverFragment;
 import org.schabi.newpipe.util.Constants;
 
 import java.io.IOException;
+import java.util.Queue;
 
-public class CommentReplyFragment extends BaseFragment implements BackPressable {
+public class CommentReplyFragment extends StateSaverFragment implements BackPressable {
 
     protected int serviceId = Constants.NO_SERVICE_ID;
     protected String name;
@@ -41,13 +42,28 @@ public class CommentReplyFragment extends BaseFragment implements BackPressable 
     }
 
     @Override
+    public String generateSuffix() {
+        return "." + System.nanoTime() + ".commentreply";
+    }
+
+    @Override
+    public void writeTo(final Queue<Object> objectsToSave) {
+        objectsToSave.add(comment);
+        objectsToSave.add(replies);
+    }
+
+    @Override
+    public void readFrom(@NonNull final Queue<Object> savedObjects) {
+        comment = (CommentsInfoItem) savedObjects.poll();
+        replies = (Page) savedObjects.poll();
+    }
+
+    @Override
     public void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("serviceId", serviceId);
         outState.putString("name", name);
         outState.putString("url", url);
-        outState.putSerializable("comment", comment);
-        outState.putSerializable("replies", replies);
     }
 
     @Override
@@ -56,8 +72,6 @@ public class CommentReplyFragment extends BaseFragment implements BackPressable 
         serviceId = savedInstanceState.getInt("serviceId", Constants.NO_SERVICE_ID);
         name = savedInstanceState.getString("name");
         url = savedInstanceState.getString("url");
-        comment = (CommentsInfoItem) savedInstanceState.getSerializable("comment");
-        replies = (Page) savedInstanceState.getSerializable("replies");
     }
 
     public static CommentsFragmentContainer newInstance(final int serviceId, final String url,

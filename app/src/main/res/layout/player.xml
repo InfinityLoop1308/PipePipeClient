@@ -740,6 +740,21 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:indeterminate="true" />
+
+                <TextView
+                    android:id="@+id/sabrBackoffCountdown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/progressBarLoadingPanel"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:visibility="gone"
+                    tools:text="YouTube requires us to wait 7 seconds before continuing playback" />
             </RelativeLayout>
         </RelativeLayout>
 

@@ -16,22 +16,23 @@ import androidx.annotation.StringRes;
 
 import com.google.android.material.chip.Chip;
 
-import org.schabi.newpipe.BaseFragment;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.FragmentChannelInfoBinding;
 import org.schabi.newpipe.databinding.ItemMetadataBinding;
 import org.schabi.newpipe.databinding.ItemMetadataTagsBinding;
 import org.schabi.newpipe.extractor.channel.ChannelInfo;
+import org.schabi.newpipe.fragments.StateSaverFragment;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.util.external_communication.TextLinkifier;
 
 import java.util.List;
+import java.util.Queue;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
-public class ChannelInfoFragment extends BaseFragment {
+public class ChannelInfoFragment extends StateSaverFragment {
     protected ChannelInfo channelInfo;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
@@ -48,15 +49,18 @@ public class ChannelInfoFragment extends BaseFragment {
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull final Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable("channelInfo", channelInfo);
+    public String generateSuffix() {
+        return "." + System.nanoTime() + ".channelinfo";
     }
 
     @Override
-    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        channelInfo = (ChannelInfo) savedInstanceState.getSerializable("channelInfo");
+    public void writeTo(final Queue<Object> objectsToSave) {
+        objectsToSave.add(channelInfo);
+    }
+
+    @Override
+    public void readFrom(@NonNull final Queue<Object> savedObjects) {
+        channelInfo = (ChannelInfo) savedObjects.poll();
     }
 
     @Override

@@ -68,6 +68,7 @@ import org.schabi.newpipe.util.ListHelper;
 import org.schabi.newpipe.util.PermissionHelper;
 import org.schabi.newpipe.util.SecondaryStreamHelper;
 import org.schabi.newpipe.util.SimpleOnSeekBarChangeListener;
+import org.schabi.newpipe.util.StateSaver;
 import org.schabi.newpipe.util.StreamItemAdapter;
 import org.schabi.newpipe.util.StreamItemAdapter.StreamSizeWrapper;
 import org.schabi.newpipe.util.ThemeHelper;
@@ -80,10 +81,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Queue;
+import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import us.shandian.giga.get.HlsDownloadStreamHelper;
 import us.shandian.giga.get.MissionRecoveryInfo;
+import us.shandian.giga.get.SabrDownloadStreamHelper;
 import us.shandian.giga.postprocessing.Postprocessing;
 import us.shandian.giga.service.DownloadManager;
 import us.shandian.giga.service.DownloadManagerService;
@@ -93,7 +97,8 @@ import us.shandian.giga.service.MissionState;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
 public class DownloadDialog extends DialogFragment
-        implements RadioGroup.OnCheckedChangeListener, AdapterView.OnItemSelectedListener {
+        implements RadioGroup.OnCheckedChangeListener, AdapterView.OnItemSelectedListener,
+        StateSaver.WriteRead {
     private static final String TAG = "DialogFragment";
     private static final boolean DEBUG = MainActivity.DEBUG;
 
@@ -124,6 +129,7 @@ public class DownloadDialog extends DialogFragment
     private DownloadDialogBinding dialogBinding;
 
     private SharedPreferences prefs;
+    private org.schabi.newpipe.util.SavedState savedState;
 
     // Variables for file name and MIME type when picking new folder because it's not set yet
     private String filenameTmp;
@@ -248,10 +254,7 @@ public class DownloadDialog extends DialogFragment
 
         setStyle(STYLE_NO_TITLE, ThemeHelper.getDialogTheme(context));
         if (savedInstanceState != null) {
-            currentInfo = (StreamInfo) savedInstanceState.getSerializable("currentInfo");
-            wrappedAudioStreams = (StreamSizeWrapper<AudioStream>) savedInstanceState.getSerializable("wrappedAudioStreams");
-            wrappedVideoStreams = (StreamSizeWrapper<VideoStream>) savedInstanceState.getSerializable("wrappedVideoStreams");
-            wrappedSubtitleStreams = (StreamSizeWrapper<SubtitlesStream>) savedInstanceState.getSerializable("wrappedSubtitleStreams");
+            savedState = StateSaver.tryToRestore(savedInstanceState, this);
             selectedVideoIndex = savedInstanceState.getInt("selectedVideoIndex", 0);
             selectedAudioIndex = savedInstanceState.getInt("selectedAudioIndex", 0);
             selectedSubtitleIndex = savedInstanceState.getInt("selectedSubtitleIndex", 0);
@@ -266,9 +269,11 @@ public class DownloadDialog extends DialogFragment
                 continue;
             }
             final AudioStream audioStream = SecondaryStreamHelper
-                    .getAudioStreamFor(getContext(), wrappedAudioStreams.getStreamsList(), videoStreams.get(i));
+                    .getAudioStreamFor(getContext(), SabrDownloadStreamHelper.audioStreamsForVideo(
+                            wrappedAudioStreams.getStreamsList(), videoStreams.get(i)), videoStreams.get(i));
 
-            if (audioStream != null) {
+            if (audioStream != null && SabrDownloadStreamHelper
+                    .isCompatibleSecondaryStream(videoStreams.get(i), audioStream)) {
                 secondaryStreams
                         .append(i, new SecondaryStreamHelper<>(wrappedAudioStreams, audioStream));
             } else if (DEBUG) {
@@ -391,6 +396,7 @@ public class DownloadDialog extends DialogFragment
     public void onDestroy() {
         super.onDestroy();
         disposables.clear();
+        StateSaver.onDestroy(savedState);
     }
 
     @Override
@@ -402,13 +408,33 @@ public class DownloadDialog extends DialogFragment
     @Override
     public void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable("currentInfo", currentInfo);
-        outState.putSerializable("wrappedAudioStreams", wrappedAudioStreams);
-        outState.putSerializable("wrappedVideoStreams", wrappedVideoStreams);
-        outState.putSerializable("wrappedSubtitleStreams", wrappedSubtitleStreams);
+        savedState = StateSaver.tryToSave(
+                requireActivity().isChangingConfigurations(), savedState, outState, this);
         outState.putInt("selectedVideoIndex", selectedVideoIndex);
         outState.putInt("selectedAudioIndex", selectedAudioIndex);
         outState.putInt("selectedSubtitleIndex", selectedSubtitleIndex);
+    }
+
+    @Override
+    public String generateSuffix() {
+        return "." + System.nanoTime() + ".download";
+    }
+
+    @Override
+    public void writeTo(final Queue<Object> objectsToSave) {
+        objectsToSave.add(currentInfo);
+        objectsToSave.add(wrappedAudioStreams);
+        objectsToSave.add(wrappedVideoStreams);
+        objectsToSave.add(wrappedSubtitleStreams);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void readFrom(@NonNull final Queue<Object> savedObjects) {
+        currentInfo = (StreamInfo) savedObjects.poll();
+        wrappedAudioStreams = (StreamSizeWrapper<AudioStream>) savedObjects.poll();
+        wrappedVideoStreams = (StreamSizeWrapper<VideoStream>) savedObjects.poll();
+        wrappedSubtitleStreams = (StreamSizeWrapper<SubtitlesStream>) savedObjects.poll();
     }
 
 
@@ -1121,7 +1147,8 @@ public class DownloadDialog extends DialogFragment
         resourceIsUrls = HlsDownloadStreamHelper
                 .buildResourceIsUrls(selectedStream, secondaryStream);
         if (HlsDownloadStreamHelper.containsHlsResource(resourceDeliveryMethods,
-                resourceManifestUrls, urls)) {
+                resourceManifestUrls, urls)
+                || SabrDownloadStreamHelper.containsSabrStream(selectedStream, secondaryStream)) {
             psName = null;
             psArgs = null;
         }

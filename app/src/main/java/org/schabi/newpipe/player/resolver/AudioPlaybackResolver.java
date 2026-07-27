@@ -55,11 +55,11 @@ public class AudioPlaybackResolver implements PlaybackResolver {
         audioStreams = filterUnsupportedFormats(audioStreams, context);
 
         final int index = ListHelper.getAudioFormatIndex(context, audioStreams, audioTrack);
-        if (index < 0 || index >= info.getAudioStreams().size()) {
+        if (index < 0 || index >= audioStreams.size()) {
             return null;
         }
 
-        final AudioStream audio = info.getAudioStreams().get(index);
+        final AudioStream audio = audioStreams.get(index);
         final MediaItemTag tag = StreamInfoTag.of(info);
 
         try {

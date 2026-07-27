@@ -2,7 +2,7 @@
 <resources>
 
     <color name="contrastColor">@color/black</color>
-    <color name="defaultIconTint">@color/black</color>
+    <color name="defaultIconTint">?android:attr/textColorPrimary</color>
 
     <color name="ic_launcher_background">#CD201F</color>
     <color name="placeholder_background">#999999</color>

@@ -573,6 +573,15 @@
 <string name="error_progress_lost">Progress lost, because the file was deleted</string>
 <string name="error_timeout">Connection timeout</string>
 <string name="error_download_resource_gone">Cannot recover this download</string>
+<string name="error_sabr_download_failed">SABR download failed</string>
+<string name="error_sabr_download_format">This SABR format cannot be downloaded</string>
+<string name="error_sabr_download_initialization">SABR initialization failed</string>
+<string name="error_sabr_download_protected">This SABR stream needs attestation</string>
+<string name="error_sabr_download_stalled">SABR stopped returning media</string>
+<string name="error_sabr_download_network">SABR download failed because of the network</string>
+<string name="error_sabr_download_muxing">Could not mux SABR media</string>
+<string name="error_sabr_download_storage">Could not write the SABR download</string>
+<string name="error_sabr_download_protocol">SABR protocol error</string>
 <string name="clear_download_history">Clear download history</string>
 <string name="confirm_prompt">Do you want to clear your download history or delete all downloaded files?</string>
 <string name="delete_downloaded_files">Delete downloaded files</string>
@@ -919,7 +928,7 @@
 <string name="sponsor_promote">Become a supporter</string>
 <string name="random_play_order_title">Random Order</string>
 <string name="random_play_order_summary">Automatically shuffle your local playlists when playing in the background</string>
-<string name="update_log">Fix: \"This content is not supported by PipePipe\" error on all videos (YouTube)\n\nYouTube has been updating frequently lately, please make sure to turn on updates checking to receive our latest patches promptly.</string>
+<string name="update_log">- Further improved YouTube video information loading and playback startup speed\n- Fixed several issues that could cause SABR playback errors under certain conditions\n- Fixed WebView being incorrectly reported as unavailable in some cases\n- Fixed IP addresses being incorrectly reported as blocked by YouTube in some cases\n- Improved overall app stability</string>
 <string name="speeding_playback_title">Long-press to speeding the playback</string>
 <string name="view_on_github">View on GitHub</string>
 <string name="donation_dialog_title">Support the Project</string>
@@ -1038,8 +1047,6 @@
 <string name="use_experimental_new_ui_summary">Use the new Compose-based UI, still being optimized. Changing this will restart the app.</string>
 <string name="force_end_on_overtime_title">Force end on overtime</string>
 <string name="force_end_on_overtime_summary">Force end playback when current position exceeds stream duration, as a workaround for streams that do not stop naturally</string>
-<string name="force_sabr_title">Force SABR</string>
-<string name="force_sabr_summary">Route all YouTube videos through the SABR pipeline instead of DASH/HLS. Experimental: may cause playback failures on some devices or videos</string>
 <string name="use_old_search_filter_title">Use old search filter</string>
 <string name="use_old_search_filter_summary">Use the old menu-based search filter instead of the new dialog UI</string>
 <string name="main_tabs_position_summary">Move main tab selector to the bottom</string>
@@ -1067,4 +1074,16 @@
 <string name="show_auto_translated_subtitles_summary">Show YouTube auto-translated subtitles. Requires YouTube login.</string>
 <string name="show_auto_translated_subtitles_login_required_summary">Disabled because YouTube login is required for auto-translated subtitles.</string>
 <string name="auto_translated_subtitles_language_title">Auto-translate subtitles to</string>
+<string name="export_data_to_newpipe_title">Export to NewPipe</string>
+<string name="export_data_to_newpipe_summary">Export backup in a NewPipe-compatible format</string>
+<string name="settings_category_other_platforms_title">Other platforms</string>
+<string name="use_dns_over_https_fallback_title">Use DNS over HTTPS fallback</string>
+<string name="use_dns_over_https_fallback_summary">Retry failed system DNS lookups using Cloudflare DNS over HTTPS. Changing this will restart the app.</string>
+<string name="youtube_player_client_title">YouTube extraction endpoint</string>
+<string name="webview_unavailable_youtube_hint">WebView unavailable. Please make sure your WebView version is higher than 80.\n\nAndroid 6 and 10: Update Android WebView in Play Store.\nAndroid 7, 8, 9: Update Chrome in Play Store.\nOther versions: This should not happen. Please report it on our GitHub.</string>
+<string name="sabr_backoff_notification_channel_name">YouTube playback waiting</string>
+<string name="sabr_backoff_notification_channel_description">Notifications when YouTube requires a playback request to wait</string>
+<string name="sabr_backoff_notification_title">Waiting for YouTube</string>
+<string name="youtube_send_session_visitor_data_summary">Send visitor data to YouTube. Help avoid temporary IP blocks, but you may be forced to wait for ads more frequently</string>
+<string name="sabr_backoff_notification_content">YouTube forces us to wait %1$d seconds before continuing playback</string>
 </resources>

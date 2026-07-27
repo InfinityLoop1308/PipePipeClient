@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat;
 
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.player.helper.MediaSessionManager;
 import org.schabi.newpipe.util.NavigationHelper;
 
 import java.util.List;
@@ -79,14 +80,22 @@ public final class NotificationUtil {
      */
     public synchronized void createNotificationIfNeededAndUpdate(final Player player,
                                                                  final boolean forceRecreate) {
+        final MediaSessionManager mediaSessionManager = player.getMediaSessionManager();
+        if (mediaSessionManager == null) {
+            Log.d(TAG, "Ignoring notification update after the player was destroyed");
+            return;
+        }
         if (forceRecreate || notificationBuilder == null) {
-            notificationBuilder = createNotification(player, null);
+            notificationBuilder = createNotification(player, null, mediaSessionManager);
         }
         updateNotification(player);
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
     }
 
-    private synchronized NotificationCompat.Builder createNotification(final Player player, final Service service) {
+    private synchronized NotificationCompat.Builder createNotification(
+            final Player player,
+            @Nullable final Service service,
+            final MediaSessionManager mediaSessionManager) {
         if (DEBUG) {
             Log.d(TAG, "createNotification()");
         }
@@ -116,7 +125,7 @@ public final class NotificationUtil {
         }
 
         builder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
-                .setMediaSession(player.getMediaSessionManager().getSessionToken())
+                .setMediaSession(mediaSessionManager.getSessionToken())
                 .setShowActionsInCompactView(compactSlots))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -138,7 +147,7 @@ public final class NotificationUtil {
             }
         } else {
             builder.setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
-                    .setMediaSession(player.getMediaSessionManager().getSessionToken()));
+                    .setMediaSession(mediaSessionManager.getSessionToken()));
         }
         return builder;
     }
@@ -192,8 +201,13 @@ public final class NotificationUtil {
 
 
     void createNotificationAndStartForeground(final Player player, final Service service) {
+        final MediaSessionManager mediaSessionManager = player.getMediaSessionManager();
+        if (mediaSessionManager == null) {
+            Log.w(TAG, "Cannot start the playback foreground service without a media session");
+            return;
+        }
         if (notificationBuilder == null) {
-            notificationBuilder = createNotification(player, service);
+            notificationBuilder = createNotification(player, service, mediaSessionManager);
         }
         updateNotification(player);
 

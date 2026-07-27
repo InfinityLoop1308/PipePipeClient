@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.extractor.stream.StreamType;
+import org.schabi.newpipe.player.PlaybackStartupTrace;
 import org.schabi.newpipe.util.ExtractorHelper;
 
 import java.io.Serializable;
@@ -131,6 +132,10 @@ public class PlayQueueItem implements Serializable {
     public Single<StreamInfo> getStream() {
         return ExtractorHelper.getStreamInfo(this.serviceId, this.url, false)
                 .subscribeOn(Schedulers.io())
+                .doOnSubscribe(ignored -> PlaybackStartupTrace.markForUrl(
+                        this.url, "stream_info_requested"))
+                .doOnSuccess(ignored -> PlaybackStartupTrace.markForUrl(
+                        this.url, "stream_info_ready"))
                 .doOnError(throwable -> error = throwable);
     }
 

@@ -14,7 +14,9 @@ import androidx.media3.exoplayer.source.SingleSampleMediaSource;
 
 import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.stream.AudioStream;
+import org.schabi.newpipe.extractor.stream.DeliveryMethod;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
+import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.extractor.stream.SubtitlesStream;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.player.datasource.SabrSessionStore;
@@ -72,8 +74,6 @@ public class VideoPlaybackResolver implements PlaybackResolver {
             return liveSource;
         }
 
-        // Hand the user-selected audio language to the SABR session store before it (re)builds the
-        // session for this video, so the switch actually changes the streamed track.
         SabrSessionStore.setPreferredAudioTrack(info.getId(), audioTrack);
 
         final List<MediaSource> mediaSources = new ArrayList<>();
@@ -82,6 +82,13 @@ public class VideoPlaybackResolver implements PlaybackResolver {
 
         removeTorrentStreams(videoStreams);
         removeTorrentStreams(videoOnlyStreams);
+
+        if (info.getStreamType() == StreamType.POST_LIVE_STREAM
+                && videoStreams.stream()
+                .anyMatch(stream -> stream.getDeliveryMethod() == DeliveryMethod.HLS)) {
+            videoStreams.removeIf(stream -> stream.getDeliveryMethod() != DeliveryMethod.HLS);
+            videoOnlyStreams.clear();
+        }
 
         // Create video stream source
         List<VideoStream> videos = ListHelper.getSortedStreamVideosList(context,
@@ -134,10 +141,6 @@ public class VideoPlaybackResolver implements PlaybackResolver {
                         dataSource, video, info, PlayerHelper.cacheKeyOf(info, video), tag);
                 mediaSources.add(streamSource);
             } catch (final IOException e) {
-                // For SABR, surface the real failure (probe / session creation) with its cause
-                // instead of swallowing it into a generic "Unable to resolve source from stream info"
-                // downstream where you can't tell where it came from. Non-SABR keeps returning null
-                // (sourceOf then falls back to the audio source), so that path is unchanged.
                 if (video.getDeliveryMethod()
                         == org.schabi.newpipe.extractor.stream.DeliveryMethod.SABR) {
                     throw new IllegalStateException(

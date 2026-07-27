@@ -10,6 +10,7 @@ import androidx.media3.database.StandaloneDatabaseProvider;
 import androidx.media3.datasource.DataSource;
 import androidx.media3.datasource.DefaultDataSource;
 import androidx.media3.datasource.DefaultHttpDataSource;
+import androidx.media3.datasource.okhttp.OkHttpDataSource;
 import androidx.media3.datasource.FileDataSource;
 import androidx.media3.datasource.TransferListener;
 import androidx.media3.datasource.cache.CacheDataSink;
@@ -18,8 +19,10 @@ import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor;
 import androidx.media3.datasource.cache.SimpleCache;
 
 import org.schabi.newpipe.player.datasource.YoutubeHttpDataSource;
+import org.schabi.newpipe.DownloaderImpl;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 
 /* package-private */ final class CacheFactory implements DataSource.Factory {
@@ -97,8 +100,11 @@ import java.lang.reflect.Method;
 
         final DataSource.Factory upstreamDataSourceFactoryToUse;
         if (upstreamDataSourceFactory == null) {
-            upstreamDataSourceFactoryToUse = new DefaultHttpDataSource.Factory()
-                    .setUserAgent(userAgent);
+            upstreamDataSourceFactoryToUse = DownloaderImpl.getInstance()
+                    .isDnsOverHttpsFallbackEnabled()
+                    ? new OkHttpDataSource.Factory(DownloaderImpl.getInstance().getClient())
+                            .setUserAgent(userAgent)
+                    : new DefaultHttpDataSource.Factory().setUserAgent(userAgent);
         } else {
             if (upstreamDataSourceFactory instanceof DefaultHttpDataSource.Factory) {
                 upstreamDataSourceFactoryToUse =
@@ -130,6 +136,16 @@ import java.lang.reflect.Method;
             method.invoke(null, cacheDir);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /** Clears media entries without destroying the process; used by cold-cache benchmarks. */
+    static synchronized void clearMediaCache() throws IOException {
+        if (cache == null) {
+            return;
+        }
+        for (final String key : new java.util.HashSet<>(cache.getKeys())) {
+            cache.removeResource(key);
         }
     }
 }

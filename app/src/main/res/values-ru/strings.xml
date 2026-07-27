@@ -391,7 +391,7 @@
     <string name="enable_queue_limit_desc">Одновременно будет выполняться только одна загрузка</string>
     <string name="start_downloads">Начать загрузку</string>
     <string name="pause_downloads">Приостановить загрузку</string>
-    <string name="downloads_storage_ask_title">downloads_storage_ask_title</string>
+    <string name="downloads_storage_ask_title">Спрашивать куда скачивать</string>
     <string name="downloads_storage_ask_summary">Для каждой загрузки запрашивать папку для сохранения.
 \nВключите системный выбор папки (SAF), если хотите загружать на внешнюю SD-карту</string>
     <string name="downloads_storage_use_saf_title">Системный выбор папки (SAF)</string>
@@ -862,14 +862,12 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="remove_duplicates_popup_warning">Дубликаты видео в плейлисте будут удалены.
 
 Вы уверены? Это действие нельзя отменить!</string>
-    <string name="channel_tab_videos">Видео</string>
     <string name="channel_tab_tracks">Треки</string>
     <string name="channel_tab_livestreams">Стримы</string>
     <string name="channel_tab_shorts">Shorts</string>
     <string name="channel_tab_playlists">Подборки</string>
     <string name="channel_tab_channels">Каналы</string>
     <string name="channel_tab_albums">Альбомы</string>
-    <string name="channel_tab_info">О канале</string>
     <string name="show_channel_tabs">Вкладки канала</string>
     <string name="show_channel_tabs_summary">Какие вкладки будут отображаться на страницах каналов</string>
     <string name="image_quality_none">Не загружать изображения</string>
@@ -997,7 +995,7 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="advanced_formats_title">Включить расширенные форматы</string>
     <string name="preferred_audio_language_title">Предпочтительный язык аудио</string>
     <string name="ip_blocked_summary">Ваш IP-адрес временно заблокирован YouTube. В течение некоторого времени могут возникать проблемы при воспроизведении некоторых видео. Если ошибка повторится, войдите в аккаунт через Настройки, чтобы продолжить.</string>
-    <string name="settings_category_filter_title">Фильтр контентаr</string>
+    <string name="settings_category_filter_title">Фильтр контента</string>
     <string name="filter_by_keyword_title">Фильтр по ключевым словам</string>
     <string name="filter_by_channel_title">Фильтр по каналам</string>
     <string name="filter_by_keyword_summary">Добавьте ключевые слова, которые нужно скрывать, разделяя их запятыми</string>
@@ -1091,4 +1089,20 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="grid_layout_summary">Отображать списки в виде сетки вместо одного столбца</string>
     <string name="grid_columns_title">Колонок в сетке</string>
     <string name="grid_columns_landscape_title">Колонок в сетке (альбомная ориентация)</string>
+    <string name="channel_tab_podcasts">Подкасты</string>
+    <string name="channel_tab_info">Информация</string>
+    <string name="channel_tab_videos">Видео</string>
+    <string name="pin_video_to_top_title">Закрепить видео сверху</string>
+    <string name="pin_video_to_top_summary">Оставлять видео закрепленным сверху при прокрутке страницы</string>
+    <string name="filter_future_items_title">Фильтровать будущие публикации</string>
+    <string name="filter_future_items_summary">Скрывать из списка видео, запланированные на будущее</string>
+    <string name="force_end_on_overtime_title">Принудительное завершение при превышении времени</string>
+    <string name="force_end_on_overtime_summary">Принудительно останавливать воспроизведение, если текущая позиция превышает длительность потока. Используется для обхода проблемы со стримами, которые не завершаются сами.</string>
+    <string name="use_old_search_filter_title">Старый фильтр поиска</string>
+    <string name="use_old_search_filter_summary">Использовать старый фильтр поиска на основе меню вместо нового всплывающего окна</string>
+    <string name="settings_category_behavior_title">Поведение</string>
+    <string name="show_auto_translated_subtitles_title">Автоматический перевод субтитров</string>
+    <string name="show_auto_translated_subtitles_summary">Показывать автоматически переведенные субтитры YouTube. Требуется вход в аккаунт YouTube.</string>
+    <string name="show_auto_translated_subtitles_login_required_summary">Отключено, так как для автоматического перевода субтитров необходим вход в аккаунт YouTube.</string>
+    <string name="auto_translated_subtitles_language_title">Язык автоматического перевода субтитров</string>
 </resources>

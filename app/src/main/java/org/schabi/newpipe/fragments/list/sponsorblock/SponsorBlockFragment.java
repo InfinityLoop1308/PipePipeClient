@@ -16,18 +16,20 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import io.reactivex.rxjava3.core.Single;
-import org.schabi.newpipe.BaseFragment;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.FragmentSponsorBlockBinding;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockAction;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockCategory;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockSegment;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
+import org.schabi.newpipe.fragments.StateSaverFragment;
 import org.schabi.newpipe.util.SponsorBlockHelper;
 import org.schabi.newpipe.util.SponsorBlockMode;
 
+import java.util.Queue;
+
 public class SponsorBlockFragment
-        extends BaseFragment
+        extends StateSaverFragment
         implements CompoundButton.OnCheckedChangeListener,
         SponsorBlockSegmentListAdapterListener {
     StreamInfo streamInfo = null;
@@ -44,6 +46,21 @@ public class SponsorBlockFragment
 
     public SponsorBlockFragment(@NonNull final StreamInfo streamInfo) {
         this.streamInfo = streamInfo;
+    }
+
+    @Override
+    public String generateSuffix() {
+        return "." + System.nanoTime() + ".sponsorblock";
+    }
+
+    @Override
+    public void writeTo(final Queue<Object> objectsToSave) {
+        objectsToSave.add(streamInfo);
+    }
+
+    @Override
+    public void readFrom(@NonNull final Queue<Object> savedObjects) {
+        streamInfo = (StreamInfo) savedObjects.poll();
     }
 
     @Override
@@ -275,7 +292,6 @@ public class SponsorBlockFragment
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable("streamInfo", streamInfo);
         if (markedStartTime != null) {
             outState.putInt("markedStartTime", markedStartTime);
         }
@@ -288,7 +304,6 @@ public class SponsorBlockFragment
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState != null) {
-            streamInfo = (StreamInfo) savedInstanceState.getSerializable("streamInfo");
             if (savedInstanceState.containsKey("markedStartTime")) {
                 markedStartTime = savedInstanceState.getInt("markedStartTime");
             }

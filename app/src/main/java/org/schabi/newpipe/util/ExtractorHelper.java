@@ -31,6 +31,7 @@ import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.linkhandler.SearchQueryHandler;
 import org.schabi.newpipe.extractor.search.filter.FilterItem;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.text.HtmlCompat;
 import androidx.preference.PreferenceManager;
@@ -321,7 +322,7 @@ public final class ExtractorHelper {
                                                          final Single<I> loadFromNetwork) {
         checkServiceId(serviceId);
         final Single<I> actualLoadFromNetwork = loadFromNetwork
-                .doOnSuccess(info -> CACHE.putInfo(serviceId, url, info, infoType));
+                .doOnSuccess(info -> cacheInfo(serviceId, url, info, infoType));
 
         final Single<I> load;
         if (forceLoad) {
@@ -335,6 +336,18 @@ public final class ExtractorHelper {
         }
 
         return load;
+    }
+
+    static void cacheInfo(final int serviceId, @NonNull final String requestedUrl,
+                          @NonNull final Info info, @NonNull final InfoItem.InfoType infoType) {
+        CACHE.putInfo(serviceId, requestedUrl, info, infoType);
+        // StreamInfo can canonicalize its URL. PlayQueueItem keeps that canonical URL, while the
+        // detail request was cached under the originally entered URL. Cache both keys so clicking
+        // play cannot trigger a second full extraction.
+        if (infoType == InfoItem.InfoType.STREAM
+                && info.getUrl() != null && !requestedUrl.equals(info.getUrl())) {
+            CACHE.putInfo(serviceId, info.getUrl(), info, infoType);
+        }
     }
 
     /**

@@ -28,6 +28,7 @@ import org.schabi.newpipe.extractor.exceptions.PaidContentException
 import org.schabi.newpipe.extractor.exceptions.PrivateContentException
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException
 import org.schabi.newpipe.extractor.exceptions.SoundCloudGoPlusContentException
+import org.schabi.newpipe.extractor.exceptions.WebViewUnavailableException
 import org.schabi.newpipe.extractor.exceptions.YoutubeMusicPremiumContentException
 import org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty
 import org.schabi.newpipe.ktx.animate
@@ -127,7 +128,8 @@ class ErrorPanelHelper(
             errorTextView.setText(getExceptionDescription(errorInfo.throwable))
 
             if (errorInfo.throwable !is ContentNotAvailableException &&
-                errorInfo.throwable !is ContentNotSupportedException
+                errorInfo.throwable !is ContentNotSupportedException &&
+                errorInfo.throwable !is WebViewUnavailableException
             ) {
                 // show retry button only for content which is not unavailable or unsupported
                 errorRetryButton.isVisible = true
@@ -192,6 +194,7 @@ class ErrorPanelHelper(
                 is PrivateContentException -> R.string.private_content_new
                 is SoundCloudGoPlusContentException -> R.string.soundcloud_go_plus_content_new
                 is YoutubeMusicPremiumContentException -> R.string.youtube_music_premium_content_new
+                is WebViewUnavailableException -> R.string.webview_unavailable_youtube_hint
                 is ContentNotAvailableException -> R.string.content_not_available
                 is ContentNotSupportedException -> R.string.content_not_supported_new
                 else -> {

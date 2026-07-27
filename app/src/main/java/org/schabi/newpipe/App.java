@@ -1,8 +1,12 @@
 package org.schabi.newpipe;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.*;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
+import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -19,8 +23,13 @@ import org.acra.ACRA;
 import org.acra.config.CoreConfigurationBuilder;
 import org.schabi.newpipe.error.ReCaptchaActivity;
 import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.downloader.Downloader;
+import org.schabi.newpipe.extractor.services.youtube.YoutubeApiDecoder;
 import org.schabi.newpipe.ktx.ExceptionUtils;
+import org.schabi.newpipe.player.datasource.LocalDomPoTokenProvider;
+import org.schabi.newpipe.player.datasource.SabrPolicyRuntime;
+import org.schabi.newpipe.player.datasource.SabrPolicyUpdateWorker;
 import org.schabi.newpipe.settings.NewPipeSettings;
 import org.schabi.newpipe.util.*;
 
@@ -37,6 +46,7 @@ import io.reactivex.rxjava3.exceptions.OnErrorNotImplementedException;
 import io.reactivex.rxjava3.exceptions.UndeliverableException;
 import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.plugins.RxJavaPlugins;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import static org.schabi.newpipe.MainActivity.DEBUG;
 
@@ -61,6 +71,7 @@ import static org.schabi.newpipe.MainActivity.DEBUG;
 public class App extends MultiDexApplication {
     public static final String PACKAGE_NAME = BuildConfig.APPLICATION_ID;
     private static final String TAG = App.class.toString();
+    private static final String YOUTUBE_ANDROID_VR_CLIENT_NAME = "ANDROID_VR";
     private static App app;
 
     private CarConnectionStateReceiver carConnectionReceiver;
@@ -79,9 +90,15 @@ public class App extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        EdgeToEdgeWorkaround.apply();
-
         app = this;
+
+        if (ACRA.isACRASenderServiceProcess()) {
+            Log.i(TAG, "This is the ACRA sender process! "
+                    + "Aborting initialization of App[onCreate]");
+            return;
+        }
+
+        EdgeToEdgeWorkaround.apply();
 
         if (ProcessPhoenix.isPhoenixProcess(this)) {
             Log.i(TAG, "This is a phoenix process! "
@@ -112,6 +129,31 @@ public class App extends MultiDexApplication {
         NewPipe.init(getDownloader(),
             Localization.getPreferredLocalization(this),
             Localization.getPreferredContentCountry(this));
+        final LocalDomPoTokenProvider sessionPoTokenProvider =
+                LocalDomPoTokenProvider.shared(this);
+        NewPipe.setYoutubeSessionPoTokenProvider((clientName, localization, contentCountry,
+                                                  loggedIn) -> {
+            if (!shouldProvideYoutubeSessionPoToken(clientName,
+                    isYoutubeSessionVisitorDataEnabled(this))) {
+                return null;
+            }
+            return sessionPoTokenProvider.getSessionPoToken(clientName, localization,
+                    contentCountry, loggedIn);
+        });
+        try {
+            SabrPolicyRuntime.initialize(this,
+                    BuildConfig.SABR_POLICY_PUBLIC_KEY_BASE64, 0);
+            SabrPolicyUpdateWorker.initialize(this);
+        } catch (final IllegalArgumentException error) {
+            Log.e(TAG, "Could not initialize SABR cloud policy; using builtin", error);
+        }
+        final AndroidWebViewAvailabilityChecker webViewAvailabilityChecker =
+                new AndroidWebViewAvailabilityChecker(this);
+        NewPipe.setWebViewAvailabilityChecker(webViewAvailabilityChecker);
+        webViewAvailabilityChecker.warmUp();
+        final WebViewJavaScriptDecoder decoder = new WebViewJavaScriptDecoder(this);
+        YoutubeApiDecoder.setLocalDecoder(decoder);
+        scheduleYoutubeDecoderPrewarm(decoder);
 
         Localization.initPrettyTime(Localization.resolvePrettyTime(getApplicationContext()));
 
@@ -119,10 +161,37 @@ public class App extends MultiDexApplication {
         initNotificationChannels();
 
         ServiceHelper.initServices(this);
+        prewarmYoutubeSessionPoToken();
 
         // Initialize image loader
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        NewPipe.setForceSabr(prefs.getBoolean(getString(R.string.force_sabr_key), false));
+        final String youtubePlayerClientKey = getString(R.string.youtube_player_client_key);
+        final String[] youtubePlayerClients = getResources()
+                .getStringArray(R.array.youtube_player_client_values);
+        final boolean hasYouTubeLogin = !TextUtils.isEmpty(prefs.getString(
+                getString(R.string.youtube_cookies_key), null));
+        final String defaultYoutubePlayerClient = hasYouTubeLogin
+                ? "tv_downgraded" : "mweb";
+        String youtubePlayerClient = prefs.getString(youtubePlayerClientKey,
+                defaultYoutubePlayerClient);
+        boolean isYoutubePlayerClientValid = false;
+        for (final String client : youtubePlayerClients) {
+            if (client.equals(youtubePlayerClient)) {
+                isYoutubePlayerClientValid = true;
+                break;
+            }
+        }
+        if (!isYoutubePlayerClientValid) {
+            youtubePlayerClient = defaultYoutubePlayerClient;
+            prefs.edit().putString(youtubePlayerClientKey, youtubePlayerClient).apply();
+        }
+        if ((hasYouTubeLogin && !"tv_downgraded".equals(youtubePlayerClient)
+                && !"mweb".equals(youtubePlayerClient))
+                || (!hasYouTubeLogin && "tv_downgraded".equals(youtubePlayerClient))) {
+            youtubePlayerClient = defaultYoutubePlayerClient;
+            prefs.edit().putString(youtubePlayerClientKey, youtubePlayerClient).apply();
+        }
+        NewPipe.setYoutubePlayerClient(youtubePlayerClient);
         PicassoHelper.init(this);
         PicassoHelper.setShouldLoadImages(
                 prefs.getBoolean(getString(R.string.download_thumbnail_key), true));
@@ -130,6 +199,70 @@ public class App extends MultiDexApplication {
                 && prefs.getBoolean(getString(R.string.show_image_indicators_key), false));
 
         configureRxJavaErrorHandler();
+    }
+
+    private void scheduleYoutubeDecoderPrewarm(final WebViewJavaScriptDecoder decoder) {
+        registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
+            private boolean scheduled;
+
+            @Override
+            public void onActivityResumed(@NonNull final Activity activity) {
+                if (scheduled) {
+                    return;
+                }
+                scheduled = true;
+                unregisterActivityLifecycleCallbacks(this);
+                activity.getWindow().getDecorView().postDelayed(
+                        () -> Schedulers.io().scheduleDirect(decoder::prewarm), 1_000);
+            }
+
+            @Override
+            public void onActivityCreated(@NonNull final Activity activity,
+                                          final Bundle savedInstanceState) {
+            }
+
+            @Override
+            public void onActivityStarted(@NonNull final Activity activity) {
+            }
+
+            @Override
+            public void onActivityPaused(@NonNull final Activity activity) {
+            }
+
+            @Override
+            public void onActivityStopped(@NonNull final Activity activity) {
+            }
+
+            @Override
+            public void onActivitySaveInstanceState(@NonNull final Activity activity,
+                                                    @NonNull final Bundle outState) {
+            }
+
+            @Override
+            public void onActivityDestroyed(@NonNull final Activity activity) {
+            }
+        });
+    }
+
+    public static void prewarmYoutubeSessionPoToken(@NonNull final Context context) {
+        LocalDomPoTokenProvider.shared(context).prewarmSessionPoToken(
+                Localization.getPreferredLocalization(context),
+                Localization.getPreferredContentCountry(context),
+                ServiceList.YouTube.hasTokens());
+    }
+
+    static boolean shouldProvideYoutubeSessionPoToken(@NonNull final String clientName,
+                                                       final boolean visitorDataEnabled) {
+        return visitorDataEnabled || YOUTUBE_ANDROID_VR_CLIENT_NAME.equals(clientName);
+    }
+
+    private static boolean isYoutubeSessionVisitorDataEnabled(@NonNull final Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+                context.getString(R.string.youtube_session_visitor_data_key), false);
+    }
+
+    private void prewarmYoutubeSessionPoToken() {
+        prewarmYoutubeSessionPoToken(this);
     }
 
     @Override
@@ -159,7 +292,9 @@ public class App extends MultiDexApplication {
 
 
     protected Downloader getDownloader() {
-        final DownloaderImpl downloader = DownloaderImpl.init(null);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final DownloaderImpl downloader = DownloaderImpl.init(null, prefs.getBoolean(
+                getString(R.string.use_dns_over_https_fallback_key), false));
         setCookiesToDownloader(downloader);
         return downloader;
     }
@@ -301,6 +436,17 @@ public class App extends MultiDexApplication {
                     NotificationManagerCompat.IMPORTANCE_DEFAULT)
                 .setName(getString(R.string.streams_notification_channel_name))
                 .setDescription(getString(R.string.streams_notification_channel_description))
+                .build());
+
+        notificationChannelCompats.add(new NotificationChannelCompat
+                .Builder(getString(R.string.sabr_backoff_notification_channel_id),
+                        NotificationManagerCompat.IMPORTANCE_DEFAULT)
+                .setName(getString(R.string.sabr_backoff_notification_channel_name))
+                .setDescription(getString(
+                        R.string.sabr_backoff_notification_channel_description))
+                .setSound(null, null)
+                .setVibrationEnabled(false)
+                .setShowBadge(false)
                 .build());
 
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);

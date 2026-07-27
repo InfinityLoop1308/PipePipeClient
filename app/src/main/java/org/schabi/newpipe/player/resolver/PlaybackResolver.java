@@ -49,17 +49,18 @@ import org.schabi.newpipe.player.mediaitem.StreamInfoTag;
 import org.schabi.newpipe.util.StreamTypeUtil;
 import org.schabi.newpipe.App;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
-import org.schabi.newpipe.extractor.localization.Localization;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
-import org.schabi.newpipe.player.datasource.SabrMediaSource;
+import org.schabi.newpipe.player.datasource.SabrDashMediaSource;
 import org.schabi.newpipe.player.datasource.SabrSessionStore;
+import org.schabi.newpipe.player.datasource.SabrSourceSpec;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
@@ -360,6 +361,9 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             return createYoutubeMediaSourceOfVideoStreamType(dataSource, stream, streamInfo,
                     cacheKey, metadata);
         } else if (streamType == StreamType.POST_LIVE_STREAM) {
+            if (stream.getDeliveryMethod() == DeliveryMethod.HLS) {
+                return buildHlsMediaSource(dataSource, stream, cacheKey, metadata);
+            }
             // If the content is not an URL, uses the DASH delivery method and if the stream type
             // of the stream is a post live stream, it means that the content is an ended
             // livestream so we need to generate the manifest corresponding to the content
@@ -462,35 +466,30 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                                                     @NonNull final MediaItemTag metadata)
             throws IOException {
         final String videoId = streamInfo.getId();
-        // Honour the user-selected video quality instead of forcing the highest (4K is heavy and
-        // hits the device VP9 decoder wall); audio-only playback passes 0 and keeps the best audio.
         final int preferredVideoItag =
                 (stream instanceof VideoStream) ? ((VideoStream) stream).getItag() : 0;
-        final SabrSessionStore.Holder holder;
+        final YoutubeSabrInfo sabrInfo = getSabrInfo(stream);
+        final SabrSourceSpec spec;
         try {
-            holder = SabrSessionStore.getOrCreate(App.getApp(), videoId, preferredVideoItag);
+            spec = SabrSessionStore.createSourceSpec(videoId, preferredVideoItag, sabrInfo);
         } catch (final ExtractionException e) {
-            throw new IOException("Could not start SABR session for " + videoId, e);
+            throw new IOException("Could not describe SABR source for " + videoId, e);
         }
-        enrichSabrAudioTracks(streamInfo, holder.info);
-        // One source carries both tracks; media3 track selection picks audio-only when there's no
-        // video renderer (background/popup). Seeking is real because it's chunk-based, not a byte
-        // stream. The audio resolver path skips its own SABR source (see VideoPlaybackResolver).
+        enrichSabrAudioTracks(streamInfo, spec.getInfo());
         final MediaItem mediaItem = new MediaItem.Builder()
                 .setTag(metadata)
                 .setUri(Uri.parse("sabr://" + videoId))
                 .setCustomCacheKey(cacheKey)
                 .build();
-        return new SabrMediaSource(mediaItem, holder, new Localization("en", "US"));
+        return new SabrDashMediaSource(App.getApp(), mediaItem, spec);
     }
 
-    /**
-     * SABR's main player response only carries the original-language audio; the dubbed tracks live
-     * in the probe's {@link YoutubeSabrInfo}. Add the missing tracks (one {@link AudioStream} per
-     * audioTrackId) to the shared {@link StreamInfo} so the generic audio-track selector (also used
-     * by HLS) lists them. The added streams are UI markers; SABR playback still picks the format via
-     * the session, so they clone the original stream's content/format and only swap the track info.
-     */
+    @Nullable
+    private static YoutubeSabrInfo getSabrInfo(@NonNull final Stream stream) {
+        final Serializable info = stream.getDeliveryMethodInfo();
+        return info instanceof YoutubeSabrInfo ? (YoutubeSabrInfo) info : null;
+    }
+
     private static void enrichSabrAudioTracks(@NonNull final StreamInfo streamInfo,
                                               @NonNull final YoutubeSabrInfo info) {
         final List<AudioStream> audioStreams = streamInfo.getAudioStreams();

@@ -1,6 +1,7 @@
 package org.schabi.newpipe.player.datasource;
 
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -14,101 +15,242 @@ import org.schabi.newpipe.extractor.services.youtube.sabr.SabrMediaSegment;
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrSegmentRequest;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
+import java.util.List;
+import java.util.Map;
 
-/**
- * Tier-2 chunk source helper: a {@link DataSource} that serves exactly ONE SABR segment (the init
- * segment or one media segment) from the session cache, then ends. The chunk framework
- * ({@code ChunkSampleStream}) opens one of these per chunk, so seeking is handled by the framework
- * picking the chunk index, NOT by byte-skipping a continuous stream (which the v1 source could not
- * land).
- *
- * <p>The segment is identified by the {@link DataSpec} uri: {@code sabrseg://<itag>/init} or
- * {@code sabrseg://<itag>/<sequenceNumber>}.</p>
- */
 public final class SabrSegmentDataSource implements DataSource {
+    private static final String TAG = "SabrSegmentDataSource";
 
     private static final long WAIT_MS = 250;
-    private static final long STALL_MS = 120_000;
-    // After waiting this long for a media segment that's BEHIND the buffered edge, treat it as a
-    // backward seek onto an evicted segment and ask the pump to reposition the session there.
-    private static final long REFETCH_AFTER_MS = 2_000;
-    // If a media segment is this far AHEAD of the buffered edge after REFETCH_AFTER_MS, it's a cold
-    // forward seek (SponsorBlock skip at start, resume-from-history): the pump fills forward from the
-    // edge and would take minutes to reach it, so jump the session onto it instead of waiting.
+    private static final long RECOVERY_AFTER_NO_PROGRESS_MS = 10_000;
+    private static final long RECOVERY_RETRY_MS = 10_000;
+    private static final long RECOVERY_FAILURE_MS = 30_000;
     private static final long FORWARD_SEEK_AHEAD_MS = 30_000;
 
-    private final SabrSessionStore.Holder holder;
-    private final YoutubeSabrFormat format;
+    @Nullable
+    private SabrSessionStore.Holder holder;
+    @Nullable
+    private final SabrSessionHandle sessionHandle;
+    private final Object readerOwner;
+    @Nullable
+    private final YoutubeSabrFormat fixedFormat;
     private final Localization localization;
-    // Prepend the init segment so each media chunk is a self-contained fmp4 (init + one fragment),
-    // which a fresh FragmentedMp4Extractor parses fully. SABR's init isn't a clean standalone atom
-    // boundary, so feeding it on its own (DASH-style InitializationChunk) hit an EOF mid-atom.
     private final boolean prependInit;
 
     @Nullable
     private Uri uri;
     @Nullable
     private byte[] data;
+    @Nullable
+    private InputStream dataStream;
+    @Nullable
+    private SabrMediaSegment progressiveSegment;
+    private long progressiveReaderGeneration = -1;
+    private int progressiveDataEndPosition = -1;
+    private long bytesRemaining;
     private int pos;
     private boolean opened;
     private volatile boolean canceled;
 
     public SabrSegmentDataSource(final SabrSessionStore.Holder holder,
+                                 final Object readerOwner,
                                  final YoutubeSabrFormat format,
                                  final Localization localization,
                                  final boolean prependInit) {
         this.holder = holder;
-        this.format = format;
+        this.sessionHandle = null;
+        this.readerOwner = readerOwner;
+        this.fixedFormat = format;
+        this.localization = localization;
+        this.prependInit = prependInit;
+    }
+
+    public SabrSegmentDataSource(final SabrSessionStore.Holder holder,
+                                 final Object readerOwner,
+                                 final Localization localization,
+                                 final boolean prependInit) {
+        this.holder = holder;
+        this.sessionHandle = null;
+        this.readerOwner = readerOwner;
+        this.fixedFormat = null;
+        this.localization = localization;
+        this.prependInit = prependInit;
+    }
+
+    SabrSegmentDataSource(final SabrSessionHandle sessionHandle,
+                          final Object readerOwner,
+                          final Localization localization,
+                          final boolean prependInit) {
+        this.holder = null;
+        this.sessionHandle = sessionHandle;
+        this.readerOwner = readerOwner;
+        this.fixedFormat = null;
         this.localization = localization;
         this.prependInit = prependInit;
     }
 
     @Override
     public void addTransferListener(final TransferListener transferListener) {
-        // Bandwidth metering not wired for the SABR source.
     }
 
     @Override
     public long open(final DataSpec dataSpec) throws IOException {
+        if (holder == null) {
+            if (sessionHandle == null) {
+                throw new IOException("SABR data source has no session handle");
+            }
+            holder = sessionHandle.acquireHolder();
+        }
         this.uri = dataSpec.uri;
         this.canceled = false;
+        closeDataStream();
+        this.data = null;
+        this.progressiveSegment = null;
+        this.progressiveReaderGeneration = -1;
+        this.progressiveDataEndPosition = -1;
         this.pos = (int) Math.max(0, dataSpec.position);
-        final SabrSegmentRequest request = requestFromUri(dataSpec.uri);
-        if (prependInit && !request.isInitializationSegment()) {
-            final byte[] init = awaitSegment(SabrSegmentRequest.initialization(format));
-            final byte[] media = awaitSegment(request);
+        SabrSegmentRequest request = requestFromUri(dataSpec.uri);
+        final YoutubeSabrFormat format = request.getFormat();
+        final long availableRemaining;
+        final int openedBytes;
+        Log.d(TAG, "open video=" + holder.videoId
+                + " itag=" + format.getItag()
+                + " uri=" + dataSpec.uri
+                + " prependInit=" + prependInit);
+        if (request.isInitializationSegment()) {
+            this.data = getInitializationData(format);
+            availableRemaining = Math.max(0, data.length - pos);
+            openedBytes = data.length;
+        } else if (prependInit) {
+            final byte[] init = getInitializationData(format);
+            final SabrMediaSegment segment = awaitSegment(request);
+            final byte[] media = segment == null ? new byte[0] : segment.getData();
             final byte[] both = new byte[init.length + media.length];
             System.arraycopy(init, 0, both, 0, init.length);
             System.arraycopy(media, 0, both, init.length, media.length);
             this.data = both;
+            if (progressiveSegment != null) {
+                progressiveDataEndPosition = both.length;
+            }
+            availableRemaining = Math.max(0, data.length - pos);
+            openedBytes = data.length;
         } else {
-            this.data = awaitSegment(request);
+            SabrMediaSegment segment = awaitSegment(request);
+            if (segment != null) {
+                try {
+                    this.dataStream = segment.openStream();
+                } catch (final FileNotFoundException e) {
+                    Log.w(TAG, "Spool file vanished before open; refetching video="
+                            + holder.videoId + " itag=" + format.getItag()
+                            + " seq=" + request.getSequenceNumber());
+                    holder.session.discardCachedSegment(request);
+                    progressiveSegment = null;
+                    segment = awaitSegment(request);
+                    if (segment != null) {
+                        this.dataStream = segment.openStream();
+                    }
+                }
+            }
+            if (segment == null) {
+                this.data = new byte[0];
+                availableRemaining = 0;
+                openedBytes = 0;
+            } else {
+                if (progressiveSegment != null) {
+                    progressiveDataEndPosition = segment.getLength();
+                }
+                final long skipped = skipFully(dataStream, Math.max(0, dataSpec.position));
+                this.pos = (int) Math.min(Integer.MAX_VALUE, skipped);
+                availableRemaining = Math.max(0, segment.getLength() - skipped);
+                openedBytes = segment.getLength();
+            }
         }
         this.opened = true;
-        final int remaining = data.length - pos;
-        return dataSpec.length == C.LENGTH_UNSET ? remaining : Math.min(dataSpec.length, remaining);
+        this.bytesRemaining = dataSpec.length == C.LENGTH_UNSET
+                ? availableRemaining : Math.min(dataSpec.length, availableRemaining);
+        Log.d(TAG, "opened video=" + holder.videoId
+                + " itag=" + format.getItag()
+                + " bytes=" + openedBytes
+                + " remaining=" + availableRemaining);
+        return bytesRemaining;
+    }
+
+    private byte[] getInitializationData(final YoutubeSabrFormat format) throws IOException {
+        final int itag = format.getItag();
+        final byte[] cached = holder.getInitializationData(itag);
+        if (cached != null) {
+            return cached;
+        }
+        final SabrMediaSegment segment =
+                holder.session.getCachedSegment(SabrSegmentRequest.initialization(format));
+        if (segment != null) {
+            final byte[] data = segment.getData();
+            holder.setInitializationData(itag, data);
+            return data;
+        }
+        final SabrMediaSegment loadedSegment =
+                awaitSegment(SabrSegmentRequest.initialization(format));
+        return loadedSegment == null ? new byte[0] : loadedSegment.getData();
     }
 
     @Override
-    public int read(final byte[] target, final int offset, final int length) {
+    public int read(final byte[] target, final int offset, final int length) throws IOException {
         if (length == 0) {
             return 0;
         }
-        if (data == null || pos >= data.length) {
+        if (bytesRemaining <= 0) {
             return C.RESULT_END_OF_INPUT;
         }
-        final int toCopy = Math.min(length, data.length - pos);
-        System.arraycopy(data, pos, target, offset, toCopy);
-        pos += toCopy;
-        return toCopy;
+        if (data != null) {
+            if (pos >= data.length) {
+                return C.RESULT_END_OF_INPUT;
+            }
+            final int toCopy = (int) Math.min(Math.min(length, data.length - pos), bytesRemaining);
+            System.arraycopy(data, pos, target, offset, toCopy);
+            pos += toCopy;
+            bytesRemaining -= toCopy;
+            maybeAdvanceProgressiveReader();
+            return toCopy;
+        }
+        if (dataStream == null) {
+            return C.RESULT_END_OF_INPUT;
+        }
+        final int toRead = (int) Math.min(length, bytesRemaining);
+        final int read = dataStream.read(target, offset, toRead);
+        if (read < 0) {
+            bytesRemaining = 0;
+            return C.RESULT_END_OF_INPUT;
+        }
+        pos = (int) Math.min(Integer.MAX_VALUE, (long) pos + read);
+        bytesRemaining -= read;
+        maybeAdvanceProgressiveReader();
+        return read;
+    }
+
+    private void maybeAdvanceProgressiveReader() {
+        final SabrMediaSegment segment = progressiveSegment;
+        if (segment == null || progressiveDataEndPosition < 0
+                || pos < progressiveDataEndPosition || !segment.isComplete() || holder == null) {
+            return;
+        }
+        final YoutubeSabrFormat format = segment.getHeader().getItag()
+                == holder.videoFormat.getItag() ? holder.videoFormat : holder.audioFormat;
+        holder.setReaderPositionMs(readerOwner, progressiveReaderGeneration, format.getItag(),
+                segment.getHeader().getStartMs() + segment.getHeader().getDurationMs());
+        progressiveSegment = null;
+        progressiveReaderGeneration = -1;
+        progressiveDataEndPosition = -1;
     }
 
     private SabrSegmentRequest requestFromUri(final Uri u) throws IOException {
-        // sabrseg://<itag>/<init|seq>
+        final YoutubeSabrFormat format = formatFromUri(u);
         final String seg = u.getLastPathSegment();
         if (seg == null) {
-            throw new IOException("Bad SABR segment uri: " + u);
+            throw new SabrLogicException("Bad SABR segment uri: " + u);
         }
         if ("init".equals(seg)) {
             return SabrSegmentRequest.initialization(format);
@@ -116,75 +258,267 @@ public final class SabrSegmentDataSource implements DataSource {
         try {
             return SabrSegmentRequest.media(format, Integer.parseInt(seg));
         } catch (final NumberFormatException e) {
-            throw new IOException("Bad SABR segment uri: " + u, e);
+            throw new SabrLogicException("Bad SABR segment uri: " + u, e);
         }
     }
 
-    /** Block until the pump has cached this segment, or give up on a real stall / cancellation. */
-    private byte[] awaitSegment(final SabrSegmentRequest request) throws IOException {
+    private YoutubeSabrFormat formatFromUri(final Uri u) throws IOException {
+        if (fixedFormat != null) {
+            return fixedFormat;
+        }
+        final String host = u.getHost();
+        if (host == null) {
+            throw new SabrLogicException("Bad SABR segment uri without itag: " + u);
+        }
+        final int itag;
+        try {
+            itag = Integer.parseInt(host);
+        } catch (final NumberFormatException e) {
+            throw new SabrLogicException("Bad SABR segment itag in uri: " + u, e);
+        }
+        if (holder.videoFormat.getItag() == itag) {
+            return holder.videoFormat;
+        }
+        if (holder.audioFormat.getItag() == itag) {
+            return holder.audioFormat;
+        }
+        throw new SabrLogicException("Unknown SABR segment itag=" + itag + " uri=" + u);
+    }
+
+    @Nullable
+    private SabrMediaSegment awaitSegment(final SabrSegmentRequest request) throws IOException {
+        final YoutubeSabrFormat format = request.getFormat();
+        holder.throwIfTerminal();
+        if (holder.isInvalidated()) {
+            throw invalidatedException(request.getFormat());
+        }
         final SabrStreamPump pump = holder.getPump(localization);
+        long readerGeneration = holder.getReaderGeneration(readerOwner);
         final long waitStart = System.currentTimeMillis();
-        long lastRefetchMs = 0;
-        while (true) {
+        long noProgressSinceMs = waitStart;
+        long mediaProgressVersion = holder.session.getMediaProgressVersion();
+        long recoveryAtMs = -1;
+        long lastRecoveryAtMs = -1;
+        boolean loggedWait = false;
+        try {
+            while (true) {
             if (canceled) {
                 throw new IOException("SABR segment read canceled");
             }
-            pump.ensureStarted();
-            final SabrMediaSegment segment = pump.getCached(request);
-            if (segment != null) {
-                if (!segment.getHeader().isInitSegment()) {
-                    // Tell the pump how far this track has been loaded so it keeps feeding ahead
-                    // (and repositions after a seek). Without this readerHead stayed 0 and the pump
-                    // throttled forever after the initial fill.
-                    holder.setReaderPositionMs(format.getItag(),
-                            segment.getHeader().getStartMs() + segment.getHeader().getDurationMs());
-                }
-                return segment.getData();
-            }
-            if (pump.isFatal()) {
-                throw new IOException("SABR pump fatal for itag=" + format.getItag());
-            }
-            // Backward seek to an evicted segment behind the buffered edge: the forward pump never
-            // re-fetches it, so it would never arrive. Drop our read position onto it (so eviction +
-            // pacing follow the rewind, not the stale pre-seek position) and ask the pump to
-            // reposition the session there. The edge check leaves a merely-slow forward fetch (the
-            // segment is still ahead of the edge) to the normal pump, so forward playback is untouched.
             if (!request.isInitializationSegment()) {
-                final long now = System.currentTimeMillis();
-                if (now - waitStart > REFETCH_AFTER_MS && now - lastRefetchMs > REFETCH_AFTER_MS) {
+                final long currentReaderGeneration = holder.getReaderGeneration(readerOwner);
+                if (readerGeneration < 0 && currentReaderGeneration >= 0) {
+                    readerGeneration = currentReaderGeneration;
+                    noProgressSinceMs = System.currentTimeMillis();
+                    mediaProgressVersion = holder.session.getMediaProgressVersion();
+                } else if (readerGeneration >= 0
+                        && currentReaderGeneration != readerGeneration) {
+                    throw new InterruptedIOException("SABR reader demand superseded for itag="
+                            + format.getItag() + ", seq=" + request.getSequenceNumber());
+                }
+            }
+            holder.throwIfTerminal();
+            if (holder.isInvalidated()) {
+                throw invalidatedException(request.getFormat());
+            }
+            if (holder.session.isBeyondEnd(request)) {
+                Log.d(TAG, "beyond end video=" + holder.videoId
+                        + " itag=" + format.getItag()
+                        + " seq=" + request.getSequenceNumber());
+                holder.session.addDiagnosticEvent("beyond_end itag=" + format.getItag()
+                        + " seq=" + request.getSequenceNumber());
+                return null;
+            }
+            final IOException demandFailure = !request.isInitializationSegment()
+                    && readerGeneration >= 0
+                    ? pump.takeDemandFailure(request, readerOwner, readerGeneration) : null;
+            if (demandFailure != null) {
+                throw demandFailure;
+            }
+            final IOException networkFailure = pump.takeNetworkFailure();
+            if (networkFailure != null) {
+                throw networkFailure;
+            }
+            if (request.isInitializationSegment()) {
+                pump.requestInitialization(format);
+            } else {
+                pump.ensureStarted();
+            }
+            final SabrMediaSegment segment;
+            if (request.isInitializationSegment()) {
+                segment = pump.getCached(request);
+            } else {
+                try {
+                    segment = holder.session.awaitReadableSegment(request, WAIT_MS);
+                } catch (final InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new IOException("Interrupted waiting for SABR segment", e);
+                }
+            }
+            if (segment != null) {
+                Log.d(TAG, "cache hit video=" + holder.videoId
+                        + " itag=" + format.getItag()
+                        + " init=" + request.isInitializationSegment()
+                        + " seq=" + request.getSequenceNumber()
+                        + " bytes=" + segment.getLength()
+                        + " disk=" + segment.isDiskBacked());
+                if (!segment.getHeader().isInitSegment()) {
+                    if (segment.isComplete()) {
+                        holder.setReaderPositionMs(readerOwner, readerGeneration, format.getItag(),
+                                segment.getHeader().getStartMs()
+                                        + segment.getHeader().getDurationMs());
+                    } else {
+                        progressiveSegment = segment;
+                        progressiveReaderGeneration = readerGeneration;
+                    }
+                }
+                return segment;
+            }
+            if (holder.session.isBeyondEnd(request)) {
+                Log.d(TAG, "beyond end video=" + holder.videoId
+                        + " itag=" + format.getItag()
+                        + " seq=" + request.getSequenceNumber());
+                holder.session.addDiagnosticEvent("beyond_end itag=" + format.getItag()
+                        + " seq=" + request.getSequenceNumber());
+                return null;
+            }
+            if (!request.isInitializationSegment() && readerGeneration >= 0) {
+                pump.requestSegmentDemand(request, readerOwner, readerGeneration);
+            }
+            if (!loggedWait && System.currentTimeMillis() - waitStart > 1000) {
+                loggedWait = true;
+                holder.session.addDiagnosticEvent("wait itag=" + format.getItag()
+                        + " init=" + request.isInitializationSegment()
+                        + " seq=" + request.getSequenceNumber()
+                        + " pump=" + pump.getStateName()
+                        + " edgeMs=" + holder.session.getStreamState().getMinBufferedEndMs()
+                        + " readerHeadMs=" + holder.getReaderHeadMs()
+                        + " readerTailMs=" + holder.getReaderTailMs()
+                        + " cachedBytes=" + holder.session.getCachedBytes());
+                Log.d(TAG, "waiting video=" + holder.videoId
+                        + " itag=" + format.getItag()
+                        + " init=" + request.isInitializationSegment()
+                        + " seq=" + request.getSequenceNumber()
+                        + " edgeMs=" + holder.session.getStreamState().getMinBufferedEndMs()
+                        + " readerHeadMs=" + holder.getReaderHeadMs());
+            }
+            final long now = System.currentTimeMillis();
+            final long currentMediaProgressVersion = holder.session.getMediaProgressVersion();
+            if (currentMediaProgressVersion != mediaProgressVersion) {
+                mediaProgressVersion = currentMediaProgressVersion;
+                noProgressSinceMs = now;
+                recoveryAtMs = -1;
+                lastRecoveryAtMs = -1;
+            }
+            if (holder.session.getDemandBackoffRemainingMs() > 0) {
+                // Server-directed pacing is not a playback stall. Keep polling so cancellation and
+                // reader replacement remain responsive, but do not let the local recovery watchdog
+                // reposition the session and attempt another request before the server deadline.
+                noProgressSinceMs = now;
+                recoveryAtMs = -1;
+                lastRecoveryAtMs = -1;
+            }
+            if (now - noProgressSinceMs > RECOVERY_AFTER_NO_PROGRESS_MS
+                    && (lastRecoveryAtMs < 0
+                            || now - lastRecoveryAtMs > RECOVERY_RETRY_MS)
+                    && pump.canRecover()
+                    && (request.isInitializationSegment() || readerGeneration >= 0)) {
+                String recovery;
+                if (request.isInitializationSegment()) {
+                    recovery = "init";
+                    pump.requestInitialization(format);
+                } else {
                     final long edgeMs = holder.session.getStreamState().getMinBufferedEndMs();
                     final long segStartMs = holder.session.getStreamState()
                             .getSegmentStartMs(format, request.getSequenceNumber());
                     if (segStartMs < edgeMs) {
-                        // Backward seek onto an evicted segment behind the edge.
-                        holder.setReaderPositionMs(format.getItag(), segStartMs);
+                        recovery = "rewind";
+                        holder.setReaderPositionMs(readerOwner, readerGeneration, format.getItag(),
+                                segStartMs);
                         pump.requestRefetchFrom(request);
-                        lastRefetchMs = now;
                     } else if (segStartMs > edgeMs + FORWARD_SEEK_AHEAD_MS) {
-                        // Cold/forward seek far ahead of where the pump is filling (SponsorBlock skip
-                        // at start, resume-from-history): jump the session onto it instead of waiting
-                        // for the forward pump to crawl there. A merely-slow normal fetch (target just
-                        // past the edge) stays on the pump, so steady playback is untouched.
-                        holder.setReaderPositionMs(format.getItag(), segStartMs);
+                        recovery = "forward";
+                        holder.setReaderPositionMs(readerOwner, readerGeneration, format.getItag(),
+                                segStartMs);
                         pump.requestForwardSeekTo(request);
-                        lastRefetchMs = now;
+                    } else {
+                        recovery = "near_edge_refetch";
+                        holder.setReaderPositionMs(readerOwner, readerGeneration,
+                                format.getItag(), segStartMs);
+                        pump.requestRefetchFrom(request);
                     }
                 }
+                holder.session.addDiagnosticEvent("recovery type=" + recovery
+                        + " itag=" + format.getItag()
+                        + " init=" + request.isInitializationSegment()
+                        + " seq=" + request.getSequenceNumber()
+                        + " pump=" + pump.getStateName()
+                        + " edgeMs=" + holder.session.getStreamState().getMinBufferedEndMs());
+                if (recoveryAtMs < 0) {
+                    recoveryAtMs = now;
+                }
+                lastRecoveryAtMs = now;
             }
-            // Stall = THIS segment hasn't arrived within STALL_MS of us actually waiting for it. Do
-            // NOT use the pump's "time since it last produced a segment": the pump legitimately stops
-            // producing while throttled (buffer full, edge far ahead), so that clock goes stale and
-            // the first cache miss after a long throttle false-stalls at ~STALL_MS. That was the
-            // recurring ~2min freeze on longer/higher-bitrate streams.
-            if (System.currentTimeMillis() - waitStart > STALL_MS) {
-                throw new IOException("SABR segment stalled for itag=" + format.getItag());
+            if (recoveryAtMs >= 0 && now - recoveryAtMs > RECOVERY_FAILURE_MS
+                    && pump.canRecover()) {
+                final SabrLogicException failure = new SabrLogicException(
+                        "SABR made no progress after recovery for itag=" + format.getItag()
+                                + ", init=" + request.isInitializationSegment()
+                                + ", seq=" + request.getSequenceNumber()
+                                + ", waitMs=" + (now - waitStart)
+                                + ", pump=" + pump.getStateName()
+                                + ", edgeMs="
+                                + holder.session.getStreamState().getMinBufferedEndMs()
+                                + ", readerHeadMs=" + holder.getReaderHeadMs()
+                                + ", readerTailMs=" + holder.getReaderTailMs()
+                                + ", cachedBytes=" + holder.session.getCachedBytes()
+                                + ", trace=" + holder.session.getDiagnosticTrace());
+                holder.failTerminal(failure);
+                throw failure;
             }
-            try {
-                Thread.sleep(WAIT_MS);
-            } catch (final InterruptedException ie) {
-                Thread.currentThread().interrupt();
-                throw new IOException("Interrupted awaiting SABR segment", ie);
+            if (request.isInitializationSegment()) {
+                try {
+                    Thread.sleep(WAIT_MS);
+                } catch (final InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new IOException("Interrupted awaiting SABR initialization", e);
+                }
             }
+        }
+        } finally {
+            if (!request.isInitializationSegment()) {
+                pump.clearSegmentDemand(request, readerOwner, readerGeneration);
+            }
+        }
+    }
+
+    private SabrLogicException invalidatedException(final YoutubeSabrFormat format) {
+        return new SabrLogicException("SABR session invalidated for video=" + holder.videoId
+                + ", itag=" + format.getItag() + ", " + holder.getInvalidationDetails());
+    }
+
+    private static long skipFully(final InputStream input, final long requested) throws IOException {
+        long remaining = requested;
+        final byte[] buffer = new byte[8192];
+        while (remaining > 0) {
+            final long skipped = input.skip(remaining);
+            if (skipped > 0) {
+                remaining -= skipped;
+                continue;
+            }
+            final int read = input.read(buffer, 0, (int) Math.min(buffer.length, remaining));
+            if (read < 0) {
+                break;
+            }
+            remaining -= read;
+        }
+        return requested - remaining;
+    }
+
+    private void closeDataStream() throws IOException {
+        if (dataStream != null) {
+            dataStream.close();
+            dataStream = null;
         }
     }
 
@@ -198,6 +532,11 @@ public final class SabrSegmentDataSource implements DataSource {
     public void close() {
         canceled = true;
         data = null;
+        try {
+            closeDataStream();
+        } catch (final IOException e) {
+            Log.w(TAG, "Could not close SABR segment stream", e);
+        }
         opened = false;
     }
 }

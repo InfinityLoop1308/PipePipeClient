@@ -36,6 +36,11 @@ import java.util.Objects;
 import static org.schabi.newpipe.extractor.utils.Utils.isBlank;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
 public class BackupSettingsFragment extends BasePreferenceFragment {
     private static final String ZIP_MIME_TYPE = "application/zip";
 
@@ -43,6 +48,7 @@ public class BackupSettingsFragment extends BasePreferenceFragment {
             = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
 
     private ContentSettingsManager manager;
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     private String importExportDataPathKey;
 
@@ -93,6 +99,7 @@ public class BackupSettingsFragment extends BasePreferenceFragment {
 
     @Override
     public void onDestroy() {
+        disposables.clear();
         super.onDestroy();
     }
 
@@ -130,19 +137,18 @@ public class BackupSettingsFragment extends BasePreferenceFragment {
     }
 
     private void exportDatabase(final StoredFileHelper file, final Uri exportDataUri) {
-        try {
-            //checkpoint before export
+        final SharedPreferences preferences = PreferenceManager
+                .getDefaultSharedPreferences(requireContext());
+        disposables.add(Completable.fromAction(() -> {
             NewPipeDatabase.checkpoint();
-
-            final SharedPreferences preferences = PreferenceManager
-                    .getDefaultSharedPreferences(requireContext());
             manager.exportDatabase(preferences, file);
-
-            saveLastImportExportDataUri(exportDataUri); // save export path only on success
-            Toast.makeText(getContext(), R.string.export_complete_toast, Toast.LENGTH_SHORT).show();
-        } catch (final Exception e) {
-            ErrorUtil.showUiErrorSnackbar(this, "Exporting database", e);
-        }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    saveLastImportExportDataUri(exportDataUri);
+                    Toast.makeText(getContext(), R.string.export_complete_toast,
+                            Toast.LENGTH_SHORT).show();
+                }, e -> ErrorUtil.showUiErrorSnackbar(this, "Exporting database", e)));
     }
 
     private void importDatabase(final StoredFileHelper file, final Uri importDataUri) {

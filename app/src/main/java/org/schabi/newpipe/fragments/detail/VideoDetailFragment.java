@@ -87,6 +87,8 @@ import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.PlayerService.PlayerType;
 import org.schabi.newpipe.player.Player;
+import org.schabi.newpipe.player.PlaybackStartupTrace;
+import org.schabi.newpipe.player.datasource.SabrSessionStore;
 import org.schabi.newpipe.player.event.OnKeyDownListener;
 import org.schabi.newpipe.player.event.PlayerServiceExtendedEventListener;
 import org.schabi.newpipe.player.helper.PlayerHelper;
@@ -221,6 +223,7 @@ public final class VideoDetailFragment
 
     private List<VideoStream> sortedVideoStreams;
     private int selectedVideoStreamIndex = -1;
+    private long pendingStartupTraceId;
     private BottomSheetBehavior<FrameLayout> bottomSheetBehavior;
     private BroadcastReceiver broadcastReceiver;
 
@@ -355,7 +358,7 @@ public final class VideoDetailFragment
         outState.putInt("serviceId", serviceId);
         outState.putString("title", title);
         outState.putString("url", url);
-        outState.putInt("bottomSheetState", bottomSheetState);
+        outState.putInt("bottomSheetState", sanitizeBottomSheetState(bottomSheetState));
         outState.putBoolean("autoPlayEnabled", autoPlayEnabled);
         outState.putString("currentSponsorBlockMode", currentSponsorBlockMode != null ? currentSponsorBlockMode.name() : null);
     }
@@ -366,7 +369,8 @@ public final class VideoDetailFragment
         serviceId = savedInstanceState.getInt("serviceId", Constants.NO_SERVICE_ID);
         title = savedInstanceState.getString("title", "");
         url = savedInstanceState.getString("url");
-        bottomSheetState = savedInstanceState.getInt("bottomSheetState", BottomSheetBehavior.STATE_EXPANDED);
+        bottomSheetState = sanitizeBottomSheetState(savedInstanceState.getInt(
+                "bottomSheetState", BottomSheetBehavior.STATE_EXPANDED));
         autoPlayEnabled = savedInstanceState.getBoolean("autoPlayEnabled", true);
         String modeStr = savedInstanceState.getString("currentSponsorBlockMode");
         currentSponsorBlockMode = modeStr != null ? SponsorBlockMode.valueOf(modeStr) : null;
@@ -586,6 +590,10 @@ public final class VideoDetailFragment
                         currentInfo.getSubChannelName());
             }
         } else if (id == R.id.detail_thumbnail_root_layout) {
+            if (currentInfo != null) {
+                pendingStartupTraceId = PlaybackStartupTrace.begin(
+                        currentInfo.getId(), currentInfo.getUrl());
+            }
             autoPlayEnabled = true; // forcefully start playing
             // FIXME Workaround #7427
             if (isPlayerAvailable()) {
@@ -602,6 +610,10 @@ public final class VideoDetailFragment
                 player.hideControls(0, 0);
                 showSystemUi();
             } else {
+                if (currentInfo != null) {
+                    pendingStartupTraceId = PlaybackStartupTrace.begin(
+                            currentInfo.getId(), currentInfo.getUrl());
+                }
                 autoPlayEnabled = true; // forcefully start playing
                 openVideoPlayer(false);
             }
@@ -1417,6 +1429,7 @@ public final class VideoDetailFragment
 
     private void openMainPlayer() {
         if (!(isPlayerServiceAvailable() && playerHolder.getListener() != null)) {
+            PlaybackStartupTrace.mark(pendingStartupTraceId, "waiting_for_player_service");
             playerHolder.startService(autoPlayEnabled, this);
             return;
         }
@@ -1425,6 +1438,7 @@ public final class VideoDetailFragment
         }
 
         final PlayQueue queue = setupPlayQueueForIntent(false);
+        PlaybackStartupTrace.mark(pendingStartupTraceId, "play_queue_ready");
 
         // Video view can have elements visible from popup,
         // We hide it here but once it ready the view will be shown in handleIntent()
@@ -1435,6 +1449,7 @@ public final class VideoDetailFragment
         Context context = requireContext();
         final Intent playerIntent = NavigationHelper.getPlayerIntent(context,
                 DeviceUtils.getPlayerServiceClass(), queue, true, autoPlayEnabled);
+        PlaybackStartupTrace.attach(playerIntent, pendingStartupTraceId);
         ContextCompat.startForegroundService(activity, playerIntent);
     }
 
@@ -1919,6 +1934,11 @@ public final class VideoDetailFragment
                 false);
         selectedVideoStreamIndex = ListHelper
                 .getDefaultResolutionIndex(activity, sortedVideoStreams);
+        if (selectedVideoStreamIndex >= 0
+                && selectedVideoStreamIndex < sortedVideoStreams.size()) {
+            SabrSessionStore.prewarm(requireContext(), info,
+                    sortedVideoStreams.get(selectedVideoStreamIndex));
+        }
         updateProgressInfo(info);
         initThumbnailViews(info);
         showMetaInfoInTextView(info.getMetaInfo(), binding.detailMetaInfoTextView,
@@ -1947,8 +1967,8 @@ public final class VideoDetailFragment
         binding.detailControlsDownload.setVisibility(info.getStreamType() == StreamType.LIVE_STREAM
                 || info.getStreamType() == StreamType.AUDIO_LIVE_STREAM ? View.GONE : View.VISIBLE);
 
-        final boolean noVideoStreams =
-                info.getVideoStreams().isEmpty() && info.getVideoOnlyStreams().isEmpty();
+        final boolean noVideoStreams = info.getStreamType() != StreamType.LIVE_STREAM
+                && info.getVideoStreams().isEmpty() && info.getVideoOnlyStreams().isEmpty();
         binding.detailControlsPopup.setVisibility(noVideoStreams ? View.GONE : View.VISIBLE);
         binding.detailThumbnailPlayButton.setImageResource(
                 noVideoStreams ? R.drawable.ic_headset_shadow : R.drawable.ic_play_arrow_shadow);
@@ -2563,6 +2583,7 @@ public final class VideoDetailFragment
 
         final FrameLayout bottomSheetLayout = activity.findViewById(R.id.fragment_player_holder);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
+        bottomSheetState = sanitizeBottomSheetState(bottomSheetState);
         bottomSheetBehavior.setState(bottomSheetState);
         final int peekHeight = getResources().getDimensionPixelSize(R.dimen.mini_player_height);
         if (bottomSheetState != BottomSheetBehavior.STATE_HIDDEN) {
@@ -2672,6 +2693,19 @@ public final class VideoDetailFragment
             }
 
         });
+    }
+
+    static boolean isStableBottomSheetState(final int state) {
+        return state == BottomSheetBehavior.STATE_COLLAPSED
+                || state == BottomSheetBehavior.STATE_EXPANDED
+                || state == BottomSheetBehavior.STATE_HALF_EXPANDED
+                || state == BottomSheetBehavior.STATE_HIDDEN;
+    }
+
+    static int sanitizeBottomSheetState(final int state) {
+        return isStableBottomSheetState(state)
+                ? state
+                : BottomSheetBehavior.STATE_COLLAPSED;
     }
 
     private boolean shouldTriggerCollapse(Fragment fragment) {

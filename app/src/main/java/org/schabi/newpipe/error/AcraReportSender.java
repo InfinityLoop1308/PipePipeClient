@@ -8,6 +8,7 @@ import org.acra.ReportField;
 import org.acra.data.CrashReportData;
 import org.acra.sender.ReportSender;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.player.datasource.SabrPlaybackDiagnostics;
 
 /*
  * Created by Christian Schabesberger  on 13.09.16.
@@ -33,8 +34,13 @@ public class AcraReportSender implements ReportSender {
 
     @Override
     public void send(@NonNull final Context context, @NonNull final CrashReportData report) {
+        final String stackTrace = report.getString(ReportField.STACK_TRACE);
+        final String sabrDiagnostics = SabrPlaybackDiagnostics.getLastSnapshot(context);
+        final String[] logs = sabrDiagnostics.isEmpty()
+                ? new String[]{stackTrace}
+                : new String[]{stackTrace, "Last SABR diagnostics\n" + sabrDiagnostics};
         ErrorUtil.openActivity(context, new ErrorInfo(
-                new String[]{report.getString(ReportField.STACK_TRACE)},
+                logs,
                 UserAction.UI_ERROR,
                 ErrorInfo.SERVICE_NONE,
                 "ACRA report",

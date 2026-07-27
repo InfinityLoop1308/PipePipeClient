@@ -13,7 +13,6 @@ import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreferenceCompat;
 
 import org.schabi.newpipe.R;
-import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.PicassoHelper;
@@ -54,11 +53,38 @@ public class AdvancedSettingsFragment extends BasePreferenceFragment implements 
                     return true;
                 });
 
+        findPreference(getString(R.string.use_dns_over_https_fallback_key))
+                .setOnPreferenceChangeListener((preference, newValue) -> {
+                    defaultPreferences.edit()
+                            .putBoolean(getString(R.string.use_dns_over_https_fallback_key),
+                                    (Boolean) newValue)
+                            .commit();
+                    final Activity activity = getActivity();
+                    if (activity != null) {
+                        NavigationHelper.restartApp(activity);
+                    }
+                    return true;
+                });
+
+        findPreference(getString(R.string.youtube_player_client_key))
+                .setOnPreferenceChangeListener((preference, newValue) -> {
+                    defaultPreferences.edit()
+                            .putString(getString(R.string.youtube_player_client_key),
+                                    (String) newValue)
+                            .commit();
+                    final Activity activity = getActivity();
+                    if (activity != null) {
+                        NavigationHelper.restartApp(activity);
+                    }
+                    return true;
+                });
+
         if (DeviceUtils.isTv(getContext())) {
             findPreference(getString(R.string.use_old_search_filter_key)).setVisible(false);
         }
 
         updateAutoTranslatedSubtitlesPreferences();
+        updateYoutubePlayerClientPreference();
     }
     
     private void initializeAndroidAutoPreference() {
@@ -92,11 +118,10 @@ public class AdvancedSettingsFragment extends BasePreferenceFragment implements 
         } else if (key.equals(getString(R.string.youtube_cookies_key))
                 || key.equals(getString(R.string.show_auto_translated_subtitles_key))) {
             updateAutoTranslatedSubtitlesPreferences();
+            updateYoutubePlayerClientPreference();
             ServiceHelper.initServices(this.getContext());
         } else if (key.equals(getString(R.string.auto_translated_subtitles_language_key))) {
             ServiceHelper.initServices(this.getContext());
-        } else if (key.equals(getString(R.string.force_sabr_key))) {
-            NewPipe.setForceSabr(sharedPreferences.getBoolean(key, false));
         }
     }
 
@@ -124,10 +149,54 @@ public class AdvancedSettingsFragment extends BasePreferenceFragment implements 
                 && autoTranslatedSubtitlesEnabled);
     }
 
+    private void updateYoutubePlayerClientPreference() {
+        final ListPreference preference = findPreference(
+                getString(R.string.youtube_player_client_key));
+        if (preference == null) {
+            return;
+        }
+        final boolean loggedIn = !TextUtils.isEmpty(defaultPreferences.getString(
+                getString(R.string.youtube_cookies_key), null));
+        final String[] entries = getResources().getStringArray(
+                R.array.youtube_player_client_entries);
+        final String[] values = getResources().getStringArray(
+                R.array.youtube_player_client_values);
+        if (loggedIn) {
+            preference.setEntries(new CharSequence[]{entries[3], entries[0]});
+            preference.setEntryValues(new CharSequence[]{values[3], values[0]});
+            final String selected = preference.getValue();
+            if (!isYoutubePlayerClientAllowed(selected, values[3], values[0])) {
+                preference.setValue("tv_downgraded");
+                defaultPreferences.edit().putString(
+                        getString(R.string.youtube_player_client_key), "tv_downgraded").apply();
+            }
+        } else {
+            preference.setEntries(new CharSequence[]{entries[0], entries[1], entries[2]});
+            preference.setEntryValues(new CharSequence[]{values[0], values[1], values[2]});
+            if (!isYoutubePlayerClientAllowed(preference.getValue(),
+                    values[0], values[1], values[2])) {
+                preference.setValue("mweb");
+                defaultPreferences.edit().putString(
+                        getString(R.string.youtube_player_client_key), "mweb").apply();
+            }
+        }
+    }
+
+    private boolean isYoutubePlayerClientAllowed(final String selected,
+                                                final String... allowedValues) {
+        for (final String value : allowedValues) {
+            if (value.equals(selected)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         updateAutoTranslatedSubtitlesPreferences();
+        updateYoutubePlayerClientPreference();
         getPreferenceManager().getSharedPreferences()
                 .registerOnSharedPreferenceChangeListener(this);
     }

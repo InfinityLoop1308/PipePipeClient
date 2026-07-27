@@ -261,6 +261,7 @@ class StringTranslator:
             XMLHandler('app/src/main/res/values-de/strings.xml'),
             XMLHandler('app/src/main/res/values-it/strings.xml'),
             XMLHandler('app/src/main/res/values-es/strings.xml'),
+            XMLHandler('app/src/main/res/values-pl/strings.xml'),
         ]
         self.translator = Translator()
 

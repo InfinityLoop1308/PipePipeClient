@@ -15,6 +15,7 @@ import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException
 import org.schabi.newpipe.extractor.exceptions.ExtractionException
 import org.schabi.newpipe.extractor.exceptions.AntiBotException
 import org.schabi.newpipe.extractor.exceptions.NeedLoginException
+import org.schabi.newpipe.extractor.exceptions.WebViewUnavailableException
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor.DeobfuscateException
 import org.schabi.newpipe.ktx.isNetworkRelated
 import java.io.PrintWriter
@@ -121,6 +122,7 @@ class ErrorInfo(
                 throwable is DeobfuscateException -> R.string.youtube_signature_deobfuscation_error
                 throwable is AntiBotException -> R.string.anti_bot_youtube_hint
                 throwable is NeedLoginException -> R.string.need_login_hint
+                throwable is WebViewUnavailableException -> R.string.webview_unavailable_youtube_hint
                 throwable is ExtractionException -> R.string.parsing_error
                 throwable is ExoPlaybackException -> {
                     when (throwable.type) {

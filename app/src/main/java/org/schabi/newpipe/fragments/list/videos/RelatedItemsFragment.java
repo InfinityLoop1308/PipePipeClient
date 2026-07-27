@@ -23,15 +23,13 @@ import org.schabi.newpipe.info_list.ItemViewMode;
 import org.schabi.newpipe.ktx.ViewUtils;
 import org.schabi.newpipe.util.RelatedItemInfo;
 
-import java.io.Serializable;
+import java.util.Queue;
 import java.util.function.Supplier;
 
 import io.reactivex.rxjava3.core.Single;
 
 public class RelatedItemsFragment extends BaseListInfoFragment<InfoItem, RelatedItemInfo>
         implements SharedPreferences.OnSharedPreferenceChangeListener {
-    private static final String INFO_KEY = "related_info_key";
-
     private RelatedItemInfo relatedItemInfo;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -143,20 +141,15 @@ public class RelatedItemsFragment extends BaseListInfoFragment<InfoItem, Related
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull final Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if(relatedItemInfo.getRelatedItems().size() <= 100){
-            outState.putSerializable(INFO_KEY, relatedItemInfo);
-        }
+    public void writeTo(final Queue<Object> objectsToSave) {
+        super.writeTo(objectsToSave);
+        objectsToSave.add(relatedItemInfo);
     }
 
     @Override
-    protected void onRestoreInstanceState(@NonNull final Bundle savedState) {
-        super.onRestoreInstanceState(savedState);
-        final Serializable serializable = savedState.getSerializable(INFO_KEY);
-        if (serializable instanceof RelatedItemInfo) {
-            this.relatedItemInfo = (RelatedItemInfo) serializable;
-        }
+    public void readFrom(@NonNull final Queue<Object> savedObjects) throws Exception {
+        super.readFrom(savedObjects);
+        relatedItemInfo = (RelatedItemInfo) savedObjects.poll();
     }
 
     @Override

@@ -4,13 +4,19 @@ plugins {
     id "org.jetbrains.kotlin.plugin.compose"
     id "org.jetbrains.kotlin.plugin.parcelize"
     id "org.jetbrains.kotlin.kapt"
-    id "org.sonarqube"
 }
 
 def keyPath = System.getenv("KEY_PATH")
 def keyStorePassword = System.getenv("KEY_STORE_PASSWORD")
 def signingKeyAlias = System.getenv("KEY_ALIAS")
 def signingKeyPassword = System.getenv("KEY_PASSWORD")
+def sabrPolicyPublicKey = ""
+def sabrPolicyUrl = ""
+def baseVersionCode = 1105
+def appVersionName = "5.2.4"
+def abiCodes = ['armeabi-v7a': 1, 'x86': 2, 'x86_64': 3, 'arm64-v8a': 4]
+def stableBuildConfigVersionCode =
+        (100 * baseVersionCode) + abiCodes['armeabi-v7a']
 
 android {
     compileSdk 37
@@ -20,13 +26,16 @@ android {
         minSdk 23
         //noinspection OldTargetApi,ExpiredTargetSdkVersion
         targetSdk 36
-        versionCode 1100
-        versionName "5.2.0-beta5"
+        versionCode baseVersionCode
+        versionName appVersionName
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
-
+        buildConfigField "String", "SABR_POLICY_PUBLIC_KEY_BASE64",
+                "\"${sabrPolicyPublicKey.replace('\\', '\\\\').replace('"', '\\"')}\""
+        buildConfigField "String", "SABR_POLICY_URL",
+                "\"${sabrPolicyUrl.replace('\\', '\\\\').replace('"', '\\"')}\""
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
@@ -88,13 +97,7 @@ android {
 
     lint {
         checkReleaseBuilds false
-        // Or, if you prefer, you can continue to check for errors in release builds,
-        // but continue the build even when errors are found:
         abortOnError false
-        // suppress false warning ("Resource IDs will be non-final in Android Gradle Plugin version
-        // 5.0, avoid using them in switch case statements"), which affects only library projects
-        disable 'NonConstantResourceId'
-        disable 'MutableCollectionMutableState'
     }
 
     compileOptions {
@@ -129,126 +132,96 @@ android {
     namespace 'org.schabi.newpipe'
 }
 
+tasks.withType(com.android.build.gradle.internal.tasks.ExtractVersionControlInfoTask).configureEach {
+    enabled = false
+}
+
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     kotlinOptions {
         jvmTarget = '25'
     }
 }
 
+kapt {
+    correctErrorTypes true
+}
+
 androidComponents.onVariants(androidComponents.selector().all()) { variant ->
-    def abiCodes = project.ext.abiCodes
-    def defaultVersionCode = android.defaultConfig.versionCode as int
-    def defaultVersionName = android.defaultConfig.versionName
+    variant.buildConfigFields.put(
+            "VERSION_CODE",
+            new com.android.build.api.variant.BuildConfigField(
+                    "int", stableBuildConfigVersionCode,
+                    "Stable across ABI splits; use PackageManager at runtime."))
 
     variant.outputs.each { output ->
         def outputFileName = output.outputFileName.get()
         def abi = abiCodes.keySet().sort { -it.length() }.find { outputFileName.contains(it) }
-        def versionCode = 100 * defaultVersionCode
+        def versionCode = 100 * baseVersionCode
         if (abi != null) {
-            versionCode = (100 * defaultVersionCode) + abiCodes[abi]
+            versionCode += abiCodes[abi]
         }
         output.versionCode.set(versionCode)
-        output.outputFileName.set("PipePipe_${defaultVersionName}-${abi ?: 'universal'}-${variant.name}.apk")
+        output.outputFileName.set(
+                "PipePipe_${appVersionName}-${abi ?: 'universal'}-${variant.name}.apk")
     }
 }
 
 ext {
-    androidxLifecycleVersion = '2.3.1'
-    androidxRoomVersion = '2.4.2'
-    androidxWorkVersion = '2.10.2'
+    androidxLifecycleVersion = '2.11.0'
+    androidxRoomVersion = '2.8.4'
+    androidxWorkVersion = '2.11.2'
 
     media3Version = '1.10.1'
-    googleAutoServiceVersion = '1.0.1'
-    groupieVersion = '2.10.0'
+    googleAutoServiceVersion = '1.1.1'
+    groupieVersion = '2.10.1'
     markwonVersion = '4.6.2'
 
-    leakCanaryVersion = '2.10'
+    leakCanaryVersion = '2.14'
     stethoVersion = '1.6.0'
-    abiCodes = ['armeabi-v7a': 1, 'x86': 2, 'x86_64': 3, 'arm64-v8a': 4]
-}
-
-configurations {
-    ktlint
-}
-
-def outputDir = "${project.buildDir}/reports/ktlint/"
-def inputFiles = project.fileTree(dir: "src", include: "**/*.kt")
-
-task runKtlint(type: JavaExec) {
-    inputs.files(inputFiles)
-    outputs.dir(outputDir)
-    getMainClass().set("com.pinterest.ktlint.Main")
-    classpath = configurations.ktlint
-    args "src/**/*.kt"
-}
-
-task formatKtlint(type: JavaExec) {
-    inputs.files(inputFiles)
-    outputs.dir(outputDir)
-    getMainClass().set("com.pinterest.ktlint.Main")
-    classpath = configurations.ktlint
-    args "-F", "src/**/*.kt"
 }
 
 afterEvaluate {
 }
 
-sonarqube {
-    properties {
-        property "sonar.projectKey", "TeamNewPipe_NewPipe"
-        property "sonar.organization", "teamnewpipe"
-        property "sonar.host.url", "https://sonarcloud.io"
-    }
-}
-
 dependencies {
 /** Desugaring **/
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
 
 /** NewPipe libraries **/
-    // You can use a local version by uncommenting a few lines in settings.gradle
-    // Or you can use a commit you pushed to GitHub by just replacing TeamNewPipe with your GitHub
-    // name and the commit hash with the commit hash of the (pushed) commit you want to test
-    // This works thanks to JitPack: https://jitpack.io/
     implementation 'com.github.TeamNewPipe:nanojson:1d9e1aea9049fc9f85e68b43ba39fe7be1c1f751'
-    implementation('com.github.TeamNewPipe:NewPipeExtractor:6a858368c86bc9a55abee586eb6c733e86c26b97') {
-        exclude group: 'org.json', module: 'json'
-    }
-
-    ktlint 'com.pinterest:ktlint:0.44.0'
+    implementation group: 'com.github.InfinityLoop1308.PipePipeExtractor', name: 'extractor'
+    implementation 'io.github.dokar3:quickjs-kt:1.0.5'
 
 /** Kotlin **/
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
-    implementation 'androidx.compose.animation:animation:1.3.1'
-    implementation 'androidx.compose.foundation:foundation:1.3.1'
-    implementation 'androidx.compose.material3:material3:1.0.1'
-    implementation 'androidx.compose.material:material-icons-extended:1.3.1'
-    implementation 'androidx.compose.ui:ui:1.3.1'
-    implementation 'androidx.compose.ui:ui-tooling-preview:1.3.1'
+    implementation 'androidx.compose.animation:animation:1.11.3'
+    implementation 'androidx.compose.foundation:foundation:1.11.3'
+    implementation 'androidx.compose.material3:material3:1.4.0'
+    implementation 'androidx.compose.material:material-icons-extended:1.7.8'
+    implementation 'androidx.compose.ui:ui:1.11.3'
+    implementation 'androidx.compose.ui:ui-tooling-preview:1.11.3'
 
 /** AndroidX **/
-    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
-    implementation 'androidx.core:core-ktx:1.6.0'
-    implementation 'androidx.documentfile:documentfile:1.0.1'
-    implementation 'androidx.fragment:fragment-ktx:1.3.6'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+    implementation 'androidx.core:core-ktx:1.19.0'
+    implementation 'androidx.documentfile:documentfile:1.1.0'
+    implementation 'androidx.fragment:fragment-ktx:1.8.9'
     implementation "androidx.lifecycle:lifecycle-livedata:${androidxLifecycleVersion}"
     implementation "androidx.lifecycle:lifecycle-viewmodel:${androidxLifecycleVersion}"
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
-    implementation 'androidx.media:media:1.5.0'
+    implementation 'androidx.media:media:1.8.0'
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'androidx.preference:preference:1.2.0'
-    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'androidx.preference:preference:1.2.1'
+    implementation 'androidx.recyclerview:recyclerview:1.4.0'
     implementation "androidx.room:room-runtime:${androidxRoomVersion}"
     implementation "androidx.room:room-rxjava3:${androidxRoomVersion}"
     kapt "androidx.room:room-compiler:${androidxRoomVersion}"
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    // Newer version specified to prevent accessibility regressions with RecyclerView, see:
-    // https://developer.android.com/jetpack/androidx/releases/viewpager2#1.1.0-alpha01
-    implementation 'androidx.viewpager2:viewpager2:1.1.0-beta01'
-    implementation 'androidx.webkit:webkit:1.4.0'
-    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0'
+    implementation 'androidx.viewpager2:viewpager2:1.1.0'
+    implementation 'androidx.webkit:webkit:1.15.0'
+    implementation 'com.google.android.material:material:1.14.0'
     implementation "androidx.work:work-runtime:${androidxWorkVersion}"
     implementation "androidx.work:work-runtime-ktx:${androidxWorkVersion}"
     implementation "androidx.work:work-rxjava3:${androidxWorkVersion}"
@@ -258,11 +231,11 @@ dependencies {
     implementation 'org.lsposed.hiddenapibypass:hiddenapibypass:6.1'
 
     // HTML parser
-    implementation "org.jsoup:jsoup:1.14.3"
+    implementation "org.jsoup:jsoup:1.22.2"
 
     // HTTP client
-    //noinspection GradleDependency --> do not update okhttp to keep supporting Android 4.4 users
-    implementation "com.squareup.okhttp3:okhttp:3.12.13"
+    implementation "com.squareup.okhttp3:okhttp:5.4.0"
+    implementation "com.squareup.okhttp3:okhttp-dnsoverhttps:5.4.0"
 
     // Media player
     implementation "androidx.media3:media3-exoplayer:${media3Version}"
@@ -270,6 +243,7 @@ dependencies {
     implementation "androidx.media3:media3-exoplayer-hls:${media3Version}"
     implementation "androidx.media3:media3-exoplayer-smoothstreaming:${media3Version}"
     implementation "androidx.media3:media3-datasource:${media3Version}"
+    implementation "androidx.media3:media3-datasource-okhttp:${media3Version}"
     implementation "androidx.media3:media3-ui:${media3Version}"
     implementation "androidx.media3:media3-session:${media3Version}"
     implementation "androidx.media3:media3-common:${media3Version}"
@@ -300,23 +274,23 @@ dependencies {
     implementation "ch.acra:acra-core:5.13.1"
 
     // Properly restarting
-    implementation 'com.jakewharton:process-phoenix:2.1.2'
+    implementation 'com.jakewharton:process-phoenix:3.0.0'
 
     // WebSocket
-    implementation "org.java-websocket:Java-WebSocket:1.4.1" // keep 1.4.1 or it will crash on sdk 21-23
+    implementation "org.java-websocket:Java-WebSocket:1.6.0"
 
     // Annotation
     implementation 'javax.annotation:javax.annotation-api:1.3.2'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
     // Reactive extensions for Java VM
-    implementation "io.reactivex.rxjava3:rxjava:3.0.13"
-    implementation "io.reactivex.rxjava3:rxandroid:3.0.0"
+    implementation "io.reactivex.rxjava3:rxjava:3.1.12"
+    implementation "io.reactivex.rxjava3:rxandroid:3.0.2"
     // RxJava binding APIs for Android UI widgets
     implementation "com.jakewharton.rxbinding4:rxbinding:4.0.0"
 
     // Date and time formatting
-    implementation "org.ocpsoft.prettytime:prettytime:5.0.2.Final"
+    implementation "org.ocpsoft.prettytime:prettytime:5.0.9.Final"
 
 
 /** Debugging **/
@@ -331,6 +305,12 @@ dependencies {
 //    implementation 'com.arthenica:ffmpeg-kit-https:6.0-2.LTS'
     implementation project(':ffmpeg')
     implementation 'com.arthenica:smart-exception-java:0.2.1'
+
+/** Instrumented integration tests **/
+    androidTestImplementation 'androidx.test:runner:1.7.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.3.0'
+    androidTestImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'org.bouncycastle:bcprov-jdk18on:1.85'
 }
 
 static String getGitWorkingBranch() {

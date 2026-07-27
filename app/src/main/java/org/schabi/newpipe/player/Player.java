@@ -241,10 +241,6 @@ public final class Player implements
     // genuinely broken surface can't loop recover->fail forever.
     private static final long SURFACE_ERROR_RECOVERY_COOLDOWN_MS = 10_000;
     private long lastSurfaceErrorRecoveryMs;
-    // One-shot: the next reload is an audio-track switch and must seek to the saved position rather
-    // than restart at 0. Scoped to the switch because that path pre-loads the SABR init metadata so
-    // the cold seek maps correctly; other SABR restarts stay at 0 (see shouldSeek).
-    private boolean seekOnNextSabrReload;
     private static final int MAX_RETRY_COUNT = 2;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -268,7 +264,7 @@ public final class Player implements
 
     public ExoPlayer simpleExoPlayer;
     private AudioReactor audioReactor;
-    private MediaSessionManager mediaSessionManager;
+    @Nullable private MediaSessionManager mediaSessionManager;
     private PlayerMediaSession playerMediaSession;
     @Nullable private SurfaceHolderCallback surfaceHolderCallback;
 
@@ -297,6 +293,7 @@ public final class Player implements
     private boolean isFullscreen = false;
     private boolean isVerticalVideo = false;
     private boolean fragmentIsVisible = false;
+    private long startupTraceId;
 
     private boolean isFullscreenGestureEnabled = true;
 
@@ -310,6 +307,18 @@ public final class Player implements
     private PlayerBinding binding;
 
     private final Handler controlsVisibilityHandler = new Handler();
+    private final Handler sabrBackoffHandler = new Handler();
+    private final Runnable sabrBackoffUpdate = new Runnable() {
+        @Override
+        public void run() {
+            updateSabrBackoffCountdown();
+            if (currentState == STATE_BLOCKED
+                    || (!exoPlayerIsNull() && simpleExoPlayer.getPlaybackState()
+                    == androidx.media3.common.Player.STATE_BUFFERING)) {
+                sabrBackoffHandler.postDelayed(this, 250L);
+            }
+        }
+    };
 
     // fullscreen player
     private boolean isQueueVisible = false;
@@ -763,6 +772,11 @@ public final class Player implements
 
     @SuppressWarnings("MethodLength")
     public void handleIntent(@NonNull final Intent intent) {
+        final long intentStartupTraceId = PlaybackStartupTrace.fromIntent(intent);
+        if (intentStartupTraceId > 0) {
+            startupTraceId = intentStartupTraceId;
+            PlaybackStartupTrace.mark(startupTraceId, "service_intent_received");
+        }
         // fail fast if no play queue was provided
         final String queueCache = intent.getStringExtra(PLAY_QUEUE_KEY);
         if (queueCache == null) {
@@ -794,6 +808,12 @@ public final class Player implements
             playQueue.move(playQueue.size() - 1, currentIndex + 1);
             return;
         }
+
+        final DefaultTrackSelector.Parameters.Builder parametersBuilder =
+                trackSelector.buildUponParameters();
+        parametersBuilder.setTrackTypeDisabled(C.TRACK_TYPE_TEXT, audioPlayerSelected());
+        parametersBuilder.setTrackTypeDisabled(C.TRACK_TYPE_VIDEO, audioPlayerSelected());
+        trackSelector.setParameters(parametersBuilder);
 
         // needed for tablets, check the function for a better explanation
         directlyOpenFullscreenIfNeeded();
@@ -833,8 +853,6 @@ public final class Player implements
             if (shouldSeek()) {
                 simpleExoPlayer.seekTo(playQueue.getIndex(), newQueue.getItem().getRecoveryPosition());
             }
-            seekOnNextSabrReload = false;
-
             simpleExoPlayer.setPlayWhenReady(playWhenReady);
 
         } else if (!exoPlayerIsNull()
@@ -893,12 +911,7 @@ public final class Player implements
         }
 
         if (oldPlayerType != playerType && playQueue != null) {
-            // Keep the position across an audio<->video player TYPE switch. This reload otherwise
-            // drops it: it doesn't save recovery, and shouldSeek() rejects a SABR recovery seek
-            // unless seekOnNextSabrReload is set, so SABR restarts at 0. The session is warm here
-            // (already playing, init metadata loaded), so the recovery seek maps to the right segment.
             setRecovery();
-            seekOnNextSabrReload = true;
             reloadPlayQueueManager();
         }
 
@@ -952,12 +965,14 @@ public final class Player implements
                               final boolean playbackSkipSilence,
                               final boolean playOnReady,
                               final boolean isMuted) {
+        PlaybackStartupTrace.mark(startupTraceId, "player_init_started");
         destroyPlayer();
         initPlayer(playOnReady);
 
         playQueue = queue;
         playQueue.init();
         reloadPlayQueueManager();
+        PlaybackStartupTrace.mark(startupTraceId, "media_source_manager_ready");
 
         if (playQueueAdapter != null) {
             playQueueAdapter.dispose();
@@ -995,6 +1010,7 @@ public final class Player implements
             Log.d(TAG, "destroyPlayer() called");
         }
 
+        stopSabrBackoffCountdown();
         cleanupVideoSurface();
 
         if (!exoPlayerIsNull()) {
@@ -1821,8 +1837,10 @@ public final class Player implements
         }
 
         // Feed the real play head to any live SABR session (no-op otherwise).
-        getCurrentStreamInfo().ifPresent(info ->
-                SabrSessionStore.updatePlayerTime(info.getId(), currentProgress));
+        getCurrentStreamInfo().ifPresent(info -> {
+            SabrSessionStore.updatePlayerTime(info.getId(), currentProgress);
+            SabrSessionStore.updatePlaybackRate(info.getId(), getPlaybackSpeed());
+        });
 
         if (duration != binding.playbackSeekBar.getMax()) {
             setVideoDurationToControls(duration);
@@ -2347,11 +2365,16 @@ public final class Player implements
                 }
                 break;
             case androidx.media3.common.Player.STATE_READY: //3
+                PlaybackStartupTrace.mark(startupTraceId, "player_ready");
                 if (!isPrepared) {
                     isPrepared = true;
                     onPrepared(playWhenReady);
                 }
                 changeState(playWhenReady ? STATE_PLAYING : STATE_PAUSED);
+                if (Build.VERSION.SDK_INT >= 37) {
+                    NotificationUtil.getInstance()
+                            .createNotificationAndStartForeground(this, service.getInstance());
+                }
                 break;
             case androidx.media3.common.Player.STATE_ENDED: // 4
                 changeState(STATE_COMPLETED);
@@ -2403,6 +2426,7 @@ public final class Player implements
         if (currentState == STATE_BLOCKED) {
             changeState(STATE_BUFFERING);
         }
+        PlaybackStartupTrace.mark(startupTraceId, "media_source_attached");
         simpleExoPlayer.setMediaSource(mediaSource, false);
         simpleExoPlayer.prepare();
     }
@@ -2607,6 +2631,7 @@ public final class Player implements
         if (DEBUG) {
             Log.d(TAG, "onBlocked() called");
         }
+        startSabrBackoffCountdown();
         if (!isProgressLoopRunning()) {
             startProgressLoop();
         }
@@ -2633,6 +2658,7 @@ public final class Player implements
         if (DEBUG) {
             Log.d(TAG, "onPlaying() called");
         }
+        stopSabrBackoffCountdown();
         if (!isProgressLoopRunning()) {
             startProgressLoop();
         }
@@ -2679,6 +2705,7 @@ public final class Player implements
         }
         binding.loadingPanel.setBackgroundColor(Color.TRANSPARENT);
         binding.loadingPanel.setVisibility(View.VISIBLE);
+        startSabrBackoffCountdown();
 
         binding.getRoot().setKeepScreenOn(true);
         if (NotificationUtil.getInstance().shouldUpdateBufferingSlot()) {
@@ -2690,6 +2717,7 @@ public final class Player implements
         if (DEBUG) {
             Log.d(TAG, "onPaused() called");
         }
+        stopSabrBackoffCountdown();
         if (isProgressLoopRunning()) {
             stopProgressLoop();
         }
@@ -2727,6 +2755,7 @@ public final class Player implements
             Log.d(TAG, "onPausedSeek() called");
         }
 
+        stopSabrBackoffCountdown();
         animatePlayButtons(false, 100);
         binding.getRoot().setKeepScreenOn(true);
 
@@ -2737,6 +2766,7 @@ public final class Player implements
         if (DEBUG) {
             Log.d(TAG, "onCompleted() called" + (playQueue == null ? ". playQueue is null" : ""));
         }
+        stopSabrBackoffCountdown();
         if (playQueue == null) {
             return;
         }
@@ -2766,6 +2796,35 @@ public final class Player implements
         animate(binding.currentDisplaySeek, false, 200, AnimationType.SCALE_AND_ALPHA);
         binding.loadingPanel.setVisibility(View.GONE);
         animate(binding.surfaceForeground, true, 100);
+    }
+
+    private void startSabrBackoffCountdown() {
+        SabrBackoffCoordinator.getInstance().setPlayerBuffering(context, true);
+        sabrBackoffHandler.removeCallbacks(sabrBackoffUpdate);
+        sabrBackoffUpdate.run();
+    }
+
+    private void stopSabrBackoffCountdown() {
+        SabrBackoffCoordinator.getInstance().setPlayerBuffering(context, false);
+        sabrBackoffHandler.removeCallbacks(sabrBackoffUpdate);
+        if (binding != null) {
+            binding.sabrBackoffCountdown.setVisibility(View.GONE);
+        }
+    }
+
+    private void updateSabrBackoffCountdown() {
+        if (binding == null) {
+            return;
+        }
+        final long remainingMs = SabrBackoffCoordinator.getInstance().getRemainingMs();
+        if (remainingMs <= 0L) {
+            binding.sabrBackoffCountdown.setVisibility(View.GONE);
+            return;
+        }
+        final int seconds = SabrBackoffCoordinator.remainingSeconds(remainingMs);
+        binding.sabrBackoffCountdown.setText(context.getString(
+                R.string.sabr_backoff_notification_content, seconds));
+        binding.sabrBackoffCountdown.setVisibility(View.VISIBLE);
     }
 
     private void animatePlayButtons(final boolean show, final int duration) {
@@ -3073,6 +3132,7 @@ public final class Player implements
 
     @Override
     public void onRenderedFirstFrame() {
+        PlaybackStartupTrace.finish(startupTraceId);
         //TODO check if this causes black screen when switching to fullscreen
         animate(binding.surfaceForeground, false, DEFAULT_CONTROLS_DURATION);
     }
@@ -3159,6 +3219,9 @@ public final class Player implements
 
         saveStreamProgressState();
         boolean isCatchableException = false;
+        final boolean sabrSessionInvalidated = error.getCause() != null
+                && error.getCause().getMessage() != null
+                && error.getCause().getMessage().startsWith("SABR session invalidated");
 
         switch (error.errorCode) {
             case ERROR_CODE_BEHIND_LIVE_WINDOW:
@@ -3183,7 +3246,8 @@ public final class Player implements
                 }
                 break;
             case ERROR_CODE_IO_UNSPECIFIED:
-                if (error.getCause().getMessage() != null && error.getCause().getMessage().contains("403")) {
+                if (error.getCause().getMessage() != null
+                        && error.getCause().getMessage().contains("Response code: 403")) {
                     try {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity())
                                 .setTitle(R.string.network_error)
@@ -3204,9 +3268,10 @@ public final class Player implements
             case ERROR_CODE_IO_NETWORK_CONNECTION_FAILED:
             case ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT:
             case ERROR_CODE_UNSPECIFIED:
+                if (sabrSessionInvalidated) {
+                    isCatchableException = true;
+                }
                 setRecovery();
-                // SABR: recover at the saved position, not 0 (see shouldSeek).
-                seekOnNextSabrReload = true;
                 reloadPlayQueueManager();
                 break;
 case ERROR_CODE_DECODER_INIT_FAILED: {
@@ -3220,8 +3285,6 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                     // falls through to shutdown below.
                     lastSurfaceErrorRecoveryMs = System.currentTimeMillis();
                     setRecovery();
-                    // SABR: recover at the saved position, not 0 (see shouldSeek).
-                    seekOnNextSabrReload = true;
                     reloadPlayQueueManager();
                     break;
                 }
@@ -3433,19 +3496,10 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
             } else {
                 simpleExoPlayer.seekToDefaultPosition(currentPlayQueueIndex);
             }
-            seekOnNextSabrReload = false;
         }
     }
 
     public boolean shouldSeek() {
-        // SABR honours the saved position only on an audio-track switch: that path rebuilds the
-        // session and pre-loads the init metadata, so the cold seek maps the time to the right
-        // segment. Any other SABR (re)start stays at 0, because a cold seek before that metadata is
-        // loaded maps with the default segment duration and overshoots the segment count -> endless
-        // buffering. (Lifting this for resume needs the same metadata pre-load made general.)
-        if (isCurrentStreamSabr()) {
-            return seekOnNextSabrReload;
-        }
         return !prefs.getBoolean(context.getString(R.string.always_start_from_beginning_key), false);
     }
 
@@ -4046,8 +4100,13 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     @Override // own playback listener
     @Nullable
     public MediaSource sourceOf(final PlayQueueItem item, final StreamInfo info) {
+        PlaybackStartupTrace.mark(startupTraceId, "resolver_started");
+        final MediaSource resolved;
         if (audioPlayerSelected()) {
-            return Optional.ofNullable(audioResolver.resolve(info)).orElse(videoResolver.resolve(info)) ;
+            resolved = Optional.ofNullable(audioResolver.resolve(info))
+                    .orElse(videoResolver.resolve(info));
+            PlaybackStartupTrace.mark(startupTraceId, "resolver_finished");
+            return resolved;
         }
 
         if (isAudioOnly && videoResolver.getStreamSourceType().orElse(
@@ -4056,7 +4115,10 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
             // If the current info has only video streams with audio and if the stream is played as
             // audio, we need to use the audio resolver, otherwise the video stream will be played
             // in background.
-            return Optional.ofNullable(audioResolver.resolve(info)).orElse(videoResolver.resolve(info)) ;
+            resolved = Optional.ofNullable(audioResolver.resolve(info))
+                    .orElse(videoResolver.resolve(info));
+            PlaybackStartupTrace.mark(startupTraceId, "resolver_finished");
+            return resolved;
         }
 
         // Even if the stream is played in background, we need to use the video resolver if the
@@ -4066,7 +4128,9 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         // Note that the video is not fetched when the app is in background because the video
         // renderer is fully disabled (see useVideoSource method), except for HLS streams
         // (see https://github.com/google/ExoPlayer/issues/9282).
-        return videoResolver.resolve(info);
+        resolved = videoResolver.resolve(info);
+        PlaybackStartupTrace.mark(startupTraceId, "resolver_finished");
+        return resolved;
     }
 
     public void disablePreloadingOfCurrentTrack() {
@@ -4179,19 +4243,13 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
 
         for (int i = 0; i < availableStreams.size(); i++) {
             final VideoStream videoStream = availableStreams.get(i);
-            qualityPopupMenu.getMenu().add(POPUP_MENU_ID_QUALITY, i, Menu.NONE, videoStream.getCodec().toUpperCase().split("\\.")[0] + " " + videoStream.resolution + sabrTag(videoStream));
+            qualityPopupMenu.getMenu().add(POPUP_MENU_ID_QUALITY, i, Menu.NONE, videoStream.getCodec().toUpperCase().split("\\.")[0] + " " + videoStream.resolution);
         }
         if (getSelectedVideoStream() != null) {
-            binding.qualityTextView.setText(getSelectedVideoStream().resolution + sabrTag(getSelectedVideoStream()));
+            binding.qualityTextView.setText(getSelectedVideoStream().resolution);
         }
         qualityPopupMenu.setOnMenuItemClickListener(this);
         qualityPopupMenu.setOnDismissListener(this);
-    }
-
-    // PoC marker: flag SABR-delivered streams in the quality UI
-    private static String sabrTag(final VideoStream stream) {
-        return stream != null && stream.getDeliveryMethod() == DeliveryMethod.SABR
-                ? " (SABR)" : "";
     }
 
     private void buildPlaybackSpeedMenu() {
@@ -4307,10 +4365,6 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
 
             saveStreamProgressState(); //TODO added, check if good
             setRecovery();
-            // Quality change is a reload, not a fresh start: keep the saved position (see shouldSeek).
-            // getOrCreate eager-loads the new format's init metadata (token is cached), so the seek
-            // maps to the right segment.
-            seekOnNextSabrReload = true;
             setSelectedIndex(menuItemIndex);
             reloadPlayQueueManager();
 
@@ -4337,7 +4391,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         }
         isSomePopupMenuVisible = false; //TODO check if this works
         if (getSelectedVideoStream() != null) {
-            binding.qualityTextView.setText(getSelectedVideoStream().resolution + sabrTag(getSelectedVideoStream()));
+            binding.qualityTextView.setText(getSelectedVideoStream().resolution);
         }
         if (isPlaying()) {
             hideControls(DEFAULT_CONTROLS_DURATION, 0);
@@ -4513,9 +4567,6 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     private void setAudioTrack(@Nullable final String audioTrackId) {
         saveStreamProgressState();
         setRecovery();
-        // This reload is a switch: keep the saved position instead of restarting at 0 (see
-        // shouldSeek). Consumed in the recovery-seek paths below.
-        seekOnNextSabrReload = true;
         videoResolver.setAudioTrack(audioTrackId);
         audioResolver.setAudioTrack(audioTrackId);
         reloadPlayQueueManager();
@@ -5232,10 +5283,9 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         final SourceType sourceType = videoResolver.getStreamSourceType().orElse(
                 SourceType.VIDEO_WITH_AUDIO_OR_AUDIO_ONLY);
 
-        // SABR is backed by a live, session-driven source: rebuilding it over the cached session on
-        // return-from-background re-prepares + cold-seeks and freezes playback (see
-        // ISSUE_SABR_RESUME_FREEZE.md). The session keeps both tracks buffered while backgrounded, so
-        // just re-enable the video track on the live source instead of a full reload.
+        // For SABR, a play queue manager reload stops the player and releases the current media
+        // source. Releasing the last SABR source reference also evicts its session, so background /
+        // foreground video toggles must keep the live source and only update track selection.
         if (!isCurrentStreamSabr()
                 && playQueueManagerReloadingNeeded(sourceType, info, getVideoRendererIndex())) {
             reloadPlayQueueManager();
@@ -5381,6 +5431,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         return prefs;
     }
 
+    @Nullable
     public MediaSessionManager getMediaSessionManager() {
         return mediaSessionManager;
     }
