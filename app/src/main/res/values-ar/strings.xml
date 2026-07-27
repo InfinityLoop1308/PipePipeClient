@@ -723,7 +723,14 @@
     <string name="no">لا</string>
     <string name="later">لاحقًا</string>
     <string name="back">رجوع</string>
-    <string name="replies">الردود</string>
+    <plurals name="replies">
+        <item quantity="zero">بدون ردود</item>
+        <item quantity="one">رد واحد</item>
+        <item quantity="two">ردّان</item>
+        <item quantity="few">%s ردود</item>
+        <item quantity="many">%s رداً</item>
+        <item quantity="other">%s رد</item>
+    </plurals>
     <string name="disable_android_auto_title">تعطيل Android Auto</string>
     <string name="disable_android_auto_summary">تعطيل اتصال Android Auto لتجنب مشاكل الإشعارات على أندرويد 12 والإصدارات الأقدم.\n\nبعد إعادة تفعيل هذا الخيار، يجب إعادة تشغيل التطبيق وإعادة الاتصال بالسيارة لتفعيل التغيير.</string>
     <string name="progressive_load_interval_title">حجم فاصل تحميل التشغيل</string>
