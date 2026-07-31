@@ -3,6 +3,7 @@ package org.schabi.newpipe.player.datasource
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.util.Log
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrPoTokenProvider
@@ -19,7 +20,11 @@ import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.util.Base64
 import java.util.HashMap
+import java.util.concurrent.CancellationException
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
 
 internal fun youtubeCredentialIdentity(loggedIn: Boolean, tokens: String?): String {
     val digest = MessageDigest.getInstance("SHA-256")
@@ -72,6 +77,14 @@ class LocalDomPoTokenProvider(context: Context) :
     private val credentialIdentityTracker = CredentialIdentityTracker(
         onChanged = ::invalidateCredentialBoundState,
     )
+    private val prewarmExecutor = Executors.newSingleThreadExecutor { runnable ->
+        Thread(runnable, "YoutubeSessionPoTokenPrewarm").apply { isDaemon = true }
+    }
+    private val sessionPoTokenPrewarmer =
+        ContextBoundSingleFlight<YoutubeSessionPoTokenContext, YoutubeSessionPoToken>(
+            prewarmExecutor,
+        )
+
     override fun getSessionPoToken(
         clientName: String,
         clientVersion: String,
@@ -82,34 +95,119 @@ class LocalDomPoTokenProvider(context: Context) :
     ): YoutubeSessionPoToken? {
         val credentialIdentity = currentCredentialIdentity(loggedIn)
         credentialIdentityTracker.observe(credentialIdentity)
-        val visitorData = getOrFetchVisitorData(
+        val requestContext = YoutubeSessionPoTokenContext(
+            clientName,
+            clientVersion,
+            userAgent,
             localization,
             contentCountry,
             loggedIn,
             credentialIdentity,
         )
-        val playerContext = createPoTokenContext(
-            visitorData,
+        sessionPoTokenPrewarmer.inFlight(requestContext)?.let {
+            return awaitSessionPoTokenPrewarm(it)
+        }
+        return getSessionPoTokenNow(requestContext)
+    }
+
+    fun prewarmSessionPoToken(
+        clientName: String,
+        clientVersion: String,
+        userAgent: String?,
+        localization: Localization,
+        contentCountry: ContentCountry,
+        loggedIn: Boolean,
+    ) {
+        val credentialIdentity = currentCredentialIdentity(loggedIn)
+        credentialIdentityTracker.observe(credentialIdentity)
+        val requestContext = YoutubeSessionPoTokenContext(
             clientName,
             clientVersion,
             userAgent,
+            localization,
+            contentCountry,
+            loggedIn,
+            credentialIdentity,
+        )
+        sessionPoTokenPrewarmer.start(requestContext) {
+            val startedAtMs = SystemClock.elapsedRealtime()
+            try {
+                getSessionPoTokenNow(requestContext).also {
+                    Log.i(
+                        TAG,
+                        "session token prewarm ready client=$clientName in " +
+                            "${SystemClock.elapsedRealtime() - startedAtMs}ms",
+                    )
+                }
+            } catch (error: Throwable) {
+                Log.w(TAG, "session token prewarm failed client=$clientName", error)
+                throw error
+            }
+        }
+    }
+
+    fun cancelSessionPoTokenPrewarm() {
+        sessionPoTokenPrewarmer.cancel()
+    }
+
+    private fun awaitSessionPoTokenPrewarm(
+        prewarm: Future<YoutubeSessionPoToken>,
+    ): YoutubeSessionPoToken {
+        try {
+            return prewarm.get()
+        } catch (error: InterruptedException) {
+            Thread.currentThread().interrupt()
+            throw SabrProtocolException(
+                "Interrupted waiting for session PO token prewarm",
+                error,
+            )
+        } catch (error: CancellationException) {
+            throw SabrProtocolException("Session PO token prewarm was invalidated", error)
+        } catch (error: ExecutionException) {
+            throw SabrProtocolException(
+                "Session PO token prewarm failed",
+                error.cause ?: error,
+            )
+        }
+    }
+
+    private fun getSessionPoTokenNow(
+        requestContext: YoutubeSessionPoTokenContext,
+    ): YoutubeSessionPoToken {
+        if (!credentialsStillMatch(requestContext.credentialIdentity)) {
+            throw SabrProtocolException(
+                "YouTube credentials changed before session PO token initialization",
+            )
+        }
+        val visitorData = getOrFetchVisitorData(
+            requestContext.localization,
+            requestContext.contentCountry,
+            requestContext.loggedIn,
+            requestContext.credentialIdentity,
+        )
+        val playerContext = createPoTokenContext(
+            visitorData,
+            requestContext.clientName,
+            requestContext.clientVersion,
+            requestContext.userAgent,
         )
         val attestationContext = localDomAttestationContext(
             visitorData,
             YoutubeParsingHelper.getClientVersion(),
         )
-        val credentialHeaders = createCredentialHeaders(loggedIn)
+        val credentialHeaders = createCredentialHeaders(requestContext.loggedIn)
         val rawToken = getOrMintToken(
             visitorData,
             attestationContext,
-            credentialIdentity,
+            requestContext.credentialIdentity,
             playerContext.cacheIdentity + ':' + attestationContext.cacheIdentity,
             credentialHeaders,
         )
         val encoded = Base64.getUrlEncoder().withoutPadding().encodeToString(rawToken)
         Log.i(
             TAG,
-            "session token ready client=$clientName loggedIn=$loggedIn bytes=${rawToken.size}",
+            "session token ready client=${requestContext.clientName} " +
+                "loggedIn=${requestContext.loggedIn} bytes=${rawToken.size}",
         )
         return YoutubeSessionPoToken(visitorData, encoded)
     }
@@ -319,6 +417,7 @@ class LocalDomPoTokenProvider(context: Context) :
     }
 
     private fun invalidateCredentialBoundState() {
+        sessionPoTokenPrewarmer.cancel()
         synchronized(visitorDataLock) {
             fetchedVisitorData = null
             fetchedVisitorDataLoggedIn = null

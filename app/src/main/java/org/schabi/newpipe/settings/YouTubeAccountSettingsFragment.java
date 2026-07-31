@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
+import org.schabi.newpipe.App;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.services.youtube.YoutubeParsingHelper;
 import org.schabi.newpipe.views.YouTubeLoginWebViewActivity;
@@ -72,6 +73,12 @@ public class YouTubeAccountSettingsFragment extends BaseAccountSettingsFragment 
         defaultPreferences.edit().putString(getCookiesKey(), "").apply();
         defaultPreferences.edit().putString(getString(R.string.youtube_po_token_key), "").apply();
         onLogoutSuccess();
+    }
+
+    @Override
+    protected void refreshAccountDependentState() {
+        super.refreshAccountDependentState();
+        App.prewarmYoutubeSessionPoToken(requireContext());
     }
 
     @Override
