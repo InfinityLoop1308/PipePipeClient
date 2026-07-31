@@ -23,7 +23,6 @@ import org.acra.ACRA;
 import org.acra.config.CoreConfigurationBuilder;
 import org.schabi.newpipe.error.ReCaptchaActivity;
 import org.schabi.newpipe.extractor.NewPipe;
-import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.downloader.Downloader;
 import org.schabi.newpipe.extractor.services.youtube.YoutubeApiDecoder;
 import org.schabi.newpipe.ktx.ExceptionUtils;
@@ -69,6 +68,8 @@ import static org.schabi.newpipe.MainActivity.DEBUG;
 public class App extends MultiDexApplication {
     public static final String PACKAGE_NAME = BuildConfig.APPLICATION_ID;
     private static final String TAG = App.class.toString();
+    private static final String YOUTUBE_WEB_CLIENT_NAME = "WEB";
+    private static final String YOUTUBE_MWEB_CLIENT_NAME = "MWEB";
     private static final String YOUTUBE_ANDROID_VR_CLIENT_NAME = "ANDROID_VR";
     private static App app;
 
@@ -129,14 +130,14 @@ public class App extends MultiDexApplication {
             Localization.getPreferredContentCountry(this));
         final LocalDomPoTokenProvider sessionPoTokenProvider =
                 LocalDomPoTokenProvider.shared(this);
-        NewPipe.setYoutubeSessionPoTokenProvider((clientName, localization, contentCountry,
-                                                  loggedIn) -> {
+        NewPipe.setYoutubeSessionPoTokenProvider((clientName, clientVersion, userAgent,
+                                                  localization, contentCountry, loggedIn) -> {
             if (!shouldProvideYoutubeSessionPoToken(clientName,
                     isYoutubeSessionVisitorDataEnabled(this))) {
                 return null;
             }
-            return sessionPoTokenProvider.getSessionPoToken(clientName, localization,
-                    contentCountry, loggedIn);
+            return sessionPoTokenProvider.getSessionPoToken(clientName, clientVersion, userAgent,
+                    localization, contentCountry, loggedIn);
         });
         final AndroidWebViewAvailabilityChecker webViewAvailabilityChecker =
                 new AndroidWebViewAvailabilityChecker(this);
@@ -152,7 +153,6 @@ public class App extends MultiDexApplication {
         initNotificationChannels();
 
         ServiceHelper.initServices(this);
-        prewarmYoutubeSessionPoToken();
 
         // Initialize image loader
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -235,25 +235,17 @@ public class App extends MultiDexApplication {
         });
     }
 
-    public static void prewarmYoutubeSessionPoToken(@NonNull final Context context) {
-        LocalDomPoTokenProvider.shared(context).prewarmSessionPoToken(
-                Localization.getPreferredLocalization(context),
-                Localization.getPreferredContentCountry(context),
-                ServiceList.YouTube.hasTokens());
-    }
-
     static boolean shouldProvideYoutubeSessionPoToken(@NonNull final String clientName,
                                                        final boolean visitorDataEnabled) {
-        return visitorDataEnabled || YOUTUBE_ANDROID_VR_CLIENT_NAME.equals(clientName);
+        return visitorDataEnabled
+                || YOUTUBE_WEB_CLIENT_NAME.equals(clientName)
+                || YOUTUBE_MWEB_CLIENT_NAME.equals(clientName)
+                || YOUTUBE_ANDROID_VR_CLIENT_NAME.equals(clientName);
     }
 
     private static boolean isYoutubeSessionVisitorDataEnabled(@NonNull final Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
                 context.getString(R.string.youtube_session_visitor_data_key), false);
-    }
-
-    private void prewarmYoutubeSessionPoToken() {
-        prewarmYoutubeSessionPoToken(this);
     }
 
     @Override

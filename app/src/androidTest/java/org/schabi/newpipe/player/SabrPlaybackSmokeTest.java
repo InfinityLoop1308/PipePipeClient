@@ -1928,31 +1928,23 @@ public final class SabrPlaybackSmokeTest {
             waitForPositionWithSabrProgress(playerRef.get(), info.getId(), targetMs,
                     TimeUnit.MILLISECONDS.toSeconds(targetMs) + PLAYBACK_TIMEOUT_SECONDS,
                     playerError);
-            final PlaybackException error = playerError.get();
             final String trace = holder.session.getDiagnosticTrace();
-            if (error != null) {
-                final String errors = messageChain(error).toLowerCase(Locale.US);
-                final boolean attestationRequired = errors.contains("attestation required");
-                final boolean attestationPending = errors.contains(
-                        "attestation remained pending without media");
-                assertTrue("Anonymous audio item failed unexpectedly: index=" + index
-                                + " video=" + info.getId() + " error=" + errors
-                                + " trace=" + trace,
-                        attestationRequired || attestationPending);
-                assertTrue("Attestation failure was not recorded in the SABR trace: index="
-                                + index + " video=" + info.getId() + " trace=" + trace,
-                        attestationRequired ? trace.contains("protection=3/")
-                                : trace.contains("attestation_pending_no_media count=3"));
-                System.out.println("SABR_ANONYMOUS_SEQUENCE_BOUNDED_FAILURE index=" + index
-                        + " video=" + info.getId()
-                        + " positionMs=" + positionOf(playerRef.get())
-                        + " error=" + errors
-                        + " trace=" + trace);
-                return;
-            }
+            assertNull("Anonymous audio item failed during playback: index=" + index
+                            + " video=" + info.getId() + " trace=" + trace,
+                    playerError.get());
+            assertTrue("Anonymous audio item did not reach target: index=" + index
+                            + " video=" + info.getId() + " targetMs=" + targetMs
+                            + " positionMs=" + positionOf(playerRef.get()) + " trace=" + trace,
+                    positionOf(playerRef.get()) >= targetMs);
+            final int maxProtectionStatus = holder.session.getMaxStreamProtectionStatus();
+            assertTrue("Anonymous audio item received unexpected protection status: index="
+                            + index + " video=" + info.getId() + " maxStatus="
+                            + maxProtectionStatus + " trace=" + trace,
+                    maxProtectionStatus <= 1);
             System.out.println("SABR_ANONYMOUS_SEQUENCE index=" + index
                     + " video=" + info.getId()
                     + " positionMs=" + positionOf(playerRef.get())
+                    + " maxProtectionStatus=" + maxProtectionStatus
                     + " trace=" + trace);
         } catch (final Exception | AssertionError failure) {
             final String trace = holder == null ? "<no SABR session>"

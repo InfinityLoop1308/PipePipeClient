@@ -17,10 +17,16 @@ public final class YoutubeSessionPoTokenSettingTest {
     }
 
     @Test
-    public void otherClientsFollowVisitorDataSetting() {
-        assertFalse(App.shouldProvideYoutubeSessionPoToken("WEB", false));
-        assertFalse(App.shouldProvideYoutubeSessionPoToken("MWEB", false));
+    public void webClientsAlwaysGetVisitorBoundPoTokens() {
+        assertTrue(App.shouldProvideYoutubeSessionPoToken("WEB", false));
+        assertTrue(App.shouldProvideYoutubeSessionPoToken("MWEB", false));
         assertTrue(App.shouldProvideYoutubeSessionPoToken("WEB", true));
         assertTrue(App.shouldProvideYoutubeSessionPoToken("MWEB", true));
+    }
+
+    @Test
+    public void otherClientsFollowVisitorDataSetting() {
+        assertFalse(App.shouldProvideYoutubeSessionPoToken("ANDROID", false));
+        assertTrue(App.shouldProvideYoutubeSessionPoToken("ANDROID", true));
     }
 }
