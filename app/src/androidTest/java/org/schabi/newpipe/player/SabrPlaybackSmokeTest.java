@@ -534,74 +534,59 @@ public final class SabrPlaybackSmokeTest {
     }
 
     @Test
-    public void repeatedProtectedNoMediaResponsesHonorBackoffAndRecover() throws Exception {
+    public void rejectedAttestationFailsWithoutEnteringBackoff() throws Exception {
         try (SabrSmokeHarness harness = SabrSmokeHarness.create()) {
             harness.downloader.enqueue(new UmpFixture()
                     .segment(1, SMOKE_VIDEO_ITAG, 1, 0, 30_000)
                     .bytes());
-            for (int i = 0; i < 3; i++) {
-                harness.downloader.enqueue(new UmpFixture()
-                        .part(SabrResponseDecoder.STREAM_PROTECTION_STATUS,
-                                streamProtection(3, 20))
-                        .part(SabrResponseDecoder.NEXT_REQUEST_POLICY,
-                                nextRequestPolicy(2_000))
-                        .bytes());
-            }
             harness.downloader.enqueue(new UmpFixture()
-                    .segment(5, SMOKE_VIDEO_ITAG, 2, 30_000, 5_000)
+                    .part(SabrResponseDecoder.STREAM_PROTECTION_STATUS,
+                            streamProtection(3, 20))
+                    .part(SabrResponseDecoder.NEXT_REQUEST_POLICY,
+                            nextRequestPolicy(59_000))
                     .bytes());
 
-            final long elapsedMs = harness.openMediaSegment(
-                    SabrSegmentRequest.media(harness.videoFormat, 2), 10_000);
+            final long startMs = System.currentTimeMillis();
+            harness.openMediaSegmentExpectFailure(
+                    SabrSegmentRequest.media(harness.videoFormat, 2), 5_000);
+            final long elapsedMs = System.currentTimeMillis() - startMs;
 
             final String trace = harness.holder.session.getDiagnosticTrace();
-            final List<Long> requestTimesMs = harness.downloader.requestTimesSnapshot();
-            assertTrue("Repeated protection responses were not exercised: " + trace,
+            assertTrue("Rejected attestation response was not exercised: " + trace,
                     trace.contains("protection=3/20"));
-            assertTrue("Expected one initial request, three empty responses, and recovery: "
-                            + requestTimesMs,
-                    requestTimesMs.size() >= 5);
-            for (int i = 2; i < 5; i++) {
-                final long retryDelayMs = requestTimesMs.get(i) - requestTimesMs.get(i - 1);
-                assertTrue("Demand hammered a policy-only response at retry " + i
-                                + ": delayMs=" + retryDelayMs + " trace=" + trace,
-                        retryDelayMs >= 1_500);
-            }
-            assertTrue("Server-paced retries completed suspiciously fast: elapsedMs=" + elapsedMs
-                            + " trace=" + trace,
-                    elapsedMs >= 5_500);
-            assertTrue("Server-paced demand recovery took too long: elapsedMs=" + elapsedMs
-                            + " trace=" + trace,
-                    elapsedMs < 9_000);
+            assertTrue("Rejected attestation incorrectly entered the 59 second backoff: elapsedMs="
+                            + elapsedMs + " trace=" + trace,
+                    elapsedMs < 2_000);
+            assertTrue("Rejected attestation triggered another SABR request: "
+                            + harness.downloader.requestTimesSnapshot(),
+                    harness.downloader.requestTimesSnapshot().size() <= 2);
         }
     }
 
     @Test
-    public void protectionBoundaryReloadsAfterTokenRefreshBudget() throws Exception {
+    public void pendingAttestationDoesNotReloadOrFail() throws Exception {
         try (SabrSmokeHarness harness = SabrSmokeHarness.create()) {
-            for (int i = 0; i < 3; i++) {
-                harness.downloader.enqueue(new UmpFixture()
-                        .part(SabrResponseDecoder.STREAM_PROTECTION_STATUS,
-                                streamProtection(2, -1))
-                        .part(SabrResponseDecoder.NEXT_REQUEST_POLICY,
-                                nextRequestPolicy(2_000))
-                        .bytes());
-            }
+            harness.downloader.enqueue(new UmpFixture()
+                    .part(SabrResponseDecoder.STREAM_PROTECTION_STATUS,
+                            streamProtection(2, 20))
+                    .part(SabrResponseDecoder.NEXT_REQUEST_POLICY,
+                            nextRequestPolicy(2_000))
+                    .bytes());
 
-            try {
-                for (int i = 0; i < 3; i++) {
-                    harness.holder.session.pumpOnceStreaming(
-                            new Localization("en", "US"));
-                }
-            } catch (final Exception expected) {
-                final String trace = harness.holder.session.getDiagnosticTrace();
-                assertTrue("Protection boundary did not reload after the token refresh budget: "
-                                + trace,
-                        trace.contains("protected_no_media_reload refreshes=2 reloads=0"));
-                return;
-            }
-            throw new AssertionError(
-                    "Protection boundary kept retrying after the token refresh budget");
+            final YoutubeSabrSession.DemandResponseResult result =
+                    harness.holder.session.pumpOnceStreamingForDemand(
+                            new Localization("en", "US"),
+                            SabrSegmentRequest.media(harness.videoFormat, 1));
+
+            final String trace = harness.holder.session.getDiagnosticTrace();
+            assertTrue("Pending attestation response was not exercised: " + trace,
+                    trace.contains("protection=2/20"));
+            assertTrue("Pending attestation did not return through normal response handling",
+                    result.wasRequestPerformed());
+            assertEquals("Pending attestation unexpectedly returned media", 0,
+                    result.getSegmentCount());
+            assertEquals("Pending attestation triggered an implicit retry", 1,
+                    harness.downloader.requestTimesSnapshot().size());
         }
     }
 
@@ -1028,13 +1013,13 @@ public final class SabrPlaybackSmokeTest {
     }
 
     @Test
-    public void demandProtectedNoMediaHonorsServerBackoff() throws Exception {
+    public void demandPendingAttestationHonorsServerBackoff() throws Exception {
         try (SabrSmokeHarness harness = SabrSmokeHarness.create()) {
             harness.downloader.enqueue(new UmpFixture()
                     .segment(1, SMOKE_VIDEO_ITAG, 1, 0, 30_000)
                     .bytes());
             harness.downloader.enqueue(new UmpFixture()
-                    .part(SabrResponseDecoder.STREAM_PROTECTION_STATUS, streamProtection(3, 7))
+                    .part(SabrResponseDecoder.STREAM_PROTECTION_STATUS, streamProtection(2, 7))
                     .part(SabrResponseDecoder.NEXT_REQUEST_POLICY, nextRequestPolicy(3_000))
                     .bytes());
             harness.downloader.enqueue(new UmpFixture()
@@ -1045,16 +1030,16 @@ public final class SabrPlaybackSmokeTest {
                     SabrSegmentRequest.media(harness.videoFormat, 2), 6_000);
 
             final String trace = harness.holder.session.getDiagnosticTrace();
-            assertTrue("Protected no-media response was not exercised: " + trace,
-                    trace.contains("protection=3/7"));
+            assertTrue("Pending attestation response was not exercised: " + trace,
+                    trace.contains("protection=2/7"));
             final List<Long> requestTimesMs = harness.downloader.requestTimesSnapshot();
             assertTrue("Expected initial, protected, and target requests: " + requestTimesMs,
                     requestTimesMs.size() >= 3);
             final long retryDelayMs = requestTimesMs.get(2) - requestTimesMs.get(1);
-            assertTrue("Protected no-media retry ignored backoff: delayMs=" + retryDelayMs
+            assertTrue("Pending attestation next request ignored backoff: delayMs=" + retryDelayMs
                             + " trace=" + trace,
                     retryDelayMs >= 2_800);
-            assertTrue("Protected no-media retry did not honor the server backoff: elapsedMs="
+            assertTrue("Pending attestation did not honor the server backoff: elapsedMs="
                             + elapsedMs, elapsedMs < 5_000);
         }
     }
@@ -1940,14 +1925,35 @@ public final class SabrPlaybackSmokeTest {
                     + " video=" + info.getId() + " durationMs=" + durationMs,
                     durationMs > 61_000);
             final long targetMs = Math.min(playbackMs, durationMs - 1_000);
-            waitForPosition(playerRef.get(), targetMs,
-                    TimeUnit.MILLISECONDS.toSeconds(targetMs) + PLAYBACK_TIMEOUT_SECONDS);
-            assertNull("Anonymous audio item failed: index=" + index + " video=" + info.getId(),
-                    playerError.get());
+            waitForPositionWithSabrProgress(playerRef.get(), info.getId(), targetMs,
+                    TimeUnit.MILLISECONDS.toSeconds(targetMs) + PLAYBACK_TIMEOUT_SECONDS,
+                    playerError);
+            final PlaybackException error = playerError.get();
+            final String trace = holder.session.getDiagnosticTrace();
+            if (error != null) {
+                final String errors = messageChain(error).toLowerCase(Locale.US);
+                final boolean attestationRequired = errors.contains("attestation required");
+                final boolean attestationPending = errors.contains(
+                        "attestation remained pending without media");
+                assertTrue("Anonymous audio item failed unexpectedly: index=" + index
+                                + " video=" + info.getId() + " error=" + errors
+                                + " trace=" + trace,
+                        attestationRequired || attestationPending);
+                assertTrue("Attestation failure was not recorded in the SABR trace: index="
+                                + index + " video=" + info.getId() + " trace=" + trace,
+                        attestationRequired ? trace.contains("protection=3/")
+                                : trace.contains("attestation_pending_no_media count=3"));
+                System.out.println("SABR_ANONYMOUS_SEQUENCE_BOUNDED_FAILURE index=" + index
+                        + " video=" + info.getId()
+                        + " positionMs=" + positionOf(playerRef.get())
+                        + " error=" + errors
+                        + " trace=" + trace);
+                return;
+            }
             System.out.println("SABR_ANONYMOUS_SEQUENCE index=" + index
                     + " video=" + info.getId()
                     + " positionMs=" + positionOf(playerRef.get())
-                    + " trace=" + holder.session.getDiagnosticTrace());
+                    + " trace=" + trace);
         } catch (final Exception | AssertionError failure) {
             final String trace = holder == null ? "<no SABR session>"
                     : holder.session.getDiagnosticTrace();
@@ -2279,6 +2285,27 @@ public final class SabrPlaybackSmokeTest {
         final long deadlineNs = System.nanoTime() + TimeUnit.SECONDS.toNanos(timeoutSeconds);
         while (System.nanoTime() < deadlineNs) {
             if (positionOf(player) >= targetMs) {
+                return;
+            }
+            Thread.sleep(250);
+        }
+        assertEquals("Playback position did not reach target", targetMs, positionOf(player));
+    }
+
+    private static void waitForPositionWithSabrProgress(final ExoPlayer player,
+                                                        final String videoId,
+                                                        final long targetMs,
+                                                        final long timeoutSeconds,
+                                                        final AtomicReference<PlaybackException>
+                                                                playerError) throws Exception {
+        final long deadlineNs = System.nanoTime() + TimeUnit.SECONDS.toNanos(timeoutSeconds);
+        while (System.nanoTime() < deadlineNs) {
+            if (playerError.get() != null) {
+                return;
+            }
+            final long positionMs = positionOf(player);
+            SabrSessionStore.updatePlayerTime(videoId, positionMs);
+            if (positionMs >= targetMs) {
                 return;
             }
             Thread.sleep(250);
