@@ -1784,6 +1784,5 @@
         <item>android_vr</item>
         <item>tv_downgraded</item>
     </string-array>
-    <string name="youtube_session_visitor_data_key">youtube_session_visitor_data</string>
     <string name="sabr_backoff_notification_channel_id">sabr_backoff</string>
 </resources>

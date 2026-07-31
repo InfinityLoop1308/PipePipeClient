@@ -982,7 +982,6 @@
 <string name="sabr_backoff_notification_channel_name">YouTube-Wiedergabe wartet</string>
 <string name="sabr_backoff_notification_channel_description">Benachrichtigungen, wenn YouTube verlangt, dass eine Wiedergabeanfrage wartet</string>
 <string name="sabr_backoff_notification_title">Warten auf YouTube</string>
-<string name="youtube_send_session_visitor_data_summary">Besucherdaten an YouTube senden. Hilft dabei, vorübergehende IP-Sperren zu vermeiden, aber Sie müssen möglicherweise häufiger auf Werbung warten.</string>
 <string name="sabr_backoff_notification_content">YouTube zwingt uns, %1$d Sekunden zu warten, bevor die Wiedergabe fortgesetzt wird</string>
 <string name="playback_speed_gesture_control_title">Wischen zur Steuerung der Wiedergabegeschwindigkeit</string>
 <string name="playback_speed_gesture_control_summary">In der Mitte wischen, um die Wiedergabegeschwindigkeit zu steuern. Deaktiviert die Vollbild-Gestensteuerung.</string>

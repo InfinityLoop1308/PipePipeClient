@@ -11,7 +11,6 @@ import org.schabi.newpipe.App;
 import org.schabi.newpipe.player.PlaybackStartupTrace;
 import org.schabi.newpipe.player.SabrBackoffCoordinator;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
-import org.schabi.newpipe.extractor.localization.ContentCountry;
 import org.schabi.newpipe.extractor.localization.Localization;
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrPoTokenProvider;
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrMediaSegment;
@@ -673,10 +672,10 @@ public final class SabrSessionStore {
         PlaybackStartupTrace.markForVideoId(videoId, "sabr_source_spec_started");
         final String preferredAudioTrackId = PREFERRED_AUDIO.get(videoId);
         final Localization localization = new Localization("en", "US");
-        final ContentCountry contentCountry = new ContentCountry("US");
-        final YoutubeSabrInfo info = isUsableExtractorInfo(extractorInfo, videoId)
-                ? extractorInfo
-                : YoutubeSabrProbeFetch(videoId, localization, contentCountry);
+        if (!isUsableExtractorInfo(extractorInfo, videoId)) {
+            throw new IOException("SABR extractor info is missing for " + videoId);
+        }
+        final YoutubeSabrInfo info = Objects.requireNonNull(extractorInfo);
         final YoutubeSabrFormat audioFormat = pickAudioFormat(info, preferredAudioTrackId);
         final YoutubeSabrFormat videoFormat = pickVideoFormat(info, preferredVideoItag);
         if (audioFormat == null || videoFormat == null) {
@@ -1065,15 +1064,6 @@ public final class SabrSessionStore {
                 && info.getServerAbrStreamingUrl() != null
                 && !info.getServerAbrStreamingUrl().isEmpty()
                 && !info.getFormats().isEmpty();
-    }
-
-    @NonNull
-    private static YoutubeSabrInfo YoutubeSabrProbeFetch(@NonNull final String videoId,
-                                                        @NonNull final Localization localization,
-                                                        @NonNull final ContentCountry contentCountry)
-            throws IOException, ExtractionException {
-        return org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrProbe.fetchSabrInfo(
-                videoId, YoutubeSabrClientProfile.WEB, localization, contentCountry);
     }
 
     private static YoutubeSabrFormat pickAudioFormat(@NonNull final YoutubeSabrInfo info,

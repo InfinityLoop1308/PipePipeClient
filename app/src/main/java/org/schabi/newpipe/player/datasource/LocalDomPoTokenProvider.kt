@@ -21,6 +21,7 @@ import java.security.MessageDigest
 import java.util.Base64
 import java.util.HashMap
 import java.util.concurrent.CancellationException
+import java.util.concurrent.Callable
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
@@ -81,7 +82,10 @@ class LocalDomPoTokenProvider(context: Context) :
         Thread(runnable, "YoutubeSessionPoTokenPrewarm").apply { isDaemon = true }
     }
     private val sessionPoTokenPrewarmer =
-        ContextBoundSingleFlight<YoutubeSessionPoTokenContext, YoutubeSessionPoToken>(
+        ContextBoundSingleFlight<
+            YoutubeSessionPoTokenPrewarmContext,
+            PreparedYoutubeSessionPoToken
+        >(
             prewarmExecutor,
         )
 
@@ -93,6 +97,9 @@ class LocalDomPoTokenProvider(context: Context) :
         contentCountry: ContentCountry,
         loggedIn: Boolean,
     ): YoutubeSessionPoToken? {
+        if (clientName.isBlank() || clientVersion.isBlank() || userAgent.isNullOrBlank()) {
+            return null
+        }
         val credentialIdentity = currentCredentialIdentity(loggedIn)
         credentialIdentityTracker.observe(credentialIdentity)
         val requestContext = YoutubeSessionPoTokenContext(
@@ -104,35 +111,49 @@ class LocalDomPoTokenProvider(context: Context) :
             loggedIn,
             credentialIdentity,
         )
-        sessionPoTokenPrewarmer.inFlight(requestContext)?.let {
-            return awaitSessionPoTokenPrewarm(it)
+        sessionPoTokenPrewarmer.inFlight(requestContext.prewarmContext())?.let {
+            val prepared = awaitSessionPoTokenPrewarm(it)
+            if (prepared.context == requestContext) {
+                return prepared.token
+            }
         }
         return getSessionPoTokenNow(requestContext)
     }
 
     fun prewarmSessionPoToken(
         clientName: String,
-        clientVersion: String,
         userAgent: String?,
         localization: Localization,
         contentCountry: ContentCountry,
         loggedIn: Boolean,
+        clientVersionResolver: Callable<String>,
     ) {
         val credentialIdentity = currentCredentialIdentity(loggedIn)
         credentialIdentityTracker.observe(credentialIdentity)
-        val requestContext = YoutubeSessionPoTokenContext(
+        val prewarmContext = YoutubeSessionPoTokenPrewarmContext(
             clientName,
-            clientVersion,
             userAgent,
             localization,
             contentCountry,
             loggedIn,
             credentialIdentity,
         )
-        sessionPoTokenPrewarmer.start(requestContext) {
+        sessionPoTokenPrewarmer.start(prewarmContext) {
             val startedAtMs = SystemClock.elapsedRealtime()
             try {
-                getSessionPoTokenNow(requestContext).also {
+                val requestContext = YoutubeSessionPoTokenContext(
+                    clientName,
+                    clientVersionResolver.call(),
+                    userAgent,
+                    localization,
+                    contentCountry,
+                    loggedIn,
+                    credentialIdentity,
+                )
+                PreparedYoutubeSessionPoToken(
+                    requestContext,
+                    getSessionPoTokenNow(requestContext),
+                ).also {
                     Log.i(
                         TAG,
                         "session token prewarm ready client=$clientName in " +
@@ -151,8 +172,8 @@ class LocalDomPoTokenProvider(context: Context) :
     }
 
     private fun awaitSessionPoTokenPrewarm(
-        prewarm: Future<YoutubeSessionPoToken>,
-    ): YoutubeSessionPoToken {
+        prewarm: Future<PreparedYoutubeSessionPoToken>,
+    ): PreparedYoutubeSessionPoToken {
         try {
             return prewarm.get()
         } catch (error: InterruptedException) {

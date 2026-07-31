@@ -1038,7 +1038,6 @@
 <string name="sabr_backoff_notification_channel_name">Reproducción de YouTube en espera</string>
 <string name="sabr_backoff_notification_channel_description">Notificaciones cuando YouTube requiere que una solicitud de reproducción espere</string>
 <string name="sabr_backoff_notification_title">Esperando a YouTube</string>
-<string name="youtube_send_session_visitor_data_summary">Enviar datos de visitantes a YouTube. Ayuda a evitar bloqueos temporales de IP, pero es posible que te veas obligado a esperar por los anuncios con mayor frecuencia.</string>
 <string name="sabr_backoff_notification_content">YouTube nos obliga a esperar %1$d segundos antes de continuar la reproducción</string>
 <string name="playback_speed_gesture_control_title">Desliza para controlar la velocidad de reproducción</string>
 <string name="playback_speed_gesture_control_summary">Desliza en el centro para controlar la velocidad de reproducción. Desactiva el control por gestos en pantalla completa.</string>

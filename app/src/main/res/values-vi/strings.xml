@@ -1091,7 +1091,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sabr_backoff_notification_channel_name">Đang chờ phát lại YouTube</string>
 <string name="sabr_backoff_notification_channel_description">Thông báo khi YouTube yêu cầu chờ phát lại</string>
 <string name="sabr_backoff_notification_title">Đang chờ YouTube</string>
-<string name="youtube_send_session_visitor_data_summary">Gửi dữ liệu người truy cập đến YouTube. Giúp tránh việc bị chặn IP tạm thời, nhưng bạn có thể sẽ phải chờ quảng cáo thường xuyên hơn.</string>
 <string name="sabr_backoff_notification_content">YouTube buộc chúng ta phải đợi %1$d giây trước khi tiếp tục phát</string>
 <string name="playback_speed_gesture_control_title">Vuốt để điều khiển tốc độ phát lại</string>
 <string name="playback_speed_gesture_control_summary">Vuốt ở giữa để điều khiển tốc độ phát. Vô hiệu hóa điều khiển bằng cử chỉ toàn màn hình</string>

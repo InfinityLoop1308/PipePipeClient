@@ -25,7 +25,6 @@ import org.schabi.newpipe.error.ReCaptchaActivity;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.downloader.Downloader;
-import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.services.youtube.YoutubeApiDecoder;
 import org.schabi.newpipe.extractor.services.youtube.YoutubeParsingHelper;
 import org.schabi.newpipe.ktx.ExceptionUtils;
@@ -39,8 +38,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Callable;
 
 import io.reactivex.rxjava3.exceptions.CompositeException;
 import io.reactivex.rxjava3.exceptions.MissingBackpressureException;
@@ -76,12 +74,6 @@ public class App extends MultiDexApplication {
     private static final String YOUTUBE_WEB_CLIENT_NAME = "WEB";
     private static final String YOUTUBE_MWEB_CLIENT_NAME = "MWEB";
     private static final String YOUTUBE_ANDROID_VR_CLIENT_NAME = "ANDROID_VR";
-    private static final ExecutorService YOUTUBE_SESSION_PO_TOKEN_PREWARM_EXECUTOR =
-            Executors.newSingleThreadExecutor(runnable -> {
-                final Thread thread = new Thread(runnable, "YoutubePoTokenPrewarmSchedule");
-                thread.setDaemon(true);
-                return thread;
-            });
     private static App app;
 
     private CarConnectionStateReceiver carConnectionReceiver;
@@ -141,15 +133,7 @@ public class App extends MultiDexApplication {
             Localization.getPreferredContentCountry(this));
         final LocalDomPoTokenProvider sessionPoTokenProvider =
                 LocalDomPoTokenProvider.shared(this);
-        NewPipe.setYoutubeSessionPoTokenProvider((clientName, clientVersion, userAgent,
-                                                  localization, contentCountry, loggedIn) -> {
-            if (!shouldProvideYoutubeSessionPoToken(clientName,
-                    isYoutubeSessionVisitorDataEnabled(this))) {
-                return null;
-            }
-            return sessionPoTokenProvider.getSessionPoToken(clientName, clientVersion, userAgent,
-                    localization, contentCountry, loggedIn);
-        });
+        NewPipe.setYoutubeSessionPoTokenProvider(sessionPoTokenProvider);
         final AndroidWebViewAvailabilityChecker webViewAvailabilityChecker =
                 new AndroidWebViewAvailabilityChecker(this);
         NewPipe.setWebViewAvailabilityChecker(webViewAvailabilityChecker);
@@ -248,57 +232,51 @@ public class App extends MultiDexApplication {
     }
 
     public static void prewarmYoutubeSessionPoToken(@NonNull final Context context) {
-        final Context appContext = context.getApplicationContext();
-        final LocalDomPoTokenProvider provider = LocalDomPoTokenProvider.shared(appContext);
+        final LocalDomPoTokenProvider provider = LocalDomPoTokenProvider.shared(context);
         provider.cancelSessionPoTokenPrewarm();
-        YOUTUBE_SESSION_PO_TOKEN_PREWARM_EXECUTOR.execute(() -> {
-            try {
-                final YoutubePoTokenClientContext client = resolveYoutubePoTokenClientContext(
-                        NewPipe.getYoutubePlayerClient());
-                final boolean loggedIn = ServiceList.YouTube.hasTokens();
-                if (client == null || !shouldProvideYoutubeSessionPoToken(client.clientName,
-                        isYoutubeSessionVisitorDataEnabled(appContext))) {
-                    return;
-                }
-                provider.prewarmSessionPoToken(client.clientName, client.clientVersion,
-                        client.userAgent, YoutubeParsingHelper.getPlayerRequestLocalization(),
-                        ServiceList.YouTube.getContentCountry(), loggedIn);
-            } catch (final IOException | ExtractionException e) {
-                Log.w(TAG, "Could not resolve YouTube client context for PO token prewarm", e);
-            } catch (final RuntimeException e) {
-                Log.w(TAG, "Could not schedule YouTube session PO token prewarm", e);
+        try {
+            final YoutubePoTokenClientContext client = resolveYoutubePoTokenClientContext(
+                    NewPipe.getYoutubePlayerClient());
+            if (client == null) {
+                return;
             }
-        });
+            provider.prewarmSessionPoToken(client.clientName, client.userAgent,
+                    YoutubeParsingHelper.getPlayerRequestLocalization(),
+                    ServiceList.YouTube.getContentCountry(), ServiceList.YouTube.hasTokens(),
+                    client.clientVersionResolver);
+        } catch (final RuntimeException e) {
+            Log.w(TAG, "Could not schedule YouTube session PO token prewarm", e);
+        }
     }
 
     private static YoutubePoTokenClientContext resolveYoutubePoTokenClientContext(
-            @NonNull final String selectedClient) throws IOException, ExtractionException {
+            @NonNull final String selectedClient) {
         switch (selectedClient) {
             case "mweb":
                 return new YoutubePoTokenClientContext(YOUTUBE_MWEB_CLIENT_NAME,
-                        YoutubeParsingHelper.getClientVersion(),
+                        YoutubeParsingHelper::getClientVersion,
                         YoutubeParsingHelper.MWEB_USER_AGENT);
             case "web":
                 return new YoutubePoTokenClientContext(YOUTUBE_WEB_CLIENT_NAME,
-                        YoutubeParsingHelper.getClientVersion(),
+                        YoutubeParsingHelper::getClientVersion,
                         YoutubeParsingHelper.WEB_USER_AGENT);
             case "web_safari":
                 return new YoutubePoTokenClientContext(YOUTUBE_WEB_CLIENT_NAME,
-                        "2.20260114.08.00",
+                        () -> "2.20260114.08.00",
                         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
                                 + "AppleWebKit/605.1.15 (KHTML, like Gecko) "
                                 + "Version/15.5 Safari/605.1.15,gzip(gfe)");
             case "android_vr":
                 return new YoutubePoTokenClientContext(YOUTUBE_ANDROID_VR_CLIENT_NAME,
-                        "1.65.10",
+                        () -> "1.65.10",
                         "com.google.android.apps.youtube.vr.oculus/1.65.10 "
                                 + "(Linux; U; Android 12L; eureka-user "
                                 + "Build/SQ3A.220605.009.A1) gzip");
             case "tv_simply":
-                return new YoutubePoTokenClientContext("TVHTML5_SIMPLY", "1.0",
+                return new YoutubePoTokenClientContext("TVHTML5_SIMPLY", () -> "1.0",
                         YoutubeParsingHelper.WEB_USER_AGENT);
             case "tv_downgraded":
-                return new YoutubePoTokenClientContext("TVHTML5", "5.20260114",
+                return new YoutubePoTokenClientContext("TVHTML5", () -> "5.20260114",
                         "Mozilla/5.0 (ChromiumStylePlatform) Cobalt/Version");
             default:
                 return null;
@@ -307,29 +285,16 @@ public class App extends MultiDexApplication {
 
     private static final class YoutubePoTokenClientContext {
         @NonNull private final String clientName;
-        @NonNull private final String clientVersion;
+        @NonNull private final Callable<String> clientVersionResolver;
         @NonNull private final String userAgent;
 
         private YoutubePoTokenClientContext(@NonNull final String clientName,
-                                            @NonNull final String clientVersion,
+                                            @NonNull final Callable<String> clientVersionResolver,
                                             @NonNull final String userAgent) {
             this.clientName = clientName;
-            this.clientVersion = clientVersion;
+            this.clientVersionResolver = clientVersionResolver;
             this.userAgent = userAgent;
         }
-    }
-
-    static boolean shouldProvideYoutubeSessionPoToken(@NonNull final String clientName,
-                                                       final boolean visitorDataEnabled) {
-        return visitorDataEnabled
-                || YOUTUBE_WEB_CLIENT_NAME.equals(clientName)
-                || YOUTUBE_MWEB_CLIENT_NAME.equals(clientName)
-                || YOUTUBE_ANDROID_VR_CLIENT_NAME.equals(clientName);
-    }
-
-    private static boolean isYoutubeSessionVisitorDataEnabled(@NonNull final Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
-                context.getString(R.string.youtube_session_visitor_data_key), false);
     }
 
     @Override

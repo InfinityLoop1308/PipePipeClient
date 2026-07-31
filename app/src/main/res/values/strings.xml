@@ -1084,6 +1084,5 @@
 <string name="sabr_backoff_notification_channel_name">YouTube playback waiting</string>
 <string name="sabr_backoff_notification_channel_description">Notifications when YouTube requires a playback request to wait</string>
 <string name="sabr_backoff_notification_title">Waiting for YouTube</string>
-<string name="youtube_send_session_visitor_data_summary">Send visitor data to YouTube. Help avoid temporary IP blocks, but you may be forced to wait for ads more frequently</string>
 <string name="sabr_backoff_notification_content">YouTube forces us to wait %1$d seconds before continuing playback</string>
 </resources>

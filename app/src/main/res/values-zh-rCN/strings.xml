@@ -1046,7 +1046,6 @@
 <string name="sabr_backoff_notification_channel_name">YouTube 播放等待</string>
 <string name="sabr_backoff_notification_channel_description">YouTube 强制播放请求等待时显示通知</string>
 <string name="sabr_backoff_notification_title">正在等待 YouTube</string>
-<string name="youtube_send_session_visitor_data_summary">向 YouTube 发送访客数据。有助于避免临时的 IP 封禁，但您可能会被迫更频繁地等待广告。</string>
 <string name="sabr_backoff_notification_content">YouTube 强制我们等待 %1$d 秒后才能继续播放</string>
 <string name="playback_speed_gesture_control_title">滑动控制播放速度</string>
 <string name="playback_speed_gesture_control_summary">在中间滑动以控制播放速度。将禁用全屏手势控制</string>

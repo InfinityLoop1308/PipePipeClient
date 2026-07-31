@@ -75,14 +75,6 @@
                 app:singleLineTitle="false"
                 app:iconSpaceReserved="false" />
 
-        <SwitchPreferenceCompat
-                android:defaultValue="false"
-                android:key="@string/youtube_session_visitor_data_key"
-                android:summary="@string/youtube_send_session_visitor_data_summary"
-                android:title="@string/youtube_visitor_data_title"
-                app:singleLineTitle="false"
-                app:iconSpaceReserved="false" />
-
         <PreferenceScreen
                 android:fragment="org.schabi.newpipe.settings.ExoPlayerSettingsFragment"
                 android:key="@string/exoplayer_settings_key"

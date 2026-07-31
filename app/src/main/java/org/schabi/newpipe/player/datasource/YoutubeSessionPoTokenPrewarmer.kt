@@ -2,6 +2,7 @@ package org.schabi.newpipe.player.datasource
 
 import org.schabi.newpipe.extractor.localization.ContentCountry
 import org.schabi.newpipe.extractor.localization.Localization
+import org.schabi.newpipe.extractor.services.youtube.YoutubeSessionPoToken
 import java.util.concurrent.Executor
 import java.util.concurrent.Future
 import java.util.concurrent.FutureTask
@@ -15,6 +16,30 @@ internal data class YoutubeSessionPoTokenContext(
     val loggedIn: Boolean,
     val credentialIdentity: String,
 )
+
+internal data class YoutubeSessionPoTokenPrewarmContext(
+    val clientName: String,
+    val userAgent: String?,
+    val localization: Localization,
+    val contentCountry: ContentCountry,
+    val loggedIn: Boolean,
+    val credentialIdentity: String,
+)
+
+internal data class PreparedYoutubeSessionPoToken(
+    val context: YoutubeSessionPoTokenContext,
+    val token: YoutubeSessionPoToken,
+)
+
+internal fun YoutubeSessionPoTokenContext.prewarmContext() =
+    YoutubeSessionPoTokenPrewarmContext(
+        clientName,
+        userAgent,
+        localization,
+        contentCountry,
+        loggedIn,
+        credentialIdentity,
+    )
 
 internal class ContextBoundSingleFlight<K, V>(private val executor: Executor) {
     private data class Entry<K, V>(val key: K, val task: FutureTask<V>)

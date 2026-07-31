@@ -8,6 +8,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.schabi.newpipe.extractor.localization.ContentCountry
 import org.schabi.newpipe.extractor.localization.Localization
+import org.schabi.newpipe.extractor.services.youtube.YoutubeSessionPoToken
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -79,6 +80,70 @@ class SabrSessionPoTokenPrewarmerTest {
         }
     }
 
+    @Test(timeout = 5_000)
+    fun foregroundSharesTaskWhileClientVersionResolutionIsBlocked() {
+        val prewarmExecutor = Executors.newSingleThreadExecutor()
+        val foregroundExecutor = Executors.newSingleThreadExecutor()
+        val prewarmer = ContextBoundSingleFlight<
+            YoutubeSessionPoTokenPrewarmContext,
+            PreparedYoutubeSessionPoToken
+        >(prewarmExecutor)
+        val requestContext = YoutubeSessionPoTokenContext(
+            "MWEB",
+            "2.test",
+            "test-user-agent",
+            Localization("en", "US"),
+            ContentCountry("US"),
+            false,
+            "credential-a",
+        )
+        val versionResolutionStarted = CountDownLatch(1)
+        val versionResolutionRelease = CountDownLatch(1)
+        val foregroundStarted = CountDownLatch(1)
+        val initializations = AtomicInteger()
+        val synchronousInitializations = AtomicInteger()
+        try {
+            assertTrue(prewarmer.start(requestContext.prewarmContext()) {
+                versionResolutionStarted.countDown()
+                versionResolutionRelease.await()
+                initializations.incrementAndGet()
+                PreparedYoutubeSessionPoToken(
+                    requestContext,
+                    YoutubeSessionPoToken("visitor-data", "prewarmed-token"),
+                )
+            })
+            assertTrue(versionResolutionStarted.await(2, TimeUnit.SECONDS))
+
+            val foreground = foregroundExecutor.submit<YoutubeSessionPoToken> {
+                foregroundStarted.countDown()
+                val prepared = prewarmer.inFlight(requestContext.prewarmContext())?.get()
+                if (prepared?.context == requestContext) {
+                    prepared.token
+                } else {
+                    synchronousInitializations.incrementAndGet()
+                    YoutubeSessionPoToken("visitor-data", "synchronous-token")
+                }
+            }
+            assertTrue(foregroundStarted.await(2, TimeUnit.SECONDS))
+            assertFalse(foreground.isDone)
+            assertEquals(0, initializations.get())
+            assertEquals(0, synchronousInitializations.get())
+
+            versionResolutionRelease.countDown()
+
+            assertEquals(
+                "prewarmed-token",
+                foreground.get(2, TimeUnit.SECONDS).poToken,
+            )
+            assertEquals(1, initializations.get())
+            assertEquals(0, synchronousInitializations.get())
+        } finally {
+            versionResolutionRelease.countDown()
+            prewarmExecutor.shutdownNow()
+            foregroundExecutor.shutdownNow()
+        }
+    }
+
     @Test
     fun fullPlayerContextControlsTaskIdentity() {
         val context = YoutubeSessionPoTokenContext(
@@ -93,6 +158,10 @@ class SabrSessionPoTokenPrewarmerTest {
 
         assertNotEquals(context, context.copy(clientName = "WEB"))
         assertNotEquals(context, context.copy(clientVersion = "3.test"))
+        assertEquals(
+            context.prewarmContext(),
+            context.copy(clientVersion = "3.test").prewarmContext(),
+        )
         assertNotEquals(context, context.copy(userAgent = "other-user-agent"))
         assertNotEquals(context, context.copy(localization = Localization("zh", "CN")))
         assertNotEquals(context, context.copy(contentCountry = ContentCountry("CN")))

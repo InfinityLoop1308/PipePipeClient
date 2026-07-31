@@ -28,7 +28,6 @@ import androidx.media3.exoplayer.analytics.AnalyticsListener;
 import androidx.media3.exoplayer.source.MediaSource;
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
 import androidx.media3.exoplayer.upstream.DefaultBandwidthMeter;
-import androidx.preference.PreferenceManager;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -151,16 +150,10 @@ public final class SabrPlaybackSmokeTest {
                 "anonymousVideoCount", "10"));
         final long playbackMs = Long.parseLong(arguments.getString(
                 "anonymousPlaybackMs", "130000"));
-        final boolean visitorDataEnabled = Boolean.parseBoolean(arguments.getString(
-                "anonymousVisitorData", "false"));
         assertTrue("The probe must cross the 60s SABR protection boundary",
                 playbackMs > 60_000);
 
         ServiceList.YouTube.setTokens("");
-        PreferenceManager.getDefaultSharedPreferences(context).edit()
-                .putBoolean(context.getString(R.string.youtube_session_visitor_data_key),
-                        visitorDataEnabled)
-                .commit();
         NewPipe.setYoutubePlayerClient("mweb");
 
         final PlaylistInfo playlist = PlaylistInfo.getInfo(ServiceList.YouTube, playlistUrl);

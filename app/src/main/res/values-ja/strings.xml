@@ -1005,7 +1005,6 @@
 <string name="sabr_backoff_notification_channel_name">YouTube再生待機</string>
 <string name="sabr_backoff_notification_channel_description">YouTubeで再生リクエストの待機が必要な場合の通知</string>
 <string name="sabr_backoff_notification_title">YouTubeの待機中</string>
-<string name="youtube_send_session_visitor_data_summary">YouTubeに訪問者データを送信します。一時的なIPブロックの回避に役立ちますが、より頻繁に広告を待たされる可能性があります。</string>
 <string name="sabr_backoff_notification_content">YouTubeの制限により、再生を続行する前に %1$d 秒待機する必要があります</string>
 <string name="playback_speed_gesture_control_title">スワイプで再生速度を調整</string>
 <string name="playback_speed_gesture_control_summary">中央をスワイプして再生速度を調整します。フルスクリーンのジェスチャー操作は無効になります。</string>

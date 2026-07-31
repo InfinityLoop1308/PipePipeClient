@@ -999,7 +999,6 @@ Voulez-vous continuer?</string>
 <string name="sabr_backoff_notification_channel_name">Lecture YouTube en attente</string>
 <string name="sabr_backoff_notification_channel_description">Notifications lorsque YouTube exige qu\'une demande de lecture soit mise en attente</string>
 <string name="sabr_backoff_notification_title">En attente de YouTube</string>
-<string name="youtube_send_session_visitor_data_summary">Envoyer les données des visiteurs à YouTube. Aide à éviter les blocages temporaires d\'IP, mais vous pourriez être forcé d\'attendre les annonces plus fréquemment.</string>
 <string name="sabr_backoff_notification_content">YouTube nous oblige à attendre %1$d secondes avant de reprendre la lecture</string>
 <string name="playback_speed_gesture_control_title">Balayez pour contrôler la vitesse de lecture</string>
 <string name="playback_speed_gesture_control_summary">Glissez au milieu pour contrôler la vitesse de lecture. Désactive le contrôle gestuel en plein écran.</string>
