@@ -439,21 +439,23 @@ class LocalDomPoTokenProvider(context: Context) :
 
     private fun invalidateCredentialBoundState() {
         sessionPoTokenPrewarmer.cancel()
-        synchronized(visitorDataLock) {
-            fetchedVisitorData = null
-            fetchedVisitorDataLoggedIn = null
-            fetchedVisitorDataCredentialIdentity = null
-            visitorDataFetchedAtMs = 0
+        prewarmExecutor.execute {
+            synchronized(visitorDataLock) {
+                fetchedVisitorData = null
+                fetchedVisitorDataLoggedIn = null
+                fetchedVisitorDataCredentialIdentity = null
+                visitorDataFetchedAtMs = 0
+            }
+            synchronized(generatorLock) {
+                generator?.let { mainHandler.post { it.close() } }
+                generator = null
+                generatorContext = null
+                generatorCredentialIdentity = null
+            }
+            cache.clear()
+            prefs.edit().clear().commit()
+            Log.i(TAG, "YouTube credentials changed; cleared credential-bound PO token state")
         }
-        synchronized(generatorLock) {
-            generator?.let { mainHandler.post { it.close() } }
-            generator = null
-            generatorContext = null
-            generatorCredentialIdentity = null
-        }
-        cache.clear()
-        prefs.edit().clear().commit()
-        Log.i(TAG, "YouTube credentials changed; cleared credential-bound PO token state")
     }
 
     private fun diskLoad(videoId: String): CachedToken? {
