@@ -86,8 +86,8 @@ public final class CacheDownloadService extends Service {
         intent.putExtra(EXTRA_THUMBNAIL_URL, info.getThumbnailUrl());
         intent.putExtra(EXTRA_TEXTUAL_UPLOAD_DATE, info.getTextualUploadDate());
         intent.putExtra(EXTRA_VIEW_COUNT, info.getViewCount());
-        intent.putExtra(EXTRA_DESCRIPTION,
-                info.getDescription() != null ? info.getDescription().getContent() : null);
+        intent.putExtra(EXTRA_DESCRIPTION, truncateDescription(
+                info.getDescription() != null ? info.getDescription().getContent() : null));
         if (video != null) {
             intent.putExtra(EXTRA_VIDEO_URL, video.getContent());
             intent.putExtra(EXTRA_VIDEO_FORMAT,
@@ -111,6 +111,20 @@ public final class CacheDownloadService extends Service {
             CacheManager.reportProgress(info.getServiceId(), info.getUrl(),
                     CacheManager.PROGRESS_FAILED);
         }
+    }
+
+    /**
+     * Intent extras cross a Binder transaction with a hard ~1 MB budget shared by the whole
+     * process, and some descriptions are enormous. Cap it: the description is a nice-to-have for
+     * the offline page, not worth risking a TransactionTooLargeException over.
+     */
+    @Nullable
+    private static String truncateDescription(@Nullable final String description) {
+        final int maxChars = 20_000;
+        if (description == null || description.length() <= maxChars) {
+            return description;
+        }
+        return description.substring(0, maxChars) + "…";
     }
 
     @Override
@@ -271,12 +285,29 @@ public final class CacheDownloadService extends Service {
                           @NonNull final String streamUrl,
                           final int rangeStart,
                           final int rangeEnd) throws IOException {
-        final Request request = new Request.Builder().url(url).get().build();
+        final Request request;
+        try {
+            request = new Request.Builder()
+                    .url(url)
+                    // Some CDNs (notably googlevideo) reject or throttle requests without a
+                    // browser-ish User-Agent, and DownloaderImpl only adds one on its own
+                    // request path - this call bypasses that and uses the raw OkHttp client.
+                    .header("User-Agent", org.schabi.newpipe.DownloaderImpl.USER_AGENT)
+                    .get()
+                    .build();
+        } catch (final IllegalArgumentException e) {
+            // OkHttp throws this (unchecked!) when the content isn't a parseable http(s) URL,
+            // e.g. an inline DASH/HLS manifest document. Convert it to a checked IOException so
+            // it travels the normal failure path instead of silently killing the worker thread.
+            throw new IOException("Stream content for " + label + " is not a usable URL: "
+                    + abbreviate(url), e);
+        }
+
         try (Response response = client.newCall(request).execute()) {
             final ResponseBody body = response.body();
             if (!response.isSuccessful() || body == null) {
                 throw new IOException("HTTP " + response.code() + " while caching " + label
-                        + " from " + url);
+                        + " from " + abbreviate(url));
             }
             final long contentLength = body.contentLength();
             long readBytes = 0;
@@ -300,8 +331,24 @@ public final class CacheDownloadService extends Service {
                     }
                 }
             }
+            if (readBytes == 0) {
+                throw new IOException("Cached " + label + " came back empty (0 bytes) from "
+                        + abbreviate(url));
+            }
+            CacheLogger.d(this, TAG, "downloaded " + label + ": " + readBytes + " bytes"
+                    + (contentLength > 0 ? " of " + contentLength + " expected" : ""));
+            if (contentLength > 0 && readBytes < contentLength) {
+                throw new IOException("Cached " + label + " is truncated: got " + readBytes
+                        + " of " + contentLength + " bytes");
+            }
             return readBytes;
         }
+    }
+
+    /** Media URLs are enormous and full of tokens; keep the log readable and less sensitive. */
+    @NonNull
+    private static String abbreviate(@NonNull final String url) {
+        return url.length() <= 120 ? url : url.substring(0, 120) + "…(" + url.length() + " chars)";
     }
 
     private void deletePartial(@NonNull final File dir) {

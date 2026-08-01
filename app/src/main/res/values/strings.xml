@@ -38,7 +38,13 @@
 <string name="cache_debug_log_title">Cache debug log</string>
 <string name="cache_log_menu_title">View cache debug log</string>
 <string name="cache_failed_toast">Failed to cache video - see the debug log for details</string>
-<string name="cache_failed_no_streams">No downloadable video/audio stream was found for this video</string>
+<string name="cache_failed_no_streams">This video has no directly downloadable stream, so it can\'t be cached. (Its streams are delivered via SABR/HLS, which only the regular Download feature can handle.) See the cache debug log for details.</string>
+<string name="cache_dialog_title">Cache for offline viewing</string>
+<string name="cache_quality_label">Quality</string>
+<string name="cache_action">Cache</string>
+<string name="cache_hint_no_video">No cacheable video quality for this video — audio only.</string>
+<string name="cache_hint_no_audio">No cacheable audio track for this video — video only.</string>
+<string name="cache_hint_reduced">Some qualities aren\'t listed: only directly downloadable streams can be cached.</string>
 <string name="refresh">Refresh</string>
 <string name="search">Search</string>
 <string name="settings">Settings</string>

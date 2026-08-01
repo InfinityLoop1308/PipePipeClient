@@ -279,8 +279,11 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         // feed's own long-press menu (or elsewhere) is reflected without waiting for onResume().
         disposables.add(
             io.reactivex.rxjava3.core.Observable.merge(
-                CacheManager.cacheChanges.map { it as Any },
-                CacheManager.cacheProgress.map { it as Any }
+                listOf(
+                    CacheManager.cacheChanges.map { it as Any },
+                    CacheManager.cacheProgress.map { it as Any },
+                    CacheManager.cacheDataChanged.map { it as Any }
+                )
             )
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {

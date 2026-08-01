@@ -12,6 +12,8 @@ import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockAction;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockCategory;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockSegment;
 import org.schabi.newpipe.extractor.stream.AudioStream;
+import org.schabi.newpipe.extractor.stream.DeliveryMethod;
+import org.schabi.newpipe.extractor.stream.Stream;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.extractor.stream.VideoStream;
@@ -154,50 +156,169 @@ public final class CacheManager {
     }
 
     /**
-     * Picks the default video (preferring a video-only stream, so the smaller separately-muxed
-     * audio track can be reused) and audio stream for caching, mirroring the same
-     * {@link org.schabi.newpipe.util.ListHelper} logic used to choose the default playback
-     * quality, and starts a background download of both plus the sponsor segments already
-     * present on {@code info}.
+     * Whether {@link CacheDownloadService} can actually fetch this stream with a plain HTTP GET.
      *
-     * @return {@code true} if a download was actually enqueued, {@code false} if neither a video
-     *         nor an audio stream could be selected (nothing to cache) - in which case the
-     *         caller should tell the user instead of claiming caching "started".
+     * <p>This is the crux of the "I pressed Cache, it said it started, and nothing happened" bug:
+     * the cache downloader streams {@link Stream#getContent()} straight to a file over OkHttp,
+     * which only works for a stream whose content really is a direct media URL. Two other kinds
+     * exist and both fail:</p>
+     * <ul>
+     *   <li>{@code !isUrl()} - the content is an <em>inline manifest document</em> (DASH/HLS/SMIL
+     *       text), not a link. Handing that to {@code Request.Builder().url(...)} throws
+     *       {@link IllegalArgumentException}, an unchecked exception that used to escape the
+     *       download worker thread and get swallowed by its {@code ExecutorService} - no crash,
+     *       no error, no notification, nothing.</li>
+     *   <li>{@link DeliveryMethod#SABR} (YouTube's current default) and
+     *       {@link DeliveryMethod#HLS}/{@link DeliveryMethod#DASH} URLs - fetchable, but what
+     *       comes back is a manifest/segment-protocol endpoint, not the media itself. Saving it
+     *       would produce a small file that can never play, i.e. a cache entry that silently
+     *       does nothing useful.</li>
+     * </ul>
+     *
+     * <p>The regular download feature copes with these via the whole
+     * {@code us.shandian.giga} mission machinery (SABR/HLS-aware, multi-threaded, resumable);
+     * the cache deliberately does not reimplement that, so it restricts itself to streams it can
+     * genuinely handle and says so plainly when there are none.</p>
+     */
+    public static boolean isCacheable(@Nullable final Stream stream) {
+        return stream != null
+                && stream.isUrl()
+                && stream.getDeliveryMethod() == DeliveryMethod.PROGRESSIVE_HTTP;
+    }
+
+    /**
+     * The video streams that can actually be cached, best quality first, in the same order and
+     * with the same language filtering the download dialog uses.
+     */
+    @NonNull
+    public static List<VideoStream> getCacheableVideoStreams(@NonNull final Context context,
+                                                             @NonNull final StreamInfo info) {
+        final List<VideoStream> sorted = new ArrayList<>(org.schabi.newpipe.util.ListHelper
+                .getSortedStreamVideosList(context, info.getVideoStreams(),
+                        info.getVideoOnlyStreams(), false, false));
+        final List<VideoStream> cacheable = new ArrayList<>();
+        for (final VideoStream stream : sorted) {
+            if (isCacheable(stream)) {
+                cacheable.add(stream);
+            }
+        }
+        return cacheable;
+    }
+
+    /** The audio streams that can actually be cached. */
+    @NonNull
+    public static List<AudioStream> getCacheableAudioStreams(@NonNull final StreamInfo info) {
+        final List<AudioStream> cacheable = new ArrayList<>();
+        for (final AudioStream stream : info.getAudioStreams()) {
+            if (isCacheable(stream)) {
+                cacheable.add(stream);
+            }
+        }
+        return cacheable;
+    }
+
+    /**
+     * Human-readable summary of every stream the extractor returned and why it is or isn't
+     * cacheable. Written to the debug log whenever caching can't proceed, so a bug report
+     * screenshot immediately shows whether the video only offers SABR/HLS/manifest streams.
+     */
+    @NonNull
+    public static String describeStreams(@NonNull final StreamInfo info) {
+        final StringBuilder sb = new StringBuilder();
+        appendStreamDescriptions(sb, "video", info.getVideoStreams());
+        appendStreamDescriptions(sb, "videoOnly", info.getVideoOnlyStreams());
+        appendStreamDescriptions(sb, "audio", info.getAudioStreams());
+        return sb.length() == 0 ? "(extractor returned no streams at all)" : sb.toString();
+    }
+
+    private static void appendStreamDescriptions(@NonNull final StringBuilder sb,
+                                                 @NonNull final String label,
+                                                 @Nullable final List<? extends Stream> streams) {
+        if (streams == null || streams.isEmpty()) {
+            sb.append(label).append(": none; ");
+            return;
+        }
+        for (final Stream stream : streams) {
+            sb.append(label).append('[')
+                    .append("delivery=").append(stream.getDeliveryMethod())
+                    .append(" isUrl=").append(stream.isUrl())
+                    .append(" format=").append(stream.getFormat())
+                    .append(" cacheable=").append(isCacheable(stream))
+                    .append("]; ");
+        }
+    }
+
+    /**
+     * Starts caching {@code info} using explicitly chosen streams (see
+     * {@code CacheDialog} - the quality selector). Either stream may be null: video-only gives a
+     * silent video, audio-only gives an audio-only cache entry, and passing both caches a
+     * video-only track plus its separate audio track.
+     *
+     * @return {@code true} if a download was actually enqueued.
      */
     public static boolean startCaching(@NonNull final Context context,
-                                       @NonNull final StreamInfo info) {
+                                       @NonNull final StreamInfo info,
+                                       @Nullable final VideoStream video,
+                                       @Nullable final AudioStream audio) {
         final Context appContext = context.getApplicationContext();
         CacheLogger.d(appContext, "startCaching", "requested for serviceId=" + info.getServiceId()
-                + " url=" + info.getUrl() + " title=" + info.getName());
+                + " url=" + info.getUrl() + " title=" + info.getName()
+                + " video=" + (video != null ? video.getResolution() : "none")
+                + " audio=" + (audio != null ? audio.getAverageBitrate() + "kbps" : "none"));
 
-        final List<VideoStream> videoCandidates = !info.getVideoOnlyStreams().isEmpty()
-                ? info.getVideoOnlyStreams() : info.getVideoStreams();
-        final int videoIndex = org.schabi.newpipe.util.ListHelper
-                .getDefaultResolutionIndex(appContext, videoCandidates);
-        final VideoStream video = videoIndex >= 0 && videoIndex < videoCandidates.size()
-                ? videoCandidates.get(videoIndex) : null;
-
-        final List<AudioStream> audioStreams = info.getAudioStreams();
-        final int audioIndex = org.schabi.newpipe.util.ListHelper
-                .getDefaultAudioFormat(appContext, audioStreams);
-        final AudioStream audio = audioIndex >= 0 && audioIndex < audioStreams.size()
-                ? audioStreams.get(audioIndex) : null;
-
-        CacheLogger.d(appContext, "startCaching", "video candidates=" + videoCandidates.size()
-                + " chosen video=" + (video != null ? video.getContent() : "none")
-                + "; audio candidates=" + audioStreams.size()
-                + " chosen audio=" + (audio != null ? audio.getContent() : "none"));
-
-        if (video == null && audio == null) {
+        if (!isCacheable(video) && !isCacheable(audio)) {
             CacheLogger.w(appContext, "startCaching",
-                    "no video or audio stream available - not starting a download for "
-                            + info.getUrl());
+                    "nothing cacheable was selected for " + info.getUrl()
+                            + " - available streams: " + describeStreams(info));
             return false;
         }
 
         reportProgress(info.getServiceId(), info.getUrl(), 0);
-        CacheDownloadService.enqueue(appContext, info, video, audio);
+        CacheDownloadService.enqueue(appContext, info,
+                isCacheable(video) ? video : null,
+                isCacheable(audio) ? audio : null);
         return true;
+    }
+
+    /**
+     * Convenience entry point that picks the default quality itself, for callers without a UI to
+     * show the quality selector in.
+     *
+     * @return {@code true} if a download was actually enqueued, {@code false} if this video has
+     *         no cacheable stream at all - in which case the caller must tell the user rather
+     *         than claiming caching "started".
+     */
+    public static boolean startCaching(@NonNull final Context context,
+                                       @NonNull final StreamInfo info) {
+        final Context appContext = context.getApplicationContext();
+        final List<VideoStream> videos = getCacheableVideoStreams(appContext, info);
+        final List<AudioStream> audios = getCacheableAudioStreams(info);
+
+        final VideoStream video;
+        if (videos.isEmpty()) {
+            video = null;
+        } else {
+            final int index = org.schabi.newpipe.util.ListHelper
+                    .getDefaultResolutionIndex(appContext, videos);
+            video = index >= 0 && index < videos.size() ? videos.get(index) : videos.get(0);
+        }
+
+        // Only pair a separate audio track with a video-only stream; a muxed video stream
+        // already carries its own audio, and caching a second copy would just waste space.
+        AudioStream audio = null;
+        if (!audios.isEmpty() && (video == null || video.isVideoOnly())) {
+            final int index = org.schabi.newpipe.util.ListHelper
+                    .getDefaultAudioFormat(appContext, audios);
+            audio = index >= 0 && index < audios.size() ? audios.get(index) : audios.get(0);
+        }
+
+        if (video == null && audio == null) {
+            CacheLogger.w(appContext, "startCaching",
+                    "no cacheable stream for " + info.getUrl()
+                            + " - available streams: " + describeStreams(info));
+            return false;
+        }
+        return startCaching(context, info, video, audio);
     }
 
     public static void removeCache(@NonNull final Context context,
@@ -224,9 +345,50 @@ public final class CacheManager {
     public static boolean isCachedBlocking(@NonNull final Context context,
                                            final int serviceId,
                                            @NonNull final String url) {
+        observeCachedKeys(context);
+        if (snapshotReady) {
+            // Fast path: pure in-memory lookup, so scrolling a long list doesn't do one
+            // round-trip to the database per row per bind.
+            return CACHED_KEYS.contains(cacheKey(serviceId, url));
+        }
         final CachedStreamEntity entity =
                 findCachedStream(context, serviceId, url).blockingGet();
         return entity != null && entity.isComplete();
+    }
+
+    /**
+     * Fires whenever the set of cached streams changes, so lists can refresh their badges. Unlike
+     * {@link #cacheChanges} this carries no payload - it just means "re-check everything".
+     */
+    public static final PublishSubject<Object> cacheDataChanged = PublishSubject.create();
+
+    private static final Set<String> CACHED_KEYS = ConcurrentHashMap.newKeySet();
+    private static volatile boolean snapshotReady = false;
+    private static io.reactivex.rxjava3.disposables.Disposable snapshotDisposable;
+
+    /**
+     * Subscribes (once per process) to the cache table so {@link #CACHED_KEYS} always mirrors it.
+     * Room re-emits the {@link Flowable} on every write, so the snapshot maintains itself and
+     * list-item binding never has to touch the database.
+     */
+    private static synchronized void observeCachedKeys(@NonNull final Context context) {
+        if (snapshotDisposable != null) {
+            return;
+        }
+        final Context appContext = context.getApplicationContext();
+        snapshotDisposable = dao(appContext).getAllComplete()
+                .subscribeOn(io.reactivex.rxjava3.schedulers.Schedulers.io())
+                .subscribe(entities -> {
+                    final Set<String> fresh = new HashSet<>(entities.size());
+                    for (final CachedStreamEntity entity : entities) {
+                        fresh.add(cacheKey(entity.getServiceId(), entity.getUrl()));
+                    }
+                    CACHED_KEYS.clear();
+                    CACHED_KEYS.addAll(fresh);
+                    snapshotReady = true;
+                    cacheDataChanged.onNext(Boolean.TRUE);
+                }, throwable -> CacheLogger.e(appContext, "CacheManager",
+                        "failed to observe cached streams", throwable));
     }
 
     /** What, if anything, a list-item badge should show for a stream. */

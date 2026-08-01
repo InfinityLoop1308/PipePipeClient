@@ -60,6 +60,7 @@ import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.databinding.FragmentVideoDetailBinding;
 import org.schabi.newpipe.database.cache.model.CachedStreamEntity;
 import org.schabi.newpipe.download.DownloadDialog;
+import org.schabi.newpipe.local.cache.CacheDialog;
 import org.schabi.newpipe.local.cache.CacheLogger;
 import org.schabi.newpipe.local.cache.CacheManager;
 import org.schabi.newpipe.error.ErrorInfo;
@@ -2107,12 +2108,9 @@ public final class VideoDetailFragment
     }
 
     private void startCachingForOfflineViewing(@NonNull final StreamInfo info) {
-        final boolean started = CacheManager.startCaching(activity, info);
-        if (started) {
-            Toast.makeText(activity, R.string.cache_started, Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(activity, R.string.cache_failed_no_streams, Toast.LENGTH_LONG).show();
-        }
+        // Let the user pick a quality, just like the download flow does. CacheDialog itself
+        // reports (and logs) the reason if this video has nothing cacheable at all.
+        CacheDialog.show(activity, info);
     }
 
     private void confirmRemoveFromCache(@NonNull final CachedStreamEntity cached) {

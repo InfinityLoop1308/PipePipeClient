@@ -18,6 +18,7 @@ import androidx.preference.PreferenceManager;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.download.DownloadDialog;
+import org.schabi.newpipe.local.cache.CacheDialog;
 import org.schabi.newpipe.local.cache.CacheLogger;
 import org.schabi.newpipe.local.cache.CacheManager;
 import org.schabi.newpipe.local.dialog.PlaylistAppendDialog;
@@ -171,12 +172,11 @@ public enum StreamDialogDefaultEntry {
                             .setNegativeButton(R.string.cancel, null)
                             .show());
         } else {
-            fetchStreamInfoAndSaveToDatabase(context, item.getServiceId(), item.getUrl(), info -> {
-                final boolean started = CacheManager.startCaching(context, info);
-                Toast.makeText(context, started
-                        ? R.string.cache_started : R.string.cache_failed_no_streams,
-                        Toast.LENGTH_LONG).show();
-            });
+            // Needs the full StreamInfo (a list item only carries metadata, no stream URLs)
+            // before a quality can be offered, so fetch it first, then show the same selector
+            // the video page uses.
+            fetchStreamInfoAndSaveToDatabase(context, item.getServiceId(), item.getUrl(),
+                    info -> CacheDialog.show(context, info));
         }
     }),
 

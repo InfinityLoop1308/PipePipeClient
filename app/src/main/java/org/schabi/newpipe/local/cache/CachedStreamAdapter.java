@@ -16,7 +16,6 @@ import org.schabi.newpipe.views.NewPipeTextView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public final class CachedStreamAdapter extends RecyclerView.Adapter<CachedStreamAdapter.ViewHolder> {
 
@@ -56,10 +55,11 @@ public final class CachedStreamAdapter extends RecyclerView.Adapter<CachedStream
         final CachedStreamEntity entity = items.get(position);
         holder.title.setText(entity.getTitle());
 
-        final long megabytes = entity.getTotalSizeBytes() / (1024 * 1024);
+        // Utility.formatBytes is what the download UI uses, and unlike the previous
+        // "bytes / 1024 / 1024 MB" it doesn't render every sub-megabyte entry as "0 MB".
+        final String size = us.shandian.giga.util.Utility.formatBytes(entity.getTotalSizeBytes());
         final String uploader = entity.getUploaderName() == null ? "" : entity.getUploaderName();
-        holder.subtitle.setText(String.format(Locale.getDefault(),
-                "%s • %d MB", uploader, megabytes));
+        holder.subtitle.setText(uploader.isEmpty() ? size : uploader + " • " + size);
 
         PicassoHelper.loadThumbnail(entity.getThumbnailUrl()).into(holder.thumbnail);
 
