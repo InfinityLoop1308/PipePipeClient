@@ -787,7 +787,12 @@ public final class VideoDetailFragment
         binding.detailControlsPlaylistAppend.setOnLongClickListener(this);
         binding.detailControlsDownload.setOnClickListener(this);
         binding.detailControlsDownload.setOnLongClickListener(this);
-        binding.detailControlsCache.setOnClickListener(this);
+        // Nullable: this view only exists in layout variants that declare it. ViewBinding makes
+        // the field @Nullable in that case, and dereferencing it crashed every video page on
+        // layouts without it (e.g. layout-large-land, used by large screens in landscape).
+        if (binding.detailControlsCache != null) {
+            binding.detailControlsCache.setOnClickListener(this);
+        }
         if (cacheChangesSubscriber != null) {
             cacheChangesSubscriber.dispose();
         }
@@ -2157,7 +2162,7 @@ public final class VideoDetailFragment
     }
 
     private void setCacheButtonCached(final boolean cached) {
-        if (binding == null) {
+        if (binding == null || binding.detailControlsCache == null) {
             return;
         }
         binding.detailControlsCache.setText(cached
@@ -2174,7 +2179,7 @@ public final class VideoDetailFragment
      * like it silently did nothing.
      */
     private void setCacheButtonProgress(final int percent) {
-        if (binding == null) {
+        if (binding == null || binding.detailControlsCache == null) {
             return;
         }
         if (percent == CacheManager.PROGRESS_PROCESSING) {
