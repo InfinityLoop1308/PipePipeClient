@@ -86,16 +86,15 @@ public class DownloadActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            case R.id.open_cached_videos:
-                startActivity(new Intent(this,
-                        org.schabi.newpipe.local.cache.CacheActivity.class));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        final int id = item.getItemId();
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else if (id == R.id.open_cached_videos) {
+            startActivity(new Intent(this, org.schabi.newpipe.local.cache.CacheActivity.class));
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
 }
