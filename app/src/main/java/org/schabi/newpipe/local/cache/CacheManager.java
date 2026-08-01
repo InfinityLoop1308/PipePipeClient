@@ -732,6 +732,12 @@ public final class CacheManager {
                     .setDeliveryMethod(org.schabi.newpipe.extractor.stream.DeliveryMethod
                             .PROGRESSIVE_HTTP)
                     .setResolution(playableResolution(entity.getVideoResolution()))
+                    // Must not be left unset. ListHelper.getSortedStreamVideosList() builds its
+                    // de-duplication key with videoStream.getCodec().split("\\.")[0], outside any
+                    // try/catch, and VideoStream.Builder passes an unset codec through as null -
+                    // so a null here threw NPE while resolving playback and the cached video
+                    // showed two seconds of black and nothing else.
+                    .setCodec(codecForFormat(format))
                     .setIsVideoOnly(hasSeparateAudio)
                     .build();
             if (hasSeparateAudio) {
@@ -753,6 +759,7 @@ public final class CacheManager {
                     .setMediaFormat(format)
                     .setDeliveryMethod(org.schabi.newpipe.extractor.stream.DeliveryMethod
                             .PROGRESSIVE_HTTP)
+                    .setCodec(codecForFormat(format))
                     .setAverageBitrate(128)
                     .build());
         }
@@ -777,6 +784,30 @@ public final class CacheManager {
      * <p>The real resolution is stored with the entry now; the fallback only covers rows cached
      * before that column existed, and just has to be parseable.</p>
      */
+    /**
+     * A non-null codec label for a reconstructed cached stream.
+     *
+     * <p>Only ever used for grouping and for the "advanced formats" preference checks
+     * ({@code av01}/{@code hev1}/{@code hvc1}), never for decoding - the container tells the
+     * player what it actually needs. Deliberately reports a plain codec so a cached file can't be
+     * filtered out of the playback list by a preference the user changed after caching it.</p>
+     */
+    @NonNull
+    private static String codecForFormat(
+            @Nullable final org.schabi.newpipe.extractor.MediaFormat format) {
+        if (format == null) {
+            return "avc1";
+        }
+        switch (format) {
+            case WEBM:
+            case WEBMA:
+            case WEBMA_OPUS:
+                return "vp9";
+            default:
+                return "avc1";
+        }
+    }
+
     @NonNull
     private static String playableResolution(@Nullable final String stored) {
         if (stored == null || stored.isEmpty()) {
