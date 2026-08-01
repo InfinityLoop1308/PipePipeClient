@@ -1,5 +1,6 @@
 package org.schabi.newpipe.info_list.holder;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -145,9 +146,31 @@ public class StreamInfoItemHolder extends InfoItemHolder {
         itemAdditionalDetails.setText(getStreamInfoDetailLine(item));
 
         if (itemCacheStatusView != null) {
-            final boolean cached = CacheManager.isCachedBlocking(
-                    itemBuilder.getContext(), item.getServiceId(), item.getUrl());
-            itemCacheStatusView.setVisibility(cached ? View.VISIBLE : View.GONE);
+            bindCacheStatus(itemCacheStatusView, item);
+        }
+    }
+
+    static void bindCacheStatus(final ImageView cacheStatusView, final StreamInfoItem item) {
+        final Context context = cacheStatusView.getContext();
+        final CacheManager.CacheDisplayState state = CacheManager.getCacheDisplayState(
+                context, item.getServiceId(), item.getUrl());
+        switch (state) {
+            case CACHED:
+                cacheStatusView.setVisibility(View.VISIBLE);
+                cacheStatusView.setImageResource(R.drawable.ic_offline_pin);
+                cacheStatusView.setContentDescription(
+                        context.getString(R.string.cache_offline_badge_desc));
+                break;
+            case DOWNLOADING:
+                cacheStatusView.setVisibility(View.VISIBLE);
+                cacheStatusView.setImageResource(R.drawable.ic_file_download);
+                cacheStatusView.setContentDescription(
+                        context.getString(R.string.cache_downloading_badge_desc));
+                break;
+            case NONE:
+            default:
+                cacheStatusView.setVisibility(View.GONE);
+                break;
         }
     }
 

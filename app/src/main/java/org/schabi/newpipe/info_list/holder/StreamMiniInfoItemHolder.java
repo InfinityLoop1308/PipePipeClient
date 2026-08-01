@@ -14,7 +14,6 @@ import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.info_list.InfoItemBuilder;
 import org.schabi.newpipe.ktx.ViewUtils;
-import org.schabi.newpipe.local.cache.CacheManager;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.PicassoHelper;
@@ -114,9 +113,7 @@ public class StreamMiniInfoItemHolder extends InfoItemHolder {
         }
 
         if (itemCacheStatusView != null) {
-            final boolean cached = CacheManager.isCachedBlocking(
-                    itemBuilder.getContext(), item.getServiceId(), item.getUrl());
-            itemCacheStatusView.setVisibility(cached ? View.VISIBLE : View.GONE);
+            StreamInfoItemHolder.bindCacheStatus(itemCacheStatusView, item);
         }
     }
 

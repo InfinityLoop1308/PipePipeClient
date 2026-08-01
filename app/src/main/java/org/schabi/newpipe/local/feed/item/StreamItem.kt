@@ -67,13 +67,21 @@ data class StreamItem(
     }
 
     private fun updateCacheStatus(viewBinding: ListStreamItemBinding) {
-        viewBinding.itemCacheStatusView.visibility = if (CacheManager.isCachedBlocking(
-                viewBinding.root.context, stream.serviceId, stream.url
-            )
-        ) {
-            View.VISIBLE
-        } else {
-            View.GONE
+        val context = viewBinding.root.context
+        val state = CacheManager.getCacheDisplayState(context, stream.serviceId, stream.url)
+        val cacheStatusView = viewBinding.itemCacheStatusView
+        when (state) {
+            CacheManager.CacheDisplayState.CACHED -> {
+                cacheStatusView.visibility = View.VISIBLE
+                cacheStatusView.setImageResource(R.drawable.ic_offline_pin)
+                cacheStatusView.contentDescription = context.getString(R.string.cache_offline_badge_desc)
+            }
+            CacheManager.CacheDisplayState.DOWNLOADING -> {
+                cacheStatusView.visibility = View.VISIBLE
+                cacheStatusView.setImageResource(R.drawable.ic_file_download)
+                cacheStatusView.contentDescription = context.getString(R.string.cache_downloading_badge_desc)
+            }
+            else -> cacheStatusView.visibility = View.GONE
         }
     }
 

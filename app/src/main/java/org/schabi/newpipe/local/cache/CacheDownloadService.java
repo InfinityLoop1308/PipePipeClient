@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -70,6 +69,10 @@ public final class CacheDownloadService extends Service {
                                @NonNull final StreamInfo info,
                                @Nullable final VideoStream video,
                                @Nullable final AudioStream audio) {
+        CacheLogger.d(context, TAG, "enqueue() serviceId=" + info.getServiceId()
+                + " url=" + info.getUrl() + " video=" + (video != null) + " audio="
+                + (audio != null) + " descriptionLength=" + (info.getDescription() != null
+                        ? info.getDescription().getContent().length() : 0));
         final Intent intent = new Intent(context, CacheDownloadService.class);
         intent.putExtra(EXTRA_SERVICE_ID, info.getServiceId());
         intent.putExtra(EXTRA_URL, info.getUrl());
@@ -97,7 +100,17 @@ public final class CacheDownloadService extends Service {
         }
         intent.putExtra(EXTRA_SEGMENTS,
                 CacheManager.serializeSegments(info.getSponsorBlockSegments()));
-        ContextCompat.startForegroundService(context, intent);
+        try {
+            ContextCompat.startForegroundService(context, intent);
+        } catch (final Exception e) {
+            // e.g. android.os.TransactionTooLargeException for a very long description, or
+            // ForegroundServiceStartNotAllowedException - either way, don't let the caller crash
+            // or the caching attempt disappear without a trace.
+            CacheLogger.e(context, TAG, "Failed to start CacheDownloadService for url="
+                    + info.getUrl(), e);
+            CacheManager.reportProgress(info.getServiceId(), info.getUrl(),
+                    CacheManager.PROGRESS_FAILED);
+        }
     }
 
     @Override
@@ -108,6 +121,8 @@ public final class CacheDownloadService extends Service {
 
     @Override
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
+        CacheLogger.d(this, TAG, "onStartCommand() intent=" + (intent == null ? "null"
+                : intent.getStringExtra(EXTRA_URL)));
         if (intent == null) {
             return START_NOT_STICKY;
         }
@@ -116,6 +131,19 @@ public final class CacheDownloadService extends Service {
         executor.execute(() -> {
             try {
                 runJob(intent);
+            } catch (final Throwable t) {
+                // Must not let anything escape uncaught here: an ExecutorService swallows an
+                // uncaught exception from its worker thread silently (just logs it, no crash,
+                // no callback) - which is exactly how this used to fail with no visible error
+                // at all ("said it started, nothing else"). Always leave a trace and reset the
+                // in-progress state instead.
+                final int serviceId = intent.getIntExtra(EXTRA_SERVICE_ID, 0);
+                final String url = intent.getStringExtra(EXTRA_URL);
+                CacheLogger.e(this, TAG, "Uncaught exception while caching url=" + url, t);
+                updateNotification(intent.getStringExtra(EXTRA_TITLE), -1);
+                if (url != null) {
+                    CacheManager.reportProgress(serviceId, url, CacheManager.PROGRESS_FAILED);
+                }
             } finally {
                 pendingJobs--;
                 if (pendingJobs <= 0) {
@@ -132,15 +160,38 @@ public final class CacheDownloadService extends Service {
         final String url = intent.getStringExtra(EXTRA_URL);
         final String streamId = intent.getStringExtra(EXTRA_STREAM_ID);
         final String title = intent.getStringExtra(EXTRA_TITLE);
+        CacheLogger.d(this, TAG, "runJob() starting for serviceId=" + serviceId + " url=" + url
+                + " streamId=" + streamId + " title=" + title);
         if (url == null || streamId == null || title == null) {
+            CacheLogger.e(this, TAG, "runJob() aborting: missing required extra(s) - url="
+                    + url + " streamId=" + streamId + " title=" + title, null);
+            updateNotification(title, -1);
+            if (url != null) {
+                CacheManager.reportProgress(serviceId, url, CacheManager.PROGRESS_FAILED);
+            }
             return;
         }
 
-        final File dir = CacheManager.getCacheDirFor(this, serviceId, streamId);
         final String videoUrl = intent.getStringExtra(EXTRA_VIDEO_URL);
         final String audioUrl = intent.getStringExtra(EXTRA_AUDIO_URL);
         final String videoFormat = intent.getStringExtra(EXTRA_VIDEO_FORMAT);
         final String audioFormat = intent.getStringExtra(EXTRA_AUDIO_FORMAT);
+        CacheLogger.d(this, TAG, "runJob() videoUrl=" + (videoUrl != null) + " audioUrl="
+                + (audioUrl != null));
+
+        if (videoUrl == null && audioUrl == null) {
+            // Nothing to download - inserting a "complete" DB row here (as this used to do)
+            // would create a cached-videos entry that can never actually play. Fail loudly
+            // instead so the user sees why, rather than the cache silently doing nothing.
+            CacheLogger.e(this, TAG, "runJob() aborting: no video or audio URL to download for "
+                    + url, null);
+            updateNotification(title, -1);
+            CacheManager.reportProgress(serviceId, url, CacheManager.PROGRESS_FAILED);
+            return;
+        }
+
+        final File dir = CacheManager.getCacheDirFor(this, serviceId, streamId);
+        CacheLogger.d(this, TAG, "runJob() dir=" + dir.getAbsolutePath());
 
         String videoPath = null;
         String audioPath = null;
@@ -148,22 +199,33 @@ public final class CacheDownloadService extends Service {
         try {
             final OkHttpClient client =
                     org.schabi.newpipe.DownloaderImpl.getInstance().getClient();
+            // Video gets the first half of the progress range (0-50) and audio the second half
+            // (50-100) when both are downloaded, so the reported percent reflects the whole job
+            // rather than restarting at 0 for the second file.
+            final int videoRangeEnd = audioUrl != null ? 50 : 100;
             if (videoUrl != null) {
                 final File videoFile = new File(dir,
                         "video." + (videoFormat != null ? videoFormat : "mp4"));
-                totalBytes += download(client, videoUrl, videoFile, title, "video");
+                totalBytes += download(client, videoUrl, videoFile, title, "video",
+                        serviceId, url, 0, videoRangeEnd);
                 videoPath = videoFile.getAbsolutePath();
+                CacheLogger.d(this, TAG, "runJob() video download complete: "
+                        + videoFile.getAbsolutePath() + " (" + videoFile.length() + " bytes)");
             }
             if (audioUrl != null) {
                 final File audioFile = new File(dir,
                         "audio." + (audioFormat != null ? audioFormat : "m4a"));
-                totalBytes += download(client, audioUrl, audioFile, title, "audio");
+                totalBytes += download(client, audioUrl, audioFile, title, "audio",
+                        serviceId, url, videoRangeEnd, 100);
                 audioPath = audioFile.getAbsolutePath();
+                CacheLogger.d(this, TAG, "runJob() audio download complete: "
+                        + audioFile.getAbsolutePath() + " (" + audioFile.length() + " bytes)");
             }
         } catch (final IOException e) {
-            Log.e(TAG, "Failed to cache stream " + url, e);
+            CacheLogger.e(this, TAG, "Failed to cache stream " + url, e);
             deletePartial(dir);
             updateNotification(title, -1);
+            CacheManager.reportProgress(serviceId, url, CacheManager.PROGRESS_FAILED);
             return;
         }
 
@@ -191,21 +253,30 @@ public final class CacheDownloadService extends Service {
                 System.currentTimeMillis(),
                 true);
 
+        CacheLogger.d(this, TAG, "runJob() all downloads complete for url=" + url
+                + ", inserting DB row (" + totalBytes + " bytes total)");
         NewPipeDatabase.getInstance(getApplicationContext()).cachedStreamDAO().insert(entity);
         updateNotification(title, 100);
+        CacheManager.reportProgress(serviceId, url, CacheManager.PROGRESS_DONE);
         CacheManager.cacheChanges.onNext(new CacheManager.CacheChangeEvent(serviceId, url, true));
+        CacheLogger.d(this, TAG, "runJob() done for url=" + url);
     }
 
     private long download(@NonNull final OkHttpClient client,
                           @NonNull final String url,
                           @NonNull final File target,
                           @NonNull final String title,
-                          @NonNull final String label) throws IOException {
+                          @NonNull final String label,
+                          final int serviceId,
+                          @NonNull final String streamUrl,
+                          final int rangeStart,
+                          final int rangeEnd) throws IOException {
         final Request request = new Request.Builder().url(url).get().build();
         try (Response response = client.newCall(request).execute()) {
             final ResponseBody body = response.body();
             if (!response.isSuccessful() || body == null) {
-                throw new IOException("HTTP " + response.code() + " while caching " + label);
+                throw new IOException("HTTP " + response.code() + " while caching " + label
+                        + " from " + url);
             }
             final long contentLength = body.contentLength();
             long readBytes = 0;
@@ -218,10 +289,13 @@ public final class CacheDownloadService extends Service {
                     output.write(buffer, 0, read);
                     readBytes += read;
                     if (contentLength > 0) {
-                        final int percent = (int) (readBytes * 100 / contentLength);
-                        if (percent != lastReportedPercent) {
-                            lastReportedPercent = percent;
-                            updateNotification(title, percent);
+                        final int filePercent = (int) (readBytes * 100 / contentLength);
+                        final int overallPercent = rangeStart
+                                + filePercent * (rangeEnd - rangeStart) / 100;
+                        if (filePercent != lastReportedPercent) {
+                            lastReportedPercent = filePercent;
+                            updateNotification(title, overallPercent);
+                            CacheManager.reportProgress(serviceId, streamUrl, overallPercent);
                         }
                     }
                 }

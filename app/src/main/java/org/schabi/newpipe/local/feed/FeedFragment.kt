@@ -73,6 +73,7 @@ import org.schabi.newpipe.info_list.dialog.InfoItemDialog
 import org.schabi.newpipe.ktx.animate
 import org.schabi.newpipe.ktx.animateHideRecyclerViewAllowingScrolling
 import org.schabi.newpipe.ktx.slideUp
+import org.schabi.newpipe.local.cache.CacheManager
 import org.schabi.newpipe.local.feed.item.StreamItem
 import org.schabi.newpipe.local.feed.service.FeedLoadService
 import org.schabi.newpipe.local.subscription.SubscriptionManager
@@ -273,6 +274,23 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         }
         setupPlaylistControlListeners()
         updateSwipeRefreshListener()
+
+        // Live-refresh cache badges while this fragment is visible, so caching a video from the
+        // feed's own long-press menu (or elsewhere) is reflected without waiting for onResume().
+        disposables.add(
+            io.reactivex.rxjava3.core.Observable.merge(
+                CacheManager.cacheChanges.map { it as Any },
+                CacheManager.cacheProgress.map { it as Any }
+            )
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    if (this::groupAdapter.isInitialized) {
+                        groupAdapter.notifyItemRangeChanged(
+                            0, groupAdapter.itemCount, StreamItem.UPDATE_CACHE_STATUS
+                        )
+                    }
+                }
+        )
     }
 
     private fun updatePullToRefreshState() {

@@ -20,7 +20,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Maybe;
@@ -58,6 +60,62 @@ public final class CacheManager {
             this.url = url;
             this.cached = cached;
         }
+    }
+
+    /**
+     * Fired by {@link CacheDownloadService} as a download progresses, so any visible UI (the
+     * video page's Cache button, list-item badges) can show live progress instead of the
+     * unhelpful "started, then nothing" experience of only reacting to {@link #cacheChanges}.
+     */
+    public static final PublishSubject<CacheProgressEvent> cacheProgress = PublishSubject.create();
+
+    /** In-memory only (not persisted) so list rows can synchronously check "is this in progress
+     * right now" the same way {@link #isCachedBlocking} checks "is this cached" - keyed the same
+     * way as {@link #cacheKey}. */
+    private static final Map<String, Integer> PROGRESS_BY_KEY = new ConcurrentHashMap<>();
+
+    public static final class CacheProgressEvent {
+        public final int serviceId;
+        @NonNull public final String url;
+        /** 0-99 while downloading, {@link #PROGRESS_DONE} on success, {@link #PROGRESS_FAILED}
+         * on failure. */
+        public final int percent;
+
+        public CacheProgressEvent(final int serviceId, @NonNull final String url,
+                                  final int percent) {
+            this.serviceId = serviceId;
+            this.url = url;
+            this.percent = percent;
+        }
+    }
+
+    public static final int PROGRESS_FAILED = -1;
+    public static final int PROGRESS_DONE = 100;
+
+    /**
+     * Records and broadcasts a download progress update. A {@code percent} of
+     * {@link #PROGRESS_FAILED} or {@link #PROGRESS_DONE} clears the in-progress marker for this
+     * stream (the download is no longer "in progress" either way).
+     */
+    public static void reportProgress(final int serviceId, @NonNull final String url,
+                                      final int percent) {
+        final String key = cacheKey(serviceId, url);
+        if (percent < 0 || percent >= PROGRESS_DONE) {
+            PROGRESS_BY_KEY.remove(key);
+        } else {
+            PROGRESS_BY_KEY.put(key, percent);
+        }
+        cacheProgress.onNext(new CacheProgressEvent(serviceId, url, percent));
+    }
+
+    /**
+     * @return the last reported progress percent (0-99) for a stream currently being cached, or
+     *         {@link #PROGRESS_FAILED} if nothing is in progress for it. Purely in-memory (no DB
+     *         access), safe to call from the main thread during RecyclerView bind.
+     */
+    public static int getProgressBlocking(final int serviceId, @NonNull final String url) {
+        final Integer percent = PROGRESS_BY_KEY.get(cacheKey(serviceId, url));
+        return percent == null ? PROGRESS_FAILED : percent;
     }
 
     @NonNull
@@ -101,10 +159,17 @@ public final class CacheManager {
      * {@link org.schabi.newpipe.util.ListHelper} logic used to choose the default playback
      * quality, and starts a background download of both plus the sponsor segments already
      * present on {@code info}.
+     *
+     * @return {@code true} if a download was actually enqueued, {@code false} if neither a video
+     *         nor an audio stream could be selected (nothing to cache) - in which case the
+     *         caller should tell the user instead of claiming caching "started".
      */
-    public static void startCaching(@NonNull final Context context,
-                                    @NonNull final StreamInfo info) {
+    public static boolean startCaching(@NonNull final Context context,
+                                       @NonNull final StreamInfo info) {
         final Context appContext = context.getApplicationContext();
+        CacheLogger.d(appContext, "startCaching", "requested for serviceId=" + info.getServiceId()
+                + " url=" + info.getUrl() + " title=" + info.getName());
+
         final List<VideoStream> videoCandidates = !info.getVideoOnlyStreams().isEmpty()
                 ? info.getVideoOnlyStreams() : info.getVideoStreams();
         final int videoIndex = org.schabi.newpipe.util.ListHelper
@@ -118,11 +183,27 @@ public final class CacheManager {
         final AudioStream audio = audioIndex >= 0 && audioIndex < audioStreams.size()
                 ? audioStreams.get(audioIndex) : null;
 
+        CacheLogger.d(appContext, "startCaching", "video candidates=" + videoCandidates.size()
+                + " chosen video=" + (video != null ? video.getContent() : "none")
+                + "; audio candidates=" + audioStreams.size()
+                + " chosen audio=" + (audio != null ? audio.getContent() : "none"));
+
+        if (video == null && audio == null) {
+            CacheLogger.w(appContext, "startCaching",
+                    "no video or audio stream available - not starting a download for "
+                            + info.getUrl());
+            return false;
+        }
+
+        reportProgress(info.getServiceId(), info.getUrl(), 0);
         CacheDownloadService.enqueue(appContext, info, video, audio);
+        return true;
     }
 
     public static void removeCache(@NonNull final Context context,
                                    @NonNull final CachedStreamEntity entity) {
+        CacheLogger.d(context, "removeCache", "removing serviceId=" + entity.getServiceId()
+                + " url=" + entity.getUrl());
         deleteFilesFor(entity);
         dao(context).delete(entity);
         cacheChanges.onNext(
@@ -146,6 +227,27 @@ public final class CacheManager {
         final CachedStreamEntity entity =
                 findCachedStream(context, serviceId, url).blockingGet();
         return entity != null && entity.isComplete();
+    }
+
+    /** What, if anything, a list-item badge should show for a stream. */
+    public enum CacheDisplayState { NONE, DOWNLOADING, CACHED }
+
+    /**
+     * Combines {@link #isCachedBlocking} and {@link #getProgressBlocking} into the single tri-
+     * state a list-item badge needs, so callers (list holders, feed items) don't have to
+     * duplicate the "which takes priority" logic themselves.
+     */
+    @NonNull
+    public static CacheDisplayState getCacheDisplayState(@NonNull final Context context,
+                                                         final int serviceId,
+                                                         @NonNull final String url) {
+        if (isCachedBlocking(context, serviceId, url)) {
+            return CacheDisplayState.CACHED;
+        }
+        if (getProgressBlocking(serviceId, url) >= 0) {
+            return CacheDisplayState.DOWNLOADING;
+        }
+        return CacheDisplayState.NONE;
     }
 
     /**

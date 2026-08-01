@@ -26,6 +26,7 @@ import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.extractor.stream.StreamType;
+import org.schabi.newpipe.local.cache.CacheManager;
 import org.schabi.newpipe.player.helper.PlayerHolder;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 
@@ -312,6 +313,21 @@ public final class InfoItemDialog {
         }
 
         /**
+         * Adds a "Cache" or "Uncache" entry (issue #2782's "cache for offline viewing" feature)
+         * depending on whether {@link #infoItem} is currently cached, so the dialog always shows
+         * the action that will actually happen rather than a fixed "Cache" label.
+         * @return the current {@link Builder} instance
+         */
+        public Builder addCacheEntryIfNeeded() {
+            final boolean cached = CacheManager.isCachedBlocking(
+                    context, infoItem.getServiceId(), infoItem.getUrl());
+            final int label = cached
+                    ? R.string.controls_cache_delete_title : R.string.controls_cache_title;
+            entries.add(new StreamDialogEntry(label, StreamDialogDefaultEntry.CACHE.action));
+            return this;
+        }
+
+        /**
          * Adds the {@link StreamDialogDefaultEntry#PLAY_WITH_KODI} entry if it is needed.
          * @return the current {@link Builder} instance
          */
@@ -344,7 +360,10 @@ public final class InfoItemDialog {
          */
         public Builder addDefaultEndEntries() {
             addAllEntries(
-                    StreamDialogDefaultEntry.DOWNLOAD,
+                    StreamDialogDefaultEntry.DOWNLOAD
+            );
+            addCacheEntryIfNeeded();
+            addAllEntries(
                     StreamDialogDefaultEntry.APPEND_PLAYLIST,
                     StreamDialogDefaultEntry.SHARE,
                     StreamDialogDefaultEntry.OPEN_IN_BROWSER

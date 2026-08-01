@@ -60,6 +60,7 @@ import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.databinding.FragmentVideoDetailBinding;
 import org.schabi.newpipe.database.cache.model.CachedStreamEntity;
 import org.schabi.newpipe.download.DownloadDialog;
+import org.schabi.newpipe.local.cache.CacheLogger;
 import org.schabi.newpipe.local.cache.CacheManager;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
@@ -222,6 +223,7 @@ public final class VideoDetailFragment
     @Nullable
     private Disposable positionSubscriber = null;
     private Disposable cacheChangesSubscriber = null;
+    private Disposable cacheProgressSubscriber = null;
     private Disposable submitSegmentSubscriber;
 
     private List<VideoStream> sortedVideoStreams;
@@ -797,6 +799,18 @@ public final class VideoDetailFragment
                     }
                 });
         disposables.add(cacheChangesSubscriber);
+        if (cacheProgressSubscriber != null) {
+            cacheProgressSubscriber.dispose();
+        }
+        cacheProgressSubscriber = CacheManager.cacheProgress
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(event -> {
+                    if (currentInfo != null && currentInfo.getServiceId() == event.serviceId
+                            && currentInfo.getUrl().equals(event.url)) {
+                        setCacheButtonProgress(event.percent);
+                    }
+                });
+        disposables.add(cacheProgressSubscriber);
         binding.detailControlsShare.setOnClickListener(this);
         binding.detailControlsOpenInBrowser.setOnClickListener(this);
         binding.detailControlsStartSleepTimer.setOnClickListener(this);
@@ -2075,19 +2089,30 @@ public final class VideoDetailFragment
             return;
         }
         final StreamInfo info = currentInfo;
+        CacheLogger.d(activity, "VideoDetailFragment",
+                "cache button tapped for url=" + info.getUrl());
         disposables.add(CacheManager.findCachedStream(activity, info.getServiceId(), info.getUrl())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         cached -> confirmRemoveFromCache(cached),
-                        throwable -> ErrorUtil.showSnackbar(activity, new ErrorInfo(throwable,
-                                UserAction.REQUESTED_STREAM, "Checking offline cache", info)),
+                        throwable -> {
+                            CacheLogger.e(activity, "VideoDetailFragment",
+                                    "failed to check cache state for url=" + info.getUrl(),
+                                    throwable);
+                            ErrorUtil.showSnackbar(activity, new ErrorInfo(throwable,
+                                    UserAction.REQUESTED_STREAM, "Checking offline cache", info));
+                        },
                         () -> startCachingForOfflineViewing(info)));
     }
 
     private void startCachingForOfflineViewing(@NonNull final StreamInfo info) {
-        CacheManager.startCaching(activity, info);
-        Toast.makeText(activity, R.string.cache_started, Toast.LENGTH_SHORT).show();
+        final boolean started = CacheManager.startCaching(activity, info);
+        if (started) {
+            Toast.makeText(activity, R.string.cache_started, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(activity, R.string.cache_failed_no_streams, Toast.LENGTH_LONG).show();
+        }
     }
 
     private void confirmRemoveFromCache(@NonNull final CachedStreamEntity cached) {
@@ -2116,6 +2141,14 @@ public final class VideoDetailFragment
             return;
         }
         final StreamInfo info = currentInfo;
+        final int inProgressPercent =
+                CacheManager.getProgressBlocking(info.getServiceId(), info.getUrl());
+        if (inProgressPercent >= 0) {
+            // A download for this stream was already in flight (e.g. started before navigating
+            // away and back) - reflect that immediately instead of showing the plain button.
+            setCacheButtonProgress(inProgressPercent);
+            return;
+        }
         disposables.add(CacheManager.findCachedStream(activity, info.getServiceId(), info.getUrl())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -2135,6 +2168,32 @@ public final class VideoDetailFragment
                 ? R.string.controls_cache_delete_desc : R.string.controls_cache_desc));
         binding.detailControlsCache.setCompoundDrawablesWithIntrinsicBounds(
                 0, cached ? R.drawable.ic_delete : R.drawable.ic_offline_pin, 0, 0);
+    }
+
+    /**
+     * Shows live download progress on the cache button (e.g. "Caching… 42%") while a background
+     * cache download for the currently open stream is in flight, so tapping Cache doesn't feel
+     * like it silently did nothing.
+     */
+    private void setCacheButtonProgress(final int percent) {
+        if (binding == null) {
+            return;
+        }
+        if (percent < 0) {
+            // failed: fall back to whatever the real cached state now is
+            updateCacheButtonState();
+            return;
+        }
+        if (percent >= 100) {
+            setCacheButtonCached(true);
+            return;
+        }
+        binding.detailControlsCache.setText(
+                getString(R.string.controls_cache_progress_title, percent));
+        binding.detailControlsCache.setContentDescription(
+                getString(R.string.controls_cache_progress_title, percent));
+        binding.detailControlsCache.setCompoundDrawablesWithIntrinsicBounds(
+                0, R.drawable.ic_file_download, 0, 0);
     }
 
     /*//////////////////////////////////////////////////////////////////////////
