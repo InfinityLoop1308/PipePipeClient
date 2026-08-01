@@ -26,6 +26,8 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
+import us.shandian.giga.get.SabrDownloadStreamHelper;
+
 /**
  * Quality selector for the "cache for offline viewing" feature, mirroring what the regular
  * download dialog offers (video quality vs audio-only, with file sizes filled in asynchronously)
@@ -72,9 +74,15 @@ public final class CacheDialog {
             if (!videoStreams.get(i).isVideoOnly()) {
                 continue;
             }
+            // SABR video must be paired with SABR audio (and vice versa) - the same constraint
+            // the download dialog enforces, otherwise the mission can't assemble the two.
             final AudioStream audioStream = SecondaryStreamHelper.getAudioStreamFor(
-                    context, audioStreams, videoStreams.get(i));
-            if (audioStream != null) {
+                    context,
+                    SabrDownloadStreamHelper.audioStreamsForVideo(audioStreams,
+                            videoStreams.get(i)),
+                    videoStreams.get(i));
+            if (audioStream != null && SabrDownloadStreamHelper
+                    .isCompatibleSecondaryStream(videoStreams.get(i), audioStream)) {
                 secondaryStreams.append(i,
                         new SecondaryStreamHelper<>(wrappedAudio, audioStream));
             }

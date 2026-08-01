@@ -8,6 +8,8 @@ import androidx.annotation.Nullable;
 import org.schabi.newpipe.NewPipeDatabase;
 import org.schabi.newpipe.database.cache.dao.CachedStreamDAO;
 import org.schabi.newpipe.database.cache.model.CachedStreamEntity;
+import org.schabi.newpipe.extractor.MediaFormat;
+import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockAction;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockCategory;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockSegment;
@@ -29,6 +31,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.subjects.PublishSubject;
+
+import us.shandian.giga.get.HlsDownloadStreamHelper;
+import us.shandian.giga.get.MissionRecoveryInfo;
+import us.shandian.giga.get.SabrDownloadStreamHelper;
+import us.shandian.giga.postprocessing.Postprocessing;
 
 /**
  * Backs the "cache for offline viewing" feature requested in
@@ -156,34 +163,26 @@ public final class CacheManager {
     }
 
     /**
-     * Whether {@link CacheDownloadService} can actually fetch this stream with a plain HTTP GET.
+     * Whether {@link CacheDownloadService} can fetch this stream.
      *
-     * <p>This is the crux of the "I pressed Cache, it said it started, and nothing happened" bug:
-     * the cache downloader streams {@link Stream#getContent()} straight to a file over OkHttp,
-     * which only works for a stream whose content really is a direct media URL. Two other kinds
-     * exist and both fail:</p>
-     * <ul>
-     *   <li>{@code !isUrl()} - the content is an <em>inline manifest document</em> (DASH/HLS/SMIL
-     *       text), not a link. Handing that to {@code Request.Builder().url(...)} throws
-     *       {@link IllegalArgumentException}, an unchecked exception that used to escape the
-     *       download worker thread and get swallowed by its {@code ExecutorService} - no crash,
-     *       no error, no notification, nothing.</li>
-     *   <li>{@link DeliveryMethod#SABR} (YouTube's current default) and
-     *       {@link DeliveryMethod#HLS}/{@link DeliveryMethod#DASH} URLs - fetchable, but what
-     *       comes back is a manifest/segment-protocol endpoint, not the media itself. Saving it
-     *       would produce a small file that can never play, i.e. a cache entry that silently
-     *       does nothing useful.</li>
-     * </ul>
+     * <p>Originally the cache ran its own OkHttp GET over {@link Stream#getContent()}, which only
+     * works when the content really is a direct media URL. For an inline manifest
+     * ({@code !isUrl()}) that threw an unchecked {@link IllegalArgumentException} which escaped
+     * the download worker and was swallowed by its {@code ExecutorService} - the notorious
+     * "it said caching started and nothing happened". For {@link DeliveryMethod#SABR} (YouTube's
+     * current default) and {@link DeliveryMethod#HLS} it "succeeded" but saved a manifest instead
+     * of media.</p>
      *
-     * <p>The regular download feature copes with these via the whole
-     * {@code us.shandian.giga} mission machinery (SABR/HLS-aware, multi-threaded, resumable);
-     * the cache deliberately does not reimplement that, so it restricts itself to streams it can
-     * genuinely handle and says so plainly when there are none.</p>
+     * <p>The cache now runs the same {@link us.shandian.giga.get.DownloadMission} engine as the
+     * regular Download feature, so all of those work - if the app can download a stream, it can
+     * cache it. Torrents are the sole exception, exactly as in the download UI
+     * ({@code ListHelper.removeNonUrlAndTorrentStreams}), because there is no torrent client.</p>
      */
     public static boolean isCacheable(@Nullable final Stream stream) {
-        return stream != null
-                && stream.isUrl()
-                && stream.getDeliveryMethod() == DeliveryMethod.PROGRESSIVE_HTTP;
+        // Anything the download engine can fetch, the cache can fetch, because they are now the
+        // same engine. Torrents are the one exception: DownloadMission has no torrent client, and
+        // the regular download UI filters them out too (ListHelper.removeNonUrlAndTorrentStreams).
+        return stream != null && stream.getDeliveryMethod() != DeliveryMethod.TORRENT;
     }
 
     /**
@@ -193,11 +192,17 @@ public final class CacheManager {
     @NonNull
     public static List<VideoStream> getCacheableVideoStreams(@NonNull final Context context,
                                                              @NonNull final StreamInfo info) {
+        // Same pipeline the download dialog builds its quality list with, including the
+        // HLS manifest fallback, so the cache offers the same qualities Download does.
         final List<VideoStream> sorted = new ArrayList<>(org.schabi.newpipe.util.ListHelper
                 .getSortedStreamVideosList(context, info.getVideoStreams(),
                         info.getVideoOnlyStreams(), false, false));
+        final List<VideoStream> filtered = new ArrayList<>(org.schabi.newpipe.util.ListHelper
+                .filterVideoStreamsByPreferredLanguage(context, sorted, info.getAudioStreams()));
+        HlsDownloadStreamHelper.addManifestFallbackIfNeeded(filtered, info);
+
         final List<VideoStream> cacheable = new ArrayList<>();
-        for (final VideoStream stream : sorted) {
+        for (final VideoStream stream : filtered) {
             if (isCacheable(stream)) {
                 cacheable.add(stream);
             }
@@ -205,11 +210,15 @@ public final class CacheManager {
         return cacheable;
     }
 
-    /** The audio streams that can actually be cached. */
+    /** The audio streams that can actually be cached, matching the download dialog's list. */
     @NonNull
     public static List<AudioStream> getCacheableAudioStreams(@NonNull final StreamInfo info) {
+        final List<AudioStream> downloadable = new ArrayList<>(org.schabi.newpipe.util.ListHelper
+                .filterDownloadableAudioStreams(info.getAudioStreams()));
+        HlsDownloadStreamHelper.addAudioFallbackIfNeeded(downloadable, info);
+
         final List<AudioStream> cacheable = new ArrayList<>();
-        for (final AudioStream stream : info.getAudioStreams()) {
+        for (final AudioStream stream : downloadable) {
             if (isCacheable(stream)) {
                 cacheable.add(stream);
             }
@@ -266,18 +275,135 @@ public final class CacheManager {
                 + " video=" + (video != null ? video.getResolution() : "none")
                 + " audio=" + (audio != null ? audio.getAverageBitrate() + "kbps" : "none"));
 
-        if (!isCacheable(video) && !isCacheable(audio)) {
+        if (video == null && audio == null) {
             CacheLogger.w(appContext, "startCaching",
-                    "nothing cacheable was selected for " + info.getUrl()
+                    "nothing was selected for " + info.getUrl()
                             + " - available streams: " + describeStreams(info));
             return false;
         }
 
+        final CacheRequest request = buildRequest(info, video, audio);
         reportProgress(info.getServiceId(), info.getUrl(), 0);
-        CacheDownloadService.enqueue(appContext, info,
-                isCacheable(video) ? video : null,
-                isCacheable(audio) ? audio : null);
+        CacheDownloadService.enqueue(appContext, request);
         return true;
+    }
+
+    /**
+     * Everything {@link CacheDownloadService} needs to run a {@link us.shandian.giga.get
+     * .DownloadMission} plus the metadata to record afterwards. Assembled here so the mission
+     * parameters are derived in exactly one place, matching what {@code DownloadDialog} passes to
+     * {@code DownloadManagerService.startMission()}.
+     */
+    public static final class CacheRequest {
+        public int serviceId;
+        public String url;
+        public String streamId;
+        public String title;
+        public String streamType;
+        public long duration;
+        public String uploaderName;
+        public String uploaderUrl;
+        public String uploaderAvatarUrl;
+        public String thumbnailUrl;
+        public String textualUploadDate;
+        public long viewCount;
+        public String description;
+        public String sponsorBlockSegments;
+
+        public String[] urls;
+        public char kind;
+        public String psName;
+        public String[] psArgs;
+        public MissionRecoveryInfo[] recoveryInfo;
+        public String[] resourceDeliveryMethods;
+        public String[] resourceManifestUrls;
+        public boolean[] resourceIsUrls;
+        public String fileSuffix;
+        public String mimeType;
+        public long nearLength;
+    }
+
+    /**
+     * Mirrors the download dialog's mission setup: which URLs to fetch, which post-processing
+     * algorithm muxes them, and the per-resource delivery metadata that lets the mission engine
+     * handle SABR/HLS streams rather than treating everything as a plain file.
+     */
+    @NonNull
+    private static CacheRequest buildRequest(@NonNull final StreamInfo info,
+                                             @Nullable final VideoStream video,
+                                             @Nullable final AudioStream audio) {
+        final CacheRequest request = new CacheRequest();
+        request.serviceId = info.getServiceId();
+        request.url = info.getUrl();
+        request.streamId = info.getId();
+        request.title = info.getName();
+        request.streamType = info.getStreamType().name();
+        request.duration = info.getDuration();
+        request.uploaderName = info.getUploaderName();
+        request.uploaderUrl = info.getUploaderUrl();
+        request.uploaderAvatarUrl = info.getUploaderAvatarUrl();
+        request.thumbnailUrl = info.getThumbnailUrl();
+        request.textualUploadDate = info.getTextualUploadDate();
+        request.viewCount = info.getViewCount();
+        request.description =
+                info.getDescription() != null ? info.getDescription().getContent() : null;
+        request.sponsorBlockSegments = serializeSegments(info.getSponsorBlockSegments());
+
+        // A muxed video stream already carries audio; only a video-only track needs its separate
+        // audio track fetched and muxed in.
+        final Stream primary = video != null ? video : audio;
+        final Stream secondary = video != null && video.isVideoOnly() ? audio : null;
+        request.kind = video != null ? 'v' : 'a';
+
+        if (secondary != null) {
+            if (info.getService() == ServiceList.BiliBili) {
+                request.psName = Postprocessing.BILIBILI_MUXER;
+            } else if (info.getService() == ServiceList.NicoNico) {
+                request.psName = Postprocessing.NICONICO_MUXER;
+            } else if (video.getFormat() == MediaFormat.MPEG_4) {
+                request.psName = Postprocessing.ALGORITHM_MP4_FROM_DASH_MUXER;
+            } else {
+                request.psName = Postprocessing.ALGORITHM_WEBM_MUXER;
+            }
+        } else if (video == null && audio != null) {
+            if (info.getService() == ServiceList.NicoNico) {
+                request.psName = Postprocessing.NICONICO_MUXER;
+            } else if (audio.getFormat() == MediaFormat.M4A
+                    && info.getService() != ServiceList.BiliBili) {
+                request.psName = Postprocessing.ALGORITHM_M4A_NO_DASH;
+            } else if (audio.getFormat() == MediaFormat.WEBMA_OPUS) {
+                request.psName = Postprocessing.ALGORITHM_OGG_FROM_WEBM_DEMUXER;
+            }
+        }
+
+        request.urls = secondary == null
+                ? new String[]{primary.getContent()}
+                : new String[]{primary.getContent(), secondary.getContent()};
+        request.recoveryInfo = secondary == null
+                ? new MissionRecoveryInfo[]{new MissionRecoveryInfo(primary)}
+                : new MissionRecoveryInfo[]{new MissionRecoveryInfo(primary),
+                        new MissionRecoveryInfo(secondary)};
+        request.resourceDeliveryMethods =
+                HlsDownloadStreamHelper.buildResourceDeliveryMethods(primary, secondary);
+        request.resourceManifestUrls =
+                HlsDownloadStreamHelper.buildResourceManifestUrls(primary, secondary);
+        request.resourceIsUrls =
+                HlsDownloadStreamHelper.buildResourceIsUrls(primary, secondary);
+
+        // HLS and SABR resources are assembled by the mission engine itself and must not be run
+        // through a muxer afterwards - same rule the download dialog applies.
+        if (HlsDownloadStreamHelper.containsHlsResource(request.resourceDeliveryMethods,
+                request.resourceManifestUrls, request.urls)
+                || SabrDownloadStreamHelper.containsSabrStream(primary, secondary)) {
+            request.psName = null;
+            request.psArgs = null;
+        }
+
+        final MediaFormat format = primary.getFormat();
+        request.fileSuffix = format != null ? format.getSuffix() : (video != null ? "mp4" : "m4a");
+        request.mimeType = format != null ? format.getMimeType()
+                : (video != null ? "video/mp4" : "audio/mp4");
+        return request;
     }
 
     /**
