@@ -49,6 +49,9 @@ public final class CacheDownloadService extends Service {
     private static final String TAG = "CacheDownloadService";
     private static final int NOTIFICATION_ID = 0x63616368; // "cach"
     private static final int PROGRESS_POLL_MS = 700;
+    private static final long STALL_WARN_MS = 30_000;
+    private static final long STALL_LOG_INTERVAL_MS = 60_000;
+    private static final long STALL_ABORT_MS = 180_000;
 
     private static final String EXTRA_SERVICE_ID = "cache_service_id";
     private static final String EXTRA_URL = "cache_url";
@@ -81,6 +84,8 @@ public final class CacheDownloadService extends Service {
     private Handler handler;
     /** Missions still running, keyed by "serviceId url" so progress/finish can be attributed. */
     private final Map<DownloadMission, Intent> running = new HashMap<>();
+    /** Per mission: {lastDone, lastProgressAtMs, lastStallLogAtMs}. See {@link #watchForStall}. */
+    private final Map<DownloadMission, long[]> stallWatch = new HashMap<>();
     /**
      * Room forbids blocking database calls on the main thread, and both the service callbacks
      * ({@code onStartCommand}) and the mission's message handler run there.
@@ -282,17 +287,37 @@ public final class CacheDownloadService extends Service {
         return recovery;
     }
 
+    @NonNull
+    private static String describeMessage(final int what) {
+        switch (what) {
+            case DownloadManagerService.MESSAGE_RUNNING: return "RUNNING";
+            case DownloadManagerService.MESSAGE_PAUSED: return "PAUSED";
+            case DownloadManagerService.MESSAGE_FINISHED: return "FINISHED";
+            case DownloadManagerService.MESSAGE_ERROR: return "ERROR";
+            case DownloadManagerService.MESSAGE_DELETED: return "DELETED";
+            default: return "UNKNOWN(" + what + ")";
+        }
+    }
+
     private void onMissionMessage(final int what, @Nullable final DownloadMission mission) {
         if (mission == null) {
             return;
         }
         final Intent intent = running.get(mission);
         if (intent == null) {
+            CacheLogger.w(this, TAG, "mission message " + describeMessage(what)
+                    + " for an unknown mission - ignoring");
             return;
         }
         final String url = intent.getStringExtra(EXTRA_URL);
         final String title = intent.getStringExtra(EXTRA_TITLE);
         final int serviceId = intent.getIntExtra(EXTRA_SERVICE_ID, 0);
+        // Every mission message is logged: when a download appears to hang, knowing which of
+        // these did (or didn't) arrive is the difference between guessing and knowing.
+        CacheLogger.d(this, TAG, "mission message " + describeMessage(what)
+                + " done=" + mission.done + " length=" + mission.getLength()
+                + " psState=" + mission.psState + " url=" + url);
+        stallWatch.remove(mission);
 
         switch (what) {
             case DownloadManagerService.MESSAGE_FINISHED:
@@ -404,25 +429,110 @@ public final class CacheDownloadService extends Service {
         if (running.isEmpty()) {
             return;
         }
-        for (final Map.Entry<DownloadMission, Intent> entry : running.entrySet()) {
+        // Snapshot: watchForStall() may abort a mission and remove it from `running`.
+        for (final Map.Entry<DownloadMission, Intent> entry
+                : new java.util.ArrayList<>(running.entrySet())) {
             final DownloadMission mission = entry.getKey();
             final Intent intent = entry.getValue();
             final long length = mission.getLength();
             if (length <= 0) {
                 continue;
             }
-            // Cap at 99: 100 is reserved for "finished and written to the database". Once the
-            // bytes are in, remuxing/post-processing still has to run, which for a long video is
-            // slow and reports no byte progress - so say so rather than showing a frozen "99%"
-            // that looks indistinguishable from a hang.
-            final boolean processing = mission.done >= length || mission.isPsRunning();
+            // "Processing" means ffmpeg is actually remuxing, which is the only phase that
+            // legitimately makes no byte progress. psState == 1 is set by SabrFfmpegMuxer;
+            // isPsRunning() covers the non-SABR postprocessing path (it returns false for SABR,
+            // because SABR missions have no psAlgorithm). Previously this was inferred from
+            // "bytes are all in", which mislabelled a genuine stall as processing.
+            final boolean processing = mission.psState == 1 || mission.isPsRunning();
             final int percent = (int) Math.min(99, mission.done * 100 / length);
             updateNotification(intent.getStringExtra(EXTRA_TITLE), percent, processing);
             CacheManager.reportProgress(intent.getIntExtra(EXTRA_SERVICE_ID, 0),
                     intent.getStringExtra(EXTRA_URL),
                     processing ? CacheManager.PROGRESS_PROCESSING : percent);
+            watchForStall(mission, intent, percent, processing);
         }
         scheduleProgressPoll();
+    }
+
+    /**
+     * Notices when a mission stops making byte progress and isn't remuxing either, and says so in
+     * the debug log with the full mission state. Without this a stall is indistinguishable from
+     * slow progress: the UI just sits at a percentage forever with nothing explaining why.
+     */
+    private void watchForStall(@NonNull final DownloadMission mission,
+                               @NonNull final Intent intent,
+                               final int percent,
+                               final boolean processing) {
+        final long now = System.currentTimeMillis();
+        long[] watch = stallWatch.get(mission);
+        if (watch == null) {
+            watch = new long[]{mission.done, now, 0};
+            stallWatch.put(mission, watch);
+            return;
+        }
+        if (mission.done != watch[0] || processing) {
+            final long previousDone = watch[0];
+            watch[0] = mission.done;
+            watch[1] = now;
+            // Heartbeat while bytes ARE flowing. Crucial for telling a real hang apart from a
+            // download that keeps running while the UI shows 99% - which is what happens when
+            // `done` overshoots the expected length, since the percentage is capped at 99.
+            if (now - watch[2] >= STALL_LOG_INTERVAL_MS) {
+                watch[2] = now;
+                CacheLogger.d(this, TAG, "progress " + percent + "%"
+                        + " done=" + mission.done + " (+" + (mission.done - previousDone) + ")"
+                        + " length=" + mission.getLength()
+                        + " nearLength=" + mission.nearLength
+                        + (mission.done > mission.getLength() ? " OVERSHOOTING-EXPECTED-LENGTH" : "")
+                        + " psState=" + mission.psState
+                        + " processing=" + processing);
+            }
+            return;
+        }
+        final long stalledMs = now - watch[1];
+        if (stalledMs < STALL_WARN_MS || now - watch[2] < STALL_LOG_INTERVAL_MS) {
+            return;
+        }
+        watch[2] = now;
+        final String state = "STALLED " + (stalledMs / 1000) + "s at " + percent + "%"
+                + " url=" + intent.getStringExtra(EXTRA_URL)
+                + " done=" + mission.done
+                + " length=" + mission.getLength()
+                + " nearLength=" + mission.nearLength
+                + " current=" + mission.current + "/" + mission.urls.length
+                + " running=" + mission.running
+                + " psState=" + mission.psState
+                + " errCode=" + mission.errCode
+                + " unknownLength=" + mission.unknownLength
+                + " initialized=" + mission.isInitialized()
+                + " finished=" + mission.isFinished();
+        CacheLogger.w(this, TAG, state);
+
+        if (stalledMs >= STALL_ABORT_MS) {
+            // Never leave a download hanging indefinitely: give up with a visible error so the
+            // user can retry, instead of a percentage that sits there forever.
+            final int serviceId = intent.getIntExtra(EXTRA_SERVICE_ID, 0);
+            final String url = intent.getStringExtra(EXTRA_URL);
+            CacheLogger.e(this, TAG, "aborting stalled cache download - " + state, null);
+            running.remove(mission);
+            stallWatch.remove(mission);
+            try {
+                mission.pause();
+            } catch (final Exception ignored) {
+                // best effort; we're failing the mission either way
+            }
+            deleteQuietly(mission.storage);
+            if (url != null) {
+                runOffMainThread(() -> NewPipeDatabase.getInstance(getApplicationContext())
+                        .cachedStreamDAO().deleteByUrl(serviceId, url));
+                CacheManager.unregisterRunningMission(serviceId, url);
+                CacheManager.reportProgress(serviceId, url, CacheManager.PROGRESS_FAILED);
+                CacheManager.cacheChanges.onNext(
+                        new CacheManager.CacheChangeEvent(serviceId, url, false));
+            }
+            updateNotification(intent.getStringExtra(EXTRA_TITLE), -1);
+            stopIfIdle();
+        }
     }
 
     private void stopIfIdle() {

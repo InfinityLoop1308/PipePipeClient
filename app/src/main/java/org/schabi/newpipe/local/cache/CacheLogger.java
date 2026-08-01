@@ -97,6 +97,33 @@ public final class CacheLogger {
         }
     }
 
+    /**
+     * The most recent log lines, trimmed to fit in a single free-tier Discord message (2000
+     * characters). Sharing the whole log is useless for a bug report: it's the tail that matters,
+     * and anything longer gets truncated or rejected on the way out anyway.
+     */
+    @NonNull
+    public static synchronized String getRecentLogText() {
+        final int budget = 1900;
+        final StringBuilder sb = new StringBuilder();
+        final java.util.Iterator<String> newestFirst = LINES.descendingIterator();
+        while (newestFirst.hasNext()) {
+            final String line = newestFirst.next();
+            if (sb.length() + line.length() + 1 > budget) {
+                break;
+            }
+            sb.insert(0, line + "\n");
+        }
+        if (sb.length() == 0) {
+            // A single line longer than the whole budget (a stack trace): take its tail.
+            final String last = LINES.peekLast();
+            return last == null
+                    ? getLogText()
+                    : last.substring(Math.max(0, last.length() - budget));
+        }
+        return sb.toString();
+    }
+
     @NonNull
     public static synchronized String getLogText() {
         if (LINES.isEmpty()) {

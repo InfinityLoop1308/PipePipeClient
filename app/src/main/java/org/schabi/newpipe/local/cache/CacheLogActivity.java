@@ -57,8 +57,10 @@ public final class CacheLogActivity extends AppCompatActivity {
             onBackPressed();
             return true;
         } else if (id == R.id.menu_item_cache_log_share) {
+            // Only the tail: a full log doesn't fit in a Discord message, and the recent lines
+            // are the ones that describe whatever just went wrong.
             ShareUtils.shareText(this, getString(R.string.cache_debug_log_title),
-                    CacheLogger.getLogText());
+                    CacheLogger.getRecentLogText());
             return true;
         } else if (id == R.id.menu_item_cache_log_clear) {
             CacheLogger.clear(getApplicationContext());
