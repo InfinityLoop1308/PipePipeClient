@@ -341,6 +341,7 @@ public final class CacheManager {
         public String[] resourceManifestUrls;
         public boolean[] resourceIsUrls;
         public String fileSuffix;
+        public String videoResolution;
         public String mimeType;
         public long nearLength;
     }
@@ -421,6 +422,7 @@ public final class CacheManager {
             request.psArgs = null;
         }
 
+        request.videoResolution = video != null ? video.getResolution() : null;
         final MediaFormat format = primary.getFormat();
         request.fileSuffix = format != null ? format.getSuffix() : (video != null ? "mp4" : "m4a");
         request.mimeType = format != null ? format.getMimeType()
@@ -729,7 +731,7 @@ public final class CacheManager {
                     .setMediaFormat(format)
                     .setDeliveryMethod(org.schabi.newpipe.extractor.stream.DeliveryMethod
                             .PROGRESSIVE_HTTP)
-                    .setResolution("cached")
+                    .setResolution(playableResolution(entity.getVideoResolution()))
                     .setIsVideoOnly(hasSeparateAudio)
                     .build();
             if (hasSeparateAudio) {
@@ -760,6 +762,32 @@ public final class CacheManager {
         info.setSupportComments(false);
         info.setSupportRelatedItems(false);
         return info;
+    }
+
+    /**
+     * A resolution label the player can actually parse.
+     *
+     * <p>{@code ListHelper.getVideoStreamIndex()} calls
+     * {@code ListHelper.calculateResolution()} <em>unguarded</em> while picking the default
+     * quality, and that method ends in {@code Integer.parseInt(resolution.replaceAll("[^\\d.]",
+     * ""))}. A label with no digits in it - the literal {@code "cached"} this used to pass -
+     * makes that throw {@link NumberFormatException}, so resolving playback for a cached video
+     * blew up and all you got was a black screen.</p>
+     *
+     * <p>The real resolution is stored with the entry now; the fallback only covers rows cached
+     * before that column existed, and just has to be parseable.</p>
+     */
+    @NonNull
+    private static String playableResolution(@Nullable final String stored) {
+        if (stored == null || stored.isEmpty()) {
+            return "720p";
+        }
+        try {
+            org.schabi.newpipe.util.ListHelper.calculateResolution(stored);
+            return stored;
+        } catch (final RuntimeException e) {
+            return "720p";
+        }
     }
 
     @Nullable

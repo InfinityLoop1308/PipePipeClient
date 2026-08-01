@@ -72,6 +72,7 @@ data class CachedStreamEntity(
     @ColumnInfo(name = VIDEO_MEDIA_FORMAT)
     var videoMediaFormatSuffix: String?,
 
+
     @ColumnInfo(name = AUDIO_MEDIA_FORMAT)
     var audioMediaFormatSuffix: String?,
 
@@ -91,7 +92,18 @@ data class CachedStreamEntity(
 
     /** True once both media files finished downloading and the entry is playable offline. */
     @ColumnInfo(name = IS_COMPLETE)
-    var isComplete: Boolean = false
+    var isComplete: Boolean = false,
+
+    /**
+     * The real resolution label of the cached video, e.g. "1080p60". Must be something
+     * `ListHelper.calculateResolution()` can parse: `getVideoStreamIndex()` calls it unguarded
+     * while picking a playback quality, so the placeholder `"cached"` this used to invent threw
+     * NumberFormatException and a cached video played nothing but a black screen.
+     *
+     * Deliberately last in the constructor: the Java call sites pass arguments positionally.
+     */
+    @ColumnInfo(name = VIDEO_RESOLUTION)
+    var videoResolution: String? = null
 ) : Serializable {
     companion object {
         const val CACHED_STREAM_TABLE = "cached_streams"
@@ -112,6 +124,7 @@ data class CachedStreamEntity(
         const val VIDEO_FILE_PATH = "video_file_path"
         const val AUDIO_FILE_PATH = "audio_file_path"
         const val VIDEO_MEDIA_FORMAT = "video_media_format"
+        const val VIDEO_RESOLUTION = "video_resolution"
         const val AUDIO_MEDIA_FORMAT = "audio_media_format"
         const val SPONSOR_BLOCK_SEGMENTS = "sponsor_block_segments"
         const val TOTAL_SIZE_BYTES = "total_size_bytes"

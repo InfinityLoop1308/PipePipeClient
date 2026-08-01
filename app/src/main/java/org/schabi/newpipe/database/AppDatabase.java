@@ -1,7 +1,7 @@
 package org.schabi.newpipe.database;
 
 import static org.schabi.newpipe.database.Migrations.DB_VER_6;
-import static org.schabi.newpipe.database.Migrations.DB_VER_902;
+import static org.schabi.newpipe.database.Migrations.DB_VER_903;
 
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
@@ -41,7 +41,7 @@ import org.schabi.newpipe.database.subscription.SubscriptionEntity;
                 FeedEntity.class, FeedGroupEntity.class, FeedGroupSubscriptionEntity.class,
                 FeedLastUpdatedEntity.class, CachedStreamEntity.class
         },
-        version = DB_VER_902
+        version = DB_VER_903
 )
 public abstract class AppDatabase extends RoomDatabase {
     public static final String DATABASE_NAME = "newpipe.db";

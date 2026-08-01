@@ -78,6 +78,7 @@ public final class CacheDownloadService extends Service {
     private static final String EXTRA_MISSION_MANIFESTS = "cache_mission_manifests";
     private static final String EXTRA_MISSION_IS_URLS = "cache_mission_is_urls";
     private static final String EXTRA_MISSION_SUFFIX = "cache_mission_suffix";
+    private static final String EXTRA_VIDEO_RESOLUTION = "cache_video_resolution";
     private static final String EXTRA_MISSION_MIME = "cache_mission_mime";
     private static final String EXTRA_NEAR_LENGTH = "cache_near_length";
 
@@ -135,6 +136,7 @@ public final class CacheDownloadService extends Service {
         intent.putExtra(EXTRA_MISSION_MANIFESTS, request.resourceManifestUrls);
         intent.putExtra(EXTRA_MISSION_IS_URLS, request.resourceIsUrls);
         intent.putExtra(EXTRA_MISSION_SUFFIX, request.fileSuffix);
+        intent.putExtra(EXTRA_VIDEO_RESOLUTION, request.videoResolution);
         intent.putExtra(EXTRA_MISSION_MIME, request.mimeType);
         intent.putExtra(EXTRA_NEAR_LENGTH, request.nearLength);
 
@@ -417,7 +419,8 @@ public final class CacheDownloadService extends Service {
                 intent.getStringExtra(EXTRA_SEGMENTS),
                 complete ? file.length() : 0,
                 System.currentTimeMillis(),
-                complete);
+                complete,
+                intent.getStringExtra(EXTRA_VIDEO_RESOLUTION));
     }
 
     private void scheduleProgressPoll() {

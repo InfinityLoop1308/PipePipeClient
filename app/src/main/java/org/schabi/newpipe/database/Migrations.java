@@ -30,6 +30,7 @@ public final class Migrations {
     public static final int DB_VER_900 = 900;
     public static final int DB_VER_901 = 901;
     public static final int DB_VER_902 = 902;
+    public static final int DB_VER_903 = 903;
 
     private static final String TAG = Migrations.class.getName();
     public static final boolean DEBUG = MainActivity.DEBUG;
@@ -451,6 +452,18 @@ public final class Migrations {
             database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS "
                     + "`index_cached_streams_service_id_url` ON `cached_streams` "
                     + "(`service_id`, `url`)");
+        }
+    };
+
+    /**
+     * Adds the cached video's real resolution label. Without it buildStreamInfoFromCache had to
+     * invent one, and the placeholder it used was unparseable by ListHelper.calculateResolution(),
+     * which is called unguarded when the player picks a quality - so cached videos played black.
+     */
+    public static final Migration MIGRATION_902_903 = new Migration(DB_VER_902, DB_VER_903) {
+        @Override
+        public void migrate(@NonNull final SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE `cached_streams` ADD COLUMN `video_resolution` TEXT");
         }
     };
 
