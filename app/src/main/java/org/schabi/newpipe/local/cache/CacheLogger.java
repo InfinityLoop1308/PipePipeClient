@@ -30,6 +30,14 @@ public final class CacheLogger {
     private static final int MAX_LINES = 1000;
     private static final long MAX_FILE_BYTES = 512L * 1024L;
 
+    /**
+     * Identifies which cache-feature build a shared log came from. A stack trace's line numbers
+     * are otherwise the only clue, which already cost one round of confusion: a report that
+     * looked like "the fix didn't work" turned out to be from the build before the fix. Bump
+     * this whenever a build is handed out.
+     */
+    public static final String BUILD_MARKER = "cache-feature v13";
+
     private static final ArrayDeque<String> LINES = new ArrayDeque<>();
     private static final SimpleDateFormat TIME_FORMAT =
             new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
@@ -104,7 +112,8 @@ public final class CacheLogger {
      */
     @NonNull
     public static synchronized String getRecentLogText() {
-        final int budget = 1900;
+        final String header = "[" + BUILD_MARKER + "]\n";
+        final int budget = 1900 - header.length();
         final StringBuilder sb = new StringBuilder();
         final java.util.Iterator<String> newestFirst = LINES.descendingIterator();
         while (newestFirst.hasNext()) {
@@ -117,11 +126,11 @@ public final class CacheLogger {
         if (sb.length() == 0) {
             // A single line longer than the whole budget (a stack trace): take its tail.
             final String last = LINES.peekLast();
-            return last == null
+            return header + (last == null
                     ? getLogText()
-                    : last.substring(Math.max(0, last.length() - budget));
+                    : last.substring(Math.max(0, last.length() - budget)));
         }
-        return sb.toString();
+        return header + sb;
     }
 
     @NonNull

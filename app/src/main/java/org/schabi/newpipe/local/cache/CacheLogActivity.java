@@ -41,7 +41,9 @@ public final class CacheLogActivity extends AppCompatActivity {
     }
 
     private void refreshLog() {
-        binding.cacheLogText.setText(CacheLogger.getLogText());
+        // Prefixed with the build marker so a screenshot identifies which build it came from.
+        binding.cacheLogText.setText(
+                "[" + CacheLogger.BUILD_MARKER + "]\n" + CacheLogger.getLogText());
     }
 
     @Override
