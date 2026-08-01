@@ -20,6 +20,12 @@ interface CachedStreamDAO {
     @Query("SELECT * FROM $CACHED_STREAM_TABLE WHERE $SERVICE_ID = :serviceId AND $URL = :url LIMIT 1")
     fun findStream(serviceId: Int, url: String): Maybe<CachedStreamEntity>
 
+    @Query("SELECT * FROM $CACHED_STREAM_TABLE WHERE $SERVICE_ID = :serviceId AND $URL = :url LIMIT 1")
+    fun findStreamBlocking(serviceId: Int, url: String): CachedStreamEntity?
+
+    @Query("SELECT * FROM $CACHED_STREAM_TABLE WHERE is_complete = 1")
+    fun getAllCompleteBlocking(): List<CachedStreamEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(entity: CachedStreamEntity): Long
 

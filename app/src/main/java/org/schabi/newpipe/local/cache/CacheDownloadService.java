@@ -193,6 +193,7 @@ public final class CacheDownloadService extends Service {
 
         NewPipeDatabase.getInstance(getApplicationContext()).cachedStreamDAO().insert(entity);
         updateNotification(title, 100);
+        CacheManager.cacheChanges.onNext(new CacheManager.CacheChangeEvent(serviceId, url, true));
     }
 
     private long download(@NonNull final OkHttpClient client,

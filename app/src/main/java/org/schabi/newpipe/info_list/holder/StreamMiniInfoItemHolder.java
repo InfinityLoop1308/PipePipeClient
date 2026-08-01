@@ -14,6 +14,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.info_list.InfoItemBuilder;
 import org.schabi.newpipe.ktx.ViewUtils;
+import org.schabi.newpipe.local.cache.CacheManager;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.PicassoHelper;
@@ -27,6 +28,7 @@ public class StreamMiniInfoItemHolder extends InfoItemHolder {
     public final TextView itemUploaderView;
     public final TextView itemDurationView;
     private final AnimatedProgressBar itemProgressView;
+    private final ImageView itemCacheStatusView;
 
     StreamMiniInfoItemHolder(final InfoItemBuilder infoItemBuilder, final int layoutId,
                              final ViewGroup parent) {
@@ -37,6 +39,7 @@ public class StreamMiniInfoItemHolder extends InfoItemHolder {
         itemUploaderView = itemView.findViewById(R.id.itemUploaderView);
         itemDurationView = itemView.findViewById(R.id.itemDurationView);
         itemProgressView = itemView.findViewById(R.id.itemProgressView);
+        itemCacheStatusView = itemView.findViewById(R.id.itemCacheStatusView);
     }
 
     public StreamMiniInfoItemHolder(final InfoItemBuilder infoItemBuilder, final ViewGroup parent) {
@@ -108,6 +111,12 @@ public class StreamMiniInfoItemHolder extends InfoItemHolder {
             default:
                 disableLongClick();
                 break;
+        }
+
+        if (itemCacheStatusView != null) {
+            final boolean cached = CacheManager.isCachedBlocking(
+                    itemBuilder.getContext(), item.getServiceId(), item.getUrl());
+            itemCacheStatusView.setVisibility(cached ? View.VISIBLE : View.GONE);
         }
     }
 

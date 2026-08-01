@@ -9,12 +9,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.functions.Function4
+import io.reactivex.rxjava3.functions.Function5
 import io.reactivex.rxjava3.processors.BehaviorProcessor
 import io.reactivex.rxjava3.schedulers.Schedulers
 import org.schabi.newpipe.R
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.database.stream.StreamWithState
+import org.schabi.newpipe.local.cache.CacheManager
 import org.schabi.newpipe.local.feed.item.StreamItem
 import org.schabi.newpipe.local.feed.service.FeedEventManager
 import org.schabi.newpipe.local.feed.service.FeedEventManager.Event.ErrorResultEvent
@@ -28,13 +29,19 @@ import java.util.concurrent.TimeUnit
 class FeedViewModel(
     private val applicationContext: Context,
     groupId: Long = FeedGroupEntity.GROUP_ALL_ID,
-    initialShowPlayedItems: Boolean = true
+    initialShowPlayedItems: Boolean = true,
+    initialShowCachedOnly: Boolean = false
 ) : ViewModel() {
     private var feedDatabaseManager: FeedDatabaseManager = FeedDatabaseManager(applicationContext)
 
     private val toggleShowPlayedItems = BehaviorProcessor.create<Boolean>()
     private val toggleShowPlayedItemsFlowable = toggleShowPlayedItems
         .startWithItem(initialShowPlayedItems)
+        .distinctUntilChanged()
+
+    private val toggleShowCachedOnly = BehaviorProcessor.create<Boolean>()
+    private val toggleShowCachedOnlyFlowable = toggleShowCachedOnly
+        .startWithItem(initialShowCachedOnly)
         .distinctUntilChanged()
 
     private val mutableStateLiveData = MutableLiveData<FeedState>()
@@ -44,24 +51,34 @@ class FeedViewModel(
         .combineLatest(
             FeedEventManager.events(),
             toggleShowPlayedItemsFlowable,
+            toggleShowCachedOnlyFlowable,
             feedDatabaseManager.notLoadedCount(groupId),
             feedDatabaseManager.oldestSubscriptionUpdate(groupId),
 
-            Function4 { t1: FeedEventManager.Event, t2: Boolean,
-                t3: Long, t4: List<OffsetDateTime> ->
-                return@Function4 CombineResultEventHolder(t1, t2, t3, t4.firstOrNull())
+            Function5 { t1: FeedEventManager.Event, t2: Boolean, t3: Boolean,
+                t4: Long, t5: List<OffsetDateTime> ->
+                return@Function5 CombineResultEventHolder(t1, t2, t3, t4, t5.firstOrNull())
             }
         )
         .throttleLatest(DEFAULT_THROTTLE_TIMEOUT, TimeUnit.MILLISECONDS)
         .subscribeOn(Schedulers.io())
         .observeOn(Schedulers.io())
-        .map { (event, showPlayedItems, notLoadedCount, oldestUpdate) ->
-            val streamItems = if (event is SuccessResultEvent || event is IdleEvent)
-                feedDatabaseManager
+        .map { (event, showPlayedItems, showCachedOnly, notLoadedCount, oldestUpdate) ->
+            val streamItems = if (event is SuccessResultEvent || event is IdleEvent) {
+                val streams = feedDatabaseManager
                     .getStreams(groupId, showPlayedItems)
                     .blockingGet(arrayListOf())
-            else
+                if (showCachedOnly) {
+                    val cachedKeys = CacheManager.getAllCompleteCacheKeysBlocking(applicationContext)
+                    streams.filter {
+                        cachedKeys.contains(CacheManager.cacheKey(it.stream.serviceId, it.stream.url))
+                    }
+                } else {
+                    streams
+                }
+            } else {
                 arrayListOf()
+            }
 
             CombineResultDataHolder(event, streamItems, notLoadedCount, oldestUpdate)
         }
@@ -89,8 +106,9 @@ class FeedViewModel(
     private data class CombineResultEventHolder(
         val t1: FeedEventManager.Event,
         val t2: Boolean,
-        val t3: Long,
-        val t4: OffsetDateTime?
+        val t3: Boolean,
+        val t4: Long,
+        val t5: OffsetDateTime?
     )
 
     private data class CombineResultDataHolder(
@@ -112,10 +130,26 @@ class FeedViewModel(
 
     fun getShowPlayedItemsFromPreferences() = getShowPlayedItemsFromPreferences(applicationContext)
 
+    fun toggleCachedOnly(showCachedOnly: Boolean) {
+        toggleShowCachedOnly.onNext(showCachedOnly)
+    }
+
+    fun saveShowCachedOnlyToPreferences(showCachedOnly: Boolean) =
+        PreferenceManager.getDefaultSharedPreferences(applicationContext).edit {
+            this.putBoolean(applicationContext.getString(R.string.feed_show_cached_only_key), showCachedOnly)
+            this.apply()
+        }
+
+    fun getShowCachedOnlyFromPreferences() = getShowCachedOnlyFromPreferences(applicationContext)
+
     companion object {
         private fun getShowPlayedItemsFromPreferences(context: Context) =
             PreferenceManager.getDefaultSharedPreferences(context)
                 .getBoolean(context.getString(R.string.feed_show_played_items_key), true)
+
+        private fun getShowCachedOnlyFromPreferences(context: Context) =
+            PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.feed_show_cached_only_key), false)
     }
 
     class Factory(
@@ -128,7 +162,8 @@ class FeedViewModel(
                 context.applicationContext,
                 groupId,
                 // Read initial value from preferences
-                getShowPlayedItemsFromPreferences(context.applicationContext)
+                getShowPlayedItemsFromPreferences(context.applicationContext),
+                getShowCachedOnlyFromPreferences(context.applicationContext)
             ) as T
         }
     }

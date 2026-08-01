@@ -14,6 +14,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.info_list.InfoItemBuilder;
 import org.schabi.newpipe.ktx.ViewUtils;
+import org.schabi.newpipe.local.cache.CacheManager;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import androidx.preference.PreferenceManager;
 
@@ -56,6 +57,7 @@ public class StreamInfoItemHolder extends InfoItemHolder {
     public final TextView itemDurationView;
     private final AnimatedProgressBar itemProgressView;
     public final TextView itemAdditionalDetails;
+    private final ImageView itemCacheStatusView;
 
     public StreamInfoItemHolder(final InfoItemBuilder infoItemBuilder, final ViewGroup parent) {
         this(infoItemBuilder, R.layout.list_stream_item, parent);
@@ -70,6 +72,7 @@ public class StreamInfoItemHolder extends InfoItemHolder {
         itemDurationView = itemView.findViewById(R.id.itemDurationView);
         itemProgressView = itemView.findViewById(R.id.itemProgressView);
         itemAdditionalDetails = itemView.findViewById(R.id.itemAdditionalDetails);
+        itemCacheStatusView = itemView.findViewById(R.id.itemCacheStatusView);
     }
 
     @Override
@@ -140,6 +143,12 @@ public class StreamInfoItemHolder extends InfoItemHolder {
         }
 
         itemAdditionalDetails.setText(getStreamInfoDetailLine(item));
+
+        if (itemCacheStatusView != null) {
+            final boolean cached = CacheManager.isCachedBlocking(
+                    itemBuilder.getContext(), item.getServiceId(), item.getUrl());
+            itemCacheStatusView.setVisibility(cached ? View.VISIBLE : View.GONE);
+        }
     }
 
     @Override

@@ -26,6 +26,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/itemCacheStatusView"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_margin="4dp"
+        android:background="@color/duration_background_color"
+        android:contentDescription="@string/cache_offline_badge_desc"
+        android:padding="2dp"
+        android:src="@drawable/ic_offline_pin"
+        android:tint="@color/duration_text_color"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/itemThumbnailView"
+        app:layout_constraintTop_toTopOf="@id/itemThumbnailView"
+        tools:visibility="visible" />
+
     <org.schabi.newpipe.views.NewPipeTextView
         android:id="@+id/itemDurationView"
         android:layout_width="wrap_content"

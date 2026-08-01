@@ -21,6 +21,22 @@
         android:src="@drawable/dummy_thumbnail"
         tools:ignore="RtlHardcoded" />
 
+    <ImageView
+        android:id="@+id/itemCacheStatusView"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignStart="@id/itemThumbnailView"
+        android:layout_alignLeft="@id/itemThumbnailView"
+        android:layout_alignTop="@id/itemThumbnailView"
+        android:background="@color/duration_background_color"
+        android:contentDescription="@string/cache_offline_badge_desc"
+        android:padding="2dp"
+        android:src="@drawable/ic_offline_pin"
+        android:tint="@color/duration_text_color"
+        android:visibility="gone"
+        tools:ignore="RtlHardcoded"
+        tools:visibility="visible" />
+
     <org.schabi.newpipe.views.NewPipeTextView
         android:id="@+id/itemDurationView"
         android:layout_width="wrap_content"

@@ -105,6 +105,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
 
     private lateinit var groupAdapter: GroupieAdapter
     @JvmField var showPlayedItems: Boolean = true
+    @JvmField var showCachedOnly: Boolean = false
 
     private var onSettingsChangeListener: SharedPreferences.OnSharedPreferenceChangeListener? = null
     private var updateListViewModeOnResume = false
@@ -201,6 +202,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         val factory = FeedViewModel.Factory(requireContext(), groupId)
         viewModel = ViewModelProvider(this, factory).get(FeedViewModel::class.java)
         showPlayedItems = viewModel.getShowPlayedItemsFromPreferences()
+        showCachedOnly = viewModel.getShowCachedOnlyFromPreferences()
         viewModel.stateLiveData.observe(viewLifecycleOwner) { it?.let(::handleResult) }
 
         groupAdapter = GroupieAdapter().apply {
@@ -234,6 +236,9 @@ class FeedFragment : BaseStateFragment<FeedState>() {
     override fun onResume() {
         super.onResume()
         updateRelativeTimeViews()
+        // Refresh cache badges in case a stream was cached/uncached elsewhere (e.g. the video
+        // detail page) while this fragment wasn't visible.
+        groupAdapter.notifyItemRangeChanged(0, groupAdapter.itemCount, StreamItem.UPDATE_CACHE_STATUS)
 
         if (updateListViewModeOnResume) {
             updateListViewModeOnResume = false
@@ -383,6 +388,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
 
         inflater.inflate(R.menu.menu_feed_fragment, menu)
         updateTogglePlayedItemsButton(menu.findItem(R.id.menu_item_feed_toggle_played_items))
+        updateToggleCachedOnlyButton(menu.findItem(R.id.menu_item_feed_toggle_cached_only))
         menu.findItem(R.id.action_search_feed)?.isVisible =
             menu.isItemVisible(R.id.action_search).not()
     }
@@ -393,6 +399,11 @@ class FeedFragment : BaseStateFragment<FeedState>() {
             updateTogglePlayedItemsButton(item)
             viewModel.togglePlayedItems(showPlayedItems)
             viewModel.saveShowPlayedItemsToPreferences(showPlayedItems)
+        } else if (item.itemId == R.id.menu_item_feed_toggle_cached_only) {
+            showCachedOnly = !item.isChecked
+            updateToggleCachedOnlyButton(item)
+            viewModel.toggleCachedOnly(showCachedOnly)
+            viewModel.saveShowCachedOnlyToPreferences(showCachedOnly)
         } else if (item.itemId == R.id.menu_item_feed_channel_list) {
             openFeedChannelsFragment(fm, groupId, groupName)
         } else if (item.itemId == R.id.action_search_feed) {
@@ -451,12 +462,14 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         super.onSaveInstanceState(outState)
         listState?.let { outState.putParcelable("listState", it) }
         outState.putBoolean("showPlayedItems", showPlayedItems)
+        outState.putBoolean("showCachedOnly", showCachedOnly)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         listState = savedInstanceState.getParcelable("listState")
         showPlayedItems = savedInstanceState.getBoolean("showPlayedItems", true)
+        showCachedOnly = savedInstanceState.getBoolean("showCachedOnly", false)
     }
 
     private fun updateTogglePlayedItemsButton(menuItem: MenuItem) {
@@ -465,6 +478,10 @@ class FeedFragment : BaseStateFragment<FeedState>() {
             requireContext(),
             if (showPlayedItems) R.drawable.ic_visibility_on else R.drawable.ic_visibility_off
         )
+    }
+
+    private fun updateToggleCachedOnlyButton(menuItem: MenuItem) {
+        menuItem.isChecked = showCachedOnly
     }
 
     /*

@@ -221,6 +221,7 @@ public final class VideoDetailFragment
     private final CompositeDisposable disposables = new CompositeDisposable();
     @Nullable
     private Disposable positionSubscriber = null;
+    private Disposable cacheChangesSubscriber = null;
     private Disposable submitSegmentSubscriber;
 
     private List<VideoStream> sortedVideoStreams;
@@ -784,6 +785,18 @@ public final class VideoDetailFragment
         binding.detailControlsDownload.setOnClickListener(this);
         binding.detailControlsDownload.setOnLongClickListener(this);
         binding.detailControlsCache.setOnClickListener(this);
+        if (cacheChangesSubscriber != null) {
+            cacheChangesSubscriber.dispose();
+        }
+        cacheChangesSubscriber = CacheManager.cacheChanges
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(event -> {
+                    if (currentInfo != null && currentInfo.getServiceId() == event.serviceId
+                            && currentInfo.getUrl().equals(event.url)) {
+                        setCacheButtonCached(event.cached);
+                    }
+                });
+        disposables.add(cacheChangesSubscriber);
         binding.detailControlsShare.setOnClickListener(this);
         binding.detailControlsOpenInBrowser.setOnClickListener(this);
         binding.detailControlsStartSleepTimer.setOnClickListener(this);
@@ -1073,6 +1086,7 @@ public final class VideoDetailFragment
                     hideMainPlayerOnLoadingNewStream();
                     handleResult(result);
                     showContent();
+                    updateCacheButtonState();
                     if (playedFromCache) {
                         Toast.makeText(activity, R.string.playing_from_cache, Toast.LENGTH_SHORT)
                                 .show();
@@ -2090,6 +2104,37 @@ public final class VideoDetailFragment
                 })
                 .setNegativeButton(R.string.cancel, null)
                 .show();
+    }
+
+    /**
+     * Checks whether {@link #currentInfo} is already cached and updates the cache/delete button
+     * (icon, label, content description) to match, so users don't have to tap it to find out
+     * which action it currently performs.
+     */
+    private void updateCacheButtonState() {
+        if (currentInfo == null || activity == null) {
+            return;
+        }
+        final StreamInfo info = currentInfo;
+        disposables.add(CacheManager.findCachedStream(activity, info.getServiceId(), info.getUrl())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        cached -> setCacheButtonCached(true),
+                        throwable -> setCacheButtonCached(false),
+                        () -> setCacheButtonCached(false)));
+    }
+
+    private void setCacheButtonCached(final boolean cached) {
+        if (binding == null) {
+            return;
+        }
+        binding.detailControlsCache.setText(cached
+                ? R.string.controls_cache_delete_title : R.string.controls_cache_title);
+        binding.detailControlsCache.setContentDescription(getString(cached
+                ? R.string.controls_cache_delete_desc : R.string.controls_cache_desc));
+        binding.detailControlsCache.setCompoundDrawablesWithIntrinsicBounds(
+                0, cached ? R.drawable.ic_delete : R.drawable.ic_offline_pin, 0, 0);
     }
 
     /*//////////////////////////////////////////////////////////////////////////

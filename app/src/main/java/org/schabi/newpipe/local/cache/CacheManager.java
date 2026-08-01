@@ -18,9 +18,12 @@ import org.schabi.newpipe.extractor.stream.VideoStream;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import io.reactivex.rxjava3.core.Maybe;
+import io.reactivex.rxjava3.subjects.PublishSubject;
 
 /**
  * Backs the "cache for offline viewing" feature requested in
@@ -34,6 +37,26 @@ public final class CacheManager {
     private static final String CACHE_DIR_NAME = "stream_cache";
 
     private CacheManager() {
+    }
+
+    /**
+     * Fired whenever a stream is cached or removed from the cache, so any currently visible UI
+     * (e.g. the cache/delete button on the video page) can update itself without re-querying the
+     * database on a timer. Carries the affected stream's identity and its new cached state.
+     */
+    public static final PublishSubject<CacheChangeEvent> cacheChanges = PublishSubject.create();
+
+    public static final class CacheChangeEvent {
+        public final int serviceId;
+        @NonNull public final String url;
+        public final boolean cached;
+
+        public CacheChangeEvent(final int serviceId, @NonNull final String url,
+                                final boolean cached) {
+            this.serviceId = serviceId;
+            this.url = url;
+            this.cached = cached;
+        }
     }
 
     @NonNull
@@ -101,6 +124,39 @@ public final class CacheManager {
                                    @NonNull final CachedStreamEntity entity) {
         deleteFilesFor(entity);
         dao(context).delete(entity);
+        cacheChanges.onNext(
+                new CacheChangeEvent(entity.getServiceId(), entity.getUrl(), false));
+    }
+
+    /**
+     * Synchronous cache lookup for use on list-item binding, mirroring the existing
+     * {@code HistoryRecordManager.loadStreamState(...).blockingGet()} per-item convention used
+     * for the watch-progress indicator (see {@code StreamInfoItemHolder}).
+     */
+    public static boolean isCachedBlocking(@NonNull final Context context,
+                                           final int serviceId,
+                                           @NonNull final String url) {
+        final CachedStreamEntity entity = dao(context).findStreamBlocking(serviceId, url);
+        return entity != null && entity.isComplete();
+    }
+
+    /**
+     * All currently complete cache entries' identities, for filtering a list of streams down to
+     * only the ones available offline (e.g. the subscriptions feed's "cached only" toggle).
+     */
+    @NonNull
+    public static Set<String> getAllCompleteCacheKeysBlocking(@NonNull final Context context) {
+        final List<CachedStreamEntity> entities = dao(context).getAllCompleteBlocking();
+        final Set<String> keys = new HashSet<>(entities.size());
+        for (final CachedStreamEntity entity : entities) {
+            keys.add(cacheKey(entity.getServiceId(), entity.getUrl()));
+        }
+        return keys;
+    }
+
+    @NonNull
+    public static String cacheKey(final int serviceId, @NonNull final String url) {
+        return serviceId + " " + url;
     }
 
     static void deleteFilesFor(@NonNull final CachedStreamEntity entity) {

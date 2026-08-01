@@ -15,6 +15,7 @@ import org.schabi.newpipe.extractor.stream.StreamType.AUDIO_LIVE_STREAM
 import org.schabi.newpipe.extractor.stream.StreamType.AUDIO_STREAM
 import org.schabi.newpipe.extractor.stream.StreamType.LIVE_STREAM
 import org.schabi.newpipe.extractor.stream.StreamType.VIDEO_STREAM
+import org.schabi.newpipe.local.cache.CacheManager
 import org.schabi.newpipe.util.Localization
 import org.schabi.newpipe.util.PicassoHelper
 import org.schabi.newpipe.util.StreamTypeUtil
@@ -27,6 +28,7 @@ data class StreamItem(
 ) : BindableItem<ListStreamItemBinding>() {
     companion object {
         const val UPDATE_RELATIVE_TIME = 1
+        const val UPDATE_CACHE_STATUS = 2
     }
 
     private val stream: StreamEntity = streamWithState.stream
@@ -56,8 +58,23 @@ data class StreamItem(
                 getStreamInfoDetailLine(viewBinding.itemAdditionalDetails.context)
             return
         }
+        if (payloads.contains(UPDATE_CACHE_STATUS)) {
+            updateCacheStatus(viewBinding)
+            return
+        }
 
         super.bind(viewBinding, position, payloads)
+    }
+
+    private fun updateCacheStatus(viewBinding: ListStreamItemBinding) {
+        viewBinding.itemCacheStatusView.visibility = if (CacheManager.isCachedBlocking(
+                viewBinding.root.context, stream.serviceId, stream.url
+            )
+        ) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
     }
 
     override fun bind(viewBinding: ListStreamItemBinding, position: Int) {
@@ -111,6 +128,8 @@ data class StreamItem(
 
         viewBinding.itemAdditionalDetails.text =
             getStreamInfoDetailLine(viewBinding.itemAdditionalDetails.context)
+
+        updateCacheStatus(viewBinding)
 
         execBindEnd?.accept(viewBinding)
     }
