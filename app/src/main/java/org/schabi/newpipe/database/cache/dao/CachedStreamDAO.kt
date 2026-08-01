@@ -20,11 +20,13 @@ interface CachedStreamDAO {
     @Query("SELECT * FROM $CACHED_STREAM_TABLE WHERE $SERVICE_ID = :serviceId AND $URL = :url LIMIT 1")
     fun findStream(serviceId: Int, url: String): Maybe<CachedStreamEntity>
 
-    @Query("SELECT * FROM $CACHED_STREAM_TABLE WHERE $SERVICE_ID = :serviceId AND $URL = :url LIMIT 1")
-    fun findStreamBlocking(serviceId: Int, url: String): CachedStreamEntity?
-
+    // Deliberately Rx-returning (Maybe/Flowable), not a plain blocking return type: Room only
+    // allows blocking a caller thread on the result (e.g. via blockingGet()/blockingFirst()) when
+    // the query itself runs on Room's own query executor, which is how Rx-returning DAO methods
+    // work. A plain blocking DAO method throws IllegalStateException when called from the main
+    // thread, which is where list-item binding (see CacheManager.isCachedBlocking) needs this.
     @Query("SELECT * FROM $CACHED_STREAM_TABLE WHERE is_complete = 1")
-    fun getAllCompleteBlocking(): List<CachedStreamEntity>
+    fun getAllComplete(): Flowable<List<CachedStreamEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(entity: CachedStreamEntity): Long

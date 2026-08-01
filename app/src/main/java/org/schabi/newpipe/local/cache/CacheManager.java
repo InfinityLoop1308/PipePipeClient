@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 
@@ -129,24 +130,35 @@ public final class CacheManager {
     }
 
     /**
-     * Synchronous cache lookup for use on list-item binding, mirroring the existing
+     * Synchronous cache lookup for use on list-item binding (e.g. on the main thread during
+     * RecyclerView bind), mirroring the existing
      * {@code HistoryRecordManager.loadStreamState(...).blockingGet()} per-item convention used
-     * for the watch-progress indicator (see {@code StreamInfoItemHolder}).
+     * for the watch-progress indicator (see {@code StreamInfoItemHolder}). Goes through the
+     * {@link Maybe}-returning {@link #findCachedStream} rather than a plain blocking DAO method,
+     * since Room only allows blocking a caller thread with {@code blockingGet()} when the actual
+     * query runs on Room's own query executor (as it does for Rx-returning DAO methods) — a
+     * direct blocking DAO method throws {@code IllegalStateException: Cannot access database on
+     * the main thread} instead.
      */
     public static boolean isCachedBlocking(@NonNull final Context context,
                                            final int serviceId,
                                            @NonNull final String url) {
-        final CachedStreamEntity entity = dao(context).findStreamBlocking(serviceId, url);
+        final CachedStreamEntity entity =
+                findCachedStream(context, serviceId, url).blockingGet();
         return entity != null && entity.isComplete();
     }
 
     /**
      * All currently complete cache entries' identities, for filtering a list of streams down to
      * only the ones available offline (e.g. the subscriptions feed's "cached only" toggle).
+     * Only ever called off the main thread (from {@code FeedViewModel}'s IO-scheduled combine
+     * pipeline), but still goes through the {@link Flowable}-returning DAO method rather than a
+     * plain blocking one, so it stays safe even if a future caller doesn't guarantee that.
      */
     @NonNull
     public static Set<String> getAllCompleteCacheKeysBlocking(@NonNull final Context context) {
-        final List<CachedStreamEntity> entities = dao(context).getAllCompleteBlocking();
+        final List<CachedStreamEntity> entities =
+                dao(context).getAllComplete().blockingFirst(new ArrayList<>());
         final Set<String> keys = new HashSet<>(entities.size());
         for (final CachedStreamEntity entity : entities) {
             keys.add(cacheKey(entity.getServiceId(), entity.getUrl()));
