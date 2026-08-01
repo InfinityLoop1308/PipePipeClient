@@ -194,7 +194,7 @@
     <string name="drawer_close">Закрыть боковую панель</string>
     <string name="video_player">Видеоплеер</string>
     <string name="background_player">Фоновый плеер</string>
-    <string name="popup_player">леер в окне</string>
+    <string name="popup_player">Плеер в окне</string>
     <string name="preferred_player_fetcher_notification_title">Получение сведений…</string>
     <string name="preferred_player_fetcher_notification_message">Загрузка запрошенного контента</string>
     <string name="controls_download_desc">Скачать файл трансляции</string>
@@ -862,12 +862,14 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="remove_duplicates_popup_warning">Дубликаты видео в плейлисте будут удалены.
 
 Вы уверены? Это действие нельзя отменить!</string>
+    <string name="channel_tab_videos">Видео</string>
     <string name="channel_tab_tracks">Треки</string>
     <string name="channel_tab_livestreams">Стримы</string>
     <string name="channel_tab_shorts">Shorts</string>
     <string name="channel_tab_playlists">Подборки</string>
     <string name="channel_tab_channels">Каналы</string>
     <string name="channel_tab_albums">Альбомы</string>
+    <string name="channel_tab_info">О канале</string>
     <string name="show_channel_tabs">Вкладки канала</string>
     <string name="show_channel_tabs_summary">Какие вкладки будут отображаться на страницах каналов</string>
     <string name="image_quality_none">Не загружать изображения</string>
@@ -1098,6 +1100,8 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="filter_future_items_summary">Скрывать из списка видео, запланированные на будущее</string>
     <string name="force_end_on_overtime_title">Принудительное завершение при превышении времени</string>
     <string name="force_end_on_overtime_summary">Принудительно останавливать воспроизведение, если текущая позиция превышает длительность потока. Используется для обхода проблемы со стримами, которые не завершаются сами.</string>
+    <string name="force_sabr_title">Принудительный SABR</string>
+    <string name="force_sabr_summary">Направлять все видео YouTube через конвейер SABR вместо DASH/HLS. Экспериментальная функция: может вызвать проблемы с воспроизведением на некоторых устройствах или видео</string>
     <string name="use_old_search_filter_title">Старый фильтр поиска</string>
     <string name="use_old_search_filter_summary">Использовать старый фильтр поиска на основе меню вместо нового всплывающего окна</string>
     <string name="settings_category_behavior_title">Поведение</string>
@@ -1105,4 +1109,38 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="show_auto_translated_subtitles_summary">Показывать автоматически переведенные субтитры YouTube. Требуется вход в аккаунт YouTube.</string>
     <string name="show_auto_translated_subtitles_login_required_summary">Отключено, так как для автоматического перевода субтитров необходим вход в аккаунт YouTube.</string>
     <string name="auto_translated_subtitles_language_title">Язык автоматического перевода субтитров</string>
+    <string name="past_hour">За последний час</string>
+    <string name="past_day">За 24 часа</string>
+    <string name="past_week">За неделю</string>
+    <string name="past_month">За месяц</string>
+    <string name="past_year">За год</string>
+    <string name="short_video">Короткое</string>
+    <string name="medium_length">Среднее</string>
+    <string name="long_video">Длинное</string>
+    <string name="extra_long">Очень длинное</string>
+    <string name="upload_date">Дата загрузки</string>
+    <string name="duration">Длительность</string>
+    <string name="license">Лицензия</string>
+    <string name="published">Опубликовано</string>
+    <string name="disable_exoplayer_media_codec_async_queueing_title">Отключить асинхронную очередь MediaCodec</string>
+    <string name="disable_exoplayer_media_codec_async_queueing_summary">Решение проблем с воспроизведением, вызванных асинхронной очередью MediaCodec на некоторых устройствах. Включение может улучшить совместимость, но снизить производительность воспроизведения.</string>
+    <string name="media_codec_workaround_hint_title">Сбой воспроизведения MediaCodec</string>
+    <string name="media_codec_async_workaround_hint">Этот сбой может быть вызван асинхронной очередью MediaCodec. Попробуйте включить «Отключить асинхронную очередь MediaCodec» в настройках ExoPlayer и перезапустить воспроизведение.</string>
+    <string name="media_codec_surface_workaround_hint">Этот сбой произошел при смене поверхности вывода видео. Попробуйте включить «Всегда использовать обходной путь для настройки поверхности вывода видео ExoPlayer» в настройках ExoPlayer и перезапустить воспроизведение.</string>
+    <string name="search_inside_channel">Искать на канале %s</string>
+    <string name="show_auto_translated_subtitles_title">Автоматический перевод субтитров</string>
+    <string name="show_auto_translated_subtitles_summary">Показывать автоматически переведенные субтитры YouTube. Требуется вход в аккаунт YouTube.</string>
+    <string name="show_auto_translated_subtitles_login_required_summary">Отключено, так как для автоматического перевода субтитров требуется вход в аккаунт YouTube.</string>
+    <string name="auto_translated_subtitles_language_title">Язык автоматического перевода субтитров</string>
+    <string name="export_data_to_newpipe_title">Экспорт в NewPipe</string>
+    <string name="export_data_to_newpipe_summary">Экспорт резервной копии в формате, совместимом с NewPipe</string>
+    <string name="settings_category_other_platforms_title">Другие платформы</string>
+    <string name="use_dns_over_https_fallback_title">Использовать резервный DNS over HTTPS</string>
+    <string name="use_dns_over_https_fallback_summary">Повторять неудачные системные DNS-запросы через Cloudflare DNS over HTTPS. Изменение этого параметра перезапустит приложение.</string>
+    <string name="youtube_player_client_title">Метод извлечения данных YouTube</string>
+    <string name="webview_unavailable_youtube_hint">WebView недоступен. Убедитесь, что версия WebView выше 80.\n\nAndroid 6 и 10: обновите Android System WebView в Play Маркете.\nAndroid 7, 8 и 9: обновите Chrome в Play Маркете.\nДругие версии: этого не должно было произойти. Пожалуйста, сообщите об ошибке на GitHub.</string>
+    <string name="sabr_backoff_notification_channel_name">Ожидание воспроизведения YouTube</string>
+    <string name="sabr_backoff_notification_channel_description">Уведомления, когда YouTube требует ожидания запроса на воспроизведение</string>
+    <string name="sabr_backoff_notification_title">Ожидание ответа YouTube</string>
+    <string name="sabr_backoff_notification_content">YouTube требует подождать %1$d сек. перед продолжением воспроизведения</string>
 </resources>
