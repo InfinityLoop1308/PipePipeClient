@@ -64,6 +64,13 @@ public final class CacheActivity extends AppCompatActivity implements CachedStre
                     binding.cacheList.setVisibility(
                             list.isEmpty() ? View.GONE : View.VISIBLE);
                 }));
+
+        // Rows for in-progress downloads show a percentage, which only the in-memory progress
+        // map knows about - the database row doesn't change as bytes arrive, so Room won't
+        // re-emit. Re-bind on progress updates so the percentage actually counts up.
+        disposables.add(CacheManager.cacheProgress
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(event -> adapter.notifyDataSetChanged()));
     }
 
     @Override

@@ -172,6 +172,19 @@ public final class CacheManager {
     }
 
     /**
+     * Like {@link #findCachedStream} but only matches a finished entry. Offline playback must use
+     * this: a row now exists from the moment caching starts, so the Cached videos screen can list
+     * the download in progress, and playing that row's half-written file would fail.
+     */
+    @NonNull
+    public static Maybe<CachedStreamEntity> findCompleteCachedStream(
+            @NonNull final Context context,
+            final int serviceId,
+            @NonNull final String url) {
+        return dao(context).findCompleteStream(serviceId, url);
+    }
+
+    /**
      * Whether {@link CacheDownloadService} can fetch this stream.
      *
      * <p>Originally the cache ran its own OkHttp GET over {@link Stream#getContent()}, which only
@@ -456,10 +469,37 @@ public final class CacheManager {
         return startCaching(context, info, video, audio);
     }
 
+    /** Missions currently downloading, so an entry removed mid-download can actually be stopped. */
+    private static final Map<String, us.shandian.giga.get.DownloadMission> RUNNING_MISSIONS =
+            new ConcurrentHashMap<>();
+
+    static void registerRunningMission(final int serviceId, @NonNull final String url,
+                                       @NonNull final us.shandian.giga.get.DownloadMission m) {
+        RUNNING_MISSIONS.put(cacheKey(serviceId, url), m);
+    }
+
+    static void unregisterRunningMission(final int serviceId, @NonNull final String url) {
+        RUNNING_MISSIONS.remove(cacheKey(serviceId, url));
+    }
+
     public static void removeCache(@NonNull final Context context,
                                    @NonNull final CachedStreamEntity entity) {
         CacheLogger.d(context, "removeCache", "removing serviceId=" + entity.getServiceId()
-                + " url=" + entity.getUrl());
+                + " url=" + entity.getUrl() + " complete=" + entity.isComplete());
+
+        // If it's still downloading, stop the mission first, otherwise it would keep running and
+        // re-insert its row when it finished.
+        final us.shandian.giga.get.DownloadMission mission =
+                RUNNING_MISSIONS.remove(cacheKey(entity.getServiceId(), entity.getUrl()));
+        if (mission != null) {
+            try {
+                mission.pause();
+            } catch (final Exception e) {
+                CacheLogger.w(context, "removeCache", "could not stop running mission: " + e);
+            }
+            reportProgress(entity.getServiceId(), entity.getUrl(), PROGRESS_FAILED);
+        }
+
         deleteFilesFor(entity);
         dao(context).delete(entity);
         cacheChanges.onNext(

@@ -20,6 +20,17 @@ interface CachedStreamDAO {
     @Query("SELECT * FROM $CACHED_STREAM_TABLE WHERE $SERVICE_ID = :serviceId AND $URL = :url LIMIT 1")
     fun findStream(serviceId: Int, url: String): Maybe<CachedStreamEntity>
 
+    /**
+     * Only entries whose download actually finished. Offline playback must use this rather than
+     * [findStream]: a row exists from the moment caching starts (so the Cached videos screen can
+     * show it downloading), and its file is incomplete until then.
+     */
+    @Query(
+        "SELECT * FROM $CACHED_STREAM_TABLE " +
+            "WHERE $SERVICE_ID = :serviceId AND $URL = :url AND is_complete = 1 LIMIT 1"
+    )
+    fun findCompleteStream(serviceId: Int, url: String): Maybe<CachedStreamEntity>
+
     // Deliberately Rx-returning (Maybe/Flowable), not a plain blocking return type: Room only
     // allows blocking a caller thread on the result (e.g. via blockingGet()/blockingFirst()) when
     // the query itself runs on Room's own query executor, which is how Rx-returning DAO methods

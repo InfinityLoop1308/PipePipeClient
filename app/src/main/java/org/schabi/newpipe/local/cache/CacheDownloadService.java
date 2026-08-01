@@ -24,6 +24,8 @@ import org.schabi.newpipe.streams.io.StoredFileHelper;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import us.shandian.giga.get.DownloadMission;
 import us.shandian.giga.get.MissionRecoveryInfo;
@@ -79,6 +81,21 @@ public final class CacheDownloadService extends Service {
     private Handler handler;
     /** Missions still running, keyed by "serviceId url" so progress/finish can be attributed. */
     private final Map<DownloadMission, Intent> running = new HashMap<>();
+    /**
+     * Room forbids blocking database calls on the main thread, and both the service callbacks
+     * ({@code onStartCommand}) and the mission's message handler run there.
+     */
+    private final ExecutorService dbExecutor = Executors.newSingleThreadExecutor();
+
+    private void runOffMainThread(@NonNull final Runnable work) {
+        dbExecutor.execute(() -> {
+            try {
+                work.run();
+            } catch (final Throwable t) {
+                CacheLogger.e(this, TAG, "cache database write failed", t);
+            }
+        });
+    }
 
     /**
      * Starts caching. All mission parameters are computed by
@@ -238,6 +255,15 @@ public final class CacheDownloadService extends Service {
         });
 
         running.put(mission, intent);
+        // Record the entry up front (is_complete = false) so it shows in "Cached videos" while
+        // it downloads, rather than the screen staying empty until the moment it finishes.
+        // Offline playback deliberately ignores incomplete rows - see findCompleteCachedStream.
+        final CachedStreamEntity placeholder = buildEntity(intent, target, false);
+        runOffMainThread(() -> NewPipeDatabase.getInstance(getApplicationContext())
+                .cachedStreamDAO().insert(placeholder));
+        CacheManager.registerRunningMission(serviceId, url, mission);
+        CacheManager.cacheChanges.onNext(new CacheManager.CacheChangeEvent(serviceId, url, false));
+
         CacheLogger.d(this, TAG, "starting mission -> " + target.getAbsolutePath());
         mission.start();
         scheduleProgressPoll();
@@ -280,8 +306,15 @@ public final class CacheDownloadService extends Service {
                         + " errCode=" + mission.errCode
                         + " errObject=" + mission.errObject, mission.errObject);
                 deleteQuietly(mission.storage);
+                // Drop the placeholder row so a failed attempt doesn't linger in "Cached videos"
+                // as a download that never progresses.
+                runOffMainThread(() -> NewPipeDatabase.getInstance(getApplicationContext())
+                        .cachedStreamDAO().deleteByUrl(serviceId, url));
+                CacheManager.unregisterRunningMission(serviceId, url);
                 updateNotification(title, -1);
                 CacheManager.reportProgress(serviceId, url, CacheManager.PROGRESS_FAILED);
+                CacheManager.cacheChanges.onNext(
+                        new CacheManager.CacheChangeEvent(serviceId, url, false));
                 stopIfIdle();
                 break;
             default:
@@ -309,15 +342,40 @@ public final class CacheDownloadService extends Service {
             return;
         }
 
-        // Post-processing muxes video+audio into this one file, so an entry is either a single
-        // video file (which already carries its audio) or a single audio file.
-        final boolean audioOnly = kind == 'a';
-        final CachedStreamEntity entity = new CachedStreamEntity(
+        CacheLogger.d(this, TAG, "cached " + file.getAbsolutePath()
+                + " (" + file.length() + " bytes) for url=" + url);
+        // Replaces the placeholder row inserted when the mission started (the table has a unique
+        // index on service_id + url and the DAO inserts with OnConflictStrategy.REPLACE).
+        final CachedStreamEntity finished = buildEntity(intent, file, true);
+        runOffMainThread(() -> NewPipeDatabase.getInstance(getApplicationContext())
+                .cachedStreamDAO().insert(finished));
+        CacheManager.unregisterRunningMission(serviceId, url);
+        updateNotification(title, 100);
+        CacheManager.reportProgress(serviceId, url, CacheManager.PROGRESS_DONE);
+        CacheManager.cacheChanges.onNext(new CacheManager.CacheChangeEvent(serviceId, url, true));
+    }
+
+    /**
+     * Builds the database row for a cache entry. Post-processing muxes video+audio into one
+     * file, so an entry is either a single video file (already carrying its audio) or a single
+     * audio file.
+     *
+     * @param complete {@code false} for the placeholder written when the download starts
+     */
+    @NonNull
+    private CachedStreamEntity buildEntity(@NonNull final Intent intent,
+                                           @NonNull final File file,
+                                           final boolean complete) {
+        final boolean audioOnly = intent.getCharExtra(EXTRA_MISSION_KIND, 'v') == 'a';
+        final String suffix = intent.getStringExtra(EXTRA_MISSION_SUFFIX);
+        final String url = intent.getStringExtra(EXTRA_URL);
+        final String title = intent.getStringExtra(EXTRA_TITLE);
+        return new CachedStreamEntity(
                 0,
-                serviceId,
+                intent.getIntExtra(EXTRA_SERVICE_ID, 0),
                 url,
                 intent.getStringExtra(EXTRA_STREAM_ID),
-                title == null ? url : title,
+                title == null ? String.valueOf(url) : title,
                 intent.getStringExtra(EXTRA_STREAM_TYPE),
                 intent.getLongExtra(EXTRA_DURATION, 0),
                 intent.getStringExtra(EXTRA_UPLOADER_NAME),
@@ -332,16 +390,9 @@ public final class CacheDownloadService extends Service {
                 audioOnly ? null : suffix,
                 audioOnly ? suffix : null,
                 intent.getStringExtra(EXTRA_SEGMENTS),
-                file.length(),
+                complete ? file.length() : 0,
                 System.currentTimeMillis(),
-                true);
-
-        CacheLogger.d(this, TAG, "cached " + file.getAbsolutePath()
-                + " (" + file.length() + " bytes) for url=" + url);
-        NewPipeDatabase.getInstance(getApplicationContext()).cachedStreamDAO().insert(entity);
-        updateNotification(title, 100);
-        CacheManager.reportProgress(serviceId, url, CacheManager.PROGRESS_DONE);
-        CacheManager.cacheChanges.onNext(new CacheManager.CacheChangeEvent(serviceId, url, true));
+                complete);
     }
 
     private void scheduleProgressPoll() {
@@ -450,5 +501,7 @@ public final class CacheDownloadService extends Service {
         if (handler != null) {
             handler.removeCallbacksAndMessages(null);
         }
+        // shutdown(), not shutdownNow(): a queued "download finished" row must still be written.
+        dbExecutor.shutdown();
     }
 }

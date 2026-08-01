@@ -1086,7 +1086,7 @@ public final class VideoDetailFragment
         // straight from disk instead of hitting the network, unless a refresh was requested.
         final Single<StreamInfo> streamInfoSingle = forceNetwork
                 ? ExtractorHelper.getStreamInfo(serviceId, url, true)
-                : CacheManager.findCachedStream(activity, serviceId, url)
+                : CacheManager.findCompleteCachedStream(activity, serviceId, url)
                         .map(CacheManager::buildStreamInfoFromCache)
                         .doOnSuccess(info -> playedFromCache = true)
                         .switchIfEmpty(ExtractorHelper.getStreamInfo(serviceId, url, false)

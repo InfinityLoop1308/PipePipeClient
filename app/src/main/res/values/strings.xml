@@ -23,6 +23,7 @@
 <string name="controls_cache_delete_desc">Remove this video from the offline cache</string>
 <string name="controls_cache_progress_title">Caching… %1$d%%</string>
 <string name="cache_processing_title">Processing…</string>
+<string name="cache_incomplete_status">Incomplete — tap delete and cache again</string>
 <string name="cache_processing_short">…</string>
 <string name="cache_processing_notification">Processing \"%1$s\"…</string>
 <string name="cache_started">Caching for offline viewing started</string>

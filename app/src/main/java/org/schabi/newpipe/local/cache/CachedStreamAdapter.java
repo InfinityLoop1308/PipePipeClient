@@ -1,5 +1,6 @@
 package org.schabi.newpipe.local.cache;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,11 +56,28 @@ public final class CachedStreamAdapter extends RecyclerView.Adapter<CachedStream
         final CachedStreamEntity entity = items.get(position);
         holder.title.setText(entity.getTitle());
 
-        // Utility.formatBytes is what the download UI uses, and unlike the previous
-        // "bytes / 1024 / 1024 MB" it doesn't render every sub-megabyte entry as "0 MB".
-        final String size = us.shandian.giga.util.Utility.formatBytes(entity.getTotalSizeBytes());
         final String uploader = entity.getUploaderName() == null ? "" : entity.getUploaderName();
-        holder.subtitle.setText(uploader.isEmpty() ? size : uploader + " • " + size);
+        final String status;
+        if (entity.isComplete()) {
+            // Utility.formatBytes is what the download UI uses, and unlike the previous
+            // "bytes / 1024 / 1024 MB" it doesn't render every sub-megabyte entry as "0 MB".
+            status = us.shandian.giga.util.Utility.formatBytes(entity.getTotalSizeBytes());
+        } else {
+            // Still downloading: the row exists from the moment caching starts, so show how far
+            // along it is rather than a meaningless "0 B".
+            final int percent = CacheManager.getProgressBlocking(
+                    entity.getServiceId(), entity.getUrl());
+            final Context context = holder.itemView.getContext();
+            if (percent == CacheManager.PROGRESS_PROCESSING) {
+                status = context.getString(R.string.cache_processing_title);
+            } else if (percent == CacheManager.PROGRESS_FAILED) {
+                // No live mission: the app was restarted while this was downloading.
+                status = context.getString(R.string.cache_incomplete_status);
+            } else {
+                status = context.getString(R.string.controls_cache_progress_title, percent);
+            }
+        }
+        holder.subtitle.setText(uploader.isEmpty() ? status : uploader + " • " + status);
 
         PicassoHelper.loadThumbnail(entity.getThumbnailUrl()).into(holder.thumbnail);
 
