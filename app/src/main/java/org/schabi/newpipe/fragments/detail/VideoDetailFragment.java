@@ -2141,7 +2141,7 @@ public final class VideoDetailFragment
         final StreamInfo info = currentInfo;
         final int inProgressPercent =
                 CacheManager.getProgressBlocking(info.getServiceId(), info.getUrl());
-        if (inProgressPercent >= 0) {
+        if (inProgressPercent != CacheManager.PROGRESS_FAILED) {
             // A download for this stream was already in flight (e.g. started before navigating
             // away and back) - reflect that immediately instead of showing the plain button.
             setCacheButtonProgress(inProgressPercent);
@@ -2175,6 +2175,16 @@ public final class VideoDetailFragment
      */
     private void setCacheButtonProgress(final int percent) {
         if (binding == null) {
+            return;
+        }
+        if (percent == CacheManager.PROGRESS_PROCESSING) {
+            // Bytes are in; ffmpeg is remuxing. This can take a while on a long video, so name
+            // the phase rather than leaving a percentage that looks frozen.
+            binding.detailControlsCache.setText(R.string.cache_processing_title);
+            binding.detailControlsCache.setContentDescription(
+                    getString(R.string.cache_processing_title));
+            binding.detailControlsCache.setCompoundDrawablesWithIntrinsicBounds(
+                    0, R.drawable.ic_file_download, 0, 0);
             return;
         }
         if (percent < 0) {

@@ -70,18 +70,32 @@ data class StreamItem(
         val context = viewBinding.root.context
         val state = CacheManager.getCacheDisplayState(context, stream.serviceId, stream.url)
         val cacheStatusView = viewBinding.itemCacheStatusView
+        val cacheProgressView = viewBinding.itemCacheProgressView
         when (state) {
             CacheManager.CacheDisplayState.CACHED -> {
                 cacheStatusView.visibility = View.VISIBLE
                 cacheStatusView.setImageResource(R.drawable.ic_offline_pin)
                 cacheStatusView.contentDescription = context.getString(R.string.cache_offline_badge_desc)
+                cacheProgressView.visibility = View.GONE
             }
             CacheManager.CacheDisplayState.DOWNLOADING -> {
-                cacheStatusView.visibility = View.VISIBLE
-                cacheStatusView.setImageResource(R.drawable.ic_file_download)
-                cacheStatusView.contentDescription = context.getString(R.string.cache_downloading_badge_desc)
+                // Show the live percentage rather than a static arrow, which gives no clue
+                // whether the download is actually moving.
+                val percent = CacheManager.getProgressBlocking(stream.serviceId, stream.url)
+                cacheStatusView.visibility = View.GONE
+                cacheProgressView.visibility = View.VISIBLE
+                cacheProgressView.text = if (percent == CacheManager.PROGRESS_PROCESSING) {
+                    context.getString(R.string.cache_processing_short)
+                } else {
+                    "$percent%"
+                }
+                cacheProgressView.contentDescription =
+                    context.getString(R.string.cache_downloading_badge_desc)
             }
-            else -> cacheStatusView.visibility = View.GONE
+            else -> {
+                cacheStatusView.visibility = View.GONE
+                cacheProgressView.visibility = View.GONE
+            }
         }
     }
 

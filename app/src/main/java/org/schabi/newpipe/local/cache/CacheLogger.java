@@ -28,6 +28,7 @@ public final class CacheLogger {
     private static final String TAG = "CacheDebug";
     private static final String LOG_FILE_NAME = "cache_debug_log.txt";
     private static final int MAX_LINES = 1000;
+    private static final long MAX_FILE_BYTES = 512L * 1024L;
 
     private static final ArrayDeque<String> LINES = new ArrayDeque<>();
     private static final SimpleDateFormat TIME_FORMAT =
@@ -77,6 +78,16 @@ public final class CacheLogger {
 
         try {
             final File file = logFile(context);
+            if (file.length() > MAX_FILE_BYTES) {
+                // Rewrite from the in-memory ring buffer instead of appending forever.
+                try (FileWriter writer = new FileWriter(file, false)) {
+                    for (final String kept : LINES) {
+                        writer.write(kept);
+                        writer.write("\n");
+                    }
+                }
+                return;
+            }
             try (FileWriter writer = new FileWriter(file, true)) {
                 writer.write(entry);
                 writer.write("\n");
@@ -103,9 +114,12 @@ public final class CacheLogger {
     }
 
     /**
-     * Loads whatever was persisted to disk (e.g. from a previous app process, if the app was
-     * killed between the crash and opening the log screen) into memory, prepended before any
-     * lines already logged in this process.
+     * Reloads the log from disk, which is the single source of truth: every line handed to
+     * {@link #append} is written there as well as kept in memory.
+     *
+     * <p>This used to <em>merge</em> the file's contents in front of the in-memory lines, but
+     * those same lines were already in the file - so every visit to the log screen (and every tap
+     * of Refresh) duplicated everything logged in the current process, compounding each time.</p>
      */
     public static synchronized void loadFromDisk(@NonNull final Context context) {
         final File file = logFile(context);
@@ -114,10 +128,8 @@ public final class CacheLogger {
         }
         try {
             final java.util.List<String> onDisk = java.nio.file.Files.readAllLines(file.toPath());
-            final ArrayDeque<String> merged = new ArrayDeque<>(onDisk);
-            merged.addAll(LINES);
             LINES.clear();
-            LINES.addAll(merged);
+            LINES.addAll(onDisk);
             while (LINES.size() > MAX_LINES) {
                 LINES.removeFirst();
             }

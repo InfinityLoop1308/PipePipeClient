@@ -222,6 +222,16 @@ public final class CacheDownloadService extends Service {
         mission.resourceManifestUrls = intent.getStringArrayExtra(EXTRA_MISSION_MANIFESTS);
         mission.resourceIsUrls = intent.getBooleanArrayExtra(EXTRA_MISSION_IS_URLS);
         mission.enqueued = false;
+        mission.timestamp = System.currentTimeMillis();
+        // DownloadManager normally gives every mission a metadata file and DownloadMission
+        // assumes one exists: notifyFinished() -> deleteThisFromFile() dereferences it without a
+        // null check, so a standalone mission would throw NPE on the download thread *before*
+        // sending MESSAGE_FINISHED - the download would sit at 99% forever with nothing running.
+        mission.metadata = new File(dir, ".mission");
+        if (!mission.metadata.exists() && !mission.metadata.createNewFile()) {
+            throw new IllegalStateException(
+                    "could not create " + mission.metadata.getAbsolutePath());
+        }
         mission.mHandler = new Handler(Looper.getMainLooper(), msg -> {
             onMissionMessage(msg.what, (DownloadMission) msg.obj);
             return true;
@@ -350,12 +360,16 @@ public final class CacheDownloadService extends Service {
             if (length <= 0) {
                 continue;
             }
-            // Cap at 99: 100 is reserved for "finished and written to the database", and
-            // post-processing (muxing) still runs after the bytes are all downloaded.
+            // Cap at 99: 100 is reserved for "finished and written to the database". Once the
+            // bytes are in, remuxing/post-processing still has to run, which for a long video is
+            // slow and reports no byte progress - so say so rather than showing a frozen "99%"
+            // that looks indistinguishable from a hang.
+            final boolean processing = mission.done >= length || mission.isPsRunning();
             final int percent = (int) Math.min(99, mission.done * 100 / length);
-            updateNotification(intent.getStringExtra(EXTRA_TITLE), percent);
+            updateNotification(intent.getStringExtra(EXTRA_TITLE), percent, processing);
             CacheManager.reportProgress(intent.getIntExtra(EXTRA_SERVICE_ID, 0),
-                    intent.getStringExtra(EXTRA_URL), percent);
+                    intent.getStringExtra(EXTRA_URL),
+                    processing ? CacheManager.PROGRESS_PROCESSING : percent);
         }
         scheduleProgressPoll();
     }
@@ -380,6 +394,12 @@ public final class CacheDownloadService extends Service {
 
     @NonNull
     private Notification buildNotification(@Nullable final String title, final int percent) {
+        return buildNotification(title, percent, false);
+    }
+
+    @NonNull
+    private Notification buildNotification(@Nullable final String title, final int percent,
+                                           final boolean processing) {
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(
                 this, getString(R.string.notification_channel_id))
                 .setSmallIcon(R.drawable.ic_newpipe_triangle_white)
@@ -394,6 +414,11 @@ public final class CacheDownloadService extends Service {
             builder.setContentText(getString(R.string.cache_notification_done, title));
             builder.setOngoing(false);
             builder.setProgress(0, 0, false);
+        } else if (processing) {
+            // Indeterminate: remuxing reports no byte progress, and a bar parked at 99% for
+            // minutes reads as a hang.
+            builder.setContentText(getString(R.string.cache_processing_notification, title));
+            builder.setProgress(0, 0, true);
         } else {
             builder.setProgress(100, percent, percent == 0);
         }
@@ -401,10 +426,15 @@ public final class CacheDownloadService extends Service {
     }
 
     private void updateNotification(@Nullable final String title, final int percent) {
+        updateNotification(title, percent, false);
+    }
+
+    private void updateNotification(@Nullable final String title, final int percent,
+                                    final boolean processing) {
         final NotificationManager manager = ContextCompat.getSystemService(this,
                 NotificationManager.class);
         if (manager != null) {
-            manager.notify(NOTIFICATION_ID, buildNotification(title, percent));
+            manager.notify(NOTIFICATION_ID, buildNotification(title, percent, processing));
         }
     }
 

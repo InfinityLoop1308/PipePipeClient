@@ -59,6 +59,7 @@ public class StreamInfoItemHolder extends InfoItemHolder {
     private final AnimatedProgressBar itemProgressView;
     public final TextView itemAdditionalDetails;
     private final ImageView itemCacheStatusView;
+    private final TextView itemCacheProgressView;
 
     public StreamInfoItemHolder(final InfoItemBuilder infoItemBuilder, final ViewGroup parent) {
         this(infoItemBuilder, R.layout.list_stream_item, parent);
@@ -74,6 +75,7 @@ public class StreamInfoItemHolder extends InfoItemHolder {
         itemProgressView = itemView.findViewById(R.id.itemProgressView);
         itemAdditionalDetails = itemView.findViewById(R.id.itemAdditionalDetails);
         itemCacheStatusView = itemView.findViewById(R.id.itemCacheStatusView);
+        itemCacheProgressView = itemView.findViewById(R.id.itemCacheProgressView);
     }
 
     @Override
@@ -146,11 +148,25 @@ public class StreamInfoItemHolder extends InfoItemHolder {
         itemAdditionalDetails.setText(getStreamInfoDetailLine(item));
 
         if (itemCacheStatusView != null) {
-            bindCacheStatus(itemCacheStatusView, item);
+            bindCacheStatus(itemCacheStatusView, itemCacheProgressView, item);
         }
     }
 
     static void bindCacheStatus(final ImageView cacheStatusView, final StreamInfoItem item) {
+        bindCacheStatus(cacheStatusView, null, item);
+    }
+
+    /**
+     * Shows the cache state on a list row: the offline pin once cached, or - while a cache
+     * download is running - the live percentage, because a bare download arrow gives no sense of
+     * whether anything is actually happening.
+     *
+     * @param cacheProgressView optional text badge for the percentage; when absent the icon is
+     *                          used for the downloading state too
+     */
+    static void bindCacheStatus(final ImageView cacheStatusView,
+                                final TextView cacheProgressView,
+                                final StreamInfoItem item) {
         final Context context = cacheStatusView.getContext();
         final CacheManager.CacheDisplayState state = CacheManager.getCacheDisplayState(
                 context, item.getServiceId(), item.getUrl());
@@ -160,16 +176,36 @@ public class StreamInfoItemHolder extends InfoItemHolder {
                 cacheStatusView.setImageResource(R.drawable.ic_offline_pin);
                 cacheStatusView.setContentDescription(
                         context.getString(R.string.cache_offline_badge_desc));
+                if (cacheProgressView != null) {
+                    cacheProgressView.setVisibility(View.GONE);
+                }
                 break;
             case DOWNLOADING:
-                cacheStatusView.setVisibility(View.VISIBLE);
-                cacheStatusView.setImageResource(R.drawable.ic_file_download);
-                cacheStatusView.setContentDescription(
-                        context.getString(R.string.cache_downloading_badge_desc));
+                final int percent = CacheManager.getProgressBlocking(
+                        item.getServiceId(), item.getUrl());
+                final String label = percent == CacheManager.PROGRESS_PROCESSING
+                        ? context.getString(R.string.cache_processing_short)
+                        : percent + "%";
+                if (cacheProgressView != null) {
+                    // Percentage badge replaces the icon so the two don't overlap in the corner.
+                    cacheStatusView.setVisibility(View.GONE);
+                    cacheProgressView.setVisibility(View.VISIBLE);
+                    cacheProgressView.setText(label);
+                    cacheProgressView.setContentDescription(
+                            context.getString(R.string.cache_downloading_badge_desc));
+                } else {
+                    cacheStatusView.setVisibility(View.VISIBLE);
+                    cacheStatusView.setImageResource(R.drawable.ic_file_download);
+                    cacheStatusView.setContentDescription(
+                            context.getString(R.string.cache_downloading_badge_desc));
+                }
                 break;
             case NONE:
             default:
                 cacheStatusView.setVisibility(View.GONE);
+                if (cacheProgressView != null) {
+                    cacheProgressView.setVisibility(View.GONE);
+                }
                 break;
         }
     }

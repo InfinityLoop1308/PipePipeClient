@@ -28,6 +28,7 @@ public class StreamMiniInfoItemHolder extends InfoItemHolder {
     public final TextView itemDurationView;
     private final AnimatedProgressBar itemProgressView;
     private final ImageView itemCacheStatusView;
+    private final TextView itemCacheProgressView;
 
     StreamMiniInfoItemHolder(final InfoItemBuilder infoItemBuilder, final int layoutId,
                              final ViewGroup parent) {
@@ -39,6 +40,7 @@ public class StreamMiniInfoItemHolder extends InfoItemHolder {
         itemDurationView = itemView.findViewById(R.id.itemDurationView);
         itemProgressView = itemView.findViewById(R.id.itemProgressView);
         itemCacheStatusView = itemView.findViewById(R.id.itemCacheStatusView);
+        itemCacheProgressView = itemView.findViewById(R.id.itemCacheProgressView);
     }
 
     public StreamMiniInfoItemHolder(final InfoItemBuilder infoItemBuilder, final ViewGroup parent) {
@@ -113,7 +115,7 @@ public class StreamMiniInfoItemHolder extends InfoItemHolder {
         }
 
         if (itemCacheStatusView != null) {
-            StreamInfoItemHolder.bindCacheStatus(itemCacheStatusView, item);
+            StreamInfoItemHolder.bindCacheStatus(itemCacheStatusView, itemCacheProgressView, item);
         }
     }
 

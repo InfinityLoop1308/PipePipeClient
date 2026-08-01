@@ -100,6 +100,13 @@ public final class CacheManager {
 
     public static final int PROGRESS_FAILED = -1;
     public static final int PROGRESS_DONE = 100;
+    /**
+     * All bytes are downloaded but the file is still being remuxed/post-processed. A distinct
+     * sentinel rather than 99 so the UI can say "Processing…" instead of sitting on a frozen
+     * "99%" that is indistinguishable from a hang - and so it can't be confused with a genuine
+     * 99% of bytes.
+     */
+    public static final int PROGRESS_PROCESSING = -2;
 
     /**
      * Records and broadcasts a download progress update. A {@code percent} of
@@ -109,9 +116,11 @@ public final class CacheManager {
     public static void reportProgress(final int serviceId, @NonNull final String url,
                                       final int percent) {
         final String key = cacheKey(serviceId, url);
-        if (percent < 0 || percent >= PROGRESS_DONE) {
+        if (percent == PROGRESS_FAILED || percent >= PROGRESS_DONE) {
             PROGRESS_BY_KEY.remove(key);
         } else {
+            // 0-99 while fetching bytes, or PROGRESS_PROCESSING while remuxing: both mean the
+            // stream is still being worked on and list badges should keep showing it.
             PROGRESS_BY_KEY.put(key, percent);
         }
         cacheProgress.onNext(new CacheProgressEvent(serviceId, url, percent));
@@ -532,7 +541,7 @@ public final class CacheManager {
         if (isCachedBlocking(context, serviceId, url)) {
             return CacheDisplayState.CACHED;
         }
-        if (getProgressBlocking(serviceId, url) >= 0) {
+        if (getProgressBlocking(serviceId, url) != PROGRESS_FAILED) {
             return CacheDisplayState.DOWNLOADING;
         }
         return CacheDisplayState.NONE;
