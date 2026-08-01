@@ -173,6 +173,20 @@
                 android:value="long_running_download" />
         </service>
 
+        <!-- cache for offline viewing (issue #2782) -->
+        <activity
+            android:name=".local.cache.CacheActivity"
+            android:label="@string/cached_videos_title"
+            android:launchMode="singleTask" />
+
+        <service
+            android:name=".local.cache.CacheDownloadService"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="long_running_download" />
+        </service>
+
         <activity
                 android:name=".util.FilePickerActivityHelper"
                 android:label="@string/app_name"

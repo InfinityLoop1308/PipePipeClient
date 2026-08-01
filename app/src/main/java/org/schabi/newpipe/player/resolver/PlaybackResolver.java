@@ -160,6 +160,15 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                                         @NonNull final MediaItemTag metadata,
                                         final long initialPositionMs)
             throws IOException {
+        // Streams cached for offline viewing (issue #2782) are plain local files by the time
+        // they reach here, regardless of which service they came from - play them back like
+        // any other progressive local file instead of going through service-specific (e.g.
+        // YouTube SABR) resolution, which expects a live remote stream.
+        final String content = stream.getContent();
+        if (content != null && content.startsWith("file://")) {
+            return buildProgressiveMediaSource(dataSource, stream, cacheKey, metadata);
+        }
+
         StreamingService service = streamInfo.getService();
         if (ServiceList.YouTube.equals(service)) {
             return createYoutubeMediaSource(stream, streamInfo, dataSource, cacheKey, metadata,

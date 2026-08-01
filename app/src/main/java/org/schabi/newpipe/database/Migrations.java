@@ -29,6 +29,7 @@ public final class Migrations {
     public static final int DB_VER_9 = 9;
     public static final int DB_VER_900 = 900;
     public static final int DB_VER_901 = 901;
+    public static final int DB_VER_902 = 902;
 
     private static final String TAG = Migrations.class.getName();
     public static final boolean DEBUG = MainActivity.DEBUG;
@@ -427,6 +428,31 @@ public final class Migrations {
         }
     };
 
+
+    public static final Migration MIGRATION_901_902 = new Migration(DB_VER_901, DB_VER_902) {
+        @Override
+        public void migrate(@NonNull final SupportSQLiteDatabase database) {
+            // Table backing the "cache for offline viewing" feature (issue #2782):
+            // stores enough stream metadata + local file paths to render and play a
+            // video/audio pair without hitting the network again.
+            database.execSQL("CREATE TABLE IF NOT EXISTS `cached_streams` "
+                    + "(`uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+                    + "`service_id` INTEGER NOT NULL, `url` TEXT NOT NULL, `stream_id` TEXT NOT NULL, "
+                    + "`title` TEXT NOT NULL, "
+                    + "`stream_type` TEXT NOT NULL, `duration` INTEGER NOT NULL, "
+                    + "`uploader_name` TEXT, `uploader_url` TEXT, `uploader_avatar_url` TEXT, "
+                    + "`thumbnail_url` TEXT, `textual_upload_date` TEXT, "
+                    + "`view_count` INTEGER NOT NULL, `description` TEXT, "
+                    + "`video_file_path` TEXT, `audio_file_path` TEXT, "
+                    + "`video_media_format` TEXT, `audio_media_format` TEXT, "
+                    + "`sponsor_block_segments` TEXT, "
+                    + "`total_size_bytes` INTEGER NOT NULL, `cached_at` INTEGER NOT NULL, "
+                    + "`is_complete` INTEGER NOT NULL)");
+            database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS "
+                    + "`index_cached_streams_service_id_url` ON `cached_streams` "
+                    + "(`service_id`, `url`)");
+        }
+    };
 
     private Migrations() {
     }

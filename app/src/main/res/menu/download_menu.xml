@@ -30,4 +30,10 @@
         android:title="@string/clear_download_history"
         android:visible="false"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/open_cached_videos"
+        android:icon="@drawable/ic_offline_pin"
+        android:title="@string/cached_videos_title"
+        app:showAsAction="ifRoom" />
 </menu>

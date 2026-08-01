@@ -90,6 +90,10 @@ public class DownloadActivity extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
+            case R.id.open_cached_videos:
+                startActivity(new Intent(this,
+                        org.schabi.newpipe.local.cache.CacheActivity.class));
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

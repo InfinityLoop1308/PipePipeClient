@@ -58,7 +58,9 @@ import org.schabi.newpipe.App;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.databinding.FragmentVideoDetailBinding;
+import org.schabi.newpipe.database.cache.model.CachedStreamEntity;
 import org.schabi.newpipe.download.DownloadDialog;
+import org.schabi.newpipe.local.cache.CacheManager;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.ReCaptchaActivity;
@@ -213,6 +215,7 @@ public final class VideoDetailFragment
 
     @Nullable
     private StreamInfo currentInfo = null;
+    private boolean playedFromCache = false;
     private Disposable currentWorker;
     @NonNull
     private final CompositeDisposable disposables = new CompositeDisposable();
@@ -542,6 +545,8 @@ public final class VideoDetailFragment
                     PermissionHelper.DOWNLOAD_DIALOG_REQUEST_CODE)) {
                 this.openDownloadDialog();
             }
+        } else if (id == R.id.detail_controls_cache) {
+            toggleCacheForOfflineViewing();
         } else if (id == R.id.detail_controls_share) {
             if (currentInfo != null) {
                 ShareUtils.shareText(requireContext(), currentInfo.getName(),
@@ -778,6 +783,7 @@ public final class VideoDetailFragment
         binding.detailControlsPlaylistAppend.setOnLongClickListener(this);
         binding.detailControlsDownload.setOnClickListener(this);
         binding.detailControlsDownload.setOnLongClickListener(this);
+        binding.detailControlsCache.setOnClickListener(this);
         binding.detailControlsShare.setOnClickListener(this);
         binding.detailControlsOpenInBrowser.setOnClickListener(this);
         binding.detailControlsStartSleepTimer.setOnClickListener(this);
@@ -1047,8 +1053,19 @@ public final class VideoDetailFragment
 
     private void runWorker(final boolean forceLoad, final boolean addToBackStack) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        currentWorker = ExtractorHelper.getStreamInfo(serviceId, url, forceLoad
-                        || url.contains("live.bilibili.com"))
+        final boolean forceNetwork = forceLoad || url.contains("live.bilibili.com");
+        // "Cache for offline viewing" (issue #2782): if the user cached this stream, load it
+        // straight from disk instead of hitting the network, unless a refresh was requested.
+        final Single<StreamInfo> streamInfoSingle = forceNetwork
+                ? ExtractorHelper.getStreamInfo(serviceId, url, true)
+                : CacheManager.findCachedStream(activity, serviceId, url)
+                        .map(CacheManager::buildStreamInfoFromCache)
+                        .doOnSuccess(info -> playedFromCache = true)
+                        .switchIfEmpty(ExtractorHelper.getStreamInfo(serviceId, url, false)
+                                .toMaybe())
+                        .toSingle();
+        playedFromCache = false;
+        currentWorker = streamInfoSingle
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> {
@@ -1056,6 +1073,10 @@ public final class VideoDetailFragment
                     hideMainPlayerOnLoadingNewStream();
                     handleResult(result);
                     showContent();
+                    if (playedFromCache) {
+                        Toast.makeText(activity, R.string.playing_from_cache, Toast.LENGTH_SHORT)
+                                .show();
+                    }
                     if (addToBackStack) {
                         if (playQueue == null) {
                             playQueue = new SinglePlayQueue(result);
@@ -2027,6 +2048,48 @@ public final class VideoDetailFragment
             ErrorUtil.showSnackbar(activity, new ErrorInfo(e, UserAction.DOWNLOAD_OPEN_DIALOG,
                     "Showing download dialog", currentInfo));
         }
+    }
+
+    /**
+     * "Cache for offline viewing" feature requested in
+     * https://github.com/InfinityLoop1308/PipePipe/issues/2782: caches the stream's
+     * video/audio, thumbnail metadata and SponsorBlock segments so it can be watched offline
+     * and then thrown away, without going through the export-to-storage download flow.
+     */
+    private void toggleCacheForOfflineViewing() {
+        if (currentInfo == null || activity == null) {
+            return;
+        }
+        final StreamInfo info = currentInfo;
+        disposables.add(CacheManager.findCachedStream(activity, info.getServiceId(), info.getUrl())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        cached -> confirmRemoveFromCache(cached),
+                        throwable -> ErrorUtil.showSnackbar(activity, new ErrorInfo(throwable,
+                                UserAction.REQUESTED_STREAM, "Checking offline cache", info)),
+                        () -> startCachingForOfflineViewing(info)));
+    }
+
+    private void startCachingForOfflineViewing(@NonNull final StreamInfo info) {
+        CacheManager.startCaching(activity, info);
+        Toast.makeText(activity, R.string.cache_started, Toast.LENGTH_SHORT).show();
+    }
+
+    private void confirmRemoveFromCache(@NonNull final CachedStreamEntity cached) {
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.cache_remove_confirm_title)
+                .setMessage(R.string.cache_remove_confirm_message)
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
+                    disposables.add(io.reactivex.rxjava3.core.Completable
+                            .fromAction(() -> CacheManager.removeCache(activity, cached))
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(() -> Toast.makeText(activity, R.string.cache_removed,
+                                    Toast.LENGTH_SHORT).show()));
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     /*//////////////////////////////////////////////////////////////////////////

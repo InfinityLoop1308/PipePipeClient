@@ -568,6 +568,22 @@
                             android:textSize="@dimen/detail_control_text_size"
                             app:drawableTopCompat="@drawable/ic_cast" />
 
+                        <org.schabi.newpipe.views.NewPipeTextView
+                            android:id="@+id/detail_controls_cache"
+                            android:layout_width="@dimen/detail_control_width"
+                            android:layout_height="@dimen/detail_control_height"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            android:contentDescription="@string/controls_cache_desc"
+                            android:focusable="true"
+                            android:gravity="center"
+                            android:paddingVertical="@dimen/detail_control_padding"
+                            android:text="@string/controls_cache_title"
+                            android:textSize="@dimen/detail_control_text_size"
+                            app:drawableTopCompat="@drawable/ic_offline_pin" />
+
                         <TextView
                             android:id="@+id/detail_controls_crash_the_player"
                             android:layout_width="@dimen/detail_control_width"
