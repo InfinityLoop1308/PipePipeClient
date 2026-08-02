@@ -74,7 +74,7 @@ data class StreamItem(
         when (state) {
             CacheManager.CacheDisplayState.CACHED -> {
                 cacheStatusView.visibility = View.VISIBLE
-                cacheStatusView.setImageResource(R.drawable.ic_offline_pin)
+                cacheStatusView.setImageResource(R.drawable.ic_cached_offline)
                 cacheStatusView.contentDescription = context.getString(R.string.cache_offline_badge_desc)
                 cacheProgressView.visibility = View.GONE
             }

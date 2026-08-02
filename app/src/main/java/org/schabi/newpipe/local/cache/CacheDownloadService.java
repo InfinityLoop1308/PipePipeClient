@@ -52,6 +52,7 @@ public final class CacheDownloadService extends Service {
     private static final long STALL_WARN_MS = 30_000;
     private static final long STALL_LOG_INTERVAL_MS = 60_000;
     private static final long STALL_ABORT_MS = 180_000;
+    private static final long NEVER_STARTED_ABORT_MS = 45_000;
 
     private static final String EXTRA_SERVICE_ID = "cache_service_id";
     private static final String EXTRA_URL = "cache_url";
@@ -266,8 +267,14 @@ public final class CacheDownloadService extends Service {
         // it downloads, rather than the screen staying empty until the moment it finishes.
         // Offline playback deliberately ignores incomplete rows - see findCompleteCachedStream.
         final CachedStreamEntity placeholder = buildEntity(intent, target, false);
-        runOffMainThread(() -> NewPipeDatabase.getInstance(getApplicationContext())
-                .cachedStreamDAO().insert(placeholder));
+        runOffMainThread(() -> {
+            // Drop any leftover row from an attempt that never finished, so a retry starts from
+            // a clean slate rather than inheriting the previous attempt's state.
+            NewPipeDatabase.getInstance(getApplicationContext()).cachedStreamDAO()
+                    .deleteByUrl(serviceId, url);
+            NewPipeDatabase.getInstance(getApplicationContext()).cachedStreamDAO()
+                    .insert(placeholder);
+        });
         CacheManager.registerRunningMission(serviceId, url, mission);
         CacheManager.cacheChanges.onNext(new CacheManager.CacheChangeEvent(serviceId, url, false));
 
@@ -439,6 +446,11 @@ public final class CacheDownloadService extends Service {
             final Intent intent = entry.getValue();
             final long length = mission.getLength();
             if (length <= 0) {
+                // A mission that never reports a length never initialised - it produced no bytes
+                // and no error. Skipping it here (as this used to) meant the stall watchdog never
+                // saw it either, so a download that silently failed to start just sat there
+                // forever with no progress and no failure. Watch it too.
+                watchForStall(mission, intent, 0, false);
                 continue;
             }
             // "Processing" means ffmpeg is actually remuxing, which is the only phase that
@@ -493,11 +505,19 @@ public final class CacheDownloadService extends Service {
             return;
         }
         final long stalledMs = now - watch[1];
+        // A mission that has produced nothing and never initialised didn't start at all, as
+        // opposed to one that stalled midway. Give up on it much sooner: there is nothing to wait
+        // for, and leaving it "in progress" is what made a failed start look like a live download.
+        final boolean neverStarted = mission.done == 0 && !mission.isInitialized();
+        final long abortAfterMs = neverStarted ? NEVER_STARTED_ABORT_MS : STALL_ABORT_MS;
         if (stalledMs < STALL_WARN_MS || now - watch[2] < STALL_LOG_INTERVAL_MS) {
-            return;
+            if (!(neverStarted && stalledMs >= abortAfterMs)) {
+                return;
+            }
         }
         watch[2] = now;
-        final String state = "STALLED " + (stalledMs / 1000) + "s at " + percent + "%"
+        final String state = (neverStarted ? "NEVER STARTED after " : "STALLED ")
+                + (stalledMs / 1000) + "s at " + percent + "%"
                 + " url=" + intent.getStringExtra(EXTRA_URL)
                 + " done=" + mission.done
                 + " length=" + mission.getLength()
@@ -511,7 +531,7 @@ public final class CacheDownloadService extends Service {
                 + " finished=" + mission.isFinished();
         CacheLogger.w(this, TAG, state);
 
-        if (stalledMs >= STALL_ABORT_MS) {
+        if (stalledMs >= abortAfterMs) {
             // Never leave a download hanging indefinitely: give up with a visible error so the
             // user can retry, instead of a percentage that sits there forever.
             final int serviceId = intent.getIntExtra(EXTRA_SERVICE_ID, 0);

@@ -22,7 +22,7 @@
         android:id="@+id/menu_item_feed_toggle_cached_only"
         android:checkable="true"
         android:checked="false"
-        android:icon="@drawable/ic_offline_pin"
+        android:icon="@drawable/ic_cached_offline"
         android:title="@string/feed_toggle_show_cached_only"
         app:showAsAction="collapseActionView" />
 

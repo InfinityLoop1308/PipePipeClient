@@ -34,7 +34,7 @@
         android:background="@color/duration_background_color"
         android:contentDescription="@string/cache_offline_badge_desc"
         android:padding="2dp"
-        android:src="@drawable/ic_offline_pin"
+        android:src="@drawable/ic_cached_offline"
         android:tint="@color/duration_text_color"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="@id/itemThumbnailView"

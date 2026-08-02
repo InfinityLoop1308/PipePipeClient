@@ -158,7 +158,9 @@ public enum StreamDialogDefaultEntry {
                 "context menu Cache/Uncache tapped for url=" + item.getUrl()
                         + " currentlyCached=" + cached);
         if (cached) {
-            CacheManager.findCachedStream(context, item.getServiceId(), item.getUrl())
+            // Complete entries only: an unfinished row is a failed attempt, and offering to
+            // delete it rather than retry is what made a broken cache impossible to restart.
+            CacheManager.findCompleteCachedStream(context, item.getServiceId(), item.getUrl())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(cachedEntity -> new AlertDialog.Builder(context)

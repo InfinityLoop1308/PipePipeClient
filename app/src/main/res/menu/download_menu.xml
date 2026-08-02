@@ -33,7 +33,7 @@
 
     <item
         android:id="@+id/open_cached_videos"
-        android:icon="@drawable/ic_offline_pin"
+        android:icon="@drawable/ic_cached_offline"
         android:title="@string/cached_videos_title"
         app:showAsAction="ifRoom" />
 </menu>

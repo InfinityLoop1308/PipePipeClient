@@ -2115,7 +2115,12 @@ public final class VideoDetailFragment
         final StreamInfo info = currentInfo;
         CacheLogger.d(activity, "VideoDetailFragment",
                 "cache button tapped for url=" + info.getUrl());
-        disposables.add(CacheManager.findCachedStream(activity, info.getServiceId(), info.getUrl())
+        // Only a *finished* entry means "already cached, offer to remove it". An unfinished row
+        // is the leftover of an attempt that failed or was interrupted, and tapping Cache on one
+        // used to offer to delete it instead of retrying - which made a failed cache look
+        // impossible to restart. Those fall through to caching again, which cleans up first.
+        disposables.add(CacheManager.findCompleteCachedStream(
+                        activity, info.getServiceId(), info.getUrl())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -2188,7 +2193,7 @@ public final class VideoDetailFragment
         binding.detailControlsCache.setContentDescription(getString(cached
                 ? R.string.controls_cache_delete_desc : R.string.controls_cache_desc));
         binding.detailControlsCache.setCompoundDrawablesWithIntrinsicBounds(
-                0, cached ? R.drawable.ic_delete : R.drawable.ic_offline_pin, 0, 0);
+                0, cached ? R.drawable.ic_delete : R.drawable.ic_cached_offline, 0, 0);
     }
 
     /**

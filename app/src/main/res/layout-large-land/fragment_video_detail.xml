@@ -519,7 +519,7 @@
                                 android:paddingVertical="@dimen/detail_control_padding"
                                 android:text="@string/controls_cache_title"
                                 android:textSize="@dimen/detail_control_text_size"
-                                app:drawableTopCompat="@drawable/ic_offline_pin" />
+                                app:drawableTopCompat="@drawable/ic_cached_offline" />
 
                         </LinearLayout>
 

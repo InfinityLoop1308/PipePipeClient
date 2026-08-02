@@ -173,7 +173,7 @@ public class StreamInfoItemHolder extends InfoItemHolder {
         switch (state) {
             case CACHED:
                 cacheStatusView.setVisibility(View.VISIBLE);
-                cacheStatusView.setImageResource(R.drawable.ic_offline_pin);
+                cacheStatusView.setImageResource(R.drawable.ic_cached_offline);
                 cacheStatusView.setContentDescription(
                         context.getString(R.string.cache_offline_badge_desc));
                 if (cacheProgressView != null) {

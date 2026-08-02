@@ -1,0 +1,19 @@
+<!--
+  "Available offline" badge for the cache-for-offline-viewing feature.
+
+  The previous icon was @drawable/ic_offline_pin, which despite its name contains the Material
+  "account_circle" path - a head and shoulders in a circle - so every cached video was marked
+  with what looked like a user profile picture. This is Material's "download_done" (a check over
+  a baseline): unambiguous, and clearly distinct from ic_file_download, which marks a cache
+  download still in progress.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:tint="@color/defaultIconTint"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M4,19h16v2H4V19zM9,14.5L4.5,10l1.41,-1.41L9,11.67l8.59,-8.58L19,4.5L9,14.5z" />
+</vector>
