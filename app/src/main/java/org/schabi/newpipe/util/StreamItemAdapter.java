@@ -13,7 +13,6 @@ import android.widget.TextView;
 import org.schabi.newpipe.DownloaderImpl;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.MediaFormat;
-import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.DeliveryMethod;
@@ -298,7 +297,7 @@ public class StreamItemAdapter<T extends Stream, U extends Stream> extends BaseA
             } else {
                 return -1;
             }
-            final YoutubeSabrFormat format = ((YoutubeSabrInfo) stream.getDeliveryMethodInfo())
+            final YoutubeSabrInfo.Format format = ((YoutubeSabrInfo) stream.getDeliveryMethodInfo())
                     .findFormatByItag(itag);
             return format != null && format.getContentLength() > 0
                     ? format.getContentLength() : -1;

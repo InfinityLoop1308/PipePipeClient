@@ -18,9 +18,8 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.schabi.newpipe.extractor.localization.Localization;
-import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrClientProfile;
-import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
+import org.schabi.newpipe.extractor.services.youtube.ItagItem;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
 
 import java.io.File;
@@ -67,8 +66,8 @@ public final class SabrSponsorBlockStallProbeTest {
         assumeProbeEnabled();
         final Context context = context();
         final String videoId = "discarded-prepared-source-probe";
-        final YoutubeSabrFormat audio = format(AUDIO_ITAG, true);
-        final YoutubeSabrFormat video = format(VIDEO_ITAG, false);
+        final YoutubeSabrInfo.Format audio = format(AUDIO_ITAG, true);
+        final YoutubeSabrInfo.Format video = format(VIDEO_ITAG, false);
         final YoutubeSabrInfo info = info(videoId, audio, video);
         final YoutubeSabrSession session = session(context, videoId, info, audio, video);
         final SabrSourceSpec spec = new SabrSourceSpec(videoId, info, audio, video,
@@ -88,8 +87,8 @@ public final class SabrSponsorBlockStallProbeTest {
         assumeProbeEnabled();
         final Context context = context();
         final String videoId = "failed-prepared-source-probe";
-        final YoutubeSabrFormat audio = format(AUDIO_ITAG, true);
-        final YoutubeSabrFormat video = format(VIDEO_ITAG, false);
+        final YoutubeSabrInfo.Format audio = format(AUDIO_ITAG, true);
+        final YoutubeSabrInfo.Format video = format(VIDEO_ITAG, false);
         final YoutubeSabrInfo info = info(videoId, audio, video);
         final YoutubeSabrSession session = session(context, videoId, info, audio, video);
         final SabrSourceSpec spec = new SabrSourceSpec(videoId, info, audio, video,
@@ -269,8 +268,8 @@ public final class SabrSponsorBlockStallProbeTest {
         assumeProbeEnabled();
         final Context context = context();
         final String videoId = "composite-session-key-probe";
-        final YoutubeSabrFormat audio = format(AUDIO_ITAG, true);
-        final YoutubeSabrFormat video = format(VIDEO_ITAG, false);
+        final YoutubeSabrInfo.Format audio = format(AUDIO_ITAG, true);
+        final YoutubeSabrInfo.Format video = format(VIDEO_ITAG, false);
         final YoutubeSabrInfo info = info(videoId, audio, video);
         final SabrSourceSpec firstSpec = spec(videoId, info, audio, video);
         final SabrSourceSpec secondSpec = spec(videoId, info, audio, video);
@@ -330,15 +329,15 @@ public final class SabrSponsorBlockStallProbeTest {
     }
 
     private static SabrSourceSpec spec(final String videoId) throws Exception {
-        final YoutubeSabrFormat audio = format(AUDIO_ITAG, true);
-        final YoutubeSabrFormat video = format(VIDEO_ITAG, false);
+        final YoutubeSabrInfo.Format audio = format(AUDIO_ITAG, true);
+        final YoutubeSabrInfo.Format video = format(VIDEO_ITAG, false);
         return spec(videoId, info(videoId, audio, video), audio, video);
     }
 
     private static SabrSourceSpec spec(final String videoId,
                                        final YoutubeSabrInfo info,
-                                       final YoutubeSabrFormat audio,
-                                       final YoutubeSabrFormat video) {
+                                       final YoutubeSabrInfo.Format audio,
+                                       final YoutubeSabrInfo.Format video) {
         return new SabrSourceSpec(videoId, info, audio, video,
                 new Localization("en", "US"), AUDIO_INIT, VIDEO_INIT);
     }
@@ -356,11 +355,11 @@ public final class SabrSponsorBlockStallProbeTest {
     private static YoutubeSabrSession session(final Context context,
                                               final String videoId,
                                               final YoutubeSabrInfo info,
-                                              final YoutubeSabrFormat audio,
-                                              final YoutubeSabrFormat video) {
+                                              final YoutubeSabrInfo.Format audio,
+                                              final YoutubeSabrInfo.Format video) {
         final File spoolDirectory = new File(context.getCacheDir(),
                 "sabr-lease-probe-" + videoId + '-' + System.nanoTime());
-        return new YoutubeSabrSession(info, audio, video, null, spoolDirectory);
+        return new YoutubeSabrSession(info, audio, video, spoolDirectory);
     }
 
     private static boolean sessionCacheClosed(final YoutubeSabrSession session) throws Exception {
@@ -409,21 +408,18 @@ public final class SabrSponsorBlockStallProbeTest {
         return (AtomicInteger) field.get(holder);
     }
 
-    private static YoutubeSabrFormat format(final int itag, final boolean audio)
+    private static YoutubeSabrInfo.Format format(final int itag, final boolean audio)
             throws Exception {
-        final Constructor<YoutubeSabrFormat> constructor =
-                YoutubeSabrFormat.class.getDeclaredConstructor(int.class, long.class,
-                        String.class, String.class, String.class, String.class, boolean.class,
-                        String.class, String.class, boolean.class, int.class, int.class,
-                        int.class, long.class, long.class, String.class, long.class, long.class);
-        constructor.setAccessible(true);
-        return constructor.newInstance(itag, 123456L, null,
+        final ItagItem parsedFormat = ItagItem.getItag(itag);
+        parsedFormat.setWidth(audio ? -1 : 1920);
+        parsedFormat.setHeight(audio ? -1 : 1080);
+        parsedFormat.setBitrate(audio ? 128_000 : 2_000_000);
+        parsedFormat.setContentLength(100_000L);
+        parsedFormat.setApproxDurationMs(300_000L);
+        return YoutubeSabrInfo.Format.fromParsedFormat(parsedFormat, 123456L, null,
                 audio ? "audio/mp4" : "video/mp4",
-                audio ? "audio-track" : null, audio ? "Original" : null, audio,
-                audio ? null : "1080p", audio ? "AUDIO_QUALITY_MEDIUM" : null, false,
-                audio ? -1 : 1920, audio ? -1 : 1080,
-                audio ? 128_000 : 2_000_000, 100_000L, 300_000L,
-                null, -1L, -1L);
+                audio ? "audio-track" : null, audio ? "Original" : null,
+                false, null, -1L, -1L);
     }
 
     private static byte[] mp4Sidx(final int... durationsMs) {
@@ -447,13 +443,13 @@ public final class SabrSponsorBlockStallProbeTest {
     }
 
     private static YoutubeSabrInfo info(final String videoId,
-                                        final YoutubeSabrFormat... formats) throws Exception {
+                                        final YoutubeSabrInfo.Format... formats) throws Exception {
         final Constructor<YoutubeSabrInfo> constructor =
-                YoutubeSabrInfo.class.getDeclaredConstructor(YoutubeSabrClientProfile.class,
+                YoutubeSabrInfo.class.getDeclaredConstructor(
                         String.class, String.class, String.class, String.class, String.class,
                         String.class, java.util.List.class);
         constructor.setAccessible(true);
-        return constructor.newInstance(YoutubeSabrClientProfile.MWEB, videoId, "cpn",
+        return constructor.newInstance(videoId, "cpn",
                 "2.20250122.04.00", "visitor", "https://sabr.test", null,
                 Arrays.asList(formats));
     }

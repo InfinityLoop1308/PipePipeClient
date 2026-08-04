@@ -1,5 +1,6 @@
 package org.schabi.newpipe.player.datasource;
 
+import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import android.net.Uri;
 import android.util.Log;
 
@@ -11,16 +12,13 @@ import androidx.media3.datasource.DataSpec;
 import androidx.media3.datasource.TransferListener;
 
 import org.schabi.newpipe.extractor.localization.Localization;
-import org.schabi.newpipe.extractor.services.youtube.sabr.SabrMediaSegment;
+import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrMediaSegment;
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrSegmentRequest;
-import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
-import java.util.List;
-import java.util.Map;
 
 public final class SabrSegmentDataSource implements DataSource {
     private static final String TAG = "SabrSegmentDataSource";
@@ -37,7 +35,7 @@ public final class SabrSegmentDataSource implements DataSource {
     private final SabrSessionHandle sessionHandle;
     private final Object readerOwner;
     @Nullable
-    private final YoutubeSabrFormat fixedFormat;
+    private final YoutubeSabrInfo.Format fixedFormat;
     private final Localization localization;
     private final boolean prependInit;
 
@@ -58,7 +56,7 @@ public final class SabrSegmentDataSource implements DataSource {
 
     public SabrSegmentDataSource(final SabrSessionStore.Holder holder,
                                  final Object readerOwner,
-                                 final YoutubeSabrFormat format,
+                                 final YoutubeSabrInfo.Format format,
                                  final Localization localization,
                                  final boolean prependInit) {
         this.holder = holder;
@@ -114,7 +112,7 @@ public final class SabrSegmentDataSource implements DataSource {
         this.progressiveDataEndPosition = -1;
         this.pos = (int) Math.max(0, dataSpec.position);
         SabrSegmentRequest request = requestFromUri(dataSpec.uri);
-        final YoutubeSabrFormat format = request.getFormat();
+        final YoutubeSabrInfo.Format format = request.getFormat();
         final long availableRemaining;
         final int openedBytes;
         Log.d(TAG, "open video=" + holder.videoId
@@ -179,7 +177,7 @@ public final class SabrSegmentDataSource implements DataSource {
         return bytesRemaining;
     }
 
-    private byte[] getInitializationData(final YoutubeSabrFormat format) throws IOException {
+    private byte[] getInitializationData(final YoutubeSabrInfo.Format format) throws IOException {
         final int itag = format.getItag();
         final byte[] cached = holder.getInitializationData(itag);
         if (cached != null) {
@@ -237,7 +235,7 @@ public final class SabrSegmentDataSource implements DataSource {
                 || pos < progressiveDataEndPosition || !segment.isComplete() || holder == null) {
             return;
         }
-        final YoutubeSabrFormat format = segment.getHeader().getItag()
+        final YoutubeSabrInfo.Format format = segment.getHeader().getItag()
                 == holder.videoFormat.getItag() ? holder.videoFormat : holder.audioFormat;
         holder.setReaderPositionMs(readerOwner, progressiveReaderGeneration, format.getItag(),
                 segment.getHeader().getStartMs() + segment.getHeader().getDurationMs());
@@ -247,7 +245,7 @@ public final class SabrSegmentDataSource implements DataSource {
     }
 
     private SabrSegmentRequest requestFromUri(final Uri u) throws IOException {
-        final YoutubeSabrFormat format = formatFromUri(u);
+        final YoutubeSabrInfo.Format format = formatFromUri(u);
         final String seg = u.getLastPathSegment();
         if (seg == null) {
             throw new SabrLogicException("Bad SABR segment uri: " + u);
@@ -262,7 +260,7 @@ public final class SabrSegmentDataSource implements DataSource {
         }
     }
 
-    private YoutubeSabrFormat formatFromUri(final Uri u) throws IOException {
+    private YoutubeSabrInfo.Format formatFromUri(final Uri u) throws IOException {
         if (fixedFormat != null) {
             return fixedFormat;
         }
@@ -287,7 +285,7 @@ public final class SabrSegmentDataSource implements DataSource {
 
     @Nullable
     private SabrMediaSegment awaitSegment(final SabrSegmentRequest request) throws IOException {
-        final YoutubeSabrFormat format = request.getFormat();
+        final YoutubeSabrInfo.Format format = request.getFormat();
         holder.throwIfTerminal();
         if (holder.isInvalidated()) {
             throw invalidatedException(request.getFormat());
@@ -410,7 +408,7 @@ public final class SabrSegmentDataSource implements DataSource {
                 recoveryAtMs = -1;
                 lastRecoveryAtMs = -1;
             }
-            if (holder.session.getDemandBackoffRemainingMs() > 0) {
+            if (holder.session.getBackoffRemainingMs() > 0) {
                 // Server-directed pacing is not a playback stall. Keep polling so cancellation and
                 // reader replacement remain responsive, but do not let the local recovery watchdog
                 // reposition the session and attempt another request before the server deadline.
@@ -492,7 +490,7 @@ public final class SabrSegmentDataSource implements DataSource {
         }
     }
 
-    private SabrLogicException invalidatedException(final YoutubeSabrFormat format) {
+    private SabrLogicException invalidatedException(final YoutubeSabrInfo.Format format) {
         return new SabrLogicException("SABR session invalidated for video=" + holder.videoId
                 + ", itag=" + format.getItag() + ", " + holder.getInvalidationDetails());
     }

@@ -3,8 +3,8 @@ package us.shandian.giga.get
 import android.util.Log
 import org.schabi.newpipe.BuildConfig
 import org.schabi.newpipe.extractor.localization.Localization
-import org.schabi.newpipe.extractor.services.youtube.sabr.SabrProtocolException
-import org.schabi.newpipe.extractor.services.youtube.sabr.SabrRecoverableException
+import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrProtocolException
+import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrRecoverableException
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrSegmentRequest
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
@@ -94,9 +94,10 @@ internal class SabrDownloader(
             info,
             SabrDownloadFormatResolver.selectedAudioFormat(info, recoveries),
             SabrDownloadFormatResolver.selectedVideoFormat(info, recoveries),
-            LocalDomPoTokenProvider(mission.context),
             null,
         )
+        val poToken = LocalDomPoTokenProvider(mission.context).getPoToken(info, session.streamState)
+        session.streamState.setPoToken(poToken)
         val workDir = prepareWorkDirectory()
         val targets = SabrDownloadFormatResolver.buildTargets(info, recoveries, workDir)
         restoreTargets(targets)
@@ -124,6 +125,7 @@ internal class SabrDownloader(
                 session,
                 targets,
                 SabrSegmentWriter(session, targets, outputs, ::reportBytesWritten),
+                poToken,
             )
         } finally {
             outputs.values.forEach { output ->
@@ -298,14 +300,13 @@ internal class SabrDownloader(
         session: YoutubeSabrSession,
         targets: List<SabrDownloadTarget>,
         writer: SabrSegmentWriter,
+        poToken: ByteArray,
     ) {
         val localization = Localization("en", "US")
         writer.observeWrittenInitializations()
-        if (targets.size == 1 && !targets.first().initializationWritten) {
-            fetchInitializationsOrRetry(writer, localization)
-            writer.observeWrittenInitializations()
-            writer.drainCachedInitializations()
-        }
+        prepareInitializations(session, targets, writer, localization, poToken)
+        writer.observeWrittenInitializations()
+        writer.drainCachedInitializations()
 
         var emptyResponses = 0
         while (true) {
@@ -327,17 +328,6 @@ internal class SabrDownloader(
             wroteSegment = writer.drainCachedSegments() || wroteSegment
             enforceSessionCacheLimit(session, writer)
             configureInitializedSingleTargetMode(session, targets)
-            if (hasMediaWaitingForInitialization(targets)) {
-                fetchMissingInitializationsOrRetry(writer, localization)
-                writer.observeWrittenInitializations()
-                wroteSegment = writer.drainCachedInitializations() || wroteSegment
-                wroteSegment = writer.drainCachedSegments() || wroteSegment
-                configureInitializedSingleTargetMode(session, targets)
-                if (hasMediaWaitingForInitialization(targets)) {
-                    throw RetryColdStartException()
-                }
-            }
-
             if (isDownloadComplete(session, targets)) {
                 break
             }
@@ -356,33 +346,32 @@ internal class SabrDownloader(
         }
     }
 
-    @Throws(IOException::class)
-    private fun fetchInitializationsOrRetry(
+    @Throws(IOException::class, InterruptedException::class)
+    private fun prepareInitializations(
+        session: YoutubeSabrSession,
+        targets: List<SabrDownloadTarget>,
         writer: SabrSegmentWriter,
         localization: Localization,
+        poToken: ByteArray,
     ) {
-        try {
-            writer.fetchUnwrittenInitializations(localization)
-        } catch (error: SabrProtocolException) {
-            if (isRetryableInitializationProtocolError(error)) {
-                throw RetryColdStartException(error)
-            }
-            throw error
+        val pendingTargets = targets.filterNot { it.initializationWritten }
+        if (pendingTargets.isEmpty()) {
+            return
         }
-    }
 
-    @Throws(IOException::class)
-    private fun fetchMissingInitializationsOrRetry(
-        writer: SabrSegmentWriter,
-        localization: Localization,
-    ) {
         try {
-            writer.fetchMissingInitializations(localization)
-        } catch (error: SabrProtocolException) {
-            if (isRetryableInitializationProtocolError(error)) {
-                throw RetryColdStartException(error)
+            ensureRunning()
+            val initialization = session.initialize(localization, 2_000, poToken)
+            for (target in pendingTargets) {
+                val data = if (target.format.isAudio) {
+                    initialization.audioData
+                } else {
+                    initialization.videoData
+                } ?: throw RetryColdStartException()
+                writer.writeInitializationData(target, data)
             }
-            throw error
+        } catch (failure: IOException) {
+            throw RetryColdStartException(failure)
         }
     }
 
@@ -416,10 +405,6 @@ internal class SabrDownloader(
         } else {
             session.streamState.setVideoOnlyRequestMode()
         }
-    }
-
-    private fun hasMediaWaitingForInitialization(targets: List<SabrDownloadTarget>): Boolean {
-        return targets.any { target -> !target.initializationWritten && target.pending.isNotEmpty() }
     }
 
     private fun downloadPlayerTimeMs(
@@ -508,15 +493,6 @@ internal class SabrDownloader(
             "SABR download failed: ${message.ifBlank { "protocol error" }}",
             error,
         )
-    }
-
-    private fun isRetryableInitializationProtocolError(error: SabrProtocolException): Boolean {
-        val message = error.message.orEmpty()
-        if (!message.contains(":init")) {
-            return false
-        }
-        return message.contains("policy-only", ignoreCase = true) ||
-            message.contains("not returned", ignoreCase = true)
     }
 
     private fun logDebug(message: String) {

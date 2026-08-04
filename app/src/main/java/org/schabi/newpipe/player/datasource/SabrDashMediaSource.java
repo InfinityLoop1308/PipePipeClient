@@ -1,5 +1,6 @@
 package org.schabi.newpipe.player.datasource;
 
+import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
@@ -29,7 +30,6 @@ import androidx.media3.exoplayer.trackselection.ExoTrackSelection;
 import androidx.media3.exoplayer.upstream.Allocator;
 
 import org.schabi.newpipe.extractor.localization.Localization;
-import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrStreamState;
 
 import java.io.ByteArrayInputStream;
@@ -161,7 +161,7 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
     }
 
     private static String adaptationSet(final YoutubeSabrStreamState state,
-                                        final YoutubeSabrFormat format,
+                                        final YoutubeSabrInfo.Format format,
                                         final int trackType) {
         final String mime = containerMimeType(format);
         final String codecs = codecs(format);
@@ -190,7 +190,7 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
     }
 
     private static String segmentTemplate(final YoutubeSabrStreamState state,
-                                          final YoutubeSabrFormat format) {
+                                          final YoutubeSabrInfo.Format format) {
         final long endSegment = state.getEndSegment(format);
         if (endSegment <= 0 || endSegment > 10_000) {
             throw new IllegalStateException("Invalid exact SABR segment count: itag="
@@ -216,7 +216,7 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
                 + String.format(java.util.Locale.US, "%03d", safeDurationMs % 1000) + "S";
     }
 
-    private static String containerMimeType(final YoutubeSabrFormat format) {
+    private static String containerMimeType(final YoutubeSabrInfo.Format format) {
         final String mime = format.getMimeType();
         if (mime == null || mime.isEmpty()) {
             return format.isAudio() ? MimeTypes.AUDIO_MP4 : MimeTypes.VIDEO_MP4;
@@ -226,7 +226,7 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
     }
 
     @Nullable
-    private static String codecs(final YoutubeSabrFormat format) {
+    private static String codecs(final YoutubeSabrInfo.Format format) {
         final String mime = format.getMimeType();
         if (mime == null) {
             return null;

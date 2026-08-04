@@ -49,7 +49,6 @@ import org.schabi.newpipe.player.mediaitem.StreamInfoTag;
 import org.schabi.newpipe.util.StreamTypeUtil;
 import org.schabi.newpipe.App;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
-import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.player.datasource.SabrDashMediaSource;
 import org.schabi.newpipe.player.datasource.SabrSessionStore;
@@ -501,7 +500,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
         for (final AudioStream a : audioStreams) {
             present.add(Objects.toString(a.getAudioTrackId(), ""));
         }
-        for (final YoutubeSabrFormat f : info.getFormats()) {
+        for (final YoutubeSabrInfo.Format f : info.getFormats()) {
             final String trackId = f.getAudioTrackId();
             if (!f.isAudio() || trackId == null || !present.add(trackId)) {
                 continue;

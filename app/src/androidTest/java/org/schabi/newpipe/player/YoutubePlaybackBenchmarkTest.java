@@ -1,5 +1,6 @@
 package org.schabi.newpipe.player;
 
+import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -42,7 +43,6 @@ import org.schabi.newpipe.SharedWebViewRuntime;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.services.youtube.sabr.SabrSegmentRequest;
-import org.schabi.newpipe.extractor.services.youtube.sabr.SabrNextRequestPolicy;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.DeliveryMethod;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
@@ -102,11 +102,6 @@ public final class YoutubePlaybackBenchmarkTest {
                 args.getString("diagnosticDetails", "false"));
         final boolean coldSabrCachesEachTrial = Boolean.parseBoolean(
                 args.getString("coldSabrCachesEachTrial", "false"));
-        final boolean disableSessionPoToken = Boolean.parseBoolean(
-                args.getString("disableSessionPoToken", "false"));
-        if (disableSessionPoToken) {
-            NewPipe.setYoutubeSessionPoTokenProvider(null);
-        }
         if (warmWebViewRuntime) {
             SharedWebViewRuntime.get(context).ensureReady(120_000L, "benchmark WebView warmup");
         }
@@ -637,16 +632,14 @@ public final class YoutubePlaybackBenchmarkTest {
     }
 
     private static SabrStats sabrStats(final SabrSessionStore.Holder holder) {
-        final SabrNextRequestPolicy policy = holder.session.getStreamState()
-                .getNextRequestPolicy();
         return new SabrStats(holder.session.getTotalResponseBytes(),
                 holder.session.getRequestNumber(), holder.session.getPeakCachedBytes(),
                 holder.session.getStreamState().getBandwidthEstimate(),
-                policy == null ? -1 : policy.getTargetAudioReadaheadMs(),
-                policy == null ? -1 : policy.getTargetVideoReadaheadMs(),
-                policy == null ? -1 : policy.getMinAudioReadaheadMs(),
-                policy == null ? -1 : policy.getMinVideoReadaheadMs(),
-                policy == null ? -1 : policy.getMaxTimeSinceLastRequestMs());
+                holder.session.getStreamState().getTargetAudioReadaheadMs(),
+                holder.session.getStreamState().getTargetVideoReadaheadMs(),
+                holder.session.getStreamState().getMinAudioReadaheadMs(),
+                holder.session.getStreamState().getMinVideoReadaheadMs(),
+                holder.session.getStreamState().getMaxTimeSinceLastRequestMs());
     }
 
     private static String readTextFile(final File file) throws Exception {
@@ -1314,7 +1307,7 @@ public final class YoutubePlaybackBenchmarkTest {
 
         private static boolean hasMediaSegment(final SabrSessionStore.Holder holder,
                                                final org.schabi.newpipe.extractor.services.youtube
-                                                       .sabr.YoutubeSabrFormat format,
+                                                       .sabr.YoutubeSabrInfo.Format format,
                                                final int sequence) {
             return holder.session.getCachedSegment(SabrSegmentRequest.media(format, sequence))
                     != null;

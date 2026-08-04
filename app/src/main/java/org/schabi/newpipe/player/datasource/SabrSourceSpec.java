@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.schabi.newpipe.extractor.localization.Localization;
-import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormat;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrStreamState;
@@ -19,8 +18,8 @@ public final class SabrSourceSpec {
     private final long sourceId;
     @NonNull private final String videoId;
     @NonNull private final YoutubeSabrInfo info;
-    @NonNull private final YoutubeSabrFormat audioFormat;
-    @NonNull private final YoutubeSabrFormat videoFormat;
+    @NonNull private final YoutubeSabrInfo.Format audioFormat;
+    @NonNull private final YoutubeSabrInfo.Format videoFormat;
     @NonNull private final Localization localization;
     @NonNull private final byte[] audioInitializationData;
     @NonNull private final byte[] videoInitializationData;
@@ -28,8 +27,8 @@ public final class SabrSourceSpec {
 
     public SabrSourceSpec(@NonNull final String videoId,
                    @NonNull final YoutubeSabrInfo info,
-                   @NonNull final YoutubeSabrFormat audioFormat,
-                   @NonNull final YoutubeSabrFormat videoFormat,
+                   @NonNull final YoutubeSabrInfo.Format audioFormat,
+                   @NonNull final YoutubeSabrInfo.Format videoFormat,
                    @NonNull final Localization localization,
                    @NonNull final byte[] audioInitializationData,
                    @NonNull final byte[] videoInitializationData) {
@@ -39,8 +38,8 @@ public final class SabrSourceSpec {
 
     SabrSourceSpec(@NonNull final String videoId,
                    @NonNull final YoutubeSabrInfo info,
-                   @NonNull final YoutubeSabrFormat audioFormat,
-                   @NonNull final YoutubeSabrFormat videoFormat,
+                   @NonNull final YoutubeSabrInfo.Format audioFormat,
+                   @NonNull final YoutubeSabrInfo.Format videoFormat,
                    @NonNull final Localization localization,
                    @NonNull final byte[] audioInitializationData,
                    @NonNull final byte[] videoInitializationData,
@@ -71,12 +70,12 @@ public final class SabrSourceSpec {
     }
 
     @NonNull
-    public YoutubeSabrFormat getAudioFormat() {
+    public YoutubeSabrInfo.Format getAudioFormat() {
         return audioFormat;
     }
 
     @NonNull
-    public YoutubeSabrFormat getVideoFormat() {
+    public YoutubeSabrInfo.Format getVideoFormat() {
         return videoFormat;
     }
 
