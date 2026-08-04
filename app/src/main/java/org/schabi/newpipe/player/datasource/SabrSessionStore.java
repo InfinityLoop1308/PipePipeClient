@@ -19,6 +19,7 @@ import org.schabi.newpipe.extractor.services.youtube.sabr.SabrSegmentRequest;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrStreamState;
+import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrMediaSegment;
 import org.schabi.newpipe.extractor.stream.DeliveryMethod;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.VideoStream;
@@ -136,13 +137,16 @@ public final class SabrSessionStore {
         @NonNull private final byte[] audioInitialization;
         @NonNull private final byte[] videoInitialization;
         @NonNull private final AtomicReference<YoutubeSabrSession> preparedSession;
+        @NonNull private final AtomicReference<List<SabrMediaSegment>> mediaSegments;
 
         BootstrapResult(@NonNull final byte[] audioInitialization,
                         @NonNull final byte[] videoInitialization,
-                        @Nullable final YoutubeSabrSession preparedSession) {
+                        @Nullable final YoutubeSabrSession preparedSession,
+                        @NonNull final List<SabrMediaSegment> mediaSegments) {
             this.audioInitialization = audioInitialization.clone();
             this.videoInitialization = videoInitialization.clone();
             this.preparedSession = new AtomicReference<>(preparedSession);
+            this.mediaSegments = new AtomicReference<>(mediaSegments);
         }
 
         @Nullable
@@ -150,16 +154,18 @@ public final class SabrSessionStore {
             return preparedSession.getAndSet(null);
         }
 
+        @NonNull
+        List<SabrMediaSegment> getMediaSegments() {
+            final List<SabrMediaSegment> value = mediaSegments.getAndSet(Collections.emptyList());
+            return value;
+        }
+
         void discardPreparedSession() {
-            final YoutubeSabrSession session = preparedSession.getAndSet(null);
-            if (session != null) {
-                session.clearCache();
-            }
+            preparedSession.set(null);
         }
     }
 
-    private static final class BootstrapBackoffState
-            implements YoutubeSabrSession.BackoffListener {
+    private static final class BootstrapBackoffState {
         @NonNull private final Context appContext;
         @NonNull private final String videoId;
         private long deadlineElapsedMs = SabrBackoffCoordinator.NO_DEADLINE;
@@ -171,7 +177,6 @@ public final class SabrSessionStore {
             this.videoId = videoId;
         }
 
-        @Override
         public synchronized void onBackoffStarted(final int durationMs) {
             deadlineElapsedMs = SystemClock.elapsedRealtime() + durationMs;
             Log.i(TAG, "bootstrap_backoff_start video=" + videoId
@@ -182,7 +187,6 @@ public final class SabrSessionStore {
             }
         }
 
-        @Override
         public synchronized void onBackoffFinished() {
             Log.i(TAG, "bootstrap_backoff_finish video=" + videoId
                     + " waiters=" + waiters);
@@ -272,12 +276,13 @@ public final class SabrSessionStore {
         private final AtomicInteger leaseReferences = new AtomicInteger();
         private Object readerOwner;
         private long readerGeneration;
-        private volatile SabrStreamPump pump;
+        private volatile SabrMediaBridge bridge;
+        @NonNull private final SabrBackoffState backoffState;
+        @NonNull private final List<SabrMediaSegment> bootstrapMediaSegments;
         private volatile boolean invalidated;
         private volatile String stopReason;
         private volatile SabrLogicException terminalFailure;
         private long lastDiagnosticsAtMs;
-        private long lastDiagnosticsPeakCachedBytes;
 
         Holder(@NonNull final Context appContext,
                @NonNull final String videoId,
@@ -292,7 +297,8 @@ public final class SabrSessionStore {
             this.session = session;
             this.audioFormat = audioFormat;
             this.videoFormat = videoFormat;
-            attachBackoffListener();
+            this.bootstrapMediaSegments = Collections.emptyList();
+            this.backoffState = new SabrBackoffState();
         }
 
         Holder(@NonNull final Context appContext,
@@ -306,27 +312,10 @@ public final class SabrSessionStore {
             this.session = session;
             this.audioFormat = spec.getAudioFormat();
             this.videoFormat = spec.getVideoFormat();
+            this.bootstrapMediaSegments = spec.takeBootstrapMediaSegments();
+            this.backoffState = new SabrBackoffState();
             retainBootstrapInitialization(spec, audioFormat);
             retainBootstrapInitialization(spec, videoFormat);
-            attachBackoffListener();
-        }
-
-        private void attachBackoffListener() {
-            session.setBackoffListener(new YoutubeSabrSession.BackoffListener() {
-                @Override
-                public void onBackoffStarted(final int durationMs) {
-                    Log.i(TAG, "backoff_start video=" + videoId
-                            + " durationMs=" + durationMs);
-                    SabrBackoffCoordinator.getInstance().begin(appContext, Holder.this,
-                            SystemClock.elapsedRealtime() + durationMs);
-                }
-
-                @Override
-                public void onBackoffFinished() {
-                    Log.i(TAG, "backoff_finish video=" + videoId);
-                    SabrBackoffCoordinator.getInstance().clear(appContext, Holder.this);
-                }
-            });
         }
 
         public long getPlayerTimeMs() {
@@ -441,11 +430,12 @@ public final class SabrSessionStore {
                     .getSegmentNumberAtOrAfterTimeMs(audioFormat, positionMs);
             final SabrSegmentRequest audioRequest = SabrSegmentRequest.media(
                     audioFormat, audioSequence);
-            if (session.getCachedSegment(request) == null
-                    || session.getCachedSegment(audioRequest) == null) {
-                getPump(localization).requestSeekTo(request, backward, positionMs);
+            final SabrMediaBridge currentBridge = getBridge(localization);
+            if (currentBridge.getCached(request) == null
+                    || currentBridge.getCached(audioRequest) == null) {
+                currentBridge.requestSeekTo(request, backward, positionMs);
             } else {
-                getPump(localization).noteSeekWithinCache();
+                currentBridge.noteSeekWithinCache();
             }
         }
 
@@ -548,11 +538,24 @@ public final class SabrSessionStore {
             return false;
         }
 
-        synchronized SabrStreamPump getPump(@NonNull final Localization localization) {
-            if (pump == null) {
-                pump = new SabrStreamPump(session, this, localization);
+        synchronized SabrMediaBridge getBridge(@NonNull final Localization localization) {
+            if (bridge == null) {
+                bridge = new SabrMediaBridge(session, localization, backoffState);
+                bridge.seedSegments(bootstrapMediaSegments);
             }
-            return pump;
+            return bridge;
+        }
+
+        public long getBackoffRemainingMs() {
+            return backoffState.remainingMs();
+        }
+
+        public void addBackoffListener(@NonNull final SabrBackoffState.Listener listener) {
+            backoffState.addListener(listener);
+        }
+
+        public void removeBackoffListener(@NonNull final SabrBackoffState.Listener listener) {
+            backoffState.removeListener(listener);
         }
 
         boolean isInvalidated() {
@@ -579,10 +582,9 @@ public final class SabrSessionStore {
 
         void stop(@NonNull final String reason) {
             SabrBackoffCoordinator.getInstance().clear(appContext, this);
-            session.setBackoffListener(null);
             Log.w(TAG, "stop video=" + videoId + " reason=" + reason
                     + " leases=" + leaseReferences.get() + " activeTracks=" + hasActiveTracks()
-                    + " pump=" + (pump == null ? "none" : pump.getStateName()));
+                    + " bridge=" + (bridge == null ? "none" : bridge.getStateName()));
             recordDiagnostics("stop reason=" + reason);
             stopReason = reason;
             session.addDiagnosticEvent("session_stop reason=" + reason
@@ -595,12 +597,10 @@ public final class SabrSessionStore {
                 readerPositions.clear();
                 applyActiveTracks();
             }
-            final SabrStreamPump streamPump = pump;
-            pump = null;
-            if (streamPump != null) {
-                streamPump.stop();
-            } else {
-                session.clearCache();
+            final SabrMediaBridge mediaBridge = bridge;
+            bridge = null;
+            if (mediaBridge != null) {
+                mediaBridge.stop();
             }
         }
 
@@ -611,14 +611,11 @@ public final class SabrSessionStore {
         void recordDiagnostics(@NonNull final String event) {
             SabrPlaybackDiagnostics.record(appContext, this, event);
             lastDiagnosticsAtMs = System.currentTimeMillis();
-            lastDiagnosticsPeakCachedBytes = session.getPeakCachedBytes();
         }
 
         void recordDiagnosticsThrottled(@NonNull final String event) {
             final long now = System.currentTimeMillis();
-            final long peakCachedBytes = session.getPeakCachedBytes();
-            if (now - lastDiagnosticsAtMs >= 5_000
-                    || peakCachedBytes != lastDiagnosticsPeakCachedBytes) {
+            if (now - lastDiagnosticsAtMs >= 5_000) {
                 recordDiagnostics(event);
             }
         }
@@ -682,7 +679,7 @@ public final class SabrSessionStore {
         PlaybackStartupTrace.markForVideoId(videoId, "sabr_source_spec_ready");
         return new SabrSourceSpec(videoId, info, audioFormat, videoFormat, localization,
                 bootstrap.audioInitialization, bootstrap.videoInitialization,
-                bootstrap.takePreparedSession());
+                bootstrap.takePreparedSession(), bootstrap.getMediaSegments());
     }
 
     /** Starts expensive first-play work while the user is still reading the detail page. */
@@ -759,7 +756,6 @@ public final class SabrSessionStore {
                 "sabr-bootstrap/" + info.getVideoId() + '-' + System.nanoTime());
         final YoutubeSabrSession session = new YoutubeSabrSession(info, audioFormat, videoFormat,
                 spoolDirectory);
-        session.setBackoffListener(backoffState);
         boolean handedOff = false;
         try {
             final byte[] poToken = awaitWarmedToken(info.getVideoId(), info, sessionProvider,
@@ -785,12 +781,8 @@ public final class SabrSessionStore {
             }
             handedOff = true;
             return new BootstrapResult(initialization.getAudioData(), initialization.getVideoData(),
-                    session);
+                    session, initialization.getMediaSegments());
         } finally {
-            session.setBackoffListener(null);
-            if (!handedOff) {
-                session.clearCache();
-            }
         }
     }
 

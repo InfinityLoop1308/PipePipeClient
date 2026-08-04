@@ -7,9 +7,12 @@ import org.schabi.newpipe.extractor.localization.Localization;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrStreamState;
+import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrMediaSegment;
 
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.Collections;
+import java.util.List;
 
 /** Immutable metadata needed to construct a SABR MediaSource without owning a live session. */
 public final class SabrSourceSpec {
@@ -24,6 +27,7 @@ public final class SabrSourceSpec {
     @NonNull private final byte[] audioInitializationData;
     @NonNull private final byte[] videoInitializationData;
     @NonNull private final AtomicReference<YoutubeSabrSession> preparedSession;
+    @NonNull private final List<SabrMediaSegment> bootstrapMediaSegments;
 
     public SabrSourceSpec(@NonNull final String videoId,
                    @NonNull final YoutubeSabrInfo info,
@@ -33,7 +37,7 @@ public final class SabrSourceSpec {
                    @NonNull final byte[] audioInitializationData,
                    @NonNull final byte[] videoInitializationData) {
         this(videoId, info, audioFormat, videoFormat, localization,
-                audioInitializationData, videoInitializationData, null);
+                audioInitializationData, videoInitializationData, null, Collections.emptyList());
     }
 
     SabrSourceSpec(@NonNull final String videoId,
@@ -43,7 +47,8 @@ public final class SabrSourceSpec {
                    @NonNull final Localization localization,
                    @NonNull final byte[] audioInitializationData,
                    @NonNull final byte[] videoInitializationData,
-                   @Nullable final YoutubeSabrSession preparedSession) {
+                   @Nullable final YoutubeSabrSession preparedSession,
+                   @NonNull final List<SabrMediaSegment> bootstrapMediaSegments) {
         this.sourceId = NEXT_SOURCE_ID.incrementAndGet();
         this.videoId = videoId;
         this.info = info;
@@ -53,6 +58,7 @@ public final class SabrSourceSpec {
         this.audioInitializationData = audioInitializationData.clone();
         this.videoInitializationData = videoInitializationData.clone();
         this.preparedSession = new AtomicReference<>(preparedSession);
+        this.bootstrapMediaSegments = bootstrapMediaSegments;
     }
 
     @NonNull
@@ -112,10 +118,12 @@ public final class SabrSourceSpec {
         return preparedSession.getAndSet(null);
     }
 
+    @NonNull
+    List<SabrMediaSegment> takeBootstrapMediaSegments() {
+        return bootstrapMediaSegments;
+    }
+
     void discardPreparedSession() {
-        final YoutubeSabrSession session = preparedSession.getAndSet(null);
-        if (session != null) {
-            session.clearCache();
-        }
+        preparedSession.set(null);
     }
 }

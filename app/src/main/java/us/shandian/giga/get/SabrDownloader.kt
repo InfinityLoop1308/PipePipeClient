@@ -135,7 +135,6 @@ internal class SabrDownloader(
                     // Nothing to do.
                 }
             }
-            session.clearCache()
         }
 
         ensureRunning()
@@ -306,14 +305,17 @@ internal class SabrDownloader(
         writer.observeWrittenInitializations()
         prepareInitializations(session, targets, writer, localization, poToken)
         writer.observeWrittenInitializations()
-        writer.drainCachedInitializations()
 
         var emptyResponses = 0
+        var nextRequestAtMs = 0L
         while (true) {
             ensureRunning()
+            val backoffRemainingMs = nextRequestAtMs - System.currentTimeMillis()
+            if (backoffRemainingMs > 0) {
+                Thread.sleep(backoffRemainingMs)
+                ensureRunning()
+            }
             writer.observeWrittenInitializations()
-            var wroteSegment = writer.drainCachedInitializations()
-            wroteSegment = writer.drainCachedSegments() || wroteSegment
             configureInitializedSingleTargetMode(session, targets)
 
             if (isDownloadComplete(session, targets)) {
@@ -322,16 +324,15 @@ internal class SabrDownloader(
 
             val playerTimeMs = downloadPlayerTimeMs(session, targets)
             session.streamState.setPlayerTimeMs(playerTimeMs)
-            val segmentCount = session.pumpOnceStreaming(localization)
+            val requestResult = session.requestOnce(localization, writer::acceptSegment)
+            nextRequestAtMs = System.currentTimeMillis() + requestResult.backoffMs
+            val segmentCount = requestResult.segmentCount
             writer.observeWrittenInitializations()
-            wroteSegment = writer.drainCachedInitializations() || wroteSegment
-            wroteSegment = writer.drainCachedSegments() || wroteSegment
-            enforceSessionCacheLimit(session, writer)
             configureInitializedSingleTargetMode(session, targets)
             if (isDownloadComplete(session, targets)) {
                 break
             }
-            if (wroteSegment || segmentCount > 0) {
+            if (segmentCount > 0) {
                 emptyResponses = 0
             } else {
                 emptyResponses++
@@ -370,27 +371,12 @@ internal class SabrDownloader(
                 } ?: throw RetryColdStartException()
                 writer.writeInitializationData(target, data)
             }
+            for (segment in initialization.mediaSegments) {
+                writer.acceptSegment(segment)
+            }
         } catch (failure: IOException) {
             throw RetryColdStartException(failure)
         }
-    }
-
-    @Throws(IOException::class)
-    private fun enforceSessionCacheLimit(
-        session: YoutubeSabrSession,
-        writer: SabrSegmentWriter,
-    ) {
-        if (session.cachedBytes <= MAX_SESSION_CACHE_BYTES) {
-            return
-        }
-        writer.drainCachedSegments()
-        if (session.cachedBytes <= MAX_SESSION_CACHE_BYTES) {
-            return
-        }
-        throw SabrDownloadException(
-            SabrDownloadException.Reason.STALLED,
-            "SABR download stalled: cached media grew to ${session.cachedBytes} bytes",
-        )
     }
 
     private fun configureInitializedSingleTargetMode(
@@ -508,7 +494,6 @@ internal class SabrDownloader(
         private const val MAX_COLD_START_RETRIES = 3
         private const val MAX_TRANSIENT_RETRIES = 5
         private const val MAX_TRANSIENT_RETRY_DELAY_MS = 5_000L
-        private const val MAX_SESSION_CACHE_BYTES = 48L * 1024L * 1024L
         private const val MAX_INITIALIZATION_BYTES = 16 * 1024 * 1024
 
         @JvmStatic

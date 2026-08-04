@@ -1,7 +1,6 @@
 package us.shandian.giga.get
 
 import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrMediaSegment
-import org.schabi.newpipe.extractor.services.youtube.sabr.SabrSegmentRequest
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
 import java.io.IOException
 import java.io.OutputStream
@@ -12,6 +11,28 @@ internal class SabrSegmentWriter(
     private val outputs: Map<Int, OutputStream>,
     private val onBytesWritten: (SabrDownloadTarget, Long) -> Unit,
 ) {
+    @Throws(IOException::class)
+    fun acceptSegment(segment: SabrMediaSegment) {
+        val target = targets.firstOrNull { it.format.itag == segment.header.itag }
+        if (target == null) {
+            segment.delete()
+            return
+        }
+        try {
+            if (segment.header.isInitSegment) {
+                writeInitializationSegment(
+                    target,
+                    outputs.getValue(target.resourceIndex),
+                    segment.data,
+                )
+            } else {
+                writeMediaSegment(target, outputs.getValue(target.resourceIndex), segment)
+            }
+        } finally {
+            segment.delete()
+        }
+    }
+
     fun observeWrittenInitializations() {
         for (target in targets) {
             val data = target.initializationData ?: continue
@@ -20,41 +41,6 @@ internal class SabrSegmentWriter(
                     || session.streamState.ingestInitializationData(target.format, data)
             }
         }
-    }
-
-    @Throws(IOException::class)
-    fun drainCachedInitializations(): Boolean {
-        var wroteInitialization = false
-        for (target in targets) {
-            if (target.initializationWritten) {
-                continue
-            }
-            val request = SabrSegmentRequest.initialization(target.format)
-            val segment = session.getCachedSegment(request) ?: continue
-            writeInitializationSegment(target, outputs.getValue(target.resourceIndex), segment.data)
-            session.discardCachedSegment(request)
-            wroteInitialization = true
-        }
-        return wroteInitialization
-    }
-
-    @Throws(IOException::class)
-    fun drainCachedSegments(): Boolean {
-        var wroteSegment = false
-        for (target in targets) {
-            while (true) {
-                val request = SabrSegmentRequest.media(target.format, target.nextWriteSequence)
-                val segment = session.getCachedSegment(request) ?: break
-                if (segment.header.isInitSegment) {
-                    session.discardCachedSegment(request)
-                    continue
-                }
-                writeMediaSegment(target, outputs.getValue(target.resourceIndex), segment)
-                session.discardCachedSegment(request)
-                wroteSegment = true
-            }
-        }
-        return wroteSegment
     }
 
     @Throws(IOException::class)
