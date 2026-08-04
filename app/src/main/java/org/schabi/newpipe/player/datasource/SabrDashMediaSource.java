@@ -30,7 +30,7 @@ import androidx.media3.exoplayer.trackselection.ExoTrackSelection;
 import androidx.media3.exoplayer.upstream.Allocator;
 
 import org.schabi.newpipe.extractor.localization.Localization;
-import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrStreamState;
+import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormatTimeline;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -47,7 +47,6 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
     private final SabrSourceSpec spec;
     private final SabrSessionHandle sessionHandle;
     private final Localization localization;
-    private final YoutubeSabrStreamState manifestState;
     private final long durationUs;
     private final DashMediaSource childSource;
     private final PlaybackState playbackState = new PlaybackState();
@@ -58,12 +57,6 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
         this.spec = spec;
         try {
             this.localization = spec.getLocalization();
-            this.manifestState = spec.newStreamState();
-            if (!manifestState.hasSegmentIndex(spec.getAudioFormat())
-                    || !manifestState.hasSegmentIndex(spec.getVideoFormat())) {
-                throw new IOException("Refusing to publish guessed SABR DASH timeline for "
-                        + spec.getVideoId());
-            }
             this.sessionHandle = new SabrSessionHandle(context, spec);
             this.playbackState.setReaderOwner(this);
             final long durationMs = spec.getDurationMs();
@@ -71,7 +64,7 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
             final DataSource.Factory sabrDataSourceFactory =
                     () -> new SabrSegmentDataSource(sessionHandle, playbackState.getReaderOwner(),
                             localization, /* prependInit= */ false);
-            final DashManifest manifest = buildManifest(spec, manifestState, durationMs);
+            final DashManifest manifest = buildManifest(spec, durationMs);
             this.childSource = new DashMediaSource.Factory(
                     new DefaultDashChunkSource.Factory(sabrDataSourceFactory),
                     /* manifestDataSourceFactory= */ null)
@@ -140,7 +133,6 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
     }
 
     private static DashManifest buildManifest(final SabrSourceSpec spec,
-                                              final YoutubeSabrStreamState state,
                                               final long durationMs)
             throws IOException {
         final String mpd = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -149,8 +141,8 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
                 + "minBufferTime=\"PT1.5S\" mediaPresentationDuration=\""
                 + formatDuration(durationMs) + "\">"
                 + "<Period id=\"0\" start=\"PT0S\">"
-                + adaptationSet(state, spec.getVideoFormat(), C.TRACK_TYPE_VIDEO)
-                + adaptationSet(state, spec.getAudioFormat(), C.TRACK_TYPE_AUDIO)
+                + adaptationSet(spec, spec.getVideoFormat(), C.TRACK_TYPE_VIDEO)
+                + adaptationSet(spec, spec.getAudioFormat(), C.TRACK_TYPE_AUDIO)
                 + "</Period></MPD>";
         try {
             return new DashManifestParser().parse(Uri.parse("sabr://" + spec.getVideoId()),
@@ -160,7 +152,7 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
         }
     }
 
-    private static String adaptationSet(final YoutubeSabrStreamState state,
+    private static String adaptationSet(final SabrSourceSpec spec,
                                         final YoutubeSabrInfo.Format format,
                                         final int trackType) {
         final String mime = containerMimeType(format);
@@ -184,14 +176,14 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
         }
         builder.append(">")
                 .append("<BaseURL>sabrseg://").append(format.getItag()).append("/</BaseURL>")
-                .append(segmentTemplate(state, format))
+                .append(segmentTemplate(spec.getTimeline(format)))
                 .append("</Representation></AdaptationSet>");
         return builder.toString();
     }
 
-    private static String segmentTemplate(final YoutubeSabrStreamState state,
-                                          final YoutubeSabrInfo.Format format) {
-        final long endSegment = state.getEndSegment(format);
+    private static String segmentTemplate(final YoutubeSabrFormatTimeline timeline) {
+        final YoutubeSabrInfo.Format format = timeline.getFormat();
+        final long endSegment = timeline.getEndSequence();
         if (endSegment <= 0 || endSegment > 10_000) {
             throw new IllegalStateException("Invalid exact SABR segment count: itag="
                     + format.getItag() + ", count=" + endSegment);
@@ -201,8 +193,8 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
                 .append("initialization=\"init\" media=\"$Number$\">")
                 .append("<SegmentTimeline>");
         for (int sequence = 1; sequence <= endSegment; sequence++) {
-            final long startMs = state.getSegmentStartMs(format, sequence);
-            final long endMs = state.getSegmentEndMs(format, sequence);
+            final long startMs = timeline.getStartMs(sequence);
+            final long endMs = timeline.getEndMs(sequence);
             final long durationMs = Math.max(1, endMs - startMs);
             builder.append("<S t=\"").append(Math.max(0, startMs))
                     .append("\" d=\"").append(durationMs).append("\"/>");
@@ -407,10 +399,9 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
                 return positionUs;
             }
             final long positionMs = Math.max(0, positionUs / 1000L);
-            final int currentSequence = manifestState.getSegmentNumberAtOrAfterTimeMs(
-                    spec.getVideoFormat(), positionMs);
-            final long nextStartMs = manifestState.getSegmentStartMs(
-                    spec.getVideoFormat(), currentSequence + 1);
+            final YoutubeSabrFormatTimeline timeline = spec.getVideoTimeline();
+            final int currentSequence = timeline.getSequenceAt(positionMs);
+            final long nextStartMs = timeline.getStartMs(currentSequence + 1);
             final long nextStartUs = nextStartMs * 1000L;
             if (nextStartUs > positionUs
                     && nextStartUs - positionUs <= toleranceUs) {

@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.localization.Localization;
-import org.schabi.newpipe.extractor.services.youtube.sabr.SabrSegmentRequest;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
 import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrMediaSegment;
 
@@ -20,13 +19,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 /** Bridges Media3 segment demand to serialized SABR transactions. */
 final class SabrMediaBridge {
     private static final int MAX_AHEAD_SEGMENTS = 64;
+    private final SabrSessionStore.Holder holder;
     private final YoutubeSabrSession session;
     private final Localization localization;
     private final SabrBackoffState backoff;
-    private final LinkedBlockingQueue<SabrSegmentRequest> pending = new LinkedBlockingQueue<>();
-    private final Map<String, SabrSegmentRequest> pendingKeys = new ConcurrentHashMap<>();
+    private final LinkedBlockingQueue<SabrSegmentKey> pending = new LinkedBlockingQueue<>();
+    private final Map<String, SabrSegmentKey> pendingKeys = new ConcurrentHashMap<>();
     private final Map<String, IOException> failures = new ConcurrentHashMap<>();
     private final Map<String, SabrMediaSegment> ahead = new ConcurrentHashMap<>();
+    private final Map<Integer, Integer> nextSequences = new ConcurrentHashMap<>();
     private final Deque<String> aheadOrder = new ArrayDeque<>();
     private final Object available = new Object();
     private volatile IOException networkFailure;
@@ -35,10 +36,11 @@ final class SabrMediaBridge {
     private volatile long mediaProgressVersion;
     private Thread worker;
 
-    SabrMediaBridge(@NonNull final YoutubeSabrSession session,
+    SabrMediaBridge(@NonNull final SabrSessionStore.Holder holder,
                     @NonNull final Localization localization,
                     @NonNull final SabrBackoffState backoff) {
-        this.session = session;
+        this.holder = holder;
+        this.session = holder.session;
         this.localization = localization;
         this.backoff = backoff;
     }
@@ -90,12 +92,12 @@ final class SabrMediaBridge {
     }
 
     @Nullable
-    SabrMediaSegment getCached(@NonNull final SabrSegmentRequest request) {
+    SabrMediaSegment getCached(@NonNull final SabrSegmentKey request) {
         return ahead.get(key(request));
     }
 
     @Nullable
-    SabrMediaSegment awaitReadableSegment(@NonNull final SabrSegmentRequest request,
+    SabrMediaSegment awaitReadableSegment(@NonNull final SabrSegmentKey request,
                                           final long timeoutMs) throws InterruptedException {
         SabrMediaSegment segment = getCached(request);
         if (segment != null || timeoutMs <= 0) {
@@ -111,7 +113,7 @@ final class SabrMediaBridge {
         return segment;
     }
 
-    void discard(@NonNull final SabrSegmentRequest request) {
+    void discard(@NonNull final SabrSegmentKey request) {
         final String segmentKey = key(request);
         final SabrMediaSegment segment = ahead.remove(segmentKey);
         synchronized (available) {
@@ -130,7 +132,7 @@ final class SabrMediaBridge {
     }
 
     @Nullable
-    IOException takeDemandFailure(@NonNull final SabrSegmentRequest request,
+    IOException takeDemandFailure(@NonNull final SabrSegmentKey request,
                                   @NonNull final Object readerOwner,
                                   final long readerGeneration) {
         return failures.remove(key(request));
@@ -157,14 +159,17 @@ final class SabrMediaBridge {
     }
 
     void requestInitialization(@NonNull final org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo.Format format) {
-        requestSegmentDemand(SabrSegmentRequest.initialization(format), this, 0);
+        requestSegmentDemand(SabrSegmentKey.initialization(format), this, 0);
     }
 
-    void requestSegmentDemand(@NonNull final SabrSegmentRequest request,
+    void requestSegmentDemand(@NonNull final SabrSegmentKey request,
                               @NonNull final Object readerOwner,
                               final long readerGeneration) {
         if (ahead.containsKey(key(request))) {
             return;
+        }
+        if (!request.isInitialization()) {
+            nextSequences.put(request.getFormat().getItag(), request.getSequenceNumber());
         }
         final String key = key(request);
         if (pendingKeys.putIfAbsent(key, request) == null) {
@@ -173,7 +178,7 @@ final class SabrMediaBridge {
         }
     }
 
-    void clearSegmentDemand(@NonNull final SabrSegmentRequest request,
+    void clearSegmentDemand(@NonNull final SabrSegmentKey request,
                             @NonNull final Object readerOwner,
                             final long readerGeneration) {
         final String key = key(request);
@@ -181,24 +186,25 @@ final class SabrMediaBridge {
         failures.remove(key);
     }
 
-    void requestRefetchFrom(@NonNull final SabrSegmentRequest request) {
-        session.getStreamState().rewindTo(request);
+    void requestRefetchFrom(@NonNull final SabrSegmentKey request) {
+        nextSequences.put(request.getFormat().getItag(), request.getSequenceNumber());
+        session.clearPlaybackCookie();
         requestSegmentDemand(request, this, 0);
     }
 
-    void requestForwardSeekTo(@NonNull final SabrSegmentRequest request) {
-        session.getStreamState().jumpTo(request);
+    void requestForwardSeekTo(@NonNull final SabrSegmentKey request) {
+        nextSequences.put(request.getFormat().getItag(), request.getSequenceNumber());
+        session.clearPlaybackCookie();
         requestSegmentDemand(request, this, 0);
     }
 
-    void requestSeekTo(@NonNull final SabrSegmentRequest request,
+    void requestSeekTo(@NonNull final SabrSegmentKey request,
                        final boolean backward,
                        final long positionMs) {
-        if (backward) {
-            session.getStreamState().rewindTo(request, positionMs);
-        } else {
-            session.getStreamState().jumpTo(request, positionMs);
-        }
+        nextSequences.put(request.getFormat().getItag(), request.getSequenceNumber());
+        nextSequences.put(holder.audioFormat.getItag(), holder.audioTimeline.getSequenceAt(positionMs));
+        nextSequences.put(holder.videoFormat.getItag(), holder.videoTimeline.getSequenceAt(positionMs));
+        session.clearPlaybackCookie();
         requestSegmentDemand(request, this, 0);
     }
 
@@ -210,13 +216,19 @@ final class SabrMediaBridge {
         while (!stopped) {
             try {
                 backoff.awaitReady();
-                final SabrSegmentRequest request = pending.take();
+                final SabrSegmentKey request = pending.take();
                 final String requestKey = key(request);
                 if (!pendingKeys.containsKey(requestKey)) {
                     continue;
                 }
                 final YoutubeSabrSession.RequestResult requestResult =
-                        session.requestOnce(localization, segment -> {
+                        session.requestOnce(localization, holder.getPlayerTimeMs(),
+                                holder.audioTimeline, bufferedThrough(holder.audioFormat),
+                                holder.videoTimeline, bufferedThrough(holder.videoFormat),
+                                holder.isAudioActive(), holder.isVideoActive(),
+                                holder.getPlayerTimeMs() > 1_000,
+                                holder.getBandwidthEstimate(), holder.getPlaybackRate(),
+                                holder.getPoToken(), segment -> {
                     final String segmentKey = key(segment.getHeader().getItag(),
                             segment.getHeader().isInitSegment()
                                     ? "init" : String.valueOf(segment.getHeader().getSequenceNumber()));
@@ -237,9 +249,10 @@ final class SabrMediaBridge {
                 // Backoff is returned as request data; the owning Holder publishes it to
                 // observers and gates the next request.
                 backoff.update(requestResult.getBackoffMs());
+                holder.observeBandwidth(requestResult.getBandwidthSample());
                 pendingKeys.remove(requestKey);
                 pending.removeIf(candidate -> ahead.containsKey(key(candidate)));
-                for (final SabrSegmentRequest candidate : pending) {
+                for (final SabrSegmentKey candidate : pending) {
                     if (ahead.containsKey(key(candidate))) {
                         pendingKeys.remove(key(candidate));
                     }
@@ -263,9 +276,16 @@ final class SabrMediaBridge {
         }
     }
 
+    private int bufferedThrough(
+            @NonNull final org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo.Format format) {
+        final Integer next = nextSequences.get(format.getItag());
+        if (next != null) return Math.max(0, next - 1);
+        return Math.max(0, holder.getTimeline(format).getSequenceAt(holder.getPlayerTimeMs()) - 1);
+    }
 
-    private static String key(@NonNull final SabrSegmentRequest request) {
-        return key(request.getFormat().getItag(), request.isInitializationSegment()
+
+    private static String key(@NonNull final SabrSegmentKey request) {
+        return key(request.getFormat().getItag(), request.isInitialization()
                 ? "init" : String.valueOf(request.getSequenceNumber()));
     }
 

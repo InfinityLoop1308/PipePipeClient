@@ -7,7 +7,6 @@ import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.services.youtube.YoutubeParsingHelper
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrProtocolException
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo
-import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrStreamState
 import java.io.Closeable
 import java.util.HashMap
 import java.util.concurrent.CountDownLatch
@@ -17,10 +16,7 @@ import java.util.concurrent.atomic.AtomicReference
 class LocalDomPoTokenProvider(context: Context) {
     private val appContext = context.applicationContext
 
-    fun getPoToken(
-        info: YoutubeSabrInfo,
-        streamState: YoutubeSabrStreamState,
-    ): ByteArray {
+    fun getPoToken(info: YoutubeSabrInfo): ByteArray {
         val visitorData = info.visitorData
             ?: throw SabrProtocolException("Missing visitorData in YouTube player response")
         val session = OneShotMintSession.create(

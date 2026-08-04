@@ -5,8 +5,8 @@ import androidx.annotation.Nullable;
 
 import org.schabi.newpipe.extractor.localization.Localization;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
+import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormatTimeline;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
-import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrStreamState;
 import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrMediaSegment;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -26,6 +26,8 @@ public final class SabrSourceSpec {
     @NonNull private final Localization localization;
     @NonNull private final byte[] audioInitializationData;
     @NonNull private final byte[] videoInitializationData;
+    @NonNull private final YoutubeSabrFormatTimeline audioTimeline;
+    @NonNull private final YoutubeSabrFormatTimeline videoTimeline;
     @NonNull private final AtomicReference<YoutubeSabrSession> preparedSession;
     @NonNull private final List<SabrMediaSegment> bootstrapMediaSegments;
 
@@ -37,7 +39,10 @@ public final class SabrSourceSpec {
                    @NonNull final byte[] audioInitializationData,
                    @NonNull final byte[] videoInitializationData) {
         this(videoId, info, audioFormat, videoFormat, localization,
-                audioInitializationData, videoInitializationData, null, Collections.emptyList());
+                audioInitializationData, videoInitializationData,
+                parseTimeline(audioFormat, audioInitializationData),
+                parseTimeline(videoFormat, videoInitializationData),
+                null, Collections.emptyList());
     }
 
     SabrSourceSpec(@NonNull final String videoId,
@@ -47,6 +52,8 @@ public final class SabrSourceSpec {
                    @NonNull final Localization localization,
                    @NonNull final byte[] audioInitializationData,
                    @NonNull final byte[] videoInitializationData,
+                   @NonNull final YoutubeSabrFormatTimeline audioTimeline,
+                   @NonNull final YoutubeSabrFormatTimeline videoTimeline,
                    @Nullable final YoutubeSabrSession preparedSession,
                    @NonNull final List<SabrMediaSegment> bootstrapMediaSegments) {
         this.sourceId = NEXT_SOURCE_ID.incrementAndGet();
@@ -57,6 +64,8 @@ public final class SabrSourceSpec {
         this.localization = localization;
         this.audioInitializationData = audioInitializationData.clone();
         this.videoInitializationData = videoInitializationData.clone();
+        this.audioTimeline = audioTimeline;
+        this.videoTimeline = videoTimeline;
         this.preparedSession = new AtomicReference<>(preparedSession);
         this.bootstrapMediaSegments = bootstrapMediaSegments;
     }
@@ -105,12 +114,14 @@ public final class SabrSourceSpec {
         return Math.max(audioFormat.getApproxDurationMs(), videoFormat.getApproxDurationMs());
     }
 
+    @NonNull YoutubeSabrFormatTimeline getAudioTimeline() { return audioTimeline; }
+    @NonNull YoutubeSabrFormatTimeline getVideoTimeline() { return videoTimeline; }
+
     @NonNull
-    YoutubeSabrStreamState newStreamState() {
-        final YoutubeSabrStreamState state = new YoutubeSabrStreamState(audioFormat, videoFormat);
-        state.ingestInitializationData(audioFormat, audioInitializationData);
-        state.ingestInitializationData(videoFormat, videoInitializationData);
-        return state;
+    YoutubeSabrFormatTimeline getTimeline(@NonNull final YoutubeSabrInfo.Format format) {
+        if (format.getItag() == audioFormat.getItag()) return audioTimeline;
+        if (format.getItag() == videoFormat.getItag()) return videoTimeline;
+        throw new IllegalArgumentException("Unknown SABR itag: " + format.getItag());
     }
 
     @Nullable
@@ -125,5 +136,16 @@ public final class SabrSourceSpec {
 
     void discardPreparedSession() {
         preparedSession.set(null);
+    }
+
+    @NonNull
+    private static YoutubeSabrFormatTimeline parseTimeline(
+            @NonNull final YoutubeSabrInfo.Format format, @NonNull final byte[] data) {
+        try {
+            return YoutubeSabrFormatTimeline.parse(format, data);
+        } catch (final Exception error) {
+            throw new IllegalArgumentException("Invalid SABR initialization timeline: itag="
+                    + format.getItag(), error);
+        }
     }
 }

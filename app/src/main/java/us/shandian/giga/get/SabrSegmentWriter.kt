@@ -1,12 +1,11 @@
 package us.shandian.giga.get
 
 import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrMediaSegment
-import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
+import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormatTimeline
 import java.io.IOException
 import java.io.OutputStream
 
 internal class SabrSegmentWriter(
-    private val session: YoutubeSabrSession,
     private val targets: List<SabrDownloadTarget>,
     private val outputs: Map<Int, OutputStream>,
     private val onBytesWritten: (SabrDownloadTarget, Long) -> Unit,
@@ -36,9 +35,8 @@ internal class SabrSegmentWriter(
     fun observeWrittenInitializations() {
         for (target in targets) {
             val data = target.initializationData ?: continue
-            if (!target.initializationObserved) {
-                target.initializationObserved = session.streamState.hasSegmentIndex(target.format)
-                    || session.streamState.ingestInitializationData(target.format, data)
+            if (target.timeline == null) {
+                target.timeline = YoutubeSabrFormatTimeline.parse(target.format, data)
             }
         }
     }
@@ -60,6 +58,7 @@ internal class SabrSegmentWriter(
         writeToStorage(output, data)
         target.initializationWritten = true
         target.initializationData = data
+        target.timeline = YoutubeSabrFormatTimeline.parse(target.format, data)
         onBytesWritten(target, data.size.toLong())
         flushPendingMedia(target, output)
         return true
