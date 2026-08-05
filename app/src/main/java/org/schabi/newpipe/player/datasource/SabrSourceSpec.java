@@ -15,43 +15,55 @@ import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
-/** Source metadata for one video format and one Media3-selectable audio codec group. */
+/** Source metadata for one selected video format and one Media3-selectable audio codec group. */
 public final class SabrSourceSpec {
     @NonNull private final String videoId;
     @NonNull private final YoutubeSabrInfo info;
+    @NonNull private final byte[] poToken;
     @NonNull private final YoutubeSabrInfo.Format bootstrapAudioFormat;
     @NonNull private final List<YoutubeSabrInfo.Format> audioFormats;
-    @NonNull private final YoutubeSabrInfo.Format videoFormat;
+    @NonNull private final List<YoutubeSabrInfo.Format> videoFormats;
+    @NonNull private final YoutubeSabrInfo.Format bootstrapVideoFormat;
     @NonNull private final Map<String, YoutubeSabrInfo.Format> formatsByKey;
     @NonNull private final Map<YoutubeSabrInfo.Format, String> keysByFormat;
     @NonNull private final Map<YoutubeSabrInfo.Format, byte[]> initializationData =
             new ConcurrentHashMap<>();
-    @NonNull private final YoutubeSabrFormatTimeline audioTimeline;
-    @NonNull private final YoutubeSabrFormatTimeline videoTimeline;
+    @Nullable private volatile YoutubeSabrFormatTimeline audioTimeline;
+    @Nullable private volatile YoutubeSabrFormatTimeline sharedVideoTimeline;
     @NonNull private final AtomicReference<List<SabrMediaSegment>> bootstrapMediaSegments;
 
     SabrSourceSpec(@NonNull final String videoId,
                    @NonNull final YoutubeSabrInfo info,
+                   @NonNull final byte[] poToken,
                    @NonNull final YoutubeSabrInfo.Format bootstrapAudioFormat,
                    @NonNull final List<YoutubeSabrInfo.Format> audioFormats,
-                   @NonNull final YoutubeSabrInfo.Format videoFormat,
-                   @NonNull final byte[] audioInitializationData,
-                   @NonNull final byte[] videoInitializationData,
-                   @NonNull final YoutubeSabrFormatTimeline audioTimeline,
-                   @NonNull final YoutubeSabrFormatTimeline videoTimeline,
+                   @NonNull final List<YoutubeSabrInfo.Format> videoFormats,
+                   @NonNull final YoutubeSabrInfo.Format bootstrapVideoFormat,
+                   @Nullable final byte[] audioInitializationData,
+                   @Nullable final byte[] videoInitializationData,
+                   @Nullable final YoutubeSabrFormatTimeline audioTimeline,
+                   @Nullable final YoutubeSabrFormatTimeline videoTimeline,
                    @NonNull final List<SabrMediaSegment> bootstrapMediaSegments) {
         if (audioFormats.isEmpty() || !audioFormats.contains(bootstrapAudioFormat)) {
             throw new IllegalArgumentException("SABR audio codec group is empty");
         }
         this.videoId = videoId;
         this.info = info;
+        this.poToken = poToken.clone();
         this.bootstrapAudioFormat = bootstrapAudioFormat;
         this.audioFormats = Collections.unmodifiableList(new ArrayList<>(audioFormats));
-        this.videoFormat = videoFormat;
+        if (videoFormats.isEmpty() || !videoFormats.contains(bootstrapVideoFormat)) {
+            throw new IllegalArgumentException("SABR video codec group is empty");
+        }
+        this.videoFormats = Collections.unmodifiableList(new ArrayList<>(videoFormats));
+        this.bootstrapVideoFormat = bootstrapVideoFormat;
         final Map<String, YoutubeSabrInfo.Format> byKey = new LinkedHashMap<>();
         final Map<YoutubeSabrInfo.Format, String> byFormat = new ConcurrentHashMap<>();
-        byKey.put("v", videoFormat);
-        byFormat.put(videoFormat, "v");
+        for (int i = 0; i < videoFormats.size(); i++) {
+            final String key = "v" + i;
+            byKey.put(key, videoFormats.get(i));
+            byFormat.put(videoFormats.get(i), key);
+        }
         for (int i = 0; i < audioFormats.size(); i++) {
             final String key = "a" + i;
             byKey.put(key, audioFormats.get(i));
@@ -60,20 +72,38 @@ public final class SabrSourceSpec {
         formatsByKey = Collections.unmodifiableMap(byKey);
         keysByFormat = Collections.unmodifiableMap(byFormat);
         this.audioTimeline = audioTimeline;
-        this.videoTimeline = videoTimeline;
+        this.sharedVideoTimeline = videoTimeline;
         this.bootstrapMediaSegments = new AtomicReference<>(bootstrapMediaSegments);
-        putInitializationData(bootstrapAudioFormat, audioInitializationData);
-        putInitializationData(videoFormat, videoInitializationData);
+        if (audioInitializationData != null) putInitializationData(bootstrapAudioFormat,
+                audioInitializationData);
+        if (videoInitializationData != null) putInitializationData(bootstrapVideoFormat,
+                videoInitializationData);
+    }
+
+    SabrSourceSpec(@NonNull final String videoId, @NonNull final YoutubeSabrInfo info,
+                   @NonNull final byte[] poToken, @NonNull final YoutubeSabrInfo.Format audio,
+                   @NonNull final List<YoutubeSabrInfo.Format> audios,
+                   @NonNull final YoutubeSabrInfo.Format video,
+                   @Nullable final byte[] audioInit, @Nullable final byte[] videoInit,
+                   @Nullable final YoutubeSabrFormatTimeline audioTimeline,
+                   @Nullable final YoutubeSabrFormatTimeline videoTimeline,
+                   @NonNull final List<SabrMediaSegment> segments) {
+        this(videoId, info, poToken, audio, audios, Collections.singletonList(video), video,
+                audioInit, videoInit, audioTimeline, videoTimeline, segments);
     }
 
     @NonNull public String getVideoId() { return videoId; }
     @NonNull public YoutubeSabrInfo getInfo() { return info; }
+    @NonNull byte[] getPoToken() { return poToken.clone(); }
     @NonNull
     public YoutubeSabrInfo.Format getBootstrapAudioFormat() {
         return bootstrapAudioFormat;
     }
     @NonNull public List<YoutubeSabrInfo.Format> getAudioFormats() { return audioFormats; }
-    @NonNull public YoutubeSabrInfo.Format getVideoFormat() { return videoFormat; }
+    @NonNull public List<YoutubeSabrInfo.Format> getVideoFormats() { return videoFormats; }
+    @NonNull public YoutubeSabrInfo.Format getBootstrapVideoFormat() { return bootstrapVideoFormat; }
+    /** Compatibility accessor; callers needing a group must use getVideoFormats(). */
+    @NonNull public YoutubeSabrInfo.Format getVideoFormat() { return bootstrapVideoFormat; }
 
     @Nullable YoutubeSabrInfo.Format getFormat(@NonNull final String key) {
         return formatsByKey.get(key);
@@ -98,16 +128,30 @@ public final class SabrSourceSpec {
 
     long getDurationMs() {
         return Math.max(bootstrapAudioFormat.getApproxDurationMs(),
-                videoFormat.getApproxDurationMs());
+                bootstrapVideoFormat.getApproxDurationMs());
     }
 
-    @NonNull YoutubeSabrFormatTimeline getAudioTimeline() { return audioTimeline; }
-    @NonNull YoutubeSabrFormatTimeline getVideoTimeline() { return videoTimeline; }
+    @NonNull YoutubeSabrFormatTimeline getAudioTimeline() {
+        if (audioTimeline == null) throw new IllegalStateException("SABR audio timeline is not ready");
+        return audioTimeline;
+    }
+    @Nullable YoutubeSabrFormatTimeline peekAudioTimeline() { return audioTimeline; }
+    @Nullable YoutubeSabrFormatTimeline peekVideoTimeline() { return sharedVideoTimeline; }
+    @NonNull YoutubeSabrFormatTimeline getVideoTimeline() {
+        if (sharedVideoTimeline == null) throw new IllegalStateException("SABR video timeline is not ready");
+        return sharedVideoTimeline;
+    }
+
+    void putTimeline(@NonNull final YoutubeSabrInfo.Format format,
+                     @NonNull final YoutubeSabrFormatTimeline timeline) {
+        if (format.isAudio()) audioTimeline = timeline;
+        else sharedVideoTimeline = timeline;
+    }
 
     @NonNull
     YoutubeSabrFormatTimeline getTimeline(@NonNull final YoutubeSabrInfo.Format format) {
         if (format.isAudio() && audioFormats.contains(format)) return audioTimeline;
-        if (format.getItag() == videoFormat.getItag()) return videoTimeline;
+        if (videoFormats.contains(format)) return sharedVideoTimeline;
         throw new IllegalArgumentException("Unknown SABR itag: " + format.getItag());
     }
 

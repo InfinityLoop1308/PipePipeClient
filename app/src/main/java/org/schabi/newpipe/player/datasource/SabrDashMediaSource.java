@@ -72,6 +72,17 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
         try {
             final long durationMs = spec.getDurationMs();
             this.durationUs = durationMs > 0 ? durationMs * 1000L : C.TIME_UNSET;
+            final SabrMediaBridge preparationBridge = getOrCreateBridge();
+            if (spec.peekAudioTimeline() == null || spec.peekVideoTimeline() == null) {
+                try {
+                    preparationBridge.fetchSegments(0, spec.getBootstrapAudioFormat(), true, true);
+                } catch (final ExtractionException error) {
+                    throw new IOException("Could not prepare SABR first response", error);
+                }
+                if (spec.peekAudioTimeline() == null || spec.peekVideoTimeline() == null) {
+                    throw new IOException("SABR first response did not provide initialization");
+                }
+            }
             final DataSource.Factory sabrDataSourceFactory =
                     playerDataSource.getCacheDataSourceFactory(
                             this::createDataSource, this::buildCacheKey);
@@ -81,7 +92,7 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
                     /* manifestDataSourceFactory= */ null)
                     .createMediaSource(manifest, mediaItem);
             Log.d(TAG, "create source video=" + spec.getVideoId()
-                    + " videoItag=" + spec.getVideoFormat().getItag()
+                    + " videoItag=" + spec.getBootstrapVideoFormat().getItag()
                     + " bootstrapAudioItag=" + spec.getBootstrapAudioFormat().getItag());
         } catch (final IOException | RuntimeException | Error e) {
             throw e;
@@ -170,8 +181,7 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
                 + "minBufferTime=\"PT1.5S\" mediaPresentationDuration=\""
                 + formatDuration(durationMs) + "\">"
                 + "<Period id=\"0\" start=\"PT0S\">"
-                + adaptationSet(spec, Collections.singletonList(spec.getVideoFormat()),
-                        C.TRACK_TYPE_VIDEO, "0")
+                + videoAdaptationSets(spec)
                 + audioAdaptationSets(spec)
                 + "</Period></MPD>";
         try {
@@ -195,6 +205,10 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
                     String.valueOf(++index)));
         }
         return result.toString();
+    }
+
+    private static String videoAdaptationSets(final SabrSourceSpec spec) {
+        return adaptationSet(spec, spec.getVideoFormats(), C.TRACK_TYPE_VIDEO, "0");
     }
 
     private static String adaptationSet(final SabrSourceSpec spec,
@@ -373,25 +387,28 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
         private boolean updateActiveTracks(final ExoTrackSelection[] selections) {
             boolean videoActive = false;
             boolean audioActive = false;
+            YoutubeSabrInfo.Format currentVideo = null;
+            YoutubeSabrInfo.Format currentAudio = null;
             for (final ExoTrackSelection selection : selections) {
                 if (selection == null) {
                     continue;
                 }
                 final Format format = selection.getSelectedFormat();
-                if (format != null && spec.getFormatKey(spec.getVideoFormat())
-                        .equals(format.id)) {
-                    videoActive = true;
-                } else if (format != null) {
-                    for (final YoutubeSabrInfo.Format audio : spec.getAudioFormats()) {
-                        if (spec.getFormatKey(audio).equals(format.id)) {
-                            audioActive = true;
-                            break;
-                        }
+                if (format != null) {
+                    final YoutubeSabrInfo.Format selected = spec.getFormat(format.id);
+                    if (selected != null && selected.isVideo()) {
+                        videoActive = true;
+                        currentVideo = selected;
+                    } else if (selected != null) {
+                        audioActive = true;
+                        currentAudio = selected;
                     }
                 }
             }
             Log.d(TAG, "activeTracks video=" + spec.getVideoId()
                     + " video=" + videoActive + " audio=" + audioActive);
+            getOrCreateBridge().setSelectedFormats(currentAudio, currentVideo);
+            getOrCreateBridge().setActiveTracks(audioActive, videoActive);
             return videoActive || audioActive;
         }
 

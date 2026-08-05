@@ -81,12 +81,7 @@ public final class SabrSegmentDataSource implements DataSource {
     }
 
     private byte[] initializationData(final YoutubeSabrInfo.Format format) throws IOException {
-        try {
-            return bridge.fetchInitialization(format, FETCH_TIMEOUT_MS);
-        } catch (final org.schabi.newpipe.extractor.exceptions.ExtractionException error) {
-            throw new IOException("SABR initialization extraction failed: itag="
-                    + format.getItag(), error);
-        }
+        return bridge.getInitializationData(format);
     }
 
     @Override
@@ -137,7 +132,7 @@ public final class SabrSegmentDataSource implements DataSource {
                     + request.getFormat().getItag() + ", seq=" + request.getSequenceNumber());
         }
         try {
-            return bridge.fetchSegment(request, FETCH_TIMEOUT_MS);
+            return bridge.awaitSegment(request, FETCH_TIMEOUT_MS);
         } catch (final org.schabi.newpipe.extractor.exceptions.ExtractionException error) {
             throw new IOException("SABR segment extraction failed", error);
         }

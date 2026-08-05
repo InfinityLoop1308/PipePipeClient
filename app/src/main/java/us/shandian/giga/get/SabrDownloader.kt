@@ -7,6 +7,7 @@ import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrProtocol
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrRecoverableException
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
+import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrRequestHelper
 import org.schabi.newpipe.extractor.stream.DeliveryMethod
 import org.schabi.newpipe.extractor.stream.StreamInfo
 import org.schabi.newpipe.youtube.LocalDomPoTokenProvider
@@ -379,23 +380,34 @@ internal class SabrDownloader(
             return
         }
 
-        ensureRunning()
-        val initialization = session.initialize(2_000, poToken)
+        var adaptiveSucceeded = true
         for (target in pendingTargets) {
-            val data = if (target.format.isAudio) {
-                initialization.audioData
-            } else {
-                initialization.videoData
-            } ?: throw RetryColdStartException()
-            target.timeline = if (target.format.isAudio) {
-                initialization.audioTimeline
-            } else {
-                initialization.videoTimeline
-            } ?: throw RetryColdStartException()
-            writer.writeInitializationData(target, data)
+            ensureRunning()
+            try {
+                val data = YoutubeSabrRequestHelper.fetchInitializationData(
+                    target.format, poToken, 2_000)
+                writer.writeInitializationData(target, data)
+            } catch (_: IOException) {
+                adaptiveSucceeded = false
+                break
+            }
         }
-        for (segment in initialization.mediaSegments) {
-            writer.acceptSegment(segment)
+        if (!adaptiveSucceeded) {
+            ensureRunning()
+            session.requestOnce(
+                0L,
+                null, 0,
+                null, 0,
+                targets.any { it.format.isAudio },
+                targets.any { it.format.isVideo },
+                false,
+                1.0f,
+                writer::acceptSegment,
+            )
+            writer.observeWrittenInitializations()
+        }
+        if (pendingTargets.any { !it.initializationWritten }) {
+            throw RetryColdStartException()
         }
     }
 
