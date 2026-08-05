@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.schabi.newpipe.App;
-import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
@@ -138,9 +137,6 @@ public final class SabrSessionStore {
         final File spool = new File(context.getCacheDir(),
                 "sabr-segments/" + spec.getVideoId() + '-' + System.nanoTime());
         final YoutubeSabrSession created = new YoutubeSabrSession(spec.getInfo(), null, null, spool);
-        final LocalDomPoTokenProvider tokenProvider = provider(context);
-        created.setPoTokenRefresher(() -> tokenProvider.getPoToken(spec.getInfo()));
-        created.setIdentityRefresher(() -> refreshIdentity(context, spec.getInfo()));
         final byte[] token = spec.getPoToken();
         if (token == null || token.length == 0) {
             throw new SabrLogicException("SABR PO token provider returned no token for video="
@@ -148,41 +144,6 @@ public final class SabrSessionStore {
         }
         created.setPoToken(token);
         return cacheSession(key, created);
-    }
-
-    @NonNull
-    private static YoutubeSabrSession.SessionIdentity refreshIdentity(
-            @NonNull final Context context, @NonNull final YoutubeSabrInfo rejectedInfo)
-            throws IOException, ExtractionException {
-        final StreamInfo refreshed = StreamInfo.getInfo(ServiceList.YouTube,
-                "https://www.youtube.com/watch?v=" + rejectedInfo.getVideoId());
-        YoutubeSabrInfo freshInfo = null;
-        for (final VideoStream stream : refreshed.getVideoOnlyStreams()) {
-            if (stream.getDeliveryMethod() == DeliveryMethod.SABR
-                    && stream.getDeliveryMethodInfo() instanceof YoutubeSabrInfo) {
-                freshInfo = (YoutubeSabrInfo) stream.getDeliveryMethodInfo();
-                break;
-            }
-        }
-        if (freshInfo == null) {
-            for (final AudioStream stream : refreshed.getAudioStreams()) {
-                if (stream.getDeliveryMethod() == DeliveryMethod.SABR
-                        && stream.getDeliveryMethodInfo() instanceof YoutubeSabrInfo) {
-                    freshInfo = (YoutubeSabrInfo) stream.getDeliveryMethodInfo();
-                    break;
-                }
-            }
-        }
-        if (freshInfo == null) {
-            throw new SabrLogicException("Refreshed player response has no SABR identity for "
-                    + rejectedInfo.getVideoId());
-        }
-        final byte[] token = provider(context).getPoToken(freshInfo);
-        if (token == null || token.length == 0) {
-            throw new SabrLogicException("Refreshed SABR identity returned no PO token for "
-                    + rejectedInfo.getVideoId());
-        }
-        return new YoutubeSabrSession.SessionIdentity(freshInfo, token);
     }
 
     @Nullable
