@@ -180,7 +180,6 @@ public final class SabrPlaybackSmokeTest {
         try (SabrSmokeHarness harness = SabrSmokeHarness.create()) {
             harness.setPlayerTimeMs(20_000);
             harness.downloader.enqueue(new UmpFixture()
-                    .initSegment(0, SMOKE_VIDEO_ITAG)
                     .segment(1, SMOKE_VIDEO_ITAG, 1, 0, 5_000)
                     .bytes());
             harness.downloader.enqueue(new UmpFixture()
@@ -240,7 +239,6 @@ public final class SabrPlaybackSmokeTest {
     public void repeatedNonTargetMediaBatchesFailWithinDemandBudget() throws Exception {
         try (SabrSmokeHarness harness = SabrSmokeHarness.create()) {
             harness.downloader.enqueue(new UmpFixture()
-                    .initSegment(0, SMOKE_VIDEO_ITAG)
                     .segment(1, SMOKE_VIDEO_ITAG, 1, 0, 5_000)
                     .bytes());
             for (int response = 0; response < 3; response++) {
@@ -590,78 +588,6 @@ public final class SabrPlaybackSmokeTest {
     }
 
     @Test
-    public void nativeBootstrapBuildsExactTimelineWithoutAdaptiveRangeRequests() throws Exception {
-        final YoutubeSabrInfo.Format audioFormat = smokeFormat(SMOKE_AUDIO_ITAG, true);
-        final YoutubeSabrInfo.Format videoFormat = smokeFormat(SMOKE_VIDEO_ITAG, false);
-        final byte[] audioInit = mp4Sidx(20_001, 20_000, 19_999);
-        final byte[] videoInit = mp4Sidx(5_000, 5_000, 5_000, 5_000);
-        try (SabrSmokeHarness harness = SabrSmokeHarness.create(audioFormat, videoFormat)) {
-            harness.downloader.enqueue(new UmpFixture()
-                    .part(SabrResponseDecoder.FORMAT_INITIALIZATION_METADATA,
-                            initializationMetadata(SMOKE_AUDIO_ITAG, 3, 60_000, "audio/mp4"))
-                    .part(SabrResponseDecoder.FORMAT_INITIALIZATION_METADATA,
-                            initializationMetadata(SMOKE_VIDEO_ITAG, 4, 20_000, "video/mp4"))
-                    .initSegment(1, SMOKE_AUDIO_ITAG, audioInit)
-                    .initSegment(2, SMOKE_VIDEO_ITAG, videoInit)
-                    .bytes());
-
-            harness.holder.session.bootstrapInitialization(new Localization("en", "US"));
-            assertTrue(harness.holder.session.getStreamState().hasSegmentIndex(audioFormat));
-            assertTrue(harness.holder.session.getStreamState().hasSegmentIndex(videoFormat));
-            assertEquals(20_001, harness.holder.session.getStreamState()
-                    .getSegmentStartMs(audioFormat, 2));
-            assertEquals(40_001, harness.holder.session.getStreamState()
-                    .getSegmentStartMs(audioFormat, 3));
-
-            final SabrSourceSpec spec = harness.holder.session.initializedSpec();
-            final Context context = InstrumentationRegistry.getInstrumentation()
-                    .getTargetContext();
-            final Method buildManifest = SabrDashMediaSource.class.getDeclaredMethod(
-                    "buildManifest", SabrSourceSpec.class, long.class);
-            buildManifest.setAccessible(true);
-            assertNotNull(buildManifest.invoke(null, spec, spec.getDurationMs()));
-
-            assertTrue("Bootstrap unexpectedly used adaptive range transport",
-                    harness.downloader.streamingTimeoutsMs.isEmpty());
-        }
-    }
-
-    @Test
-    public void nativeBootstrapHonorsInitialAndSkipsCompletedResponseBackoff() throws Exception {
-        final YoutubeSabrInfo.Format audioFormat = smokeFormat(SMOKE_AUDIO_ITAG, true);
-        final YoutubeSabrInfo.Format videoFormat = smokeFormat(SMOKE_VIDEO_ITAG, false);
-        final byte[] audioInit = mp4Sidx(20_000);
-        final byte[] videoInit = mp4Sidx(5_000);
-        try (SabrSmokeHarness harness = SabrSmokeHarness.create(audioFormat, videoFormat)) {
-            harness.downloader.enqueue(new UmpFixture()
-                    .part(SabrResponseDecoder.NEXT_REQUEST_POLICY, nextRequestPolicy(500))
-                    .bytes());
-            harness.downloader.enqueue(new UmpFixture()
-                    .part(SabrResponseDecoder.NEXT_REQUEST_POLICY, nextRequestPolicy(5_000))
-                    .part(SabrResponseDecoder.FORMAT_INITIALIZATION_METADATA,
-                            initializationMetadata(SMOKE_AUDIO_ITAG, 1, 20_000, "audio/mp4"))
-                    .part(SabrResponseDecoder.FORMAT_INITIALIZATION_METADATA,
-                            initializationMetadata(SMOKE_VIDEO_ITAG, 1, 5_000, "video/mp4"))
-                    .initSegment(1, SMOKE_AUDIO_ITAG, audioInit)
-                    .initSegment(2, SMOKE_VIDEO_ITAG, videoInit)
-                    .bytes());
-
-            final long bootstrapStartNs = System.nanoTime();
-            harness.holder.session.bootstrapInitialization(new Localization("en", "US"));
-            final long bootstrapElapsedMs = TimeUnit.NANOSECONDS.toMillis(
-                    System.nanoTime() - bootstrapStartNs);
-
-            final List<Long> requestTimesMs = harness.downloader.requestTimesSnapshot();
-            assertEquals(2, requestTimesMs.size());
-            assertTrue("Bootstrap ignored the initial SABR backoff: " + requestTimesMs,
-                    requestTimesMs.get(1) - requestTimesMs.get(0) >= 400);
-            assertTrue("Bootstrap waited for the completed init response backoff: elapsedMs="
-                            + bootstrapElapsedMs,
-                    bootstrapElapsedMs < 2_000);
-        }
-    }
-
-    @Test
     public void demandIncompleteMediaResponseRetriesThroughPump() throws Exception {
         try (SabrSmokeHarness harness = SabrSmokeHarness.create()) {
             harness.downloader.enqueue(new UmpFixture()
@@ -999,35 +925,6 @@ public final class SabrPlaybackSmokeTest {
 
             assertArrayEquals("Demand path did not return decompressed media bytes",
                     raw, harness.getLastSegmentData());
-        }
-    }
-
-    @Test
-    public void compressedAndInitializationSegmentsRemainCompletionOnly() throws Exception {
-        final byte[] rawCompressedMedia = new byte[]{30, 31, 32, 33, 34, 35};
-        final byte[] compressedMedia = gzip(rawCompressedMedia);
-        final int compressedSplit = Math.max(1, compressedMedia.length / 2);
-        try (SabrSmokeHarness harness = SabrSmokeHarness.create()) {
-            final GatedMediaResponse response = new GatedMediaResponse(
-                    1, SMOKE_VIDEO_ITAG, 1, 0, 5_000,
-                    Arrays.copyOfRange(compressedMedia, 0, compressedSplit),
-                    Arrays.copyOfRange(compressedMedia, compressedSplit, compressedMedia.length),
-                    1, false, null);
-            verifyCompletionOnly(harness,
-                    SabrSegmentKey.media(harness.videoFormat, 1),
-                    response, rawCompressedMedia, "compressed media");
-        }
-
-        final byte[] initializationBytes = mp4Sidx(5_000, 5_000);
-        try (SabrSmokeHarness harness = SabrSmokeHarness.create()) {
-            final GatedMediaResponse response = new GatedMediaResponse(
-                    1, SMOKE_VIDEO_ITAG, 0, 0, 0,
-                    Arrays.copyOfRange(initializationBytes, 0, 2),
-                    Arrays.copyOfRange(initializationBytes, 2, initializationBytes.length),
-                    0, true, null);
-            verifyInitializationCompletionOnly(harness,
-                    SabrSegmentKey.initialization(harness.videoFormat),
-                    response, initializationBytes, "initialization segment");
         }
     }
 
@@ -1656,61 +1553,6 @@ public final class SabrPlaybackSmokeTest {
         return trace;
     }
 
-    private static void verifyCompletionOnly(final SabrSmokeHarness harness,
-                                             final SabrSegmentKey request,
-                                             final GatedMediaResponse response,
-                                             final byte[] expectedBytes,
-                                             final String description) throws Exception {
-        harness.downloader.enqueue(response);
-        final AsyncSegmentReader reader = new AsyncSegmentReader(
-                harness.holder, harness.readerOwner, request, 1);
-        reader.start();
-        try {
-            assertTrue(description + " producer did not reach the MEDIA payload gate",
-                    response.awaitGate(2_000));
-            assertTrue(description + " became readable before completion",
-                    !reader.awaitOpened(300));
-        } finally {
-            response.release();
-        }
-        assertTrue(description + " did not finish after completion",
-                reader.awaitDone(2_000));
-        assertNull(description + " read failed", reader.getFailure());
-        assertTrue(description + " did not reach EOF", reader.isEofObserved());
-        assertTrue(description + " returned unexpected bytes",
-                Arrays.equals(expectedBytes, reader.bytesSnapshot()));
-    }
-
-    private static void verifyInitializationCompletionOnly(
-            final SabrSmokeHarness harness,
-            final SabrSegmentKey request,
-            final GatedMediaResponse response,
-            final byte[] expectedBytes,
-            final String description) throws Exception {
-        final Field initializationData = SabrSourceSpec.class
-                .getDeclaredField("initializationData");
-        initializationData.setAccessible(true);
-        @SuppressWarnings("unchecked") final Map<YoutubeSabrInfo.Format, byte[]> values =
-                (Map<YoutubeSabrInfo.Format, byte[]>) initializationData.get(harness.holder.spec);
-        values.remove(request.getFormat());
-        harness.downloader.enqueue(response);
-        final AsyncSegmentReader reader = new AsyncSegmentReader(
-                harness.holder, harness.readerOwner, request, 1);
-        reader.start();
-        try {
-            assertTrue(description + " producer did not reach the MEDIA payload gate",
-                    response.awaitGate(2_000));
-            assertTrue(description + " became readable before completion",
-                    !reader.awaitOpened(300));
-        } finally {
-            response.release();
-        }
-        assertTrue(description + " did not finish after completion", reader.awaitDone(2_000));
-        assertNull(description + " read failed", reader.getFailure());
-        assertTrue(description + " returned unexpected bytes",
-                Arrays.equals(expectedBytes, reader.bytesSnapshot()));
-    }
-
     private static long usedHeapBytes() {
         final Runtime runtime = Runtime.getRuntime();
         return runtime.totalMemory() - runtime.freeMemory();
@@ -2102,8 +1944,18 @@ public final class SabrPlaybackSmokeTest {
                     Collections.emptyList());
             delegate.setPoToken(new byte[]{1, 2, 3, 4});
             bridge = new SabrMediaBridge(context, delegate, spec);
+            setBridgeTimeline("audioTimeline", audioTimeline);
+            setBridgeTimeline("videoTimeline", videoTimeline);
             session = new SmokeSession(delegate, bridge, spec, audioFormat, videoFormat,
                     audioTimeline, videoTimeline);
+        }
+
+        private void setBridgeTimeline(final String fieldName,
+                                       final org.schabi.newpipe.extractor.services.youtube.sabr
+                                               .YoutubeSabrFormatTimeline timeline) throws Exception {
+            final Field field = SabrMediaBridge.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(bridge, timeline);
         }
 
         private void setActiveTracks(final Object owner,
@@ -2134,7 +1986,6 @@ public final class SabrPlaybackSmokeTest {
         private volatile boolean videoActive = true;
         private volatile long playerTimeMs;
         private volatile long peakCachedBytes;
-        private YoutubeSabrSession.InitializationResult initializationResult;
 
         private SmokeSession(final YoutubeSabrSession delegate,
                              final SabrMediaBridge bridge,
@@ -2161,7 +2012,7 @@ public final class SabrPlaybackSmokeTest {
 
         private YoutubeSabrSession.RequestResult pumpOnceStreamingForDemand(
                 final Localization localization, final SabrSegmentKey request) throws Exception {
-            playerTimeMs = Math.max(0, spec.getTimeline(request.getFormat())
+            playerTimeMs = Math.max(0, (request.getFormat().isAudio() ? audioTimeline : videoTimeline)
                     .getStartMs(request.getSequenceNumber()));
             return requestOnce(request);
         }
@@ -2187,28 +2038,6 @@ public final class SabrPlaybackSmokeTest {
             if (previous != null && previous != segment) previous.delete();
             state.observe(format, segment);
             peakCachedBytes = Math.max(peakCachedBytes, getCachedBytes());
-        }
-
-        private void bootstrapInitialization(final Localization localization) throws Exception {
-            initializationResult = delegate.initialize(2_000, new byte[]{1, 2, 3, 4});
-            state.setTimelines(initializationResult.getAudioTimeline(),
-                    initializationResult.getVideoTimeline());
-        }
-
-        private SabrSourceSpec initializedSpec() {
-            if (initializationResult == null
-                    || initializationResult.getAudioData() == null
-                    || initializationResult.getVideoData() == null
-                    || initializationResult.getAudioTimeline() == null
-                    || initializationResult.getVideoTimeline() == null) {
-                return spec;
-            }
-            return new SabrSourceSpec(spec.getVideoId(), spec.getInfo(), audioFormat,
-                    Collections.singletonList(audioFormat), videoFormat,
-                    initializationResult.getAudioData(), initializationResult.getVideoData(),
-                    initializationResult.getAudioTimeline(),
-                    initializationResult.getVideoTimeline(),
-                    initializationResult.getMediaSegments());
         }
 
         private SabrMediaSegment getCachedSegment(final SabrSegmentKey request) {
@@ -2913,20 +2742,6 @@ public final class SabrPlaybackSmokeTest {
 
         private UmpFixture segment(final int headerId, final int itag, final int sequence) {
             return mediaHeader(headerId, itag, sequence).media(headerId).mediaEnd(headerId);
-        }
-
-        private UmpFixture initSegment(final int headerId, final int itag) {
-            return mediaHeader(headerId, itag, 0, 0, 0, 4, 0, true)
-                    .media(headerId)
-                    .mediaEnd(headerId);
-        }
-
-        private UmpFixture initSegment(final int headerId,
-                                       final int itag,
-                                       final byte[] payload) {
-            return mediaHeader(headerId, itag, 0, 0, 0, payload.length, 0, true)
-                    .media(headerId, payload)
-                    .mediaEnd(headerId);
         }
 
         private UmpFixture segment(final int headerId,

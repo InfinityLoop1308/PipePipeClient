@@ -90,20 +90,15 @@ final class SabrMediaBridge {
             final boolean audioActive,
             final boolean videoActive) throws IOException, ExtractionException {
         synchronized (requestLock) {
-            requestThread = Thread.currentThread();
-            try {
-                final YoutubeSabrSession.RequestResult result = session.requestOnce(
-                        activeAudio,
-                        videoFormat, playerTimeMs,
-                        audioTimeline, bufferedThrough(activeAudio),
-                        videoTimeline, bufferedThrough(videoFormat),
-                        audioActive, videoActive, videoActive && !audioActive,
-                        1.0f, segment -> acceptSegment(segment, activeAudio));
-                publishBackoff(result.getBackoffMs());
-                return result;
-            } finally {
-                requestThread = null;
-            }
+            final YoutubeSabrSession.RequestResult result = session.requestOnce(
+                    activeAudio,
+                    videoFormat, playerTimeMs,
+                    audioTimeline, bufferedThrough(activeAudio),
+                    videoTimeline, bufferedThrough(videoFormat),
+                    audioActive, videoActive, videoActive && !audioActive,
+                    1.0f, segment -> acceptSegment(segment, activeAudio));
+            publishBackoff(result.getBackoffMs());
+            return result;
         }
     }
 

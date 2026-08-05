@@ -3233,7 +3233,13 @@ public final class Player implements
         saveStreamProgressState();
         boolean isCatchableException = false;
 
-        switch (error.errorCode) {
+        if (containsSabrAttestationRequired(error)) {
+            isCatchableException = true;
+            setRecovery();
+            reloadPlayQueueManager();
+        } else {
+
+            switch (error.errorCode) {
             case ERROR_CODE_BEHIND_LIVE_WINDOW:
                 isCatchableException = true;
                 simpleExoPlayer.seekToDefaultPosition();
@@ -3314,6 +3320,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                 // API, remote and renderer errors belong here:
                 onPlaybackShutdown();
                 break;
+            }
         }
 
         if (!isCatchableException) {
@@ -3324,6 +3331,18 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         if (fragmentListener != null) {
             fragmentListener.onPlayerError(error, isCatchableException);
         }
+    }
+
+    private static boolean containsSabrAttestationRequired(@NonNull final Throwable error) {
+        Throwable current = error;
+        while (current != null) {
+            if (current.getMessage() != null
+                    && current.getMessage().contains("SABR attestation required")) {
+                return true;
+            }
+            current = current.getCause();
+        }
+        return false;
     }
 
     private void showMediaCodecWorkaroundHint(@NonNull final PlaybackException error) {

@@ -19,7 +19,6 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class SabrSourceSpec {
     @NonNull private final String videoId;
     @NonNull private final YoutubeSabrInfo info;
-    @NonNull private final byte[] poToken;
     @NonNull private final YoutubeSabrInfo.Format bootstrapAudioFormat;
     @NonNull private final List<YoutubeSabrInfo.Format> audioFormats;
     @NonNull private final List<YoutubeSabrInfo.Format> videoFormats;
@@ -32,7 +31,6 @@ public final class SabrSourceSpec {
 
     SabrSourceSpec(@NonNull final String videoId,
                    @NonNull final YoutubeSabrInfo info,
-                   @NonNull final byte[] poToken,
                    @NonNull final YoutubeSabrInfo.Format bootstrapAudioFormat,
                    @NonNull final List<YoutubeSabrInfo.Format> audioFormats,
                    @NonNull final List<YoutubeSabrInfo.Format> videoFormats,
@@ -47,7 +45,6 @@ public final class SabrSourceSpec {
         }
         this.videoId = videoId;
         this.info = info;
-        this.poToken = poToken.clone();
         this.bootstrapAudioFormat = bootstrapAudioFormat;
         this.audioFormats = Collections.unmodifiableList(new ArrayList<>(audioFormats));
         if (videoFormats.isEmpty() || !videoFormats.contains(bootstrapVideoFormat)) {
@@ -77,20 +74,19 @@ public final class SabrSourceSpec {
     }
 
     SabrSourceSpec(@NonNull final String videoId, @NonNull final YoutubeSabrInfo info,
-                   @NonNull final byte[] poToken, @NonNull final YoutubeSabrInfo.Format audio,
+                   @NonNull final YoutubeSabrInfo.Format audio,
                    @NonNull final List<YoutubeSabrInfo.Format> audios,
                    @NonNull final YoutubeSabrInfo.Format video,
                    @Nullable final byte[] audioInit, @Nullable final byte[] videoInit,
                    @Nullable final YoutubeSabrFormatTimeline audioTimeline,
                    @Nullable final YoutubeSabrFormatTimeline videoTimeline,
                    @NonNull final List<SabrMediaSegment> segments) {
-        this(videoId, info, poToken, audio, audios, Collections.singletonList(video), video,
+        this(videoId, info, audio, audios, Collections.singletonList(video), video,
                 audioInit, videoInit, audioTimeline, videoTimeline, segments);
     }
 
     @NonNull public String getVideoId() { return videoId; }
     @NonNull public YoutubeSabrInfo getInfo() { return info; }
-    @NonNull byte[] getPoToken() { return poToken.clone(); }
     @NonNull
     public YoutubeSabrInfo.Format getBootstrapAudioFormat() {
         return bootstrapAudioFormat;

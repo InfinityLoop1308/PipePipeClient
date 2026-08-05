@@ -35,7 +35,6 @@ import java.util.concurrent.FutureTask;
 /** Prepares SABR source data and retains a small LRU of Extractor protocol sessions. */
 public final class SabrSessionStore {
     private static final int MAX_WARM_ENTRIES = 32;
-    private static final int MAX_SESSIONS = 8;
     private static final ExecutorService WARM_EXECUTOR = Executors.newFixedThreadPool(2,
             runnable -> daemonThread(runnable, "SabrAdaptivePrewarm"));
     private static final Map<String, Future<byte[]>> WARM_ENTRIES =
@@ -47,14 +46,6 @@ public final class SabrSessionStore {
                     return size() > MAX_WARM_ENTRIES;
                 }
             });
-    private static final Map<String, YoutubeSabrSession> SESSIONS =
-            new LinkedHashMap<String, YoutubeSabrSession>(MAX_SESSIONS + 1, 0.75f, true) {
-                @Override
-                protected boolean removeEldestEntry(
-                        final Map.Entry<String, YoutubeSabrSession> eldest) {
-                    return size() > MAX_SESSIONS;
-                }
-            };
     private static volatile LocalDomPoTokenProvider sharedProvider;
 
     private SabrSessionStore() {
@@ -96,15 +87,9 @@ public final class SabrSessionStore {
         }
         final List<YoutubeSabrInfo.Format> videoFormats =
                 Collections.singletonList(preferredVideo);
-        final YoutubeSabrInfo.Format videoBootstrap = preferredVideo;
-        final String key = warmKey(info);
-        final byte[] warmedPoToken = takeWarmedPoToken(key, videoId);
-        final LocalDomPoTokenProvider tokenProvider = provider(App.getApp());
-        final byte[] poToken = warmedPoToken == null
-                ? tokenProvider.getPoToken(info) : warmedPoToken;
         PlaybackStartupTrace.markForVideoId(videoId, "sabr_source_spec_ready");
-        return new SabrSourceSpec(videoId, info, poToken,
-                audio.bootstrapFormat, audio.formats, videoFormats, videoBootstrap,
+        return new SabrSourceSpec(videoId, info,
+                audio.bootstrapFormat, audio.formats, videoFormats, preferredVideo,
                 null, null, null, null, Collections.emptyList());
     }
 
@@ -114,9 +99,6 @@ public final class SabrSessionStore {
                 || !(selectedStream.getDeliveryMethodInfo() instanceof YoutubeSabrInfo)) return;
         final YoutubeSabrInfo info = (YoutubeSabrInfo) selectedStream.getDeliveryMethodInfo();
         if (!isUsableExtractorInfo(info, streamInfo.getId())) return;
-        final AudioSelection audio = selectAudioGroup(context, info, streamInfo.getAudioStreams());
-        final YoutubeSabrInfo.Format video = pickVideoFormat(info, selectedStream.getItag());
-        if (audio == null || video == null) return;
         final String key = warmKey(info);
         synchronized (WARM_ENTRIES) {
             if (WARM_ENTRIES.containsKey(key)) return;
@@ -131,33 +113,20 @@ public final class SabrSessionStore {
     static YoutubeSabrSession getOrCreateSession(@NonNull final Context context,
                                                  @NonNull final SabrSourceSpec spec)
             throws IOException, ExtractionException {
-        final String key = sessionKey(spec.getInfo());
-        final YoutubeSabrSession cached = getSession(key);
-        if (cached != null) return cached;
         final File spool = new File(context.getCacheDir(),
                 "sabr-segments/" + spec.getVideoId() + '-' + System.nanoTime());
-        final YoutubeSabrSession created = new YoutubeSabrSession(spec.getInfo(), null, null, spool);
-        final byte[] token = spec.getPoToken();
-        if (token == null || token.length == 0) {
+        final YoutubeSabrSession created = new YoutubeSabrSession(spec.getInfo(),
+                spec.getBootstrapAudioFormat(), spec.getBootstrapVideoFormat(), spool);
+        final LocalDomPoTokenProvider tokenProvider = provider(context);
+        final byte[] token = takeWarmedPoToken(warmKey(spec.getInfo()), spec.getVideoId());
+        final byte[] resolvedToken = token == null
+                ? tokenProvider.getPoToken(spec.getInfo()) : token;
+        if (resolvedToken == null || resolvedToken.length == 0) {
             throw new SabrLogicException("SABR PO token provider returned no token for video="
                     + spec.getVideoId());
         }
-        created.setPoToken(token);
-        return cacheSession(key, created);
-    }
-
-    @Nullable
-    private static synchronized YoutubeSabrSession getSession(@NonNull final String key) {
-        return SESSIONS.get(key);
-    }
-
-    @NonNull
-    private static synchronized YoutubeSabrSession cacheSession(
-            @NonNull final String key, @NonNull final YoutubeSabrSession session) {
-        final YoutubeSabrSession existing = SESSIONS.get(key);
-        if (existing != null) return existing;
-        SESSIONS.put(key, session);
-        return session;
+        created.setPoToken(resolvedToken);
+        return created;
     }
 
     @Nullable
@@ -277,11 +246,6 @@ public final class SabrSessionStore {
     @NonNull
     private static String warmKey(@NonNull final YoutubeSabrInfo info) {
         return Objects.requireNonNull(info.getServerAbrStreamingUrl());
-    }
-
-    @NonNull
-    private static String sessionKey(@NonNull final YoutubeSabrInfo info) {
-        return warmKey(info);
     }
 
 }
