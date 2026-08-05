@@ -1,5 +1,7 @@
 package org.schabi.newpipe.player.datasource;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -8,6 +10,7 @@ import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormatTimel
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
 import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrMediaSegment;
+import org.schabi.newpipe.player.SabrBackoffCoordinator;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -28,6 +31,7 @@ final class SabrMediaBridge {
 
     private final YoutubeSabrSession session;
     private final SabrSourceSpec spec;
+    private final Context appContext;
     private final YoutubeSabrInfo.Format videoFormat;
     private final YoutubeSabrFormatTimeline audioTimeline;
     private final YoutubeSabrFormatTimeline videoTimeline;
@@ -41,8 +45,10 @@ final class SabrMediaBridge {
     private volatile boolean stopped;
     @Nullable private volatile Thread requestThread;
 
-    SabrMediaBridge(@NonNull final YoutubeSabrSession session,
+    SabrMediaBridge(@NonNull final Context context,
+                    @NonNull final YoutubeSabrSession session,
                     @NonNull final SabrSourceSpec spec) {
+        appContext = context.getApplicationContext();
         this.session = session;
         this.spec = spec;
         videoFormat = spec.getVideoFormat();
@@ -69,6 +75,7 @@ final class SabrMediaBridge {
                         ensureBudget(SabrSegmentKey.initialization(format), deadlineNs)));
                 data = session.fetchInitializationData(format, remainingMs,
                         segment -> acceptSegment(segment, format.isAudio() ? format : null));
+                publishBackoff(session.getBackoffRemainingMs());
                 ensureBudget(SabrSegmentKey.initialization(format), deadlineNs);
                 spec.putInitializationData(format, data);
                 return data;
@@ -122,6 +129,7 @@ final class SabrMediaBridge {
                                 videoTimeline, bufferedThrough(videoFormat),
                                 audioActive, videoActive, videoActive && !audioActive,
                                 1.0f, received -> acceptSegment(received, activeAudio));
+                        publishBackoff(result.getBackoffMs());
                         if (result.isDeferred()) continue;
 
                         segment = ahead.get(request);
@@ -157,6 +165,7 @@ final class SabrMediaBridge {
 
     void stop() {
         stopped = true;
+        SabrBackoffCoordinator.getInstance().clear(appContext, this);
         final Thread current = requestThread;
         if (current != null) current.interrupt();
         for (final SabrMediaSegment segment : ahead.values()) segment.delete();
@@ -170,12 +179,21 @@ final class SabrMediaBridge {
                                           final long deadlineNs) throws IOException {
         while (true) {
             final long backoffMs = session.getBackoffRemainingMs();
+            publishBackoff(backoffMs);
             if (backoffMs <= 0) return;
             final long remainingNs = ensureBudget(request, deadlineNs);
             if (TimeUnit.MILLISECONDS.toNanos(backoffMs) >= remainingNs) {
                 throw timeout(request, "SABR backoff cannot fit within the fetch budget");
             }
             sleep(backoffMs);
+        }
+    }
+
+    private void publishBackoff(final long remainingMs) {
+        if (remainingMs > 0L) {
+            SabrBackoffCoordinator.getInstance().begin(appContext, this, remainingMs);
+        } else {
+            SabrBackoffCoordinator.getInstance().clear(appContext, this);
         }
     }
 

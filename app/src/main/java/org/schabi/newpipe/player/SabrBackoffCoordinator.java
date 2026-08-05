@@ -15,6 +15,10 @@ import androidx.core.app.NotificationManagerCompat;
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
 
+import java.util.IdentityHashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 /** Publishes the SABR server-wait state independently from the media notification. */
 public final class SabrBackoffCoordinator {
     public static final long NO_DEADLINE = -1L;
@@ -25,10 +29,8 @@ public final class SabrBackoffCoordinator {
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Runnable updateTask = this::updateNotification;
     private Context appContext;
-    private Object owner;
-    private long deadlineElapsedMs = NO_DEADLINE;
+    private final Map<Object, Long> deadlinesByOwner = new IdentityHashMap<>();
     private boolean playerBuffering;
-    private boolean playbackBlockedBeforeBuffering;
 
     private SabrBackoffCoordinator() {
     }
@@ -40,48 +42,27 @@ public final class SabrBackoffCoordinator {
 
     public synchronized void begin(@NonNull final Context context,
                                    @NonNull final Object sourceOwner,
-                                   final long deadlineMs) {
-        begin(context, sourceOwner, deadlineMs, false);
-    }
-
-    public synchronized void beginPlaybackWait(@NonNull final Context context,
-                                               @NonNull final Object sourceOwner,
-                                               final long deadlineMs) {
-        begin(context, sourceOwner, deadlineMs, true);
-    }
-
-    private synchronized void begin(@NonNull final Context context,
-                                    @NonNull final Object sourceOwner,
-                                    final long deadlineMs,
-                                    final boolean blocksPlaybackBeforeBuffering) {
-        if (deadlineMs <= SystemClock.elapsedRealtime()) {
+                                   final long remainingMs) {
+        if (remainingMs <= 0L) {
             clear(context, sourceOwner);
             return;
         }
         appContext = context.getApplicationContext();
-        if (owner != sourceOwner) {
-            owner = sourceOwner;
-            deadlineElapsedMs = deadlineMs;
-            playbackBlockedBeforeBuffering = blocksPlaybackBeforeBuffering;
-        } else {
-            deadlineElapsedMs = Math.max(deadlineElapsedMs, deadlineMs);
-            playbackBlockedBeforeBuffering |= blocksPlaybackBeforeBuffering;
-        }
+        deadlinesByOwner.put(sourceOwner, SystemClock.elapsedRealtime() + remainingMs);
         handler.removeCallbacks(updateTask);
         updateNotification();
     }
 
     public synchronized void clear(@NonNull final Context context,
                                    @NonNull final Object sourceOwner) {
-        if (owner != sourceOwner) {
-            return;
-        }
-        owner = null;
-        deadlineElapsedMs = NO_DEADLINE;
-        playbackBlockedBeforeBuffering = false;
+        deadlinesByOwner.remove(sourceOwner);
         handler.removeCallbacks(updateTask);
-        NotificationManagerCompat.from(context.getApplicationContext())
-                .cancel(NOTIFICATION_ID);
+        if (getRemainingMs() > 0L && playerBuffering) {
+            updateNotification();
+        } else {
+            NotificationManagerCompat.from(context.getApplicationContext())
+                    .cancel(NOTIFICATION_ID);
+        }
     }
 
     public synchronized void setPlayerBuffering(@NonNull final Context context,
@@ -89,7 +70,7 @@ public final class SabrBackoffCoordinator {
         appContext = context.getApplicationContext();
         playerBuffering = buffering;
         handler.removeCallbacks(updateTask);
-        if (buffering || playbackBlockedBeforeBuffering) {
+        if (buffering) {
             updateNotification();
         } else {
             NotificationManagerCompat.from(appContext).cancel(NOTIFICATION_ID);
@@ -97,8 +78,18 @@ public final class SabrBackoffCoordinator {
     }
 
     public synchronized long getRemainingMs() {
-        return deadlineElapsedMs == NO_DEADLINE
-                ? 0L : Math.max(0L, deadlineElapsedMs - SystemClock.elapsedRealtime());
+        final long now = SystemClock.elapsedRealtime();
+        long latestDeadline = NO_DEADLINE;
+        final Iterator<Map.Entry<Object, Long>> iterator = deadlinesByOwner.entrySet().iterator();
+        while (iterator.hasNext()) {
+            final long deadline = iterator.next().getValue();
+            if (deadline <= now) {
+                iterator.remove();
+            } else {
+                latestDeadline = Math.max(latestDeadline, deadline);
+            }
+        }
+        return latestDeadline == NO_DEADLINE ? 0L : latestDeadline - now;
     }
 
     public synchronized boolean isWaiting() {
@@ -111,16 +102,12 @@ public final class SabrBackoffCoordinator {
 
     @SuppressLint("MissingPermission")
     private synchronized void updateNotification() {
-        if (appContext == null || deadlineElapsedMs == NO_DEADLINE
-                || (!playerBuffering && !playbackBlockedBeforeBuffering)) {
+        if (appContext == null || !playerBuffering) {
             return;
         }
         final long remainingMs = getRemainingMs();
         if (remainingMs <= 0L) {
             final Context context = appContext;
-            owner = null;
-            deadlineElapsedMs = NO_DEADLINE;
-            playbackBlockedBeforeBuffering = false;
             NotificationManagerCompat.from(context).cancel(NOTIFICATION_ID);
             return;
         }

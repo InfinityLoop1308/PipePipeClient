@@ -49,6 +49,7 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
     private static final long END_SEEK_BACKOFF_US = 1_000L;
 
     private final MediaItem mediaItem;
+    private final Context context;
     private final SabrSourceSpec spec;
     private final YoutubeSabrSession session;
     @Nullable private SabrMediaBridge bridge;
@@ -57,6 +58,7 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
     public SabrDashMediaSource(@NonNull final Context context,
                                @NonNull final MediaItem mediaItem,
                                @NonNull final SabrSourceSpec spec) throws IOException {
+        this.context = context.getApplicationContext();
         this.mediaItem = mediaItem;
         this.spec = spec;
         try {
@@ -139,7 +141,7 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
     @NonNull
     private synchronized SabrMediaBridge getOrCreateBridge() {
         if (bridge == null) {
-            bridge = new SabrMediaBridge(session, spec);
+            bridge = new SabrMediaBridge(context, session, spec);
             bridge.seedSegments(spec.takeBootstrapMediaSegments());
         }
         return bridge;

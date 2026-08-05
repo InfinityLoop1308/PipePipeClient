@@ -1854,10 +1854,6 @@ public final class Player implements
             return;
         }
 
-        // Feed the real play head to any live SABR session (no-op otherwise).
-        getCurrentStreamInfo().ifPresent(info -> {
-        });
-
         if (duration != binding.playbackSeekBar.getMax()) {
             setVideoDurationToControls(duration);
         }
@@ -2833,7 +2829,7 @@ public final class Player implements
             return;
         }
         final long remainingMs = SabrBackoffCoordinator.getInstance().getRemainingMs();
-        if (remainingMs <= 0L) {
+        if (!fragmentIsVisible || remainingMs <= 0L) {
             binding.sabrBackoffCountdown.setVisibility(View.GONE);
             return;
         }
@@ -3236,9 +3232,6 @@ public final class Player implements
 
         saveStreamProgressState();
         boolean isCatchableException = false;
-        final boolean sabrSessionInvalidated = error.getCause() != null
-                && error.getCause().getMessage() != null
-                && error.getCause().getMessage().startsWith("SABR session invalidated");
 
         switch (error.errorCode) {
             case ERROR_CODE_BEHIND_LIVE_WINDOW:
@@ -3285,9 +3278,6 @@ public final class Player implements
             case ERROR_CODE_IO_NETWORK_CONNECTION_FAILED:
             case ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT:
             case ERROR_CODE_UNSPECIFIED:
-                if (sabrSessionInvalidated) {
-                    isCatchableException = true;
-                }
                 setRecovery();
                 reloadPlayQueueManager();
                 break;
@@ -5312,9 +5302,8 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         final SourceType sourceType = videoResolver.getStreamSourceType().orElse(
                 SourceType.VIDEO_WITH_AUDIO_OR_AUDIO_ONLY);
 
-        // For SABR, a play queue manager reload stops the player and releases the current media
-        // source. Releasing the last SABR source reference also evicts its session, so background /
-        // foreground video toggles must keep the live source and only update track selection.
+        // A SABR source already exposes both audio and video, so background / foreground video
+        // toggles only need to update Media3 track selection instead of rebuilding the source.
         if (!isCurrentStreamSabr()
                 && playQueueManagerReloadingNeeded(sourceType, info, getVideoRendererIndex())) {
             reloadPlayQueueManager();
