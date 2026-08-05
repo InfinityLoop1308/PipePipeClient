@@ -51,7 +51,7 @@ import org.schabi.newpipe.App;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.player.datasource.SabrDashMediaSource;
-import org.schabi.newpipe.player.datasource.SabrSessionStore;
+import org.schabi.newpipe.player.datasource.SabrSessionHelper;
 import org.schabi.newpipe.player.datasource.SabrSourceSpec;
 
 import androidx.annotation.NonNull;
@@ -471,7 +471,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
         final YoutubeSabrInfo sabrInfo = getSabrInfo(stream);
         final SabrSourceSpec spec;
         try {
-            spec = SabrSessionStore.createSourceSpec(videoId, preferredVideoItag,
+            spec = SabrSessionHelper.createSourceSpec(videoId, preferredVideoItag,
                     streamInfo.getAudioStreams(), sabrInfo);
         } catch (final ExtractionException e) {
             throw new IOException("Could not describe SABR source for " + videoId, e);

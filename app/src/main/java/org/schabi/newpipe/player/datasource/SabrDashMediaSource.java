@@ -65,7 +65,7 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
         this.mediaItem = mediaItem;
         this.spec = spec;
         try {
-            session = SabrSessionStore.getOrCreateSession(context, spec);
+            session = SabrSessionHelper.getOrCreateSession(context, spec);
         } catch (final ExtractionException e) {
             throw new IOException("Could not create SABR session for " + spec.getVideoId(), e);
         }

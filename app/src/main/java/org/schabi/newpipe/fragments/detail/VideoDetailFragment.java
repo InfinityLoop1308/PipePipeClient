@@ -88,7 +88,6 @@ import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.PlayerService.PlayerType;
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.PlaybackStartupTrace;
-import org.schabi.newpipe.player.datasource.SabrSessionStore;
 import org.schabi.newpipe.player.event.OnKeyDownListener;
 import org.schabi.newpipe.player.event.PlayerServiceExtendedEventListener;
 import org.schabi.newpipe.player.helper.PlayerHelper;
@@ -1936,11 +1935,6 @@ public final class VideoDetailFragment
                 false);
         selectedVideoStreamIndex = ListHelper
                 .getDefaultResolutionIndex(activity, sortedVideoStreams);
-        if (selectedVideoStreamIndex >= 0
-                && selectedVideoStreamIndex < sortedVideoStreams.size()) {
-            SabrSessionStore.prewarm(requireContext(), info,
-                    sortedVideoStreams.get(selectedVideoStreamIndex));
-        }
         updateProgressInfo(info);
         initThumbnailViews(info);
         showMetaInfoInTextView(info.getMetaInfo(), binding.detailMetaInfoTextView,

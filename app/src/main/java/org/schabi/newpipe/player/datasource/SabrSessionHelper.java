@@ -9,64 +9,22 @@ import org.schabi.newpipe.App;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
-import org.schabi.newpipe.extractor.stream.DeliveryMethod;
 import org.schabi.newpipe.extractor.stream.AudioStream;
-import org.schabi.newpipe.extractor.stream.StreamInfo;
-import org.schabi.newpipe.extractor.stream.VideoStream;
+import org.schabi.newpipe.extractor.stream.DeliveryMethod;
 import org.schabi.newpipe.player.PlaybackStartupTrace;
 import org.schabi.newpipe.util.ListHelper;
-import org.schabi.newpipe.youtube.LocalDomPoTokenProvider;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 
-/** Prepares SABR source data and retains a small LRU of Extractor protocol sessions. */
-public final class SabrSessionStore {
-    private static final int MAX_WARM_ENTRIES = 32;
-    private static final ExecutorService WARM_EXECUTOR = Executors.newFixedThreadPool(2,
-            runnable -> daemonThread(runnable, "SabrAdaptivePrewarm"));
-    private static final Map<String, Future<byte[]>> WARM_ENTRIES =
-            Collections.synchronizedMap(new LinkedHashMap<String, Future<byte[]>>(
-                    MAX_WARM_ENTRIES + 1, 0.75f, true) {
-                @Override
-                protected boolean removeEldestEntry(
-                        final Map.Entry<String, Future<byte[]>> eldest) {
-                    return size() > MAX_WARM_ENTRIES;
-                }
-            });
-    private static volatile LocalDomPoTokenProvider sharedProvider;
-
-    private SabrSessionStore() {
-    }
-
-    private static Thread daemonThread(final Runnable runnable, final String name) {
-        final Thread thread = new Thread(runnable, name);
-        thread.setDaemon(true);
-        return thread;
-    }
-
-    @NonNull
-    private static LocalDomPoTokenProvider provider(@NonNull final Context context) {
-        LocalDomPoTokenProvider result = sharedProvider;
-        if (result != null) return result;
-        synchronized (SabrSessionStore.class) {
-            if (sharedProvider == null) {
-                sharedProvider = new LocalDomPoTokenProvider(context.getApplicationContext());
-            }
-            return sharedProvider;
-        }
+/** Selects SABR formats and creates protocol sessions. */
+public final class SabrSessionHelper {
+    private SabrSessionHelper() {
     }
 
     @NonNull
@@ -93,22 +51,6 @@ public final class SabrSessionStore {
                 null, null, null, null, Collections.emptyList());
     }
 
-    public static void prewarm(@NonNull final Context context, @NonNull final StreamInfo streamInfo,
-                               @NonNull final VideoStream selectedStream) {
-        if (selectedStream.getDeliveryMethod() != DeliveryMethod.SABR
-                || !(selectedStream.getDeliveryMethodInfo() instanceof YoutubeSabrInfo)) return;
-        final YoutubeSabrInfo info = (YoutubeSabrInfo) selectedStream.getDeliveryMethodInfo();
-        if (!isUsableExtractorInfo(info, streamInfo.getId())) return;
-        final String key = warmKey(info);
-        synchronized (WARM_ENTRIES) {
-            if (WARM_ENTRIES.containsKey(key)) return;
-            final FutureTask<byte[]> task = new FutureTask<>(() ->
-                    provider(context).getPoToken(info));
-            WARM_ENTRIES.put(key, task);
-            WARM_EXECUTOR.execute(task);
-        }
-    }
-
     @NonNull
     static YoutubeSabrSession getOrCreateSession(@NonNull final Context context,
                                                  @NonNull final SabrSourceSpec spec)
@@ -117,37 +59,13 @@ public final class SabrSessionStore {
                 "sabr-segments/" + spec.getVideoId() + '-' + System.nanoTime());
         final YoutubeSabrSession created = new YoutubeSabrSession(spec.getInfo(),
                 spec.getBootstrapAudioFormat(), spec.getBootstrapVideoFormat(), spool);
-        final LocalDomPoTokenProvider tokenProvider = provider(context);
-        final byte[] token = takeWarmedPoToken(warmKey(spec.getInfo()), spec.getVideoId());
-        final byte[] resolvedToken = token == null
-                ? tokenProvider.getPoToken(spec.getInfo()) : token;
+        final byte[] resolvedToken = spec.getInfo().getPoToken();
         if (resolvedToken == null || resolvedToken.length == 0) {
             throw new SabrLogicException("SABR PO token provider returned no token for video="
                     + spec.getVideoId());
         }
         created.setPoToken(resolvedToken);
         return created;
-    }
-
-    @Nullable
-    private static byte[] takeWarmedPoToken(@NonNull final String key,
-                                           @NonNull final String videoId)
-            throws IOException, ExtractionException {
-        final Future<byte[]> future;
-        synchronized (WARM_ENTRIES) {
-            future = WARM_ENTRIES.remove(key);
-        }
-        if (future == null) return null;
-        try {
-            final byte[] poToken = future.get();
-            return poToken == null ? null : poToken.clone();
-        } catch (final InterruptedException error) {
-            Thread.currentThread().interrupt();
-            throw new IOException("Interrupted awaiting SABR prewarm for " + videoId, error);
-        } catch (final ExecutionException error) {
-            // Prewarm is opportunistic. A failed task must not poison the real resolve path.
-            return null;
-        }
     }
 
     private static boolean isUsableExtractorInfo(@Nullable final YoutubeSabrInfo info,
@@ -241,11 +159,6 @@ public final class SabrSessionStore {
             }
         }
         return lowest;
-    }
-
-    @NonNull
-    private static String warmKey(@NonNull final YoutubeSabrInfo info) {
-        return Objects.requireNonNull(info.getServerAbrStreamingUrl());
     }
 
 }

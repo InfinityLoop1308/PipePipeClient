@@ -94,6 +94,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.zip.GZIPOutputStream;
 
+import javax.annotation.Nonnull;
+
 /**
  * Online smoke test for the production Extractor -> SABR MediaSource -> Media3 pipeline.
  *
@@ -127,6 +129,108 @@ public final class SabrPlaybackSmokeTest {
     @Test
     public void extractorToMedia3PlaysAndSeeks() throws Exception {
         runSmokeCase(SmokeCase.playback());
+    }
+
+    @Test
+    public void extractorToSabrFetchesAudioAfter65Seconds() throws Exception {
+        final Context context = InstrumentationRegistry.getInstrumentation()
+                .getTargetContext().getApplicationContext();
+        assertTrue("The target process must use PipePipe's App initialization",
+                context instanceof App);
+
+        final Bundle arguments = InstrumentationRegistry.getArguments();
+        final String url = arguments.getString("url", DEFAULT_URL);
+        NewPipe.setYoutubePlayerClient("mweb");
+
+        // Keep this as a real StreamExtractor run: all SABR metadata, including visitorData,
+        // serverAbrStreamingUrl, ustreamer config and formats, must come from the player response.
+        final StreamInfo streamInfo = StreamInfo.getInfo(ServiceList.YouTube, url);
+        final AudioStream audioStream = streamInfo.getAudioStreams().stream()
+                .filter(SabrPlaybackSmokeTest::isSabr)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError(
+                        "Extractor returned no SABR audio stream for " + url));
+        assertTrue("SABR audio stream has no YoutubeSabrInfo",
+                audioStream.getDeliveryMethodInfo() instanceof YoutubeSabrInfo);
+        final YoutubeSabrInfo sabrInfo =
+                (YoutubeSabrInfo) audioStream.getDeliveryMethodInfo();
+        final String trackId = audioStream.getAudioTrackId();
+        final YoutubeSabrInfo.Format audioFormat = sabrInfo.getFormats().stream()
+                .filter(YoutubeSabrInfo.Format::isAudio)
+                .filter(format -> format.getItag() == audioStream.getItagItem().id)
+                .filter(format -> trackId == null
+                        || trackId.equals(format.getAudioTrackId()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError(
+                        "Could not map extracted SABR audio stream to its format: itag="
+                                + audioStream.getItagItem().id + " track=" + trackId));
+
+        final File spoolDirectory = new File(context.getCacheDir(),
+                "sabr-audio-probe-" + System.nanoTime());
+        final YoutubeSabrSession session = new YoutubeSabrSession(
+                sabrInfo, audioFormat, null, spoolDirectory);
+        session.setPoToken(sabrInfo.getPoToken());
+
+        final long requestedStartMs = 65_000L;
+        final long requiredMediaMs = 2_000L;
+        final AtomicBoolean found = new AtomicBoolean();
+        final AtomicReference<String> observed = new AtomicReference<>("");
+        try {
+            for (int attempt = 1; attempt <= 8 && !found.get(); attempt++) {
+                final YoutubeSabrSession.RequestResult result = session.requestOnce(
+                        requestedStartMs,
+                        null, 0,
+                        null, 0,
+                        true, false, false, 1.0f,
+                        segment -> {
+                            try {
+                                if (segment.getHeader().isInitSegment()) return;
+                                final long startMs = segment.getHeader().getStartMs();
+                                final long durationMs = segment.getHeader().getDurationMs();
+                                final long usableMs = startMs < 0 || durationMs < 0 ? -1
+                                        : startMs + durationMs
+                                        - Math.max(startMs, requestedStartMs);
+                                observed.set("itag=" + segment.getHeader().getItag()
+                                        + " sequence=" + segment.getHeader().getSequenceNumber()
+                                        + " startMs=" + startMs
+                                        + " durationMs=" + durationMs
+                                        + " usableAfter65sMs=" + usableMs);
+                                if (usableMs > requiredMediaMs) found.set(true);
+                            } finally {
+                                segment.delete();
+                            }
+                        });
+                final long backoffMs = Math.max(result.getBackoffMs(),
+                        session.getBackoffRemainingMs());
+                if (!found.get() && backoffMs > 0) {
+                    SystemClock.sleep(Math.min(backoffMs + 10, 30_000));
+                }
+            }
+        } catch (final Exception error) {
+            printSabrAudioProbeTrace("failure", session);
+            throw error;
+        }
+
+        printSabrAudioProbeTrace("complete", session);
+        System.out.println("SABR_AUDIO_PROBE url=" + url
+                + " videoId=" + streamInfo.getId()
+                + " itag=" + audioFormat.getItag()
+                + " observed={" + observed.get() + '}');
+        assertTrue("Did not receive more than 2 seconds of SABR audio at/after 65 seconds; "
+                        + "lastSegment={" + observed.get() + "} trace="
+                        + session.getDiagnosticTrace(),
+                found.get());
+    }
+
+    private static void printSabrAudioProbeTrace(
+            @Nonnull final String outcome,
+            @Nonnull final YoutubeSabrSession session) {
+        final String trace = session.getDiagnosticTrace();
+        final String[] events = trace.isEmpty() ? new String[0] : trace.split(" \\| ");
+        for (int index = 0; index < events.length; index++) {
+            System.out.println("SABR_AUDIO_PROBE_TRACE outcome=" + outcome
+                    + " event=" + (index + 1) + " " + events[index]);
+        }
     }
 
     @Test

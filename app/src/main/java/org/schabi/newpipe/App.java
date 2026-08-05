@@ -28,6 +28,7 @@ import org.schabi.newpipe.extractor.services.youtube.YoutubeApiDecoder;
 import org.schabi.newpipe.ktx.ExceptionUtils;
 import org.schabi.newpipe.settings.NewPipeSettings;
 import org.schabi.newpipe.util.*;
+import org.schabi.newpipe.youtube.LocalDomPoTokenProvider;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -138,6 +139,8 @@ public class App extends MultiDexApplication {
         initNotificationChannels();
 
         ServiceHelper.initServices(this);
+        LocalDomPoTokenProvider.initialize(this);
+        NewPipe.setYoutubePoTokenResolver(LocalDomPoTokenProvider.INSTANCE::getPlayerPoToken);
 
         // Initialize image loader
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);

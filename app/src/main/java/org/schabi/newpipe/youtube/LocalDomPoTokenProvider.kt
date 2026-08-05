@@ -1,64 +1,171 @@
 package org.schabi.newpipe.youtube
 
 import android.content.Context
+import android.util.Log
 import com.grack.nanojson.JsonObject
 import com.grack.nanojson.JsonParser
 import com.grack.nanojson.JsonWriter
 import org.schabi.newpipe.DownloaderImpl
 import org.schabi.newpipe.SharedWebViewRuntime
-import org.schabi.newpipe.extractor.ServiceList
-import org.schabi.newpipe.extractor.services.youtube.YoutubeParsingHelper
+import org.schabi.newpipe.extractor.services.youtube.YoutubePoTokenResult
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrProtocolException
-import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo
 import java.io.Closeable
 import java.util.Base64
 import java.util.HashMap
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.Executors
+import java.util.concurrent.FutureTask
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
+import java.util.regex.Pattern
 
-class LocalDomPoTokenProvider(context: Context) {
-    private val appContext = context.applicationContext
+object LocalDomPoTokenProvider {
+    private lateinit var appContext: Context
+    private val initializationExecutor = Executors.newSingleThreadExecutor { runnable ->
+        Thread(runnable, "YoutubePoTokenWarmup").apply { isDaemon = true }
+    }
+    private val initializationLock = Any()
+    @Volatile
+    private var initializationTask: FutureTask<MintState>? = null
 
-    fun getPoToken(info: YoutubeSabrInfo): ByteArray {
-        val visitorData = info.visitorData
-            ?: throw SabrProtocolException("Missing visitorData in YouTube player response")
-        val session = OneShotMintSession.create(
-            appContext,
-            visitorData,
-            info.clientVersion,
-            createCredentialHeaders(),
-        )
-        return try {
-            session.mint(info.videoId)
-        } finally {
-            session.close()
-        }
+    fun warmUp() {
+        ensureInitializationTask()
     }
 
-    private fun createCredentialHeaders(): Map<String, List<String>> {
-        return HashMap<String, List<String>>().apply {
-            if (ServiceList.YouTube.hasTokens()) {
-                YoutubeParsingHelper.addLoggedInHeaders(this)
-            } else {
-                YoutubeParsingHelper.addCookieHeader(this)
+    fun getPlayerPoToken(videoId: String): YoutubePoTokenResult {
+        val state = getState()
+        val token = if (state.homeConfig.useContentPoToken) {
+            state.session.mint(videoId)
+        } else {
+            state.sessionPoToken.clone()
+        }
+        return YoutubePoTokenResult(
+            state.homeConfig.visitorData,
+            state.homeConfig.clientVersion,
+            Base64.getUrlEncoder().withoutPadding().encodeToString(token),
+        )
+    }
+
+    private fun getState(): MintState {
+        while (true) {
+            val task = ensureInitializationTask()
+            val state = try {
+                task.get()
+            } catch (error: InterruptedException) {
+                Thread.currentThread().interrupt()
+                throw SabrProtocolException("Global PO token initialization interrupted", error)
+            } catch (error: ExecutionException) {
+                synchronized(initializationLock) {
+                    if (initializationTask === task) {
+                        initializationTask = null
+                    }
+                }
+                val cause = error.cause ?: error
+                throw SabrProtocolException(
+                    "Global PO token initialization failed: ${cause.message}",
+                    cause,
+                )
+            }
+            if (!state.session.isExpired()) {
+                return state
+            }
+            synchronized(initializationLock) {
+                if (initializationTask === task) {
+                    initializationTask = null
+                    state.session.close()
+                }
             }
         }
     }
+
+    private fun ensureInitializationTask(): FutureTask<MintState> {
+        initializationTask?.let { return it }
+        synchronized(initializationLock) {
+            initializationTask?.let { return it }
+            val task = FutureTask {
+                val homeConfig = fetchAnonymousHomeConfig()
+                val session = PersistentMintSession.create(
+                    appContext,
+                    homeConfig.visitorData,
+                    homeConfig.clientName,
+                    homeConfig.clientVersion,
+                )
+                try {
+                    val sessionPoToken = session.mint(homeConfig.visitorData)
+                    Log.i(
+                        TAG,
+                        "Global PO minter ready client=${homeConfig.clientName} " +
+                            "version=${homeConfig.clientVersion} " +
+                            "contentPot=${homeConfig.useContentPoToken} " +
+                            "sessionPot=${homeConfig.useSessionPoToken}",
+                    )
+                    MintState(homeConfig, session, sessionPoToken)
+                } catch (error: Throwable) {
+                    session.close()
+                    throw error
+                }
+            }
+            initializationTask = task
+            initializationExecutor.execute(task)
+            return task
+        }
+    }
+
+    private fun fetchAnonymousHomeConfig(): AnonymousHomeConfig {
+        val downloader = DownloaderImpl.getInstance()
+            ?: throw SabrProtocolException("DownloaderImpl is not initialized")
+        val response = downloader.get(
+            YOUTUBE_HOME,
+            mapOf(
+                "Accept-Language" to listOf("en-US"),
+                "Cookie" to listOf(ANONYMOUS_COOKIE),
+                "User-Agent" to listOf(SharedWebViewRuntime.USER_AGENT),
+            ),
+        )
+        if (response.responseCode() != 200) {
+            throw SabrProtocolException(
+                "YouTube home initialization failed: ${response.responseCode()}",
+            )
+        }
+        return parseAnonymousHomeConfig(response.responseBody())
+    }
+
+    private data class MintState(
+        val homeConfig: AnonymousHomeConfig,
+        val session: PersistentMintSession,
+        val sessionPoToken: ByteArray,
+    )
+
+    @JvmStatic
+    fun initialize(context: Context) {
+        synchronized(initializationLock) {
+            if (!::appContext.isInitialized) {
+                appContext = context.applicationContext
+            }
+        }
+        warmUp()
+    }
+
+    private const val TAG = "YoutubeGlobalPoToken"
+    private const val YOUTUBE_HOME = "https://www.youtube.com"
+    private const val ANONYMOUS_COOKIE = "PREF=hl=en&gl=US"
 }
 
-private class OneShotMintSession private constructor(
+private class PersistentMintSession private constructor(
     context: Context,
     private val initialization: InitWaiter,
     private val visitorData: String,
+    private val clientName: String,
     private val clientVersion: String,
-    private val credentialHeaders: Map<String, List<String>>,
 ) : Closeable {
     private val runtime = SharedWebViewRuntime.get(context.applicationContext)
     private val sessionId = runtime.registerSabrLocalDomCallbacks(Callbacks())
     private val tokenWaiters = mutableMapOf<String, TokenWaiter>()
     @Volatile
     private var closed = false
+    @Volatile
+    private var expiresAtMs = Long.MAX_VALUE
 
     private fun loadScriptAndInitialize() {
         try {
@@ -117,6 +224,10 @@ private class OneShotMintSession private constructor(
             throw SabrProtocolException("Local DOM PO token generation returned no token")
         }
         return token
+    }
+
+    fun isExpired(): Boolean {
+        return closed || System.currentTimeMillis() >= expiresAtMs - EXPIRY_MARGIN_MS
     }
 
     override fun close() {
@@ -234,12 +345,12 @@ private class OneShotMintSession private constructor(
     private fun downloadAndRunBotguard() {
         makeBotguardServiceRequest(
             "https://www.youtube.com/youtubei/v1/att/get?prettyPrint=false",
-            buildAttestationBody(visitorData, clientVersion),
+            buildAttestationBody(visitorData, clientName, clientVersion),
             contentType = "application/json",
             extraHeaders = buildAttestationHeaders(
                 visitorData,
+                clientName,
                 clientVersion,
-                credentialHeaders,
             ),
             onSuccess = { body ->
                 try {
@@ -279,7 +390,10 @@ private class OneShotMintSession private constructor(
             "[ \"$REQUEST_KEY\", \"$botguardResponse\" ]",
             onSuccess = { body ->
                 try {
-                    val integrityToken = parseSabrIntegrityTokenData(body).first
+                    val integrityTokenData = parseSabrIntegrityTokenData(body)
+                    val integrityToken = integrityTokenData.first
+                    expiresAtMs = System.currentTimeMillis() +
+                        TimeUnit.SECONDS.toMillis(integrityTokenData.second)
                     runtime.evaluateJavascript(
                         "pipepipeSabrCreateMinter(" + jsonString(sessionId) + ", " +
                             integrityToken + ");",
@@ -299,7 +413,7 @@ private class OneShotMintSession private constructor(
         }
 
         override fun onRunBotguardResult(botguardResponse: String) {
-            this@OneShotMintSession.onRunBotguardResult(botguardResponse)
+            this@PersistentMintSession.onRunBotguardResult(botguardResponse)
         }
 
         override fun onMinterReady() {
@@ -323,7 +437,7 @@ private class OneShotMintSession private constructor(
 
     private class InitWaiter {
         val latch = CountDownLatch(1)
-        val session = AtomicReference<OneShotMintSession>()
+        val session = AtomicReference<PersistentMintSession>()
         val error = AtomicReference<Throwable>()
     }
 
@@ -331,22 +445,23 @@ private class OneShotMintSession private constructor(
         private const val ASSET = "sabr_po_token.js"
         private const val TOKEN_TIMEOUT_MS = 30_000L
         private const val INIT_TIMEOUT_MS = 60_000L
+        private const val EXPIRY_MARGIN_MS = 60_000L
         private const val REQUEST_KEY = "O43z0dpjhgX20SCx4KAo"
 
         @Throws(SabrProtocolException::class)
         fun create(
             context: Context,
             visitorData: String,
+            clientName: String,
             clientVersion: String,
-            credentialHeaders: Map<String, List<String>>,
-        ): OneShotMintSession {
+        ): PersistentMintSession {
             val initialization = InitWaiter()
-            val session = OneShotMintSession(
+            val session = PersistentMintSession(
                 context,
                 initialization,
                 visitorData,
+                clientName,
                 clientVersion,
-                credentialHeaders,
             )
             session.loadScriptAndInitialize()
             try {
@@ -373,19 +488,89 @@ private class OneShotMintSession private constructor(
     }
 }
 
-private fun buildAttestationBody(visitorData: String, clientVersion: String): String {
-    return """{"context":{"client":{"clientName":"WEB","clientVersion":${jsonString(clientVersion)},"hl":"en","gl":"US","utcOffsetMinutes":0,"visitorData":${jsonString(visitorData)}}},"engagementType":"ENGAGEMENT_TYPE_UNBOUND"}"""
+private data class AnonymousHomeConfig(
+    val visitorData: String,
+    val clientName: String,
+    val clientVersion: String,
+    val useContentPoToken: Boolean,
+    val useSessionPoToken: Boolean,
+)
+
+private fun parseAnonymousHomeConfig(homeHtml: String): AnonymousHomeConfig {
+    val matcher = YTCFG_PATTERN.matcher(homeHtml)
+    var rawClientConfig: String? = null
+    while (matcher.find()) {
+        val candidate = matcher.group(1) ?: continue
+        if (candidate.indexOf("INNERTUBE_CONTEXT") > 0) {
+            rawClientConfig = candidate
+        }
+    }
+    val clientConfig = rawClientConfig?.let { JsonParser.`object`().from(it) }
+        ?: throw SabrProtocolException("YouTube home has no client context")
+    val visitorData = (
+        clientConfig.getString("EOM_VISITOR_DATA")
+            ?.takeIf { it.isNotEmpty() }
+            ?: clientConfig.getString("VISITOR_DATA")?.takeIf { it.isNotEmpty() }
+        )?.replace("%3D", "=")
+        ?: throw SabrProtocolException("YouTube home has no anonymous visitor data")
+    val client = clientConfig.getObject("INNERTUBE_CONTEXT")?.getObject("client")
+        ?: throw SabrProtocolException("YouTube home has no Innertube client context")
+    val clientName = client.getString("clientName")?.takeIf { it.isNotEmpty() }
+        ?: throw SabrProtocolException("YouTube home has no client name")
+    val clientVersion = client.getString("clientVersion")?.takeIf { it.isNotEmpty() }
+        ?: throw SabrProtocolException("YouTube home has no client version")
+    val watchConfig = clientConfig.getObject("WEB_PLAYER_CONTEXT_CONFIGS")
+        ?.getObject("WEB_PLAYER_CONTEXT_CONFIG_ID_KEVLAR_WATCH")
+    val serializedFlags = watchConfig?.getString("serializedExperimentFlags")
+    val experimentFlags = serializedFlags?.let(::parseExperimentFlags).orEmpty()
+    val useContentPoToken = if (watchConfig == null) {
+        true
+    } else {
+        experimentFlags["html5_generate_content_po_token"] == "true"
+    }
+    val useSessionPoToken =
+        experimentFlags["html5_generate_session_po_token"] == "true"
+    return AnonymousHomeConfig(
+        visitorData,
+        clientName,
+        clientVersion,
+        useContentPoToken,
+        useSessionPoToken,
+    )
+}
+
+private fun parseExperimentFlags(serializedFlags: String): Map<String, String> {
+    return serializedFlags.split('&').associate { part ->
+        val separator = part.indexOf('=')
+        if (separator < 0) {
+            part to "true"
+        } else {
+            part.substring(0, separator) to part.substring(separator + 1)
+        }
+    }
+}
+
+private val YTCFG_PATTERN = Pattern.compile("ytcfg\\.set\\((.*?)\\);", Pattern.DOTALL)
+
+private fun buildAttestationBody(
+    visitorData: String,
+    clientName: String,
+    clientVersion: String,
+): String {
+    return """{"context":{"client":{"clientName":${jsonString(clientName)},"clientVersion":${jsonString(clientVersion)},"hl":"en","gl":"US","utcOffsetMinutes":0,"visitorData":${jsonString(visitorData)}}},"engagementType":"ENGAGEMENT_TYPE_UNBOUND"}"""
 }
 
 private fun buildAttestationHeaders(
     visitorData: String,
+    clientName: String,
     clientVersion: String,
-    credentialHeaders: Map<String, List<String>>,
 ): Map<String, List<String>> {
-    return HashMap(credentialHeaders).apply {
+    require(clientName == "WEB") { "Unsupported PO token client: $clientName" }
+    return HashMap<String, List<String>>().apply {
         put("User-Agent", listOf(SharedWebViewRuntime.USER_AGENT))
         put("Accept", listOf("application/json"))
         put("Content-Type", listOf("application/json"))
+        put("Cookie", listOf("PREF=hl=en&gl=US"))
         put("Origin", listOf("https://www.youtube.com"))
         put("Referer", listOf("https://www.youtube.com/"))
         put("X-Goog-Visitor-Id", listOf(visitorData))
