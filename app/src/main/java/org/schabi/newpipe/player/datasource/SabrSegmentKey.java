@@ -36,6 +36,14 @@ final class SabrSegmentKey {
     boolean isInitialization() { return initialization; }
     int getSequenceNumber() { return sequenceNumber; }
 
+    @NonNull
+    String getCacheKey(@NonNull final String videoId) {
+        final String xtags = Objects.toString(format.getXtags(), "");
+        return "sabr:" + videoId + ':' + format.getItag() + ':' + format.getLastModified()
+                + ':' + xtags.length() + ':' + xtags + ':'
+                + (initialization ? "init" : sequenceNumber);
+    }
+
     @Override
     public boolean equals(final Object other) {
         if (this == other) return true;

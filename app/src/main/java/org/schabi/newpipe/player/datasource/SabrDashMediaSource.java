@@ -16,6 +16,7 @@ import androidx.media3.common.MimeTypes;
 import androidx.media3.common.StreamKey;
 import androidx.media3.common.Timeline;
 import androidx.media3.datasource.DataSource;
+import androidx.media3.datasource.DataSpec;
 import androidx.media3.datasource.TransferListener;
 import androidx.media3.exoplayer.LoadingInfo;
 import androidx.media3.exoplayer.SeekParameters;
@@ -32,6 +33,7 @@ import androidx.media3.exoplayer.trackselection.ExoTrackSelection;
 import androidx.media3.exoplayer.upstream.Allocator;
 
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormatTimeline;
+import org.schabi.newpipe.player.helper.PlayerDataSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -57,7 +59,8 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
     private final DashMediaSource childSource;
     public SabrDashMediaSource(@NonNull final Context context,
                                @NonNull final MediaItem mediaItem,
-                               @NonNull final SabrSourceSpec spec) throws IOException {
+                               @NonNull final SabrSourceSpec spec,
+                               @NonNull final PlayerDataSource playerDataSource) throws IOException {
         this.context = context.getApplicationContext();
         this.mediaItem = mediaItem;
         this.spec = spec;
@@ -70,7 +73,8 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
             final long durationMs = spec.getDurationMs();
             this.durationUs = durationMs > 0 ? durationMs * 1000L : C.TIME_UNSET;
             final DataSource.Factory sabrDataSourceFactory =
-                    this::createDataSource;
+                    playerDataSource.getCacheDataSourceFactory(
+                            this::createDataSource, this::buildCacheKey);
             final DashManifest manifest = buildManifest(spec, durationMs);
             this.childSource = new DashMediaSource.Factory(
                     new DefaultDashChunkSource.Factory(sabrDataSourceFactory),
@@ -145,6 +149,16 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
             bridge.seedSegments(spec.takeBootstrapMediaSegments());
         }
         return bridge;
+    }
+
+    @NonNull
+    private String buildCacheKey(@NonNull final DataSpec dataSpec) {
+        try {
+            return SabrSegmentDataSource.requestFromUri(spec, dataSpec.uri)
+                    .getCacheKey(spec.getVideoId());
+        } catch (final IOException error) {
+            throw new IllegalArgumentException("Bad SABR cache URI: " + dataSpec.uri, error);
+        }
     }
 
     private static DashManifest buildManifest(final SabrSourceSpec spec,

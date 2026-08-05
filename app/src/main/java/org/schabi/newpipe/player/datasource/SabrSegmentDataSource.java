@@ -49,7 +49,7 @@ public final class SabrSegmentDataSource implements DataSource {
         data = null;
         position = (int) Math.max(0, dataSpec.position);
 
-        final SabrSegmentKey request = requestFromUri(dataSpec.uri);
+        final SabrSegmentKey request = requestFromUri(spec, dataSpec.uri);
         openedRequest = request;
         final int totalBytes;
         final long available;
@@ -113,7 +113,8 @@ public final class SabrSegmentDataSource implements DataSource {
         return count;
     }
 
-    private SabrSegmentKey requestFromUri(final Uri value) throws IOException {
+    static SabrSegmentKey requestFromUri(final SabrSourceSpec spec,
+                                         final Uri value) throws IOException {
         final String host = value.getHost();
         final String segment = value.getLastPathSegment();
         if (host == null || segment == null) {

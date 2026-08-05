@@ -12,7 +12,10 @@ internal class SabrSegmentWriter(
 ) {
     @Throws(IOException::class)
     fun acceptSegment(segment: SabrMediaSegment) {
-        val target = targets.firstOrNull { it.format.itag == segment.header.itag }
+        val target = targets.firstOrNull {
+            it.format.itag == segment.header.itag &&
+                it.format.xtags == segment.header.xtags
+        }
         if (target == null) {
             segment.delete()
             return

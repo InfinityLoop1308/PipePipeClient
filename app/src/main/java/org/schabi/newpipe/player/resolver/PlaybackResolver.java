@@ -451,7 +451,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                                 .setCustomCacheKey(cacheKey)
                                 .build());
             case SABR:
-                return buildSabrMediaSource(stream, streamInfo, cacheKey, metadata);
+                return buildSabrMediaSource(dataSource, stream, streamInfo, cacheKey, metadata);
             default:
                 throw new IOException("Unsupported delivery method for YouTube contents: "
                         + deliveryMethod);
@@ -459,7 +459,8 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
     }
 
     @NonNull
-    private static MediaSource buildSabrMediaSource(@NonNull final Stream stream,
+    private static MediaSource buildSabrMediaSource(@NonNull final PlayerDataSource dataSource,
+                                                    @NonNull final Stream stream,
                                                     @NonNull final StreamInfo streamInfo,
                                                     @NonNull final String cacheKey,
                                                     @NonNull final MediaItemTag metadata)
@@ -480,7 +481,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                 .setUri(Uri.parse("sabr://" + videoId))
                 .setCustomCacheKey(cacheKey)
                 .build();
-        return new SabrDashMediaSource(App.getApp(), mediaItem, spec);
+        return new SabrDashMediaSource(App.getApp(), mediaItem, spec, dataSource);
     }
 
     @Nullable

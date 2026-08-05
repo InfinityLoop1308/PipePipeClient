@@ -23,6 +23,7 @@ import androidx.media3.datasource.ResolvingDataSource;
 import androidx.media3.datasource.TransferListener;
 import androidx.media3.datasource.okhttp.OkHttpDataSource;
 import androidx.media3.datasource.cache.CacheDataSource;
+import androidx.media3.datasource.cache.CacheKeyFactory;
 import com.grack.nanojson.JsonObject;
 import com.grack.nanojson.JsonParser;
 import com.grack.nanojson.JsonParserException;
@@ -83,6 +84,7 @@ public class PlayerDataSource {
     private final DataSource.Factory biliCachelessDataSourceFactory;
     private final TransferListener transferListener;
     private final Context context;
+    private final String userAgent;
 
     private NicoWebSocketClient nicoWebSocketClient;
 
@@ -103,6 +105,7 @@ public class PlayerDataSource {
 
         this.context = context;
         this.transferListener = transferListener;
+        this.userAgent = userAgent;
 
         YoutubeProgressiveDashManifestCreator.getCache().setMaximumSize(
                 MAXIMUM_SIZE_CACHED_GENERATED_MANIFESTS_PER_CACHE);
@@ -170,6 +173,18 @@ public class PlayerDataSource {
         return new DashMediaSource.Factory(
                 getDefaultDashChunkSourceFactory(cacheDataSourceFactoryBuilder.build()),
                 cacheDataSourceFactoryBuilder.build());
+    }
+
+    /** Wraps a custom playback source in the same disk cache used by other media sources. */
+    @NonNull
+    public DataSource.Factory getCacheDataSourceFactory(
+            @NonNull final DataSource.Factory upstreamDataSourceFactory,
+            @NonNull final CacheKeyFactory cacheKeyFactory) {
+        final CacheFactory.Builder builder = new CacheFactory.Builder(
+                context, userAgent, transferListener);
+        builder.setUpstreamDataSourceFactory(upstreamDataSourceFactory);
+        builder.setCacheKeyFactory(cacheKeyFactory);
+        return builder.build();
     }
 
     public ProgressiveMediaSource.Factory getProgressiveMediaSourceFactory() {
