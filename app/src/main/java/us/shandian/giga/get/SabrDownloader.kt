@@ -2,10 +2,13 @@ package us.shandian.giga.get
 
 import android.util.Log
 import org.schabi.newpipe.BuildConfig
+import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrProtocolException
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrRecoverableException
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
+import org.schabi.newpipe.extractor.stream.DeliveryMethod
+import org.schabi.newpipe.extractor.stream.StreamInfo
 import org.schabi.newpipe.youtube.LocalDomPoTokenProvider
 import java.io.File
 import java.io.FileOutputStream
@@ -86,7 +89,12 @@ internal class SabrDownloader(
             SabrDownloadFormatResolver.selectedVideoFormat(info, recoveries),
             null,
         )
-        val poToken = LocalDomPoTokenProvider(mission.context).getPoToken(info)
+        val tokenProvider = LocalDomPoTokenProvider(mission.context)
+        session.setPoTokenRefresher { tokenProvider.getPoToken(info) }
+        session.setIdentityRefresher {
+            refreshIdentity(info.videoId, tokenProvider)
+        }
+        val poToken = tokenProvider.getPoToken(info)
         session.setPoToken(poToken)
         val workDir = prepareWorkDirectory()
         val targets = SabrDownloadFormatResolver.buildTargets(info, recoveries, workDir)
@@ -130,6 +138,32 @@ internal class SabrDownloader(
             workDir,
         )
         completeMission(finalBytes)
+    }
+
+    private fun refreshIdentity(
+        videoId: String,
+        tokenProvider: LocalDomPoTokenProvider,
+    ): YoutubeSabrSession.SessionIdentity {
+        val refreshed = StreamInfo.getInfo(
+            ServiceList.YouTube,
+            "https://www.youtube.com/watch?v=$videoId",
+        )
+        val freshInfo = (refreshed.videoOnlyStreams.asSequence() +
+            refreshed.audioStreams.asSequence())
+            .firstNotNullOfOrNull { stream ->
+                if (stream.deliveryMethod == DeliveryMethod.SABR) {
+                    stream.deliveryMethodInfo as? YoutubeSabrInfo
+                } else {
+                    null
+                }
+            }
+            ?: throw SabrProtocolException(
+                "Refreshed player response has no SABR identity for $videoId",
+            )
+        return YoutubeSabrSession.SessionIdentity(
+            freshInfo,
+            tokenProvider.getPoToken(freshInfo),
+        )
     }
 
     @Throws(IOException::class)

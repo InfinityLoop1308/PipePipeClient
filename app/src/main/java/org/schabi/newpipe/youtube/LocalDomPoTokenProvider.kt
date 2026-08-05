@@ -26,7 +26,7 @@ class LocalDomPoTokenProvider(context: Context) {
         val session = OneShotMintSession.create(
             appContext,
             visitorData,
-            YoutubeParsingHelper.getClientVersion(),
+            info.clientVersion,
             createCredentialHeaders(),
         )
         return try {

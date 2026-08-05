@@ -1,6 +1,5 @@
 package org.schabi.newpipe.player;
 
-import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -42,12 +41,10 @@ import org.schabi.newpipe.DownloaderImpl;
 import org.schabi.newpipe.SharedWebViewRuntime;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.ServiceList;
-import org.schabi.newpipe.extractor.services.youtube.sabr.SabrSegmentRequest;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.DeliveryMethod;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.VideoStream;
-import org.schabi.newpipe.player.datasource.SabrSessionStore;
 import org.schabi.newpipe.player.helper.LegacySubtitleRenderersFactory;
 import org.schabi.newpipe.player.helper.LoadController;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
@@ -58,7 +55,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -100,8 +96,6 @@ public final class YoutubePlaybackBenchmarkTest {
                 args.getString("warmWebViewRuntime", "false"));
         final boolean diagnosticDetails = Boolean.parseBoolean(
                 args.getString("diagnosticDetails", "false"));
-        final boolean coldSabrCachesEachTrial = Boolean.parseBoolean(
-                args.getString("coldSabrCachesEachTrial", "false"));
         if (warmWebViewRuntime) {
             SharedWebViewRuntime.get(context).ensureReady(120_000L, "benchmark WebView warmup");
         }
@@ -159,8 +153,7 @@ public final class YoutubePlaybackBenchmarkTest {
                 .put("warmWebViewRuntime", warmWebViewRuntime)
                 .put("diagnosticDetails", diagnosticDetails)
                 .put("playerMediaCacheClearedEachTrial", true)
-                .put("sabrSessionEvictedEachTrial", true)
-                .put("coldSabrCachesEachTrial", coldSabrCachesEachTrial)
+                .put("sabrSessionPolicy", "bounded_store")
                 .put("cachedExtractionAcrossTrials", true)
                 .put("firstFrameMetricScope", "media_source_resolve_to_rendered_frame")
                 .put("excludedFromFirstFrameMs", new JSONArray(Arrays.asList(
@@ -215,8 +208,7 @@ public final class YoutubePlaybackBenchmarkTest {
                 final boolean warmup = round < 0;
                 final Result result = runTrial(context, path, extractions.get(path).info,
                         round, warmup, playSeconds, startPositionMs, seekTargetMs,
-                        maxHeight, targetCodec, url, warmWebViewRuntime,
-                        diagnosticDetails, coldSabrCachesEachTrial);
+                        maxHeight, targetCodec, url, warmWebViewRuntime, diagnosticDetails);
                 emit("PIPEPIPE_BENCHMARK_RESULT", result.toJson());
                 emitTrialDetails(result);
                 if (!warmup) {
@@ -237,14 +229,8 @@ public final class YoutubePlaybackBenchmarkTest {
                                    final long seekTargetMs,
                                    final int maxHeight, final String targetCodec,
                                    final String url, final boolean warmWebViewRuntime,
-                                   final boolean diagnosticDetails,
-                                   final boolean coldSabrCachesEachTrial) throws Exception {
+                                   final boolean diagnosticDetails) throws Exception {
         NewPipe.setYoutubePlayerClient(path.client);
-        if (coldSabrCachesEachTrial && path.sourceDelivery == DeliveryMethod.SABR) {
-            SabrSessionStore.clearBenchmarkCaches(context, info.getId());
-        } else {
-            SabrSessionStore.evict(info.getId());
-        }
         final CountingTransferListener transfers = new CountingTransferListener(diagnosticDetails);
         final PlayerDataSource dataSource = new PlayerDataSource(context,
                 DownloaderImpl.USER_AGENT, transfers);
@@ -470,20 +456,11 @@ public final class YoutubePlaybackBenchmarkTest {
         long finalBufferedPositionMs = -1;
         SabrStats sabrStats = SabrStats.EMPTY;
         SeekTrace seekTrace = SeekTrace.EMPTY;
-        SabrSessionStore.Holder sabrHolder = null;
         try {
             waitUntil(() -> frameNs.get() != 0 || ended.get() || error.get() != null,
                     START_TIMEOUT_MS);
             throwPlayerError(error.get());
             assertTrue("Playback ended before rendering the first frame", frameNs.get() != 0);
-            if (path.sourceDelivery == DeliveryMethod.SABR) {
-                sabrHolder = findActiveSabrHolder(info.getId());
-                assertNotNull("SABR player reached first frame without an active session holder",
-                        sabrHolder);
-                if (diagnosticDetails) {
-                    sabrHolder.session.setTraceEnabled(true);
-                }
-            }
             final long playbackStartPositionMs = firstFramePositionMs.get();
             assertTrue("First frame did not report a valid playback position: "
                     + playbackStartPositionMs, playbackStartPositionMs >= 0);
@@ -511,25 +488,12 @@ public final class YoutubePlaybackBenchmarkTest {
             finalPositionMs = reachedPositionMs;
             finalBufferedPositionMs = bufferedPosition(playerRef.get());
             if (startPositionMs >= 0) {
-                if (path.sourceDelivery == DeliveryMethod.SABR) {
-                    sabrStats = sabrStats(sabrHolder);
-                    if (diagnosticDetails) {
-                        seekTrace = SeekTrace.fromSabrStartup(sabrHolder, startPositionMs);
-                    }
-                } else {
-                    seekTrace = transfers.finishSeekTrace();
-                }
+                seekTrace = transfers.finishSeekTrace();
             } else {
                 final long duration = duration(playerRef.get());
                 final long target = seekTargetMs >= 0 ? seekTargetMs
                         : duration == C.TIME_UNSET ? 30_000
                         : Math.max(1_000, Math.min(30_000, duration / 2));
-                final org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
-                        .TraceSnapshot sabrTraceBefore = !diagnosticDetails || sabrHolder == null
-                        ? null
-                        : sabrHolder.session.getTraceSnapshot();
-                final SeekCacheSnapshot sabrCacheBefore = diagnosticDetails
-                        ? SeekCacheSnapshot.fromSabr(sabrHolder, target) : SeekCacheSnapshot.EMPTY;
                 transfers.startSeekTrace();
                 final long seekStart = SystemClock.elapsedRealtimeNanos();
                 InstrumentationRegistry.getInstrumentation().runOnMainSync(
@@ -538,20 +502,7 @@ public final class YoutubePlaybackBenchmarkTest {
                         || error.get() != null, START_TIMEOUT_MS);
                 throwPlayerError(error.get());
                 seekRecoveryMs = elapsedMs(seekStart);
-                if (path.sourceDelivery == DeliveryMethod.SABR) {
-                    sabrStats = sabrStats(sabrHolder);
-                    if (diagnosticDetails) {
-                        final org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
-                                .TraceSnapshot sabrTraceAfter = sabrHolder == null ? null
-                                : sabrHolder.session.getTraceSnapshot();
-                        final SeekCacheSnapshot sabrCacheAfter = SeekCacheSnapshot.fromSabr(
-                                sabrHolder, target);
-                        seekTrace = SeekTrace.fromSabr(sabrTraceBefore, sabrTraceAfter,
-                                sabrCacheBefore, sabrCacheAfter);
-                    }
-                } else {
-                    seekTrace = transfers.finishSeekTrace();
-                }
+                seekTrace = transfers.finishSeekTrace();
             }
         } catch (final Exception | AssertionError failure) {
             try {
@@ -594,12 +545,10 @@ public final class YoutubePlaybackBenchmarkTest {
                     textureRef.get().release();
                 }
             });
-            SabrSessionStore.evict(info.getId());
         }
         final long uidRxAfter = TrafficStats.getUidRxBytes(Process.myUid());
         final long uidRxBytes = uidRxBefore < 0 || uidRxAfter < 0 ? -1 : uidRxAfter - uidRxBefore;
-        final long mediaBytes = path.sourceDelivery == DeliveryMethod.SABR
-                ? sabrStats.responseBytes : transfers.networkBytes.get();
+        final long mediaBytes = transfers.networkBytes.get();
         return new Result(path, round, warmup, selector.selected, resolveMs,
                 toMs(readyNs.get() - prepareNs), toMs(frameNs.get() - prepareNs),
                 toMs(audioNs.get() - prepareNs), seekRecoveryMs, rebufferCount.get(),
@@ -610,36 +559,7 @@ public final class YoutubePlaybackBenchmarkTest {
                 firstFramePositionMs.get(), firstFrameBufferedPositionMs.get(), finalPositionMs,
                 finalBufferedPositionMs, actualVideoFormat.get(), actualAudioFormat.get(),
                 snapshot(stateTransitions), snapshot(loadEvents), warmWebViewRuntime,
-                diagnosticDetails, coldSabrCachesEachTrial,
-                stateTransitionCount.get(), loadEventCount.get());
-    }
-
-    @Nullable
-    private static SabrSessionStore.Holder findActiveSabrHolder(final String videoId)
-            throws Exception {
-        final Field sessionsField = SabrSessionStore.class.getDeclaredField("SESSIONS");
-        sessionsField.setAccessible(true);
-        final Map<?, ?> sessions = (Map<?, ?>) sessionsField.get(null);
-        for (final Object value : sessions.values()) {
-            if (value instanceof SabrSessionStore.Holder) {
-                final SabrSessionStore.Holder holder = (SabrSessionStore.Holder) value;
-                if (videoId.equals(holder.videoId)) {
-                    return holder;
-                }
-            }
-        }
-        return null;
-    }
-
-    private static SabrStats sabrStats(final SabrSessionStore.Holder holder) {
-        return new SabrStats(holder.session.getTotalResponseBytes(),
-                holder.session.getRequestNumber(), holder.session.getPeakCachedBytes(),
-                holder.session.getStreamState().getBandwidthEstimate(),
-                holder.session.getStreamState().getTargetAudioReadaheadMs(),
-                holder.session.getStreamState().getTargetVideoReadaheadMs(),
-                holder.session.getStreamState().getMinAudioReadaheadMs(),
-                holder.session.getStreamState().getMinVideoReadaheadMs(),
-                holder.session.getStreamState().getMaxTimeSinceLastRequestMs());
+                diagnosticDetails, stateTransitionCount.get(), loadEventCount.get());
     }
 
     private static String readTextFile(final File file) throws Exception {
@@ -834,7 +754,6 @@ public final class YoutubePlaybackBenchmarkTest {
         final AtomicLong value = new AtomicLong();
         InstrumentationRegistry.getInstrumentation().runOnMainSync(
                 () -> value.set(player.getCurrentPosition()));
-        SabrSessionStore.updatePlayerTime(videoId, value.get());
         return value.get();
     }
 
@@ -1087,7 +1006,7 @@ public final class YoutubePlaybackBenchmarkTest {
                 peakPssDeltaKb, linearPlaybackWallMs, firstFramePositionMs,
                 firstFrameBufferedPositionMs, finalPositionMs, finalBufferedPositionMs;
         private final int rebufferCount, droppedFrames, stateTransitionCount, loadEventCount;
-        private final boolean warmWebViewRuntime, diagnosticDetails, coldSabrCachesEachTrial;
+        private final boolean warmWebViewRuntime, diagnosticDetails;
         private final SabrStats sabrStats;
         private final SeekTrace seekTrace;
         private final String url, videoId, targetCodec;
@@ -1114,7 +1033,7 @@ public final class YoutubePlaybackBenchmarkTest {
                        @Nullable final Format actualAudioFormat,
                        final List<String> stateTransitions, final List<String> loadEvents,
                        final boolean warmWebViewRuntime, final boolean diagnosticDetails,
-                       final boolean coldSabrCachesEachTrial, final int stateTransitionCount,
+                       final int stateTransitionCount,
                        final int loadEventCount) {
             this.path=path; this.round=round; this.warmup=warmup; this.stream=stream;
             this.resolveMs=resolveMs; this.readyMs=readyMs; this.firstFrameMs=firstFrameMs;
@@ -1138,7 +1057,6 @@ public final class YoutubePlaybackBenchmarkTest {
             this.stateTransitions=stateTransitions; this.loadEvents=loadEvents;
             this.warmWebViewRuntime=warmWebViewRuntime;
             this.diagnosticDetails=diagnosticDetails;
-            this.coldSabrCachesEachTrial=coldSabrCachesEachTrial;
             this.stateTransitionCount=stateTransitionCount;
             this.loadEventCount=loadEventCount;
         }
@@ -1153,7 +1071,6 @@ public final class YoutubePlaybackBenchmarkTest {
                     .put("loadController",PRODUCTION_LOAD_CONTROLLER)
                     .put("warmWebViewRuntime",warmWebViewRuntime)
                     .put("diagnosticDetails",diagnosticDetails)
-                    .put("coldSabrCachesEachTrial",coldSabrCachesEachTrial)
                     .put("firstFrameMetricScope", "media_source_resolve_to_rendered_frame")
                     .put("height",SelectingQualityResolver.effectiveHeight(stream))
                     .put("itag",stream.getItag()).put("codec",String.valueOf(stream.getCodec()))
@@ -1271,48 +1188,6 @@ public final class YoutubePlaybackBenchmarkTest {
             this.requestNumber = requestNumber;
         }
 
-        private static SeekCacheSnapshot fromSabr(final SabrSessionStore.Holder holder,
-                                                  final long targetMs) {
-            if (holder == null) {
-                return EMPTY;
-            }
-            final int videoSeq = holder.session.getStreamState()
-                    .getSegmentNumberAtOrAfterTimeMs(holder.videoFormat, targetMs);
-            final int previousVideoSeq = Math.max(1, videoSeq - 1);
-            final int nextVideoSeq = videoSeq + 1;
-            final int audioSeq = holder.session.getStreamState()
-                    .getSegmentNumberAtOrAfterTimeMs(holder.audioFormat, targetMs);
-            return new SeekCacheSnapshot(targetMs, videoSeq,
-                    holder.session.getStreamState().getSegmentStartMs(holder.videoFormat,
-                            videoSeq),
-                    holder.session.getStreamState().getSegmentEndMs(holder.videoFormat,
-                            videoSeq),
-                    hasMediaSegment(holder, holder.videoFormat, videoSeq),
-                    previousVideoSeq,
-                    hasMediaSegment(holder, holder.videoFormat, previousVideoSeq),
-                    nextVideoSeq,
-                    hasMediaSegment(holder, holder.videoFormat, nextVideoSeq),
-                    audioSeq,
-                    holder.session.getStreamState().getSegmentStartMs(holder.audioFormat,
-                            audioSeq),
-                    holder.session.getStreamState().getSegmentEndMs(holder.audioFormat,
-                            audioSeq),
-                    hasMediaSegment(holder, holder.audioFormat, audioSeq),
-                    holder.session.getStreamState().getMinBufferedEndMs(),
-                    holder.session.getStreamState().getBufferedEndMs(holder.videoFormat),
-                    holder.session.getStreamState().getBufferedEndMs(holder.audioFormat),
-                    holder.session.getCachedBytes(),
-                    holder.session.getRequestNumber());
-        }
-
-        private static boolean hasMediaSegment(final SabrSessionStore.Holder holder,
-                                               final org.schabi.newpipe.extractor.services.youtube
-                                                       .sabr.YoutubeSabrInfo.Format format,
-                                               final int sequence) {
-            return holder.session.getCachedSegment(SabrSegmentRequest.media(format, sequence))
-                    != null;
-        }
-
         private JSONObject toJson() throws Exception {
             return new JSONObject()
                     .put("targetMs", targetMs)
@@ -1392,70 +1267,6 @@ public final class YoutubePlaybackBenchmarkTest {
                     Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
         }
 
-        private static SeekTrace fromSabr(
-                final org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
-                        .TraceSnapshot before,
-                final org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
-                        .TraceSnapshot after,
-                final SeekCacheSnapshot cacheBefore,
-                final SeekCacheSnapshot cacheAfter) {
-            if (before == null || after == null) {
-                return EMPTY;
-            }
-            return new SeekTrace(-1,
-                    after.getResponseBytes() - before.getResponseBytes(),
-                    after.getMediaPayloadBytes() - before.getMediaPayloadBytes(),
-                    after.getControlPayloadBytes() - before.getControlPayloadBytes(),
-                    after.getUmpOverheadBytes() - before.getUmpOverheadBytes(),
-                    after.getDiscardedBytes() - before.getDiscardedBytes(),
-                    after.getRequestNumber() - before.getRequestNumber(),
-                    after.getCachedBytes() - before.getCachedBytes(),
-                    delta(after.getSegments(), before.getSegments().size()),
-                    delta(after.getDiscards(), before.getDiscards().size()),
-                    Collections.emptyList(), cacheBefore, cacheAfter,
-                    tail(before.getSegments(), 24), tail(before.getDiscards(), 24),
-                    delta(after.getResponses(), before.getResponses().size()));
-        }
-
-        private static SeekTrace fromSabrStartup(final SabrSessionStore.Holder holder,
-                                                 final long startPositionMs) {
-            if (holder == null) {
-                return EMPTY;
-            }
-            final org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
-                    .TraceSnapshot after = holder.session.getTraceSnapshot();
-            return new SeekTrace(-1,
-                    after.getResponseBytes(),
-                    after.getMediaPayloadBytes(),
-                    after.getControlPayloadBytes(),
-                    after.getUmpOverheadBytes(),
-                    after.getDiscardedBytes(),
-                    after.getRequestNumber(),
-                    after.getCachedBytes(),
-                    new ArrayList<>(after.getSegments()),
-                    new ArrayList<>(after.getDiscards()),
-                    Collections.emptyList(),
-                    SeekCacheSnapshot.EMPTY,
-                    SeekCacheSnapshot.fromSabr(holder, startPositionMs),
-                    Collections.emptyList(),
-                    Collections.emptyList(),
-                    new ArrayList<>(after.getResponses()));
-        }
-
-        private static List<String> delta(final List<String> values, final int start) {
-            if (start >= values.size()) {
-                return Collections.emptyList();
-            }
-            return new ArrayList<>(values.subList(Math.max(0, start), values.size()));
-        }
-
-        private static List<String> tail(final List<String> values, final int count) {
-            if (values.isEmpty()) {
-                return Collections.emptyList();
-            }
-            return new ArrayList<>(values.subList(Math.max(0, values.size() - count),
-                    values.size()));
-        }
     }
 
     private static final class SabrStats {
