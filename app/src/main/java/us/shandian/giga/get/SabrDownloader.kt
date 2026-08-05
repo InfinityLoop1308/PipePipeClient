@@ -22,7 +22,7 @@ internal class SabrDownloader(
         try {
             ensureRunning()
             val recoveries = validateRecoveryInfo()
-            var info = SabrDownloadFormatResolver.resolveInfo(recoveries)
+            val info = SabrDownloadFormatResolver.resolveInfo(recoveries)
 
             val expectedLength = recoveries.map { recovery ->
                 when (recovery.kind) {
@@ -36,13 +36,8 @@ internal class SabrDownloader(
             prepareMission(expectedLength)
             var coldStartAttempts = 0
             var transientAttempts = 0
-            var refreshInfo = false
             while (true) {
                 try {
-                    if (refreshInfo) {
-                        info = SabrDownloadFormatResolver.resolveInfo(recoveries)
-                        refreshInfo = false
-                    }
                     runSessionAttempt(info, recoveries)
                     break
                 } catch (error: RetryColdStartException) {
@@ -55,7 +50,6 @@ internal class SabrDownloader(
                         )
                     }
                     logDebug("retry cold start attempt=$coldStartAttempts")
-                    refreshInfo = true
                 } catch (error: Exception) {
                     if (!isRetryableAttemptFailure(error)) {
                         throw error
@@ -70,7 +64,6 @@ internal class SabrDownloader(
                     transientAttempts++
                     logDebug("retry transient attempt=$transientAttempts error=${error.javaClass.simpleName}")
                     Thread.sleep(transientRetryDelayMs(transientAttempts))
-                    refreshInfo = true
                 }
             }
         } catch (error: InterruptedException) {
@@ -94,6 +87,7 @@ internal class SabrDownloader(
             null,
         )
         val poToken = LocalDomPoTokenProvider(mission.context).getPoToken(info)
+        session.setPoToken(poToken)
         val workDir = prepareWorkDirectory()
         val targets = SabrDownloadFormatResolver.buildTargets(info, recoveries, workDir)
         restoreTargets(targets)
@@ -197,6 +191,7 @@ internal class SabrDownloader(
                 val checkpoint = mission.sabrCheckpoint?.resources?.firstOrNull {
                     it.resourceIndex == target.resourceIndex &&
                         it.itag == target.format.itag &&
+                        it.xtags == target.format.xtags &&
                         it.tempFilePath == target.file.absolutePath &&
                         it.nextWriteSequence > 0 &&
                         it.bytesWritten >= it.initializationBytes &&
@@ -248,6 +243,7 @@ internal class SabrDownloader(
         resources += SabrResourceCheckpoint(
             resourceIndex = target.resourceIndex,
             itag = target.format.itag,
+            xtags = target.format.xtags,
             tempFilePath = target.file.absolutePath,
             nextWriteSequence = target.nextWriteSequence,
             bytesWritten = target.file.length(),
@@ -280,11 +276,10 @@ internal class SabrDownloader(
         prepareInitializations(session, targets, writer, poToken)
         writer.observeWrittenInitializations()
 
-        var emptyResponses = 0
-        var nextRequestAtMs = 0L
+        var noProgressResponses = 0
         while (true) {
             ensureRunning()
-            val backoffRemainingMs = nextRequestAtMs - System.currentTimeMillis()
+            val backoffRemainingMs = session.backoffRemainingMs
             if (backoffRemainingMs > 0) {
                 Thread.sleep(backoffRemainingMs)
                 ensureRunning()
@@ -297,6 +292,7 @@ internal class SabrDownloader(
             val playerTimeMs = downloadPlayerTimeMs(targets)
             val audio = targets.firstOrNull { it.format.isAudio }
             val video = targets.firstOrNull { it.format.isVideo }
+            val sequencesBeforeRequest = targets.map { it.nextWriteSequence }
             val requestResult = session.requestOnce(
                 playerTimeMs,
                 audio?.timeline,
@@ -309,26 +305,30 @@ internal class SabrDownloader(
                 1.0f,
                 writer::acceptSegment,
             )
-            nextRequestAtMs = System.currentTimeMillis() + requestResult.backoffMs
             if (requestResult.isDeferred) {
                 continue
             }
-            val segmentCount = requestResult.segmentCount
             writer.observeWrittenInitializations()
             if (isDownloadComplete(targets)) {
                 break
             }
-            if (segmentCount > 0) {
-                emptyResponses = 0
+            val madeProgress = targets.indices.any { index ->
+                targets[index].nextWriteSequence > sequencesBeforeRequest[index]
+            }
+            if (madeProgress) {
+                noProgressResponses = 0
             } else {
-                emptyResponses++
-                if (emptyResponses > MAX_EMPTY_RESPONSES) {
+                noProgressResponses++
+                if (noProgressResponses >= MAX_NO_PROGRESS_RESPONSES) {
                     throw SabrDownloadException(
                         SabrDownloadException.Reason.STALLED,
-                        "SABR download stalled: no media received after $MAX_EMPTY_RESPONSES rounds",
+                        "SABR download stalled: no target sequence advanced after " +
+                            "$MAX_NO_PROGRESS_RESPONSES responses",
                     )
                 }
-                Thread.sleep(IDLE_POLL_MS)
+                if (session.backoffRemainingMs <= 0) {
+                    Thread.sleep(IDLE_POLL_MS)
+                }
             }
         }
     }
@@ -345,27 +345,23 @@ internal class SabrDownloader(
             return
         }
 
-        try {
-            ensureRunning()
-            val initialization = session.initialize(2_000, poToken)
-            for (target in pendingTargets) {
-                val data = if (target.format.isAudio) {
-                    initialization.audioData
-                } else {
-                    initialization.videoData
-                } ?: throw RetryColdStartException()
-                target.timeline = if (target.format.isAudio) {
-                    initialization.audioTimeline
-                } else {
-                    initialization.videoTimeline
-                } ?: throw RetryColdStartException()
-                writer.writeInitializationData(target, data)
-            }
-            for (segment in initialization.mediaSegments) {
-                writer.acceptSegment(segment)
-            }
-        } catch (failure: IOException) {
-            throw RetryColdStartException(failure)
+        ensureRunning()
+        val initialization = session.initialize(2_000, poToken)
+        for (target in pendingTargets) {
+            val data = if (target.format.isAudio) {
+                initialization.audioData
+            } else {
+                initialization.videoData
+            } ?: throw RetryColdStartException()
+            target.timeline = if (target.format.isAudio) {
+                initialization.audioTimeline
+            } else {
+                initialization.videoTimeline
+            } ?: throw RetryColdStartException()
+            writer.writeInitializationData(target, data)
+        }
+        for (segment in initialization.mediaSegments) {
+            writer.acceptSegment(segment)
         }
     }
 
@@ -459,7 +455,7 @@ internal class SabrDownloader(
     companion object {
         private const val TAG = "SabrDownloader"
         private const val IDLE_POLL_MS = 250L
-        private const val MAX_EMPTY_RESPONSES = 60
+        private const val MAX_NO_PROGRESS_RESPONSES = 60
         private const val MAX_COLD_START_RETRIES = 3
         private const val MAX_TRANSIENT_RETRIES = 5
         private const val MAX_TRANSIENT_RETRY_DELAY_MS = 5_000L
@@ -485,5 +481,5 @@ internal class SabrDownloader(
         }
     }
 
-    private class RetryColdStartException(cause: Throwable? = null) : IOException(cause)
+    private class RetryColdStartException : IOException()
 }
