@@ -73,20 +73,20 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
             final long durationMs = spec.getDurationMs();
             this.durationUs = durationMs > 0 ? durationMs * 1000L : C.TIME_UNSET;
             final SabrMediaBridge preparationBridge = getOrCreateBridge();
-            if (spec.peekAudioTimeline() == null || spec.peekVideoTimeline() == null) {
+            if (!preparationBridge.hasTimelines()) {
                 try {
                     preparationBridge.fetchSegments(0, spec.getBootstrapAudioFormat(), true, true);
                 } catch (final ExtractionException error) {
                     throw new IOException("Could not prepare SABR first response", error);
                 }
-                if (spec.peekAudioTimeline() == null || spec.peekVideoTimeline() == null) {
+                if (!preparationBridge.hasTimelines()) {
                     throw new IOException("SABR first response did not provide initialization");
                 }
             }
             final DataSource.Factory sabrDataSourceFactory =
                     playerDataSource.getCacheDataSourceFactory(
                             this::createDataSource, this::buildCacheKey);
-            final DashManifest manifest = buildManifest(spec, durationMs);
+            final DashManifest manifest = buildManifest(spec, durationMs, preparationBridge);
             this.childSource = new DashMediaSource.Factory(
                     new DefaultDashChunkSource.Factory(sabrDataSourceFactory),
                     /* manifestDataSourceFactory= */ null)
@@ -173,7 +173,8 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
     }
 
     private static DashManifest buildManifest(final SabrSourceSpec spec,
-                                              final long durationMs)
+                                              final long durationMs,
+                                              final SabrMediaBridge bridge)
             throws IOException {
         final String mpd = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                 + "<MPD xmlns=\"urn:mpeg:dash:schema:mpd:2011\" type=\"static\" "
@@ -181,8 +182,8 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
                 + "minBufferTime=\"PT1.5S\" mediaPresentationDuration=\""
                 + formatDuration(durationMs) + "\">"
                 + "<Period id=\"0\" start=\"PT0S\">"
-                + videoAdaptationSets(spec)
-                + audioAdaptationSets(spec)
+                + videoAdaptationSets(spec, bridge)
+                + audioAdaptationSets(spec, bridge)
                 + "</Period></MPD>";
         try {
             return new DashManifestParser().parse(Uri.parse("sabr://" + spec.getVideoId()),
@@ -192,7 +193,8 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
         }
     }
 
-    private static String audioAdaptationSets(final SabrSourceSpec spec) {
+    private static String audioAdaptationSets(final SabrSourceSpec spec,
+                                              final SabrMediaBridge bridge) {
         final Map<String, List<YoutubeSabrInfo.Format>> tracks = new LinkedHashMap<>();
         for (final YoutubeSabrInfo.Format format : spec.getAudioFormats()) {
             tracks.computeIfAbsent(java.util.Objects.toString(format.getAudioTrackId(), "default"),
@@ -201,17 +203,19 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
         final StringBuilder result = new StringBuilder();
         int index = 0;
         for (final Map.Entry<String, List<YoutubeSabrInfo.Format>> track : tracks.entrySet()) {
-            result.append(adaptationSet(spec, track.getValue(), C.TRACK_TYPE_AUDIO,
-                    String.valueOf(++index)));
+                result.append(adaptationSet(spec, bridge, track.getValue(), C.TRACK_TYPE_AUDIO,
+                        String.valueOf(++index)));
         }
         return result.toString();
     }
 
-    private static String videoAdaptationSets(final SabrSourceSpec spec) {
-        return adaptationSet(spec, spec.getVideoFormats(), C.TRACK_TYPE_VIDEO, "0");
+    private static String videoAdaptationSets(final SabrSourceSpec spec,
+                                              final SabrMediaBridge bridge) {
+        return adaptationSet(spec, bridge, spec.getVideoFormats(), C.TRACK_TYPE_VIDEO, "0");
     }
 
     private static String adaptationSet(final SabrSourceSpec spec,
+                                        final SabrMediaBridge bridge,
                                         final List<YoutubeSabrInfo.Format> formats,
                                         final int trackType,
                                         final String adaptationId) {
@@ -254,7 +258,7 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
             }
             builder.append("><BaseURL>sabrseg://").append(spec.getFormatKey(format))
                     .append("/</BaseURL>")
-                    .append(segmentTemplate(format, spec.getTimeline(format)))
+                    .append(segmentTemplate(format, bridge.getTimeline(format)))
                     .append("</Representation>");
         }
         builder.append("</AdaptationSet>");
@@ -486,7 +490,8 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
                 return positionUs;
             }
             final long positionMs = Math.max(0, positionUs / 1000L);
-            final YoutubeSabrFormatTimeline timeline = spec.getVideoTimeline();
+            final YoutubeSabrFormatTimeline timeline = getOrCreateBridge().getTimeline(
+                    spec.getBootstrapVideoFormat());
             final int currentSequence = timeline.getSequenceAt(positionMs);
             final long nextStartMs = timeline.getStartMs(currentSequence + 1);
             final long nextStartUs = nextStartMs * 1000L;

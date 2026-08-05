@@ -28,8 +28,6 @@ public final class SabrSourceSpec {
     @NonNull private final Map<YoutubeSabrInfo.Format, String> keysByFormat;
     @NonNull private final Map<YoutubeSabrInfo.Format, byte[]> initializationData =
             new ConcurrentHashMap<>();
-    @Nullable private volatile YoutubeSabrFormatTimeline audioTimeline;
-    @Nullable private volatile YoutubeSabrFormatTimeline sharedVideoTimeline;
     @NonNull private final AtomicReference<List<SabrMediaSegment>> bootstrapMediaSegments;
 
     SabrSourceSpec(@NonNull final String videoId,
@@ -71,8 +69,6 @@ public final class SabrSourceSpec {
         }
         formatsByKey = Collections.unmodifiableMap(byKey);
         keysByFormat = Collections.unmodifiableMap(byFormat);
-        this.audioTimeline = audioTimeline;
-        this.sharedVideoTimeline = videoTimeline;
         this.bootstrapMediaSegments = new AtomicReference<>(bootstrapMediaSegments);
         if (audioInitializationData != null) putInitializationData(bootstrapAudioFormat,
                 audioInitializationData);
@@ -129,30 +125,6 @@ public final class SabrSourceSpec {
     long getDurationMs() {
         return Math.max(bootstrapAudioFormat.getApproxDurationMs(),
                 bootstrapVideoFormat.getApproxDurationMs());
-    }
-
-    @NonNull YoutubeSabrFormatTimeline getAudioTimeline() {
-        if (audioTimeline == null) throw new IllegalStateException("SABR audio timeline is not ready");
-        return audioTimeline;
-    }
-    @Nullable YoutubeSabrFormatTimeline peekAudioTimeline() { return audioTimeline; }
-    @Nullable YoutubeSabrFormatTimeline peekVideoTimeline() { return sharedVideoTimeline; }
-    @NonNull YoutubeSabrFormatTimeline getVideoTimeline() {
-        if (sharedVideoTimeline == null) throw new IllegalStateException("SABR video timeline is not ready");
-        return sharedVideoTimeline;
-    }
-
-    void putTimeline(@NonNull final YoutubeSabrInfo.Format format,
-                     @NonNull final YoutubeSabrFormatTimeline timeline) {
-        if (format.isAudio()) audioTimeline = timeline;
-        else sharedVideoTimeline = timeline;
-    }
-
-    @NonNull
-    YoutubeSabrFormatTimeline getTimeline(@NonNull final YoutubeSabrInfo.Format format) {
-        if (format.isAudio() && audioFormats.contains(format)) return audioTimeline;
-        if (videoFormats.contains(format)) return sharedVideoTimeline;
-        throw new IllegalArgumentException("Unknown SABR itag: " + format.getItag());
     }
 
     @NonNull

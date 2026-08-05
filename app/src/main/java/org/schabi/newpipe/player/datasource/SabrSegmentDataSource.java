@@ -127,7 +127,7 @@ public final class SabrSegmentDataSource implements DataSource {
 
     private SabrMediaSegment awaitSegment(final SabrSegmentKey request) throws IOException {
         if (request.getSequenceNumber()
-                > spec.getTimeline(request.getFormat()).getEndSequence()) {
+                > bridge.getTimeline(request.getFormat()).getEndSequence()) {
             throw new SabrLogicException("SABR segment is beyond the timeline: itag="
                     + request.getFormat().getItag() + ", seq=" + request.getSequenceNumber());
         }

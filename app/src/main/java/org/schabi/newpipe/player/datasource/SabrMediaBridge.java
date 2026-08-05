@@ -55,13 +55,26 @@ final class SabrMediaBridge {
         videoFormat = spec.getBootstrapVideoFormat();
         audioActive = true;
         videoActive = true;
-        audioTimeline = spec.peekAudioTimeline();
-        videoTimeline = spec.peekVideoTimeline();
     }
 
     void setActiveTracks(final boolean audioActive, final boolean videoActive) {
         this.audioActive = audioActive;
         this.videoActive = videoActive;
+    }
+
+    @NonNull
+    YoutubeSabrFormatTimeline getTimeline(@NonNull final YoutubeSabrInfo.Format format) {
+        final YoutubeSabrFormatTimeline timeline = format.isAudio()
+                ? audioTimeline : videoTimeline;
+        if (timeline == null) {
+            throw new IllegalStateException("SABR timeline is not ready: itag="
+                    + format.getItag());
+        }
+        return timeline;
+    }
+
+    boolean hasTimelines() {
+        return audioTimeline != null && videoTimeline != null;
     }
 
     void setSelectedFormats(@Nullable final YoutubeSabrInfo.Format audio,
@@ -250,7 +263,6 @@ final class SabrMediaBridge {
                 try {
                     final YoutubeSabrFormatTimeline timeline =
                             YoutubeSabrFormatTimeline.parse(format, data);
-                    spec.putTimeline(format, timeline);
                     if (format.isAudio()) audioTimeline = timeline;
                     else videoTimeline = timeline;
                 } catch (final ExtractionException error) {
