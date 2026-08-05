@@ -75,12 +75,13 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
             final SabrMediaBridge preparationBridge = getOrCreateBridge();
             if (!preparationBridge.hasTimelines()) {
                 try {
-                    preparationBridge.fetchSegments(0, spec.getBootstrapAudioFormat(), true, true);
+                    preparationBridge.awaitSegment(
+                            SabrSegmentKey.media(spec.getBootstrapVideoFormat(), 1), 30_000, 0);
                 } catch (final ExtractionException error) {
-                    throw new IOException("Could not prepare SABR first response", error);
+                    throw new IOException("Could not prepare SABR fragments", error);
                 }
                 if (!preparationBridge.hasTimelines()) {
-                    throw new IOException("SABR first response did not provide initialization");
+                    throw new IOException("SABR fragments did not provide initialization");
                 }
             }
             final DataSource.Factory sabrDataSourceFactory =

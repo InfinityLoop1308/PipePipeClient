@@ -123,6 +123,14 @@ final class SabrMediaBridge {
     SabrMediaSegment awaitSegment(@NonNull final SabrSegmentKey request,
                                   final long timeoutMs)
             throws IOException, ExtractionException {
+        return awaitSegment(request, timeoutMs, Long.MIN_VALUE);
+    }
+
+    @NonNull
+    SabrMediaSegment awaitSegment(@NonNull final SabrSegmentKey request,
+                                  final long timeoutMs,
+                                  final long explicitPlayerTimeMs)
+            throws IOException, ExtractionException {
         final long deadlineNs = System.nanoTime()
                 + TimeUnit.MILLISECONDS.toNanos(Math.max(1, timeoutMs));
         SabrMediaSegment segment = ahead.get(request);
@@ -141,8 +149,13 @@ final class SabrMediaBridge {
                         final YoutubeSabrInfo.Format activeAudio = request.getFormat().isAudio()
                                 ? request.getFormat() : (currentAudioFormat == null
                                 ? spec.getBootstrapAudioFormat() : currentAudioFormat);
-                        final long playerTimeMs = Math.max(0, timelineFor(request.getFormat())
-                                .getStartMs(request.getSequenceNumber()));
+                        final YoutubeSabrFormatTimeline requestTimeline =
+                                timelineFor(request.getFormat());
+                        final long playerTimeMs = explicitPlayerTimeMs != Long.MIN_VALUE
+                                ? Math.max(0, explicitPlayerTimeMs)
+                                : requestTimeline == null ? 0
+                                : Math.max(0, requestTimeline.getStartMs(
+                                request.getSequenceNumber()));
                         final YoutubeSabrSession.RequestResult result = fetchSegments(
                                 playerTimeMs, activeAudio, audioActive, videoActive);
                         if (result.isDeferred()) continue;
@@ -300,8 +313,9 @@ final class SabrMediaBridge {
         return next == null ? 0 : Math.max(0, next - 1);
     }
 
-    @NonNull
-    private YoutubeSabrFormatTimeline timelineFor(@NonNull final YoutubeSabrInfo.Format format) {
+    @Nullable
+    private YoutubeSabrFormatTimeline timelineFor(
+            @NonNull final YoutubeSabrInfo.Format format) {
         return format.isAudio() ? audioTimeline : videoTimeline;
     }
 
