@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 
+import java.util.Objects;
+
 /** Identifies one initialization or media segment requested by Media3. */
 final class SabrSegmentKey {
     @NonNull private final YoutubeSabrInfo.Format format;
@@ -32,6 +34,23 @@ final class SabrSegmentKey {
 
     @NonNull YoutubeSabrInfo.Format getFormat() { return format; }
     boolean isInitialization() { return initialization; }
-    boolean isInitializationSegment() { return initialization; }
     int getSequenceNumber() { return sequenceNumber; }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) return true;
+        if (!(other instanceof SabrSegmentKey)) return false;
+        final SabrSegmentKey that = (SabrSegmentKey) other;
+        return format.getItag() == that.format.getItag()
+                && format.getLastModified() == that.format.getLastModified()
+                && Objects.equals(format.getXtags(), that.format.getXtags())
+                && initialization == that.initialization
+                && sequenceNumber == that.sequenceNumber;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(format.getItag(), format.getLastModified(), format.getXtags(),
+                initialization, sequenceNumber);
+    }
 }

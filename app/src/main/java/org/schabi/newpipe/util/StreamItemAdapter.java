@@ -297,8 +297,14 @@ public class StreamItemAdapter<T extends Stream, U extends Stream> extends BaseA
             } else {
                 return -1;
             }
-            final YoutubeSabrInfo.Format format = ((YoutubeSabrInfo) stream.getDeliveryMethodInfo())
-                    .findFormatByItag(itag);
+            YoutubeSabrInfo.Format format = null;
+            for (final YoutubeSabrInfo.Format candidate
+                    : ((YoutubeSabrInfo) stream.getDeliveryMethodInfo()).getFormats()) {
+                if (candidate.getItag() == itag) {
+                    format = candidate;
+                    break;
+                }
+            }
             return format != null && format.getContentLength() > 0
                     ? format.getContentLength() : -1;
         }

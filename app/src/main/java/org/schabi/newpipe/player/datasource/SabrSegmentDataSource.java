@@ -1,552 +1,184 @@
 package org.schabi.newpipe.player.datasource;
 
-import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
-
 import androidx.media3.common.C;
 import androidx.media3.datasource.DataSource;
 import androidx.media3.datasource.DataSpec;
 import androidx.media3.datasource.TransferListener;
 
-import org.schabi.newpipe.extractor.localization.Localization;
+import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrMediaSegment;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InterruptedIOException;
 
+/** Serves Media3's exact format/sequence demand from SABR responses. */
 public final class SabrSegmentDataSource implements DataSource {
     private static final String TAG = "SabrSegmentDataSource";
+    private static final long FETCH_TIMEOUT_MS = 30_000;
 
-    private static final long WAIT_MS = 250;
-    private static final long RECOVERY_AFTER_NO_PROGRESS_MS = 10_000;
-    private static final long RECOVERY_RETRY_MS = 10_000;
-    private static final long RECOVERY_FAILURE_MS = 30_000;
-    private static final long FORWARD_SEEK_AHEAD_MS = 30_000;
+    private final SabrSourceSpec spec;
+    private final SabrMediaBridge bridge;
 
-    @Nullable
-    private SabrSessionStore.Holder holder;
-    @Nullable
-    private final SabrSessionHandle sessionHandle;
-    private final Object readerOwner;
-    @Nullable
-    private final YoutubeSabrInfo.Format fixedFormat;
-    private final Localization localization;
-    private final boolean prependInit;
-
-    @Nullable
-    private Uri uri;
-    @Nullable
-    private byte[] data;
-    @Nullable
-    private InputStream dataStream;
-    @Nullable
-    private SabrMediaSegment progressiveSegment;
-    private long progressiveReaderGeneration = -1;
-    private int progressiveDataEndPosition = -1;
-    private long bytesRemaining;
-    private int pos;
-    private boolean opened;
-    private volatile boolean canceled;
+    @Nullable private Uri uri;
+    @Nullable private byte[] data;
+    @Nullable private InputStream dataStream;
     @Nullable private SabrSegmentKey openedRequest;
+    private long bytesRemaining;
+    private int position;
 
-    public SabrSegmentDataSource(final SabrSessionStore.Holder holder,
-                                 final Object readerOwner,
-                                 final YoutubeSabrInfo.Format format,
-                                 final Localization localization,
-                                 final boolean prependInit) {
-        this.holder = holder;
-        this.sessionHandle = null;
-        this.readerOwner = readerOwner;
-        this.fixedFormat = format;
-        this.localization = localization;
-        this.prependInit = prependInit;
-    }
-
-    public SabrSegmentDataSource(final SabrSessionStore.Holder holder,
-                                 final Object readerOwner,
-                                 final Localization localization,
-                                 final boolean prependInit) {
-        this.holder = holder;
-        this.sessionHandle = null;
-        this.readerOwner = readerOwner;
-        this.fixedFormat = null;
-        this.localization = localization;
-        this.prependInit = prependInit;
-    }
-
-    SabrSegmentDataSource(final SabrSessionHandle sessionHandle,
-                          final Object readerOwner,
-                          final Localization localization,
-                          final boolean prependInit) {
-        this.holder = null;
-        this.sessionHandle = sessionHandle;
-        this.readerOwner = readerOwner;
-        this.fixedFormat = null;
-        this.localization = localization;
-        this.prependInit = prependInit;
+    SabrSegmentDataSource(final SabrSourceSpec spec,
+                          final SabrMediaBridge bridge) {
+        this.spec = spec;
+        this.bridge = bridge;
     }
 
     @Override
     public void addTransferListener(final TransferListener transferListener) {
+        // Network transfer happens inside YoutubeSabrSession, not through this DataSource.
     }
 
     @Override
     public long open(final DataSpec dataSpec) throws IOException {
-        if (holder == null) {
-            if (sessionHandle == null) {
-                throw new IOException("SABR data source has no session handle");
-            }
-            holder = sessionHandle.acquireHolder();
-        }
-        this.uri = dataSpec.uri;
-        this.canceled = false;
+        uri = dataSpec.uri;
         closeDataStream();
-        this.data = null;
-        this.progressiveSegment = null;
-        this.progressiveReaderGeneration = -1;
-        this.progressiveDataEndPosition = -1;
-        this.pos = (int) Math.max(0, dataSpec.position);
-        SabrSegmentKey request = requestFromUri(dataSpec.uri);
+        data = null;
+        position = (int) Math.max(0, dataSpec.position);
+
+        final SabrSegmentKey request = requestFromUri(dataSpec.uri);
         openedRequest = request;
-        final YoutubeSabrInfo.Format format = request.getFormat();
-        final long availableRemaining;
-        final int openedBytes;
-        Log.d(TAG, "open video=" + holder.videoId
-                + " itag=" + format.getItag()
-                + " uri=" + dataSpec.uri
-                + " prependInit=" + prependInit);
-        if (request.isInitializationSegment()) {
-            this.data = getInitializationData(format);
-            availableRemaining = Math.max(0, data.length - pos);
-            openedBytes = data.length;
-        } else if (prependInit) {
-            final byte[] init = getInitializationData(format);
-            final SabrMediaSegment segment = awaitSegment(request);
-            final byte[] media = segment == null ? new byte[0] : segment.getData();
-            final byte[] both = new byte[init.length + media.length];
-            System.arraycopy(init, 0, both, 0, init.length);
-            System.arraycopy(media, 0, both, init.length, media.length);
-            this.data = both;
-            if (progressiveSegment != null) {
-                progressiveDataEndPosition = both.length;
-            }
-            availableRemaining = Math.max(0, data.length - pos);
-            openedBytes = data.length;
+        final int totalBytes;
+        final long available;
+        if (request.isInitialization()) {
+            data = initializationData(request.getFormat());
+            totalBytes = data.length;
+            available = Math.max(0, totalBytes - position);
         } else {
             SabrMediaSegment segment = awaitSegment(request);
-            if (segment != null) {
-                try {
-                    this.dataStream = segment.openStream();
-                } catch (final FileNotFoundException e) {
-                    Log.w(TAG, "Spool file vanished before open; refetching video="
-                            + holder.videoId + " itag=" + format.getItag()
-                            + " seq=" + request.getSequenceNumber());
-                    holder.getBridge(localization).discard(request);
-                    progressiveSegment = null;
-                    segment = awaitSegment(request);
-                    if (segment != null) {
-                        this.dataStream = segment.openStream();
-                    }
-                }
+            try {
+                dataStream = segment.openStream();
+            } catch (final FileNotFoundException error) {
+                bridge.discard(request);
+                segment = awaitSegment(request);
+                dataStream = segment.openStream();
             }
-            if (segment == null) {
-                this.data = new byte[0];
-                availableRemaining = 0;
-                openedBytes = 0;
-            } else {
-                if (progressiveSegment != null) {
-                    progressiveDataEndPosition = segment.getLength();
-                }
-                final long skipped = skipFully(dataStream, Math.max(0, dataSpec.position));
-                this.pos = (int) Math.min(Integer.MAX_VALUE, skipped);
-                availableRemaining = Math.max(0, segment.getLength() - skipped);
-                openedBytes = segment.getLength();
-            }
+            final long skipped = skipFully(dataStream, dataSpec.position);
+            position = (int) Math.min(Integer.MAX_VALUE, skipped);
+            totalBytes = segment.getLength();
+            available = Math.max(0, totalBytes - skipped);
         }
-        this.opened = true;
-        this.bytesRemaining = dataSpec.length == C.LENGTH_UNSET
-                ? availableRemaining : Math.min(dataSpec.length, availableRemaining);
-        Log.d(TAG, "opened video=" + holder.videoId
-                + " itag=" + format.getItag()
-                + " bytes=" + openedBytes
-                + " remaining=" + availableRemaining);
+        bytesRemaining = dataSpec.length == C.LENGTH_UNSET
+                ? available : Math.min(dataSpec.length, available);
+        Log.d(TAG, "open video=" + spec.getVideoId()
+                + " itag=" + request.getFormat().getItag()
+                + " seq=" + (request.isInitialization() ? "init" : request.getSequenceNumber())
+                + " bytes=" + totalBytes);
         return bytesRemaining;
     }
 
-    private byte[] getInitializationData(final YoutubeSabrInfo.Format format) throws IOException {
-        final int itag = format.getItag();
-        final byte[] cached = holder.getInitializationData(itag);
-        if (cached != null) {
-            return cached;
+    private byte[] initializationData(final YoutubeSabrInfo.Format format) throws IOException {
+        try {
+            return bridge.fetchInitialization(format, FETCH_TIMEOUT_MS);
+        } catch (final org.schabi.newpipe.extractor.exceptions.ExtractionException error) {
+            throw new IOException("SABR initialization extraction failed: itag="
+                    + format.getItag(), error);
         }
-        final SabrMediaSegment segment =
-                holder.getBridge(localization).getCached(SabrSegmentKey.initialization(format));
-        if (segment != null) {
-            final byte[] data = segment.getData();
-            holder.setInitializationData(itag, data);
-            return data;
-        }
-        final SabrMediaSegment loadedSegment =
-                awaitSegment(SabrSegmentKey.initialization(format));
-        if (loadedSegment == null) {
-            return new byte[0];
-        }
-        final byte[] loaded = loadedSegment.getData();
-        holder.setInitializationData(itag, loaded);
-        holder.getBridge(localization).discard(SabrSegmentKey.initialization(format));
-        return loaded;
     }
 
     @Override
     public int read(final byte[] target, final int offset, final int length) throws IOException {
-        if (length == 0) {
-            return 0;
-        }
-        if (bytesRemaining <= 0) {
-            return C.RESULT_END_OF_INPUT;
-        }
+        if (length == 0) return 0;
+        if (bytesRemaining <= 0) return C.RESULT_END_OF_INPUT;
         if (data != null) {
-            if (pos >= data.length) {
-                return C.RESULT_END_OF_INPUT;
-            }
-            final int toCopy = (int) Math.min(Math.min(length, data.length - pos), bytesRemaining);
-            System.arraycopy(data, pos, target, offset, toCopy);
-            pos += toCopy;
-            bytesRemaining -= toCopy;
-            maybeAdvanceProgressiveReader();
-            return toCopy;
+            if (position >= data.length) return C.RESULT_END_OF_INPUT;
+            final int count = (int) Math.min(Math.min(length, data.length - position),
+                    bytesRemaining);
+            System.arraycopy(data, position, target, offset, count);
+            position += count;
+            bytesRemaining -= count;
+            return count;
         }
-        if (dataStream == null) {
-            return C.RESULT_END_OF_INPUT;
-        }
-        final int toRead = (int) Math.min(length, bytesRemaining);
-        final int read = dataStream.read(target, offset, toRead);
-        if (read < 0) {
+        if (dataStream == null) return C.RESULT_END_OF_INPUT;
+        final int count = dataStream.read(target, offset, (int) Math.min(length, bytesRemaining));
+        if (count < 0) {
             bytesRemaining = 0;
             return C.RESULT_END_OF_INPUT;
         }
-        pos = (int) Math.min(Integer.MAX_VALUE, (long) pos + read);
-        bytesRemaining -= read;
-        maybeAdvanceProgressiveReader();
-        return read;
+        position += count;
+        bytesRemaining -= count;
+        return count;
     }
 
-    private void maybeAdvanceProgressiveReader() {
-        final SabrMediaSegment segment = progressiveSegment;
-        if (segment == null || progressiveDataEndPosition < 0
-                || pos < progressiveDataEndPosition || !segment.isComplete() || holder == null) {
-            return;
+    private SabrSegmentKey requestFromUri(final Uri value) throws IOException {
+        final String host = value.getHost();
+        final String segment = value.getLastPathSegment();
+        if (host == null || segment == null) {
+            throw new SabrLogicException("Bad SABR segment URI: " + value);
         }
-        final YoutubeSabrInfo.Format format = segment.getHeader().getItag()
-                == holder.videoFormat.getItag() ? holder.videoFormat : holder.audioFormat;
-        holder.setReaderPositionMs(readerOwner, progressiveReaderGeneration, format.getItag(),
-                segment.getHeader().getStartMs() + segment.getHeader().getDurationMs());
-        progressiveSegment = null;
-        progressiveReaderGeneration = -1;
-        progressiveDataEndPosition = -1;
-    }
-
-    private SabrSegmentKey requestFromUri(final Uri u) throws IOException {
-        final YoutubeSabrInfo.Format format = formatFromUri(u);
-        final String seg = u.getLastPathSegment();
-        if (seg == null) {
-            throw new SabrLogicException("Bad SABR segment uri: " + u);
-        }
-        if ("init".equals(seg)) {
-            return SabrSegmentKey.initialization(format);
-        }
+        final YoutubeSabrInfo.Format format = spec.getFormat(host);
+        if (format == null) throw new SabrLogicException("Unknown SABR format=" + host);
+        if ("init".equals(segment)) return SabrSegmentKey.initialization(format);
         try {
-            return SabrSegmentKey.media(format, Integer.parseInt(seg));
-        } catch (final NumberFormatException e) {
-            throw new SabrLogicException("Bad SABR segment uri: " + u, e);
+            return SabrSegmentKey.media(format, Integer.parseInt(segment));
+        } catch (final NumberFormatException error) {
+            throw new SabrLogicException("Bad SABR sequence in URI: " + value, error);
         }
     }
 
-    private YoutubeSabrInfo.Format formatFromUri(final Uri u) throws IOException {
-        if (fixedFormat != null) {
-            return fixedFormat;
-        }
-        final String host = u.getHost();
-        if (host == null) {
-            throw new SabrLogicException("Bad SABR segment uri without itag: " + u);
-        }
-        final int itag;
-        try {
-            itag = Integer.parseInt(host);
-        } catch (final NumberFormatException e) {
-            throw new SabrLogicException("Bad SABR segment itag in uri: " + u, e);
-        }
-        if (holder.videoFormat.getItag() == itag) {
-            return holder.videoFormat;
-        }
-        if (holder.audioFormat.getItag() == itag) {
-            return holder.audioFormat;
-        }
-        throw new SabrLogicException("Unknown SABR segment itag=" + itag + " uri=" + u);
-    }
-
-    @Nullable
     private SabrMediaSegment awaitSegment(final SabrSegmentKey request) throws IOException {
-        final YoutubeSabrInfo.Format format = request.getFormat();
-        holder.throwIfTerminal();
-        if (holder.isInvalidated()) {
-            throw invalidatedException(request.getFormat());
+        if (request.getSequenceNumber()
+                > spec.getTimeline(request.getFormat()).getEndSequence()) {
+            throw new SabrLogicException("SABR segment is beyond the timeline: itag="
+                    + request.getFormat().getItag() + ", seq=" + request.getSequenceNumber());
         }
-        final SabrMediaBridge bridge = holder.getBridge(localization);
-        long readerGeneration = holder.getReaderGeneration(readerOwner);
-        final long waitStart = System.currentTimeMillis();
-        long noProgressSinceMs = waitStart;
-        long mediaProgressVersion = bridge.getMediaProgressVersion();
-        long recoveryAtMs = -1;
-        long lastRecoveryAtMs = -1;
-        boolean loggedWait = false;
         try {
-            while (true) {
-            if (canceled) {
-                throw new IOException("SABR segment read canceled");
-            }
-            if (!request.isInitializationSegment()) {
-                final long currentReaderGeneration = holder.getReaderGeneration(readerOwner);
-                if (readerGeneration < 0 && currentReaderGeneration >= 0) {
-                    readerGeneration = currentReaderGeneration;
-                    noProgressSinceMs = System.currentTimeMillis();
-                    mediaProgressVersion = bridge.getMediaProgressVersion();
-                } else if (readerGeneration >= 0
-                        && currentReaderGeneration != readerGeneration) {
-                    throw new InterruptedIOException("SABR reader demand superseded for itag="
-                            + format.getItag() + ", seq=" + request.getSequenceNumber());
-                }
-            }
-            holder.throwIfTerminal();
-            if (holder.isInvalidated()) {
-                throw invalidatedException(request.getFormat());
-            }
-            if (!request.isInitializationSegment() && holder.isBeyondEnd(request)) {
-                Log.d(TAG, "beyond end video=" + holder.videoId
-                        + " itag=" + format.getItag()
-                        + " seq=" + request.getSequenceNumber());
-                holder.session.addDiagnosticEvent("beyond_end itag=" + format.getItag()
-                        + " seq=" + request.getSequenceNumber());
-                return null;
-            }
-            final IOException demandFailure = !request.isInitializationSegment()
-                    && readerGeneration >= 0
-                    ? bridge.takeDemandFailure(request, readerOwner, readerGeneration) : null;
-            if (demandFailure != null) {
-                throw demandFailure;
-            }
-            final IOException networkFailure = bridge.takeNetworkFailure();
-            if (networkFailure != null) {
-                throw networkFailure;
-            }
-            if (request.isInitializationSegment()) {
-                bridge.requestInitialization(format);
-            } else {
-                bridge.ensureStarted();
-            }
-            final SabrMediaSegment segment;
-            if (request.isInitializationSegment()) {
-                    segment = bridge.getCached(request);
-            } else {
-                try {
-                    segment = bridge.awaitReadableSegment(request, WAIT_MS);
-                } catch (final InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    throw new IOException("Interrupted waiting for SABR segment", e);
-                }
-            }
-            if (segment != null) {
-                Log.d(TAG, "cache hit video=" + holder.videoId
-                        + " itag=" + format.getItag()
-                        + " init=" + request.isInitializationSegment()
-                        + " seq=" + request.getSequenceNumber()
-                        + " bytes=" + segment.getLength()
-                        + " disk=" + segment.isDiskBacked());
-                if (!segment.getHeader().isInitSegment()) {
-                    if (segment.isComplete()) {
-                        holder.setReaderPositionMs(readerOwner, readerGeneration, format.getItag(),
-                                segment.getHeader().getStartMs()
-                                        + segment.getHeader().getDurationMs());
-                    } else {
-                        progressiveSegment = segment;
-                        progressiveReaderGeneration = readerGeneration;
-                    }
-                }
-                return segment;
-            }
-            if (!request.isInitializationSegment() && holder.isBeyondEnd(request)) {
-                Log.d(TAG, "beyond end video=" + holder.videoId
-                        + " itag=" + format.getItag()
-                        + " seq=" + request.getSequenceNumber());
-                holder.session.addDiagnosticEvent("beyond_end itag=" + format.getItag()
-                        + " seq=" + request.getSequenceNumber());
-                return null;
-            }
-            if (!request.isInitializationSegment() && readerGeneration >= 0) {
-                bridge.requestSegmentDemand(request, readerOwner, readerGeneration);
-            }
-            if (!loggedWait && System.currentTimeMillis() - waitStart > 1000) {
-                loggedWait = true;
-                holder.session.addDiagnosticEvent("wait itag=" + format.getItag()
-                        + " init=" + request.isInitializationSegment()
-                        + " seq=" + request.getSequenceNumber()
-                        + " bridge=" + bridge.getStateName()
-                        + " edgeMs=" + holder.getReaderHeadMs()
-                        + " readerHeadMs=" + holder.getReaderHeadMs()
-                        + " readerTailMs=" + holder.getReaderTailMs()
-                        + " aheadBytes=" + bridge.getAheadBytes());
-                Log.d(TAG, "waiting video=" + holder.videoId
-                        + " itag=" + format.getItag()
-                        + " init=" + request.isInitializationSegment()
-                        + " seq=" + request.getSequenceNumber()
-                        + " edgeMs=" + holder.getReaderHeadMs()
-                        + " readerHeadMs=" + holder.getReaderHeadMs());
-            }
-            final long now = System.currentTimeMillis();
-            final long currentMediaProgressVersion = bridge.getMediaProgressVersion();
-            if (currentMediaProgressVersion != mediaProgressVersion) {
-                mediaProgressVersion = currentMediaProgressVersion;
-                noProgressSinceMs = now;
-                recoveryAtMs = -1;
-                lastRecoveryAtMs = -1;
-            }
-            if (holder.getBackoffRemainingMs() > 0) {
-                // Server-directed pacing is not a playback stall. Keep polling so cancellation and
-                // reader replacement remain responsive, but do not let the local recovery watchdog
-                // reposition the session and attempt another request before the server deadline.
-                noProgressSinceMs = now;
-                recoveryAtMs = -1;
-                lastRecoveryAtMs = -1;
-            }
-            if (now - noProgressSinceMs > RECOVERY_AFTER_NO_PROGRESS_MS
-                    && (lastRecoveryAtMs < 0
-                            || now - lastRecoveryAtMs > RECOVERY_RETRY_MS)
-                    && bridge.canRecover()
-                    && (request.isInitializationSegment() || readerGeneration >= 0)) {
-                String recovery;
-                if (request.isInitializationSegment()) {
-                    recovery = "init";
-                    bridge.requestInitialization(format);
-                } else {
-                    final long edgeMs = holder.getReaderHeadMs();
-                    final long segStartMs = holder.getTimeline(format)
-                            .getStartMs(request.getSequenceNumber());
-                    if (segStartMs < edgeMs) {
-                        recovery = "rewind";
-                        holder.setReaderPositionMs(readerOwner, readerGeneration, format.getItag(),
-                                segStartMs);
-                        bridge.requestRefetchFrom(request);
-                    } else if (segStartMs > edgeMs + FORWARD_SEEK_AHEAD_MS) {
-                        recovery = "forward";
-                        holder.setReaderPositionMs(readerOwner, readerGeneration, format.getItag(),
-                                segStartMs);
-                        bridge.requestForwardSeekTo(request);
-                    } else {
-                        recovery = "near_edge_refetch";
-                        holder.setReaderPositionMs(readerOwner, readerGeneration,
-                                format.getItag(), segStartMs);
-                        bridge.requestRefetchFrom(request);
-                    }
-                }
-                holder.session.addDiagnosticEvent("recovery type=" + recovery
-                        + " itag=" + format.getItag()
-                        + " init=" + request.isInitializationSegment()
-                        + " seq=" + request.getSequenceNumber()
-                        + " bridge=" + bridge.getStateName()
-                        + " edgeMs=" + holder.getReaderHeadMs());
-                if (recoveryAtMs < 0) {
-                    recoveryAtMs = now;
-                }
-                lastRecoveryAtMs = now;
-            }
-            if (recoveryAtMs >= 0 && now - recoveryAtMs > RECOVERY_FAILURE_MS
-                    && bridge.canRecover()) {
-                final SabrLogicException failure = new SabrLogicException(
-                        "SABR made no progress after recovery for itag=" + format.getItag()
-                                + ", init=" + request.isInitializationSegment()
-                                + ", seq=" + request.getSequenceNumber()
-                                + ", waitMs=" + (now - waitStart)
-                                + ", bridge=" + bridge.getStateName()
-                                + ", edgeMs="
-                                + holder.getReaderHeadMs()
-                                + ", readerHeadMs=" + holder.getReaderHeadMs()
-                                + ", readerTailMs=" + holder.getReaderTailMs()
-                                + ", aheadBytes=" + bridge.getAheadBytes()
-                                + ", trace=" + holder.session.getDiagnosticTrace());
-                holder.failTerminal(failure);
-                throw failure;
-            }
-            if (request.isInitializationSegment()) {
-                try {
-                    Thread.sleep(WAIT_MS);
-                } catch (final InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    throw new IOException("Interrupted awaiting SABR initialization", e);
-                }
-            }
+            return bridge.fetchSegment(request, FETCH_TIMEOUT_MS);
+        } catch (final org.schabi.newpipe.extractor.exceptions.ExtractionException error) {
+            throw new IOException("SABR segment extraction failed", error);
         }
-        } finally {
-            if (!request.isInitializationSegment()) {
-                bridge.clearSegmentDemand(request, readerOwner, readerGeneration);
-            }
-        }
-    }
-
-    private SabrLogicException invalidatedException(final YoutubeSabrInfo.Format format) {
-        return new SabrLogicException("SABR session invalidated for video=" + holder.videoId
-                + ", itag=" + format.getItag() + ", " + holder.getInvalidationDetails());
     }
 
     private static long skipFully(final InputStream input, final long requested) throws IOException {
-        long remaining = requested;
+        long remaining = Math.max(0, requested);
         final byte[] buffer = new byte[8192];
         while (remaining > 0) {
             final long skipped = input.skip(remaining);
             if (skipped > 0) {
                 remaining -= skipped;
-                continue;
+            } else {
+                final int read = input.read(buffer, 0, (int) Math.min(buffer.length, remaining));
+                if (read < 0) break;
+                remaining -= read;
             }
-            final int read = input.read(buffer, 0, (int) Math.min(buffer.length, remaining));
-            if (read < 0) {
-                break;
-            }
-            remaining -= read;
         }
         return requested - remaining;
     }
 
     private void closeDataStream() throws IOException {
-        if (dataStream != null) {
-            dataStream.close();
-            dataStream = null;
-        }
+        if (dataStream != null) dataStream.close();
+        dataStream = null;
     }
 
     @Nullable
     @Override
-    public Uri getUri() {
-        return uri;
-    }
+    public Uri getUri() { return uri; }
 
     @Override
     public void close() {
-        canceled = true;
         data = null;
         try {
             closeDataStream();
-        } catch (final IOException e) {
-            Log.w(TAG, "Could not close SABR segment stream", e);
+        } catch (final IOException error) {
+            Log.w(TAG, "Could not close SABR segment stream", error);
         }
         final SabrSegmentKey request = openedRequest;
         openedRequest = null;
-        if (request != null && !request.isInitializationSegment() && holder != null) {
-            holder.getBridge(localization).discard(request);
+        if (request != null && !request.isInitialization()) {
+            bridge.discard(request);
         }
-        opened = false;
     }
 }

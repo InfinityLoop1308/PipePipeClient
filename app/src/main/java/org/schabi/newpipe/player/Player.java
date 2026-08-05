@@ -135,7 +135,6 @@ import org.schabi.newpipe.player.helper.LoadController;
 import org.schabi.newpipe.player.helper.MediaSessionManager;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.player.helper.PlayerHelper;
-import org.schabi.newpipe.player.datasource.SabrSessionStore;
 import org.schabi.newpipe.player.listeners.view.PlaybackSpeedClickListener;
 import org.schabi.newpipe.player.listeners.view.QualityClickListener;
 import org.schabi.newpipe.player.mediaitem.MediaItemTag;
@@ -815,6 +814,13 @@ public final class Player implements
                 trackSelector.buildUponParameters();
         parametersBuilder.setTrackTypeDisabled(C.TRACK_TYPE_TEXT, audioPlayerSelected());
         parametersBuilder.setTrackTypeDisabled(C.TRACK_TYPE_VIDEO, audioPlayerSelected());
+        final String preferredAudioLanguage = prefs.getString(
+                context.getString(R.string.preferred_audio_language_key), "original");
+        if ("original".equals(preferredAudioLanguage)) {
+            parametersBuilder.setPreferredAudioLanguages();
+        } else {
+            parametersBuilder.setPreferredAudioLanguages(preferredAudioLanguage);
+        }
         trackSelector.setParameters(parametersBuilder);
 
         // needed for tablets, check the function for a better explanation
@@ -1850,8 +1856,6 @@ public final class Player implements
 
         // Feed the real play head to any live SABR session (no-op otherwise).
         getCurrentStreamInfo().ifPresent(info -> {
-            SabrSessionStore.updatePlayerTime(info.getId(), currentProgress);
-            SabrSessionStore.updatePlaybackRate(info.getId(), getPlaybackSpeed());
         });
 
         if (duration != binding.playbackSeekBar.getMax()) {
@@ -3084,6 +3088,7 @@ public final class Player implements
             enqueueTimer.cancel(true);
         }
         onTextTracksChanged(tracks);
+        onAudioTracksChanged();
     }
 
     @Override
@@ -4581,6 +4586,18 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         setRecovery();
         videoResolver.setAudioTrack(audioTrackId);
         audioResolver.setAudioTrack(audioTrackId);
+        if (isCurrentStreamSabr() && !exoPlayerIsNull()) {
+            final DefaultTrackSelector.Parameters.Builder parameters =
+                    trackSelector.buildUponParameters();
+            if (audioTrackId == null || audioTrackId.isEmpty()) {
+                parameters.setPreferredAudioLanguages();
+            } else {
+                parameters.setPreferredAudioLanguages(
+                        audioTrackId.split("[._-]", 2)[0]);
+            }
+            trackSelector.setParameters(parameters);
+            return;
+        }
         reloadPlayQueueManager();
     }
 

@@ -77,8 +77,6 @@ public class VideoPlaybackResolver implements PlaybackResolver {
             return liveSource;
         }
 
-        SabrSessionStore.setPreferredAudioTrack(info.getId(), audioTrack);
-
         final List<MediaSource> mediaSources = new ArrayList<>();
         final List<VideoStream> videoStreams = new ArrayList<>(info.getVideoStreams());
         final List<VideoStream> videoOnlyStreams = new ArrayList<>(info.getVideoOnlyStreams());

@@ -24,7 +24,7 @@ internal object SabrDownloadFormatResolver {
             } else {
                 null
             }
-            ?: info.findBestAudioFormat()
+            ?: info.formats.filter { it.isAudio }.maxByOrNull { it.bitrate }
             ?: throw SabrDownloadException(
                 SabrDownloadException.Reason.FORMAT,
                 "SABR download failed: missing audio format",
@@ -43,7 +43,7 @@ internal object SabrDownloadFormatResolver {
             } else {
                 null
             }
-            ?: info.findLowestVideoFormat()
+            ?: findLightweightVideoFormat(info)
             ?: throw SabrDownloadException(
                 SabrDownloadException.Reason.FORMAT,
                 "SABR download failed: missing video format",

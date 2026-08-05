@@ -2,12 +2,11 @@ package us.shandian.giga.get
 
 import android.util.Log
 import org.schabi.newpipe.BuildConfig
-import org.schabi.newpipe.extractor.localization.Localization
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrProtocolException
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrRecoverableException
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
-import org.schabi.newpipe.player.datasource.LocalDomPoTokenProvider
+import org.schabi.newpipe.youtube.LocalDomPoTokenProvider
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -277,14 +276,12 @@ internal class SabrDownloader(
         writer: SabrSegmentWriter,
         poToken: ByteArray,
     ) {
-        val localization = Localization("en", "US")
         writer.observeWrittenInitializations()
-        prepareInitializations(session, targets, writer, localization, poToken)
+        prepareInitializations(session, targets, writer, poToken)
         writer.observeWrittenInitializations()
 
         var emptyResponses = 0
         var nextRequestAtMs = 0L
-        var bandwidthEstimate = -1L
         while (true) {
             ensureRunning()
             val backoffRemainingMs = nextRequestAtMs - System.currentTimeMillis()
@@ -301,7 +298,6 @@ internal class SabrDownloader(
             val audio = targets.firstOrNull { it.format.isAudio }
             val video = targets.firstOrNull { it.format.isVideo }
             val requestResult = session.requestOnce(
-                localization,
                 playerTimeMs,
                 audio?.timeline,
                 (audio?.nextWriteSequence ?: 1) - 1,
@@ -310,16 +306,13 @@ internal class SabrDownloader(
                 audio != null,
                 video != null,
                 false,
-                bandwidthEstimate,
                 1.0f,
-                poToken,
                 writer::acceptSegment,
             )
-            if (requestResult.bandwidthSample > 0) {
-                bandwidthEstimate = if (bandwidthEstimate <= 0) requestResult.bandwidthSample
-                else (bandwidthEstimate * 3 + requestResult.bandwidthSample) / 4
-            }
             nextRequestAtMs = System.currentTimeMillis() + requestResult.backoffMs
+            if (requestResult.isDeferred) {
+                continue
+            }
             val segmentCount = requestResult.segmentCount
             writer.observeWrittenInitializations()
             if (isDownloadComplete(targets)) {
@@ -345,7 +338,6 @@ internal class SabrDownloader(
         session: YoutubeSabrSession,
         targets: List<SabrDownloadTarget>,
         writer: SabrSegmentWriter,
-        localization: Localization,
         poToken: ByteArray,
     ) {
         val pendingTargets = targets.filterNot { it.initializationWritten }
@@ -355,7 +347,7 @@ internal class SabrDownloader(
 
         try {
             ensureRunning()
-            val initialization = session.initialize(localization, 2_000, poToken)
+            val initialization = session.initialize(2_000, poToken)
             for (target in pendingTargets) {
                 val data = if (target.format.isAudio) {
                     initialization.audioData

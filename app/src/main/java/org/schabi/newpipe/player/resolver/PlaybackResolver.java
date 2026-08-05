@@ -470,11 +470,11 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
         final YoutubeSabrInfo sabrInfo = getSabrInfo(stream);
         final SabrSourceSpec spec;
         try {
-            spec = SabrSessionStore.createSourceSpec(videoId, preferredVideoItag, sabrInfo);
+            spec = SabrSessionStore.createSourceSpec(videoId, preferredVideoItag,
+                    streamInfo.getAudioStreams(), sabrInfo);
         } catch (final ExtractionException e) {
             throw new IOException("Could not describe SABR source for " + videoId, e);
         }
-        enrichSabrAudioTracks(streamInfo, spec.getInfo());
         final MediaItem mediaItem = new MediaItem.Builder()
                 .setTag(metadata)
                 .setUri(Uri.parse("sabr://" + videoId))
@@ -487,38 +487,6 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
     private static YoutubeSabrInfo getSabrInfo(@NonNull final Stream stream) {
         final Serializable info = stream.getDeliveryMethodInfo();
         return info instanceof YoutubeSabrInfo ? (YoutubeSabrInfo) info : null;
-    }
-
-    private static void enrichSabrAudioTracks(@NonNull final StreamInfo streamInfo,
-                                              @NonNull final YoutubeSabrInfo info) {
-        final List<AudioStream> audioStreams = streamInfo.getAudioStreams();
-        if (audioStreams.isEmpty()) {
-            return;
-        }
-        final AudioStream template = audioStreams.get(0);
-        final Set<String> present = new HashSet<>();
-        for (final AudioStream a : audioStreams) {
-            present.add(Objects.toString(a.getAudioTrackId(), ""));
-        }
-        for (final YoutubeSabrInfo.Format f : info.getFormats()) {
-            final String trackId = f.getAudioTrackId();
-            if (!f.isAudio() || trackId == null || !present.add(trackId)) {
-                continue;
-            }
-            final String langPart = trackId.split("\\.")[0];
-            final String displayName = f.getAudioTrackDisplayName();
-            audioStreams.add(new AudioStream.Builder()
-                    .setId(template.getId() + "-" + trackId)
-                    .setContent(template.getContent(), template.isUrl())
-                    .setMediaFormat(template.getFormat())
-                    .setAverageBitrate(f.getBitrate())
-                    .setItagItem(template.getItagItem())
-                    .setDeliveryMethod(DeliveryMethod.SABR)
-                    .setAudioTrackId(trackId)
-                    .setAudioTrackName(displayName != null ? displayName : langPart)
-                    .setAudioLocale(langPart.split("-")[0])
-                    .build());
-        }
     }
 
     @NonNull

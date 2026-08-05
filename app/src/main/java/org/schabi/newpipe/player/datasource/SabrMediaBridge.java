@@ -4,306 +4,314 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
-import org.schabi.newpipe.extractor.localization.Localization;
+import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormatTimeline;
+import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
 import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrMediaSegment;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
-/** Bridges Media3 segment demand to serialized SABR transactions. */
+/** Synchronously bridges one Media3 segment read to serialized SABR transactions. */
 final class SabrMediaBridge {
     private static final int MAX_AHEAD_SEGMENTS = 64;
-    private final SabrSessionStore.Holder holder;
-    private final YoutubeSabrSession session;
-    private final Localization localization;
-    private final SabrBackoffState backoff;
-    private final LinkedBlockingQueue<SabrSegmentKey> pending = new LinkedBlockingQueue<>();
-    private final Map<String, SabrSegmentKey> pendingKeys = new ConcurrentHashMap<>();
-    private final Map<String, IOException> failures = new ConcurrentHashMap<>();
-    private final Map<String, SabrMediaSegment> ahead = new ConcurrentHashMap<>();
-    private final Map<Integer, Integer> nextSequences = new ConcurrentHashMap<>();
-    private final Deque<String> aheadOrder = new ArrayDeque<>();
-    private final Object available = new Object();
-    private volatile IOException networkFailure;
-    private volatile boolean stopped;
-    private volatile boolean started;
-    private volatile long mediaProgressVersion;
-    private Thread worker;
+    private static final long COOKIE_RECOVERY_AFTER_MS = 10_000;
+    private static final long EMPTY_RESPONSE_RETRY_MS = 250;
 
-    SabrMediaBridge(@NonNull final SabrSessionStore.Holder holder,
-                    @NonNull final Localization localization,
-                    @NonNull final SabrBackoffState backoff) {
-        this.holder = holder;
-        this.session = holder.session;
-        this.localization = localization;
-        this.backoff = backoff;
+    private final YoutubeSabrSession session;
+    private final SabrSourceSpec spec;
+    private final YoutubeSabrInfo.Format videoFormat;
+    private final YoutubeSabrFormatTimeline audioTimeline;
+    private final YoutubeSabrFormatTimeline videoTimeline;
+    private final Map<SabrSegmentKey, SabrMediaSegment> ahead = new ConcurrentHashMap<>();
+    private final Map<YoutubeSabrInfo.Format, Integer> nextSequences =
+            new ConcurrentHashMap<>();
+    private final Map<SabrSegmentKey, AtomicInteger> activeDemands = new ConcurrentHashMap<>();
+    private final Deque<SabrSegmentKey> aheadOrder = new ArrayDeque<>();
+    private final Object requestLock = new Object();
+
+    private volatile boolean stopped;
+    @Nullable private volatile Thread requestThread;
+
+    SabrMediaBridge(@NonNull final YoutubeSabrSession session,
+                    @NonNull final SabrSourceSpec spec) {
+        this.session = session;
+        this.spec = spec;
+        videoFormat = spec.getVideoFormat();
+        audioTimeline = spec.getAudioTimeline();
+        videoTimeline = spec.getVideoTimeline();
+    }
+
+    @NonNull
+    byte[] fetchInitialization(@NonNull final YoutubeSabrInfo.Format format,
+                               final long timeoutMs)
+            throws IOException, ExtractionException {
+        byte[] data = spec.getInitializationData(format);
+        if (data != null) return data;
+        final long deadlineNs = System.nanoTime()
+                + TimeUnit.MILLISECONDS.toNanos(Math.max(1, timeoutMs));
+        synchronized (requestLock) {
+            requestThread = Thread.currentThread();
+            try {
+                data = spec.getInitializationData(format);
+                if (data != null) return data;
+                awaitBackoffWithinBudget(SabrSegmentKey.initialization(format), deadlineNs);
+                if (stopped) throw new IOException("SABR bridge is stopped");
+                final long remainingMs = Math.max(1, TimeUnit.NANOSECONDS.toMillis(
+                        ensureBudget(SabrSegmentKey.initialization(format), deadlineNs)));
+                data = session.fetchInitializationData(format, remainingMs,
+                        segment -> acceptSegment(segment, format.isAudio() ? format : null));
+                ensureBudget(SabrSegmentKey.initialization(format), deadlineNs);
+                spec.putInitializationData(format, data);
+                return data;
+            } finally {
+                requestThread = null;
+            }
+        }
     }
 
     void seedSegments(@NonNull final List<SabrMediaSegment> segments) {
         for (final SabrMediaSegment segment : segments) {
-            final String segmentKey = key(segment.getHeader().getItag(),
-                    segment.getHeader().isInitSegment()
-                            ? "init" : String.valueOf(segment.getHeader().getSequenceNumber()));
-            final SabrMediaSegment previous = ahead.putIfAbsent(segmentKey, segment);
-            if (previous != null) {
-                segment.delete();
-            } else {
-                synchronized (available) {
-                    aheadOrder.addLast(segmentKey);
-                }
-            }
-        }
-        synchronized (available) {
-            trimAhead();
-            available.notifyAll();
+            acceptSegment(segment, spec.getBootstrapAudioFormat());
         }
     }
 
-    synchronized void ensureStarted() {
-        if (started || stopped) {
-            return;
+    @NonNull
+    SabrMediaSegment fetchSegment(@NonNull final SabrSegmentKey request,
+                                  final long timeoutMs)
+            throws IOException, ExtractionException {
+        final long deadlineNs = System.nanoTime()
+                + TimeUnit.MILLISECONDS.toNanos(Math.max(1, timeoutMs));
+        retainDemand(request);
+        try {
+            SabrMediaSegment segment = ahead.get(request);
+            if (segment != null) return segment;
+            if (!request.isInitialization()) {
+                nextSequences.put(request.getFormat(), request.getSequenceNumber());
+            }
+            synchronized (requestLock) {
+                requestThread = Thread.currentThread();
+                try {
+                    long recoveryAtNs = System.nanoTime()
+                            + TimeUnit.MILLISECONDS.toNanos(COOKIE_RECOVERY_AFTER_MS);
+                    while (!stopped) {
+                        segment = ahead.get(request);
+                        if (segment != null) return segment;
+                        awaitBackoffWithinBudget(request, deadlineNs);
+                        if (stopped) throw new IOException("SABR bridge is stopped");
+
+                        final YoutubeSabrInfo.Format activeAudio = activeAudioFormat(request);
+                        final boolean audioActive = activeAudio != null;
+                        final boolean videoActive = hasActiveDemandFor(videoFormat);
+                        final long playerTimeMs = request.isInitialization() ? 0
+                                : Math.max(0, timelineFor(request.getFormat())
+                                .getStartMs(request.getSequenceNumber()));
+                        final YoutubeSabrSession.RequestResult result = session.requestOnce(
+                                activeAudio == null ? spec.getBootstrapAudioFormat() : activeAudio,
+                                videoFormat,
+                                playerTimeMs,
+                                audioTimeline, activeAudio == null ? 0 : bufferedThrough(activeAudio),
+                                videoTimeline, bufferedThrough(videoFormat),
+                                audioActive, videoActive, videoActive && !audioActive,
+                                1.0f, received -> acceptSegment(received, activeAudio));
+                        if (result.isDeferred()) continue;
+
+                        segment = ahead.get(request);
+                        if (segment != null) return segment;
+                        ensureBudget(request, deadlineNs);
+                        if (System.nanoTime() >= recoveryAtNs) {
+                            session.clearPlaybackCookie();
+                            recoveryAtNs = System.nanoTime()
+                                    + TimeUnit.MILLISECONDS.toNanos(COOKIE_RECOVERY_AFTER_MS);
+                        }
+                        if (result.getSegmentCount() == 0
+                                && session.getBackoffRemainingMs() == 0) {
+                            sleepWithinBudget(request, deadlineNs, EMPTY_RESPONSE_RETRY_MS);
+                        }
+                    }
+                    throw new IOException("SABR bridge is stopped");
+                } finally {
+                    requestThread = null;
+                }
+            }
+        } finally {
+            releaseDemand(request);
         }
-        started = true;
-        worker = new Thread(this::run, "SabrMediaBridge");
-        worker.setDaemon(true);
-        worker.start();
+    }
+
+    void discard(@NonNull final SabrSegmentKey request) {
+        final SabrMediaSegment segment = ahead.remove(request);
+        synchronized (aheadOrder) {
+            aheadOrder.remove(request);
+        }
+        if (segment != null) segment.delete();
     }
 
     void stop() {
         stopped = true;
-        final Thread current = worker;
-        if (current != null) {
-            current.interrupt();
-        }
-        for (final SabrMediaSegment segment : ahead.values()) {
-            segment.delete();
-        }
+        final Thread current = requestThread;
+        if (current != null) current.interrupt();
+        for (final SabrMediaSegment segment : ahead.values()) segment.delete();
         ahead.clear();
-        synchronized (available) {
+        synchronized (aheadOrder) {
             aheadOrder.clear();
-            available.notifyAll();
         }
     }
 
-    @Nullable
-    SabrMediaSegment getCached(@NonNull final SabrSegmentKey request) {
-        return ahead.get(key(request));
-    }
-
-    @Nullable
-    SabrMediaSegment awaitReadableSegment(@NonNull final SabrSegmentKey request,
-                                          final long timeoutMs) throws InterruptedException {
-        SabrMediaSegment segment = getCached(request);
-        if (segment != null || timeoutMs <= 0) {
-            return segment;
-        }
-        synchronized (available) {
-            segment = getCached(request);
-            if (segment == null) {
-                available.wait(timeoutMs);
-                segment = getCached(request);
+    private void awaitBackoffWithinBudget(@NonNull final SabrSegmentKey request,
+                                          final long deadlineNs) throws IOException {
+        while (true) {
+            final long backoffMs = session.getBackoffRemainingMs();
+            if (backoffMs <= 0) return;
+            final long remainingNs = ensureBudget(request, deadlineNs);
+            if (TimeUnit.MILLISECONDS.toNanos(backoffMs) >= remainingNs) {
+                throw timeout(request, "SABR backoff cannot fit within the fetch budget");
             }
+            sleep(backoffMs);
         }
-        return segment;
     }
 
-    void discard(@NonNull final SabrSegmentKey request) {
-        final String segmentKey = key(request);
-        final SabrMediaSegment segment = ahead.remove(segmentKey);
-        synchronized (available) {
-            aheadOrder.remove(segmentKey);
+    private void sleepWithinBudget(@NonNull final SabrSegmentKey request,
+                                   final long deadlineNs,
+                                   final long requestedMs) throws IOException {
+        final long remainingNs = ensureBudget(request, deadlineNs);
+        sleep(Math.min(requestedMs, Math.max(1,
+                TimeUnit.NANOSECONDS.toMillis(remainingNs))));
+    }
+
+    private static void sleep(final long milliseconds) throws InterruptedIOException {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (final InterruptedException error) {
+            Thread.currentThread().interrupt();
+            final InterruptedIOException interrupted =
+                    new InterruptedIOException("Interrupted during SABR fetch");
+            interrupted.initCause(error);
+            throw interrupted;
         }
-        if (segment != null) {
+    }
+
+    private long ensureBudget(@NonNull final SabrSegmentKey request,
+                              final long deadlineNs) throws SabrLogicException {
+        final long remainingNs = deadlineNs - System.nanoTime();
+        if (remainingNs <= 0) throw timeout(request, "SABR fetch exceeded its budget");
+        return remainingNs;
+    }
+
+    @NonNull
+    private SabrLogicException timeout(@NonNull final SabrSegmentKey request,
+                                       @NonNull final String reason) {
+        return new SabrLogicException(reason + ": itag=" + request.getFormat().getItag()
+                + ", seq=" + request.getSequenceNumber() + ", trace="
+                + session.getDiagnosticTrace());
+    }
+
+    private void acceptSegment(@NonNull final SabrMediaSegment segment,
+                               @Nullable final YoutubeSabrInfo.Format requestedAudio) {
+        if (stopped || segment.getHeader().isInitSegment()) {
             segment.delete();
-        }
-    }
-
-    @Nullable
-    IOException takeNetworkFailure() {
-        final IOException failure = networkFailure;
-        networkFailure = null;
-        return failure;
-    }
-
-    @Nullable
-    IOException takeDemandFailure(@NonNull final SabrSegmentKey request,
-                                  @NonNull final Object readerOwner,
-                                  final long readerGeneration) {
-        return failures.remove(key(request));
-    }
-
-    boolean canRecover() {
-        return !stopped && networkFailure == null;
-    }
-
-    String getStateName() {
-        return stopped ? "STOPPED" : (pending.isEmpty() ? "IDLE" : "REQUESTING");
-    }
-
-    long getAheadBytes() {
-        long bytes = 0;
-        for (final SabrMediaSegment segment : ahead.values()) {
-            bytes += segment.getLength();
-        }
-        return bytes;
-    }
-
-    long getMediaProgressVersion() {
-        return mediaProgressVersion;
-    }
-
-    void requestInitialization(@NonNull final org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo.Format format) {
-        requestSegmentDemand(SabrSegmentKey.initialization(format), this, 0);
-    }
-
-    void requestSegmentDemand(@NonNull final SabrSegmentKey request,
-                              @NonNull final Object readerOwner,
-                              final long readerGeneration) {
-        if (ahead.containsKey(key(request))) {
             return;
         }
-        if (!request.isInitialization()) {
-            nextSequences.put(request.getFormat().getItag(), request.getSequenceNumber());
+        final YoutubeSabrInfo.Format format = formatForSegment(segment, requestedAudio);
+        if (format == null) {
+            segment.delete();
+            return;
         }
-        final String key = key(request);
-        if (pendingKeys.putIfAbsent(key, request) == null) {
-            pending.offer(request);
-            ensureStarted();
+        final SabrSegmentKey key = SabrSegmentKey.media(
+                format, segment.getHeader().getSequenceNumber());
+        final SabrMediaSegment previous = ahead.putIfAbsent(key, segment);
+        if (previous != null) {
+            if (previous != segment) segment.delete();
+            return;
         }
-    }
-
-    void clearSegmentDemand(@NonNull final SabrSegmentKey request,
-                            @NonNull final Object readerOwner,
-                            final long readerGeneration) {
-        final String key = key(request);
-        pendingKeys.remove(key);
-        failures.remove(key);
-    }
-
-    void requestRefetchFrom(@NonNull final SabrSegmentKey request) {
-        nextSequences.put(request.getFormat().getItag(), request.getSequenceNumber());
-        session.clearPlaybackCookie();
-        requestSegmentDemand(request, this, 0);
-    }
-
-    void requestForwardSeekTo(@NonNull final SabrSegmentKey request) {
-        nextSequences.put(request.getFormat().getItag(), request.getSequenceNumber());
-        session.clearPlaybackCookie();
-        requestSegmentDemand(request, this, 0);
-    }
-
-    void requestSeekTo(@NonNull final SabrSegmentKey request,
-                       final boolean backward,
-                       final long positionMs) {
-        nextSequences.put(request.getFormat().getItag(), request.getSequenceNumber());
-        nextSequences.put(holder.audioFormat.getItag(), holder.audioTimeline.getSequenceAt(positionMs));
-        nextSequences.put(holder.videoFormat.getItag(), holder.videoTimeline.getSequenceAt(positionMs));
-        session.clearPlaybackCookie();
-        requestSegmentDemand(request, this, 0);
-    }
-
-    void noteSeekWithinCache() {
-        // Media3 can continue reading the already published segment window.
-    }
-
-    private void run() {
-        while (!stopped) {
-            try {
-                backoff.awaitReady();
-                final SabrSegmentKey request = pending.take();
-                final String requestKey = key(request);
-                if (!pendingKeys.containsKey(requestKey)) {
-                    continue;
-                }
-                final YoutubeSabrSession.RequestResult requestResult =
-                        session.requestOnce(localization, holder.getPlayerTimeMs(),
-                                holder.audioTimeline, bufferedThrough(holder.audioFormat),
-                                holder.videoTimeline, bufferedThrough(holder.videoFormat),
-                                holder.isAudioActive(), holder.isVideoActive(),
-                                holder.getPlayerTimeMs() > 1_000,
-                                holder.getBandwidthEstimate(), holder.getPlaybackRate(),
-                                holder.getPoToken(), segment -> {
-                    final String segmentKey = key(segment.getHeader().getItag(),
-                            segment.getHeader().isInitSegment()
-                                    ? "init" : String.valueOf(segment.getHeader().getSequenceNumber()));
-                    final SabrMediaSegment previous = ahead.putIfAbsent(segmentKey, segment);
-                    if (previous != null && previous != segment) {
-                        segment.delete();
-                    } else if (previous == null) {
-                        mediaProgressVersion++;
-                        synchronized (available) {
-                            aheadOrder.addLast(segmentKey);
-                            trimAhead();
-                        }
-                    }
-                    synchronized (available) {
-                        available.notifyAll();
-                    }
-                        });
-                // Backoff is returned as request data; the owning Holder publishes it to
-                // observers and gates the next request.
-                backoff.update(requestResult.getBackoffMs());
-                holder.observeBandwidth(requestResult.getBandwidthSample());
-                pendingKeys.remove(requestKey);
-                pending.removeIf(candidate -> ahead.containsKey(key(candidate)));
-                for (final SabrSegmentKey candidate : pending) {
-                    if (ahead.containsKey(key(candidate))) {
-                        pendingKeys.remove(key(candidate));
-                    }
-                }
-            } catch (final InterruptedException e) {
-                if (stopped) {
-                    break;
-                }
-                Thread.currentThread().interrupt();
-                break;
-            } catch (final IOException | ExtractionException e) {
-                final IOException failure = e instanceof IOException
-                        ? (IOException) e : new IOException("SABR request failed", e);
-                networkFailure = failure;
-                for (final String key : pendingKeys.keySet()) {
-                    failures.put(key, failure);
-                }
-                pending.clear();
-                pendingKeys.clear();
-            }
+        synchronized (aheadOrder) {
+            aheadOrder.addLast(key);
+            trimAhead();
         }
-    }
-
-    private int bufferedThrough(
-            @NonNull final org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo.Format format) {
-        final Integer next = nextSequences.get(format.getItag());
-        if (next != null) return Math.max(0, next - 1);
-        return Math.max(0, holder.getTimeline(format).getSequenceAt(holder.getPlayerTimeMs()) - 1);
-    }
-
-
-    private static String key(@NonNull final SabrSegmentKey request) {
-        return key(request.getFormat().getItag(), request.isInitialization()
-                ? "init" : String.valueOf(request.getSequenceNumber()));
-    }
-
-    private static String key(final int itag, @NonNull final String sequence) {
-        return itag + ":" + sequence;
     }
 
     private void trimAhead() {
-        while (aheadOrder.size() > MAX_AHEAD_SEGMENTS) {
-            final String oldest = aheadOrder.removeFirst();
-            if (pendingKeys.containsKey(oldest)) {
+        int protectedKeysSeen = 0;
+        while (aheadOrder.size() > MAX_AHEAD_SEGMENTS
+                && protectedKeysSeen < aheadOrder.size()) {
+            final SabrSegmentKey oldest = aheadOrder.removeFirst();
+            if (activeDemands.containsKey(oldest)) {
                 aheadOrder.addLast(oldest);
-                break;
+                protectedKeysSeen++;
+                continue;
             }
             final SabrMediaSegment removed = ahead.remove(oldest);
-            if (removed != null) {
-                removed.delete();
+            if (removed != null) removed.delete();
+            protectedKeysSeen = 0;
+        }
+    }
+
+    private void retainDemand(@NonNull final SabrSegmentKey request) {
+        activeDemands.compute(request, (ignored, count) -> {
+            if (count == null) return new AtomicInteger(1);
+            count.incrementAndGet();
+            return count;
+        });
+    }
+
+    private void releaseDemand(@NonNull final SabrSegmentKey request) {
+        activeDemands.computeIfPresent(request,
+                (ignored, count) -> count.decrementAndGet() <= 0 ? null : count);
+    }
+
+    private boolean hasActiveDemandFor(@NonNull final YoutubeSabrInfo.Format format) {
+        for (final SabrSegmentKey demand : activeDemands.keySet()) {
+            if (demand.getFormat().getItag() == format.getItag()) return true;
+        }
+        return false;
+    }
+
+    @Nullable
+    private YoutubeSabrInfo.Format activeAudioFormat(@NonNull final SabrSegmentKey request) {
+        if (request.getFormat().isAudio()) return request.getFormat();
+        for (final SabrSegmentKey demand : activeDemands.keySet()) {
+            if (demand.getFormat().isAudio()) return demand.getFormat();
+        }
+        return null;
+    }
+
+    private int bufferedThrough(@NonNull final YoutubeSabrInfo.Format format) {
+        final Integer next = nextSequences.get(format);
+        return next == null ? 0 : Math.max(0, next - 1);
+    }
+
+    @NonNull
+    private YoutubeSabrFormatTimeline timelineFor(@NonNull final YoutubeSabrInfo.Format format) {
+        return format.isAudio() ? audioTimeline : videoTimeline;
+    }
+
+    @Nullable
+    private YoutubeSabrInfo.Format formatForSegment(
+            @NonNull final SabrMediaSegment segment,
+            @Nullable final YoutubeSabrInfo.Format requestedAudio) {
+        final int itag = segment.getHeader().getItag();
+        final String xtags = segment.getHeader().getXtags();
+        if (videoFormat.getItag() == itag && (xtags == null
+                || Objects.equals(videoFormat.getXtags(), xtags))) return videoFormat;
+        if (requestedAudio != null && requestedAudio.getItag() == itag && (xtags == null
+                || Objects.equals(requestedAudio.getXtags(), xtags))) return requestedAudio;
+        YoutubeSabrInfo.Format onlyMatchingItag = null;
+        int matchingItags = 0;
+        for (final YoutubeSabrInfo.Format format : spec.getAudioFormats()) {
+            if (format.getItag() == itag && Objects.equals(format.getXtags(), xtags)) return format;
+            if (format.getItag() == itag) {
+                onlyMatchingItag = format;
+                matchingItags++;
             }
         }
+        return xtags == null && matchingItags == 1 ? onlyMatchingItag : null;
     }
 }
