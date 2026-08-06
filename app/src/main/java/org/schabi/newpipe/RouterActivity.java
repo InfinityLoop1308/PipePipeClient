@@ -467,7 +467,7 @@ public class RouterActivity extends AppCompatActivity {
                 final PlayerService.PlayerType playerType = PlayerHolder.getInstance().getType();
                 if (capabilities.contains(VIDEO)
                         && PlayerHelper.isAutoplayAllowedByUser(context)
-                        && playerType == null || playerType == PlayerService.PlayerType.VIDEO) {
+                        && (playerType == null || playerType == PlayerService.PlayerType.VIDEO)) {
                     // show only "video player" since the details activity will be opened and the
                     // video will be auto played there. Since "show info" would do the exact same
                     // thing, use that as a key to let VideoDetailFragment load the stream instead
@@ -475,9 +475,13 @@ public class RouterActivity extends AppCompatActivity {
                     returnList.add(new AdapterChoiceItem(
                             showInfo.key, videoPlayer.description, videoPlayer.icon));
                 } else {
-                    // show only "show info" if video player is not applicable, auto play is
-                    // disabled or a video is playing in a player different than the main one
+                    // Always show "show info" when the video player cannot use the detail activity
+                    // for autoplay. Add the standalone video player choice as well, so users can
+                    // explicitly start playback when autoplay is disabled or another player runs.
                     returnList.add(showInfo);
+                    if (capabilities.contains(VIDEO)) {
+                        returnList.add(videoPlayer);
+                    }
                 }
             }
 

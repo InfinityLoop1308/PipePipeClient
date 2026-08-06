@@ -6,9 +6,7 @@ import androidx.media3.datasource.DataSpec;
 import androidx.media3.datasource.DefaultHttpDataSource;
 import androidx.media3.datasource.HttpDataSource;
 import androidx.media3.datasource.TransferListener;
-import androidx.media3.datasource.okhttp.OkHttpDataSource;
 import com.google.common.base.Predicate;
-import org.schabi.newpipe.DownloaderImpl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +20,6 @@ public class NiconicoLiveHttpDataSource extends PurifiedHttpDataSource {
 
     public static class Factory implements HttpDataSource.Factory {
         private final DefaultHttpDataSource.Factory inner = new DefaultHttpDataSource.Factory();
-        private final OkHttpDataSource.Factory okHttp = new OkHttpDataSource.Factory(
-                DownloaderImpl.getInstance().getClient());
         private final String url;
 
         /** Creates an instance. */
@@ -39,13 +35,11 @@ public class NiconicoLiveHttpDataSource extends PurifiedHttpDataSource {
         public final Factory setDefaultRequestProperties(
                 final Map<String, String> defaultRequestProperties) {
             inner.setDefaultRequestProperties(defaultRequestProperties);
-            okHttp.setDefaultRequestProperties(defaultRequestProperties);
             return this;
         }
 
         public Factory setUserAgent(@Nullable final String userAgent) {
             inner.setUserAgent(userAgent);
-            okHttp.setUserAgent(userAgent);
             return this;
         }
 
@@ -66,13 +60,11 @@ public class NiconicoLiveHttpDataSource extends PurifiedHttpDataSource {
 
         public Factory setContentTypePredicate(@Nullable final Predicate<String> predicate) {
             inner.setContentTypePredicate(predicate);
-            okHttp.setContentTypePredicate(predicate);
             return this;
         }
 
         public Factory setTransferListener(@Nullable final TransferListener transferListener) {
             inner.setTransferListener(transferListener);
-            okHttp.setTransferListener(transferListener);
             return this;
         }
 
@@ -83,9 +75,7 @@ public class NiconicoLiveHttpDataSource extends PurifiedHttpDataSource {
 
         @Override
         public NiconicoLiveHttpDataSource createDataSource() {
-            return new NiconicoLiveHttpDataSource(DownloaderImpl.getInstance()
-                    .isDnsOverHttpsFallbackEnabled()
-                    ? okHttp.createDataSource() : inner.createDataSource(), url);
+            return new NiconicoLiveHttpDataSource(inner.createDataSource(), url);
         }
     }
 

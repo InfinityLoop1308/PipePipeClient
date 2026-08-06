@@ -18,7 +18,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
-import androidx.preference.PreferenceManager;
 import com.grack.nanojson.JsonWriter;
 import org.schabi.newpipe.BuildConfig;
 import org.schabi.newpipe.MainActivity;
@@ -37,6 +36,7 @@ import java.util.Arrays;
 
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
 import static org.schabi.newpipe.extractor.NewPipe.getDownloader;
+import static org.schabi.newpipe.extractor.NewPipe.getYoutubePlayerClient;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
 /*
@@ -380,8 +380,7 @@ public class ErrorActivity extends AppCompatActivity {
     }
 
     private String getEndpoint() {
-        return PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(getString(R.string.youtube_player_client_key), "android_vr");
+        return getYoutubePlayerClient();
     }
 
     private String getOsString() {

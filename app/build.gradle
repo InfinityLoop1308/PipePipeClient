@@ -11,7 +11,7 @@ def keyStorePassword = System.getenv("KEY_STORE_PASSWORD")
 def signingKeyAlias = System.getenv("KEY_ALIAS")
 def signingKeyPassword = System.getenv("KEY_PASSWORD")
 def baseVersionCode = 1105
-def appVersionName = "5.2.5-beta3"
+def appVersionName = "5.2.5-beta5"
 def abiCodes = ['armeabi-v7a': 1, 'x86': 2, 'x86_64': 3, 'arm64-v8a': 4]
 def stableBuildConfigVersionCode =
         (100 * baseVersionCode) + abiCodes['armeabi-v7a']
@@ -228,7 +228,6 @@ dependencies {
 
     // HTTP client
     implementation "com.squareup.okhttp3:okhttp:5.4.0"
-    implementation "com.squareup.okhttp3:okhttp-dnsoverhttps:5.4.0"
 
     // Media player
     implementation "androidx.media3:media3-exoplayer:${media3Version}"
@@ -236,7 +235,6 @@ dependencies {
     implementation "androidx.media3:media3-exoplayer-hls:${media3Version}"
     implementation "androidx.media3:media3-exoplayer-smoothstreaming:${media3Version}"
     implementation "androidx.media3:media3-datasource:${media3Version}"
-    implementation "androidx.media3:media3-datasource-okhttp:${media3Version}"
     implementation "androidx.media3:media3-ui:${media3Version}"
     implementation "androidx.media3:media3-session:${media3Version}"
     implementation "androidx.media3:media3-common:${media3Version}"

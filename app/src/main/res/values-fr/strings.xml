@@ -983,8 +983,7 @@ Voulez-vous continuer?</string>
 <string name="export_data_to_newpipe_title">Exporter vers NewPipe</string>
 <string name="export_data_to_newpipe_summary">Exporter la sauvegarde dans un format compatible avec NewPipe</string>
 <string name="settings_category_other_platforms_title">Autres plateformes</string>
-<string name="use_dns_over_https_fallback_title">Utiliser le DNS sur HTTPS en solution de repli</string>
-<string name="use_dns_over_https_fallback_summary">Réessayer les requêtes DNS système ayant échoué en utilisant le DNS sur HTTPS de Cloudflare. La modification de ce paramètre redémarrera l\'application.</string>
+
 <string name="youtube_player_client_title">Point de terminaison d\'extraction YouTube</string>
 <string name="error_sabr_download_failed">Le téléchargement SABR a échoué</string>
 <string name="error_sabr_download_format">Ce format SABR ne peut pas être téléchargé</string>

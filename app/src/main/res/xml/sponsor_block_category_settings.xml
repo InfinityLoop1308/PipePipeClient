@@ -42,9 +42,9 @@
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true"
             android:dependency="@string/sponsor_block_category_sponsor_key"
-            android:defaultValue="@string/sponsor_block_skip_mode_enabled"
+            android:defaultValue="@string/sponsor_block_skip_mode_automatic_value"
             android:entries="@array/sponsor_block_category_sponsor_modes_key"
-            android:entryValues="@array/sponsor_block_category_sponsor_modes_key"
+            android:entryValues="@array/sponsor_block_category_mode_values"
             android:key="@string/sponsor_block_category_sponsor_mode_key"
             android:title="@string/settings_category_sponsor_block_category_enable_mode_title" />
 
@@ -77,9 +77,9 @@
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true"
             android:dependency="@string/sponsor_block_category_intro_key"
-            android:defaultValue="@string/sponsor_block_skip_mode_enabled"
+            android:defaultValue="@string/sponsor_block_skip_mode_automatic_value"
             android:entries="@array/sponsor_block_category_sponsor_modes_key"
-            android:entryValues="@array/sponsor_block_category_sponsor_modes_key"
+            android:entryValues="@array/sponsor_block_category_mode_values"
             android:key="@string/sponsor_block_category_intro_mode_key"
             android:title="@string/settings_category_sponsor_block_category_enable_mode_title" />
 
@@ -112,9 +112,9 @@
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true"
             android:dependency="@string/sponsor_block_category_outro_key"
-            android:defaultValue="@string/sponsor_block_skip_mode_enabled"
+            android:defaultValue="@string/sponsor_block_skip_mode_automatic_value"
             android:entries="@array/sponsor_block_category_sponsor_modes_key"
-            android:entryValues="@array/sponsor_block_category_sponsor_modes_key"
+            android:entryValues="@array/sponsor_block_category_mode_values"
             android:key="@string/sponsor_block_category_outro_mode_key"
             android:title="@string/settings_category_sponsor_block_category_enable_mode_title" />
 
@@ -147,9 +147,9 @@
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true"
             android:dependency="@string/sponsor_block_category_interaction_key"
-            android:defaultValue="@string/sponsor_block_skip_mode_enabled"
+            android:defaultValue="@string/sponsor_block_skip_mode_automatic_value"
             android:entries="@array/sponsor_block_category_sponsor_modes_key"
-            android:entryValues="@array/sponsor_block_category_sponsor_modes_key"
+            android:entryValues="@array/sponsor_block_category_mode_values"
             android:key="@string/sponsor_block_category_interaction_mode_key"
             android:title="@string/settings_category_sponsor_block_category_enable_mode_title" />
 
@@ -206,9 +206,9 @@
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true"
             android:dependency="@string/sponsor_block_category_self_promo_key"
-            android:defaultValue="@string/sponsor_block_skip_mode_enabled"
+            android:defaultValue="@string/sponsor_block_skip_mode_automatic_value"
             android:entries="@array/sponsor_block_category_sponsor_modes_key"
-            android:entryValues="@array/sponsor_block_category_sponsor_modes_key"
+            android:entryValues="@array/sponsor_block_category_mode_values"
             android:key="@string/sponsor_block_category_self_promo_mode_key"
             android:title="@string/settings_category_sponsor_block_category_enable_mode_title" />
 
@@ -241,9 +241,9 @@
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true"
             android:dependency="@string/sponsor_block_category_non_music_key"
-            android:defaultValue="@string/sponsor_block_skip_mode_enabled"
+            android:defaultValue="@string/sponsor_block_skip_mode_automatic_value"
             android:entries="@array/sponsor_block_category_sponsor_modes_key"
-            android:entryValues="@array/sponsor_block_category_sponsor_modes_key"
+            android:entryValues="@array/sponsor_block_category_mode_values"
             android:key="@string/sponsor_block_category_non_music_mode_key"
             android:title="@string/settings_category_sponsor_block_category_enable_mode_title" />
 
@@ -276,9 +276,9 @@
             app:iconSpaceReserved="false"
             app:useSimpleSummaryProvider="true"
             android:dependency="@string/sponsor_block_category_preview_key"
-            android:defaultValue="@string/sponsor_block_skip_mode_enabled"
+            android:defaultValue="@string/sponsor_block_skip_mode_automatic_value"
             android:entries="@array/sponsor_block_category_sponsor_modes_key"
-            android:entryValues="@array/sponsor_block_category_sponsor_modes_key"
+            android:entryValues="@array/sponsor_block_category_mode_values"
             android:key="@string/sponsor_block_category_preview_mode_key"
             android:title="@string/settings_category_sponsor_block_category_enable_mode_title" />
 
@@ -311,9 +311,9 @@
             app:singleLineTitle="false"
             app:useSimpleSummaryProvider="true"
             android:dependency="@string/sponsor_block_category_filler_key"
-            android:defaultValue="@string/sponsor_block_skip_mode_enabled"
+            android:defaultValue="@string/sponsor_block_skip_mode_automatic_value"
             android:entries="@array/sponsor_block_category_sponsor_modes_key"
-            android:entryValues="@array/sponsor_block_category_sponsor_modes_key"
+            android:entryValues="@array/sponsor_block_category_mode_values"
             android:key="@string/sponsor_block_category_filler_mode_key"
             android:title="@string/settings_category_sponsor_block_category_enable_mode_title"
             />

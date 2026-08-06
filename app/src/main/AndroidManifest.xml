@@ -132,7 +132,11 @@
             android:foregroundServiceType="dataSync" />
         <service
             android:name=".local.feed.service.FeedLoadService"
-            android:foregroundServiceType="dataSync" />
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="user_initiated_subscription_feed_refresh" />
+        </service>
 
         <activity
                 android:name=".PanicResponderActivity"

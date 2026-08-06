@@ -1044,8 +1044,7 @@
 <string name="export_data_to_newpipe_title">Eksportuj do NewPipe</string>
 <string name="export_data_to_newpipe_summary">Eksportuj kopię zapasową do formatu kompatybilnego z NewPipe</string>
 <string name="settings_category_other_platforms_title">Inne platformy</string>
-<string name="use_dns_over_https_fallback_title">Używaj zastępczego DNS przez HTTPS</string>
-<string name="use_dns_over_https_fallback_summary">Ponawiaj nieudane zapytania DNS używaj DNS przez HTTPS Cloudflare. Zmienienie tej opcji zrestartuje aplikację.</string>
+
 <string name="youtube_player_client_title">Endpoint wydobywania YouTube</string>
 <string name="webview_unavailable_youtube_hint">WebView jest niedostępne. Upewnij się że twoja wersja WebView jest nowsza niż 80.\n\nAndroid 6 i 10: Zaktualizuj Android WebView w Sklepie Play.\nAndroid 7, 8, 9: Zaktualizuj Chrome w Sklepie Play.\nInne wersje: To nie powinno się dziać. Zgłoś to na naszym GitHubie.</string>
 <string name="sponsor_block">SponsorBlock</string>

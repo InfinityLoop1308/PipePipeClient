@@ -1020,8 +1020,7 @@
 <string name="export_data_to_newpipe_title">匯出至 NewPipe</string>
 <string name="export_data_to_newpipe_summary">以 NewPipe 相容格式匯出備份</string>
 <string name="settings_category_other_platforms_title">其他平台</string>
-<string name="use_dns_over_https_fallback_title">使用 DNS over HTTPS 備用機制</string>
-<string name="use_dns_over_https_fallback_summary">使用 Cloudflare DNS over HTTPS 重試失敗的系統 DNS 查詢。變更此設定將會重新啟動應用程式。</string>
+
 <string name="youtube_player_client_title">YouTube 擷取端點</string>
 <string name="error_sabr_download_failed">SABR 下載失敗</string>
 <string name="error_sabr_download_format">無法下載此 SABR 格式</string>

@@ -2006,7 +2006,8 @@ public final class Player implements
             }
 
             // Do not skip if highlight mode. Do not skip if manual mode + no explicit bypass
-            if (secondaryMode == SponsorBlockSecondaryMode.HIGHLIGHT
+            if (secondaryMode == SponsorBlockSecondaryMode.DISABLED
+                    || secondaryMode == SponsorBlockSecondaryMode.HIGHLIGHT
                     || (secondaryMode == SponsorBlockSecondaryMode.MANUAL
                     && !bypassSecondaryMode)) {
                 return;
@@ -5750,7 +5751,8 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         }
 
         // get pref
-        final String defaultValue = context.getString(R.string.sponsor_block_skip_mode_enabled);
+        final String defaultValue = context.getString(
+                R.string.sponsor_block_skip_mode_automatic_value);
         final String key;
         switch (segment.category) {
             case SPONSOR:
@@ -5774,7 +5776,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                         defaultValue);
                 break;
             case HIGHLIGHT:
-                key = "Highlight Only"; // not a regular "skippable" segment
+                key = context.getString(R.string.sponsor_block_skip_mode_highlight_value);
                 break;
             case SELF_PROMO:
                 key = prefs.getString(
@@ -5801,21 +5803,17 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                 break;
         }
 
-// map pref to enum
+        // map pref to enum
         final SponsorBlockSecondaryMode pref;
-        switch (key) {
-            case "Automatic":
-                pref = SponsorBlockSecondaryMode.ENABLED;
-                break;
-            case "Manual":
-                pref = SponsorBlockSecondaryMode.MANUAL;
-                break;
-            case "Highlight Only":
-                pref = SponsorBlockSecondaryMode.HIGHLIGHT;
-                break;
-            default:
-                pref = SponsorBlockSecondaryMode.DISABLED;
-                break;
+        if (key.equals(context.getString(R.string.sponsor_block_skip_mode_automatic_value))) {
+            pref = SponsorBlockSecondaryMode.ENABLED;
+        } else if (key.equals(context.getString(R.string.sponsor_block_skip_mode_manual_value))) {
+            pref = SponsorBlockSecondaryMode.MANUAL;
+        } else if (key.equals(context.getString(
+                R.string.sponsor_block_skip_mode_highlight_value))) {
+            pref = SponsorBlockSecondaryMode.HIGHLIGHT;
+        } else {
+            pref = SponsorBlockSecondaryMode.DISABLED;
         }
         if (DEBUG) {
             Log.d("SPONSOR_BLOCK", "Sponsor segment secondary mode: category = ["

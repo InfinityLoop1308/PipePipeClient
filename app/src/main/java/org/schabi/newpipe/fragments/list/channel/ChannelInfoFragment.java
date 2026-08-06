@@ -68,8 +68,10 @@ public class ChannelInfoFragment extends StateSaverFragment {
                              @Nullable final ViewGroup container,
                              final Bundle savedInstanceState) {
         binding = FragmentChannelInfoBinding.inflate(inflater, container, false);
-        loadDescription();
-        setupMetadata(inflater, binding.detailMetadataLayout);
+        if (channelInfo != null) {
+            loadDescription();
+            setupMetadata(inflater, binding.detailMetadataLayout);
+        }
         return binding.getRoot();
     }
 

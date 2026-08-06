@@ -966,8 +966,7 @@
 <string name="export_data_to_newpipe_title">Nach NewPipe exportieren</string>
 <string name="export_data_to_newpipe_summary">Backup in einem NewPipe-kompatiblen Format exportieren</string>
 <string name="settings_category_other_platforms_title">Andere Plattformen</string>
-<string name="use_dns_over_https_fallback_title">DNS-over-HTTPS-Fallback verwenden</string>
-<string name="use_dns_over_https_fallback_summary">Fehlgeschlagene System-DNS-Abfragen über Cloudflare DNS-over-HTTPS wiederholen. Durch diese Änderung wird die App neu gestartet.</string>
+
 <string name="youtube_player_client_title">YouTube-Extraktionsendpunkt</string>
 <string name="error_sabr_download_failed">SABR-Download fehlgeschlagen</string>
 <string name="error_sabr_download_format">Dieses SABR-Format kann nicht heruntergeladen werden</string>

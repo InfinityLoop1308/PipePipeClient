@@ -1075,8 +1075,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="export_data_to_newpipe_title">Xuất sang NewPipe</string>
 <string name="export_data_to_newpipe_summary">Xuất bản sao lưu ở định dạng tương thích với NewPipe</string>
 <string name="settings_category_other_platforms_title">Các nền tảng khác</string>
-<string name="use_dns_over_https_fallback_title">Sử dụng DNS dự phòng qua HTTPS</string>
-<string name="use_dns_over_https_fallback_summary">Thử lại các tra cứu DNS hệ thống bị lỗi bằng Cloudflare DNS qua HTTPS. Thay đổi điều này sẽ khởi động lại ứng dụng.</string>
+
 <string name="youtube_player_client_title">Điểm cuối trích xuất YouTube</string>
 <string name="error_sabr_download_failed">Tải xuống SABR thất bại</string>
 <string name="error_sabr_download_format">Không thể tải xuống định dạng SABR này</string>

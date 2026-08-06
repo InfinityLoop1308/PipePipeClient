@@ -8,7 +8,10 @@ import androidx.preference.PreferenceManager;
 
 import org.schabi.newpipe.R;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 public final class PipePipeMigrations {
@@ -42,13 +45,21 @@ public final class PipePipeMigrations {
         }
     };
 
+    public static final Migration MIGRATION_3_4 = new Migration(3, 4) {
+        @Override
+        protected void migrate(final Context context, final SharedPreferences preferences) {
+            migrateSponsorBlockModeValues(context, preferences);
+        }
+    };
+
     private static final Migration[] PIPEPIPE_MIGRATIONS = {
             MIGRATION_0_1,
             MIGRATION_1_2,
             MIGRATION_2_3,
+            MIGRATION_3_4,
     };
 
-    public static final int VERSION = 3;
+    public static final int VERSION = 4;
 
     public static void initMigrations(final Context context, final boolean isFirstRun) {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -186,6 +197,64 @@ public final class PipePipeMigrations {
                 .putBoolean(newKey, preferences.getBoolean(oldKey, true))
                 .remove(oldKey)
                 .apply();
+    }
+
+    private static void migrateSponsorBlockModeValues(
+            final Context context,
+            final SharedPreferences preferences) {
+        final Map<String, String> legacyValues = getLegacySponsorBlockModeValues(context);
+        final int[] preferenceKeys = {
+                R.string.sponsor_block_category_sponsor_mode_key,
+                R.string.sponsor_block_category_intro_mode_key,
+                R.string.sponsor_block_category_outro_mode_key,
+                R.string.sponsor_block_category_interaction_mode_key,
+                R.string.sponsor_block_category_self_promo_mode_key,
+                R.string.sponsor_block_category_non_music_mode_key,
+                R.string.sponsor_block_category_preview_mode_key,
+                R.string.sponsor_block_category_filler_mode_key,
+        };
+        final SharedPreferences.Editor editor = preferences.edit();
+
+        for (final int preferenceKeyId : preferenceKeys) {
+            final String preferenceKey = context.getString(preferenceKeyId);
+            final String oldValue = preferences.getString(preferenceKey, null);
+            final String newValue = legacyValues.get(oldValue);
+            if (newValue != null && !newValue.equals(oldValue)) {
+                editor.putString(preferenceKey, newValue);
+            }
+        }
+
+        editor.apply();
+    }
+
+    private static Map<String, String> getLegacySponsorBlockModeValues(final Context context) {
+        final Map<String, String> result = new HashMap<>();
+        addSponsorBlockModeValues(context, result);
+
+        for (final String localeName : context.getAssets().getLocales()) {
+            final String languageTag = localeName.replace("-r", "-").replace('_', '-');
+            final Locale locale = Locale.forLanguageTag(languageTag);
+            if (locale.getLanguage().isEmpty()) {
+                continue;
+            }
+
+            final Configuration configuration =
+                    new Configuration(context.getResources().getConfiguration());
+            configuration.setLocale(locale);
+            addSponsorBlockModeValues(context.createConfigurationContext(configuration), result);
+        }
+
+        return result;
+    }
+
+    private static void addSponsorBlockModeValues(final Context context,
+                                                  final Map<String, String> values) {
+        values.put(context.getString(R.string.sponsor_block_skip_mode_enabled),
+                context.getString(R.string.sponsor_block_skip_mode_automatic_value));
+        values.put(context.getString(R.string.sponsor_block_skip_mode_manual),
+                context.getString(R.string.sponsor_block_skip_mode_manual_value));
+        values.put(context.getString(R.string.sponsor_block_skip_mode_highlight),
+                context.getString(R.string.sponsor_block_skip_mode_highlight_value));
     }
 
     private PipePipeMigrations() { }

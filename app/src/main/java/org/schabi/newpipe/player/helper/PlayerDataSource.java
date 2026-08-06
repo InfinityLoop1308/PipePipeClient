@@ -17,11 +17,9 @@ import androidx.media3.extractor.ts.DefaultTsPayloadReaderFactory;
 import androidx.media3.datasource.DataSource;
 import androidx.media3.datasource.DefaultDataSource;
 import androidx.media3.datasource.DefaultHttpDataSource;
-import androidx.media3.datasource.HttpDataSource;
 import androidx.media3.exoplayer.upstream.DefaultLoadErrorHandlingPolicy;
 import androidx.media3.datasource.ResolvingDataSource;
 import androidx.media3.datasource.TransferListener;
-import androidx.media3.datasource.okhttp.OkHttpDataSource;
 import androidx.media3.datasource.cache.CacheDataSource;
 import androidx.media3.datasource.cache.CacheKeyFactory;
 import com.grack.nanojson.JsonObject;
@@ -57,7 +55,6 @@ import org.schabi.newpipe.extractor.services.youtube.dashmanifestcreators.Youtub
 import org.schabi.newpipe.extractor.services.youtube.dashmanifestcreators.YoutubePostLiveStreamDvrDashManifestCreator;
 import org.schabi.newpipe.extractor.services.youtube.dashmanifestcreators.YoutubeProgressiveDashManifestCreator;
 import org.schabi.newpipe.player.datasource.YoutubeHttpDataSource;
-import org.schabi.newpipe.player.datasource.YoutubeOkHttpDataSource;
 
 public class PlayerDataSource {
 
@@ -100,7 +97,7 @@ public class PlayerDataSource {
         cacheDataSourceFactoryBuilder = new CacheFactory.Builder(context, userAgent,
                 transferListener);
         cachelessDataSourceFactory = new DefaultDataSource.Factory(context,
-                getDefaultHttpDataSourceFactory(userAgent))
+                new DefaultHttpDataSource.Factory().setUserAgent(userAgent).setDefaultRequestProperties(Map.of("Referer", "https://www.bilibili.com")))
                 .setTransferListener(transferListener);
 
         this.context = context;
@@ -118,17 +115,6 @@ public class PlayerDataSource {
                 new PurifiedHttpDataSource.Factory().setUserAgent(userAgent)
                         .setDefaultRequestProperties(Map.of("Referer", "https://www.bilibili.com")))
                 .setTransferListener(transferListener);
-    }
-
-    private HttpDataSource.Factory getDefaultHttpDataSourceFactory(final String userAgent) {
-        final Map<String, String> headers = Map.of("Referer", "https://www.bilibili.com");
-        if (DownloaderImpl.getInstance().isDnsOverHttpsFallbackEnabled()) {
-            return new OkHttpDataSource.Factory(DownloaderImpl.getInstance().getClient())
-                    .setUserAgent(userAgent)
-                    .setDefaultRequestProperties(headers);
-        }
-        return new DefaultHttpDataSource.Factory().setUserAgent(userAgent)
-                .setDefaultRequestProperties(headers);
     }
 
     public SsMediaSource.Factory getLiveSsMediaSourceFactory() {
@@ -233,12 +219,9 @@ public class PlayerDataSource {
     }
 
     @NonNull
-    private DataSource.Factory getYoutubeHttpDataSourceFactory(
+    private YoutubeHttpDataSource.Factory getYoutubeHttpDataSourceFactory(
             final boolean rangeParameterEnabled,
             final boolean rnParameterEnabled) {
-        if (DownloaderImpl.getInstance().isDnsOverHttpsFallbackEnabled()) {
-            return new YoutubeOkHttpDataSource.Factory(rangeParameterEnabled, rnParameterEnabled);
-        }
         return new YoutubeHttpDataSource.Factory()
                 .setRangeParameterEnabled(rangeParameterEnabled)
                 .setRnParameterEnabled(rnParameterEnabled);

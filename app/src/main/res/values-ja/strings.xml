@@ -989,8 +989,7 @@
 <string name="export_data_to_newpipe_title">NewPipeへエクスポート</string>
 <string name="export_data_to_newpipe_summary">NewPipe互換形式でバックアップをエクスポート</string>
 <string name="settings_category_other_platforms_title">その他のプラットフォーム</string>
-<string name="use_dns_over_https_fallback_title">DNS over HTTPS フォールバックを使用する</string>
-<string name="use_dns_over_https_fallback_summary">Cloudflare DNS over HTTPS を使用して、失敗したシステム DNS ルックアップを再試行します。これを変更するとアプリが再起動します。</string>
+
 <string name="youtube_player_client_title">YouTube抽出エンドポイント</string>
 <string name="error_sabr_download_failed">SABRのダウンロードに失敗しました</string>
 <string name="error_sabr_download_format">このSABRフォーマットはダウンロードできません</string>

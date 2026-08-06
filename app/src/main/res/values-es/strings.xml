@@ -1022,8 +1022,7 @@
 <string name="export_data_to_newpipe_title">Exportar a NewPipe</string>
 <string name="export_data_to_newpipe_summary">Exportar copia de seguridad en un formato compatible con NewPipe</string>
 <string name="settings_category_other_platforms_title">Otras plataformas</string>
-<string name="use_dns_over_https_fallback_title">Usar DNS sobre HTTPS como respaldo</string>
-<string name="use_dns_over_https_fallback_summary">Reintentar las búsquedas de DNS del sistema fallidas utilizando DNS sobre HTTPS de Cloudflare. Cambiar esto reiniciará la aplicación.</string>
+
 <string name="youtube_player_client_title">Endpoint de extracción de YouTube</string>
 <string name="error_sabr_download_failed">La descarga de SABR falló</string>
 <string name="error_sabr_download_format">Este formato de SABR no se puede descargar</string>

@@ -118,6 +118,9 @@ public class App extends MultiDexApplication {
 
         // Initialize settings first because others inits can use its values
         NewPipeSettings.initSettings(this);
+        // Set this before any activity is created so AppCompat can apply the selected night mode
+        // while attaching the activity's base context.
+        ThemeHelper.setDayNightMode(this);
 
         // Initialize Android Auto component state based on preference
         DeviceUtils.updateAndroidAutoComponentState(this);
@@ -159,11 +162,13 @@ public class App extends MultiDexApplication {
         final String playerClientKey = context.getString(R.string.youtube_player_client_key);
         final boolean loggedIn = !TextUtils.isEmpty(prefs.getString(
                 context.getString(R.string.youtube_cookies_key), null));
-        final String defaultClient = loggedIn ? "tv_downgraded" : "android_vr";
+        final String defaultClient = loggedIn ? "tv_downgraded" : "visionos";
         final String selectedClient = prefs.getString(playerClientKey, defaultClient);
         final boolean allowed = loggedIn
                 ? "tv_downgraded".equals(selectedClient)
-                : "mweb".equals(selectedClient) || "android_vr".equals(selectedClient);
+                : "mweb".equals(selectedClient)
+                        || "android_vr".equals(selectedClient)
+                        || "visionos".equals(selectedClient);
         final String reconciledClient = allowed ? selectedClient : defaultClient;
 
         if (!reconciledClient.equals(selectedClient)) {
@@ -242,9 +247,7 @@ public class App extends MultiDexApplication {
 
 
     protected Downloader getDownloader() {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        final DownloaderImpl downloader = DownloaderImpl.init(null, prefs.getBoolean(
-                getString(R.string.use_dns_over_https_fallback_key), false));
+        final DownloaderImpl downloader = DownloaderImpl.init(null);
         setCookiesToDownloader(downloader);
         return downloader;
     }

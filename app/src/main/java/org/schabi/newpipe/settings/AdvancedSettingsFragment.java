@@ -54,19 +54,6 @@ public class AdvancedSettingsFragment extends BasePreferenceFragment implements 
                     return true;
                 });
 
-        findPreference(getString(R.string.use_dns_over_https_fallback_key))
-                .setOnPreferenceChangeListener((preference, newValue) -> {
-                    defaultPreferences.edit()
-                            .putBoolean(getString(R.string.use_dns_over_https_fallback_key),
-                                    (Boolean) newValue)
-                            .commit();
-                    final Activity activity = getActivity();
-                    if (activity != null) {
-                        NavigationHelper.restartApp(activity);
-                    }
-                    return true;
-                });
-
         findPreference(getString(R.string.youtube_player_client_key))
                 .setOnPreferenceChangeListener((preference, newValue) -> {
                     defaultPreferences.edit()
@@ -166,13 +153,13 @@ public class AdvancedSettingsFragment extends BasePreferenceFragment implements 
             preference.setEntries(new CharSequence[]{entries[2]});
             preference.setEntryValues(new CharSequence[]{values[2]});
         } else {
-            preference.setEntries(new CharSequence[]{entries[0], entries[1]});
-            preference.setEntryValues(new CharSequence[]{values[0], values[1]});
+            preference.setEntries(new CharSequence[]{entries[0], entries[1], entries[3]});
+            preference.setEntryValues(new CharSequence[]{values[0], values[1], values[3]});
         }
         App.reconcileYoutubePlayerClient(requireContext());
         preference.setValue(defaultPreferences.getString(
                 getString(R.string.youtube_player_client_key),
-                loggedIn ? "tv_downgraded" : "android_vr"));
+                loggedIn ? "tv_downgraded" : "visionos"));
     }
 
     @Override
