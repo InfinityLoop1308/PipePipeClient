@@ -22,6 +22,8 @@ internal class LocalDomPoTokenGenerator private constructor(
     private val tokenWaiters = mutableMapOf<String, TokenWaiter>()
     private lateinit var expirationInstant: Instant
     @Volatile
+    private var pageEventId: String? = null
+    @Volatile
     private var closed = false
 
     private fun loadScriptAndInitialize() {
@@ -142,6 +144,7 @@ internal class LocalDomPoTokenGenerator private constructor(
 
     private fun makeBotguardGetRequest(
         url: String,
+        extraHeaders: Map<String, List<String>> = emptyMap(),
         onSuccess: (String) -> Unit,
         onError: (Throwable) -> Unit,
     ) {
@@ -151,10 +154,10 @@ internal class LocalDomPoTokenGenerator private constructor(
                     ?: throw SabrProtocolException("DownloaderImpl is not initialized")
                 val response = downloader.get(
                     url,
-                    mapOf(
-                        "User-Agent" to listOf(SharedWebViewRuntime.USER_AGENT),
-                        "Accept" to listOf("*/*"),
-                    ),
+                    HashMap(extraHeaders).apply {
+                        put("User-Agent", listOf(attestationContext.userAgent))
+                        put("Accept", listOf("*/*"))
+                    },
                 )
                 if (response.responseCode() != 200) {
                     throw SabrProtocolException(
@@ -201,41 +204,56 @@ internal class LocalDomPoTokenGenerator private constructor(
     }
 
     private fun downloadAndRunBotguard() {
-        makeBotguardServiceRequest(
-            "https://www.youtube.com/youtubei/v1/att/get?prettyPrint=false",
-            buildLocalDomAttestationBody(attestationContext),
-            contentType = "application/json",
-            extraHeaders = buildLocalDomAttestationHeaders(
-                attestationContext,
-                credentialHeaders,
-            ),
-            onSuccess = { body ->
-                try {
-                    val challenge = parseSabrAttChallengeData(body)
-                    val inlineInterpreter = challenge.interpreterJavascript
-                    if (inlineInterpreter != null) {
-                        runBotguard(challenge, inlineInterpreter)
-                    } else {
-                        makeBotguardGetRequest(
-                            requireNotNull(challenge.interpreterUrl),
-                            onSuccess = { runBotguard(challenge, it) },
-                            onError = ::failInitialization,
-                        )
-                    }
-                } catch (error: Throwable) {
-                    failInitialization(error)
-                }
+        // Keep the page-native challenge paired with the EVENT_ID from the same response.
+        makeBotguardGetRequest(
+            YOUTUBE_HOME_URL,
+            extraHeaders = HashMap(credentialHeaders).apply {
+                put("Accept-Language", listOf("en-US,en;q=0.7"))
             },
+            onSuccess = ::handleYoutubePageBody,
             onError = ::failInitialization,
         )
+    }
+
+    private fun handleYoutubePageBody(body: String) {
+        try {
+            val attestation = parseSabrYoutubePageAttestation(body)
+            pageEventId = attestation.eventId
+            handleChallengeBody(attestation.rawChallengeData)
+        } catch (error: Throwable) {
+            failInitialization(error)
+        }
+    }
+
+    private fun handleChallengeBody(body: String) {
+        try {
+            val challenge = parseSabrAttChallengeData(body)
+            val inlineInterpreter = challenge.interpreterJavascript
+            if (inlineInterpreter != null) {
+                runBotguard(challenge, inlineInterpreter)
+            } else {
+                makeBotguardGetRequest(
+                    requireNotNull(challenge.interpreterUrl),
+                    onSuccess = { runBotguard(challenge, it) },
+                    onError = ::failInitialization,
+                )
+            }
+        } catch (error: Throwable) {
+            failInitialization(error)
+        }
     }
 
     private fun runBotguard(
         challenge: SabrAttChallengeData,
         interpreterJavascript: String,
     ) {
+        // The page-native BotGuard program reads this while producing its snapshot.
+        val pageContext = pageEventId?.let {
+            "window.yt=window.yt||{};window.yt.config_=window.yt.config_||{};" +
+                "window.yt.config_.EVENT_ID=" + jsString(it) + ";"
+        }.orEmpty()
         runtime.evaluateJavascript(
-            "pipepipeSabrRunBotguard(" + jsString(sessionId) + ", "
+            pageContext + "pipepipeSabrRunBotguard(" + jsString(sessionId) + ", "
                 + buildSabrAttChallengeData(challenge, interpreterJavascript) + ");",
             null,
         ) { error -> failInitialization(error) }
@@ -301,6 +319,7 @@ internal class LocalDomPoTokenGenerator private constructor(
         private const val TOKEN_TIMEOUT_MS = 30_000L
         private const val INIT_TIMEOUT_MS = 60_000L
         private const val REQUEST_KEY = "O43z0dpjhgX20SCx4KAo"
+        private const val YOUTUBE_HOME_URL = "https://www.youtube.com/"
 
         @Throws(SabrProtocolException::class)
         fun create(
