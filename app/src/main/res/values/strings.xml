@@ -928,7 +928,7 @@
 <string name="sponsor_promote">Become a supporter</string>
 <string name="random_play_order_title">Random Order</string>
 <string name="random_play_order_summary">Automatically shuffle your local playlists when playing in the background</string>
-<string name="update_log">- Further improved YouTube video information loading and playback startup speed\n- Fixed several issues that could cause SABR playback errors under certain conditions\n- Fixed WebView being incorrectly reported as unavailable in some cases\n- Fixed IP addresses being incorrectly reported as blocked by YouTube in some cases\n- Improved overall app stability</string>
+<string name="update_log">- Temporarily disable the SABR extraction endpoint and reset extraction endpoint to DASH (YouTube)\n- Use a workaround to fetch 360p video streams for YouTube Kids videos instead of throwing an error (YouTube)\n- Fix: Like and view counts were not parsed correctly for some videos (YouTube)\n- Fix: \"Channel unavailable\" error was displayed in Zulu (YouTube)\n- Fix: Playlist uploader username was parsed incorrectly (YouTube)\n- Fix: Some channel links could not be opened directly (YouTube)\n- Fix: Channel video lists failed to load correctly (NicoNico)\n- Fix: App crashes under specific circumstances\n- Fix: Some dialogs/menus ignore dark theme if the system is not dark \n- Fix: SoundCloud tracks failed to load\n- Fix: Manual SponsorBlock modes are not correctly respected if the setting language is not English\n- Fix: Background subscription refresh might be killed by the system if the subscription list is too long\n- Remove the DNS over HTTPS option that was not working as expected</string>
 <string name="speeding_playback_title">Long-press to speeding the playback</string>
 <string name="view_on_github">View on GitHub</string>
 <string name="donation_dialog_title">Support the Project</string>
@@ -1077,7 +1077,6 @@
 <string name="export_data_to_newpipe_title">Export to NewPipe</string>
 <string name="export_data_to_newpipe_summary">Export backup in a NewPipe-compatible format</string>
 <string name="settings_category_other_platforms_title">Other platforms</string>
-
 <string name="youtube_player_client_title">YouTube extraction endpoint</string>
 <string name="webview_unavailable_youtube_hint">WebView unavailable. Please make sure your WebView version is higher than 80.\n\nAndroid 6 and 10: Update Android WebView in Play Store.\nAndroid 7, 8, 9: Update Chrome in Play Store.\nOther versions: This should not happen. Please report it on our GitHub.</string>
 <string name="sabr_backoff_notification_channel_name">YouTube playback waiting</string>

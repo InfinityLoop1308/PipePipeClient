@@ -860,7 +860,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sponsor_promote">Trở thành người ủng hộ</string>
 <string name="random_play_order_title">Trình tự ngẫu nhiên</string>
 <string name="random_play_order_summary">Tự động xáo trộn danh sách phát cục bộ của bạn khi phát trong nền</string>
-<string name="update_log">- Tiếp tục cải thiện tốc độ tải thông tin video YouTube và tốc độ khởi động phát\n- Khắc phục một số sự cố có thể gây ra lỗi phát SABR trong một số điều kiện nhất định\n- Khắc phục tình trạng WebView bị báo cáo sai là không khả dụng trong một số trường hợp\n- Khắc phục tình trạng địa chỉ IP bị báo cáo sai là bị YouTube chặn trong một số trường hợp\n- Cải thiện độ ổn định tổng thể của ứng dụng</string>
+<string name="update_log">- Tạm thời vô hiệu hóa điểm cuối trích xuất SABR và đặt lại điểm cuối trích xuất thành DASH (YouTube)\n- Sử dụng giải pháp thay thế để lấy luồng video 360p cho các video YouTube Kids thay vì báo lỗi (YouTube)\n- Sửa lỗi: Số lượt thích và lượt xem không được phân tích cú pháp chính xác cho một số video (YouTube)\n- Sửa lỗi: Lỗi \"Kênh không khả dụng\" được hiển thị bằng tiếng Zulu (YouTube)\n- Sửa lỗi: Tên người dùng tải lên danh sách phát được phân tích cú pháp không chính xác (YouTube)\n- Sửa lỗi: Một số liên kết kênh không thể mở trực tiếp (YouTube)\n- Sửa lỗi: Danh sách video của kênh không tải được chính xác (NicoNico)\n- Sửa lỗi: Ứng dụng bị treo trong một số trường hợp cụ thể\n- Sửa lỗi: Một số hộp thoại/menu bỏ qua giao diện tối nếu hệ thống không ở chế độ tối \n- Sửa lỗi: Không tải được các bản nhạc SoundCloud\n- Sửa lỗi: Các chế độ SponsorBlock thủ công không được tuân thủ chính xác nếu ngôn ngữ cài đặt không phải là tiếng Anh\n- Sửa lỗi: Việc làm mới đăng ký trong nền có thể bị hệ thống buộc dừng nếu danh sách đăng ký quá dài\n- Xóa tùy chọn DNS over HTTPS không hoạt động như mong đợi</string>
 <string name="speeding_playback_title">Nhấn và giữ để tăng tốc độ phát lại</string>
 <string name="view_on_github">Xem trên GitHub</string>
 <string name="donation_dialog_title">Hỗ trợ Dự án</string>
@@ -1075,7 +1075,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="export_data_to_newpipe_title">Xuất sang NewPipe</string>
 <string name="export_data_to_newpipe_summary">Xuất bản sao lưu ở định dạng tương thích với NewPipe</string>
 <string name="settings_category_other_platforms_title">Các nền tảng khác</string>
-
 <string name="youtube_player_client_title">Điểm cuối trích xuất YouTube</string>
 <string name="error_sabr_download_failed">Tải xuống SABR thất bại</string>
 <string name="error_sabr_download_format">Không thể tải xuống định dạng SABR này</string>

@@ -770,7 +770,7 @@
 <string name="sponsor_promote">サポーターになる</string>
 <string name="random_play_order_title">ランダムな順序</string>
 <string name="random_play_order_summary">バックグラウンドで再生する際にローカルプレイリストを自動的にシャッフルします</string>
-<string name="update_log">- YouTube動画情報の読み込みと再生開始速度をさらに改善\n- 特定の条件下でSABRの再生エラーを引き起こす可能性のあるいくつかの問題を修正\n- 一部のケースでWebViewが利用不可として誤って報告される問題を修正\n- 一部のケースでIPアドレスがYouTubeによってブロックされていると誤って報告される問題を修正\n- アプリ全体の安定性を向上</string>
+<string name="update_log">- SABR抽出エンドポイントを一時的に無効化し、抽出エンドポイントをDASHにリセット (YouTube)\n- エラーをスローする代わりに、YouTube Kids動画の360p動画ストリームを取得する回避策を使用 (YouTube)\n- 修正: 一部の動画で高評価数と視聴回数が正しく解析されない問題 (YouTube)\n- 修正: 「チャンネルが利用できません」エラーがズールー語で表示される問題 (YouTube)\n- 修正: プレイリストのアップローダーのユーザー名が正しく解析されない問題 (YouTube)\n- 修正: 一部のチャンネルリンクを直接開けない問題 (YouTube)\n- 修正: チャンネルの動画リストが正しく読み込まれない問題 (NicoNico)\n- 修正: 特定の状況下でアプリがクラッシュする問題\n- 修正: システムがダークモードでない場合、一部のダイアログ/メニューでダークテーマが無視される問題 \n- 修正: SoundCloudのトラックが読み込めない問題\n- 修正: 設定言語が英語以外の場合、手動のSponsorBlockモードが正しく適用されない問題\n- 修正: 登録チャンネルのリストが長すぎる場合、バックグラウンドでの登録チャンネルの更新がシステムによって強制終了される可能性がある問題\n- 期待通りに機能していなかったDNS over HTTPSオプションを削除</string>
 <string name="speeding_playback_title">長時間押は再生速度を速めることができます</string>
 <string name="view_on_github">GitHubで表示</string>
 <string name="donation_dialog_title">プロジェクトをサポートする</string>
@@ -989,7 +989,6 @@
 <string name="export_data_to_newpipe_title">NewPipeへエクスポート</string>
 <string name="export_data_to_newpipe_summary">NewPipe互換形式でバックアップをエクスポート</string>
 <string name="settings_category_other_platforms_title">その他のプラットフォーム</string>
-
 <string name="youtube_player_client_title">YouTube抽出エンドポイント</string>
 <string name="error_sabr_download_failed">SABRのダウンロードに失敗しました</string>
 <string name="error_sabr_download_format">このSABRフォーマットはダウンロードできません</string>

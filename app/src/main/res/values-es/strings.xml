@@ -811,7 +811,7 @@
 <string name="sponsor_promote">Conviértete en un patrocinador</string>
 <string name="random_play_order_title">Orden aleatorio</string>
 <string name="random_play_order_summary">Baraja automáticamente tus listas de reproducción locales cuando se reproduzcan en segundo plano</string>
-<string name="update_log">- Mejorada aún más la velocidad de carga de información y el inicio de reproducción de videos de YouTube\n- Corregidos varios problemas que podían causar errores de reproducción SABR bajo ciertas condiciones\n- Corregido un problema por el que WebView se notificaba incorrectamente como no disponible en algunos casos\n- Corregido un problema por el que las direcciones IP se notificaban incorrectamente como bloqueadas por YouTube en algunos casos\n- Mejorada la estabilidad general de la aplicación</string>
+<string name="update_log">- Deshabilitar temporalmente el endpoint de extracción SABR y restablecer el endpoint de extracción a DASH (YouTube)\n- Usar una solución alternativa para obtener transmisiones de video de 360p para videos de YouTube Kids en lugar de mostrar un error (YouTube)\n- Corrección: Los recuentos de me gusta y vistas no se analizaban correctamente en algunos videos (YouTube)\n- Corrección: El error \"Canal no disponible\" se mostraba en zulú (YouTube)\n- Corrección: El nombre de usuario del creador de la lista de reproducción se analizaba incorrectamente (YouTube)\n- Corrección: Algunos enlaces de canales no se podían abrir directamente (YouTube)\n- Corrección: Las listas de videos del canal no se cargaban correctamente (NicoNico)\n- Corrección: La aplicación se bloqueaba en circunstancias específicas\n- Corrección: Algunos cuadros de diálogo/menús ignoran el tema oscuro si el sistema no está en modo oscuro \n- Corrección: Las pistas de SoundCloud no se cargaban\n- Corrección: Los modos manuales de SponsorBlock no se respetan correctamente si el idioma de configuración no es inglés\n- Corrección: La actualización de suscripciones en segundo plano podría ser cancelada por el sistema si la lista de suscripciones es demasiado larga\n- Eliminar la opción de DNS sobre HTTPS que no funcionaba como se esperaba</string>
 <string name="speeding_playback_title">Mantener presionado para acelerar la reproducción</string>
 <string name="view_on_github">Ver en GitHub</string>
 <string name="donation_dialog_title">Apoya el proyecto</string>
@@ -1022,7 +1022,6 @@
 <string name="export_data_to_newpipe_title">Exportar a NewPipe</string>
 <string name="export_data_to_newpipe_summary">Exportar copia de seguridad en un formato compatible con NewPipe</string>
 <string name="settings_category_other_platforms_title">Otras plataformas</string>
-
 <string name="youtube_player_client_title">Endpoint de extracción de YouTube</string>
 <string name="error_sabr_download_failed">La descarga de SABR falló</string>
 <string name="error_sabr_download_format">Este formato de SABR no se puede descargar</string>

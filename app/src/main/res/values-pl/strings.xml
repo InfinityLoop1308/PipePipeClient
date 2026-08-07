@@ -124,7 +124,7 @@
 <item quantity="other">%s odpowiedzi</item>
 </plurals>
 <string name="random_play_order_summary">Automatycznie odtwarzaj losowo w twoich lokalnych playlistach, gdy odtwarzasz w tle</string>
-<string name="update_log">- Dalsza poprawa szybkości ładowania informacji o filmach na YouTube oraz uruchamiania odtwarzania\n- Rozwiązano kilka problemów, które w pewnych warunkach mogły powodować błędy odtwarzania SABR\n- Naprawiono błędne zgłaszanie niedostępności komponentu WebView w niektórych przypadkach\n- Naprawiono błędne zgłaszanie adresów IP jako zablokowanych przez YouTube w niektórych przypadkach\n- Poprawiono ogólną stabilność aplikacji</string>
+<string name="update_log">- Tymczasowo wyłączono punkt końcowy ekstrakcji SABR i zresetowano punkt końcowy ekstrakcji na DASH (YouTube)\n- Zastosowano obejście do pobierania strumieni wideo 360p dla filmów YouTube Kids zamiast zgłaszania błędu (YouTube)\n- Poprawka: Liczba polubień i wyświetleń nie była poprawnie parsowana dla niektórych filmów (YouTube)\n- Poprawka: Błąd \"Kanał niedostępny\" był wyświetlany w języku zulu (YouTube)\n- Poprawka: Nazwa użytkownika przesyłającego playlistę była parsowana niepoprawnie (YouTube)\n- Poprawka: Niektóre linki do kanałów nie mogły być otwierane bezpośrednio (YouTube)\n- Poprawka: Listy filmów na kanale nie ładowały się poprawnie (NicoNico)\n- Poprawka: Aplikacja ulegała awarii w określonych okolicznościach\n- Poprawka: Niektóre okna dialogowe/menu ignorowały ciemny motyw, jeśli system nie był w trybie ciemnym \n- Poprawka: Utwory SoundCloud nie ładowały się\n- Poprawka: Ręczne tryby SponsorBlock nie były poprawnie uwzględniane, jeśli język ustawień był inny niż angielski\n- Poprawka: Odświeżanie subskrypcji w tle mogło być zamykane przez system, jeśli lista subskrypcji była zbyt długa\n- Usunięto opcję DNS over HTTPS, która nie działała zgodnie z oczekiwaniami</string>
 <string name="speeding_playback_title">Przytrzymaj aby przyspieszyć odtwarzanie</string>
 <string name="view_on_github">Zobacz na GitHubie</string>
 <string name="contribution_encouragement">Niezależnie od tego, czy masz pomysł na tłumaczenie, zmiany w projekcie, oczyszczenie kodu źródłowego, czy na naprawdę ciężkie zmiany w kodzie — pomoc jest zawsze mile widziana. Im więcej jest zrobione, tym lepiej!</string>
@@ -1044,7 +1044,6 @@
 <string name="export_data_to_newpipe_title">Eksportuj do NewPipe</string>
 <string name="export_data_to_newpipe_summary">Eksportuj kopię zapasową do formatu kompatybilnego z NewPipe</string>
 <string name="settings_category_other_platforms_title">Inne platformy</string>
-
 <string name="youtube_player_client_title">Endpoint wydobywania YouTube</string>
 <string name="webview_unavailable_youtube_hint">WebView jest niedostępne. Upewnij się że twoja wersja WebView jest nowsza niż 80.\n\nAndroid 6 i 10: Zaktualizuj Android WebView w Sklepie Play.\nAndroid 7, 8, 9: Zaktualizuj Chrome w Sklepie Play.\nInne wersje: To nie powinno się dziać. Zgłoś to na naszym GitHubie.</string>
 <string name="sponsor_block">SponsorBlock</string>

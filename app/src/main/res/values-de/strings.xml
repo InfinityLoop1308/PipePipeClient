@@ -750,7 +750,7 @@
 <string name="sponsor_promote">Unterstützer werden</string>
 <string name="random_play_order_title">Zufällige Reihenfolge</string>
 <string name="random_play_order_summary">Automatisch Ihre lokalen Wiedergabelisten mischen, wenn sie im Hintergrund abgespielt werden</string>
-<string name="update_log">- Weiter verbesserte Ladegeschwindigkeit von YouTube-Videoinformationen und beim Wiedergabestart\n- Mehrere Probleme behoben, die unter bestimmten Bedingungen zu SABR-Wiedergabefehlern führen konnten\n- Fehler behoben, bei dem WebView in einigen Fällen fälschlicherweise als nicht verfügbar gemeldet wurde\n- Fehler behoben, bei dem IP-Adressen in einigen Fällen fälschlicherweise als von YouTube blockiert gemeldet wurden\n- Allgemeine App-Stabilität verbessert</string>
+<string name="update_log">- SABR-Extraktionsendpunkt vorübergehend deaktiviert und Extraktionsendpunkt auf DASH zurückgesetzt (YouTube)\n- Workaround verwendet, um 360p-Videostreams für YouTube Kids-Videos abzurufen, anstatt einen Fehler auszugeben (YouTube)\n- Fix: Like- und Aufrufzahlen wurden bei einigen Videos nicht korrekt geparst (YouTube)\n- Fix: Fehler \"Kanal nicht verfügbar\" wurde auf Zulu angezeigt (YouTube)\n- Fix: Benutzername des Playlist-Uploaders wurde falsch geparst (YouTube)\n- Fix: Einige Kanallinks konnten nicht direkt geöffnet werden (YouTube)\n- Fix: Kanal-Videolisten wurden nicht korrekt geladen (NicoNico)\n- Fix: App-Abstürze unter bestimmten Umständen\n- Fix: Einige Dialoge/Menüs ignorieren das dunkle Design, wenn das System nicht dunkel ist \n- Fix: SoundCloud-Titel konnten nicht geladen werden\n- Fix: Manuelle SponsorBlock-Modi werden nicht korrekt beachtet, wenn die Einstellungssprache nicht Englisch ist\n- Fix: Die Hintergrundaktualisierung der Abonnements könnte vom System beendet werden, wenn die Abonnementliste zu lang ist\n- DNS-over-HTTPS-Option entfernt, da sie nicht wie erwartet funktionierte</string>
 <string name="speeding_playback_title">Langes Drücken, um die Wiedergabe zu beschleunigen</string>
 <string name="view_on_github">Auf GitHub ansehen</string>
 <string name="donation_dialog_title">Projekt unterstützen</string>
@@ -966,7 +966,6 @@
 <string name="export_data_to_newpipe_title">Nach NewPipe exportieren</string>
 <string name="export_data_to_newpipe_summary">Backup in einem NewPipe-kompatiblen Format exportieren</string>
 <string name="settings_category_other_platforms_title">Andere Plattformen</string>
-
 <string name="youtube_player_client_title">YouTube-Extraktionsendpunkt</string>
 <string name="error_sabr_download_failed">SABR-Download fehlgeschlagen</string>
 <string name="error_sabr_download_format">Dieses SABR-Format kann nicht heruntergeladen werden</string>

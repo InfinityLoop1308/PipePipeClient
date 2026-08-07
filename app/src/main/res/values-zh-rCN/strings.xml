@@ -815,7 +815,7 @@
 <string name="sponsor_promote">成为支持者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">在后台播放时自动随机播放您的本地播放列表</string>
-<string name="update_log">- 进一步提升了 YouTube 视频信息加载和播放启动速度\n- 修复了在某些情况下可能导致 SABR 播放错误的几个问题\n- 修复了在某些情况下 WebView 被错误报告为不可用的问题\n- 修复了在某些情况下 IP 地址被错误报告为被 YouTube 封禁的问题\n- 提升了应用的整体稳定性</string>
+<string name="update_log">- 暂时禁用 SABR 提取端点，并将提取端点重置为 DASH (YouTube)\n- 使用变通方法获取 YouTube Kids 视频的 360p 视频流，而不是抛出错误 (YouTube)\n- 修复：部分视频的点赞数和观看数解析不正确 (YouTube)\n- 修复：“频道不可用”错误显示为祖鲁语 (YouTube)\n- 修复：播放列表上传者用户名解析不正确 (YouTube)\n- 修复：部分频道链接无法直接打开 (YouTube)\n- 修复：频道视频列表无法正确加载 (NicoNico)\n- 修复：应用在特定情况下崩溃\n- 修复：如果系统不是深色模式，部分对话框/菜单会忽略深色主题 \n- 修复：SoundCloud 音轨加载失败\n- 修复：如果设置语言不是英语，手动 SponsorBlock 模式无法被正确遵循\n- 修复：如果订阅列表过长，后台订阅刷新可能会被系统终止\n- 移除未按预期工作的 DNS over HTTPS 选项</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 <string name="donation_dialog_title">支持该项目</string>
@@ -1030,7 +1030,6 @@
 <string name="export_data_to_newpipe_title">导出到 NewPipe</string>
 <string name="export_data_to_newpipe_summary">以兼容 NewPipe 的格式导出备份</string>
 <string name="settings_category_other_platforms_title">其他平台</string>
-
 <string name="youtube_player_client_title">YouTube提取端点</string>
 <string name="error_sabr_download_failed">SABR下载失败</string>
 <string name="error_sabr_download_format">该SABR格式无法下载</string>

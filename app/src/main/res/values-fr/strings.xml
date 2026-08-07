@@ -705,7 +705,7 @@ Voulez-vous continuer?</string>
 <string name="sponsor_promote">Devenez un supporter</string>
 <string name="random_play_order_title">Ordre aléatoire</string>
 <string name="random_play_order_summary">Mélangez automatiquement vos listes de lecture locales lorsque vous jouez en arrière-plan</string>
-<string name="update_log">- Amélioration supplémentaire de la vitesse de chargement des informations des vidéos YouTube et du démarrage de la lecture\n- Correction de plusieurs problèmes pouvant causer des erreurs de lecture SABR sous certaines conditions\n- Correction du problème où WebView était faussement signalé comme indisponible dans certains cas\n- Correction du problème où les adresses IP étaient faussement signalées comme bloquées par YouTube dans certains cas\n- Amélioration de la stabilité globale de l\'application</string>
+<string name="update_log">- Désactivation temporaire du point de terminaison d\'extraction SABR et réinitialisation du point de terminaison d\'extraction sur DASH (YouTube)\n- Utilisation d\'une solution de contournement pour récupérer les flux vidéo 360p des vidéos YouTube Kids au lieu de renvoyer une erreur (YouTube)\n- Correction : Le nombre de J\'aime et de vues n\'était pas analysé correctement pour certaines vidéos (YouTube)\n- Correction : L\'erreur \"Chaîne indisponible\" s\'affichait en zoulou (YouTube)\n- Correction : Le nom d\'utilisateur de l\'auteur de la playlist était analysé de manière incorrecte (YouTube)\n- Correction : Certains liens de chaînes ne pouvaient pas être ouverts directement (YouTube)\n- Correction : Les listes de vidéos des chaînes ne se chargeaient pas correctement (NicoNico)\n- Correction : L\'application plantait dans des circonstances spécifiques\n- Correction : Certaines boîtes de dialogue/menus ignoraient le thème sombre si le système n\'était pas en mode sombre \n- Correction : Les pistes SoundCloud ne se chargeaient pas\n- Correction : Les modes manuels de SponsorBlock ne sont pas correctement respectés si la langue des paramètres n\'est pas l\'anglais\n- Correction : L\'actualisation des abonnements en arrière-plan pouvait être interrompue par le système si la liste d\'abonnements était trop longue\n- Suppression de l\'option DNS over HTTPS qui ne fonctionnait pas comme prévu</string>
 <string name="speeding_playback_title">Appuyer longuement pour accélérer la lecture</string>
 <string name="view_on_github">Voir sur GitHub</string>
 <string name="donation_dialog_title">Soutenez le projet</string>
@@ -983,7 +983,6 @@ Voulez-vous continuer?</string>
 <string name="export_data_to_newpipe_title">Exporter vers NewPipe</string>
 <string name="export_data_to_newpipe_summary">Exporter la sauvegarde dans un format compatible avec NewPipe</string>
 <string name="settings_category_other_platforms_title">Autres plateformes</string>
-
 <string name="youtube_player_client_title">Point de terminaison d\'extraction YouTube</string>
 <string name="error_sabr_download_failed">Le téléchargement SABR a échoué</string>
 <string name="error_sabr_download_format">Ce format SABR ne peut pas être téléchargé</string>

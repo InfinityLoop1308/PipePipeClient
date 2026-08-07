@@ -803,7 +803,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在背景播放時自動隨機播放您的本地播放列表</string>
-<string name="update_log">- 進一步提升 YouTube 影片資訊載入與播放啟動速度\n- 修正特定情況下可能導致 SABR 播放錯誤的數個問題\n- 修正部分情況下 WebView 被錯誤回報為無法使用的問題\n- 修正部分情況下 IP 位址被錯誤回報為遭 YouTube 封鎖的問題\n- 提升應用程式整體穩定性</string>
+<string name="update_log">- 暫時停用 SABR 擷取端點，並將擷取端點重設為 DASH (YouTube)\n- 使用替代方案來取得 YouTube Kids 影片的 360p 影片串流，而非拋出錯誤 (YouTube)\n- 修正：部分影片的按讚數與觀看次數解析不正確 (YouTube)\n- 修正：\"頻道無法使用\" 錯誤顯示為祖魯語 (YouTube)\n- 修正：播放清單上傳者的使用者名稱解析不正確 (YouTube)\n- 修正：部分頻道連結無法直接開啟 (YouTube)\n- 修正：頻道影片清單無法正確載入 (NicoNico)\n- 修正：應用程式在特定情況下會閃退\n- 修正：若系統非深色模式，部分對話方塊/選單會忽略深色主題 \n- 修正：SoundCloud 音軌無法載入\n- 修正：若設定語言非英文，手動 SponsorBlock 模式無法正確套用\n- 修正：若訂閱清單過長，背景訂閱重新整理可能會被系統終止\n- 移除未如預期運作的 DNS over HTTPS 選項</string>
 <string name="speeding_playback_title">按住以加速播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這項計畫</string>
@@ -1020,7 +1020,6 @@
 <string name="export_data_to_newpipe_title">匯出至 NewPipe</string>
 <string name="export_data_to_newpipe_summary">以 NewPipe 相容格式匯出備份</string>
 <string name="settings_category_other_platforms_title">其他平台</string>
-
 <string name="youtube_player_client_title">YouTube 擷取端點</string>
 <string name="error_sabr_download_failed">SABR 下載失敗</string>
 <string name="error_sabr_download_format">無法下載此 SABR 格式</string>

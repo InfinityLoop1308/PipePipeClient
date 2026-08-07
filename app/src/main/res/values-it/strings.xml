@@ -679,7 +679,7 @@
 <string name="sponsor_promote">Diventa un sostenitore</string>
 <string name="random_play_order_title">Ordine casuale</string>
 <string name="random_play_order_summary">Mescola automaticamente le tue playlist locali quando vengono riprodotte in background</string>
-<string name="update_log">- Migliorata ulteriormente la velocità di caricamento delle informazioni dei video di YouTube e di avvio della riproduzione\n- Risolti diversi problemi che in determinate condizioni potevano causare errori di riproduzione SABR\n- Risolta l\'errata segnalazione di WebView come non disponibile in alcuni casi\n- Risolta l\'errata segnalazione di indirizzi IP bloccati da YouTube in alcuni casi\n- Migliorata la stabilità generale dell\'app</string>
+<string name="update_log">- Disabilita temporaneamente l\'endpoint di estrazione SABR e reimposta l\'endpoint di estrazione su DASH (YouTube)\n- Usa una soluzione alternativa per recuperare i flussi video a 360p per i video di YouTube Kids invece di generare un errore (YouTube)\n- Risolto: I conteggi dei Mi piace e delle visualizzazioni non venivano analizzati correttamente per alcuni video (YouTube)\n- Risolto: L\'errore \"Canale non disponibile\" veniva visualizzato in Zulu (YouTube)\n- Risolto: Il nome utente del caricatore della playlist veniva analizzato in modo errato (YouTube)\n- Risolto: Alcuni link ai canali non potevano essere aperti direttamente (YouTube)\n- Risolto: Gli elenchi dei video del canale non venivano caricati correttamente (NicoNico)\n- Risolto: L\'app si bloccava in circostanze specifiche\n- Risolto: Alcune finestre di dialogo/menu ignorano il tema scuro se il sistema non è scuro \n- Risolto: Le tracce di SoundCloud non venivano caricate\n- Risolto: Le modalità manuali di SponsorBlock non vengono rispettate correttamente se la lingua delle impostazioni non è l\'inglese\n- Risolto: L\'aggiornamento in background delle iscrizioni potrebbe essere interrotto dal sistema se l\'elenco delle iscrizioni è troppo lungo\n- Rimossa l\'opzione DNS over HTTPS che non funzionava come previsto</string>
 <string name="speeding_playback_title">Premi a lungo per aumentare la velocità di riproduzione</string>
 <string name="view_on_github">Visualizza su GitHub</string>
 <string name="donation_dialog_title">Supporta il progetto</string>
@@ -960,7 +960,6 @@
 <string name="export_data_to_newpipe_title">Esporta su NewPipe</string>
 <string name="export_data_to_newpipe_summary">Esporta il backup in un formato compatibile con NewPipe</string>
 <string name="settings_category_other_platforms_title">Altre piattaforme</string>
-
 <string name="youtube_player_client_title">Endpoint di estrazione YouTube</string>
 <string name="error_sabr_download_failed">Download SABR non riuscito</string>
 <string name="error_sabr_download_format">Questo formato SABR non può essere scaricato</string>
