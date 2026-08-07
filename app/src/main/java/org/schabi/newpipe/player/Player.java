@@ -5617,7 +5617,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         cleanupVideoSurface();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // >=API23
-            surfaceHolderCallback = new SurfaceHolderCallback(context, simpleExoPlayer);
+            surfaceHolderCallback = new SurfaceHolderCallback(simpleExoPlayer);
             binding.surfaceView.getHolder().addCallback(surfaceHolderCallback);
             final Surface surface = binding.surfaceView.getHolder().getSurface();
             // ensure player is using an unreleased surface, which the surfaceView might not be
@@ -5638,7 +5638,6 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
             if (binding != null) {
                 binding.surfaceView.getHolder().removeCallback(surfaceHolderCallback);
             }
-            surfaceHolderCallback.release();
             surfaceHolderCallback = null;
         }
     }
