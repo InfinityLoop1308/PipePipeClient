@@ -843,6 +843,55 @@ public final class SabrPlaybackSmokeTest {
     }
 
     @Test
+    public void missingInitializationUsesNativeUnselectedFormatRequest() throws Exception {
+        try (SabrSmokeHarness harness = SabrSmokeHarness.create()) {
+            harness.downloader.enqueue(new UmpFixture()
+                    .part(SabrResponseDecoder.NEXT_REQUEST_POLICY,
+                            nextRequestPolicy(0, playbackCookie(), "smoke-video"))
+                    .segment(1, SMOKE_VIDEO_ITAG, 1, 0, 5_000)
+                    .bytes());
+            assertEquals(1, harness.holder.session.pumpOnceStreaming(
+                    new Localization("en", "US")));
+
+            final Field initializationData = SabrSourceSpec.class
+                    .getDeclaredField("initializationData");
+            initializationData.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            final Map<YoutubeSabrInfo.Format, byte[]> cachedInitialization =
+                    (Map<YoutubeSabrInfo.Format, byte[]>) initializationData
+                            .get(harness.holder.spec);
+            cachedInitialization.remove(harness.videoFormat);
+
+            final byte[] nativeInitialization = mp4Sidx(5_000, 5_000, 5_000);
+            harness.downloader.enqueue(new UmpFixture()
+                    .mediaHeader(2, SMOKE_VIDEO_ITAG, 0, 0, 0,
+                            nativeInitialization.length, 0, true)
+                    .media(2, nativeInitialization)
+                    .mediaEnd(2)
+                    .bytes());
+
+            harness.openSegment(SabrSegmentKey.initialization(harness.videoFormat), 5_000);
+
+            assertArrayEquals("Native SABR initialization bytes changed",
+                    nativeInitialization, harness.getLastSegmentData());
+            assertEquals("Expected an ordinary request followed by native init recovery",
+                    2, harness.downloader.requestBodies.size());
+            final String request = SabrRequestDumper.summarize(
+                    harness.downloader.requestBodies.get(1));
+            assertTrue("Init recovery advertised the format as already selected: " + request,
+                    request.contains("selected=[]"));
+            assertTrue("Init recovery advertised a buffered range: " + request,
+                    request.contains("ranges=[]"));
+            assertTrue("Init recovery sent a top-level playback position: " + request,
+                    request.contains("topPlayerTimeMs=-1"));
+            assertTrue("Init recovery omitted the target preferred video format: " + request,
+                    request.contains("prefVideo=[itag:" + SMOKE_VIDEO_ITAG));
+            assertTrue("Init recovery discarded the session playback cookie: " + request,
+                    !request.contains("playbackCookie=null"));
+        }
+    }
+
+    @Test
     public void redirectUpdatesFollowUpSabrStreamingUrl() throws Exception {
         try (SabrSmokeHarness harness = SabrSmokeHarness.create()) {
             harness.downloader.enqueue(new UmpFixture()

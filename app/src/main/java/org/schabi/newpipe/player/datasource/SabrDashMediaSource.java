@@ -77,6 +77,10 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
                 try {
                     preparationBridge.awaitSegment(
                             SabrSegmentKey.media(spec.getBootstrapVideoFormat(), 1), 30_000, 0);
+                    preparationBridge.getInitializationData(
+                            spec.getBootstrapAudioFormat());
+                    preparationBridge.getInitializationData(
+                            spec.getBootstrapVideoFormat());
                 } catch (final ExtractionException error) {
                     throw new IOException("Could not prepare SABR fragments", error);
                 }

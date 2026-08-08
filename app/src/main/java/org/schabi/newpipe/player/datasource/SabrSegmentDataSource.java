@@ -81,7 +81,12 @@ public final class SabrSegmentDataSource implements DataSource {
     }
 
     private byte[] initializationData(final YoutubeSabrInfo.Format format) throws IOException {
-        return bridge.getInitializationData(format);
+        try {
+            return bridge.getInitializationData(format);
+        } catch (final org.schabi.newpipe.extractor.exceptions.ExtractionException error) {
+            throw new IOException("SABR initialization extraction failed: "
+                    + error.getMessage(), error);
+        }
     }
 
     @Override

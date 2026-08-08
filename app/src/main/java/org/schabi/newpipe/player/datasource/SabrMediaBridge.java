@@ -29,6 +29,7 @@ final class SabrMediaBridge {
     private static final int MAX_AHEAD_SEGMENTS = 64;
     private static final long COOKIE_RECOVERY_AFTER_MS = 10_000;
     private static final long EMPTY_RESPONSE_RETRY_MS = 250;
+    private static final long INITIALIZATION_TIMEOUT_MS = 30_000;
 
     private final YoutubeSabrSession session;
     private final SabrSourceSpec spec;
@@ -117,13 +118,44 @@ final class SabrMediaBridge {
 
     @NonNull
     byte[] getInitializationData(@NonNull final YoutubeSabrInfo.Format format)
-            throws IOException {
-        final byte[] data = spec.getInitializationData(format);
-        if (data == null) {
-            throw new IOException("SABR initialization is unavailable: itag="
-                    + format.getItag());
+            throws IOException, ExtractionException {
+        byte[] data = spec.getInitializationData(format);
+        if (data != null) return data;
+        final long deadlineNs = System.nanoTime()
+                + TimeUnit.MILLISECONDS.toNanos(INITIALIZATION_TIMEOUT_MS);
+        synchronized (requestLock) {
+            while (!stopped) {
+                data = spec.getInitializationData(format);
+                if (data != null) return data;
+                final long backoffMs = session.getBackoffRemainingMs();
+                publishBackoff(backoffMs);
+                if (backoffMs > 0) {
+                    final long remainingNs = deadlineNs - System.nanoTime();
+                    if (remainingNs <= TimeUnit.MILLISECONDS.toNanos(backoffMs)) break;
+                    sleep(backoffMs);
+                    continue;
+                }
+                try {
+                    final YoutubeSabrSession.RequestResult result =
+                            session.requestInitializationOnce(format, segment -> {
+                                attestationRetryHandler.onMediaReceived();
+                                acceptSegment(segment, format.isAudio() ? format : null);
+                            });
+                    publishBackoff(result.getBackoffMs());
+                } catch (final SabrAttestationException error) {
+                    attestationRetryHandler.prepareRetry(session, error);
+                }
+                data = spec.getInitializationData(format);
+                if (data != null) return data;
+                if (System.nanoTime() >= deadlineNs) break;
+                if (session.getBackoffRemainingMs() == 0) {
+                    sleep(Math.min(EMPTY_RESPONSE_RETRY_MS, Math.max(1,
+                            TimeUnit.NANOSECONDS.toMillis(deadlineNs - System.nanoTime()))));
+                }
+            }
         }
-        return data;
+        throw new IOException("Native SABR initialization is unavailable: itag="
+                + format.getItag() + ", trace=" + session.getDiagnosticTrace());
     }
 
     void seedSegments(@NonNull final List<SabrMediaSegment> segments) {
