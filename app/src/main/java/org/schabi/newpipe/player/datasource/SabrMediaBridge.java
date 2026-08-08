@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormatTimeline;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
+import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrRequest;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrAttestationException;
 import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrMediaSegment;
@@ -17,6 +18,7 @@ import org.schabi.newpipe.youtube.SabrAttestationRetryHandler;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
@@ -97,13 +99,17 @@ final class SabrMediaBridge {
         synchronized (requestLock) {
             while (true) {
                 try {
+                    final List<YoutubeSabrRequest.Track> tracks = new ArrayList<>(2);
+                    if (audioActive) {
+                        tracks.add(YoutubeSabrRequest.Track.of(activeAudio, audioTimeline,
+                                bufferedThrough(activeAudio)));
+                    }
+                    if (videoActive) {
+                        tracks.add(YoutubeSabrRequest.Track.of(videoFormat, videoTimeline,
+                                bufferedThrough(videoFormat)));
+                    }
                     final YoutubeSabrSession.RequestResult result = session.requestOnce(
-                            activeAudio,
-                            videoFormat, playerTimeMs,
-                            audioTimeline, bufferedThrough(activeAudio),
-                            videoTimeline, bufferedThrough(videoFormat),
-                            audioActive, videoActive, videoActive && !audioActive,
-                            1.0f, segment -> {
+                            YoutubeSabrRequest.playback(playerTimeMs, 1.0f, tracks), segment -> {
                                 attestationRetryHandler.onMediaReceived();
                                 acceptSegment(segment, activeAudio);
                             });
@@ -137,7 +143,8 @@ final class SabrMediaBridge {
                 }
                 try {
                     final YoutubeSabrSession.RequestResult result =
-                            session.requestInitializationOnce(format, segment -> {
+                            session.requestOnce(YoutubeSabrRequest.initialization(format),
+                                    segment -> {
                                 attestationRetryHandler.onMediaReceived();
                                 acceptSegment(segment, format.isAudio() ? format : null);
                             });

@@ -5,6 +5,7 @@ import org.schabi.newpipe.BuildConfig
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrProtocolException
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrRecoverableException
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo
+import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrRequest
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrRequestHelper
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrAttestationException
@@ -84,12 +85,7 @@ internal class SabrDownloader(
         recoveries: Array<MissionRecoveryInfo>,
         attestationRetryHandler: SabrAttestationRetryHandler,
     ) {
-        val session = YoutubeSabrSession(
-            info,
-            SabrDownloadFormatResolver.selectedAudioFormat(info, recoveries),
-            SabrDownloadFormatResolver.selectedVideoFormat(info, recoveries),
-            null,
-        )
+        val session = YoutubeSabrSession(info)
         val poToken = info.poToken
             ?: throw SabrProtocolException("SABR info has no player PO token")
         session.setPoToken(poToken)
@@ -299,18 +295,26 @@ internal class SabrDownloader(
             val playerTimeMs = downloadPlayerTimeMs(targets)
             val audio = targets.firstOrNull { it.format.isAudio }
             val video = targets.firstOrNull { it.format.isVideo }
+            val tracks = listOfNotNull(
+                audio?.let {
+                    YoutubeSabrRequest.Track.of(
+                        it.format,
+                        it.timeline,
+                        it.nextWriteSequence - 1,
+                    )
+                },
+                video?.let {
+                    YoutubeSabrRequest.Track.of(
+                        it.format,
+                        it.timeline,
+                        it.nextWriteSequence - 1,
+                    )
+                },
+            )
             val sequencesBeforeRequest = targets.map { it.nextWriteSequence }
             val requestResult = requestWithAttestationRetry(session, attestationRetryHandler) {
                 session.requestOnce(
-                    playerTimeMs,
-                    audio?.timeline,
-                    (audio?.nextWriteSequence ?: 1) - 1,
-                    video?.timeline,
-                    (video?.nextWriteSequence ?: 1) - 1,
-                    audio != null,
-                    video != null,
-                    false,
-                    1.0f,
+                    YoutubeSabrRequest.playback(playerTimeMs, 1.0f, tracks),
                 ) { segment ->
                     attestationRetryHandler.onMediaReceived()
                     writer.acceptSegment(segment)
@@ -372,14 +376,11 @@ internal class SabrDownloader(
         if (!adaptiveSucceeded) {
             ensureRunning()
             requestWithAttestationRetry(session, attestationRetryHandler) {
+                val tracks = targets.map { target ->
+                    YoutubeSabrRequest.Track.of(target.format, null, 0)
+                }
                 session.requestOnce(
-                    0L,
-                    null, 0,
-                    null, 0,
-                    targets.any { it.format.isAudio },
-                    targets.any { it.format.isVideo },
-                    false,
-                    1.0f,
+                    YoutubeSabrRequest.playback(0L, 1.0f, tracks),
                 ) { segment ->
                     attestationRetryHandler.onMediaReceived()
                     writer.acceptSegment(segment)

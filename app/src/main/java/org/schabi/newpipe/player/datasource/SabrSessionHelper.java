@@ -57,8 +57,7 @@ public final class SabrSessionHelper {
             throws IOException, ExtractionException {
         final File spool = new File(context.getCacheDir(),
                 "sabr-segments/" + spec.getVideoId() + '-' + System.nanoTime());
-        final YoutubeSabrSession created = new YoutubeSabrSession(spec.getInfo(),
-                spec.getBootstrapAudioFormat(), spec.getBootstrapVideoFormat(), spool);
+        final YoutubeSabrSession created = new YoutubeSabrSession(spec.getInfo(), spool);
         final byte[] resolvedToken = spec.getInfo().getPoToken();
         if (resolvedToken == null || resolvedToken.length == 0) {
             throw new SabrLogicException("SABR PO token provider returned no token for video="

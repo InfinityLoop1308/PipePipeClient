@@ -52,6 +52,7 @@ import org.schabi.newpipe.extractor.services.youtube.sabr.SabrRequestDumper;
 import org.schabi.newpipe.extractor.services.youtube.sabr.protocol.SabrResponseDecoder;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.extractor.services.youtube.ItagItem;
+import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrRequest;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.DeliveryMethod;
@@ -167,8 +168,7 @@ public final class SabrPlaybackSmokeTest {
 
         final File spoolDirectory = new File(context.getCacheDir(),
                 "sabr-audio-probe-" + System.nanoTime());
-        final YoutubeSabrSession session = new YoutubeSabrSession(
-                sabrInfo, audioFormat, null, spoolDirectory);
+        final YoutubeSabrSession session = new YoutubeSabrSession(sabrInfo, spoolDirectory);
         session.setPoToken(sabrInfo.getPoToken());
 
         final long requestedStartMs = 65_000L;
@@ -178,10 +178,9 @@ public final class SabrPlaybackSmokeTest {
         try {
             for (int attempt = 1; attempt <= 8 && !found.get(); attempt++) {
                 final YoutubeSabrSession.RequestResult result = session.requestOnce(
-                        requestedStartMs,
-                        null, 0,
-                        null, 0,
-                        true, false, false, 1.0f,
+                        YoutubeSabrRequest.playback(requestedStartMs, 1.0f,
+                                Collections.singletonList(YoutubeSabrRequest.Track.of(
+                                        audioFormat, null, 0))),
                         segment -> {
                             try {
                                 if (segment.getHeader().isInitSegment()) return;
@@ -2175,10 +2174,17 @@ public final class SabrPlaybackSmokeTest {
             final boolean demandAudio = demand != null && demand.getFormat().isAudio();
             final boolean useAudio = audioActive || demandAudio;
             final boolean useVideo = videoActive || demand != null && !demandAudio;
-            return delegate.requestOnce(audioFormat, videoFormat, playerTimeMs,
-                    audioTimeline, state.maxSegment(audioFormat),
-                    videoTimeline, state.maxSegment(videoFormat),
-                    useAudio, useVideo, useVideo && !useAudio, 1.0f, this::accept);
+            final List<YoutubeSabrRequest.Track> tracks = new ArrayList<>(2);
+            if (useAudio) {
+                tracks.add(YoutubeSabrRequest.Track.of(audioFormat, audioTimeline,
+                        state.maxSegment(audioFormat)));
+            }
+            if (useVideo) {
+                tracks.add(YoutubeSabrRequest.Track.of(videoFormat, videoTimeline,
+                        state.maxSegment(videoFormat)));
+            }
+            return delegate.requestOnce(
+                    YoutubeSabrRequest.playback(playerTimeMs, 1.0f, tracks), this::accept);
         }
 
         private void accept(final SabrMediaSegment segment) {
@@ -2355,7 +2361,7 @@ public final class SabrPlaybackSmokeTest {
                     InstrumentationRegistry.getInstrumentation().getTargetContext().getCacheDir(),
                     "sabr-smoke-" + System.nanoTime());
             final YoutubeSabrSession session =
-                    new YoutubeSabrSession(info, audioFormat, videoFormat, spoolDirectory);
+                    new YoutubeSabrSession(info, spoolDirectory);
             final Constructor<SmokeHolder> constructor =
                     SmokeHolder.class.getDeclaredConstructor(Context.class,
                             String.class, YoutubeSabrInfo.class, YoutubeSabrSession.class,
