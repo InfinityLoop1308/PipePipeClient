@@ -4,9 +4,11 @@ import android.util.Log
 import org.schabi.newpipe.BuildConfig
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrProtocolException
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrRecoverableException
+import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrAttestationException
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrRequestHelper
+import org.schabi.newpipe.youtube.LocalDomPoTokenProvider
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -114,6 +116,9 @@ internal class SabrDownloader(
                 SabrSegmentWriter(targets, outputs, ::reportBytesWritten),
                 poToken,
             )
+        } catch (error: SabrAttestationException) {
+            LocalDomPoTokenProvider.invalidate()
+            throw error
         } finally {
             outputs.values.forEach { output ->
                 try {

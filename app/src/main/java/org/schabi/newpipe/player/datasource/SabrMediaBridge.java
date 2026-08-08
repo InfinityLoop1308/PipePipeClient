@@ -9,8 +9,10 @@ import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormatTimeline;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
+import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrAttestationException;
 import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrMediaSegment;
 import org.schabi.newpipe.player.SabrBackoffCoordinator;
+import org.schabi.newpipe.youtube.LocalDomPoTokenProvider;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -90,15 +92,20 @@ final class SabrMediaBridge {
             final boolean audioActive,
             final boolean videoActive) throws IOException, ExtractionException {
         synchronized (requestLock) {
-            final YoutubeSabrSession.RequestResult result = session.requestOnce(
-                    activeAudio,
-                    videoFormat, playerTimeMs,
-                    audioTimeline, bufferedThrough(activeAudio),
-                    videoTimeline, bufferedThrough(videoFormat),
-                    audioActive, videoActive, videoActive && !audioActive,
-                    1.0f, segment -> acceptSegment(segment, activeAudio));
-            publishBackoff(result.getBackoffMs());
-            return result;
+            try {
+                final YoutubeSabrSession.RequestResult result = session.requestOnce(
+                        activeAudio,
+                        videoFormat, playerTimeMs,
+                        audioTimeline, bufferedThrough(activeAudio),
+                        videoTimeline, bufferedThrough(videoFormat),
+                        audioActive, videoActive, videoActive && !audioActive,
+                        1.0f, segment -> acceptSegment(segment, activeAudio));
+                publishBackoff(result.getBackoffMs());
+                return result;
+            } catch (final SabrAttestationException error) {
+                LocalDomPoTokenProvider.INSTANCE.invalidate();
+                throw error;
+            }
         }
     }
 

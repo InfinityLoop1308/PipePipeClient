@@ -11,14 +11,12 @@ import org.schabi.newpipe.extractor.services.youtube.YoutubePoTokenResult
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrProtocolException
 import java.io.Closeable
 import java.util.Base64
-import java.util.HashMap
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.concurrent.FutureTask
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
-import java.util.regex.Pattern
 
 object LocalDomPoTokenProvider {
     private lateinit var appContext: Context
@@ -35,16 +33,36 @@ object LocalDomPoTokenProvider {
 
     fun getPlayerPoToken(videoId: String): YoutubePoTokenResult {
         val state = getState()
-        val token = if (state.homeConfig.useContentPoToken) {
-            state.session.mint(videoId)
-        } else {
-            state.sessionPoToken.clone()
+        val token = when (state.bootstrap.binding) {
+            YoutubePoTokenBinding.CONTENT -> state.session.mint(videoId)
+            YoutubePoTokenBinding.SESSION -> requireNotNull(state.sessionPoToken).clone()
+            YoutubePoTokenBinding.NONE -> throw SabrProtocolException(
+                "YouTube home does not enable a supported PO token binding",
+            )
         }
         return YoutubePoTokenResult(
-            state.homeConfig.visitorData,
-            state.homeConfig.clientVersion,
+            state.bootstrap.visitorData,
+            state.bootstrap.clientVersion,
             Base64.getUrlEncoder().withoutPadding().encodeToString(token),
         )
+    }
+
+    fun invalidate() {
+        val sessionToClose: PersistentMintSession
+        synchronized(initializationLock) {
+            val task = initializationTask ?: return
+            if (!task.isDone || task.isCancelled) return
+            val state = try {
+                task.get()
+            } catch (_: Exception) {
+                return
+            }
+            initializationTask = null
+            sessionToClose = state.session
+        }
+        sessionToClose.close()
+        Log.i(TAG, "Invalidated rejected PO token minter")
+        warmUp()
     }
 
     private fun getState(): MintState {
@@ -84,23 +102,29 @@ object LocalDomPoTokenProvider {
         synchronized(initializationLock) {
             initializationTask?.let { return it }
             val task = FutureTask {
-                val homeConfig = fetchAnonymousHomeConfig()
+                val bootstrap = fetchAnonymousHomeBootstrap()
+                if (bootstrap.binding == YoutubePoTokenBinding.NONE) {
+                    throw SabrProtocolException(
+                        "YouTube home does not enable a supported PO token binding",
+                    )
+                }
                 val session = PersistentMintSession.create(
                     appContext,
-                    homeConfig.visitorData,
-                    homeConfig.clientName,
-                    homeConfig.clientVersion,
+                    bootstrap,
                 )
                 try {
-                    val sessionPoToken = session.mint(homeConfig.visitorData)
+                    val sessionPoToken = if (bootstrap.binding == YoutubePoTokenBinding.SESSION) {
+                        session.mint(bootstrap.visitorData)
+                    } else {
+                        null
+                    }
                     Log.i(
                         TAG,
-                        "Global PO minter ready client=${homeConfig.clientName} " +
-                            "version=${homeConfig.clientVersion} " +
-                            "contentPot=${homeConfig.useContentPoToken} " +
-                            "sessionPot=${homeConfig.useSessionPoToken}",
+                        "Global PO minter ready client=${bootstrap.clientName} " +
+                            "version=${bootstrap.clientVersion} " +
+                            "binding=${bootstrap.binding}",
                     )
-                    MintState(homeConfig, session, sessionPoToken)
+                    MintState(bootstrap, session, sessionPoToken)
                 } catch (error: Throwable) {
                     session.close()
                     throw error
@@ -112,7 +136,7 @@ object LocalDomPoTokenProvider {
         }
     }
 
-    private fun fetchAnonymousHomeConfig(): AnonymousHomeConfig {
+    private fun fetchAnonymousHomeBootstrap(): YoutubePageAttestationBootstrap {
         val downloader = DownloaderImpl.getInstance()
             ?: throw SabrProtocolException("DownloaderImpl is not initialized")
         val response = downloader.get(
@@ -128,13 +152,13 @@ object LocalDomPoTokenProvider {
                 "YouTube home initialization failed: ${response.responseCode()}",
             )
         }
-        return parseAnonymousHomeConfig(response.responseBody())
+        return parseYoutubePageAttestationBootstrap(response.responseBody())
     }
 
     private data class MintState(
-        val homeConfig: AnonymousHomeConfig,
+        val bootstrap: YoutubePageAttestationBootstrap,
         val session: PersistentMintSession,
-        val sessionPoToken: ByteArray,
+        val sessionPoToken: ByteArray?,
     )
 
     @JvmStatic
@@ -155,9 +179,7 @@ object LocalDomPoTokenProvider {
 private class PersistentMintSession private constructor(
     context: Context,
     private val initialization: InitWaiter,
-    private val visitorData: String,
-    private val clientName: String,
-    private val clientVersion: String,
+    private val bootstrap: YoutubePageAttestationBootstrap,
 ) : Closeable {
     private val runtime = SharedWebViewRuntime.get(context.applicationContext)
     private val sessionId = runtime.registerSabrLocalDomCallbacks(Callbacks())
@@ -343,34 +365,17 @@ private class PersistentMintSession private constructor(
     }
 
     private fun downloadAndRunBotguard() {
-        makeBotguardServiceRequest(
-            "https://www.youtube.com/youtubei/v1/att/get?prettyPrint=false",
-            buildAttestationBody(visitorData, clientName, clientVersion),
-            contentType = "application/json",
-            extraHeaders = buildAttestationHeaders(
-                visitorData,
-                clientName,
-                clientVersion,
-            ),
-            onSuccess = { body ->
-                try {
-                    val challenge = parseSabrAttChallengeData(body)
-                    val inlineInterpreter = challenge.interpreterJavascript
-                    if (inlineInterpreter != null) {
-                        runBotguard(challenge, inlineInterpreter)
-                    } else {
-                        makeBotguardGetRequest(
-                            requireNotNull(challenge.interpreterUrl),
-                            onSuccess = { runBotguard(challenge, it) },
-                            onError = ::failInitialization,
-                        )
-                    }
-                } catch (error: Throwable) {
-                    failInitialization(error)
-                }
-            },
-            onError = ::failInitialization,
-        )
+        val challenge = bootstrap.challenge
+        val inlineInterpreter = challenge.interpreterJavascript
+        if (inlineInterpreter != null) {
+            runBotguard(challenge, inlineInterpreter)
+        } else {
+            makeBotguardGetRequest(
+                requireNotNull(challenge.interpreterUrl),
+                onSuccess = { runBotguard(challenge, it) },
+                onError = ::failInitialization,
+            )
+        }
     }
 
     private fun runBotguard(
@@ -379,6 +384,7 @@ private class PersistentMintSession private constructor(
     ) {
         runtime.evaluateJavascript(
             "pipepipeSabrRunBotguard(" + jsonString(sessionId) + ", " +
+                jsonString(bootstrap.eventId) + ", " +
                 buildSabrAttChallengeData(challenge, interpreterJavascript) + ");",
             null,
         ) { error -> failInitialization(error) }
@@ -451,17 +457,13 @@ private class PersistentMintSession private constructor(
         @Throws(SabrProtocolException::class)
         fun create(
             context: Context,
-            visitorData: String,
-            clientName: String,
-            clientVersion: String,
+            bootstrap: YoutubePageAttestationBootstrap,
         ): PersistentMintSession {
             val initialization = InitWaiter()
             val session = PersistentMintSession(
                 context,
                 initialization,
-                visitorData,
-                clientName,
-                clientVersion,
+                bootstrap,
             )
             session.loadScriptAndInitialize()
             try {
@@ -488,99 +490,6 @@ private class PersistentMintSession private constructor(
     }
 }
 
-private data class AnonymousHomeConfig(
-    val visitorData: String,
-    val clientName: String,
-    val clientVersion: String,
-    val useContentPoToken: Boolean,
-    val useSessionPoToken: Boolean,
-)
-
-private fun parseAnonymousHomeConfig(homeHtml: String): AnonymousHomeConfig {
-    val matcher = YTCFG_PATTERN.matcher(homeHtml)
-    var rawClientConfig: String? = null
-    while (matcher.find()) {
-        val candidate = matcher.group(1) ?: continue
-        if (candidate.indexOf("INNERTUBE_CONTEXT") > 0) {
-            rawClientConfig = candidate
-        }
-    }
-    val clientConfig = rawClientConfig?.let { JsonParser.`object`().from(it) }
-        ?: throw SabrProtocolException("YouTube home has no client context")
-    val visitorData = (
-        clientConfig.getString("EOM_VISITOR_DATA")
-            ?.takeIf { it.isNotEmpty() }
-            ?: clientConfig.getString("VISITOR_DATA")?.takeIf { it.isNotEmpty() }
-        )?.replace("%3D", "=")
-        ?: throw SabrProtocolException("YouTube home has no anonymous visitor data")
-    val client = clientConfig.getObject("INNERTUBE_CONTEXT")?.getObject("client")
-        ?: throw SabrProtocolException("YouTube home has no Innertube client context")
-    val clientName = client.getString("clientName")?.takeIf { it.isNotEmpty() }
-        ?: throw SabrProtocolException("YouTube home has no client name")
-    val clientVersion = client.getString("clientVersion")?.takeIf { it.isNotEmpty() }
-        ?: throw SabrProtocolException("YouTube home has no client version")
-    val watchConfig = clientConfig.getObject("WEB_PLAYER_CONTEXT_CONFIGS")
-        ?.getObject("WEB_PLAYER_CONTEXT_CONFIG_ID_KEVLAR_WATCH")
-    val serializedFlags = watchConfig?.getString("serializedExperimentFlags")
-    val experimentFlags = serializedFlags?.let(::parseExperimentFlags).orEmpty()
-    val useContentPoToken = if (watchConfig == null) {
-        true
-    } else {
-        experimentFlags["html5_generate_content_po_token"] == "true"
-    }
-    val useSessionPoToken =
-        experimentFlags["html5_generate_session_po_token"] == "true"
-    return AnonymousHomeConfig(
-        visitorData,
-        clientName,
-        clientVersion,
-        useContentPoToken,
-        useSessionPoToken,
-    )
-}
-
-private fun parseExperimentFlags(serializedFlags: String): Map<String, String> {
-    return serializedFlags.split('&').associate { part ->
-        val separator = part.indexOf('=')
-        if (separator < 0) {
-            part to "true"
-        } else {
-            part.substring(0, separator) to part.substring(separator + 1)
-        }
-    }
-}
-
-private val YTCFG_PATTERN = Pattern.compile("ytcfg\\.set\\((.*?)\\);", Pattern.DOTALL)
-
-private fun buildAttestationBody(
-    visitorData: String,
-    clientName: String,
-    clientVersion: String,
-): String {
-    return """{"context":{"client":{"clientName":${jsonString(clientName)},"clientVersion":${jsonString(clientVersion)},"hl":"en","gl":"US","utcOffsetMinutes":0,"visitorData":${jsonString(visitorData)}}},"engagementType":"ENGAGEMENT_TYPE_UNBOUND"}"""
-}
-
-private fun buildAttestationHeaders(
-    visitorData: String,
-    clientName: String,
-    clientVersion: String,
-): Map<String, List<String>> {
-    require(clientName == "WEB") { "Unsupported PO token client: $clientName" }
-    return HashMap<String, List<String>>().apply {
-        put("User-Agent", listOf(SharedWebViewRuntime.USER_AGENT))
-        put("Accept", listOf("application/json"))
-        put("Content-Type", listOf("application/json"))
-        put("Cookie", listOf("PREF=hl=en&gl=US"))
-        put("Origin", listOf("https://www.youtube.com"))
-        put("Referer", listOf("https://www.youtube.com/"))
-        put("X-Goog-Visitor-Id", listOf(visitorData))
-        put("X-YouTube-Client-Name", listOf("1"))
-        put("X-YouTube-Client-Version", listOf(clientVersion))
-        put("x-goog-api-key", listOf(LOCAL_DOM_GOOGLE_API_KEY))
-        put("x-user-agent", listOf("grpc-web-javascript/0.1"))
-    }
-}
-
 private const val LOCAL_DOM_GOOGLE_API_KEY =
     "AIzaSyDyT5W0Jh49F30Pqqtyfdf7pDLFKLJoAnw"
 
@@ -599,35 +508,6 @@ private fun jsonString(value: String): String {
         }
         append('"')
     }
-}
-
-private data class SabrAttChallengeData(
-    val program: String,
-    val globalName: String,
-    val interpreterJavascript: String?,
-    val interpreterUrl: String?,
-)
-
-private fun parseSabrAttChallengeData(rawAttestationData: String): SabrAttChallengeData {
-    val challenge = JsonParser.`object`().from(rawAttestationData).getObject("bgChallenge")
-    val interpreterJavascript = challenge.getObject("interpreterJavascript")
-        ?.getString("privateDoNotAccessOrElseSafeScriptWrappedValue")
-        ?.takeIf { it.isNotEmpty() }
-    val rawInterpreterUrl = challenge.getObject("interpreterUrl")
-        ?.getString("privateDoNotAccessOrElseTrustedResourceUrlWrappedValue")
-        ?.takeIf { it.isNotEmpty() }
-    val interpreterUrl = rawInterpreterUrl?.let {
-        if (it.startsWith("//")) "https:$it" else it
-    }
-    require(interpreterJavascript != null || interpreterUrl != null) {
-        "Attestation challenge has no interpreter script or URL"
-    }
-    return SabrAttChallengeData(
-        program = challenge.getString("program"),
-        globalName = challenge.getString("globalName"),
-        interpreterJavascript = interpreterJavascript,
-        interpreterUrl = interpreterUrl,
-    )
 }
 
 private fun buildSabrAttChallengeData(

@@ -173,9 +173,12 @@ function obtainPoToken(mintCallback, identifier) {
   return result;
 }
 
-function pipepipeSabrRunBotguard(sessionId, challengeData) {
+function pipepipeSabrRunBotguard(sessionId, eventId, challengeData) {
   var bridge = pipepipeBridge();
   try {
+    window.yt = window.yt || {};
+    window.yt.config_ = window.yt.config_ || {};
+    window.yt.config_.EVENT_ID = eventId;
     runBotGuard(
       challengeData,
       function (result) {
