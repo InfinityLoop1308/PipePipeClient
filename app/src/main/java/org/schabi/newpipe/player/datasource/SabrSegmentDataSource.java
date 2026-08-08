@@ -134,7 +134,7 @@ public final class SabrSegmentDataSource implements DataSource {
         try {
             return bridge.awaitSegment(request, FETCH_TIMEOUT_MS);
         } catch (final org.schabi.newpipe.extractor.exceptions.ExtractionException error) {
-            throw new IOException("SABR segment extraction failed", error);
+            throw new IOException("SABR segment extraction failed: " + error.getMessage(), error);
         }
     }
 

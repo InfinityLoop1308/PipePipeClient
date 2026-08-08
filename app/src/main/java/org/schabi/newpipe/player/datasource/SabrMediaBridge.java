@@ -12,7 +12,7 @@ import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrAttestationException;
 import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrMediaSegment;
 import org.schabi.newpipe.player.SabrBackoffCoordinator;
-import org.schabi.newpipe.youtube.LocalDomPoTokenProvider;
+import org.schabi.newpipe.youtube.SabrAttestationRetryHandler;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -33,6 +33,7 @@ final class SabrMediaBridge {
     private final YoutubeSabrSession session;
     private final SabrSourceSpec spec;
     private final Context appContext;
+    private final SabrAttestationRetryHandler attestationRetryHandler;
     private volatile YoutubeSabrInfo.Format videoFormat;
     @Nullable private volatile YoutubeSabrInfo.Format currentAudioFormat;
     private volatile boolean audioActive;
@@ -54,6 +55,7 @@ final class SabrMediaBridge {
         appContext = context.getApplicationContext();
         this.session = session;
         this.spec = spec;
+        attestationRetryHandler = new SabrAttestationRetryHandler(spec.getVideoId());
         videoFormat = spec.getBootstrapVideoFormat();
         audioActive = true;
         videoActive = true;
@@ -92,19 +94,23 @@ final class SabrMediaBridge {
             final boolean audioActive,
             final boolean videoActive) throws IOException, ExtractionException {
         synchronized (requestLock) {
-            try {
-                final YoutubeSabrSession.RequestResult result = session.requestOnce(
-                        activeAudio,
-                        videoFormat, playerTimeMs,
-                        audioTimeline, bufferedThrough(activeAudio),
-                        videoTimeline, bufferedThrough(videoFormat),
-                        audioActive, videoActive, videoActive && !audioActive,
-                        1.0f, segment -> acceptSegment(segment, activeAudio));
-                publishBackoff(result.getBackoffMs());
-                return result;
-            } catch (final SabrAttestationException error) {
-                LocalDomPoTokenProvider.INSTANCE.invalidate();
-                throw error;
+            while (true) {
+                try {
+                    final YoutubeSabrSession.RequestResult result = session.requestOnce(
+                            activeAudio,
+                            videoFormat, playerTimeMs,
+                            audioTimeline, bufferedThrough(activeAudio),
+                            videoTimeline, bufferedThrough(videoFormat),
+                            audioActive, videoActive, videoActive && !audioActive,
+                            1.0f, segment -> {
+                                attestationRetryHandler.onMediaReceived();
+                                acceptSegment(segment, activeAudio);
+                            });
+                    publishBackoff(result.getBackoffMs());
+                    return result;
+                } catch (final SabrAttestationException error) {
+                    attestationRetryHandler.prepareRetry(session, error);
+                }
             }
         }
     }

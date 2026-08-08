@@ -4,11 +4,11 @@ import android.util.Log
 import org.schabi.newpipe.BuildConfig
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrProtocolException
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrRecoverableException
-import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrAttestationException
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrRequestHelper
-import org.schabi.newpipe.youtube.LocalDomPoTokenProvider
+import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrAttestationException
+import org.schabi.newpipe.youtube.SabrAttestationRetryHandler
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -36,11 +36,12 @@ internal class SabrDownloader(
                 ?.sumOf { it!!.contentLength }
                 ?: 0L
             prepareMission(expectedLength)
+            val attestationRetryHandler = SabrAttestationRetryHandler(info.videoId)
             var coldStartAttempts = 0
             var transientAttempts = 0
             while (true) {
                 try {
-                    runSessionAttempt(info, recoveries)
+                    runSessionAttempt(info, recoveries, attestationRetryHandler)
                     break
                 } catch (error: RetryColdStartException) {
                     coldStartAttempts++
@@ -81,6 +82,7 @@ internal class SabrDownloader(
     private fun runSessionAttempt(
         info: YoutubeSabrInfo,
         recoveries: Array<MissionRecoveryInfo>,
+        attestationRetryHandler: SabrAttestationRetryHandler,
     ) {
         val session = YoutubeSabrSession(
             info,
@@ -115,10 +117,8 @@ internal class SabrDownloader(
                 targets,
                 SabrSegmentWriter(targets, outputs, ::reportBytesWritten),
                 poToken,
+                attestationRetryHandler,
             )
-        } catch (error: SabrAttestationException) {
-            LocalDomPoTokenProvider.invalidate()
-            throw error
         } finally {
             outputs.values.forEach { output ->
                 try {
@@ -277,9 +277,10 @@ internal class SabrDownloader(
         targets: List<SabrDownloadTarget>,
         writer: SabrSegmentWriter,
         poToken: ByteArray,
+        attestationRetryHandler: SabrAttestationRetryHandler,
     ) {
         writer.observeWrittenInitializations()
-        prepareInitializations(session, targets, writer, poToken)
+        prepareInitializations(session, targets, writer, poToken, attestationRetryHandler)
         writer.observeWrittenInitializations()
 
         var noProgressResponses = 0
@@ -299,18 +300,22 @@ internal class SabrDownloader(
             val audio = targets.firstOrNull { it.format.isAudio }
             val video = targets.firstOrNull { it.format.isVideo }
             val sequencesBeforeRequest = targets.map { it.nextWriteSequence }
-            val requestResult = session.requestOnce(
-                playerTimeMs,
-                audio?.timeline,
-                (audio?.nextWriteSequence ?: 1) - 1,
-                video?.timeline,
-                (video?.nextWriteSequence ?: 1) - 1,
-                audio != null,
-                video != null,
-                false,
-                1.0f,
-                writer::acceptSegment,
-            )
+            val requestResult = requestWithAttestationRetry(session, attestationRetryHandler) {
+                session.requestOnce(
+                    playerTimeMs,
+                    audio?.timeline,
+                    (audio?.nextWriteSequence ?: 1) - 1,
+                    video?.timeline,
+                    (video?.nextWriteSequence ?: 1) - 1,
+                    audio != null,
+                    video != null,
+                    false,
+                    1.0f,
+                ) { segment ->
+                    attestationRetryHandler.onMediaReceived()
+                    writer.acceptSegment(segment)
+                }
+            }
             if (requestResult.isDeferred) {
                 continue
             }
@@ -345,6 +350,7 @@ internal class SabrDownloader(
         targets: List<SabrDownloadTarget>,
         writer: SabrSegmentWriter,
         poToken: ByteArray,
+        attestationRetryHandler: SabrAttestationRetryHandler,
     ) {
         val pendingTargets = targets.filterNot { it.initializationWritten }
         if (pendingTargets.isEmpty()) {
@@ -365,16 +371,20 @@ internal class SabrDownloader(
         }
         if (!adaptiveSucceeded) {
             ensureRunning()
-            session.requestOnce(
-                0L,
-                null, 0,
-                null, 0,
-                targets.any { it.format.isAudio },
-                targets.any { it.format.isVideo },
-                false,
-                1.0f,
-                writer::acceptSegment,
-            )
+            requestWithAttestationRetry(session, attestationRetryHandler) {
+                session.requestOnce(
+                    0L,
+                    null, 0,
+                    null, 0,
+                    targets.any { it.format.isAudio },
+                    targets.any { it.format.isVideo },
+                    false,
+                    1.0f,
+                ) { segment ->
+                    attestationRetryHandler.onMediaReceived()
+                    writer.acceptSegment(segment)
+                }
+            }
             writer.observeWrittenInitializations()
         }
         if (pendingTargets.any { !it.initializationWritten }) {
@@ -386,6 +396,20 @@ internal class SabrDownloader(
         return targets.minOf { target ->
             if (target.nextWriteSequence <= 1) 0L
             else target.timeline?.getEndMs(target.nextWriteSequence - 1) ?: 0L
+        }
+    }
+
+    private inline fun requestWithAttestationRetry(
+        session: YoutubeSabrSession,
+        attestationRetryHandler: SabrAttestationRetryHandler,
+        request: () -> YoutubeSabrSession.RequestResult,
+    ): YoutubeSabrSession.RequestResult {
+        while (true) {
+            try {
+                return request()
+            } catch (error: SabrAttestationException) {
+                attestationRetryHandler.prepareRetry(session, error)
+            }
         }
     }
 
