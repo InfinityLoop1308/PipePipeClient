@@ -122,6 +122,33 @@ final class SabrMediaBridge {
         }
     }
 
+    /** Seeds timelines, initialization and media around the player's initial position. */
+    void bootstrap(final long initialPositionMs) throws IOException, ExtractionException {
+        final long playerTimeMs = Math.max(0, initialPositionMs);
+        final long deadlineNs = System.nanoTime()
+                + TimeUnit.MILLISECONDS.toNanos(INITIALIZATION_TIMEOUT_MS);
+        while (!stopped) {
+            final long backoffMs = session.getBackoffRemainingMs();
+            publishBackoff(backoffMs);
+            if (backoffMs > 0) {
+                final long remainingNs = deadlineNs - System.nanoTime();
+                if (remainingNs <= TimeUnit.MILLISECONDS.toNanos(backoffMs)) break;
+                sleep(backoffMs);
+                continue;
+            }
+            final YoutubeSabrSession.RequestResult result = fetchSegments(
+                    playerTimeMs, spec.getBootstrapAudioFormat(), true, true);
+            if (result.getSegmentCount() > 0) return;
+            if (System.nanoTime() >= deadlineNs) break;
+            if (!result.isDeferred() && session.getBackoffRemainingMs() == 0) {
+                sleep(Math.min(EMPTY_RESPONSE_RETRY_MS, Math.max(1,
+                        TimeUnit.NANOSECONDS.toMillis(deadlineNs - System.nanoTime()))));
+            }
+        }
+        throw new IOException("SABR bootstrap returned no media: video=" + spec.getVideoId()
+                + ", playerMs=" + playerTimeMs + ", trace=" + session.getDiagnosticTrace());
+    }
+
     @NonNull
     byte[] getInitializationData(@NonNull final YoutubeSabrInfo.Format format)
             throws IOException, ExtractionException {

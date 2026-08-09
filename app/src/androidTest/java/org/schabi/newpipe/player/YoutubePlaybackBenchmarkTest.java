@@ -244,7 +244,8 @@ public final class YoutubePlaybackBenchmarkTest {
         final long resolveStart = SystemClock.elapsedRealtimeNanos();
         final MediaSource source;
         try {
-            source = new VideoPlaybackResolver(context, dataSource, selector).resolve(info);
+            source = new VideoPlaybackResolver(context, dataSource, selector).resolve(info,
+                    Math.max(0, startPositionMs));
         } finally {
             SabrSessionHelper.setBenchmarkSessionObserver(null);
         }

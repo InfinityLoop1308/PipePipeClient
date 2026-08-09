@@ -1244,12 +1244,6 @@ public final class SabrPlaybackSmokeTest {
         final int maxVideoHeight = Integer.parseInt(arguments.getString("maxVideoHeight",
                 String.valueOf(DEFAULT_MAX_VIDEO_HEIGHT)));
         final String targetCodec = arguments.getString("targetCodec", "");
-        final PlayerDataSource dataSource = new PlayerDataSource(context,
-                DownloaderImpl.USER_AGENT, new DefaultBandwidthMeter.Builder(context).build());
-        final VideoPlaybackResolver resolver = new VideoPlaybackResolver(context, dataSource,
-                new BoundedQualityResolver(maxVideoHeight, targetCodec));
-        final MediaSource mediaSource = resolver.resolve(info);
-        assertNotNull("VideoPlaybackResolver returned no MediaSource", mediaSource);
         final long tailStartPositionMs;
         if (smokeCase.isSponsorBlockCase()) {
             final long extractedDurationMs = info.getDuration() * 1000L;
@@ -1259,6 +1253,13 @@ public final class SabrPlaybackSmokeTest {
         } else {
             tailStartPositionMs = C.TIME_UNSET;
         }
+        final PlayerDataSource dataSource = new PlayerDataSource(context,
+                DownloaderImpl.USER_AGENT, new DefaultBandwidthMeter.Builder(context).build());
+        final VideoPlaybackResolver resolver = new VideoPlaybackResolver(context, dataSource,
+                new BoundedQualityResolver(maxVideoHeight, targetCodec));
+        final MediaSource mediaSource = resolver.resolve(info,
+                tailStartPositionMs == C.TIME_UNSET ? 0 : tailStartPositionMs);
+        assertNotNull("VideoPlaybackResolver returned no MediaSource", mediaSource);
         final CountDownLatch ready = new CountDownLatch(1);
         final CountDownLatch firstVideoFrame = new CountDownLatch(1);
         final CountDownLatch audioStarted = new CountDownLatch(1);

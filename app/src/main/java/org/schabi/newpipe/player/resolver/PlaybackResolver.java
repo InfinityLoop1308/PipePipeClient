@@ -149,9 +149,21 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                                         @NonNull final String cacheKey,
                                         @NonNull final MediaItemTag metadata)
             throws IOException {
+        return buildMediaSource(dataSource, stream, streamInfo, cacheKey, metadata, 0);
+    }
+
+    @NonNull
+    static MediaSource buildMediaSource(@NonNull final PlayerDataSource dataSource,
+                                        @NonNull final Stream stream,
+                                        @NonNull final StreamInfo streamInfo,
+                                        @NonNull final String cacheKey,
+                                        @NonNull final MediaItemTag metadata,
+                                        final long initialPositionMs)
+            throws IOException {
         StreamingService service = streamInfo.getService();
         if (ServiceList.YouTube.equals(service)) {
-            return createYoutubeMediaSource(stream, streamInfo, dataSource, cacheKey, metadata);
+            return createYoutubeMediaSource(stream, streamInfo, dataSource, cacheKey, metadata,
+                    initialPositionMs);
         } else if (ServiceList.NicoNico.equals(service)) {
             return createNicoNicoMediaSource(stream, streamInfo, dataSource, cacheKey, metadata);
         } else if (ServiceList.BiliBili.equals(service)) {
@@ -349,7 +361,8 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             final StreamInfo streamInfo,
             final PlayerDataSource dataSource,
             final String cacheKey,
-            final MediaItemTag metadata) throws IOException {
+            final MediaItemTag metadata,
+            final long initialPositionMs) throws IOException {
         if (!(stream instanceof AudioStream || stream instanceof VideoStream)) {
             throw new IOException("Try to generate a DASH manifest of a YouTube "
                     + stream.getClass() + " " + stream.getContent());
@@ -358,7 +371,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
         final StreamType streamType = streamInfo.getStreamType();
         if (streamType == StreamType.VIDEO_STREAM) {
             return createYoutubeMediaSourceOfVideoStreamType(dataSource, stream, streamInfo,
-                    cacheKey, metadata);
+                    cacheKey, metadata, initialPositionMs);
         } else if (streamType == StreamType.POST_LIVE_STREAM) {
             if (stream.getDeliveryMethod() == DeliveryMethod.HLS) {
                 return buildHlsMediaSource(dataSource, stream, cacheKey, metadata);
@@ -395,7 +408,8 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             @NonNull final T stream,
             @NonNull final StreamInfo streamInfo,
             @NonNull final String cacheKey,
-            @NonNull final MediaItemTag metadata) throws IOException {
+            @NonNull final MediaItemTag metadata,
+            final long initialPositionMs) throws IOException {
         final DeliveryMethod deliveryMethod = stream.getDeliveryMethod();
         switch (deliveryMethod) {
             case PROGRESSIVE_HTTP:
@@ -451,7 +465,8 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                                 .setCustomCacheKey(cacheKey)
                                 .build());
             case SABR:
-                return buildSabrMediaSource(dataSource, stream, streamInfo, cacheKey, metadata);
+                return buildSabrMediaSource(dataSource, stream, streamInfo, cacheKey, metadata,
+                        initialPositionMs);
             default:
                 throw new IOException("Unsupported delivery method for YouTube contents: "
                         + deliveryMethod);
@@ -463,7 +478,8 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                                                     @NonNull final Stream stream,
                                                     @NonNull final StreamInfo streamInfo,
                                                     @NonNull final String cacheKey,
-                                                    @NonNull final MediaItemTag metadata)
+                                                    @NonNull final MediaItemTag metadata,
+                                                    final long initialPositionMs)
             throws IOException {
         final String videoId = streamInfo.getId();
         final int preferredVideoItag =
@@ -481,7 +497,8 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                 .setUri(Uri.parse("sabr://" + videoId))
                 .setCustomCacheKey(cacheKey)
                 .build();
-        return new SabrDashMediaSource(App.getApp(), mediaItem, spec, dataSource);
+        return new SabrDashMediaSource(App.getApp(), mediaItem, spec, dataSource,
+                Math.max(0, initialPositionMs));
     }
 
     @Nullable

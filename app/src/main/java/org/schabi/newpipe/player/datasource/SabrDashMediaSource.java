@@ -60,7 +60,8 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
     public SabrDashMediaSource(@NonNull final Context context,
                                @NonNull final MediaItem mediaItem,
                                @NonNull final SabrSourceSpec spec,
-                               @NonNull final PlayerDataSource playerDataSource) throws IOException {
+                               @NonNull final PlayerDataSource playerDataSource,
+                               final long initialPositionMs) throws IOException {
         this.context = context.getApplicationContext();
         this.mediaItem = mediaItem;
         this.spec = spec;
@@ -75,8 +76,8 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
             final SabrMediaBridge preparationBridge = getOrCreateBridge();
             if (!preparationBridge.hasTimelines()) {
                 try {
-                    preparationBridge.awaitSegment(
-                            SabrSegmentKey.media(spec.getBootstrapVideoFormat(), 1), 30_000, 0);
+                    final long bootstrapPositionMs = Math.max(0, initialPositionMs);
+                    preparationBridge.bootstrap(bootstrapPositionMs);
                     preparationBridge.getInitializationData(
                             spec.getBootstrapAudioFormat());
                     preparationBridge.getInitializationData(
@@ -98,7 +99,8 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
                     .createMediaSource(manifest, mediaItem);
             Log.d(TAG, "create source video=" + spec.getVideoId()
                     + " videoItag=" + spec.getBootstrapVideoFormat().getItag()
-                    + " bootstrapAudioItag=" + spec.getBootstrapAudioFormat().getItag());
+                    + " bootstrapAudioItag=" + spec.getBootstrapAudioFormat().getItag()
+                    + " initialPositionMs=" + Math.max(0, initialPositionMs));
         } catch (final IOException | RuntimeException | Error e) {
             throw e;
         }
