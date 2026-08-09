@@ -7,20 +7,38 @@ warmups="${WARMUPS:-1}"
 play_seconds="${PLAY_SECONDS:-60}"
 start_position_ms="${START_POSITION_MS:-2995000}"
 seek_target_ms="${SEEK_TARGET_MS:--1}"
-paths="${PATHS:-sabr,tv_downgraded_generated_dash}"
-cookie_file="${COOKIE_FILE:-/tmp/token.txt}"
+paths="${PATHS:-}"
+cookie_file="${COOKIE_FILE-}"
+control_client="${CONTROL_CLIENT:-auto}"
 device_cookie_file="${DEVICE_COOKIE_FILE:-/data/local/tmp/pipepipe-benchmark-token.txt}"
 warm_webview_runtime="${WARM_WEBVIEW_RUNTIME:-false}"
-cold_sabr_caches_each_trial="${COLD_SABR_CACHES_EACH_TRIAL:-false}"
 diagnostic_details="${DIAGNOSTIC_DETAILS:-false}"
 max_height="${MAX_VIDEO_HEIGHT:-1080}"
 target_codec="${TARGET_CODEC:-avc}"
-hls_extraction_retries="${HLS_EXTRACTION_RETRIES:-5}"
 replace_player_cache="${REPLACE_PLAYER_CACHE:-false}"
 output="${OUTPUT:-../log/youtube-playback-benchmark-$(date +%Y%m%d-%H%M%S).log}"
 jsonl="${JSONL_OUTPUT:-${output%.log}.jsonl}"
 adb="${ADB:-adb}"
 cookie_pushed=false
+
+if [[ -z "${COOKIE_FILE+x}" && -f /tmp/token.txt ]]; then
+  cookie_file=/tmp/token.txt
+fi
+
+case "${control_client,,}" in
+  auto)
+    if [[ -n "$cookie_file" && -s "$cookie_file" ]]; then
+      control_client=tv_downgraded
+    else
+      control_client=visionos
+    fi
+    ;;
+  tv_downgraded|visionos|android_vr) control_client="${control_client,,}" ;;
+  *) echo "CONTROL_CLIENT must be auto, tv_downgraded, visionos, or android_vr" >&2; exit 2 ;;
+esac
+if [[ -z "$paths" ]]; then
+  paths="sabr,${control_client}_generated_dash"
+fi
 
 cleanup() {
   if [[ "$cookie_pushed" == true ]]; then
@@ -40,11 +58,6 @@ case "${warm_webview_runtime,,}" in
   1|true|yes) warm_webview_runtime=true ;;
   0|false|no) warm_webview_runtime=false ;;
   *) echo "WARM_WEBVIEW_RUNTIME must be true or false" >&2; exit 2 ;;
-esac
-case "${cold_sabr_caches_each_trial,,}" in
-  1|true|yes) cold_sabr_caches_each_trial=true ;;
-  0|false|no) cold_sabr_caches_each_trial=false ;;
-  *) echo "COLD_SABR_CACHES_EACH_TRIAL must be true or false" >&2; exit 2 ;;
 esac
 case "${diagnostic_details,,}" in
   1|true|yes) diagnostic_details=true ;;
@@ -92,10 +105,8 @@ instrument_args=(
   -e seekTargetMs "$seek_target_ms"
   -e paths "$paths"
   -e warmWebViewRuntime "$warm_webview_runtime"
-  -e coldSabrCachesEachTrial "$cold_sabr_caches_each_trial"
   -e diagnosticDetails "$diagnostic_details"
   -e maxVideoHeight "$max_height"
-  -e hlsExtractionRetries "$hls_extraction_retries"
   -e replacePlayerCache "$replace_player_cache"
 )
 if [[ -n "$target_codec" ]]; then
@@ -103,6 +114,10 @@ if [[ -n "$target_codec" ]]; then
 fi
 $adb shell am instrument -w -r "${instrument_args[@]}" "${device_cookie_arg[@]}" \
   "$test_id/androidx.test.runner.AndroidJUnitRunner" | tee "$output"
+instrumentation_succeeded=false
+if rg -q 'OK \(1 test\)' "$output" && ! rg -q 'FAILURES!!!' "$output"; then
+  instrumentation_succeeded=true
+fi
 
 $adb logcat -d -v brief \
   | rg 'YoutubePlayerCache|PIPEPIPE_BENCHMARK_' \
@@ -110,8 +125,25 @@ $adb logcat -d -v brief \
 
 benchmark_pid="$(rg 'PIPEPIPE_BENCHMARK_CONFIG' "$output" | tail -1 \
   | sed -nE 's/^.*System\.out\( *([0-9]+)\).*$/\1/p')"
-if [[ -n "$benchmark_pid" ]]; then
-  rg --no-filename "System\\.out\\( *${benchmark_pid}\\).*PIPEPIPE_BENCHMARK_" "$output"
+if [[ -n "$benchmark_pid" ]] && \
+    rg -q "System\\.out\\( *${benchmark_pid}\\).*PIPEPIPE_BENCHMARK_" "$output"; then
+  rg --no-filename "System\\.out\\( *${benchmark_pid}\\).*PIPEPIPE_BENCHMARK_" "$output" \
+    | sed -E 's/^.*PIPEPIPE_BENCHMARK_[A-Z_]+ (\{.*\})$/\1/' | tee "$jsonl"
+elif rg -q 'PIPEPIPE_BENCHMARK_' "$output"; then
+  rg --no-filename 'PIPEPIPE_BENCHMARK_' "$output" \
+    | sed -E 's/^.*PIPEPIPE_BENCHMARK_[A-Z_]+ (\{.*\})$/\1/' | tee "$jsonl"
 else
-  rg --no-filename 'PIPEPIPE_BENCHMARK_' "$output"
-fi | sed -E 's/^.*PIPEPIPE_BENCHMARK_[A-Z_]+ (\{.*\})$/\1/' | tee "$jsonl"
+  : > "$jsonl"
+fi
+
+expected_summaries="$(tr ',' '\n' <<< "$paths" | sed '/^[[:space:]]*$/d' | wc -l)"
+actual_summaries="$(jq -r 'select(.record == "summary") | .path' "$jsonl" 2>/dev/null \
+  | wc -l)"
+if [[ "$instrumentation_succeeded" != true ]]; then
+  echo "Playback benchmark instrumentation failed" >&2
+  exit 1
+fi
+if [[ "$actual_summaries" -ne "$expected_summaries" ]]; then
+  echo "Expected $expected_summaries benchmark summaries, got $actual_summaries" >&2
+  exit 1
+fi

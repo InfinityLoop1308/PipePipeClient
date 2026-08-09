@@ -24,7 +24,23 @@ import java.util.Objects;
 
 /** Selects SABR formats and creates protocol sessions. */
 public final class SabrSessionHelper {
+    @Nullable
+    private static volatile SessionObserver benchmarkSessionObserver;
+
     private SabrSessionHelper() {
+    }
+
+    /** Receives newly created playback sessions for instrumentation benchmarks only. */
+    public interface SessionObserver {
+        void onSessionCreated(@NonNull YoutubeSabrSession session);
+    }
+
+    /**
+     * Installs a process-wide observer used by the SABR instrumentation benchmark.
+     * Production playback must leave this unset.
+     */
+    public static void setBenchmarkSessionObserver(@Nullable final SessionObserver observer) {
+        benchmarkSessionObserver = observer;
     }
 
     @NonNull
@@ -64,6 +80,10 @@ public final class SabrSessionHelper {
                     + spec.getVideoId());
         }
         created.setPoToken(resolvedToken);
+        final SessionObserver observer = benchmarkSessionObserver;
+        if (observer != null) {
+            observer.onSessionCreated(created);
+        }
         return created;
     }
 

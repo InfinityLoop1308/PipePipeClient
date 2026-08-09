@@ -8,11 +8,15 @@ frame_timeout_seconds="${FRAME_TIMEOUT_SECONDS:-30}"
 build_install="${BUILD_INSTALL:-true}"
 youtube_client="${YOUTUBE_CLIENT:-mweb}"
 benchmark_path="${BENCHMARK_PATH:-$youtube_client}"
-cookie_file="${COOKIE_FILE:-/tmp/token.txt}"
+cookie_file="${COOKIE_FILE-}"
 device_cookie_file="${DEVICE_COOKIE_FILE:-/data/local/tmp/pipepipe-click-benchmark-token.txt}"
 readonly adb_command="${ADB:-adb}"
 output="${OUTPUT:-../log/youtube-click-to-first-frame-$(date +%Y%m%d-%H%M%S).log}"
 jsonl="${JSONL_OUTPUT:-${output%.log}.jsonl}"
+
+if [[ -z "${COOKIE_FILE+x}" && -f /tmp/token.txt ]]; then
+  cookie_file=/tmp/token.txt
+fi
 
 mkdir -p "$(dirname "$output")" "$(dirname "$jsonl")"
 
