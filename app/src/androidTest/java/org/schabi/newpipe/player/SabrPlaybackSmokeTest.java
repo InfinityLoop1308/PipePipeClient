@@ -1427,6 +1427,9 @@ public final class SabrPlaybackSmokeTest {
         final MediaSource mediaSource = new AudioPlaybackResolver(context, dataSource).resolve(info);
         assertNotNull("Audio resolver returned no MediaSource for item=" + index
                 + " video=" + info.getId(), mediaSource);
+        assertTrue("Audio resolver did not return a SABR MediaSource for item=" + index
+                + " video=" + info.getId(), mediaSource instanceof SabrDashMediaSource);
+        final SabrDashMediaSource sabrMediaSource = (SabrDashMediaSource) mediaSource;
 
         final AtomicReference<ExoPlayer> playerRef = new AtomicReference<>();
         final AtomicReference<PlaybackException> playerError = new AtomicReference<>();
@@ -1479,7 +1482,9 @@ public final class SabrPlaybackSmokeTest {
                     positionOf(playerRef.get()) >= targetMs);
             System.out.println("SABR_ANONYMOUS_SEQUENCE index=" + index
                     + " video=" + info.getId()
-                    + " positionMs=" + positionOf(playerRef.get()));
+                    + " positionMs=" + positionOf(playerRef.get())
+                    + " maxStreamProtectionStatus="
+                    + sabrMediaSource.getMaxStreamProtectionStatus());
         } catch (final Exception | AssertionError failure) {
             System.out.println("SABR_ANONYMOUS_SEQUENCE_FAILURE index=" + index
                     + " video=" + info.getId()

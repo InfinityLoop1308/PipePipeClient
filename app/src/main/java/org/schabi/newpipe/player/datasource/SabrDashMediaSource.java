@@ -110,6 +110,10 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
         return mediaItem;
     }
 
+    int getMaxStreamProtectionStatus() {
+        return session.getMaxStreamProtectionStatus();
+    }
+
     @Override
     protected void prepareSourceInternal(@Nullable final TransferListener mediaTransferListener) {
         getOrCreateBridge();
