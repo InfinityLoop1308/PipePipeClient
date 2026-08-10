@@ -4,9 +4,9 @@ import android.content.Context;
 
 import androidx.annotation.Nullable;
 
-import com.google.android.exoplayer2.upstream.ByteArrayDataSource;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.TransferListener;
+import androidx.media3.datasource.ByteArrayDataSource;
+import androidx.media3.datasource.DataSource;
+import androidx.media3.datasource.TransferListener;
 
 public class CustomDataSourceFactory implements DataSource.Factory {
     private final Context context;

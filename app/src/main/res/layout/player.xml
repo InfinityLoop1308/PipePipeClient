@@ -21,7 +21,7 @@
         android:layout_alignBottom="@+id/surfaceView"
         android:background="@android:color/black" />
 
-    <com.google.android.exoplayer2.ui.SubtitleView
+    <androidx.media3.ui.SubtitleView
         android:id="@+id/subtitleView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
