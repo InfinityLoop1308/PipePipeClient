@@ -265,8 +265,8 @@ public final class Player implements
     private PlayerMediaSession playerMediaSession;
     @Nullable private SurfaceHolderCallback surfaceHolderCallback;
 
-    @NonNull private DefaultTrackSelector trackSelector;
-    @NonNull private LoadController loadController;
+    @NonNull private final DefaultTrackSelector trackSelector;
+    @NonNull private final LoadController loadController;
     @NonNull private final DefaultRenderersFactory renderFactory;
 
     @NonNull private final VideoPlaybackResolver videoResolver;
@@ -557,9 +557,6 @@ public final class Player implements
         if (DEBUG) {
             Log.d(TAG, "initPlayer() called with: playOnReady = [" + playOnReady + "]");
         }
-
-        trackSelector = createTrackSelector();
-        loadController = new LoadController();
 
         simpleExoPlayer = new ExoPlayer.Builder(context, renderFactory)
                 .setTrackSelector(trackSelector)
