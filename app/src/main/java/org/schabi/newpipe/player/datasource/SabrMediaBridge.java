@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 /** Synchronously bridges one Media3 segment read to serialized SABR transactions. */
 final class SabrMediaBridge {
     private static final int MAX_AHEAD_SEGMENTS = 64;
-    private static final long COOKIE_RECOVERY_AFTER_MS = 10_000;
     private static final long EMPTY_RESPONSE_RETRY_MS = 250;
     private static final long PREPARATION_TIMEOUT_MS = 30_000;
 
@@ -180,8 +179,6 @@ final class SabrMediaBridge {
             synchronized (requestLock) {
                 requestThread = Thread.currentThread();
                 try {
-                    long recoveryAtNs = System.nanoTime()
-                            + TimeUnit.MILLISECONDS.toNanos(COOKIE_RECOVERY_AFTER_MS);
                     while (!stopped) {
                         segment = ahead.get(request);
                         if (segment != null) return segment;
@@ -203,11 +200,6 @@ final class SabrMediaBridge {
                         segment = ahead.get(request);
                         if (segment != null) return segment;
                         ensureBudget(request, deadlineNs);
-                        if (System.nanoTime() >= recoveryAtNs) {
-                            session.clearPlaybackCookie();
-                            recoveryAtNs = System.nanoTime()
-                                    + TimeUnit.MILLISECONDS.toNanos(COOKIE_RECOVERY_AFTER_MS);
-                        }
                         if (result.getSegmentCount() == 0
                                 && session.getBackoffRemainingMs() == 0) {
                             sleepWithinBudget(request, deadlineNs, EMPTY_RESPONSE_RETRY_MS);
