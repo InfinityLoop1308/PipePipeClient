@@ -111,6 +111,7 @@ import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.*;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
+import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrAttestationException;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockAction;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockSegment;
 import org.schabi.newpipe.extractor.stream.*;
@@ -3205,10 +3206,11 @@ public final class Player implements
         saveStreamProgressState();
         boolean isCatchableException = false;
 
-        if (containsSabrAttestationRequired(error)) {
-            isCatchableException = true;
-            setRecovery();
-            reloadPlayQueueManager();
+        if (containsSabrAttestationException(error)) {
+            // Attestation retries are handled inside the media bridge. An attestation exception
+            // reaching the player has exhausted those recovery paths and must remain terminal
+            // instead of rebuilding the source with a fresh retry budget.
+            onPlaybackShutdown();
         } else {
 
             switch (error.errorCode) {
@@ -3305,11 +3307,10 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         }
     }
 
-    private static boolean containsSabrAttestationRequired(@NonNull final Throwable error) {
+    private static boolean containsSabrAttestationException(@NonNull final Throwable error) {
         Throwable current = error;
         while (current != null) {
-            if (current.getMessage() != null
-                    && current.getMessage().contains("SABR attestation required")) {
+            if (current instanceof SabrAttestationException) {
                 return true;
             }
             current = current.getCause();

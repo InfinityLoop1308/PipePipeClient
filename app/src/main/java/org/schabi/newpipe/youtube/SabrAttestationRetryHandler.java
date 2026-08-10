@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import org.schabi.newpipe.extractor.services.youtube.YoutubePoTokenResult;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrAttestationException;
-import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrProtocolException;
 
 import java.util.Base64;
 
@@ -24,10 +23,10 @@ public final class SabrAttestationRetryHandler {
     public synchronized void prepareRetry(
             @NonNull final YoutubeSabrSession session,
             @NonNull final SabrAttestationException rejectedTokenError)
-            throws SabrProtocolException {
+            throws SabrAttestationException {
         if (retriesRemaining == 0) {
             LocalDomPoTokenProvider.INSTANCE.invalidate();
-            throw new SabrProtocolException(
+            throw new SabrAttestationException(
                     "SABR PO token was rejected after " + MAX_RETRIES
                             + " attestation recovery retries for video=" + videoId,
                     rejectedTokenError);
@@ -44,7 +43,7 @@ public final class SabrAttestationRetryHandler {
             }
             session.setPoToken(token);
         } catch (final Exception error) {
-            throw new SabrProtocolException(
+            throw new SabrAttestationException(
                     "SABR PO token recovery failed on retry " + retryNumber + " of "
                             + MAX_RETRIES + " for video=" + videoId + ": "
                             + error.getMessage(), error);
