@@ -8,8 +8,8 @@ import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
-import androidx.media3.common.PlaybackException;
-import androidx.media3.common.PlaybackParameters;
+import com.google.android.exoplayer2.PlaybackException;
+import com.google.android.exoplayer2.PlaybackParameters;
 
 import org.schabi.newpipe.App;
 import org.schabi.newpipe.MainActivity;

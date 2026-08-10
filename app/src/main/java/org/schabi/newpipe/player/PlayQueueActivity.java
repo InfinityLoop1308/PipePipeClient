@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import androidx.media3.common.PlaybackParameters;
+import com.google.android.exoplayer2.PlaybackParameters;
 
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.ActivityPlayerQueueControlBinding;
@@ -555,17 +555,17 @@ public final class PlayQueueActivity extends AppCompatActivity
 
     private void onPlayModeChanged(final int repeatMode, final boolean shuffled) {
         switch (repeatMode) {
-            case androidx.media3.common.Player.REPEAT_MODE_OFF:
+            case com.google.android.exoplayer2.Player.REPEAT_MODE_OFF:
                 queueControlBinding.controlRepeat
-                        .setImageResource(R.drawable.exo_icon_repeat_off);
+                        .setImageResource(R.drawable.exo_controls_repeat_off);
                 break;
-            case androidx.media3.common.Player.REPEAT_MODE_ONE:
+            case com.google.android.exoplayer2.Player.REPEAT_MODE_ONE:
                 queueControlBinding.controlRepeat
-                        .setImageResource(R.drawable.exo_icon_repeat_one);
+                        .setImageResource(R.drawable.exo_controls_repeat_one);
                 break;
-            case androidx.media3.common.Player.REPEAT_MODE_ALL:
+            case com.google.android.exoplayer2.Player.REPEAT_MODE_ALL:
                 queueControlBinding.controlRepeat
-                        .setImageResource(R.drawable.exo_icon_repeat_all);
+                        .setImageResource(R.drawable.exo_controls_repeat_all);
                 break;
         }
 

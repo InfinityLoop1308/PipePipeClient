@@ -1,6 +1,6 @@
 package org.schabi.newpipe.player.event;
 
-import androidx.media3.common.PlaybackException;
+import com.google.android.exoplayer2.PlaybackException;
 
 public interface PlayerServiceEventListener extends PlayerEventListener {
     void onFullscreenStateChanged(boolean fullscreen);

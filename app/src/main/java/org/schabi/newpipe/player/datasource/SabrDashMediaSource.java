@@ -9,28 +9,27 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.media3.common.C;
-import androidx.media3.common.Format;
-import androidx.media3.common.MediaItem;
-import androidx.media3.common.MimeTypes;
-import androidx.media3.common.StreamKey;
-import androidx.media3.common.Timeline;
-import androidx.media3.datasource.DataSource;
-import androidx.media3.datasource.DataSpec;
-import androidx.media3.datasource.TransferListener;
-import androidx.media3.exoplayer.LoadingInfo;
-import androidx.media3.exoplayer.SeekParameters;
-import androidx.media3.exoplayer.dash.DashMediaSource;
-import androidx.media3.exoplayer.dash.DefaultDashChunkSource;
-import androidx.media3.exoplayer.dash.manifest.DashManifest;
-import androidx.media3.exoplayer.dash.manifest.DashManifestParser;
-import androidx.media3.exoplayer.source.CompositeMediaSource;
-import androidx.media3.exoplayer.source.MediaPeriod;
-import androidx.media3.exoplayer.source.MediaSource;
-import androidx.media3.exoplayer.source.SampleStream;
-import androidx.media3.exoplayer.source.TrackGroupArray;
-import androidx.media3.exoplayer.trackselection.ExoTrackSelection;
-import androidx.media3.exoplayer.upstream.Allocator;
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.util.MimeTypes;
+import com.google.android.exoplayer2.offline.StreamKey;
+import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DataSpec;
+import com.google.android.exoplayer2.upstream.TransferListener;
+import com.google.android.exoplayer2.SeekParameters;
+import com.google.android.exoplayer2.source.dash.DashMediaSource;
+import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
+import com.google.android.exoplayer2.source.dash.manifest.DashManifest;
+import com.google.android.exoplayer2.source.dash.manifest.DashManifestParser;
+import com.google.android.exoplayer2.source.CompositeMediaSource;
+import com.google.android.exoplayer2.source.MediaPeriod;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.SampleStream;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.ExoTrackSelection;
+import com.google.android.exoplayer2.upstream.Allocator;
 
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormatTimeline;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
@@ -520,8 +519,8 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
         }
 
         @Override
-        public boolean continueLoading(final LoadingInfo loadingInfo) {
-            return child.continueLoading(loadingInfo);
+        public boolean continueLoading(final long positionUs) {
+            return child.continueLoading(positionUs);
         }
 
         @Override

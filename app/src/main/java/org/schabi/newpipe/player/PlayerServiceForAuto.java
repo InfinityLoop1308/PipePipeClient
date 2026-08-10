@@ -38,8 +38,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import androidx.media.MediaBrowserServiceCompat;
-import android.net.Uri;
-import android.support.v4.media.session.PlaybackStateCompat;
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import org.schabi.newpipe.App;
 import org.schabi.newpipe.databinding.PlayerBinding;
 import org.schabi.newpipe.player.mediabrowser.MediaBrowserImpl;
@@ -72,6 +71,7 @@ public final class PlayerServiceForAuto extends MediaBrowserServiceCompat implem
     // these are instantiated in onCreate() as per
     // https://developer.android.com/training/cars/media#browser_workflow
     private MediaSessionCompat mediaSession;
+    private MediaSessionConnector sessionConnector;
 
     private Player player;
     private WindowManager windowManager;
@@ -103,44 +103,20 @@ public final class PlayerServiceForAuto extends MediaBrowserServiceCompat implem
         // see https://developer.android.com/training/cars/media#browser_workflow
         mediaSession = new MediaSessionCompat(this, "MediaSessionPlayerServ");
         setSessionToken(mediaSession.getSessionToken());
-        mediaSession.setActive(true);
+        sessionConnector = new MediaSessionConnector(mediaSession);
+        sessionConnector.setMetadataDeduplicationEnabled(true);
 
         mediaBrowserPlaybackPreparer = new MediaBrowserPlaybackPreparer(
                 this,
-                this::setSessionError,
-                () -> setSessionError(null, 0),
+                sessionConnector::setCustomErrorMessage,
+                () -> sessionConnector.setCustomErrorMessage(null),
                 (playWhenReady) -> {
                     if (player != null) {
                         player.onPrepare();
                     }
                 }
         );
-        mediaSession.setCallback(new MediaSessionCompat.Callback() {
-            @Override
-            public void onPrepare() {
-                mediaBrowserPlaybackPreparer.onPrepare(false);
-            }
-
-            @Override
-            public void onPlayFromMediaId(final String mediaId, final Bundle extras) {
-                mediaBrowserPlaybackPreparer.onPrepareFromMediaId(mediaId, true, extras);
-            }
-
-            @Override
-            public void onPrepareFromMediaId(final String mediaId, final Bundle extras) {
-                mediaBrowserPlaybackPreparer.onPrepareFromMediaId(mediaId, false, extras);
-            }
-
-            @Override
-            public void onPlayFromSearch(final String query, final Bundle extras) {
-                mediaBrowserPlaybackPreparer.onPrepareFromSearch(query, true, extras);
-            }
-
-            @Override
-            public void onPlayFromUri(final Uri uri, final Bundle extras) {
-                mediaBrowserPlaybackPreparer.onPrepareFromUri(uri, true, extras);
-            }
-        });
+        sessionConnector.setPlaybackPreparer(mediaBrowserPlaybackPreparer);
     }
 
     private void createView() {
@@ -324,17 +300,6 @@ public final class PlayerServiceForAuto extends MediaBrowserServiceCompat implem
     @Nullable
     public Player getPlayer() {
         return player;
-    }
-
-    private void setSessionError(@Nullable final String message, final int code) {
-        final PlaybackStateCompat.Builder builder = new PlaybackStateCompat.Builder()
-                .setActions(PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID);
-        if (message != null) {
-            builder.setState(PlaybackStateCompat.STATE_ERROR, 0, 1).setErrorMessage(code, message);
-        } else {
-            builder.setState(PlaybackStateCompat.STATE_NONE, 0, 1);
-        }
-        mediaSession.setPlaybackState(builder.build());
     }
 
     /**

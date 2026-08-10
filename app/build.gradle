@@ -165,7 +165,7 @@ ext {
     androidxRoomVersion = '2.8.4'
     androidxWorkVersion = '2.11.2'
 
-    media3Version = '1.10.1'
+    exoPlayerVersion = '2.18.7'
     googleAutoServiceVersion = '1.1.1'
     groupieVersion = '2.10.1'
     markwonVersion = '4.6.2'
@@ -230,14 +230,8 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:5.4.0"
 
     // Media player
-    implementation "androidx.media3:media3-exoplayer:${media3Version}"
-    implementation "androidx.media3:media3-exoplayer-dash:${media3Version}"
-    implementation "androidx.media3:media3-exoplayer-hls:${media3Version}"
-    implementation "androidx.media3:media3-exoplayer-smoothstreaming:${media3Version}"
-    implementation "androidx.media3:media3-datasource:${media3Version}"
-    implementation "androidx.media3:media3-ui:${media3Version}"
-    implementation "androidx.media3:media3-session:${media3Version}"
-    implementation "androidx.media3:media3-common:${media3Version}"
+    implementation "com.google.android.exoplayer:exoplayer:${exoPlayerVersion}"
+    implementation "com.google.android.exoplayer:extension-mediasession:${exoPlayerVersion}"
 
     // Metadata generator for service descriptors
     compileOnly "com.google.auto.service:auto-service-annotations:${googleAutoServiceVersion}"

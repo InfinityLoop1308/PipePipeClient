@@ -3,9 +3,11 @@ package org.schabi.newpipe.player.mediabrowser
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.os.ResultReceiver
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
-import org.schabi.newpipe.player.mediasession.PlaybackPreparer
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector.PlaybackPreparer
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
@@ -91,6 +93,15 @@ class MediaBrowserPlaybackPreparer(
 
     override fun onPrepareFromUri(uri: Uri, playWhenReady: Boolean, extras: Bundle?) {
         onUnsupportedError()
+    }
+
+    override fun onCommand(
+        player: Player,
+        command: String,
+        extras: Bundle?,
+        cb: ResultReceiver?
+    ): Boolean {
+        return false
     }
     //endregion
 
