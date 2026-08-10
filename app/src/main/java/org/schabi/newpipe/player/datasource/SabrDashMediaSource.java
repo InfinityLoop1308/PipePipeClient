@@ -416,8 +416,8 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
             }
             Log.d(TAG, "activeTracks video=" + spec.getVideoId()
                     + " video=" + videoActive + " audio=" + audioActive);
-            getOrCreateBridge().setSelectedFormats(currentAudio, currentVideo);
-            getOrCreateBridge().setActiveTracks(audioActive, videoActive);
+            getOrCreateBridge().setSelection(currentAudio, currentVideo,
+                    audioActive, videoActive);
             return videoActive || audioActive;
         }
 

@@ -19,8 +19,6 @@ import java.io.InputStream;
 /** Serves Media3's exact format/sequence demand from SABR responses. */
 public final class SabrSegmentDataSource implements DataSource {
     private static final String TAG = "SabrSegmentDataSource";
-    private static final long FETCH_TIMEOUT_MS = 30_000;
-
     private final SabrSourceSpec spec;
     private final SabrMediaBridge bridge;
 
@@ -137,7 +135,7 @@ public final class SabrSegmentDataSource implements DataSource {
                     + request.getFormat().getItag() + ", seq=" + request.getSequenceNumber());
         }
         try {
-            return bridge.awaitSegment(request, FETCH_TIMEOUT_MS);
+            return bridge.awaitSegment(request);
         } catch (final org.schabi.newpipe.extractor.exceptions.ExtractionException error) {
             throw new IOException("SABR segment extraction failed: " + error.getMessage(), error);
         }
