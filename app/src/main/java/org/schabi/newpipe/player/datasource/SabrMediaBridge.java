@@ -212,7 +212,10 @@ final class SabrMediaBridge {
                         failureToPublish = retryFailure;
                         throw retryFailure;
                     }
-                } catch (final IOException | ExtractionException | RuntimeException error) {
+                } catch (final IOException error) {
+                    if (!isLoadCancellation(error)) failureToPublish = error;
+                    throw error;
+                } catch (final ExtractionException | RuntimeException error) {
                     failureToPublish = error;
                     throw error;
                 }
@@ -339,6 +342,19 @@ final class SabrMediaBridge {
         if (deadlineNs - System.nanoTime() <= 0) {
             throw failureFactory.create("SABR request exceeded its budget");
         }
+    }
+
+    private static boolean isLoadCancellation(@NonNull final IOException error) {
+        if (Thread.currentThread().isInterrupted()) return true;
+        Throwable cause = error;
+        while (cause != null) {
+            if (cause instanceof InterruptedException
+                    || cause.getClass() == InterruptedIOException.class) {
+                return true;
+            }
+            cause = cause.getCause();
+        }
+        return false;
     }
 
     @NonNull

@@ -652,6 +652,9 @@ public final class SabrPlaybackSmokeTest {
                     throw new InterruptedIOException("Interrupted while reading UMP stream");
                 }
             });
+            harness.downloader.enqueue(new UmpFixture()
+                    .segment(2, SMOKE_VIDEO_ITAG, 2, 30_000, 5_000)
+                    .bytes());
 
             final SabrSegmentKey request =
                     SabrSegmentKey.media(harness.videoFormat, 2);
@@ -687,6 +690,7 @@ public final class SabrPlaybackSmokeTest {
                     failure.get() instanceof IOException);
             assertTrue("Interrupted UMP read failed the shared SABR session: " + trace,
                     !trace.contains("terminal_failure"));
+            harness.openMediaSegment(request, 1_500);
         }
     }
 
