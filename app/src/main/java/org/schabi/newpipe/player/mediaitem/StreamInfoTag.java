@@ -1,6 +1,6 @@
 package org.schabi.newpipe.player.mediaitem;
 
-import androidx.media3.common.MediaItem;
+import com.google.android.exoplayer2.MediaItem;
 
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamType;

@@ -18,16 +18,16 @@ import android.service.notification.StatusBarNotification;
 import android.view.Surface;
 import android.view.accessibility.AccessibilityEvent;
 
-import androidx.media3.common.C;
-import androidx.media3.common.MediaItem;
-import androidx.media3.common.PlaybackException;
-import androidx.media3.common.Player;
-import androidx.media3.datasource.DataSpec;
-import androidx.media3.exoplayer.ExoPlayer;
-import androidx.media3.exoplayer.analytics.AnalyticsListener;
-import androidx.media3.exoplayer.source.MediaSource;
-import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
-import androidx.media3.exoplayer.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.PlaybackException;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.upstream.DataSpec;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.analytics.AnalyticsListener;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -61,7 +61,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.player.PlaybackStartupTrace;
 import org.schabi.newpipe.player.SabrBackoffCoordinator;
-import org.schabi.newpipe.player.helper.LegacySubtitleRenderersFactory;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import org.schabi.newpipe.player.helper.LoadController;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.player.resolver.AudioPlaybackResolver;
@@ -1285,8 +1285,8 @@ public final class SabrPlaybackSmokeTest {
         InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
             final SurfaceTexture texture = new SurfaceTexture(0);
             final Surface surface = new Surface(texture);
-            final LegacySubtitleRenderersFactory renderersFactory =
-                    new LegacySubtitleRenderersFactory(context);
+            final DefaultRenderersFactory renderersFactory =
+                    new DefaultRenderersFactory(context);
             renderersFactory.setEnableDecoderFallback(true);
             final ExoPlayer player = new ExoPlayer.Builder(context, renderersFactory)
                     .setTrackSelector(new DefaultTrackSelector(context))

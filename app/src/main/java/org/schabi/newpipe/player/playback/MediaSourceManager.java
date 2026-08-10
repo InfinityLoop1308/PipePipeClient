@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.collection.ArraySet;
 
-import androidx.media3.exoplayer.source.MediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -482,7 +482,7 @@ public class MediaSourceManager {
 
     /**
      * Checks if the corresponding MediaSource in
-     * {@link androidx.media3.exoplayer.source.ConcatenatingMediaSource}
+     * {@link com.google.android.exoplayer2.source.ConcatenatingMediaSource}
      * for a given {@link PlayQueueItem} needs replacement, either due to gapless playback
      * readiness or playlist desynchronization.
      * <p>

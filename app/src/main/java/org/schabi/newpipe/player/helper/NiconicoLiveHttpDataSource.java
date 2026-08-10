@@ -2,10 +2,10 @@ package org.schabi.newpipe.player.helper;
 
 import androidx.annotation.Nullable;
 
-import androidx.media3.datasource.DataSpec;
-import androidx.media3.datasource.DefaultHttpDataSource;
-import androidx.media3.datasource.HttpDataSource;
-import androidx.media3.datasource.TransferListener;
+import com.google.android.exoplayer2.upstream.DataSpec;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import com.google.android.exoplayer2.upstream.HttpDataSource;
+import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.common.base.Predicate;
 
 import java.util.HashMap;

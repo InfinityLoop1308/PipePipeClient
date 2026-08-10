@@ -14,20 +14,20 @@ import android.view.Surface;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.media3.common.C;
-import androidx.media3.common.Format;
-import androidx.media3.common.PlaybackException;
-import androidx.media3.common.Player;
-import androidx.media3.datasource.DataSource;
-import androidx.media3.datasource.DataSpec;
-import androidx.media3.datasource.TransferListener;
-import androidx.media3.exoplayer.DecoderReuseEvaluation;
-import androidx.media3.exoplayer.ExoPlayer;
-import androidx.media3.exoplayer.analytics.AnalyticsListener;
-import androidx.media3.exoplayer.source.LoadEventInfo;
-import androidx.media3.exoplayer.source.MediaLoadData;
-import androidx.media3.exoplayer.source.MediaSource;
-import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.PlaybackException;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DataSpec;
+import com.google.android.exoplayer2.upstream.TransferListener;
+import com.google.android.exoplayer2.decoder.DecoderReuseEvaluation;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.analytics.AnalyticsListener;
+import com.google.android.exoplayer2.source.LoadEventInfo;
+import com.google.android.exoplayer2.source.MediaLoadData;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -47,7 +47,7 @@ import org.schabi.newpipe.extractor.stream.DeliveryMethod;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.player.datasource.SabrSessionHelper;
-import org.schabi.newpipe.player.helper.LegacySubtitleRenderersFactory;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import org.schabi.newpipe.player.helper.LoadController;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.player.resolver.QualityResolver;
@@ -297,8 +297,8 @@ public final class YoutubePlaybackBenchmarkTest {
         InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
             final SurfaceTexture texture = new SurfaceTexture(0);
             final Surface surface = new Surface(texture);
-            final LegacySubtitleRenderersFactory renderers =
-                    new LegacySubtitleRenderersFactory(context);
+            final DefaultRenderersFactory renderers =
+                    new DefaultRenderersFactory(context);
             renderers.setEnableDecoderFallback(true);
             final ExoPlayer player = new ExoPlayer.Builder(context, renderers)
                     .setTrackSelector(new DefaultTrackSelector(context))
@@ -397,12 +397,11 @@ public final class YoutubePlaybackBenchmarkTest {
                 @Override
                 public void onLoadStarted(final EventTime eventTime,
                                           final LoadEventInfo loadEventInfo,
-                                          final MediaLoadData mediaLoadData,
-                                          final int retryCount) {
+                                          final MediaLoadData mediaLoadData) {
                     loadEventCount.incrementAndGet();
                     if (diagnosticDetails) {
                         loadEvents.add(loadEvent(prepareNs, "start", loadEventInfo,
-                                mediaLoadData, "retry=" + retryCount));
+                                mediaLoadData, ""));
                     }
                 }
 
