@@ -498,7 +498,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                 .setCustomCacheKey(cacheKey)
                 .build();
         return new SabrDashMediaSource(App.getApp(), mediaItem, spec, dataSource,
-                Math.max(0, initialPositionMs));
+                initialPositionMs);
     }
 
     @Nullable

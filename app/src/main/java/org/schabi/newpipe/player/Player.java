@@ -4130,7 +4130,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         PlaybackStartupTrace.mark(startupTraceId, "resolver_started");
         final long initialPositionMs = shouldSeek()
                 && item.getRecoveryPosition() != PlayQueueItem.RECOVERY_UNSET
-                ? Math.max(0, item.getRecoveryPosition()) : 0;
+                ? item.getRecoveryPosition() : 0;
         final MediaSource resolved;
         if (audioPlayerSelected()) {
             resolved = Optional.ofNullable(audioResolver.resolve(info))

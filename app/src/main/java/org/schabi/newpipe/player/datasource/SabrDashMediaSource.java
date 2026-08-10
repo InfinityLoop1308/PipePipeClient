@@ -76,8 +76,7 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
             final SabrMediaBridge preparationBridge = getOrCreateBridge();
             if (!preparationBridge.hasTimelines()) {
                 try {
-                    final long bootstrapPositionMs = Math.max(0, initialPositionMs);
-                    preparationBridge.bootstrap(bootstrapPositionMs);
+                    preparationBridge.bootstrap(initialPositionMs);
                     preparationBridge.getInitializationData(
                             spec.getBootstrapAudioFormat());
                     preparationBridge.getInitializationData(
@@ -100,7 +99,7 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
             Log.d(TAG, "create source video=" + spec.getVideoId()
                     + " videoItag=" + spec.getBootstrapVideoFormat().getItag()
                     + " bootstrapAudioItag=" + spec.getBootstrapAudioFormat().getItag()
-                    + " initialPositionMs=" + Math.max(0, initialPositionMs));
+                    + " initialPositionMs=" + initialPositionMs);
         } catch (final IOException | RuntimeException | Error e) {
             throw e;
         }

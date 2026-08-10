@@ -75,6 +75,7 @@ public class VideoPlaybackResolver implements PlaybackResolver {
 
     @Nullable
     public MediaSource resolve(@NonNull final StreamInfo info, final long initialPositionMs) {
+        final long normalizedInitialPositionMs = Math.max(0, initialPositionMs);
         final MediaSource liveSource = PlaybackResolver.maybeBuildLiveMediaSource(dataSource, info);
         if (liveSource != null) {
             streamSourceType = SourceType.LIVE_STREAM;
@@ -151,7 +152,7 @@ public class VideoPlaybackResolver implements PlaybackResolver {
             try {
                 final MediaSource streamSource = PlaybackResolver.buildMediaSource(
                         dataSource, video, info, PlayerHelper.cacheKeyOf(info, video), tag,
-                        Math.max(0, initialPositionMs));
+                        normalizedInitialPositionMs);
                 mediaSources.add(streamSource);
             } catch (final IOException e) {
                 if (video.getDeliveryMethod()
