@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 /** Synchronously bridges one Media3 segment read to serialized SABR transactions. */
 final class SabrMediaBridge {
@@ -46,9 +47,12 @@ final class SabrMediaBridge {
     private final Map<YoutubeSabrInfo.Format, Integer> nextSequences =
             new ConcurrentHashMap<>();
     private final Deque<SabrSegmentKey> aheadOrder = new ArrayDeque<>();
-    private final Object requestLock = new Object();
+    private final Object stateLock = new Object();
 
     private volatile boolean stopped;
+    private boolean requestInFlight;
+    private long transactionGeneration;
+    @Nullable private Throwable terminalFailure;
     @Nullable private volatile Thread requestThread;
 
     SabrMediaBridge(@NonNull final Context context,
@@ -89,12 +93,12 @@ final class SabrMediaBridge {
         if (video != null) videoFormat = video;
     }
 
-    /** Sends and consumes one ordinary SABR response. */
-    YoutubeSabrSession.RequestResult fetchSegments(
+    @NonNull
+    private RequestContext playbackRequest(
             final long playerTimeMs,
             @NonNull final YoutubeSabrInfo.Format activeAudio,
             final boolean audioActive,
-            final boolean videoActive) throws IOException, ExtractionException {
+            final boolean videoActive) {
         final List<YoutubeSabrRequest.Track> tracks = new ArrayList<>(2);
         if (audioActive) {
             tracks.add(YoutubeSabrRequest.Track.of(activeAudio, audioTimeline,
@@ -104,53 +108,23 @@ final class SabrMediaBridge {
             tracks.add(YoutubeSabrRequest.Track.of(videoFormat, videoTimeline,
                     bufferedThrough(videoFormat)));
         }
-        return requestOnceWithAttestationRetry(
+        return new RequestContext(
                 YoutubeSabrRequest.playback(playerTimeMs, 1.0f, tracks), activeAudio);
-    }
-
-    private YoutubeSabrSession.RequestResult requestOnceWithAttestationRetry(
-            @NonNull final YoutubeSabrRequest request,
-            @Nullable final YoutubeSabrInfo.Format requestedAudio)
-            throws IOException, ExtractionException {
-        synchronized (requestLock) {
-            while (true) {
-                try {
-                    final YoutubeSabrSession.RequestResult result = session.requestOnce(
-                            request, segment -> {
-                                attestationRetryHandler.onMediaReceived();
-                                acceptSegment(segment, requestedAudio);
-                            });
-                    publishBackoff(result.getBackoffMs());
-                    return result;
-                } catch (final SabrAttestationException error) {
-                    attestationRetryHandler.prepareRetry(session, error);
-                }
-            }
-        }
     }
 
     /** Prepares timelines while retaining any media returned around the initial position. */
     void prepareTimelines(final long initialPositionMs) throws IOException, ExtractionException {
-        if (hasTimelines()) return;
-        final long deadlineNs = System.nanoTime()
-                + TimeUnit.MILLISECONDS.toNanos(PREPARATION_TIMEOUT_MS);
         final List<YoutubeSabrInfo.Format> preferredFormats = new ArrayList<>(2);
         preferredFormats.add(spec.getBootstrapAudioFormat());
         preferredFormats.add(spec.getBootstrapVideoFormat());
-        while (!stopped && System.nanoTime() < deadlineNs
-                && awaitBackoffWithinBudget(deadlineNs)) {
-            final YoutubeSabrSession.RequestResult result = requestOnceWithAttestationRetry(
-                    YoutubeSabrRequest.preparation(
-                            Math.max(0, initialPositionMs), preferredFormats),
-                    spec.getBootstrapAudioFormat());
-            if (hasTimelines()) return;
-            if (!result.isDeferred() && session.getBackoffRemainingMs() == 0) {
-                if (!sleepWithinBudget(deadlineNs, EMPTY_RESPONSE_RETRY_MS)) break;
-            }
-        }
-        throw new IOException("SABR timeline preparation failed: video=" + spec.getVideoId()
-                + ", playerMs=" + initialPositionMs
-                + ", trace=" + session.getDiagnosticTrace());
+        awaitResult(PREPARATION_TIMEOUT_MS,
+                () -> hasTimelines() ? Boolean.TRUE : null,
+                () -> new RequestContext(YoutubeSabrRequest.preparation(
+                        Math.max(0, initialPositionMs), preferredFormats),
+                        spec.getBootstrapAudioFormat()),
+                reason -> new IOException(reason + ": video=" + spec.getVideoId()
+                        + ", playerMs=" + initialPositionMs
+                        + ", trace=" + session.getDiagnosticTrace()));
     }
 
     void seedSegments(@NonNull final List<SabrMediaSegment> segments) {
@@ -171,47 +145,89 @@ final class SabrMediaBridge {
                                   final long timeoutMs,
                                   final long explicitPlayerTimeMs)
             throws IOException, ExtractionException {
-        final long deadlineNs = System.nanoTime()
-                + TimeUnit.MILLISECONDS.toNanos(Math.max(1, timeoutMs));
-        SabrMediaSegment segment = ahead.get(request);
-            if (segment != null) return segment;
-            nextSequences.put(request.getFormat(), request.getSequenceNumber());
-            synchronized (requestLock) {
-                requestThread = Thread.currentThread();
-                try {
-                    while (!stopped) {
-                        segment = ahead.get(request);
-                        if (segment != null) return segment;
-                        awaitBackoffWithinBudget(request, deadlineNs);
-                        if (stopped) throw new IOException("SABR bridge is stopped");
-                        final YoutubeSabrInfo.Format activeAudio = request.getFormat().isAudio()
-                                ? request.getFormat() : (currentAudioFormat == null
-                                ? spec.getBootstrapAudioFormat() : currentAudioFormat);
-                        final YoutubeSabrFormatTimeline requestTimeline =
-                                timelineFor(request.getFormat());
-                        final long playerTimeMs = explicitPlayerTimeMs != Long.MIN_VALUE
-                                ? Math.max(0, explicitPlayerTimeMs)
-                                : requestTimeline == null ? 0
-                                : Math.max(0, requestTimeline.getStartMs(
-                                request.getSequenceNumber()));
-                        final YoutubeSabrSession.RequestResult result = fetchSegments(
-                                playerTimeMs, activeAudio, audioActive, videoActive);
-                        if (result.isDeferred()) continue;
-                        segment = ahead.get(request);
-                        if (segment != null) return segment;
-                        ensureBudget(request, deadlineNs);
-                        if (result.getSegmentCount() == 0
-                                && session.getBackoffRemainingMs() == 0) {
-                            sleepWithinBudget(request, deadlineNs, EMPTY_RESPONSE_RETRY_MS);
-                        }
-                    }
-                    throw new IOException("SABR bridge is stopped");
-                } finally {
-                    requestThread = null;
-                }
-        }
+        final SabrMediaSegment segment = ahead.get(request);
+        if (segment != null) return segment;
+        nextSequences.put(request.getFormat(), request.getSequenceNumber());
+        return awaitResult(timeoutMs,
+                () -> ahead.get(request),
+                () -> {
+                    final YoutubeSabrInfo.Format activeAudio = request.getFormat().isAudio()
+                            ? request.getFormat() : (currentAudioFormat == null
+                            ? spec.getBootstrapAudioFormat() : currentAudioFormat);
+                    final YoutubeSabrFormatTimeline requestTimeline =
+                            timelineFor(request.getFormat());
+                    final long playerTimeMs = explicitPlayerTimeMs != Long.MIN_VALUE
+                            ? Math.max(0, explicitPlayerTimeMs)
+                            : requestTimeline == null ? 0
+                            : Math.max(0, requestTimeline.getStartMs(
+                            request.getSequenceNumber()));
+                    return playbackRequest(playerTimeMs, activeAudio,
+                            audioActive, videoActive);
+                },
+                reason -> timeout(request, reason));
     }
 
+    @NonNull
+    private <T> T awaitResult(final long timeoutMs,
+                              @NonNull final Supplier<T> resultSupplier,
+                              @NonNull final Supplier<RequestContext> requestSupplier,
+                              @NonNull final FailureFactory failureFactory)
+            throws IOException, ExtractionException {
+        final long deadlineNs = System.nanoTime()
+                + TimeUnit.MILLISECONDS.toNanos(Math.max(1, timeoutMs));
+        while (true) {
+            final T value = resultSupplier.get();
+            if (value != null) return value;
+            ensureBudget(deadlineNs, failureFactory);
+            synchronized (stateLock) {
+                final T synchronizedValue = resultSupplier.get();
+                if (synchronizedValue != null) return synchronizedValue;
+                throwIfStoppedOrFailed();
+                if (requestInFlight) {
+                    waitForTransaction(transactionGeneration, deadlineNs, failureFactory);
+                    continue;
+                }
+                requestInFlight = true;
+                requestThread = Thread.currentThread();
+            }
+
+            YoutubeSabrSession.RequestResult result = null;
+            Throwable failureToPublish = null;
+            try {
+                if (!awaitBackoffWithinBudget(deadlineNs)) {
+                    throw failureFactory.create(
+                            "SABR backoff cannot fit within the request budget");
+                }
+                ensureBudget(deadlineNs, failureFactory);
+                throwIfStoppedOrFailed();
+                try {
+                    final RequestContext context = requestSupplier.get();
+                    result = session.requestOnce(context.request, segment -> {
+                        attestationRetryHandler.onMediaReceived();
+                        acceptSegment(segment, context.requestedAudio);
+                    });
+                    publishBackoff(result.getBackoffMs());
+                } catch (final SabrAttestationException error) {
+                    try {
+                        attestationRetryHandler.prepareRetry(session, error);
+                    } catch (final ExtractionException retryFailure) {
+                        failureToPublish = retryFailure;
+                        throw retryFailure;
+                    }
+                } catch (final IOException | ExtractionException | RuntimeException error) {
+                    failureToPublish = error;
+                    throw error;
+                }
+                if (result != null && !result.isDeferred() && result.getSegmentCount() == 0
+                        && session.getBackoffRemainingMs() == 0
+                        && !sleepWithinBudget(deadlineNs, EMPTY_RESPONSE_RETRY_MS)) {
+                    throw failureFactory.create("SABR request exceeded its budget");
+                }
+            } finally {
+                completeTransaction(failureToPublish);
+            }
+        }
+    }
 
     void discard(@NonNull final SabrSegmentKey request) {
         final SabrMediaSegment segment = ahead.remove(request);
@@ -224,7 +240,11 @@ final class SabrMediaBridge {
     void stop() {
         stopped = true;
         SabrBackoffCoordinator.getInstance().clear(appContext, this);
-        final Thread current = requestThread;
+        final Thread current;
+        synchronized (stateLock) {
+            current = requestThread;
+            stateLock.notifyAll();
+        }
         if (current != null) current.interrupt();
         for (final SabrMediaSegment segment : ahead.values()) segment.delete();
         ahead.clear();
@@ -233,23 +253,67 @@ final class SabrMediaBridge {
         }
     }
 
-    private void awaitBackoffWithinBudget(@NonNull final SabrSegmentKey request,
-                                          final long deadlineNs) throws IOException {
-        if (!awaitBackoffWithinBudget(deadlineNs)) {
-            throw timeout(request, "SABR backoff cannot fit within the fetch budget");
+    private boolean awaitBackoffWithinBudget(final long deadlineNs) throws IOException {
+        while (true) {
+            final long serverBackoffMs = session.getBackoffRemainingMs();
+            publishBackoff(serverBackoffMs);
+            if (serverBackoffMs <= 0) return true;
+            if (TimeUnit.MILLISECONDS.toNanos(serverBackoffMs)
+                    >= deadlineNs - System.nanoTime()) {
+                return false;
+            }
+            sleep(serverBackoffMs);
         }
     }
 
-    private boolean awaitBackoffWithinBudget(final long deadlineNs) throws IOException {
-        while (true) {
-            final long backoffMs = session.getBackoffRemainingMs();
-            publishBackoff(backoffMs);
-            if (backoffMs <= 0) return true;
-            if (TimeUnit.MILLISECONDS.toNanos(backoffMs) >= deadlineNs - System.nanoTime()) {
-                return false;
+    private void waitForTransaction(final long observedGeneration,
+                                    final long deadlineNs,
+                                    @NonNull final FailureFactory failureFactory)
+            throws IOException, ExtractionException {
+        while (transactionGeneration == observedGeneration && !stopped
+                && terminalFailure == null) {
+            final long remainingNs = deadlineNs - System.nanoTime();
+            if (remainingNs <= 0) {
+                throw failureFactory.create("SABR request exceeded its budget");
             }
-            sleep(backoffMs);
+            try {
+                stateLock.wait(Math.max(1, TimeUnit.NANOSECONDS.toMillis(remainingNs)));
+            } catch (final InterruptedException error) {
+                Thread.currentThread().interrupt();
+                if (stopped) throw new IOException("SABR bridge is stopped", error);
+                final InterruptedIOException interrupted =
+                        new InterruptedIOException("Interrupted during SABR fetch");
+                interrupted.initCause(error);
+                throw interrupted;
+            }
         }
+        throwIfStoppedOrFailed();
+    }
+
+    private void completeTransaction(@Nullable final Throwable failure) {
+        synchronized (stateLock) {
+            if (failure != null && terminalFailure == null) {
+                terminalFailure = failure;
+            }
+            requestInFlight = false;
+            requestThread = null;
+            transactionGeneration++;
+            stateLock.notifyAll();
+        }
+    }
+
+    private void throwIfStoppedOrFailed() throws IOException, ExtractionException {
+        final Throwable failure;
+        synchronized (stateLock) {
+            if (stopped) throw new IOException("SABR bridge is stopped");
+            failure = terminalFailure;
+        }
+        if (failure == null) return;
+        if (failure instanceof IOException) throw (IOException) failure;
+        if (failure instanceof ExtractionException) throw (ExtractionException) failure;
+        if (failure instanceof RuntimeException) throw (RuntimeException) failure;
+        if (failure instanceof Error) throw (Error) failure;
+        throw new IOException("SABR request failed", failure);
     }
 
     private void publishBackoff(final long remainingMs) {
@@ -257,14 +321,6 @@ final class SabrMediaBridge {
             SabrBackoffCoordinator.getInstance().begin(appContext, this, remainingMs);
         } else {
             SabrBackoffCoordinator.getInstance().clear(appContext, this);
-        }
-    }
-
-    private void sleepWithinBudget(@NonNull final SabrSegmentKey request,
-                                   final long deadlineNs,
-                                   final long requestedMs) throws IOException {
-        if (!sleepWithinBudget(deadlineNs, requestedMs)) {
-            throw timeout(request, "SABR fetch exceeded its budget");
         }
     }
 
@@ -289,11 +345,12 @@ final class SabrMediaBridge {
         }
     }
 
-    private long ensureBudget(@NonNull final SabrSegmentKey request,
-                              final long deadlineNs) throws SabrLogicException {
-        final long remainingNs = deadlineNs - System.nanoTime();
-        if (remainingNs <= 0) throw timeout(request, "SABR fetch exceeded its budget");
-        return remainingNs;
+    private static void ensureBudget(final long deadlineNs,
+                                     @NonNull final FailureFactory failureFactory)
+            throws IOException {
+        if (deadlineNs - System.nanoTime() <= 0) {
+            throw failureFactory.create("SABR request exceeded its budget");
+        }
     }
 
     @NonNull
@@ -389,5 +446,22 @@ final class SabrMediaBridge {
             }
         }
         return xtags == null && matchingItags == 1 ? onlyMatchingItag : null;
+    }
+
+    private static final class RequestContext {
+        @NonNull private final YoutubeSabrRequest request;
+        @Nullable private final YoutubeSabrInfo.Format requestedAudio;
+
+        private RequestContext(@NonNull final YoutubeSabrRequest request,
+                               @Nullable final YoutubeSabrInfo.Format requestedAudio) {
+            this.request = request;
+            this.requestedAudio = requestedAudio;
+        }
+    }
+
+    @FunctionalInterface
+    private interface FailureFactory {
+        @NonNull
+        IOException create(@NonNull String reason);
     }
 }
