@@ -24,11 +24,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 /** Bridges Media3's segment demand to serialized SABR requests. */
 final class SabrMediaBridge {
     private static final int MAX_AHEAD_SEGMENTS = 64;
+    private static final long MAX_CONTINUOUS_BACKOFF_MS = 30_000;
     private static final long RETRY_DELAY_MS = 250;
 
     private final Context appContext;
@@ -44,6 +46,7 @@ final class SabrMediaBridge {
     @Nullable private volatile YoutubeSabrFormatTimeline audioTimeline;
     @Nullable private volatile YoutubeSabrFormatTimeline videoTimeline;
     private volatile boolean stopped;
+    private long backoffEpisodeDeadlineNs;
 
     SabrMediaBridge(@NonNull final Context context,
                     @NonNull final YoutubeSabrSession session,
@@ -158,6 +161,7 @@ final class SabrMediaBridge {
             attestationRetryHandler.prepareRetry(session, error);
             return;
         }
+        updateBackoffEpisode(result);
         publishBackoff(result.getBackoffMs());
         if (!result.isDeferred() && result.getSegmentCount() == 0
                 && session.getBackoffRemainingMs() == 0) {
@@ -170,8 +174,31 @@ final class SabrMediaBridge {
             final long remainingMs = session.getBackoffRemainingMs();
             publishBackoff(remainingMs);
             if (remainingMs <= 0) return;
+            throwIfBackoffBudgetExceeded(remainingMs);
             sleep(Math.min(remainingMs, RETRY_DELAY_MS));
             throwIfStopped();
+        }
+    }
+
+    private void updateBackoffEpisode(@NonNull final YoutubeSabrSession.RequestResult result)
+            throws IOException {
+        if (result.getSegmentCount() > 0) {
+            backoffEpisodeDeadlineNs = 0;
+        }
+        if (result.getBackoffMs() <= 0) return;
+        if (backoffEpisodeDeadlineNs == 0) {
+            backoffEpisodeDeadlineNs = System.nanoTime()
+                    + TimeUnit.MILLISECONDS.toNanos(MAX_CONTINUOUS_BACKOFF_MS);
+        }
+        throwIfBackoffBudgetExceeded(result.getBackoffMs());
+    }
+
+    private void throwIfBackoffBudgetExceeded(final long remainingMs) throws IOException {
+        if (backoffEpisodeDeadlineNs != 0
+                && TimeUnit.MILLISECONDS.toNanos(remainingMs)
+                >= backoffEpisodeDeadlineNs - System.nanoTime()) {
+            throw new IOException("SABR continuous backoff exceeded "
+                    + MAX_CONTINUOUS_BACKOFF_MS + "ms");
         }
     }
 
