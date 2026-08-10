@@ -110,7 +110,12 @@ final class SabrMediaBridge {
             final SabrMediaSegment cached = cachedSegment(key);
             if (cached != null) return cached;
 
-            lockTransaction();
+            if (!transactionLock.tryLock()) {
+                final SabrMediaSegment arrived = cachedSegment(key);
+                if (arrived != null) return arrived;
+                throw new SabrSegmentPendingException("SABR request in progress: itag="
+                        + key.getFormat().getItag() + ", seq=" + key.getSequenceNumber());
+            }
             try {
                 final SabrMediaSegment delivered = cachedSegment(key);
                 if (delivered != null) return delivered;
@@ -199,15 +204,6 @@ final class SabrMediaBridge {
                 >= backoffEpisodeDeadlineNs - System.nanoTime()) {
             throw new IOException("SABR continuous backoff exceeded "
                     + MAX_CONTINUOUS_BACKOFF_MS + "ms");
-        }
-    }
-
-    private void lockTransaction() throws InterruptedIOException {
-        try {
-            transactionLock.lockInterruptibly();
-        } catch (final InterruptedException error) {
-            Thread.currentThread().interrupt();
-            throw interrupted(error);
         }
     }
 

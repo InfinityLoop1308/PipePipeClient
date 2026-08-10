@@ -90,6 +90,7 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
             this.childSource = new DashMediaSource.Factory(
                     new DefaultDashChunkSource.Factory(sabrDataSourceFactory),
                     /* manifestDataSourceFactory= */ null)
+                    .setLoadErrorHandlingPolicy(new SabrLoadErrorHandlingPolicy())
                     .createMediaSource(manifest, mediaItem);
             Log.d(TAG, "create source video=" + spec.getVideoId()
                     + " videoItag=" + spec.getBootstrapVideoFormat().getItag()
