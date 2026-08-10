@@ -53,7 +53,6 @@ final class SabrMediaBridge {
     private boolean requestInFlight;
     private long transactionGeneration;
     @Nullable private Throwable terminalFailure;
-    @Nullable private volatile Thread requestThread;
 
     SabrMediaBridge(@NonNull final Context context,
                     @NonNull final YoutubeSabrSession session,
@@ -188,7 +187,6 @@ final class SabrMediaBridge {
                     continue;
                 }
                 requestInFlight = true;
-                requestThread = Thread.currentThread();
             }
 
             YoutubeSabrSession.RequestResult result = null;
@@ -240,17 +238,8 @@ final class SabrMediaBridge {
     void stop() {
         stopped = true;
         SabrBackoffCoordinator.getInstance().clear(appContext, this);
-        final Thread current;
-        synchronized (stateLock) {
-            current = requestThread;
-            stateLock.notifyAll();
-        }
-        if (current != null) current.interrupt();
         for (final SabrMediaSegment segment : ahead.values()) segment.delete();
         ahead.clear();
-        synchronized (aheadOrder) {
-            aheadOrder.clear();
-        }
     }
 
     private boolean awaitBackoffWithinBudget(final long deadlineNs) throws IOException {
@@ -296,7 +285,6 @@ final class SabrMediaBridge {
                 terminalFailure = failure;
             }
             requestInFlight = false;
-            requestThread = null;
             transactionGeneration++;
             stateLock.notifyAll();
         }
@@ -396,6 +384,11 @@ final class SabrMediaBridge {
         final SabrMediaSegment previous = ahead.putIfAbsent(key, segment);
         if (previous != null) {
             if (previous != segment) segment.delete();
+            return;
+        }
+        if (stopped) {
+            ahead.remove(key, segment);
+            segment.delete();
             return;
         }
         synchronized (aheadOrder) {
