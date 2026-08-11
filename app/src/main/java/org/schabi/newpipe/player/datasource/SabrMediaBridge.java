@@ -10,13 +10,12 @@ import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormatTimel
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrRequest;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
-import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrAttestationException;
 import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrMediaSegment;
 import org.schabi.newpipe.player.SabrBackoffCoordinator;
 import org.schabi.newpipe.youtube.SabrAttestationRetryHandler;
+import org.schabi.newpipe.youtube.SabrRequestCoordinator;
 
 import java.io.IOException;
-import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -24,19 +23,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BooleanSupplier;
 
 /** Bridges Media3's segment demand to serialized SABR requests. */
 final class SabrMediaBridge {
     private static final int MAX_AHEAD_SEGMENTS = 64;
-    private static final long MAX_CONTINUOUS_BACKOFF_MS = 30_000;
-    private static final long RETRY_DELAY_MS = 250;
 
     private final Context appContext;
-    private final YoutubeSabrSession session;
     private final SabrSourceSpec spec;
-    private final SabrAttestationRetryHandler attestationRetryHandler;
+    private final SabrRequestCoordinator requestCoordinator;
     private final ReentrantLock transactionLock = new ReentrantLock(true);
     private final Map<SabrSegmentKey, SabrMediaSegment> ahead = new LinkedHashMap<>();
     private final Map<YoutubeSabrInfo.Format, Integer> nextSequences =
@@ -46,15 +42,16 @@ final class SabrMediaBridge {
     @Nullable private volatile YoutubeSabrFormatTimeline audioTimeline;
     @Nullable private volatile YoutubeSabrFormatTimeline videoTimeline;
     private volatile boolean stopped;
-    private long backoffEpisodeDeadlineNs;
 
     SabrMediaBridge(@NonNull final Context context,
                     @NonNull final YoutubeSabrSession session,
                     @NonNull final SabrSourceSpec spec) {
         appContext = context.getApplicationContext();
-        this.session = session;
         this.spec = spec;
-        attestationRetryHandler = new SabrAttestationRetryHandler(spec.getVideoId());
+        requestCoordinator = new SabrRequestCoordinator(
+                session,
+                new SabrAttestationRetryHandler(spec.getVideoId()),
+                this::publishBackoff);
         selection = new Selection(spec.getBootstrapAudioFormat(),
                 spec.getBootstrapVideoFormat(), true, true);
     }
@@ -91,9 +88,8 @@ final class SabrMediaBridge {
         formats.add(spec.getBootstrapVideoFormat());
         final YoutubeSabrRequest request = YoutubeSabrRequest.preparation(
                 Math.max(0, initialPositionMs), formats);
-        while (!hasTimelines()) {
-            requestOnce(request, spec.getBootstrapAudioFormat());
-        }
+        requestOnce(request, spec.getBootstrapAudioFormat(),
+                () -> hasTimelines() || stopped);
     }
 
     void seedSegments(@NonNull final List<SabrMediaSegment> segments) {
@@ -154,57 +150,19 @@ final class SabrMediaBridge {
     private void requestOnce(@NonNull final YoutubeSabrRequest request,
                              @Nullable final YoutubeSabrInfo.Format requestedAudio)
             throws IOException, ExtractionException {
-        awaitBackoff();
         throwIfStopped();
-        final YoutubeSabrSession.RequestResult result;
-        try {
-            result = session.requestOnce(request, segment -> {
-                attestationRetryHandler.onMediaReceived();
-                acceptSegment(segment, requestedAudio);
-            });
-        } catch (final SabrAttestationException error) {
-            attestationRetryHandler.prepareRetry(session, error);
-            return;
-        }
-        updateBackoffEpisode(result);
-        publishBackoff(result.getBackoffMs());
-        if (!result.isDeferred() && result.getSegmentCount() == 0
-                && session.getBackoffRemainingMs() == 0) {
-            sleep(RETRY_DELAY_MS);
-        }
+        requestCoordinator.request(request,
+                segment -> acceptSegment(segment, requestedAudio));
     }
 
-    private void awaitBackoff() throws IOException {
-        while (true) {
-            final long remainingMs = session.getBackoffRemainingMs();
-            publishBackoff(remainingMs);
-            if (remainingMs <= 0) return;
-            throwIfBackoffBudgetExceeded(remainingMs);
-            sleep(Math.min(remainingMs, RETRY_DELAY_MS));
-            throwIfStopped();
-        }
-    }
-
-    private void updateBackoffEpisode(@NonNull final YoutubeSabrSession.RequestResult result)
-            throws IOException {
-        if (result.getSegmentCount() > 0) {
-            backoffEpisodeDeadlineNs = 0;
-        }
-        if (result.getBackoffMs() <= 0) return;
-        if (backoffEpisodeDeadlineNs == 0) {
-            backoffEpisodeDeadlineNs = System.nanoTime()
-                    + TimeUnit.MILLISECONDS.toNanos(MAX_CONTINUOUS_BACKOFF_MS);
-        }
-        throwIfBackoffBudgetExceeded(result.getBackoffMs());
-    }
-
-    private void throwIfBackoffBudgetExceeded(final long remainingMs) throws IOException {
-        if (backoffEpisodeDeadlineNs != 0
-                && TimeUnit.MILLISECONDS.toNanos(remainingMs)
-                >= backoffEpisodeDeadlineNs - System.nanoTime()) {
-            throw new IOException("SABR continuous backoff exceeded "
-                    + MAX_CONTINUOUS_BACKOFF_MS + "ms");
-        }
+    private void requestOnce(@NonNull final YoutubeSabrRequest request,
+                             @Nullable final YoutubeSabrInfo.Format requestedAudio,
+                             @NonNull final BooleanSupplier progressChecker)
+            throws IOException, ExtractionException {
+        throwIfStopped();
+        requestCoordinator.request(request,
+                segment -> acceptSegment(segment, requestedAudio),
+                progressChecker);
     }
 
     void discard(@NonNull final SabrSegmentKey key) {
@@ -234,23 +192,6 @@ final class SabrMediaBridge {
 
     private void throwIfStopped() throws IOException {
         if (stopped) throw new IOException("SABR bridge is stopped");
-    }
-
-    private static void sleep(final long milliseconds) throws InterruptedIOException {
-        try {
-            Thread.sleep(milliseconds);
-        } catch (final InterruptedException error) {
-            Thread.currentThread().interrupt();
-            throw interrupted(error);
-        }
-    }
-
-    @NonNull
-    private static InterruptedIOException interrupted(@NonNull final InterruptedException cause) {
-        final InterruptedIOException error =
-                new InterruptedIOException("Interrupted during SABR fetch");
-        error.initCause(cause);
-        return error;
     }
 
     private void acceptSegment(@NonNull final SabrMediaSegment segment,

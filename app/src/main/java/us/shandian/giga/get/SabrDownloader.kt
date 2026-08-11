@@ -1,22 +1,21 @@
 package us.shandian.giga.get
 
-import android.util.Log
-import org.schabi.newpipe.BuildConfig
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrProtocolException
-import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrRecoverableException
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrRequest
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
-import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrRequestHelper
-import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrAttestationException
 import org.schabi.newpipe.youtube.SabrAttestationRetryHandler
+import org.schabi.newpipe.youtube.SabrRequestCoordinator
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InterruptedIOException
 import java.io.RandomAccessFile
 import java.net.ConnectException
+import java.net.SocketException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import java.util.function.BooleanSupplier
 
 internal class SabrDownloader(
     private val mission: DownloadMission,
@@ -38,39 +37,10 @@ internal class SabrDownloader(
                 ?: 0L
             prepareMission(expectedLength)
             val attestationRetryHandler = SabrAttestationRetryHandler(info.videoId)
-            var coldStartAttempts = 0
-            var transientAttempts = 0
-            while (true) {
-                try {
-                    runSessionAttempt(info, recoveries, attestationRetryHandler)
-                    break
-                } catch (error: RetryColdStartException) {
-                    coldStartAttempts++
-                    if (coldStartAttempts > MAX_COLD_START_RETRIES) {
-                        throw SabrDownloadException(
-                            SabrDownloadException.Reason.INITIALIZATION,
-                            "SABR download failed: cold start did not provide initialization",
-                            error,
-                        )
-                    }
-                    logDebug("retry cold start attempt=$coldStartAttempts")
-                } catch (error: Exception) {
-                    if (!isRetryableAttemptFailure(error)) {
-                        throw error
-                    }
-                    if (transientAttempts >= MAX_TRANSIENT_RETRIES) {
-                        throw SabrDownloadException(
-                            SabrDownloadException.Reason.NETWORK,
-                            "SABR download failed: network error after retries",
-                            error,
-                        )
-                    }
-                    transientAttempts++
-                    logDebug("retry transient attempt=$transientAttempts error=${error.javaClass.simpleName}")
-                    Thread.sleep(transientRetryDelayMs(transientAttempts))
-                }
-            }
+            runSessionAttempt(info, recoveries, attestationRetryHandler)
         } catch (error: InterruptedException) {
+            Thread.currentThread().interrupt()
+        } catch (error: InterruptedIOException) {
             Thread.currentThread().interrupt()
         } catch (error: SabrProtocolException) {
             notifyErrorAndCleanup(classifyProtocolException(error))
@@ -108,12 +78,15 @@ internal class SabrDownloader(
         }
 
         try {
-            downloadSegments(
+            val requestCoordinator = SabrRequestCoordinator(
                 session,
+                attestationRetryHandler,
+                null,
+            )
+            downloadSegments(
+                requestCoordinator,
                 targets,
                 SabrSegmentWriter(targets, outputs, ::reportBytesWritten),
-                poToken,
-                attestationRetryHandler,
             )
         } finally {
             outputs.values.forEach { output ->
@@ -269,24 +242,17 @@ internal class SabrDownloader(
 
     @Throws(IOException::class, InterruptedException::class)
     private fun downloadSegments(
-        session: YoutubeSabrSession,
+        requestCoordinator: SabrRequestCoordinator,
         targets: List<SabrDownloadTarget>,
         writer: SabrSegmentWriter,
-        poToken: ByteArray,
-        attestationRetryHandler: SabrAttestationRetryHandler,
     ) {
         writer.observeWrittenInitializations()
-        prepareInitializations(session, targets, writer, poToken, attestationRetryHandler)
+        prepareInitializations(requestCoordinator, targets, writer)
         writer.observeWrittenInitializations()
 
         var noProgressResponses = 0
         while (true) {
             ensureRunning()
-            val backoffRemainingMs = session.backoffRemainingMs
-            if (backoffRemainingMs > 0) {
-                Thread.sleep(backoffRemainingMs)
-                ensureRunning()
-            }
             writer.observeWrittenInitializations()
             if (isDownloadComplete(targets)) {
                 break
@@ -312,17 +278,11 @@ internal class SabrDownloader(
                 },
             )
             val sequencesBeforeRequest = targets.map { it.nextWriteSequence }
-            val requestResult = requestWithAttestationRetry(session, attestationRetryHandler) {
-                session.requestOnce(
-                    YoutubeSabrRequest.playback(playerTimeMs, 1.0f, tracks),
-                ) { segment ->
-                    attestationRetryHandler.onMediaReceived()
-                    writer.acceptSegment(segment)
-                }
-            }
-            if (requestResult.isDeferred) {
-                continue
-            }
+            requestWithNetworkRetry(
+                requestCoordinator,
+                YoutubeSabrRequest.playback(playerTimeMs, 1.0f, tracks),
+                writer,
+            )
             writer.observeWrittenInitializations()
             if (isDownloadComplete(targets)) {
                 break
@@ -341,76 +301,76 @@ internal class SabrDownloader(
                             "$MAX_NO_PROGRESS_RESPONSES responses",
                     )
                 }
-                if (session.backoffRemainingMs <= 0) {
-                    Thread.sleep(IDLE_POLL_MS)
-                }
+                Thread.sleep(IDLE_POLL_MS)
             }
         }
     }
 
     @Throws(IOException::class, InterruptedException::class)
     private fun prepareInitializations(
-        session: YoutubeSabrSession,
+        requestCoordinator: SabrRequestCoordinator,
         targets: List<SabrDownloadTarget>,
         writer: SabrSegmentWriter,
-        poToken: ByteArray,
-        attestationRetryHandler: SabrAttestationRetryHandler,
     ) {
         val pendingTargets = targets.filterNot { it.initializationWritten }
         if (pendingTargets.isEmpty()) {
             return
         }
 
-        var adaptiveSucceeded = true
-        for (target in pendingTargets) {
-            ensureRunning()
+        ensureRunning()
+        requestWithNetworkRetry(
+            requestCoordinator,
+            YoutubeSabrRequest.preparation(0L, targets.map { it.format }),
+            writer,
+            { pendingTargets.all { it.initializationWritten } },
+        )
+        writer.observeWrittenInitializations()
+    }
+
+    @Throws(IOException::class, InterruptedException::class)
+    private fun requestWithNetworkRetry(
+        requestCoordinator: SabrRequestCoordinator,
+        request: YoutubeSabrRequest,
+        writer: SabrSegmentWriter,
+        progressChecker: BooleanSupplier? = null,
+    ) {
+        var attempts = 0
+        while (true) {
             try {
-                val data = YoutubeSabrRequestHelper.fetchInitializationData(
-                    target.format, poToken, 2_000)
-                writer.writeInitializationData(target, data)
-            } catch (_: IOException) {
-                adaptiveSucceeded = false
-                break
+                if (progressChecker != null) {
+                    requestCoordinator.request(
+                        request,
+                        { segment -> writer.acceptSegment(segment) },
+                        progressChecker,
+                    )
+                } else {
+                    requestCoordinator.request(request) { segment ->
+                        writer.acceptSegment(segment)
+                    }
+                }
+                return
+            } catch (error: IOException) {
+                if (!isRetryableNetworkError(error) || attempts >= MAX_REQUEST_NETWORK_RETRIES) {
+                    throw error
+                }
+                attempts++
+                Thread.sleep(REQUEST_NETWORK_RETRY_DELAY_MS)
+                ensureRunning()
             }
         }
-        if (!adaptiveSucceeded) {
-            ensureRunning()
-            requestWithAttestationRetry(session, attestationRetryHandler) {
-                val tracks = targets.map { target ->
-                    YoutubeSabrRequest.Track.of(target.format, null, 0)
-                }
-                session.requestOnce(
-                    YoutubeSabrRequest.playback(0L, 1.0f, tracks),
-                ) { segment ->
-                    attestationRetryHandler.onMediaReceived()
-                    writer.acceptSegment(segment)
-                }
-            }
-            writer.observeWrittenInitializations()
-        }
-        if (pendingTargets.any { !it.initializationWritten }) {
-            throw RetryColdStartException()
-        }
+    }
+
+    private fun isRetryableNetworkError(error: IOException): Boolean {
+        return error is SocketTimeoutException ||
+            error is ConnectException ||
+            error is UnknownHostException ||
+            error is SocketException
     }
 
     private fun downloadPlayerTimeMs(targets: List<SabrDownloadTarget>): Long {
         return targets.minOf { target ->
             if (target.nextWriteSequence <= 1) 0L
             else target.timeline?.getEndMs(target.nextWriteSequence - 1) ?: 0L
-        }
-    }
-
-    private inline fun requestWithAttestationRetry(
-        session: YoutubeSabrSession,
-        attestationRetryHandler: SabrAttestationRetryHandler,
-        request: () -> YoutubeSabrSession.RequestResult,
-    ): YoutubeSabrSession.RequestResult {
-        while (true) {
-            try {
-                return request()
-            } catch (error: SabrAttestationException) {
-                attestationRetryHandler.prepareRetry(session, error)
-            }
         }
     }
 
@@ -447,26 +407,6 @@ internal class SabrDownloader(
         }
     }
 
-    private fun isRetryableAttemptFailure(error: Exception): Boolean {
-        if (error is RetryColdStartException || error is SabrDownloadException) {
-            return false
-        }
-        if (error is SabrRecoverableException) {
-            return true
-        }
-        if (error is SabrProtocolException) {
-            return false
-        }
-        return error is SocketTimeoutException ||
-            error is ConnectException ||
-            error is UnknownHostException ||
-            error is IOException
-    }
-
-    private fun transientRetryDelayMs(attempt: Int): Long {
-        return (500L shl (attempt - 1)).coerceAtMost(MAX_TRANSIENT_RETRY_DELAY_MS)
-    }
-
     private fun classifyProtocolException(error: SabrProtocolException): SabrDownloadException {
         val message = error.message.orEmpty()
         val reason = when {
@@ -488,19 +428,11 @@ internal class SabrDownloader(
         )
     }
 
-    private fun logDebug(message: String) {
-        if (BuildConfig.DEBUG) {
-            Log.d(TAG, message)
-        }
-    }
-
     companion object {
-        private const val TAG = "SabrDownloader"
         private const val IDLE_POLL_MS = 250L
         private const val MAX_NO_PROGRESS_RESPONSES = 60
-        private const val MAX_COLD_START_RETRIES = 3
-        private const val MAX_TRANSIENT_RETRIES = 5
-        private const val MAX_TRANSIENT_RETRY_DELAY_MS = 5_000L
+        private const val MAX_REQUEST_NETWORK_RETRIES = 2
+        private const val REQUEST_NETWORK_RETRY_DELAY_MS = 1_000L
         private const val MAX_INITIALIZATION_BYTES = 16 * 1024 * 1024
 
         @JvmStatic
@@ -523,5 +455,4 @@ internal class SabrDownloader(
         }
     }
 
-    private class RetryColdStartException : IOException()
 }
