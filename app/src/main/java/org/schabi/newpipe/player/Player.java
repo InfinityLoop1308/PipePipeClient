@@ -1132,8 +1132,11 @@ public final class Player implements
     //region Player type specific setup
 
     private void initVideoPlayer() {
-        // restore last resize mode
-        setResizeMode(PlayerHelper.retrieveResizeModeFromPrefs(this));
+        // Pinch zoom owns video scaling while enabled; otherwise restore the regular display mode.
+        setResizeMode(PlayerHelper.isPinchToZoomEnabled(context)
+                ? AspectRatioFrameLayout.RESIZE_MODE_FIT
+                : PlayerHelper.retrieveResizeModeFromPrefs(this));
+        binding.surfaceView.resetPinchScale();
         binding.getRoot().setLayoutParams(new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
     }
@@ -3749,6 +3752,13 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
             Log.d(TAG, "Playback - onMetadataChanged() called, playing: " + info.getName());
         }
 
+        // Zoom belongs to the current video, matching the transient behavior of the official app.
+        resetPinchZoom();
+        if (PlayerHelper.isPinchToZoomEnabled(context)) {
+            forcedAspectRatio = 0.0f;
+            setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+        }
+
         // a forced aspect ratio is a per-video correction, don't carry it over to the next one;
         // it temporarily forced the resize mode to Fit, so restore the persisted resize mode
         if (forcedAspectRatio > 0) {
@@ -4858,7 +4868,9 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
      * resize mode, since selecting an aspect ratio is what the user sees applied.
      */
     private void updateDisplayModeButtonText() {
-        binding.resizeTextView.setText(forcedAspectRatio > 0
+        binding.resizeTextView.setText(PlayerHelper.isPinchToZoomEnabled(context)
+                ? getContext().getString(R.string.resize_pinch)
+                : forcedAspectRatio > 0
                 ? PlayerHelper.aspectRatioNameOf(forcedAspectRatio)
                 : PlayerHelper.resizeTypeOf(context, binding.surfaceView.getResizeMode()));
     }
@@ -4893,7 +4905,8 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         displayModePopupMenu.setOnDismissListener(this);
 
         // a forced aspect ratio takes precedence: when active, no resize mode is the "current" one
-        final boolean ratioActive = forcedAspectRatio > 0;
+        final boolean pinchActive = PlayerHelper.isPinchToZoomEnabled(context);
+        final boolean ratioActive = forcedAspectRatio > 0 && !pinchActive;
         final int currentResizeMode = binding.surfaceView.getResizeMode();
         MenuItem activeItem = null;
 
@@ -4908,11 +4921,22 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                 onResizeModeSelected(resizeMode);
                 return true;
             });
-            if (!ratioActive && resizeMode == currentResizeMode) {
+            if (!ratioActive && !pinchActive && resizeMode == currentResizeMode) {
                 activeItem = resizeItem;
             }
             order++;
         }
+
+        final MenuItem pinchItem = menu.add(POPUP_MENU_ID_DISPLAY_MODE, order, order,
+                R.string.resize_pinch);
+        pinchItem.setOnMenuItemClickListener(menuItem -> {
+            onPinchModeSelected();
+            return true;
+        });
+        if (pinchActive) {
+            activeItem = pinchItem;
+        }
+        order++;
 
         for (int i = 0; i < PlayerHelper.ASPECT_RATIO_VALUES.length; i++) {
             final float ratio = PlayerHelper.ASPECT_RATIO_VALUES[i];
@@ -4947,6 +4971,8 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     }
 
     private void onResizeModeSelected(@AspectRatioFrameLayout.ResizeMode final int resizeMode) {
+        PlayerHelper.setPinchToZoomEnabled(context, false);
+        resetPinchZoom();
         // a resize mode supersedes any forced aspect ratio, which would otherwise have no effect
         forcedAspectRatio = 0.0f;
         if (videoNaturalAspectRatio > 0) {
@@ -4957,6 +4983,8 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     }
 
     private void setForcedAspectRatio(final float aspectRatio) {
+        PlayerHelper.setPinchToZoomEnabled(context, false);
+        resetPinchZoom();
         forcedAspectRatio = aspectRatio;
         // a forced aspect ratio is only meaningful with Fit; this resize mode change is per-video
         // and is intentionally not persisted, so the saved resize mode is restored on the next video
@@ -4966,6 +4994,62 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         if (effectiveRatio > 0) {
             binding.surfaceView.setAspectRatio(effectiveRatio);
         }
+    }
+
+    public boolean isPinchToZoomEnabled() {
+        return isFullscreen && PlayerHelper.isPinchToZoomEnabled(context);
+    }
+
+    private void onPinchModeSelected() {
+        forcedAspectRatio = 0.0f;
+        PlayerHelper.setPinchToZoomEnabled(context, true);
+        if (videoNaturalAspectRatio > 0.0f) {
+            binding.surfaceView.setAspectRatio(videoNaturalAspectRatio);
+        }
+        setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+        resetPinchZoom();
+        updateDisplayModeButtonText();
+        Toast.makeText(context, R.string.pinch_to_zoom_selected, Toast.LENGTH_SHORT).show();
+    }
+
+    private void resetPinchZoom() {
+        binding.surfaceView.resetPinchScale();
+        binding.pinchZoomIndicator.animate().cancel();
+        binding.pinchZoomIndicator.setVisibility(View.GONE);
+    }
+
+    public void onPinchZoomStart(final float focusX, final float focusY) {
+        forcedAspectRatio = 0.0f;
+        if (videoNaturalAspectRatio > 0.0f) {
+            binding.surfaceView.setAspectRatio(videoNaturalAspectRatio);
+        }
+        setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+        binding.surfaceView.beginPinchGesture(
+                focusX - binding.surfaceView.getLeft(),
+                focusY - binding.surfaceView.getTop());
+        binding.pinchZoomIndicator.animate().cancel();
+        binding.pinchZoomIndicator.setAlpha(1.0f);
+        binding.pinchZoomIndicator.setText(String.format(Locale.US, "%.1f×",
+                binding.surfaceView.getPinchScale()));
+        binding.pinchZoomIndicator.setVisibility(View.VISIBLE);
+    }
+
+    public void onPinchZoom(final float scaleFactor, final float focusX, final float focusY) {
+        if (!Float.isFinite(scaleFactor)) {
+            return;
+        }
+        binding.surfaceView.setPinchScale(
+                binding.surfaceView.getPinchScale() * scaleFactor,
+                focusX - binding.surfaceView.getLeft(),
+                focusY - binding.surfaceView.getTop());
+        binding.pinchZoomIndicator.setText(String.format(Locale.US, "%.1f×",
+                binding.surfaceView.getPinchScale()));
+    }
+
+    public void onPinchZoomEnd() {
+        binding.pinchZoomIndicator.animate().cancel();
+        binding.pinchZoomIndicator.animate().alpha(0.0f).setStartDelay(250L).setDuration(180L)
+                .withEndAction(() -> binding.pinchZoomIndicator.setVisibility(View.GONE)).start();
     }
 
     private void openCustomAspectRatioDialog() {
@@ -5032,6 +5116,8 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         }
 
         isFullscreen = !isFullscreen;
+        // Pinch zoom is fullscreen-only and never survives either direction of the transition.
+        resetPinchZoom();
         if (!isFullscreen) {
             // Apply window insets because Android will not do it when orientation changes
             // from landscape to portrait (open vertical video to reproduce)

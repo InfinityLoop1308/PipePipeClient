@@ -17,6 +17,11 @@ public class ExpandableSurfaceView extends SurfaceView {
     private float videoAspectRatio = 0.0f;
     private float scaleX = 1.0f;
     private float scaleY = 1.0f;
+    private float pinchScale = 1.0f;
+    private float pinchTranslationX = 0.0f;
+    private float pinchTranslationY = 0.0f;
+    private float lastPinchFocusX = Float.NaN;
+    private float lastPinchFocusY = Float.NaN;
 
     public ExpandableSurfaceView(final Context context, final AttributeSet attrs) {
         super(context, attrs);
@@ -70,9 +75,18 @@ public class ExpandableSurfaceView extends SurfaceView {
     @Override
     protected void onLayout(final boolean changed,
                             final int left, final int top, final int right, final int bottom) {
-        // Defensive: never push a non-finite scale into the view (it throws and takes down layout).
-        setScaleX(Float.isFinite(scaleX) ? scaleX : 1.0f);
-        setScaleY(Float.isFinite(scaleY) ? scaleY : 1.0f);
+        applyScaleAndTranslation();
+    }
+
+    private void applyScaleAndTranslation() {
+        final float safePinchScale = Float.isFinite(pinchScale) ? pinchScale : 1.0f;
+        final boolean pinchActive = safePinchScale > 1.0f;
+        setPivotX(pinchActive ? 0.0f : getWidth() / 2.0f);
+        setPivotY(pinchActive ? 0.0f : getHeight() / 2.0f);
+        setScaleX((Float.isFinite(scaleX) ? scaleX : 1.0f) * safePinchScale);
+        setScaleY((Float.isFinite(scaleY) ? scaleY : 1.0f) * safePinchScale);
+        setTranslationX(pinchActive ? pinchTranslationX : 0.0f);
+        setTranslationY(pinchActive ? pinchTranslationY : 0.0f);
     }
 
     /**
@@ -100,6 +114,47 @@ public class ExpandableSurfaceView extends SurfaceView {
     @AspectRatioFrameLayout.ResizeMode
     public int getResizeMode() {
         return resizeMode;
+    }
+
+    public void beginPinchGesture(final float focusX, final float focusY) {
+        lastPinchFocusX = focusX;
+        lastPinchFocusY = focusY;
+    }
+
+    public void setPinchScale(final float newScale, final float focusX, final float focusY) {
+        final float oldScale = pinchScale;
+        pinchScale = Math.max(1.0f, Math.min(newScale, 8.0f));
+        final float scaleChange = pinchScale / oldScale;
+
+        if (Float.isFinite(lastPinchFocusX) && Float.isFinite(lastPinchFocusY)) {
+            // Keep the content that was under the fingers anchored while also following their
+            // midpoint. This avoids the inverted, jumpy motion caused by changing View pivots.
+            pinchTranslationX = focusX
+                    - (lastPinchFocusX - pinchTranslationX) * scaleChange;
+            pinchTranslationY = focusY
+                    - (lastPinchFocusY - pinchTranslationY) * scaleChange;
+        }
+        lastPinchFocusX = focusX;
+        lastPinchFocusY = focusY;
+
+        pinchTranslationX = Math.max(getWidth() * (1.0f - pinchScale),
+                Math.min(0.0f, pinchTranslationX));
+        pinchTranslationY = Math.max(getHeight() * (1.0f - pinchScale),
+                Math.min(0.0f, pinchTranslationY));
+        applyScaleAndTranslation();
+    }
+
+    public float getPinchScale() {
+        return pinchScale;
+    }
+
+    public void resetPinchScale() {
+        pinchScale = 1.0f;
+        pinchTranslationX = 0.0f;
+        pinchTranslationY = 0.0f;
+        lastPinchFocusX = Float.NaN;
+        lastPinchFocusY = Float.NaN;
+        applyScaleAndTranslation();
     }
 
     public void setAspectRatio(final float aspectRatio) {

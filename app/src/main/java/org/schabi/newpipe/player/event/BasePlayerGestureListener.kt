@@ -28,6 +28,29 @@ abstract class BasePlayerGestureListener(
     protected val service: Service
 ) : GestureDetector.SimpleOnGestureListener(), View.OnTouchListener {
 
+    private val scaleGestureDetector = ScaleGestureDetector(
+        service,
+        object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+            override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
+                if (!player.isPinchToZoomEnabled || player.popupPlayerSelected()) return false
+                isPinchingInMain = true
+                suppressMainGestureUntilUp = true
+                player.onPinchZoomStart(detector.focusX, detector.focusY)
+                return true
+            }
+
+            override fun onScale(detector: ScaleGestureDetector): Boolean {
+                player.onPinchZoom(detector.scaleFactor, detector.focusX, detector.focusY)
+                return true
+            }
+
+            override fun onScaleEnd(detector: ScaleGestureDetector) {
+                player.onPinchZoomEnd()
+                isPinchingInMain = false
+            }
+        }
+    )
+
     // ///////////////////////////////////////////////////////////////////
     // Abstract methods for VIDEO and POPUP
     // ///////////////////////////////////////////////////////////////////
@@ -59,6 +82,8 @@ abstract class BasePlayerGestureListener(
     private var initialPopupY: Int = -1
 
     private var isMovingInMain = false
+    private var isPinchingInMain = false
+    private var suppressMainGestureUntilUp = false
     private var isMovingInPopup = false
     private var isResizing = false
 
@@ -86,7 +111,26 @@ abstract class BasePlayerGestureListener(
     private var velocityTracker: VelocityTracker? = null
 
     private fun onTouchInMain(v: View, event: MotionEvent): Boolean {
-        player.gestureDetector.onTouchEvent(event)
+        if (player.isPinchToZoomEnabled &&
+            event.actionMasked == MotionEvent.ACTION_POINTER_DOWN
+        ) {
+            // GestureDetector does not receive multi-pointer events below, so explicitly cancel
+            // its pending long-press callback before it can enable speed-up during a pinch.
+            val cancelEvent = MotionEvent.obtain(event)
+            cancelEvent.action = MotionEvent.ACTION_CANCEL
+            player.gestureDetector.onTouchEvent(cancelEvent)
+            cancelEvent.recycle()
+            if (player.longPressSpeedingEnabled) {
+                player.playbackSpeed /= player.longPressSpeedingFactor
+                player.longPressSpeedingEnabled = false
+            }
+        }
+        if (player.isPinchToZoomEnabled) {
+            scaleGestureDetector.onTouchEvent(event)
+        }
+        if (!isPinchingInMain && !suppressMainGestureUntilUp && event.pointerCount == 1) {
+            player.gestureDetector.onTouchEvent(event)
+        }
 
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
@@ -95,6 +139,7 @@ abstract class BasePlayerGestureListener(
                 velocityTracker?.addMovement(event)
             }
             MotionEvent.ACTION_MOVE -> {
+                if (isPinchingInMain) return true
                 velocityTracker?.addMovement(event)
                 velocityTracker?.computeCurrentVelocity(1000)
                 val yVelocity = velocityTracker?.yVelocity ?: 0f
@@ -110,6 +155,15 @@ abstract class BasePlayerGestureListener(
                 v.parent.requestDisallowInterceptTouchEvent(false)
                 velocityTracker?.recycle()
                 velocityTracker = null
+
+                if (isPinchingInMain) {
+                    player.onPinchZoomEnd()
+                    isPinchingInMain = false
+                    suppressMainGestureUntilUp = false
+                    return true
+                }
+
+                suppressMainGestureUntilUp = false
 
                 if (isMovingInMain) {
                     isMovingInMain = false

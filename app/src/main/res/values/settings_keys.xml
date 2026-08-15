@@ -23,6 +23,7 @@
     <string name="volume_gesture_control_key">volume_gesture_control</string>
     <string name="brightness_gesture_control_key">brightness_gesture_control</string>
     <string name="fullscreen_gesture_control_key">fullscreen_gesture_control</string>
+    <string name="pinch_to_zoom_key">pinch_to_zoom</string>
     <string name="swipe_seek_gesture_control_key">swipe_seek_gesture_control</string>
     <string name="playback_speed_gesture_control_key">playback_speed_gesture_control</string>
     <string name="resume_on_audio_focus_gain_key">resume_on_audio_focus_gain</string>

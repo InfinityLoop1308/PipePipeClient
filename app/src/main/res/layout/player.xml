@@ -21,6 +21,22 @@
         android:layout_alignBottom="@+id/surfaceView"
         android:background="@android:color/black" />
 
+    <TextView
+        android:id="@+id/pinchZoomIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="48dp"
+        android:background="@drawable/background_rectangle_black_transparent"
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="3dp"
+        android:textColor="@android:color/white"
+        android:textSize="11sp"
+        android:visibility="gone"
+        tools:text="1.5×"
+        tools:visibility="visible" />
+
     <com.google.android.exoplayer2.ui.SubtitleView
         android:id="@+id/subtitleView"
         android:layout_width="match_parent"
