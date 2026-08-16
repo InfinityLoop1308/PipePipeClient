@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import org.schabi.newpipe.NewPipeDatabase;
 import org.schabi.newpipe.database.cache.dao.CachedStreamDAO;
 import org.schabi.newpipe.database.cache.model.CachedStreamEntity;
+import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.MediaFormat;
 import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockAction;
@@ -19,6 +20,7 @@ import org.schabi.newpipe.extractor.stream.Stream;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.extractor.stream.VideoStream;
+import org.schabi.newpipe.util.InfoCache;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -504,6 +506,11 @@ public final class CacheManager {
 
         deleteFilesFor(entity);
         dao(context).delete(entity);
+        // Playback seeds InfoCache with a StreamInfo whose streams point at the files we just
+        // deleted (see VideoDetailFragment#runWorker). Leaving it there would keep handing the
+        // player a file:// stream that no longer exists until the entry expired on its own.
+        InfoCache.getInstance().removeInfo(entity.getServiceId(), entity.getUrl(),
+                InfoItem.InfoType.STREAM);
         cacheChanges.onNext(
                 new CacheChangeEvent(entity.getServiceId(), entity.getUrl(), false));
     }

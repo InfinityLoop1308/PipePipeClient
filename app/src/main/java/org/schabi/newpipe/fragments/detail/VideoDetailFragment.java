@@ -1107,6 +1107,17 @@ public final class VideoDetailFragment
                                 "failed to build StreamInfo from cache for " + url, t))
                         .doOnSuccess(info -> {
                             playedFromCache = true;
+                            // The player does not use the StreamInfo we hand to handleResult():
+                            // MediaSourceManager re-resolves every queue item through
+                            // PlayQueueItem.getStream() -> ExtractorHelper.getStreamInfo(), which
+                            // only skips the network when InfoCache already holds the stream. So
+                            // without this the cached file was built, shown and then ignored - the
+                            // player extracted the page again and streamed from the network, and
+                            // with no connection playback failed outright. Seeding InfoCache with
+                            // the cached StreamInfo makes that lookup hit, so playback really does
+                            // come off disk and needs nothing from the internet.
+                            InfoCache.getInstance().putInfo(serviceId, url, info,
+                                    InfoItem.InfoType.STREAM);
                             CacheLogger.d(activity, "playback", "cached StreamInfo ready:"
                                     + " videoStreams=" + info.getVideoStreams().size()
                                     + " videoOnly=" + info.getVideoOnlyStreams().size()
