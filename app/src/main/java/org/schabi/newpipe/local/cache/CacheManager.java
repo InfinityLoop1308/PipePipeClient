@@ -22,6 +22,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.util.InfoCache;
+import org.schabi.newpipe.util.SecondaryStreamHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -456,10 +457,22 @@ public final class CacheManager {
         // Only pair a separate audio track with a video-only stream; a muxed video stream
         // already carries its own audio, and caching a second copy would just waste space.
         AudioStream audio = null;
-        if (!audios.isEmpty() && (video == null || video.isVideoOnly())) {
+        if (!audios.isEmpty() && video == null) {
             final int index = org.schabi.newpipe.util.ListHelper
                     .getDefaultAudioFormat(appContext, audios);
             audio = index >= 0 && index < audios.size() ? audios.get(index) : audios.get(0);
+        } else if (!audios.isEmpty() && video.isVideoOnly()) {
+            // The audio has to match the video, not merely be the preferred audio format: the
+            // muxer is chosen from the video's container, so handing an MP4 video an Opus/WebM
+            // track produces a mission that downloads both and then dies in post-processing
+            // ("expected ftyp"). This is the pairing the quality selector does - see CacheDialog.
+            final AudioStream secondary = SecondaryStreamHelper.getAudioStreamFor(
+                    appContext, SabrDownloadStreamHelper.audioStreamsForVideo(audios, video),
+                    video);
+            if (secondary != null
+                    && SabrDownloadStreamHelper.isCompatibleSecondaryStream(video, secondary)) {
+                audio = secondary;
+            }
         }
 
         if (video == null && audio == null) {
