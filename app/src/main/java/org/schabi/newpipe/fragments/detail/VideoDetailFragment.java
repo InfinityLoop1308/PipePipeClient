@@ -61,7 +61,6 @@ import org.schabi.newpipe.databinding.FragmentVideoDetailBinding;
 import org.schabi.newpipe.database.cache.model.CachedStreamEntity;
 import org.schabi.newpipe.download.DownloadDialog;
 import org.schabi.newpipe.local.cache.CacheDialog;
-import org.schabi.newpipe.local.cache.CacheLogger;
 import org.schabi.newpipe.local.cache.CacheManager;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
@@ -1092,18 +1091,8 @@ public final class VideoDetailFragment
         final Single<StreamInfo> streamInfoSingle = forceNetwork
                 ? ExtractorHelper.getStreamInfo(serviceId, url, true)
                 : CacheManager.findCompleteCachedStream(activity, serviceId, url)
-                        .doOnSuccess(entity -> CacheLogger.d(activity, "playback",
-                                "using cached entry for " + url
-                                        + " file=" + entity.getVideoFilePath()
-                                        + " audioFile=" + entity.getAudioFilePath()
-                                        + " format=" + entity.getVideoMediaFormatSuffix()
-                                        + " resolution=" + entity.getVideoResolution()
-                                        + " bytes=" + entity.getTotalSizeBytes()))
                         .map(CacheManager::buildStreamInfoFromCache)
-                        // Playback resolution happens downstream of this; without logging here a
-                        // failure to build a media source was completely invisible - the cache log
-                        // showed nothing at all for a playback attempt.
-                        .doOnError(t -> CacheLogger.e(activity, "playback",
+                        .doOnError(t -> Log.e(TAG,
                                 "failed to build StreamInfo from cache for " + url, t))
                         .doOnSuccess(info -> {
                             playedFromCache = true;
@@ -1118,10 +1107,6 @@ public final class VideoDetailFragment
                             // come off disk and needs nothing from the internet.
                             InfoCache.getInstance().putInfo(serviceId, url, info,
                                     InfoItem.InfoType.STREAM);
-                            CacheLogger.d(activity, "playback", "cached StreamInfo ready:"
-                                    + " videoStreams=" + info.getVideoStreams().size()
-                                    + " videoOnly=" + info.getVideoOnlyStreams().size()
-                                    + " audioStreams=" + info.getAudioStreams().size());
                         })
                         .switchIfEmpty(ExtractorHelper.getStreamInfo(serviceId, url, false)
                                 .toMaybe())
@@ -2124,8 +2109,6 @@ public final class VideoDetailFragment
             return;
         }
         final StreamInfo info = currentInfo;
-        CacheLogger.d(activity, "VideoDetailFragment",
-                "cache button tapped for url=" + info.getUrl());
         // Only a *finished* entry means "already cached, offer to remove it". An unfinished row
         // is the leftover of an attempt that failed or was interrupted, and tapping Cache on one
         // used to offer to delete it instead of retrying - which made a failed cache look
@@ -2137,9 +2120,6 @@ public final class VideoDetailFragment
                 .subscribe(
                         cached -> confirmRemoveFromCache(cached),
                         throwable -> {
-                            CacheLogger.e(activity, "VideoDetailFragment",
-                                    "failed to check cache state for url=" + info.getUrl(),
-                                    throwable);
                             ErrorUtil.showSnackbar(activity, new ErrorInfo(throwable,
                                     UserAction.REQUESTED_STREAM, "Checking offline cache", info));
                         },
@@ -2147,8 +2127,9 @@ public final class VideoDetailFragment
     }
 
     private void startCachingForOfflineViewing(@NonNull final StreamInfo info) {
-        // Let the user pick a quality, just like the download flow does. CacheDialog itself
-        // reports (and logs) the reason if this video has nothing cacheable at all.
+        // Let the user pick a quality, just like the download flow does - unless "Cache at the
+        // default quality" is on, in which case CacheDialog caches straight away. It also
+        // reports the reason if this video has nothing cacheable at all.
         CacheDialog.show(activity, info);
     }
 

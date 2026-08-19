@@ -1,8 +1,6 @@
 package org.schabi.newpipe.local.cache;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -89,19 +87,9 @@ public final class CacheActivity extends AppCompatActivity implements CachedStre
     }
 
     @Override
-    public boolean onCreateOptionsMenu(final Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_cache_activity, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
-        final int id = item.getItemId();
-        if (id == android.R.id.home) {
+        if (item.getItemId() == android.R.id.home) {
             onBackPressed();
-            return true;
-        } else if (id == R.id.menu_item_view_cache_log) {
-            startActivity(new Intent(this, CacheLogActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

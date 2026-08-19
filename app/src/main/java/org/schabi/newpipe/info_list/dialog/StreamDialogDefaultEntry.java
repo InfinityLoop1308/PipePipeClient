@@ -19,7 +19,6 @@ import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.download.DownloadDialog;
 import org.schabi.newpipe.local.cache.CacheDialog;
-import org.schabi.newpipe.local.cache.CacheLogger;
 import org.schabi.newpipe.local.cache.CacheManager;
 import org.schabi.newpipe.local.dialog.PlaylistAppendDialog;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
@@ -154,9 +153,6 @@ public enum StreamDialogDefaultEntry {
         final Context context = fragment.requireContext();
         final boolean cached = CacheManager.isCachedBlocking(
                 context, item.getServiceId(), item.getUrl());
-        CacheLogger.d(context, "StreamDialogDefaultEntry",
-                "context menu Cache/Uncache tapped for url=" + item.getUrl()
-                        + " currentlyCached=" + cached);
         if (cached) {
             // Complete entries only: an unfinished row is a failed attempt, and offering to
             // delete it rather than retry is what made a broken cache impossible to restart.

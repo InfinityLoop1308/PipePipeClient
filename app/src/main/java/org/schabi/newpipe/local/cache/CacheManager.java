@@ -1,6 +1,7 @@
 package org.schabi.newpipe.local.cache;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -48,6 +49,7 @@ import us.shandian.giga.postprocessing.Postprocessing;
  */
 public final class CacheManager {
 
+    private static final String TAG = "CacheManager";
     private static final String CACHE_DIR_NAME = "stream_cache";
 
     private CacheManager() {
@@ -294,13 +296,9 @@ public final class CacheManager {
                                        @Nullable final VideoStream video,
                                        @Nullable final AudioStream audio) {
         final Context appContext = context.getApplicationContext();
-        CacheLogger.d(appContext, "startCaching", "requested for serviceId=" + info.getServiceId()
-                + " url=" + info.getUrl() + " title=" + info.getName()
-                + " video=" + (video != null ? video.getResolution() : "none")
-                + " audio=" + (audio != null ? audio.getAverageBitrate() + "kbps" : "none"));
 
         if (video == null && audio == null) {
-            CacheLogger.w(appContext, "startCaching",
+            Log.w(TAG,
                     "nothing was selected for " + info.getUrl()
                             + " - available streams: " + describeStreams(info));
             return false;
@@ -465,7 +463,7 @@ public final class CacheManager {
         }
 
         if (video == null && audio == null) {
-            CacheLogger.w(appContext, "startCaching",
+            Log.w(TAG,
                     "no cacheable stream for " + info.getUrl()
                             + " - available streams: " + describeStreams(info));
             return false;
@@ -488,9 +486,6 @@ public final class CacheManager {
 
     public static void removeCache(@NonNull final Context context,
                                    @NonNull final CachedStreamEntity entity) {
-        CacheLogger.d(context, "removeCache", "removing serviceId=" + entity.getServiceId()
-                + " url=" + entity.getUrl() + " complete=" + entity.isComplete());
-
         // If it's still downloading, stop the mission first, otherwise it would keep running and
         // re-insert its row when it finished.
         final us.shandian.giga.get.DownloadMission mission =
@@ -499,7 +494,7 @@ public final class CacheManager {
             try {
                 mission.pause();
             } catch (final Exception e) {
-                CacheLogger.w(context, "removeCache", "could not stop running mission: " + e);
+                Log.w(TAG, "could not stop running mission: " + e);
             }
             reportProgress(entity.getServiceId(), entity.getUrl(), PROGRESS_FAILED);
         }
@@ -571,7 +566,7 @@ public final class CacheManager {
                     CACHED_KEYS.addAll(fresh);
                     snapshotReady = true;
                     cacheDataChanged.onNext(Boolean.TRUE);
-                }, throwable -> CacheLogger.e(appContext, "CacheManager",
+                }, throwable -> Log.e(TAG,
                         "failed to observe cached streams", throwable));
     }
 

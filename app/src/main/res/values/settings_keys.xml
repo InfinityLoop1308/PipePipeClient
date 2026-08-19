@@ -329,6 +329,10 @@
     <string name="feed_show_played_items_key">feed_show_played_items</string>
     <string name="feed_show_cached_only_key">feed_show_cached_only</string>
 
+    <!-- "Cache for offline viewing" (issue #2782) -->
+    <string name="cache_use_default_quality_key">cache_use_default_quality</string>
+    <string name="cache_auto_remove_after_watching_key">cache_auto_remove_after_watching</string>
+
     <string name="show_thumbnail_key">show_thumbnail_key</string>
 
     <!-- Values will be localized in runtime -->

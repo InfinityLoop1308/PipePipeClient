@@ -119,6 +119,7 @@ import org.schabi.newpipe.fragments.OnScrollBelowItemsListener;
 import org.schabi.newpipe.fragments.detail.VideoDetailFragment;
 import org.schabi.newpipe.info_list.StreamSegmentAdapter;
 import org.schabi.newpipe.ktx.AnimationType;
+import org.schabi.newpipe.local.cache.CacheManager;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.PlayerService.PlayerType;
@@ -177,6 +178,7 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.disposables.SerialDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public final class Player implements
         PlaybackListener,
@@ -3737,8 +3739,33 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
 
     public void saveStreamProgressStateCompleted() {
         // current stream has ended, so the progress is its duration (+1 to overcome rounding)
-        getCurrentStreamInfo().ifPresent(info ->
-                saveStreamProgressState((info.getDuration() + 1) * 1000));
+        getCurrentStreamInfo().ifPresent(info -> {
+            saveStreamProgressState((info.getDuration() + 1) * 1000);
+            removeFromOfflineCacheIfWatched(info);
+        });
+    }
+
+    /**
+     * "Uncache after watching" (Settings -> Downloads -> Caching): drops a stream from the
+     * offline cache as soon as it has played to the end, so a cached queue frees its space while
+     * it is watched instead of piling up until the user clears it by hand.
+     *
+     * <p>Skipped while repeating a single stream, since that same file is about to be played
+     * again. Only complete entries are touched: an unfinished row belongs to a download that is
+     * still running, and removing it would abort a cache the user just asked for.</p>
+     */
+    private void removeFromOfflineCacheIfWatched(@NonNull final StreamInfo info) {
+        if (getRepeatMode() == REPEAT_MODE_ONE
+                || !prefs.getBoolean(
+                        context.getString(R.string.cache_auto_remove_after_watching_key), false)) {
+            return;
+        }
+        databaseUpdateDisposable.add(
+                CacheManager.findCompleteCachedStream(context, info.getServiceId(), info.getUrl())
+                        .subscribeOn(Schedulers.io())
+                        .doOnSuccess(entity -> CacheManager.removeCache(context, entity))
+                        .onErrorComplete()
+                        .subscribe());
     }
     //endregion
 

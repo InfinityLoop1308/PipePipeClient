@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Parcelable;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -99,7 +100,7 @@ public final class CacheDownloadService extends Service {
             try {
                 work.run();
             } catch (final Throwable t) {
-                CacheLogger.e(this, TAG, "cache database write failed", t);
+                Log.e(TAG, "cache database write failed", t);
             }
         });
     }
@@ -141,14 +142,10 @@ public final class CacheDownloadService extends Service {
         intent.putExtra(EXTRA_MISSION_MIME, request.mimeType);
         intent.putExtra(EXTRA_NEAR_LENGTH, request.nearLength);
 
-        CacheLogger.d(context, TAG, "enqueue() url=" + request.url
-                + " kind=" + request.kind + " urls=" + request.urls.length
-                + " postProcessing=" + request.psName
-                + " delivery=" + java.util.Arrays.toString(request.resourceDeliveryMethods));
         try {
             ContextCompat.startForegroundService(context, intent);
         } catch (final Exception e) {
-            CacheLogger.e(context, TAG, "Failed to start CacheDownloadService for url="
+            Log.e(TAG, "Failed to start CacheDownloadService for url="
                     + request.url, e);
             CacheManager.reportProgress(request.serviceId, request.url,
                     CacheManager.PROGRESS_FAILED);
@@ -183,7 +180,6 @@ public final class CacheDownloadService extends Service {
         final String url = intent.getStringExtra(EXTRA_URL);
         final String title = intent.getStringExtra(EXTRA_TITLE);
         final int serviceId = intent.getIntExtra(EXTRA_SERVICE_ID, 0);
-        CacheLogger.d(this, TAG, "onStartCommand() url=" + url);
 
         startForeground(NOTIFICATION_ID, buildNotification(title, 0));
 
@@ -192,7 +188,7 @@ public final class CacheDownloadService extends Service {
         } catch (final Throwable t) {
             // Nothing may escape: an unhandled failure here used to leave the user with a
             // "caching started" toast and no further sign of anything at all.
-            CacheLogger.e(this, TAG, "Failed to start cache mission for url=" + url, t);
+            Log.e(TAG, "Failed to start cache mission for url=" + url, t);
             updateNotification(title, -1);
             if (url != null) {
                 CacheManager.reportProgress(serviceId, url, CacheManager.PROGRESS_FAILED);
@@ -278,7 +274,6 @@ public final class CacheDownloadService extends Service {
         CacheManager.registerRunningMission(serviceId, url, mission);
         CacheManager.cacheChanges.onNext(new CacheManager.CacheChangeEvent(serviceId, url, false));
 
-        CacheLogger.d(this, TAG, "starting mission -> " + target.getAbsolutePath());
         mission.start();
         scheduleProgressPoll();
     }
@@ -314,18 +309,13 @@ public final class CacheDownloadService extends Service {
         }
         final Intent intent = running.get(mission);
         if (intent == null) {
-            CacheLogger.w(this, TAG, "mission message " + describeMessage(what)
+            Log.w(TAG, "mission message " + describeMessage(what)
                     + " for an unknown mission - ignoring");
             return;
         }
         final String url = intent.getStringExtra(EXTRA_URL);
         final String title = intent.getStringExtra(EXTRA_TITLE);
         final int serviceId = intent.getIntExtra(EXTRA_SERVICE_ID, 0);
-        // Every mission message is logged: when a download appears to hang, knowing which of
-        // these did (or didn't) arrive is the difference between guessing and knowing.
-        CacheLogger.d(this, TAG, "mission message " + describeMessage(what)
-                + " done=" + mission.done + " length=" + mission.getLength()
-                + " psState=" + mission.psState + " url=" + url);
         stallWatch.remove(mission);
 
         switch (what) {
@@ -336,7 +326,7 @@ public final class CacheDownloadService extends Service {
                 break;
             case DownloadManagerService.MESSAGE_ERROR:
                 running.remove(mission);
-                CacheLogger.e(this, TAG, "cache mission failed for url=" + url
+                Log.e(TAG, "cache mission failed for url=" + url
                         + " errCode=" + mission.errCode
                         + " errObject=" + mission.errObject, mission.errObject);
                 deleteQuietly(mission.storage);
@@ -369,15 +359,13 @@ public final class CacheDownloadService extends Service {
                 "media." + (suffix != null ? suffix : "mp4"));
 
         if (!file.exists() || file.length() == 0) {
-            CacheLogger.e(this, TAG, "mission reported success but " + file.getAbsolutePath()
+            Log.e(TAG, "mission reported success but " + file.getAbsolutePath()
                     + " is missing or empty - refusing to record an unplayable cache entry", null);
             updateNotification(title, -1);
             CacheManager.reportProgress(serviceId, url, CacheManager.PROGRESS_FAILED);
             return;
         }
 
-        CacheLogger.d(this, TAG, "cached " + file.getAbsolutePath()
-                + " (" + file.length() + " bytes) for url=" + url);
         // Replaces the placeholder row inserted when the mission started (the table has a unique
         // index on service_id + url and the DAO inserts with OnConflictStrategy.REPLACE).
         final CachedStreamEntity finished = buildEntity(intent, file, true);
@@ -486,22 +474,8 @@ public final class CacheDownloadService extends Service {
             return;
         }
         if (mission.done != watch[0] || processing) {
-            final long previousDone = watch[0];
             watch[0] = mission.done;
             watch[1] = now;
-            // Heartbeat while bytes ARE flowing. Crucial for telling a real hang apart from a
-            // download that keeps running while the UI shows 99% - which is what happens when
-            // `done` overshoots the expected length, since the percentage is capped at 99.
-            if (now - watch[2] >= STALL_LOG_INTERVAL_MS) {
-                watch[2] = now;
-                CacheLogger.d(this, TAG, "progress " + percent + "%"
-                        + " done=" + mission.done + " (+" + (mission.done - previousDone) + ")"
-                        + " length=" + mission.getLength()
-                        + " nearLength=" + mission.nearLength
-                        + (mission.done > mission.getLength() ? " OVERSHOOTING-EXPECTED-LENGTH" : "")
-                        + " psState=" + mission.psState
-                        + " processing=" + processing);
-            }
             return;
         }
         final long stalledMs = now - watch[1];
@@ -529,14 +503,14 @@ public final class CacheDownloadService extends Service {
                 + " unknownLength=" + mission.unknownLength
                 + " initialized=" + mission.isInitialized()
                 + " finished=" + mission.isFinished();
-        CacheLogger.w(this, TAG, state);
+        Log.w(TAG, state);
 
         if (stalledMs >= abortAfterMs) {
             // Never leave a download hanging indefinitely: give up with a visible error so the
             // user can retry, instead of a percentage that sits there forever.
             final int serviceId = intent.getIntExtra(EXTRA_SERVICE_ID, 0);
             final String url = intent.getStringExtra(EXTRA_URL);
-            CacheLogger.e(this, TAG, "aborting stalled cache download - " + state, null);
+            Log.e(TAG, "aborting stalled cache download - " + state, null);
             running.remove(mission);
             stallWatch.remove(mission);
             try {
@@ -572,7 +546,7 @@ public final class CacheDownloadService extends Service {
                 storage.delete();
             }
         } catch (final Exception e) {
-            CacheLogger.w(this, TAG, "could not delete partial cache file: " + e);
+            Log.w(TAG, "could not delete partial cache file: " + e);
         }
     }
 

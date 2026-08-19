@@ -1,6 +1,8 @@
 package org.schabi.newpipe.local.cache;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.preference.PreferenceManager;
 
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.DialogCacheBinding;
@@ -48,13 +51,19 @@ public final class CacheDialog {
      * @return {@code true} if the dialog was shown.
      */
     public static boolean show(@NonNull final Context context, @NonNull final StreamInfo info) {
+        if (useDefaultQuality(context)) {
+            // "Cache at the default quality": no selector at all - CacheManager picks the same
+            // default resolution/format the selector would have pre-selected.
+            final boolean started = CacheManager.startCaching(context, info);
+            Toast.makeText(context,
+                    started ? R.string.cache_started : R.string.cache_failed_no_streams,
+                    started ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG).show();
+            return started;
+        }
+
         final List<VideoStream> videoStreams =
                 CacheManager.getCacheableVideoStreams(context, info);
         final List<AudioStream> audioStreams = CacheManager.getCacheableAudioStreams(info);
-
-        CacheLogger.d(context, TAG, "opening quality selector for " + info.getUrl()
-                + ": " + videoStreams.size() + " cacheable video / " + audioStreams.size()
-                + " cacheable audio stream(s); all streams: " + CacheManager.describeStreams(info));
 
         if (videoStreams.isEmpty() && audioStreams.isEmpty()) {
             Toast.makeText(context, R.string.cache_failed_no_streams, Toast.LENGTH_LONG).show();
@@ -119,6 +128,24 @@ public final class CacheDialog {
         }
         selectDefault(context, binding, startWithVideo, videoStreams, audioStreams);
 
+        // The same two options as Settings -> Downloads -> Caching, so they can be turned on
+        // from the place where their effect is obvious. They are written straight through to the
+        // preference, exactly as the settings switches do; "always use the default quality"
+        // therefore takes effect from the next time this dialog would have been shown.
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final String defaultQualityKey =
+                context.getString(R.string.cache_use_default_quality_key);
+        final String autoRemoveKey =
+                context.getString(R.string.cache_auto_remove_after_watching_key);
+
+        binding.cacheUseDefaultQuality.setChecked(prefs.getBoolean(defaultQualityKey, false));
+        binding.cacheUseDefaultQuality.setOnCheckedChangeListener((button, checked) ->
+                prefs.edit().putBoolean(defaultQualityKey, checked).apply());
+
+        binding.cacheAutoRemove.setChecked(prefs.getBoolean(autoRemoveKey, false));
+        binding.cacheAutoRemove.setOnCheckedChangeListener((button, checked) ->
+                prefs.edit().putBoolean(autoRemoveKey, checked).apply());
+
         binding.cacheKindGroup.setOnCheckedChangeListener((group, checkedId) -> {
             final boolean video = checkedId == R.id.cache_kind_video;
             if (video) {
@@ -149,13 +176,22 @@ public final class CacheDialog {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(ignored -> videoAdapter.notifyDataSetChanged(),
-                        e -> CacheLogger.e(context, TAG, "failed to fetch video stream sizes", e)));
+                        e -> Log.e(TAG, "failed to fetch video stream sizes", e)));
         disposables.add(StreamSizeWrapper.fetchSizeForWrapper(wrappedAudio)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(ignored -> audioAdapter.notifyDataSetChanged(),
-                        e -> CacheLogger.e(context, TAG, "failed to fetch audio stream sizes", e)));
+                        e -> Log.e(TAG, "failed to fetch audio stream sizes", e)));
         return true;
+    }
+
+    /**
+     * Whether "Cache at the default quality" (Settings -> Downloads -> Caching) is on, in which
+     * case {@link #show} caches immediately instead of asking.
+     */
+    private static boolean useDefaultQuality(@NonNull final Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(context.getString(R.string.cache_use_default_quality_key), false);
     }
 
     private static void showHint(@NonNull final DialogCacheBinding binding, final int stringRes) {
