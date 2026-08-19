@@ -29,6 +29,7 @@ data class PlaylistStreamEntry(
         item.uploaderName = streamEntity.uploader
         item.uploaderUrl = streamEntity.uploaderUrl
         item.thumbnailUrl = streamEntity.thumbnailUrl
+        item.setRequiresMembership(streamEntity.isPaid)
 
         return item
     }

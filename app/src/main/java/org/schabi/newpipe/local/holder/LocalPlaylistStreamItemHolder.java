@@ -66,7 +66,13 @@ public class LocalPlaylistStreamItemHolder extends LocalItemHolder {
                 .concatenateStrings(item.getStreamEntity().getUploader(),
                         NewPipe.getNameOfService(item.getStreamEntity().getServiceId())));
 
-        if (item.getStreamEntity().getDuration() > 0) {
+        if (item.getStreamEntity().isPaid()) {
+            itemDurationView.setText(R.string.paid_video);
+            itemDurationView.setBackgroundColor(ContextCompat.getColor(itemBuilder.getContext(),
+                    R.color.paid_video_background_color));
+            itemDurationView.setVisibility(View.VISIBLE);
+            itemProgressView.setVisibility(View.GONE);
+        } else if (item.getStreamEntity().getDuration() > 0) {
             itemDurationView.setText(Localization
                     .getDurationString(item.getStreamEntity().getDuration()));
             itemDurationView.setBackgroundColor(ContextCompat.getColor(itemBuilder.getContext(),
@@ -114,7 +120,9 @@ public class LocalPlaylistStreamItemHolder extends LocalItemHolder {
         }
         final PlaylistStreamEntry item = (PlaylistStreamEntry) localItem;
 
-        if (item.getProgressMillis() > 0 && item.getStreamEntity().getDuration() > 0) {
+        if (!item.getStreamEntity().isPaid()
+                && item.getProgressMillis() > 0
+                && item.getStreamEntity().getDuration() > 0) {
             itemProgressView.setMax((int) item.getStreamEntity().getDuration());
             if (itemProgressView.getVisibility() == View.VISIBLE) {
                 itemProgressView.setProgressAnimated((int) TimeUnit.MILLISECONDS

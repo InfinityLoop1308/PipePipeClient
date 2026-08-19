@@ -215,6 +215,30 @@ data class ComposeItemState(
     val isChannel: Boolean
 )
 
+internal data class PlaylistStreamPresentation(
+    val durationText: String?,
+    val showPaidBadge: Boolean,
+    val progress: Float?
+)
+
+internal fun buildPlaylistStreamPresentation(
+    isPaid: Boolean,
+    durationSeconds: Long,
+    progressMillis: Long,
+    durationText: String?,
+    paidText: String
+): PlaylistStreamPresentation {
+    return PlaylistStreamPresentation(
+        durationText = if (isPaid) paidText else durationText,
+        showPaidBadge = isPaid,
+        progress = if (!isPaid && progressMillis > 0 && durationSeconds > 0) {
+            TimeUnit.MILLISECONDS.toSeconds(progressMillis).toFloat() / durationSeconds.toFloat()
+        } else {
+            null
+        }
+    )
+}
+
 fun buildInfoItemState(
     context: Context,
     item: InfoItem,
@@ -321,6 +345,17 @@ fun buildLocalItemState(
     return when (item.localItemType) {
         LocalItem.LocalItemType.PLAYLIST_STREAM_ITEM -> {
             item as PlaylistStreamEntry
+            val presentation = buildPlaylistStreamPresentation(
+                isPaid = item.streamEntity.isPaid,
+                durationSeconds = item.streamEntity.duration,
+                progressMillis = item.progressMillis,
+                durationText = if (item.streamEntity.duration > 0) {
+                    Localization.getDurationString(item.streamEntity.duration)
+                } else {
+                    null
+                },
+                paidText = context.getString(R.string.paid_video)
+            )
             ComposeItemState(
                 title = item.streamEntity.title,
                 subtitle = null,
@@ -329,18 +364,10 @@ fun buildLocalItemState(
                     NewPipe.getNameOfService(item.streamEntity.serviceId)
                 ),
                 imageUrl = item.streamEntity.thumbnailUrl,
-                durationText = if (item.streamEntity.duration > 0) {
-                    Localization.getDurationString(item.streamEntity.duration)
-                } else {
-                    null
-                },
+                durationText = presentation.durationText,
                 showLiveBadge = false,
-                showPaidBadge = false,
-                progress = if (item.progressMillis > 0 && item.streamEntity.duration > 0) {
-                    TimeUnit.MILLISECONDS.toSeconds(item.progressMillis).toFloat() / item.streamEntity.duration.toFloat()
-                } else {
-                    null
-                },
+                showPaidBadge = presentation.showPaidBadge,
+                progress = presentation.progress,
                 playlistCount = null,
                 isChannel = false
             )
