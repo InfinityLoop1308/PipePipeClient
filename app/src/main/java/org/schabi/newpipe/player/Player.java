@@ -2789,10 +2789,11 @@ public final class Player implements
      * Drops the finished video from the offline cache and leaves the player, which is what
      * "watched it, done with it" means in one tap.
      *
-     * <p>Fullscreen is left first, while a player still exists, so whatever the fragment pinned
-     * for it is given back before the service goes away. The removal itself is deliberately not
-     * tied to any of the player's disposables: those are cleared by the {@code stopService()} on
-     * the line below it, which would cancel the deletion halfway through.</p>
+     * <p>Closing is left to {@link VideoDetailFragment}: it owns the bottom sheet, the orientation
+     * it pinned for fullscreen and the player service, and the order those have to be given back
+     * in is delicate enough to be worth having in one place. The deletion is deliberately not tied
+     * to any of the player's disposables, since the tear-down that closing triggers clears
+     * them.</p>
      */
     private void onUncacheAndCloseClicked() {
         getCurrentStreamInfo().ifPresent(info -> {
@@ -2810,11 +2811,7 @@ public final class Player implements
         });
 
         binding.uncacheButton.setVisibility(View.GONE);
-        if (isFullscreen) {
-            toggleFullscreen();
-        }
-        context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_HIDE_MAIN_PLAYER));
-        service.stopService();
+        context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_CLOSE_PLAYER));
     }
 
     private void onPausedSeek() {

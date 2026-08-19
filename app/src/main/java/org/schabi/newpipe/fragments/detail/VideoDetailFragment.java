@@ -153,6 +153,9 @@ public final class VideoDetailFragment
             App.PACKAGE_NAME + ".VideoDetailFragment.ACTION_SEEK_TO";
     public static final String ACTION_ENTER_FULLSCREEN
             = App.PACKAGE_NAME + ".VideoDetailFragment.ACTION_ENTER_FULLSCREEN";
+    /** Sent by the player's "Uncache" button: close the video and go back to the list. */
+    public static final String ACTION_CLOSE_PLAYER =
+            App.PACKAGE_NAME + ".VideoDetailFragment.ACTION_CLOSE_PLAYER";
 
     private static final String COMMENTS_TAB_TAG = "COMMENTS";
     private static final String RELATED_TAB_TAG = "NEXT VIDEO";
@@ -1798,6 +1801,9 @@ public final class VideoDetailFragment
                     case ACTION_HIDE_MAIN_PLAYER:
                         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                         break;
+                    case ACTION_CLOSE_PLAYER:
+                        closePlayerAndReturnToList();
+                        break;
                     case ACTION_PLAYER_STARTED:
                         // If the state is not hidden we don't need to show the mini player
                         if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
@@ -1832,6 +1838,7 @@ public final class VideoDetailFragment
         intentFilter.addAction(ACTION_HIDE_MAIN_PLAYER);
         intentFilter.addAction(ACTION_PLAYER_STARTED);
         intentFilter.addAction(ACTION_ENTER_FULLSCREEN);
+        intentFilter.addAction(ACTION_CLOSE_PLAYER);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             activity.registerReceiver(broadcastReceiver, intentFilter, Context.RECEIVER_EXPORTED);
         } else {
@@ -1843,6 +1850,47 @@ public final class VideoDetailFragment
     /*//////////////////////////////////////////////////////////////////////////
     // Orientation listener
     //////////////////////////////////////////////////////////////////////////*/
+
+    /**
+     * Backs out of fullscreen straight to the list the video was opened from, leaving nothing
+     * behind: no playback, and no mini player at the bottom of the screen.
+     *
+     * <p>Fullscreen is left first, so the system UI comes back and the orientation pinned for
+     * playback is given up while the player still exists to do it. Hiding the bottom sheet then
+     * runs the same tear-down the mini player's close button uses - its STATE_HIDDEN handler
+     * calls {@link #cleanUp()}, which stops the player service and clears the stack.</p>
+     */
+    private void closePlayerAndReturnToList() {
+        setAutoPlay(false);
+        if (isPlayerAvailable()) {
+            player.pause();
+            // Write the resume position out while the player is still alive and still knows it.
+            // PlayerService#cleanup() does this too on the way down, but the position is the whole
+            // point of closing a half-watched video this way, so it is not left to the tear-down.
+            player.saveStreamProgressState();
+            if (player.isFullscreen()) {
+                // Leave fullscreen while there is still a player to do it, so the system UI comes
+                // back even though the player is about to go away.
+                player.toggleFullscreen();
+            }
+        }
+
+        // Hide the sheet before giving the orientation back, and set the field the state is saved
+        // from as well as the behaviour. Releasing the orientation rotates the screen, which
+        // recreates this fragment: a state set only on the old behaviour is lost, while
+        // bottomSheetState is restored into the new one and its STATE_HIDDEN handler then runs
+        // the usual tear-down (cleanUp(), which stops the player service).
+        bottomSheetState = BottomSheetBehavior.STATE_HIDDEN;
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+        // ...and tear down here rather than waiting for that handler to do it. Restoring a sheet
+        // that is already hidden does not fire onStateChanged, so after the recreation nothing
+        // called cleanUp() and the player service stayed alive with its media session - no mini
+        // player on screen, but the video was still there. cleanUp() is safe to run twice.
+        cleanUp();
+
+        restoreDefaultOrientation();
+    }
 
     private void restoreDefaultOrientation() {
         if (isPlayerAvailable() && player.videoPlayerSelected()) {
