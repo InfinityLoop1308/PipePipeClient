@@ -52,13 +52,6 @@
         android:minHeight="48dp"
         android:text="@string/cache_use_default_quality_checkbox" />
 
-    <CheckBox
-        android:id="@+id/cache_auto_remove"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="48dp"
-        android:text="@string/cache_auto_remove_title" />
-
     <org.schabi.newpipe.views.NewPipeTextView
         android:id="@+id/cache_hint"
         android:layout_width="match_parent"

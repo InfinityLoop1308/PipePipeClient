@@ -51,8 +51,8 @@
 <string name="cache_use_default_quality_title">Cache at the default quality</string>
 <string name="cache_use_default_quality_summary">Skip the quality selector and cache straight away, using the default video and audio quality</string>
 <string name="cache_use_default_quality_checkbox">Always use the default quality</string>
-<string name="cache_auto_remove_title">Uncache after watching</string>
-<string name="cache_auto_remove_summary">Remove a video from the offline cache once it has been watched to the end</string>
+<string name="player_uncache_title">Uncache</string>
+<string name="player_uncache_desc">Remove this video from the offline cache and close the player</string>
 <string name="refresh">Refresh</string>
 <string name="search">Search</string>
 <string name="settings">Settings</string>

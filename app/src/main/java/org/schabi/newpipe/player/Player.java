@@ -103,6 +103,7 @@ import com.squareup.picasso.Target;
 import org.schabi.newpipe.DownloaderImpl;
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.database.cache.model.CachedStreamEntity;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.databinding.PlayerBinding;
 import org.schabi.newpipe.databinding.PlayerPopupCloseOverlayBinding;
@@ -640,6 +641,7 @@ public final class Player implements
         binding.playWithKodi.setOnClickListener(this);
         binding.openInBrowser.setOnClickListener(this);
         binding.playerCloseButton.setOnClickListener(this);
+        binding.uncacheButton.setOnClickListener(this);
         binding.switchMute.setOnClickListener(this);
         binding.sleepTimer.setOnClickListener(this);
         binding.sleepTimer.setOnLongClickListener(this);
@@ -2480,6 +2482,7 @@ public final class Player implements
                 completeBCPlayer();
                 break;
         }
+        updateUncacheButtonVisibility();
         notifyPlaybackUpdateToListeners();
     }
 
@@ -2761,6 +2764,57 @@ public final class Player implements
         }
 
         binding.getRoot().setKeepScreenOn(false);
+    }
+
+    /**
+     * Shows the "Uncache" button once a video that was cached for offline viewing has played to
+     * the end - the point at which the controls are on screen anyway and the cached copy has
+     * served its purpose. Only on the video player: the popup is far too small for it and the
+     * background player has no controls at all.
+     */
+    private void updateUncacheButtonVisibility() {
+        if (binding == null) {
+            return;
+        }
+        final boolean show = currentState == STATE_COMPLETED
+                && videoPlayerSelected()
+                && getCurrentStreamInfo()
+                        .map(info -> CacheManager.isCachedBlocking(
+                                context, info.getServiceId(), info.getUrl()))
+                        .orElse(false);
+        binding.uncacheButton.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    /**
+     * Drops the finished video from the offline cache and leaves the player, which is what
+     * "watched it, done with it" means in one tap.
+     *
+     * <p>Fullscreen is left first, while a player still exists, so whatever the fragment pinned
+     * for it is given back before the service goes away. The removal itself is deliberately not
+     * tied to any of the player's disposables: those are cleared by the {@code stopService()} on
+     * the line below it, which would cancel the deletion halfway through.</p>
+     */
+    private void onUncacheAndCloseClicked() {
+        getCurrentStreamInfo().ifPresent(info -> {
+            final Context appContext = context.getApplicationContext();
+            final int serviceId = info.getServiceId();
+            final String url = info.getUrl();
+            Schedulers.io().scheduleDirect(() -> {
+                final CachedStreamEntity entity = CacheManager
+                        .findCompleteCachedStream(appContext, serviceId, url)
+                        .blockingGet();
+                if (entity != null) {
+                    CacheManager.removeCache(appContext, entity);
+                }
+            });
+        });
+
+        binding.uncacheButton.setVisibility(View.GONE);
+        if (isFullscreen) {
+            toggleFullscreen();
+        }
+        context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_HIDE_MAIN_PLAYER));
+        service.stopService();
     }
 
     private void onPausedSeek() {
@@ -3739,33 +3793,8 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
 
     public void saveStreamProgressStateCompleted() {
         // current stream has ended, so the progress is its duration (+1 to overcome rounding)
-        getCurrentStreamInfo().ifPresent(info -> {
-            saveStreamProgressState((info.getDuration() + 1) * 1000);
-            removeFromOfflineCacheIfWatched(info);
-        });
-    }
-
-    /**
-     * "Uncache after watching" (Settings -> Downloads -> Caching): drops a stream from the
-     * offline cache as soon as it has played to the end, so a cached queue frees its space while
-     * it is watched instead of piling up until the user clears it by hand.
-     *
-     * <p>Skipped while repeating a single stream, since that same file is about to be played
-     * again. Only complete entries are touched: an unfinished row belongs to a download that is
-     * still running, and removing it would abort a cache the user just asked for.</p>
-     */
-    private void removeFromOfflineCacheIfWatched(@NonNull final StreamInfo info) {
-        if (getRepeatMode() == REPEAT_MODE_ONE
-                || !prefs.getBoolean(
-                        context.getString(R.string.cache_auto_remove_after_watching_key), false)) {
-            return;
-        }
-        databaseUpdateDisposable.add(
-                CacheManager.findCompleteCachedStream(context, info.getServiceId(), info.getUrl())
-                        .subscribeOn(Schedulers.io())
-                        .doOnSuccess(entity -> CacheManager.removeCache(context, entity))
-                        .onErrorComplete()
-                        .subscribe());
+        getCurrentStreamInfo().ifPresent(info ->
+                saveStreamProgressState((info.getDuration() + 1) * 1000));
     }
     //endregion
 
@@ -4706,6 +4735,8 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         } else if (v.getId() == binding.playerCloseButton.getId()) {
             context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_HIDE_MAIN_PLAYER));
             service.stopService();
+        } else if (v.getId() == binding.uncacheButton.getId()) {
+            onUncacheAndCloseClicked();
         } else if (v.getId() == binding.skipButton.getId()) {
             onSkipClicked();
         } else if (v.getId() == binding.unskipButton.getId()) {

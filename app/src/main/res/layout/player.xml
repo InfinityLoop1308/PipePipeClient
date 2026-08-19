@@ -208,6 +208,28 @@
                     </LinearLayout>
 
                     <org.schabi.newpipe.views.NewPipeTextView
+                        android:id="@+id/uncacheButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:layout_marginEnd="8dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:contentDescription="@string/player_uncache_desc"
+                        android:drawablePadding="4dp"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:minWidth="0dp"
+                        android:padding="@dimen/player_main_buttons_padding"
+                        android:text="@string/player_uncache_title"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        app:drawableStartCompat="@drawable/ic_delete"
+                        app:drawableTint="@color/white"
+                        tools:ignore="RtlHardcoded"
+                        tools:visibility="visible" />
+
+                    <org.schabi.newpipe.views.NewPipeTextView
                         android:id="@+id/qualityTextView"
                         android:layout_width="wrap_content"
                         android:layout_height="35dp"

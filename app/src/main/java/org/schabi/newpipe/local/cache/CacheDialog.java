@@ -128,23 +128,16 @@ public final class CacheDialog {
         }
         selectDefault(context, binding, startWithVideo, videoStreams, audioStreams);
 
-        // The same two options as Settings -> Downloads -> Caching, so they can be turned on
-        // from the place where their effect is obvious. They are written straight through to the
-        // preference, exactly as the settings switches do; "always use the default quality"
-        // therefore takes effect from the next time this dialog would have been shown.
+        // The same option as Settings -> Downloads -> Caching, offered here too because this is
+        // the dialog it makes disappear. It is written straight through to the preference, just
+        // as the settings switch does, and so takes effect from the next time this dialog would
+        // have been shown.
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         final String defaultQualityKey =
                 context.getString(R.string.cache_use_default_quality_key);
-        final String autoRemoveKey =
-                context.getString(R.string.cache_auto_remove_after_watching_key);
-
         binding.cacheUseDefaultQuality.setChecked(prefs.getBoolean(defaultQualityKey, false));
         binding.cacheUseDefaultQuality.setOnCheckedChangeListener((button, checked) ->
                 prefs.edit().putBoolean(defaultQualityKey, checked).apply());
-
-        binding.cacheAutoRemove.setChecked(prefs.getBoolean(autoRemoveKey, false));
-        binding.cacheAutoRemove.setOnCheckedChangeListener((button, checked) ->
-                prefs.edit().putBoolean(autoRemoveKey, checked).apply());
 
         binding.cacheKindGroup.setOnCheckedChangeListener((group, checkedId) -> {
             final boolean video = checkedId == R.id.cache_kind_video;
