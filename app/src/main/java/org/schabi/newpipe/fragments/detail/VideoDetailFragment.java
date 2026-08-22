@@ -62,6 +62,7 @@ import org.schabi.newpipe.database.cache.model.CachedStreamEntity;
 import org.schabi.newpipe.download.DownloadDialog;
 import org.schabi.newpipe.local.cache.CacheDialog;
 import org.schabi.newpipe.local.cache.CacheManager;
+import org.schabi.newpipe.local.cache.CacheRemoval;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.ReCaptchaActivity;
@@ -2182,19 +2183,8 @@ public final class VideoDetailFragment
     }
 
     private void confirmRemoveFromCache(@NonNull final CachedStreamEntity cached) {
-        new AlertDialog.Builder(activity)
-                .setTitle(R.string.cache_remove_confirm_title)
-                .setMessage(R.string.cache_remove_confirm_message)
-                .setPositiveButton(R.string.ok, (dialog, which) -> {
-                    disposables.add(io.reactivex.rxjava3.core.Completable
-                            .fromAction(() -> CacheManager.removeCache(activity, cached))
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(() -> Toast.makeText(activity, R.string.cache_removed,
-                                    Toast.LENGTH_SHORT).show()));
-                })
-                .setNegativeButton(R.string.cancel, null)
-                .show();
+        // Asks first, unless the video has been watched - see CacheRemoval.
+        disposables.add(CacheRemoval.removeAsking(activity, cached));
     }
 
     /**

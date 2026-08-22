@@ -20,6 +20,7 @@ import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.download.DownloadDialog;
 import org.schabi.newpipe.local.cache.CacheDialog;
 import org.schabi.newpipe.local.cache.CacheManager;
+import org.schabi.newpipe.local.cache.CacheRemoval;
 import org.schabi.newpipe.local.dialog.PlaylistAppendDialog;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
@@ -159,16 +160,8 @@ public enum StreamDialogDefaultEntry {
             CacheManager.findCompleteCachedStream(context, item.getServiceId(), item.getUrl())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(cachedEntity -> new AlertDialog.Builder(context)
-                            .setTitle(R.string.cache_remove_confirm_title)
-                            .setMessage(R.string.cache_remove_confirm_message)
-                            .setPositiveButton(R.string.ok, (dialog, which) -> Completable
-                                    .fromAction(() -> CacheManager.removeCache(
-                                            context, cachedEntity))
-                                    .subscribeOn(Schedulers.io())
-                                    .subscribe())
-                            .setNegativeButton(R.string.cancel, null)
-                            .show());
+                    // Asks first, unless the video has been watched - see CacheRemoval.
+                    .subscribe(cachedEntity -> CacheRemoval.removeAsking(context, cachedEntity));
         } else {
             // Needs the full StreamInfo (a list item only carries metadata, no stream URLs)
             // before a quality can be offered, so fetch it first, then show the same selector
