@@ -703,10 +703,10 @@
 <string name="player_uncache_title">حذف نسخهٔ آفلاین</string>
 <string name="player_uncache_desc">برداشتن این ویدئو از حافظهٔ آفلاین و بستن پخش‌کننده</string>
 <string name="cache_import_missing_title">ویدئوهای ذخیره‌شده موجود نیستند</string>
-<string name="cache_import_missing_message">این پشتیبان %1$d ویدئو را آفلاین ذخیره‌شده علامت زده است، اما پرونده‌هایشان روی این دستگاه نیستند.\n\nهم‌اکنون دوباره ذخیره شوند؟ در غیر این صورت، علامت‌هایشان پاک می‌شود.</string>
+<string name="cache_import_missing_message">این پشتیبان ویدئوهایی را آفلاین ذخیره‌شده علامت زده است که پرونده‌هایشان روی این دستگاه نیستند (در مجموع %1$d).\n\nهم‌اکنون دوباره ذخیره شوند؟ در غیر این صورت، علامت‌هایشان پاک می‌شود.</string>
 <string name="cache_import_recache_button">دوباره ذخیره کن</string>
 <string name="cache_import_clear_button">پاک کردن علامت‌ها</string>
-<string name="cache_import_recaching_toast">%1$d ویدئو دوباره برای تماشای آفلاین ذخیره می‌شوند</string>
-<string name="cache_import_cleared_toast">%1$d علامت که ویدئوهایشان روی این دستگاه نیستند پاک شد</string>
+<string name="cache_import_recaching_toast">ویدئوهای نبوده دوباره برای تماشای آفلاین ذخیره می‌شوند</string>
+<string name="cache_import_cleared_toast">علامت ویدئوهایی که روی این دستگاه نیستند پاک شد</string>
 <string name="refresh">نوسازی</string>
 </resources>

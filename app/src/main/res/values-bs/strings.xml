@@ -136,10 +136,10 @@
 <string name="player_uncache_title">Obriši offline kopiju</string>
 <string name="player_uncache_desc">Ukloni ovaj video iz offline pohrane i zatvori plejer</string>
 <string name="cache_import_missing_title">Nedostaju sačuvani videi</string>
-<string name="cache_import_missing_message">Ova sigurnosna kopija označava %1$d videa kao sačuvane offline, ali njihove datoteke nisu na ovom uređaju.\n\nSačuvati ih ponovo sada? Ako ne, oznake će biti obrisane.</string>
+<string name="cache_import_missing_message">Ova sigurnosna kopija označava kao sačuvane offline videe čije datoteke nisu na ovom uređaju (ukupno %1$d).\n\nSačuvati ih ponovo sada? Ako ne, oznake će biti obrisane.</string>
 <string name="cache_import_recache_button">Sačuvaj ponovo</string>
 <string name="cache_import_clear_button">Obriši oznake</string>
-<string name="cache_import_recaching_toast">%1$d videa se ponovo spremaju za gledanje offline</string>
-<string name="cache_import_cleared_toast">Obrisano je %1$d oznaka čiji videi nisu na ovom uređaju</string>
+<string name="cache_import_recaching_toast">Videi koji nedostaju se ponovo spremaju za gledanje offline</string>
+<string name="cache_import_cleared_toast">Obrisane su oznake videa koji nisu na ovom uređaju</string>
 <string name="refresh">Osvježi</string>
 </resources>

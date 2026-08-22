@@ -414,10 +414,10 @@
 <string name="player_uncache_title">Избриши ја офлајн копијата</string>
 <string name="player_uncache_desc">Отстрани го ова видео од офлајн складиштето и затвори го плеерот</string>
 <string name="cache_import_missing_title">Недостасуваат зачувани видеа</string>
-<string name="cache_import_missing_message">Оваа резервна копија означува %1$d видеа како зачувани офлајн, но нивните датотеки не се на овој уред.\n\nДа се зачуваат повторно сега? Ако не, ознаките ќе бидат исчистени.</string>
+<string name="cache_import_missing_message">Оваа резервна копија означува како зачувани офлајн видеа чии датотеки не се на овој уред (вкупно %1$d).\n\nДа се зачуваат повторно сега? Ако не, ознаките ќе бидат исчистени.</string>
 <string name="cache_import_recache_button">Зачувај повторно</string>
 <string name="cache_import_clear_button">Исчисти ги ознаките</string>
-<string name="cache_import_recaching_toast">%1$d видеа се зачувуваат повторно за гледање офлајн</string>
-<string name="cache_import_cleared_toast">Исчистени се %1$d ознаки чии видеа не се на овој уред</string>
+<string name="cache_import_recaching_toast">Видеата што недостасуваат се зачувуваат повторно за гледање офлајн</string>
+<string name="cache_import_cleared_toast">Исчистени се ознаките на видеата што не се на овој уред</string>
 <string name="refresh">Освежи</string>
 </resources>

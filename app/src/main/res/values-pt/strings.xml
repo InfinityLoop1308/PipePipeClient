@@ -703,10 +703,10 @@
 <string name="player_uncache_title">Remover a cópia off-line</string>
 <string name="player_uncache_desc">Remover este vídeo do armazenamento off-line e fechar o player</string>
 <string name="cache_import_missing_title">Faltam vídeos salvos</string>
-<string name="cache_import_missing_message">Este backup marca %1$d vídeos como salvos off-line, mas os arquivos deles não estão neste dispositivo.\n\nSalvá-los novamente agora? Caso contrário, as marcas serão apagadas.</string>
+<string name="cache_import_missing_message">Este backup marca como salvos off-line vídeos cujos arquivos não estão neste dispositivo (%1$d no total).\n\nSalvá-los novamente agora? Caso contrário, as marcas serão apagadas.</string>
 <string name="cache_import_recache_button">Salvar novamente</string>
 <string name="cache_import_clear_button">Apagar as marcas</string>
-<string name="cache_import_recaching_toast">%1$d vídeos estão sendo salvos novamente para assistir off-line</string>
-<string name="cache_import_cleared_toast">%1$d marcas apagadas cujos vídeos não estão neste dispositivo</string>
+<string name="cache_import_recaching_toast">Os vídeos que faltam estão sendo salvos novamente para assistir off-line</string>
+<string name="cache_import_cleared_toast">Apagadas as marcas dos vídeos que não estão neste dispositivo</string>
 <string name="refresh">Atualizar</string>
 </resources>

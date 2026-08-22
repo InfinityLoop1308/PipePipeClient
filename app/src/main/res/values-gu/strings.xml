@@ -96,10 +96,10 @@
 <string name="player_uncache_title">ઑફલાઇન નકલ કાઢી નાખો</string>
 <string name="player_uncache_desc">આ વીડિયોને ઑફલાઇન સંગ્રહમાંથી કાઢીને પ્લેયર બંધ કરો</string>
 <string name="cache_import_missing_title">સાચવેલા વીડિયો મળતા નથી</string>
-<string name="cache_import_missing_message">આ બૅકઅપ %1$d વીડિયોને ઑફલાઇન સાચવેલા તરીકે ચિહ્નિત કરે છે, પણ તેમની ફાઇલો આ ઉપકરણ પર નથી.\n\nહમણાં ફરી સાચવવા? નહીં તો તેમનાં ચિહ્નો ભૂંસી નાખવામાં આવશે.</string>
+<string name="cache_import_missing_message">આ બૅકઅપ એવા વીડિયોને ઑફલાઇન સાચવેલા તરીકે ચિહ્નિત કરે છે જેમની ફાઇલો આ ઉપકરણ પર નથી (કુલ %1$d).\n\nહમણાં ફરી સાચવવા? નહીં તો તેમનાં ચિહ્નો ભૂંસી નાખવામાં આવશે.</string>
 <string name="cache_import_recache_button">ફરી સાચવો</string>
 <string name="cache_import_clear_button">ચિહ્નો ભૂંસો</string>
-<string name="cache_import_recaching_toast">%1$d વીડિયો ઑફલાઇન જોવા માટે ફરી સાચવાઈ રહ્યા છે</string>
-<string name="cache_import_cleared_toast">%1$d ચિહ્નો ભૂંસ્યાં જેમના વીડિયો આ ઉપકરણ પર નથી</string>
+<string name="cache_import_recaching_toast">ગુમ થયેલા વીડિયો ઑફલાઇન જોવા માટે ફરી સાચવાઈ રહ્યા છે</string>
+<string name="cache_import_cleared_toast">આ ઉપકરણ પર ન હોય તેવા વીડિયોનાં ચિહ્નો ભૂંસ્યાં</string>
 <string name="refresh">તાજું કરો</string>
 </resources>

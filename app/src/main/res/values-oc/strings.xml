@@ -85,10 +85,10 @@
 <string name="player_uncache_title">Suprimir la còpia fòra linha</string>
 <string name="player_uncache_desc">Levar aquesta vidèo de l\'emmagazinatge fòra linha e tancar lo lector</string>
 <string name="cache_import_missing_title">De vidèos enregistradas mancan</string>
-<string name="cache_import_missing_message">Aquesta salvagarda marca %1$d vidèos coma enregistradas fòra linha, mas lors fichièrs son pas sus aqueste aparelh.\n\nLas enregistrar tornamai ara ? Si non, lors marcas seràn escafadas.</string>
+<string name="cache_import_missing_message">Aquesta salvagarda marca coma enregistradas fòra linha de vidèos que lors fichièrs son pas sus aqueste aparelh (%1$d en tot).\n\nLas enregistrar tornamai ara ? Si non, lors marcas seràn escafadas.</string>
 <string name="cache_import_recache_button">Enregistrar tornamai</string>
 <string name="cache_import_clear_button">Escafar las marcas</string>
-<string name="cache_import_recaching_toast">%1$d vidèos son enregistradas tornamai per la lectura fòra linha</string>
-<string name="cache_import_cleared_toast">%1$d marcas escafadas que lors vidèos son pas sus aqueste aparelh</string>
+<string name="cache_import_recaching_toast">Las vidèos que mancan son enregistradas tornamai per la lectura fòra linha</string>
+<string name="cache_import_cleared_toast">Marcas escafadas de las vidèos que son pas sus aqueste aparelh</string>
 <string name="refresh">Actualizar</string>
 </resources>

@@ -690,10 +690,10 @@
 <string name="player_uncache_title">Hapus salinan offline</string>
 <string name="player_uncache_desc">Hapus video ini dari penyimpanan offline dan tutup pemutar</string>
 <string name="cache_import_missing_title">Video tersimpan tidak ada</string>
-<string name="cache_import_missing_message">Cadangan ini menandai %1$d video sebagai tersimpan offline, tetapi berkasnya tidak ada di perangkat ini.\n\nSimpan lagi sekarang? Jika tidak, tandanya akan dihapus.</string>
+<string name="cache_import_missing_message">Cadangan ini menandai video sebagai tersimpan offline padahal berkasnya tidak ada di perangkat ini (%1$d seluruhnya).\n\nSimpan lagi sekarang? Jika tidak, tandanya akan dihapus.</string>
 <string name="cache_import_recache_button">Simpan lagi</string>
 <string name="cache_import_clear_button">Hapus tanda</string>
-<string name="cache_import_recaching_toast">%1$d video sedang disimpan lagi untuk ditonton offline</string>
-<string name="cache_import_cleared_toast">%1$d tanda dihapus karena videonya tidak ada di perangkat ini</string>
+<string name="cache_import_recaching_toast">Video yang hilang sedang disimpan lagi untuk ditonton offline</string>
+<string name="cache_import_cleared_toast">Tanda video yang tidak ada di perangkat ini telah dihapus</string>
 <string name="refresh">Segarkan</string>
 </resources>

@@ -35,10 +35,10 @@
 <string name="player_uncache_title">Offline afschrift af doen</string>
 <string name="player_uncache_desc">Desen video uut der offline bewaringhe doen ende den speler sluten</string>
 <string name="cache_import_missing_title">Bewaerde videos ontbreken</string>
-<string name="cache_import_missing_message">Dese bewaringhe teykent %1$d videos als offline bewaert, maer hare bestande en sijn niet op desen toestelle.\n\nNu weder bewaren? Ist niet, so werden die teykene ghewischt.</string>
+<string name="cache_import_missing_message">Dese bewaringhe teykent videos als offline bewaert, welker bestande niet op desen toestelle en sijn (te samen %1$d).\n\nNu weder bewaren? Ist niet, so werden die teykene ghewischt.</string>
 <string name="cache_import_recache_button">Weder bewaren</string>
 <string name="cache_import_clear_button">Teykene wisschen</string>
-<string name="cache_import_recaching_toast">%1$d videos werden weder bewaert om sonder net te siene</string>
-<string name="cache_import_cleared_toast">%1$d teykene ghewischt welker videos niet op desen toestelle en sijn</string>
+<string name="cache_import_recaching_toast">Die ontbrekende videos werden weder bewaert om sonder net te siene</string>
+<string name="cache_import_cleared_toast">Teykene ghewischt van videos die niet op desen toestelle en sijn</string>
 <string name="refresh">Vernieuwen</string>
 </resources>

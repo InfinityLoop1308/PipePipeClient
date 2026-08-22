@@ -40,10 +40,10 @@
 <string name="player_uncache_title">නොබැඳි පිටපත මකන්න</string>
 <string name="player_uncache_desc">මෙම වීඩියෝව නොබැඳි ගබඩාවෙන් ඉවත් කර වාදකය වසන්න</string>
 <string name="cache_import_missing_title">සුරැකි වීඩියෝ නැත</string>
-<string name="cache_import_missing_message">මෙම උපස්ථය වීඩියෝ %1$dක් නොබැඳිව සුරැකි ලෙස සලකුණු කරයි, නමුත් ඒවායේ ගොනු මෙම උපාංගයේ නැත.\n\nදැන් නැවත සුරකින්නද? නැතිනම් ඒවායේ සලකුණු ඉවත් කෙරෙනු ඇත.</string>
+<string name="cache_import_missing_message">මෙම උපස්ථය, ගොනු මෙම උපාංගයේ නොමැති වීඩියෝ නොබැඳිව සුරැකි ලෙස සලකුණු කරයි (එකතුව %1$d).\n\nදැන් නැවත සුරකින්නද? නැතිනම් ඒවායේ සලකුණු ඉවත් කෙරෙනු ඇත.</string>
 <string name="cache_import_recache_button">නැවත සුරකින්න</string>
 <string name="cache_import_clear_button">සලකුණු ඉවත් කරන්න</string>
-<string name="cache_import_recaching_toast">වීඩියෝ %1$dක් නොබැඳිව නැරඹීමට නැවත සුරැකෙමින් පවතී</string>
-<string name="cache_import_cleared_toast">මෙම උපාංගයේ වීඩියෝ නොමැති සලකුණු %1$dක් ඉවත් කෙරිණි</string>
+<string name="cache_import_recaching_toast">නොමැති වීඩියෝ නොබැඳිව නැරඹීමට නැවත සුරැකෙමින් පවතී</string>
+<string name="cache_import_cleared_toast">මෙම උපාංගයේ නොමැති වීඩියෝවල සලකුණු ඉවත් කෙරිණි</string>
 <string name="refresh">නැවුම් කරන්න</string>
 </resources>

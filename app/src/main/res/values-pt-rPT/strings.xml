@@ -703,10 +703,10 @@
 <string name="player_uncache_title">Remover a cópia offline</string>
 <string name="player_uncache_desc">Remover este vídeo do armazenamento offline e fechar o reprodutor</string>
 <string name="cache_import_missing_title">Faltam vídeos guardados</string>
-<string name="cache_import_missing_message">Esta cópia de segurança marca %1$d vídeos como guardados offline, mas os respetivos ficheiros não estão neste dispositivo.\n\nGuardá-los novamente agora? Caso contrário, as marcas serão apagadas.</string>
+<string name="cache_import_missing_message">Esta cópia de segurança marca como guardados offline vídeos cujos ficheiros não estão neste dispositivo (%1$d no total).\n\nGuardá-los novamente agora? Caso contrário, as marcas serão apagadas.</string>
 <string name="cache_import_recache_button">Guardar novamente</string>
 <string name="cache_import_clear_button">Apagar as marcas</string>
-<string name="cache_import_recaching_toast">%1$d vídeos estão a ser guardados novamente para ver offline</string>
-<string name="cache_import_cleared_toast">%1$d marcas apagadas cujos vídeos não estão neste dispositivo</string>
+<string name="cache_import_recaching_toast">Os vídeos em falta estão a ser guardados novamente para ver offline</string>
+<string name="cache_import_cleared_toast">Apagadas as marcas dos vídeos que não estão neste dispositivo</string>
 <string name="refresh">Atualizar</string>
 </resources>

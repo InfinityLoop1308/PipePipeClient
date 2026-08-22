@@ -646,10 +646,10 @@
 <string name="player_uncache_title">Tirtir nuqulka offline</string>
 <string name="player_uncache_desc">Ka saar muuqaalkan kaydka offline oo xir ciyaaraha</string>
 <string name="cache_import_missing_title">Muuqaallada la kaydiyay way maqan yihiin</string>
-<string name="cache_import_missing_message">Kaydkan wuxuu %1$d muuqaal ku calaamadinayaa in offline loo kaydiyay, laakiin faylashoodu kuma jiraan qalabkan.\n\nHadda mar kale ma kaydinaa? Haddii kale, calaamadahooda waa la tirtiri doonaa.</string>
+<string name="cache_import_missing_message">Kaydkan wuxuu ku calaamadinayaa in offline loo kaydiyay muuqaallo aan faylashoodu ku jirin qalabkan (wadar ahaan %1$d).\n\nHadda mar kale ma kaydinaa? Haddii kale, calaamadahooda waa la tirtiri doonaa.</string>
 <string name="cache_import_recache_button">Mar kale kaydi</string>
 <string name="cache_import_clear_button">Tirtir calaamadaha</string>
-<string name="cache_import_recaching_toast">%1$d muuqaal ayaa mar kale loo kaydinayaa daawasho offline</string>
-<string name="cache_import_cleared_toast">Waxaa la tirtiray %1$d calaamadood oo muuqaalladoodu aanay ku jirin qalabkan</string>
+<string name="cache_import_recaching_toast">Muuqaallada maqan ayaa mar kale loo kaydinayaa daawasho offline</string>
+<string name="cache_import_cleared_toast">Waa la tirtiray calaamadaha muuqaallada aan ku jirin qalabkan</string>
 <string name="refresh">Cusboonaysii</string>
 </resources>

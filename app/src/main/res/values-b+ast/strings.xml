@@ -573,10 +573,10 @@
 <string name="player_uncache_title">Desaniciar la copia ensin conexón</string>
 <string name="player_uncache_desc">Quitar esti videu del almacenamientu ensin conexón y zarrar el reproductor</string>
 <string name="cache_import_missing_title">Falten videos guardaos</string>
-<string name="cache_import_missing_message">Esta copia de seguranza marca %1$d videos como guardaos ensin conexón, pero los sos ficheros nun tán nesti preséu.\n\n¿Guardalos otra vuelta agora? Si non, van llimpiase les sos marques.</string>
+<string name="cache_import_missing_message">Esta copia de seguranza marca como guardaos ensin conexón videos que los sos ficheros nun tán nesti preséu (%1$d en total).\n\n¿Guardalos otra vuelta agora? Si non, van llimpiase les sos marques.</string>
 <string name="cache_import_recache_button">Guardar otra vuelta</string>
 <string name="cache_import_clear_button">Llimpiar les marques</string>
-<string name="cache_import_recaching_toast">%1$d videos tán guardándose otra vuelta pa velos ensin conexón</string>
-<string name="cache_import_cleared_toast">Llimpiáronse %1$d marques que los sos videos nun tán nesti preséu</string>
+<string name="cache_import_recaching_toast">Los videos que falten tán guardándose otra vuelta pa velos ensin conexón</string>
+<string name="cache_import_cleared_toast">Llimpiáronse les marques de los videos que nun tán nesti preséu</string>
 <string name="refresh">Anovar</string>
 </resources>

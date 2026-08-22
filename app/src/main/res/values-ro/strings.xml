@@ -686,10 +686,10 @@
 <string name="player_uncache_title">Șterge copia offline</string>
 <string name="player_uncache_desc">Elimină acest videoclip din stocarea offline și închide playerul</string>
 <string name="cache_import_missing_title">Lipsesc videoclipuri salvate</string>
-<string name="cache_import_missing_message">Această copie de rezervă marchează %1$d videoclipuri ca salvate offline, dar fișierele lor nu sunt pe acest dispozitiv.\n\nLe salvezi din nou acum? Dacă nu, marcajele lor vor fi șterse.</string>
+<string name="cache_import_missing_message">Această copie de rezervă marchează ca salvate offline videoclipuri ale căror fișiere nu sunt pe acest dispozitiv (%1$d în total).\n\nLe salvezi din nou acum? Dacă nu, marcajele lor vor fi șterse.</string>
 <string name="cache_import_recache_button">Salvează din nou</string>
 <string name="cache_import_clear_button">Șterge marcajele</string>
-<string name="cache_import_recaching_toast">%1$d videoclipuri sunt salvate din nou pentru vizionare offline</string>
-<string name="cache_import_cleared_toast">Au fost șterse %1$d marcaje ale căror videoclipuri nu sunt pe acest dispozitiv</string>
+<string name="cache_import_recaching_toast">Videoclipurile lipsă sunt salvate din nou pentru vizionare offline</string>
+<string name="cache_import_cleared_toast">Au fost șterse marcajele videoclipurilor care nu sunt pe acest dispozitiv</string>
 <string name="refresh">Reîmprospătează</string>
 </resources>

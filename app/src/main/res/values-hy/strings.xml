@@ -170,10 +170,10 @@
 <string name="player_uncache_title">Ջնջել անցանց պատճենը</string>
 <string name="player_uncache_desc">Հեռացնել այս տեսանյութը անցանց պահոցից և փակել նվագարկիչը</string>
 <string name="cache_import_missing_title">Պահված տեսանյութերը բացակայում են</string>
-<string name="cache_import_missing_message">Այս պահուստը %1$d տեսանյութ նշում է որպես անցանց պահված, բայց դրանց ֆայլերը այս սարքում չկան։\n\nՆորի՞ց պահել դրանք հիմա։ Եթե ոչ, դրանց նշումները կջնջվեն։</string>
+<string name="cache_import_missing_message">Այս պահուստը որպես անցանց պահված նշում է տեսանյութեր, որոնց ֆայլերը այս սարքում չկան (ընդամենը %1$d)։\n\nՆորի՞ց պահել դրանք հիմա։ Եթե ոչ, դրանց նշումները կջնջվեն։</string>
 <string name="cache_import_recache_button">Պահել նորից</string>
 <string name="cache_import_clear_button">Ջնջել նշումները</string>
-<string name="cache_import_recaching_toast">%1$d տեսանյութ նորից պահվում է անցանց դիտելու համար</string>
-<string name="cache_import_cleared_toast">Ջնջվեց %1$d նշում, որոնց տեսանյութերը այս սարքում չկան</string>
+<string name="cache_import_recaching_toast">Բացակայող տեսանյութերը նորից պահվում են անցանց դիտելու համար</string>
+<string name="cache_import_cleared_toast">Ջնջվեցին այն տեսանյութերի նշումները, որոնք այս սարքում չկան</string>
 <string name="refresh">Թարմացնել</string>
 </resources>

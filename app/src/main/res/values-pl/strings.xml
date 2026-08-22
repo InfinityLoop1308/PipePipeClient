@@ -1120,10 +1120,10 @@
 <string name="player_uncache_title">Usuń kopię offline</string>
 <string name="player_uncache_desc">Usuń ten film z pamięci offline i zamknij odtwarzacz</string>
 <string name="cache_import_missing_title">Brakuje zapisanych filmów</string>
-<string name="cache_import_missing_message">Ta kopia zapasowa oznacza %1$d filmów jako zapisane offline, ale ich plików nie ma na tym urządzeniu.\n\nZapisać je teraz ponownie? Jeśli nie, oznaczenia zostaną wyczyszczone.</string>
+<string name="cache_import_missing_message">Ta kopia zapasowa oznacza jako zapisane offline filmy, których plików nie ma na tym urządzeniu (łącznie %1$d).\n\nZapisać je teraz ponownie? Jeśli nie, oznaczenia zostaną wyczyszczone.</string>
 <string name="cache_import_recache_button">Zapisz ponownie</string>
 <string name="cache_import_clear_button">Wyczyść oznaczenia</string>
-<string name="cache_import_recaching_toast">%1$d filmów jest zapisywanych ponownie do oglądania offline</string>
-<string name="cache_import_cleared_toast">Wyczyszczono %1$d oznaczeń, których filmów nie ma na tym urządzeniu</string>
+<string name="cache_import_recaching_toast">Brakujące filmy są zapisywane ponownie do oglądania offline</string>
+<string name="cache_import_cleared_toast">Wyczyszczono oznaczenia filmów, których nie ma na tym urządzeniu</string>
 <string name="refresh">Odśwież</string>
 </resources>

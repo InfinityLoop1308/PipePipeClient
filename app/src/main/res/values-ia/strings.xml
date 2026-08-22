@@ -251,10 +251,10 @@
 <string name="player_uncache_title">Remover le copia foris de linea</string>
 <string name="player_uncache_desc">Remover iste video del immagazinage foris de linea e clauder le reproductor</string>
 <string name="cache_import_missing_title">Mancante videos salveguardate</string>
-<string name="cache_import_missing_message">Iste copia de securitate marca %1$d videos como salveguardate foris de linea, ma lor files non es in iste apparato.\n\nSalveguardar los de novo ora? Si non, lor marcas essera efface.</string>
+<string name="cache_import_missing_message">Iste copia de securitate marca como salveguardate foris de linea videos cuje files non es in iste apparato (%1$d in total).\n\nSalveguardar los de novo ora? Si non, lor marcas essera efface.</string>
 <string name="cache_import_recache_button">Salveguardar de novo</string>
 <string name="cache_import_clear_button">Effacer le marcas</string>
-<string name="cache_import_recaching_toast">%1$d videos es salveguardate de novo pro reguardar foris de linea</string>
-<string name="cache_import_cleared_toast">%1$d marcas efface cuje videos non es in iste apparato</string>
+<string name="cache_import_recaching_toast">Le videos mancante es salveguardate de novo pro reguardar foris de linea</string>
+<string name="cache_import_cleared_toast">Marcas efface del videos que non es in iste apparato</string>
 <string name="refresh">Actualisar</string>
 </resources>

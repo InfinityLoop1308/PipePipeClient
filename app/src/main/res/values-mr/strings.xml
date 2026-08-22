@@ -73,10 +73,10 @@
 <string name="player_uncache_title">ऑफलाइन प्रत हटवा</string>
 <string name="player_uncache_desc">हा व्हिडिओ ऑफलाइन संग्रहातून काढून टाका आणि प्लेअर बंद करा</string>
 <string name="cache_import_missing_title">जतन केलेले व्हिडिओ सापडत नाहीत</string>
-<string name="cache_import_missing_message">हा बॅकअप %1$d व्हिडिओ ऑफलाइन जतन केलेले असल्याचे दर्शवतो, पण त्यांच्या फाइल या उपकरणावर नाहीत.\n\nआता पुन्हा जतन करायचे? नाहीतर त्यांच्या खुणा पुसल्या जातील.</string>
+<string name="cache_import_missing_message">हा बॅकअप ज्यांच्या फाइल या उपकरणावर नाहीत असे व्हिडिओ ऑफलाइन जतन केलेले असल्याचे दर्शवतो (एकूण %1$d).\n\nआता पुन्हा जतन करायचे? नाहीतर त्यांच्या खुणा पुसल्या जातील.</string>
 <string name="cache_import_recache_button">पुन्हा जतन करा</string>
 <string name="cache_import_clear_button">खुणा पुसा</string>
-<string name="cache_import_recaching_toast">%1$d व्हिडिओ ऑफलाइन पाहण्यासाठी पुन्हा जतन होत आहेत</string>
-<string name="cache_import_cleared_toast">%1$d खुणा पुसल्या ज्यांचे व्हिडिओ या उपकरणावर नाहीत</string>
+<string name="cache_import_recaching_toast">हरवलेले व्हिडिओ ऑफलाइन पाहण्यासाठी पुन्हा जतन होत आहेत</string>
+<string name="cache_import_cleared_toast">या उपकरणावर नसलेल्या व्हिडिओंच्या खुणा पुसल्या</string>
 <string name="refresh">रिफ्रेश करा</string>
 </resources>

@@ -703,10 +703,10 @@
 <string name="player_uncache_title">Zmazať offline kópiu</string>
 <string name="player_uncache_desc">Odstrániť toto video z offline úložiska a zavrieť prehrávač</string>
 <string name="cache_import_missing_title">Chýbajú uložené videá</string>
-<string name="cache_import_missing_message">Táto záloha označuje %1$d videí ako uložené offline, ale ich súbory v tomto zariadení nie sú.\n\nUložiť ich teraz znova? Ak nie, ich označenia budú vymazané.</string>
+<string name="cache_import_missing_message">Táto záloha označuje ako uložené offline videá, ktorých súbory v tomto zariadení nie sú (celkovo %1$d).\n\nUložiť ich teraz znova? Ak nie, ich označenia budú vymazané.</string>
 <string name="cache_import_recache_button">Uložiť znova</string>
 <string name="cache_import_clear_button">Vymazať označenia</string>
-<string name="cache_import_recaching_toast">%1$d videí sa znova ukladá na sledovanie offline</string>
-<string name="cache_import_cleared_toast">Vymazaných %1$d označení, ktorých videá v tomto zariadení nie sú</string>
+<string name="cache_import_recaching_toast">Chýbajúce videá sa znova ukladajú na sledovanie offline</string>
+<string name="cache_import_cleared_toast">Vymazané označenia videí, ktoré v tomto zariadení nie sú</string>
 <string name="refresh">Obnoviť</string>
 </resources>

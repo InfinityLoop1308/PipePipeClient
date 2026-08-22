@@ -707,10 +707,10 @@
 <string name="player_uncache_title">Izbriši izvanmrežnu kopiju</string>
 <string name="player_uncache_desc">Ukloni ovaj videozapis iz izvanmrežne pohrane i zatvori player</string>
 <string name="cache_import_missing_title">Nedostaju spremljeni videozapisi</string>
-<string name="cache_import_missing_message">Ova sigurnosna kopija označava %1$d videozapisa kao spremljene izvan mreže, ali njihove datoteke nisu na ovom uređaju.\n\nSpremiti ih ponovno sada? Ako ne, oznake će biti izbrisane.</string>
+<string name="cache_import_missing_message">Ova sigurnosna kopija označava kao spremljene izvan mreže videozapise čije datoteke nisu na ovom uređaju (ukupno %1$d).\n\nSpremiti ih ponovno sada? Ako ne, oznake će biti izbrisane.</string>
 <string name="cache_import_recache_button">Spremi ponovno</string>
 <string name="cache_import_clear_button">Izbriši oznake</string>
-<string name="cache_import_recaching_toast">%1$d videozapisa ponovno se sprema za gledanje izvan mreže</string>
-<string name="cache_import_cleared_toast">Izbrisano je %1$d oznaka čiji videozapisi nisu na ovom uređaju</string>
+<string name="cache_import_recaching_toast">Videozapisi koji nedostaju ponovno se spremaju za gledanje izvan mreže</string>
+<string name="cache_import_cleared_toast">Izbrisane su oznake videozapisa koji nisu na ovom uređaju</string>
 <string name="refresh">Osvježi</string>
 </resources>

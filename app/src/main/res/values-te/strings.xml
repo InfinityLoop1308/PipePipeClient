@@ -426,10 +426,10 @@
 <string name="player_uncache_title">ఆఫ్‌లైన్ ప్రతిని తొలగించు</string>
 <string name="player_uncache_desc">ఈ వీడియోను ఆఫ్‌లైన్ నిల్వ నుండి తీసివేసి ప్లేయర్‌ను మూసివేయి</string>
 <string name="cache_import_missing_title">భద్రపరచిన వీడియోలు కనిపించడం లేదు</string>
-<string name="cache_import_missing_message">ఈ బ్యాకప్ %1$d వీడియోలను ఆఫ్‌లైన్‌లో భద్రపరచినట్టు గుర్తు పెట్టింది, కానీ వాటి ఫైళ్లు ఈ పరికరంలో లేవు.\n\nఇప్పుడే మళ్లీ భద్రపరచాలా? లేకపోతే వాటి గుర్తులు తొలగించబడతాయి.</string>
+<string name="cache_import_missing_message">ఈ బ్యాకప్ ఫైళ్లు ఈ పరికరంలో లేని వీడియోలను ఆఫ్‌లైన్‌లో భద్రపరచినట్టు గుర్తు పెట్టింది (మొత్తం %1$d).\n\nఇప్పుడే మళ్లీ భద్రపరచాలా? లేకపోతే వాటి గుర్తులు తొలగించబడతాయి.</string>
 <string name="cache_import_recache_button">మళ్లీ భద్రపరచు</string>
 <string name="cache_import_clear_button">గుర్తులు తొలగించు</string>
-<string name="cache_import_recaching_toast">%1$d వీడియోలు ఆఫ్‌లైన్‌లో చూడటానికి మళ్లీ భద్రపరచబడుతున్నాయి</string>
-<string name="cache_import_cleared_toast">ఈ పరికరంలో వీడియోలు లేని %1$d గుర్తులు తొలగించబడ్డాయి</string>
+<string name="cache_import_recaching_toast">లేని వీడియోలు ఆఫ్‌లైన్‌లో చూడటానికి మళ్లీ భద్రపరచబడుతున్నాయి</string>
+<string name="cache_import_cleared_toast">ఈ పరికరంలో లేని వీడియోల గుర్తులు తొలగించబడ్డాయి</string>
 <string name="refresh">రిఫ్రెష్</string>
 </resources>

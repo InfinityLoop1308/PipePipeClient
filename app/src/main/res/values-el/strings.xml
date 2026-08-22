@@ -703,10 +703,10 @@
 <string name="player_uncache_title">Διαγραφή αντιγράφου εκτός σύνδεσης</string>
 <string name="player_uncache_desc">Αφαίρεση αυτού του βίντεο από τον αποθηκευτικό χώρο εκτός σύνδεσης και κλείσιμο του προγράμματος αναπαραγωγής</string>
 <string name="cache_import_missing_title">Λείπουν αποθηκευμένα βίντεο</string>
-<string name="cache_import_missing_message">Αυτό το αντίγραφο ασφαλείας σημειώνει %1$d βίντεο ως αποθηκευμένα εκτός σύνδεσης, αλλά τα αρχεία τους δεν βρίσκονται σε αυτή τη συσκευή.\n\nΝα αποθηκευτούν ξανά τώρα; Διαφορετικά, οι σημάνσεις τους θα διαγραφούν.</string>
+<string name="cache_import_missing_message">Αυτό το αντίγραφο ασφαλείας σημειώνει ως αποθηκευμένα εκτός σύνδεσης βίντεο των οποίων τα αρχεία δεν βρίσκονται σε αυτή τη συσκευή (%1$d συνολικά).\n\nΝα αποθηκευτούν ξανά τώρα; Διαφορετικά, οι σημάνσεις τους θα διαγραφούν.</string>
 <string name="cache_import_recache_button">Αποθήκευση ξανά</string>
 <string name="cache_import_clear_button">Διαγραφή σημάνσεων</string>
-<string name="cache_import_recaching_toast">%1$d βίντεο αποθηκεύονται ξανά για προβολή εκτός σύνδεσης</string>
-<string name="cache_import_cleared_toast">Διαγράφηκαν %1$d σημάνσεις των οποίων τα βίντεο δεν βρίσκονται σε αυτή τη συσκευή</string>
+<string name="cache_import_recaching_toast">Τα βίντεο που λείπουν αποθηκεύονται ξανά για προβολή εκτός σύνδεσης</string>
+<string name="cache_import_cleared_toast">Διαγράφηκαν οι σημάνσεις των βίντεο που δεν βρίσκονται σε αυτή τη συσκευή</string>
 <string name="refresh">Ανανέωση</string>
 </resources>

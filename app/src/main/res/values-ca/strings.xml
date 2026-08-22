@@ -680,10 +680,10 @@
 <string name="player_uncache_title">Elimina la còpia fora de línia</string>
 <string name="player_uncache_desc">Treu aquest vídeo de l\'emmagatzematge fora de línia i tanca el reproductor</string>
 <string name="cache_import_missing_title">Falten vídeos desats</string>
-<string name="cache_import_missing_message">Aquesta còpia de seguretat marca %1$d vídeos com a desats fora de línia, però els seus fitxers no són en aquest dispositiu.\n\nVoleu tornar-los a desar ara? Si no, se\'n esborraran les marques.</string>
+<string name="cache_import_missing_message">Aquesta còpia de seguretat marca com a desats fora de línia vídeos els fitxers dels quals no són en aquest dispositiu (%1$d en total).\n\nVoleu tornar-los a desar ara? Si no, se\'n esborraran les marques.</string>
 <string name="cache_import_recache_button">Torna a desar</string>
 <string name="cache_import_clear_button">Esborra les marques</string>
-<string name="cache_import_recaching_toast">S\'estan tornant a desar %1$d vídeos per veure\'ls fora de línia</string>
-<string name="cache_import_cleared_toast">S\'han esborrat %1$d marques els vídeos de les quals no són en aquest dispositiu</string>
+<string name="cache_import_recaching_toast">Els vídeos que falten es tornen a desar per veure\'ls fora de línia</string>
+<string name="cache_import_cleared_toast">S\'han esborrat les marques dels vídeos que no són en aquest dispositiu</string>
 <string name="refresh">Actualitza</string>
 </resources>

@@ -720,10 +720,10 @@
 <string name="player_uncache_title">Вилучити офлайн-копію</string>
 <string name="player_uncache_desc">Вилучити це відео з офлайн-сховища та закрити програвач</string>
 <string name="cache_import_missing_title">Збережених відео немає</string>
-<string name="cache_import_missing_message">У цій резервній копії %1$d відео позначені як збережені офлайн, але їхніх файлів немає на цьому пристрої.\n\nЗберегти їх знову зараз? Якщо ні, позначки буде знято.</string>
+<string name="cache_import_missing_message">У цій резервній копії позначені як збережені офлайн відео, файлів яких немає на цьому пристрої (усього %1$d).\n\nЗберегти їх знову зараз? Якщо ні, позначки буде знято.</string>
 <string name="cache_import_recache_button">Зберегти знову</string>
 <string name="cache_import_clear_button">Зняти позначки</string>
-<string name="cache_import_recaching_toast">%1$d відео зберігаються знову для перегляду офлайн</string>
-<string name="cache_import_cleared_toast">Знято %1$d позначок, відео яких немає на цьому пристрої</string>
+<string name="cache_import_recaching_toast">Відсутні відео зберігаються знову для перегляду офлайн</string>
+<string name="cache_import_cleared_toast">Знято позначки відео, яких немає на цьому пристрої</string>
 <string name="refresh">Оновити</string>
 </resources>

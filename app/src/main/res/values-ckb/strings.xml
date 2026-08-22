@@ -679,10 +679,10 @@
 <string name="player_uncache_title">سڕینەوەی وێنەی دەرهێڵ</string>
 <string name="player_uncache_desc">لابردنی ئەم ڤیدیۆیە لە بیرگەی دەرهێڵ و داخستنی لێدەر</string>
 <string name="cache_import_missing_title">ڤیدیۆ پاشەکەوتکراوەکان نین</string>
-<string name="cache_import_missing_message">ئەم پاڵپشتە %1$d ڤیدیۆ وەک پاشەکەوتکراوی دەرهێڵ نیشان دەکات، بەڵام پەڕگەکانیان لەسەر ئەم ئامێرە نین.\n\nئێستا دووبارە پاشەکەوت بکرێن؟ ئەگەر نا، نیشانەکانیان دەسڕدرێنەوە.</string>
+<string name="cache_import_missing_message">ئەم پاڵپشتە ڤیدیۆ وەک پاشەکەوتکراوی دەرهێڵ نیشان دەکات کە پەڕگەکانیان لەسەر ئەم ئامێرە نین (بە کۆی %1$d).\n\nئێستا دووبارە پاشەکەوت بکرێن؟ ئەگەر نا، نیشانەکانیان دەسڕدرێنەوە.</string>
 <string name="cache_import_recache_button">دووبارە پاشەکەوت بکە</string>
 <string name="cache_import_clear_button">نیشانەکان بسڕەوە</string>
-<string name="cache_import_recaching_toast">%1$d ڤیدیۆ دووبارە بۆ بینینی دەرهێڵ پاشەکەوت دەکرێن</string>
-<string name="cache_import_cleared_toast">%1$d نیشانە سڕانەوە کە ڤیدیۆکانیان لەسەر ئەم ئامێرە نین</string>
+<string name="cache_import_recaching_toast">ڤیدیۆ نەماوەکان دووبارە بۆ بینینی دەرهێڵ پاشەکەوت دەکرێن</string>
+<string name="cache_import_cleared_toast">نیشانەی ئەو ڤیدیۆیانە سڕانەوە کە لەسەر ئەم ئامێرە نین</string>
 <string name="refresh">نوێکردنەوە</string>
 </resources>

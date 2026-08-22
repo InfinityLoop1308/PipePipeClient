@@ -366,10 +366,10 @@
 <string name="player_uncache_title">ஆஃப்லைன் நகலை நீக்கு</string>
 <string name="player_uncache_desc">இந்த வீடியோவை ஆஃப்லைன் சேமிப்பிலிருந்து நீக்கி பிளேயரை மூடு</string>
 <string name="cache_import_missing_title">சேமித்த வீடியோக்கள் இல்லை</string>
-<string name="cache_import_missing_message">இந்த காப்புப்பிரதி %1$d வீடியோக்களை ஆஃப்லைனில் சேமித்ததாகக் குறிக்கிறது, ஆனால் அவற்றின் கோப்புகள் இந்தச் சாதனத்தில் இல்லை.\n\nஇப்போது மீண்டும் சேமிக்கவா? இல்லையெனில் அவற்றின் குறியீடுகள் அழிக்கப்படும்.</string>
+<string name="cache_import_missing_message">இந்த காப்புப்பிரதி, கோப்புகள் இந்தச் சாதனத்தில் இல்லாத வீடியோக்களை ஆஃப்லைனில் சேமித்ததாகக் குறிக்கிறது (மொத்தம் %1$d).\n\nஇப்போது மீண்டும் சேமிக்கவா? இல்லையெனில் அவற்றின் குறியீடுகள் அழிக்கப்படும்.</string>
 <string name="cache_import_recache_button">மீண்டும் சேமி</string>
 <string name="cache_import_clear_button">குறியீடுகளை அழி</string>
-<string name="cache_import_recaching_toast">%1$d வீடியோக்கள் ஆஃப்லைனில் பார்க்க மீண்டும் சேமிக்கப்படுகின்றன</string>
-<string name="cache_import_cleared_toast">இந்தச் சாதனத்தில் வீடியோ இல்லாத %1$d குறியீடுகள் அழிக்கப்பட்டன</string>
+<string name="cache_import_recaching_toast">இல்லாத வீடியோக்கள் ஆஃப்லைனில் பார்க்க மீண்டும் சேமிக்கப்படுகின்றன</string>
+<string name="cache_import_cleared_toast">இந்தச் சாதனத்தில் இல்லாத வீடியோக்களின் குறியீடுகள் அழிக்கப்பட்டன</string>
 <string name="refresh">புதுப்பி</string>
 </resources>

@@ -299,10 +299,10 @@
 <string name="player_uncache_title">Oflayn nüsxəni sil</string>
 <string name="player_uncache_desc">Bu videonu oflayn yaddaşdan sil və oxuducunu bağla</string>
 <string name="cache_import_missing_title">Saxlanılan videolar çatışmır</string>
-<string name="cache_import_missing_message">Bu ehtiyat nüsxə %1$d videonu oflayn saxlanılmış kimi işarələyir, lakin onların faylları bu cihazda deyil.\n\nİndi yenidən saxlanılsın? Əks halda işarələri təmizlənəcək.</string>
+<string name="cache_import_missing_message">Bu ehtiyat nüsxə faylları bu cihazda olmayan videoları oflayn saxlanılmış kimi işarələyir (cəmi %1$d).\n\nİndi yenidən saxlanılsın? Əks halda işarələri təmizlənəcək.</string>
 <string name="cache_import_recache_button">Yenidən saxla</string>
 <string name="cache_import_clear_button">İşarələri təmizlə</string>
-<string name="cache_import_recaching_toast">%1$d video oflayn baxmaq üçün yenidən saxlanılır</string>
-<string name="cache_import_cleared_toast">Videoları bu cihazda olmayan %1$d işarə təmizləndi</string>
+<string name="cache_import_recaching_toast">Çatışmayan videolar oflayn baxmaq üçün yenidən saxlanılır</string>
+<string name="cache_import_cleared_toast">Bu cihazda olmayan videoların işarələri təmizləndi</string>
 <string name="refresh">Yenilə</string>
 </resources>

@@ -67,10 +67,10 @@
 <string name="player_uncache_title">Leva \'a copia senza rete</string>
 <string name="player_uncache_desc">Leva stu video da ll\'archivio senza rete e chiure \'o lettore</string>
 <string name="cache_import_missing_title">Mancano video sarvate</string>
-<string name="cache_import_missing_message">Sta copia \'e sicurezza signa %1$d video comme sarvate senza rete, ma \'e file lloro nun stanno ncopp\'a stu dispositivo.\n\n\'E sarvammo n\'ata vota mo? Si no, \'e signe vèneno cancellate.</string>
+<string name="cache_import_missing_message">Sta copia \'e sicurezza signa comme sarvate senza rete video ca \'e file lloro nun stanno ncopp\'a stu dispositivo (%1$d ntutto).\n\n\'E sarvammo n\'ata vota mo? Si no, \'e signe vèneno cancellate.</string>
 <string name="cache_import_recache_button">Sarva n\'ata vota</string>
 <string name="cache_import_clear_button">Cancella \'e signe</string>
-<string name="cache_import_recaching_toast">%1$d video se stanno sarvanno n\'ata vota pe \'e vedé senza rete</string>
-<string name="cache_import_cleared_toast">Cancellate %1$d signe ca \'e video lloro nun stanno ncopp\'a stu dispositivo</string>
+<string name="cache_import_recaching_toast">\'E video ca mancano se stanno sarvanno n\'ata vota pe \'e vedé senza rete</string>
+<string name="cache_import_cleared_toast">Cancellate \'e signe d\'\'e video ca nun stanno ncopp\'a stu dispositivo</string>
 <string name="refresh">Aggiorna</string>
 </resources>

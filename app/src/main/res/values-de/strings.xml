@@ -1040,10 +1040,10 @@
 <string name="player_uncache_title">Offline-Kopie löschen</string>
 <string name="player_uncache_desc">Dieses Video aus dem Offline-Speicher entfernen und den Player schließen</string>
 <string name="cache_import_missing_title">Gespeicherte Videos fehlen</string>
-<string name="cache_import_missing_message">In dieser Sicherung sind %1$d Videos als offline gespeichert markiert, ihre Dateien sind aber nicht auf diesem Gerät.\n\nJetzt erneut speichern? Andernfalls werden die Markierungen entfernt.</string>
+<string name="cache_import_missing_message">Diese Sicherung markiert Videos als offline gespeichert, deren Dateien nicht auf diesem Gerät sind (insgesamt %1$d).\n\nJetzt erneut speichern? Andernfalls werden die Markierungen entfernt.</string>
 <string name="cache_import_recache_button">Erneut speichern</string>
 <string name="cache_import_clear_button">Markierungen entfernen</string>
-<string name="cache_import_recaching_toast">%1$d Videos werden erneut für die Offline-Wiedergabe gespeichert</string>
-<string name="cache_import_cleared_toast">%1$d Markierungen entfernt, deren Videos nicht auf diesem Gerät sind</string>
+<string name="cache_import_recaching_toast">Die fehlenden Videos werden erneut für die Offline-Wiedergabe gespeichert</string>
+<string name="cache_import_cleared_toast">Markierungen von Videos entfernt, die nicht auf diesem Gerät sind</string>
 <string name="refresh">Aktualisieren</string>
 </resources>

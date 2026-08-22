@@ -692,10 +692,10 @@
 <string name="player_uncache_title">Ištrinti neprisijungus įrašytą kopiją</string>
 <string name="player_uncache_desc">Pašalinti šį vaizdo įrašą iš neprisijungus saugyklos ir užverti grotuvą</string>
 <string name="cache_import_missing_title">Trūksta įrašytų vaizdo įrašų</string>
-<string name="cache_import_missing_message">Ši atsarginė kopija %1$d vaizdo įrašų žymi kaip įrašytus neprisijungus, bet jų failų šiame įrenginyje nėra.\n\nĮrašyti juos dabar iš naujo? Jei ne, žymos bus išvalytos.</string>
+<string name="cache_import_missing_message">Ši atsarginė kopija žymi kaip įrašytus neprisijungus vaizdo įrašus, kurių failų šiame įrenginyje nėra (iš viso %1$d).\n\nĮrašyti juos dabar iš naujo? Jei ne, žymos bus išvalytos.</string>
 <string name="cache_import_recache_button">Įrašyti iš naujo</string>
 <string name="cache_import_clear_button">Išvalyti žymas</string>
-<string name="cache_import_recaching_toast">%1$d vaizdo įrašų įrašoma iš naujo žiūrėjimui neprisijungus</string>
-<string name="cache_import_cleared_toast">Išvalyta %1$d žymų, kurių vaizdo įrašų šiame įrenginyje nėra</string>
+<string name="cache_import_recaching_toast">Trūkstami vaizdo įrašai įrašomi iš naujo žiūrėjimui neprisijungus</string>
+<string name="cache_import_cleared_toast">Išvalytos žymos vaizdo įrašų, kurių šiame įrenginyje nėra</string>
 <string name="refresh">Atnaujinti</string>
 </resources>

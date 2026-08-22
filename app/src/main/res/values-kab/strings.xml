@@ -176,10 +176,10 @@
 <string name="player_uncache_title">Kkes anɣel n beṛṛa n uzeṭṭa</string>
 <string name="player_uncache_desc">Kkes tavidyut-a seg uḥraz n beṛṛa n uzeṭṭa syen mdel ameɣnaǧ</string>
 <string name="cache_import_missing_title">Ulac tividyutin yettwaseklsen</string>
-<string name="cache_import_missing_message">Aḥraz-a yettcaraḍ %1$d n tvidyutin d yettwaseklsen s beṛṛa n uzeṭṭa, maca ifuyla-nsent ulac-iten deg yibenk-a.\n\nAd tent-teskelseḍ tura tikkelt-nniḍen? Ma ala, ticraḍ-nsent ad ttwakksent.</string>
+<string name="cache_import_missing_message">Aḥraz-a yettcaraḍ d yettwaseklsen s beṛṛa n uzeṭṭa tividyutin i wumi ifuyla-nsent ulac-iten deg yibenk-a (%1$d s wamata).\n\nAd tent-teskelseḍ tura tikkelt-nniḍen? Ma ala, ticraḍ-nsent ad ttwakksent.</string>
 <string name="cache_import_recache_button">Sekles tikkelt-nniḍen</string>
 <string name="cache_import_clear_button">Kkes ticraḍ</string>
-<string name="cache_import_recaching_toast">%1$d n tvidyutin ttwaseklsent tikkelt-nniḍen i uẓerri s beṛṛa n uzeṭṭa</string>
-<string name="cache_import_cleared_toast">Ttwakksent %1$d n ticraḍ i wumi tividyutin-nsent ulac-itent deg yibenk-a</string>
+<string name="cache_import_recaching_toast">Tividyutin ixuṣṣen ttwaseklsent tikkelt-nniḍen i uẓerri s beṛṛa n uzeṭṭa</string>
+<string name="cache_import_cleared_toast">Ttwakksent ticraḍ n tvidyutin ur nelli ara deg yibenk-a</string>
 <string name="refresh">Smiren</string>
 </resources>

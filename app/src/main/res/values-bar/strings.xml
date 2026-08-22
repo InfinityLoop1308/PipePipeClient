@@ -59,10 +59,10 @@
 <string name="player_uncache_title">Offline-Kopie leschn</string>
 <string name="player_uncache_desc">Des Video ausm Offline-Speicha entfernen und den Player zuamacha</string>
 <string name="cache_import_missing_title">Gspeichate Videos fehln</string>
-<string name="cache_import_missing_message">In dera Sicherung san %1$d Videos ois offline gspeichat markiert, oba eahnare Dateien san ned auf dem Gerät.\n\nJetz nomoi speichern? Wanns ned, wean de Markierunga entfernt.</string>
+<string name="cache_import_missing_message">De Sicherung markiert Videos ois offline gspeichat, deren Dateien ned auf dem Gerät san (insgesamt %1$d).\n\nJetz nomoi speichern? Wanns ned, wean de Markierunga entfernt.</string>
 <string name="cache_import_recache_button">Nomoi speichern</string>
 <string name="cache_import_clear_button">Markierunga entfernen</string>
-<string name="cache_import_recaching_toast">%1$d Videos wean nomoi fias Schaung ohne Netz gspeichat</string>
-<string name="cache_import_cleared_toast">%1$d Markierunga entfernt, deren Videos ned auf dem Gerät san</string>
+<string name="cache_import_recaching_toast">De fehlenden Videos wean nomoi fias Schaung ohne Netz gspeichat</string>
+<string name="cache_import_cleared_toast">Markierunga vo Videos entfernt, de ned auf dem Gerät san</string>
 <string name="refresh">Aktualisiern</string>
 </resources>

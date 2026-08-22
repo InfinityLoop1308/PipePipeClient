@@ -567,10 +567,10 @@
 <string name="player_uncache_title">Oflayn nusxani o\'chirish</string>
 <string name="player_uncache_desc">Bu videoni oflayn xotiradan olib tashlash va pleyerni yopish</string>
 <string name="cache_import_missing_title">Saqlangan videolar yo\'q</string>
-<string name="cache_import_missing_message">Bu zaxira nusxa %1$d videoni oflayn saqlangan deb belgilaydi, lekin ularning fayllari bu qurilmada yo\'q.\n\nHozir qaytadan saqlansinmi? Aks holda, ularning belgilari tozalanadi.</string>
+<string name="cache_import_missing_message">Bu zaxira nusxa fayllari bu qurilmada bo\'lmagan videolarni oflayn saqlangan deb belgilaydi (jami %1$d).\n\nHozir qaytadan saqlansinmi? Aks holda, ularning belgilari tozalanadi.</string>
 <string name="cache_import_recache_button">Qaytadan saqlash</string>
 <string name="cache_import_clear_button">Belgilarni tozalash</string>
-<string name="cache_import_recaching_toast">%1$d video oflayn ko\'rish uchun qaytadan saqlanmoqda</string>
-<string name="cache_import_cleared_toast">Videolari bu qurilmada bo\'lmagan %1$d belgi tozalandi</string>
+<string name="cache_import_recaching_toast">Yetishmayotgan videolar oflayn ko\'rish uchun qaytadan saqlanmoqda</string>
+<string name="cache_import_cleared_toast">Bu qurilmada bo\'lmagan videolarning belgilari tozalandi</string>
 <string name="refresh">Yangilash</string>
 </resources>

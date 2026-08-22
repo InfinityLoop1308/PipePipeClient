@@ -54,11 +54,11 @@
 <string name="player_uncache_title">Uncache</string>
 <string name="player_uncache_desc">Remove this video from the offline cache and close the player</string>
 <string name="cache_import_missing_title">Cached videos are missing</string>
-<string name="cache_import_missing_message">This backup marks %1$d videos as cached for offline viewing, but their files are not on this device.\n\nCache them again now? If not, their cache marks are cleared.</string>
+<string name="cache_import_missing_message">This backup marks videos as cached for offline viewing whose files are not on this device (%1$d in total).\n\nCache them again now? If not, their cache marks are cleared.</string>
 <string name="cache_import_recache_button">Cache again</string>
 <string name="cache_import_clear_button">Clear the marks</string>
-<string name="cache_import_recaching_toast">Caching %1$d videos again for offline viewing</string>
-<string name="cache_import_cleared_toast">Cleared %1$d cache marks whose videos are not on this device</string>
+<string name="cache_import_recaching_toast">Caching the missing videos again for offline viewing</string>
+<string name="cache_import_cleared_toast">Cleared the cache marks of videos that are not on this device</string>
 <string name="refresh">Refresh</string>
 <string name="search">Search</string>
 <string name="settings">Settings</string>

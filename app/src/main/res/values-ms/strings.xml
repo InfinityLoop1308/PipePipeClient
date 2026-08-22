@@ -443,10 +443,10 @@
 <string name="player_uncache_title">Padam salinan luar talian</string>
 <string name="player_uncache_desc">Buang video ini daripada storan luar talian dan tutup pemain</string>
 <string name="cache_import_missing_title">Video yang disimpan tiada</string>
-<string name="cache_import_missing_message">Sandaran ini menandakan %1$d video sebagai disimpan luar talian, tetapi failnya tiada pada peranti ini.\n\nSimpan semula sekarang? Jika tidak, tandanya akan dikosongkan.</string>
+<string name="cache_import_missing_message">Sandaran ini menandakan sebagai disimpan luar talian video yang failnya tiada pada peranti ini (%1$d kesemuanya).\n\nSimpan semula sekarang? Jika tidak, tandanya akan dikosongkan.</string>
 <string name="cache_import_recache_button">Simpan semula</string>
 <string name="cache_import_clear_button">Kosongkan tanda</string>
-<string name="cache_import_recaching_toast">%1$d video sedang disimpan semula untuk tontonan luar talian</string>
-<string name="cache_import_cleared_toast">%1$d tanda dikosongkan kerana videonya tiada pada peranti ini</string>
+<string name="cache_import_recaching_toast">Video yang hilang sedang disimpan semula untuk tontonan luar talian</string>
+<string name="cache_import_cleared_toast">Tanda video yang tiada pada peranti ini telah dikosongkan</string>
 <string name="refresh">Muat semula</string>
 </resources>

@@ -619,10 +619,10 @@
 <string name="player_uncache_title">Offline-kopie verwijderen</string>
 <string name="player_uncache_desc">Deze video uit de offline-opslag verwijderen en de speler sluiten</string>
 <string name="cache_import_missing_title">Opgeslagen video\'s ontbreken</string>
-<string name="cache_import_missing_message">Deze back-up markeert %1$d video\'s als offline opgeslagen, maar hun bestanden staan niet op dit toestel.\n\nNu opnieuw opslaan? Zo niet, dan worden de markeringen gewist.</string>
+<string name="cache_import_missing_message">Deze back-up markeert video\'s als offline opgeslagen waarvan de bestanden niet op dit toestel staan (%1$d in totaal).\n\nNu opnieuw opslaan? Zo niet, dan worden de markeringen gewist.</string>
 <string name="cache_import_recache_button">Opnieuw opslaan</string>
 <string name="cache_import_clear_button">Markeringen wissen</string>
-<string name="cache_import_recaching_toast">%1$d video\'s worden opnieuw opgeslagen om offline te bekijken</string>
-<string name="cache_import_cleared_toast">%1$d markeringen gewist waarvan de video\'s niet op dit toestel staan</string>
+<string name="cache_import_recaching_toast">De ontbrekende video\'s worden opnieuw opgeslagen om offline te bekijken</string>
+<string name="cache_import_cleared_toast">Markeringen gewist van video\'s die niet op dit toestel staan</string>
 <string name="refresh">Vernieuwen</string>
 </resources>

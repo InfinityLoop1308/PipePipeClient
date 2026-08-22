@@ -93,10 +93,10 @@
 <string name="player_uncache_title">ᱚᱯᱞᱟᱭᱤᱱ ᱠᱚᱯᱤ ᱢᱮᱴᱟᱣ ᱢᱮ</string>
 <string name="player_uncache_desc">ᱱᱚᱶᱟ ᱣᱤᱰᱤᱭᱳ ᱚᱯᱞᱟᱭᱤᱱ ᱫᱚᱦᱚ ᱠᱷᱚᱱ ᱚᱰᱚᱠ ᱢᱮ ᱟᱨ ᱯᱞᱮᱭᱟᱨ ᱵᱚᱸᱫᱚᱭ ᱢᱮ</string>
 <string name="cache_import_missing_title">ᱫᱚᱦᱚᱠᱟᱱ ᱣᱤᱰᱤᱭᱳ ᱠᱚ ᱵᱟᱹᱱᱩᱜᱼᱟ</string>
-<string name="cache_import_missing_message">ᱱᱚᱶᱟ ᱵᱮᱠᱟᱯ ᱨᱮ %1$d ᱣᱤᱰᱤᱭᱳ ᱚᱯᱞᱟᱭᱤᱱ ᱫᱚᱦᱚᱠᱟᱱ ᱞᱮᱠᱟᱛᱮ ᱪᱤᱱᱦᱟᱹᱠᱟᱱᱟ, ᱢᱮᱱᱠᱷᱟᱱ ᱚᱱᱠᱚᱣᱟᱜ ᱨᱮᱫ ᱠᱚ ᱱᱚᱶᱟ ᱭᱟᱱᱛᱨ ᱨᱮ ᱵᱟᱹᱱᱩᱜᱼᱟ᱾\n\nᱱᱤᱛᱚᱜ ᱫᱩᱦᱲᱟᱹ ᱫᱚᱦᱚᱭ ᱥᱮ? ᱵᱟᱝ ᱠᱷᱟᱱ ᱚᱱᱠᱚᱣᱟᱜ ᱪᱤᱱᱦᱟᱹ ᱠᱚ ᱢᱮᱴᱟᱣᱚᱜᱼᱟ᱾</string>
+<string name="cache_import_missing_message">ᱱᱚᱶᱟ ᱵᱮᱠᱟᱯ ᱨᱮ ᱚᱱᱟ ᱣᱤᱰᱤᱭᱳ ᱠᱚ ᱚᱯᱞᱟᱭᱤᱱ ᱫᱚᱦᱚᱠᱟᱱ ᱞᱮᱠᱟᱛᱮ ᱪᱤᱱᱦᱟᱹᱠᱟᱱᱟ ᱡᱟᱦᱟᱸᱠᱚᱣᱟᱜ ᱨᱮᱫ ᱠᱚ ᱱᱚᱶᱟ ᱭᱟᱱᱛᱨ ᱨᱮ ᱵᱟᱹᱱᱩᱜᱼᱟ (ᱡᱚᱛᱚ %1$d)᱾\n\nᱱᱤᱛᱚᱜ ᱫᱩᱦᱲᱟᱹ ᱫᱚᱦᱚᱭ ᱥᱮ? ᱵᱟᱝ ᱠᱷᱟᱱ ᱚᱱᱠᱚᱣᱟᱜ ᱪᱤᱱᱦᱟᱹ ᱠᱚ ᱢᱮᱴᱟᱣᱚᱜᱼᱟ᱾</string>
 <string name="cache_import_recache_button">ᱫᱩᱦᱲᱟᱹ ᱫᱚᱦᱚᱭ ᱢᱮ</string>
 <string name="cache_import_clear_button">ᱪᱤᱱᱦᱟᱹ ᱠᱚ ᱢᱮᱴᱟᱣ ᱢᱮ</string>
-<string name="cache_import_recaching_toast">%1$d ᱣᱤᱰᱤᱭᱳ ᱚᱯᱞᱟᱭᱤᱱ ᱧᱮᱞ ᱞᱟᱹᱜᱤᱫ ᱫᱩᱦᱲᱟᱹ ᱫᱚᱦᱚ ᱠᱟᱱᱟ</string>
-<string name="cache_import_cleared_toast">%1$d ᱪᱤᱱᱦᱟᱹ ᱢᱮᱴᱟᱣ ᱮᱱᱟ ᱡᱟᱦᱟᱸᱠᱚᱣᱟᱜ ᱣᱤᱰᱤᱭᱳ ᱱᱚᱶᱟ ᱭᱟᱱᱛᱨ ᱨᱮ ᱵᱟᱹᱱᱩᱜᱼᱟ</string>
+<string name="cache_import_recaching_toast">ᱵᱟᱹᱱᱩᱜ ᱣᱤᱰᱤᱭᱳ ᱠᱚ ᱚᱯᱞᱟᱭᱤᱱ ᱧᱮᱞ ᱞᱟᱹᱜᱤᱫ ᱫᱩᱦᱲᱟᱹ ᱫᱚᱦᱚ ᱠᱟᱱᱟ</string>
+<string name="cache_import_cleared_toast">ᱱᱚᱶᱟ ᱭᱟᱱᱛᱨ ᱨᱮ ᱵᱟᱹᱱᱩᱜ ᱣᱤᱰᱤᱭᱳ ᱠᱚᱣᱟᱜ ᱪᱤᱱᱦᱟᱹ ᱢᱮᱴᱟᱣ ᱮᱱᱟ</string>
 <string name="refresh">ᱱᱟᱶᱟᱭ ᱢᱮ</string>
 </resources>

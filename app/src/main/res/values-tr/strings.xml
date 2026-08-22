@@ -1046,10 +1046,10 @@
 <string name="player_uncache_title">Çevrimdışı kopyayı sil</string>
 <string name="player_uncache_desc">Bu videoyu çevrimdışı depodan kaldır ve oynatıcıyı kapat</string>
 <string name="cache_import_missing_title">Kaydedilen videolar eksik</string>
-<string name="cache_import_missing_message">Bu yedek %1$d videoyu çevrimdışı kaydedilmiş olarak işaretliyor ama dosyaları bu cihazda değil.\n\nŞimdi yeniden kaydedilsin mi? Kaydedilmezse işaretleri temizlenir.</string>
+<string name="cache_import_missing_message">Bu yedek, dosyaları bu cihazda olmayan videoları çevrimdışı kaydedilmiş olarak işaretliyor (toplam %1$d).\n\nŞimdi yeniden kaydedilsin mi? Kaydedilmezse işaretleri temizlenir.</string>
 <string name="cache_import_recache_button">Yeniden kaydet</string>
 <string name="cache_import_clear_button">İşaretleri temizle</string>
-<string name="cache_import_recaching_toast">%1$d video çevrimdışı izleme için yeniden kaydediliyor</string>
-<string name="cache_import_cleared_toast">Videoları bu cihazda olmayan %1$d işaret temizlendi</string>
+<string name="cache_import_recaching_toast">Eksik videolar çevrimdışı izleme için yeniden kaydediliyor</string>
+<string name="cache_import_cleared_toast">Bu cihazda olmayan videoların işaretleri temizlendi</string>
 <string name="refresh">Yenile</string>
 </resources>

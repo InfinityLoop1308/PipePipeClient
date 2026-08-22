@@ -35,10 +35,10 @@
 <string name="player_uncache_title">آف لائن نقل مٹٲویو</string>
 <string name="player_uncache_desc">یہٕ ویڈیو آف لائن ذخیرس منٛز ہٹٲویو تہٕ پلیئر بند کریو</string>
 <string name="cache_import_missing_title">محفوظ ویڈیو چھِ نہٕ لبنہٕ آمٕتؠ</string>
-<string name="cache_import_missing_message">یہٕ بیک اپ چھُ %1$d ویڈیو آف لائن محفوظ ہاوان، مگر تِمن ہٕنٛدؠ فایلہ چھِ نہٕ یمہ آلس پؠٹھ۔\n\nوۄنؠ دوبارٕ محفوظ کریو؟ اگر نہٕ، تہ تِمن ہٕنٛدؠ نشان ییکھ مٹٲوٕنہ۔</string>
+<string name="cache_import_missing_message">یہ بیک اپ چھُ تِمن ویڈیو آف لائن محفوظ ہاوان یمن ہٕنٛدؠ فایلہ چھِ نہٕ یمہ آلس پؠٹھ (مجموعی طور %1$d)۔\n\nوۄنؠ دوبارٕ محفوظ کریو؟ اگر نہٕ، تہ تِمن ہٕنٛدؠ نشان ییکھ مٹٲوٕنہ۔</string>
 <string name="cache_import_recache_button">دوبارٕ محفوظ کریو</string>
 <string name="cache_import_clear_button">نشان مٹٲویو</string>
-<string name="cache_import_recaching_toast">%1$d ویڈیو چھِ آف لائن ویچھنہ خٲطرٕ دوبارٕ محفوظ گژھان</string>
-<string name="cache_import_cleared_toast">%1$d نشان مٹٲوٕنہ آیہ یمن ہٕنٛدؠ ویڈیو چھِ نہٕ یمہ آلس پؠٹھ</string>
+<string name="cache_import_recaching_toast">غایب ویڈیو چھِ آف لائن ویچھنہ خٲطرٕ دوبارٕ محفوظ گژھان</string>
+<string name="cache_import_cleared_toast">یمن ویڈیوہن ہٕنٛدؠ نشان مٹٲوٕنہ آیہ یم یمہ آلس پؠٹھ چھِ نہٕ</string>
 <string name="refresh">تازٕ کریو</string>
 </resources>

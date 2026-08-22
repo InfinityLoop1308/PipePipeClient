@@ -554,10 +554,10 @@
 <string name="player_uncache_title">Forigi la eksterretan kopion</string>
 <string name="player_uncache_desc">Forigi ĉi tiun videon el la eksterreta konservejo kaj fermi la ludilon</string>
 <string name="cache_import_missing_title">Mankas konservitaj videoj</string>
-<string name="cache_import_missing_message">Ĉi tiu savkopio markas %1$d videojn kiel eksterrete konservitajn, sed iliaj dosieroj ne estas en ĉi tiu aparato.\n\nĈu konservi ilin denove nun? Se ne, iliaj markoj estos forviŝitaj.</string>
+<string name="cache_import_missing_message">Ĉi tiu savkopio markas kiel eksterrete konservitajn videojn kies dosieroj ne estas en ĉi tiu aparato (entute %1$d).\n\nĈu konservi ilin denove nun? Se ne, iliaj markoj estos forviŝitaj.</string>
 <string name="cache_import_recache_button">Konservi denove</string>
 <string name="cache_import_clear_button">Forviŝi la markojn</string>
-<string name="cache_import_recaching_toast">%1$d videoj estas konservataj denove por eksterreta spektado</string>
-<string name="cache_import_cleared_toast">Forviŝitaj %1$d markoj, kies videoj ne estas en ĉi tiu aparato</string>
+<string name="cache_import_recaching_toast">La mankantaj videoj estas konservataj denove por eksterreta spektado</string>
+<string name="cache_import_cleared_toast">Forviŝitaj la markoj de la videoj kiuj ne estas en ĉi tiu aparato</string>
 <string name="refresh">Aktualigi</string>
 </resources>

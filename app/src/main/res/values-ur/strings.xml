@@ -497,10 +497,10 @@
 <string name="player_uncache_title">آف لائن نقل حذف کریں</string>
 <string name="player_uncache_desc">اس ویڈیو کو آف لائن ذخیرے سے ہٹائیں اور پلیئر بند کریں</string>
 <string name="cache_import_missing_title">محفوظ شدہ ویڈیوز غائب ہیں</string>
-<string name="cache_import_missing_message">یہ بیک اپ %1$d ویڈیوز کو آف لائن محفوظ شدہ نشان زد کرتا ہے، مگر ان کی فائلیں اس آلے پر نہیں ہیں۔\n\nکیا انہیں ابھی دوبارہ محفوظ کیا جائے؟ اگر نہیں، تو ان کے نشان مٹا دیے جائیں گے۔</string>
+<string name="cache_import_missing_message">یہ بیک اپ ایسی ویڈیوز کو آف لائن محفوظ شدہ نشان زد کرتا ہے جن کی فائلیں اس آلے پر نہیں ہیں (کل %1$d)۔\n\nکیا انہیں ابھی دوبارہ محفوظ کیا جائے؟ اگر نہیں، تو ان کے نشان مٹا دیے جائیں گے۔</string>
 <string name="cache_import_recache_button">دوبارہ محفوظ کریں</string>
 <string name="cache_import_clear_button">نشان مٹائیں</string>
-<string name="cache_import_recaching_toast">%1$d ویڈیوز آف لائن دیکھنے کے لیے دوبارہ محفوظ کی جا رہی ہیں</string>
-<string name="cache_import_cleared_toast">%1$d نشان مٹا دیے گئے جن کی ویڈیوز اس آلے پر نہیں ہیں</string>
+<string name="cache_import_recaching_toast">غائب ویڈیوز آف لائن دیکھنے کے لیے دوبارہ محفوظ کی جا رہی ہیں</string>
+<string name="cache_import_cleared_toast">ان ویڈیوز کے نشان مٹا دیے گئے جو اس آلے پر نہیں ہیں</string>
 <string name="refresh">تازہ کریں</string>
 </resources>

@@ -703,10 +703,10 @@
 <string name="player_uncache_title">Ezabatu lineaz kanpoko kopia</string>
 <string name="player_uncache_desc">Kendu bideo hau lineaz kanpoko biltegitik eta itxi erreproduzigailua</string>
 <string name="cache_import_missing_title">Gordetako bideoak falta dira</string>
-<string name="cache_import_missing_message">Babeskopia honek %1$d bideo lineaz kanpo gordeta bezala markatzen ditu, baina haien fitxategiak ez daude gailu honetan.\n\nOrain berriro gorde? Bestela, haien markak garbituko dira.</string>
+<string name="cache_import_missing_message">Babeskopia honek lineaz kanpo gordeta bezala markatzen ditu fitxategiak gailu honetan ez dituzten bideoak (%1$d guztira).\n\nOrain berriro gorde? Bestela, haien markak garbituko dira.</string>
 <string name="cache_import_recache_button">Gorde berriro</string>
 <string name="cache_import_clear_button">Garbitu markak</string>
-<string name="cache_import_recaching_toast">%1$d bideo berriro gordetzen ari dira lineaz kanpo ikusteko</string>
-<string name="cache_import_cleared_toast">%1$d marka garbitu dira, haien bideoak ez baitaude gailu honetan</string>
+<string name="cache_import_recaching_toast">Falta diren bideoak berriro gordetzen ari dira lineaz kanpo ikusteko</string>
+<string name="cache_import_cleared_toast">Gailu honetan ez dauden bideoen markak garbitu dira</string>
 <string name="refresh">Freskatu</string>
 </resources>

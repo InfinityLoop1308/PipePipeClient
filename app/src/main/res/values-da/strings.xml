@@ -405,10 +405,10 @@
 <string name="player_uncache_title">Slet offlinekopien</string>
 <string name="player_uncache_desc">Fjern denne video fra offlinelagringen, og luk afspilleren</string>
 <string name="cache_import_missing_title">Gemte videoer mangler</string>
-<string name="cache_import_missing_message">Denne sikkerhedskopi markerer %1$d videoer som gemt offline, men deres filer findes ikke på denne enhed.\n\nSkal de gemmes igen nu? Ellers ryddes markeringerne.</string>
+<string name="cache_import_missing_message">Denne sikkerhedskopi markerer videoer som gemt offline, hvis filer ikke findes på denne enhed (%1$d i alt).\n\nSkal de gemmes igen nu? Ellers ryddes markeringerne.</string>
 <string name="cache_import_recache_button">Gem igen</string>
 <string name="cache_import_clear_button">Ryd markeringerne</string>
-<string name="cache_import_recaching_toast">%1$d videoer gemmes igen til offlinevisning</string>
-<string name="cache_import_cleared_toast">Ryddede %1$d markeringer, hvis videoer ikke findes på denne enhed</string>
+<string name="cache_import_recaching_toast">De manglende videoer gemmes igen til offlinevisning</string>
+<string name="cache_import_cleared_toast">Ryddede markeringerne for videoer, der ikke findes på denne enhed</string>
 <string name="refresh">Opdater</string>
 </resources>

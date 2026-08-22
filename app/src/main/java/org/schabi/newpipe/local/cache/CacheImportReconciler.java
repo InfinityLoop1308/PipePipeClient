@@ -212,12 +212,12 @@ public final class CacheImportReconciler {
                         preferences.getStringSet(PREF_RECACHE, Collections.emptySet()));
                 if (keys.isEmpty()) {
                     if (result.rowsDropped > 0) {
-                        toast(appContext, appContext.getString(
-                                R.string.cache_import_cleared_toast, result.rowsDropped));
+                        toast(appContext,
+                                appContext.getString(R.string.cache_import_cleared_toast));
                     }
                 } else {
-                    toast(appContext, appContext.getString(
-                            R.string.cache_import_recaching_toast, keys.size()));
+                    toast(appContext,
+                            appContext.getString(R.string.cache_import_recaching_toast));
                     recacheAll(appContext, preferences, new ArrayList<>(keys));
                 }
             } catch (final Throwable t) {

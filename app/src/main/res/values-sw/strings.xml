@@ -72,10 +72,10 @@
 <string name="player_uncache_title">Futa nakala ya nje ya mtandao</string>
 <string name="player_uncache_desc">Ondoa video hii kwenye hifadhi ya nje ya mtandao na ufunge kicheza</string>
 <string name="cache_import_missing_title">Video zilizohifadhiwa hazipo</string>
-<string name="cache_import_missing_message">Nakala hii rudufu inaonyesha video %1$d kuwa zimehifadhiwa nje ya mtandao, lakini faili zake hazipo kwenye kifaa hiki.\n\nUzihifadhi tena sasa? Kama sivyo, alama zake zitafutwa.</string>
+<string name="cache_import_missing_message">Nakala hii rudufu inaonyesha kuwa zimehifadhiwa nje ya mtandao video ambazo faili zake hazipo kwenye kifaa hiki (jumla %1$d).\n\nUzihifadhi tena sasa? Kama sivyo, alama zake zitafutwa.</string>
 <string name="cache_import_recache_button">Hifadhi tena</string>
 <string name="cache_import_clear_button">Futa alama</string>
-<string name="cache_import_recaching_toast">Video %1$d zinahifadhiwa tena ili kutazama nje ya mtandao</string>
-<string name="cache_import_cleared_toast">Alama %1$d zimefutwa ambazo video zake hazipo kwenye kifaa hiki</string>
+<string name="cache_import_recaching_toast">Video zinazokosekana zinahifadhiwa tena ili kutazama nje ya mtandao</string>
+<string name="cache_import_cleared_toast">Alama za video ambazo hazipo kwenye kifaa hiki zimefutwa</string>
 <string name="refresh">Onyesha upya</string>
 </resources>

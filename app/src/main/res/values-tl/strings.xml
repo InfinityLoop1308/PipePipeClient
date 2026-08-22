@@ -96,10 +96,10 @@
 <string name="player_uncache_title">Burahin ang offline na kopya</string>
 <string name="player_uncache_desc">Alisin ang video na ito sa offline na imbakan at isara ang player</string>
 <string name="cache_import_missing_title">May nawawalang naka-save na video</string>
-<string name="cache_import_missing_message">Minarkahan ng backup na ito ang %1$d video bilang naka-save offline, pero wala sa device na ito ang mga file nila.\n\nI-save muli ngayon? Kung hindi, buburahin ang kanilang marka.</string>
+<string name="cache_import_missing_message">Minarkahan ng backup na ito bilang naka-save offline ang mga video na wala sa device na ito ang mga file (%1$d sa kabuuan).\n\nI-save muli ngayon? Kung hindi, buburahin ang kanilang marka.</string>
 <string name="cache_import_recache_button">I-save muli</string>
 <string name="cache_import_clear_button">Burahin ang mga marka</string>
-<string name="cache_import_recaching_toast">%1$d video ang sini-save muli para mapanood offline</string>
-<string name="cache_import_cleared_toast">Nabura ang %1$d marka na ang mga video ay wala sa device na ito</string>
+<string name="cache_import_recaching_toast">Sini-save muli ang mga nawawalang video para mapanood offline</string>
+<string name="cache_import_cleared_toast">Nabura ang marka ng mga video na wala sa device na ito</string>
 <string name="refresh">I-refresh</string>
 </resources>

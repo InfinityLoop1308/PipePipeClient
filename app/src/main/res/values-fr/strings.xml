@@ -1057,10 +1057,10 @@ Voulez-vous continuer?</string>
 <string name="player_uncache_title">Supprimer la copie hors ligne</string>
 <string name="player_uncache_desc">Retirer cette vidéo du stockage hors ligne et fermer le lecteur</string>
 <string name="cache_import_missing_title">Des vidéos hors ligne sont manquantes</string>
-<string name="cache_import_missing_message">Cette sauvegarde marque %1$d vidéos comme enregistrées hors ligne, mais leurs fichiers ne sont pas sur cet appareil.\n\nLes enregistrer à nouveau maintenant ? Sinon, leurs marques seront effacées.</string>
+<string name="cache_import_missing_message">Cette sauvegarde marque comme enregistrées hors ligne des vidéos dont les fichiers ne sont pas sur cet appareil (%1$d au total).\n\nLes enregistrer à nouveau maintenant ? Sinon, leurs marques seront effacées.</string>
 <string name="cache_import_recache_button">Enregistrer à nouveau</string>
 <string name="cache_import_clear_button">Effacer les marques</string>
-<string name="cache_import_recaching_toast">%1$d vidéos sont de nouveau enregistrées pour le visionnage hors ligne</string>
-<string name="cache_import_cleared_toast">%1$d marques effacées dont les vidéos ne sont pas sur cet appareil</string>
+<string name="cache_import_recaching_toast">Les vidéos manquantes sont de nouveau enregistrées pour le visionnage hors ligne</string>
+<string name="cache_import_cleared_toast">Marques effacées des vidéos qui ne sont pas sur cet appareil</string>
 <string name="refresh">Actualiser</string>
 </resources>

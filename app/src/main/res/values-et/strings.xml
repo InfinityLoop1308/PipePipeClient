@@ -703,10 +703,10 @@
 <string name="player_uncache_title">Kustuta võrguühenduseta koopia</string>
 <string name="player_uncache_desc">Eemalda see video võrguühenduseta hoidlast ja sulge mängija</string>
 <string name="cache_import_missing_title">Salvestatud videod on puudu</string>
-<string name="cache_import_missing_message">See varukoopia märgib %1$d videot võrguühenduseta salvestatuks, kuid nende faile pole selles seadmes.\n\nKas salvestada need nüüd uuesti? Kui ei, siis märked kustutatakse.</string>
+<string name="cache_import_missing_message">See varukoopia märgib võrguühenduseta salvestatuks videod, mille faile pole selles seadmes (kokku %1$d).\n\nKas salvestada need nüüd uuesti? Kui ei, siis märked kustutatakse.</string>
 <string name="cache_import_recache_button">Salvesta uuesti</string>
 <string name="cache_import_clear_button">Kustuta märked</string>
-<string name="cache_import_recaching_toast">%1$d videot salvestatakse uuesti võrguühenduseta vaatamiseks</string>
-<string name="cache_import_cleared_toast">Kustutati %1$d märget, mille videoid pole selles seadmes</string>
+<string name="cache_import_recaching_toast">Puuduvad videod salvestatakse uuesti võrguühenduseta vaatamiseks</string>
+<string name="cache_import_cleared_toast">Kustutati märked videotelt, mida pole selles seadmes</string>
 <string name="refresh">Värskenda</string>
 </resources>

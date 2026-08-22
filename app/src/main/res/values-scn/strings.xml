@@ -35,10 +35,10 @@
 <string name="player_uncache_title">Cancella la copia senza rete</string>
 <string name="player_uncache_desc">Leva stu vidiu di l\'archiviu senza rete e chiuji lu ripruduttturi</string>
 <string name="cache_import_missing_title">Mancanu vidii sarvati</string>
-<string name="cache_import_missing_message">Sta copia di sicurizza signa %1$d vidii comu sarvati senza rete, ma li so file nun sunnu supra stu dispusitivu.\n\nLi sarvamu arrè ora? Sinnò, li signi vènunu cancillati.</string>
+<string name="cache_import_missing_message">Sta copia di sicurizza signa comu sarvati senza rete vidii ca li so file nun sunnu supra stu dispusitivu (%1$d n tuttu).\n\nLi sarvamu arrè ora? Sinnò, li signi vènunu cancillati.</string>
 <string name="cache_import_recache_button">Sarva arrè</string>
 <string name="cache_import_clear_button">Cancella li signi</string>
-<string name="cache_import_recaching_toast">%1$d vidii si stannu sarvannu arrè pi taliàrili senza rete</string>
-<string name="cache_import_cleared_toast">Cancillati %1$d signi ca li so vidii nun sunnu supra stu dispusitivu</string>
+<string name="cache_import_recaching_toast">Li vidii ca mancanu si stannu sarvannu arrè pi taliàrili senza rete</string>
+<string name="cache_import_cleared_toast">Cancillati li signi di li vidii ca nun sunnu supra stu dispusitivu</string>
 <string name="refresh">Agghiorna</string>
 </resources>

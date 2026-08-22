@@ -586,10 +586,10 @@
 <string name="player_uncache_title">Kopiya offline jê bibe</string>
 <string name="player_uncache_desc">Vê vîdyoyê ji embara offline rake û lêdêr bigire</string>
 <string name="cache_import_missing_title">Vîdyoyên tomarkirî kêm in</string>
-<string name="cache_import_missing_message">Ev paşgir %1$d vîdyoyan wek offline tomarkirî nîşan dide, lê pelên wan li ser vê amûrê nînin.\n\nNiha ji nû ve werin tomarkirin? Heke na, nîşanên wan werin paqijkirin.</string>
+<string name="cache_import_missing_message">Ev paşgir vîdyoyên ku pelên wan li ser vê amûrê nînin wek offline tomarkirî nîşan dide (bi giştî %1$d).\n\nNiha ji nû ve werin tomarkirin? Heke na, nîşanên wan werin paqijkirin.</string>
 <string name="cache_import_recache_button">Ji nû ve tomar bike</string>
 <string name="cache_import_clear_button">Nîşanan paqij bike</string>
-<string name="cache_import_recaching_toast">%1$d vîdyo ji nû ve ji bo temaşekirina offline tên tomarkirin</string>
-<string name="cache_import_cleared_toast">%1$d nîşan hatin paqijkirin ku vîdyoyên wan li ser vê amûrê nînin</string>
+<string name="cache_import_recaching_toast">Vîdyoyên kêm ji nû ve ji bo temaşekirina offline tên tomarkirin</string>
+<string name="cache_import_cleared_toast">Nîşanên vîdyoyên ku li ser vê amûrê nînin hatin paqijkirin</string>
 <string name="refresh">Nû bike</string>
 </resources>

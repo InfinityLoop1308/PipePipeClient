@@ -1104,10 +1104,10 @@
 <string name="player_uncache_title">删除缓存</string>
 <string name="player_uncache_desc">从离线缓存中移除此视频并关闭播放器</string>
 <string name="cache_import_missing_title">缓存的视频已丢失</string>
-<string name="cache_import_missing_message">此备份将 %1$d 个视频标记为已离线缓存，但它们的文件不在本设备上。\n\n现在重新缓存吗？如果不，这些标记将被清除。</string>
+<string name="cache_import_missing_message">此备份把一些视频标记为已离线缓存，但它们的文件不在本设备上（共 %1$d 个）。\n\n现在重新缓存吗？如果不，这些标记将被清除。</string>
 <string name="cache_import_recache_button">重新缓存</string>
 <string name="cache_import_clear_button">清除标记</string>
-<string name="cache_import_recaching_toast">正在重新缓存 %1$d 个视频以便离线观看</string>
-<string name="cache_import_cleared_toast">已清除 %1$d 个标记，其视频不在本设备上</string>
+<string name="cache_import_recaching_toast">正在重新缓存缺失的视频以便离线观看</string>
+<string name="cache_import_cleared_toast">已清除不在本设备上的视频的缓存标记</string>
 <string name="refresh">刷新</string>
 </resources>

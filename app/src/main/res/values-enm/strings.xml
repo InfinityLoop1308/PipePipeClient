@@ -35,10 +35,10 @@
 <string name="player_uncache_title">Do awey the offline copie</string>
 <string name="player_uncache_desc">Do this video out of the offline hord and close the pleyere</string>
 <string name="cache_import_missing_title">Kept videos ben amyssynge</string>
-<string name="cache_import_missing_message">This warde merketh %1$d videos as ykept offline, but hire files ben nat on this engyn.\n\nKepe hem eft now? And if nat, hire merkes schul be wiped.</string>
+<string name="cache_import_missing_message">This warde merketh videos as ykept offline whos files ben nat on this engyn (%1$d in alle).\n\nKepe hem eft now? And if nat, hire merkes schul be wiped.</string>
 <string name="cache_import_recache_button">Kepe eft</string>
 <string name="cache_import_clear_button">Wipe the merkes</string>
-<string name="cache_import_recaching_toast">%1$d videos ben ykept eft for to biholde withouten the net</string>
-<string name="cache_import_cleared_toast">%1$d merkes ywiped whos videos ben nat on this engyn</string>
+<string name="cache_import_recaching_toast">The amyssynge videos ben ykept eft for to biholde withouten the net</string>
+<string name="cache_import_cleared_toast">Ywiped the merkes of videos that ben nat on this engyn</string>
 <string name="refresh">Newe</string>
 </resources>

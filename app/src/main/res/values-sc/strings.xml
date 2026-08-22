@@ -703,10 +703,10 @@
 <string name="player_uncache_title">Boga sa còpia foras de línia</string>
 <string name="player_uncache_desc">Boga custu vídeu dae s\'archìviu foras de línia e serra su reprodutore</string>
 <string name="cache_import_missing_title">Mancant vídeos sarvados</string>
-<string name="cache_import_missing_message">Custa còpia de seguresa marcat %1$d vídeos comente sarvados foras de línia, ma sos documentos issoro non sunt in custu dispositivu.\n\nDdos sarvare torra immoe? Si nono, sas marcas ant a èssere cantzelladas.</string>
+<string name="cache_import_missing_message">Custa còpia de seguresa marcat comente sarvados foras de línia vídeos chi sos documentos issoro non sunt in custu dispositivu (%1$d in totu).\n\nDdos sarvare torra immoe? Si nono, sas marcas ant a èssere cantzelladas.</string>
 <string name="cache_import_recache_button">Sarva torra</string>
 <string name="cache_import_clear_button">Cantzella sas marcas</string>
-<string name="cache_import_recaching_toast">%1$d vídeos si sunt sarvende torra pro los abbaidare foras de línia</string>
-<string name="cache_import_cleared_toast">Cantzelladas %1$d marcas chi sos vídeos issoro non sunt in custu dispositivu</string>
+<string name="cache_import_recaching_toast">Sos vídeos chi mancant si sunt sarvende torra pro los abbaidare foras de línia</string>
+<string name="cache_import_cleared_toast">Cantzelladas sas marcas de sos vídeos chi non sunt in custu dispositivu</string>
 <string name="refresh">Atualiza</string>
 </resources>

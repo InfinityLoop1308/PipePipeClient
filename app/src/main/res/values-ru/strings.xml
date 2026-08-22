@@ -1169,10 +1169,10 @@ PipePipe предлагает две стратегии загрузки лен�
 <string name="player_uncache_title">Удалить офлайн-копию</string>
 <string name="player_uncache_desc">Убрать это видео из офлайн-хранилища и закрыть проигрыватель</string>
 <string name="cache_import_missing_title">Сохранённые видео отсутствуют</string>
-<string name="cache_import_missing_message">В этой резервной копии %1$d видео отмечены как сохранённые офлайн, но их файлов нет на этом устройстве.\n\nСохранить их снова сейчас? Если нет, отметки будут сняты.</string>
+<string name="cache_import_missing_message">В этой резервной копии отмечены как сохранённые офлайн видео, файлов которых нет на этом устройстве (всего %1$d).\n\nСохранить их снова сейчас? Если нет, отметки будут сняты.</string>
 <string name="cache_import_recache_button">Сохранить снова</string>
 <string name="cache_import_clear_button">Снять отметки</string>
-<string name="cache_import_recaching_toast">%1$d видео сохраняются заново для просмотра офлайн</string>
-<string name="cache_import_cleared_toast">Снято %1$d отметок, видео которых нет на этом устройстве</string>
+<string name="cache_import_recaching_toast">Недостающие видео сохраняются заново для просмотра офлайн</string>
+<string name="cache_import_cleared_toast">Сняты отметки видео, которых нет на этом устройстве</string>
 <string name="refresh">Обновить</string>
 </resources>

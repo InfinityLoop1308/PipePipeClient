@@ -554,10 +554,10 @@
 <string name="player_uncache_title">Изтриване на офлайн копието</string>
 <string name="player_uncache_desc">Премахване на това видео от офлайн хранилището и затваряне на плейъра</string>
 <string name="cache_import_missing_title">Липсват запазени видеа</string>
-<string name="cache_import_missing_message">Това резервно копие отбелязва %1$d видеа като запазени офлайн, но файловете им не са на това устройство.\n\nДа бъдат ли запазени отново сега? Ако не, отметките им ще бъдат изчистени.</string>
+<string name="cache_import_missing_message">Това резервно копие отбелязва като запазени офлайн видеа, чиито файлове не са на това устройство (общо %1$d).\n\nДа бъдат ли запазени отново сега? Ако не, отметките им ще бъдат изчистени.</string>
 <string name="cache_import_recache_button">Запазване отново</string>
 <string name="cache_import_clear_button">Изчистване на отметките</string>
-<string name="cache_import_recaching_toast">%1$d видеа се запазват отново за гледане офлайн</string>
-<string name="cache_import_cleared_toast">Изчистени са %1$d отметки, чиито видеа не са на това устройство</string>
+<string name="cache_import_recaching_toast">Липсващите видеа се запазват отново за гледане офлайн</string>
+<string name="cache_import_cleared_toast">Изчистени са отметките на видеата, които не са на това устройство</string>
 <string name="refresh">Опресняване</string>
 </resources>

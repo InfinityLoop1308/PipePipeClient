@@ -51,10 +51,10 @@
 <string name="player_uncache_title">Sampoh salinan offline</string>
 <string name="player_uncache_desc">Peugleh video nyoe nibak simpanan offline dan tôp pemutar</string>
 <string name="cache_import_missing_title">Video nyang ka jisimpan hana</string>
-<string name="cache_import_missing_message">Cadangan nyoe jipeutanda %1$d video ka jisimpan offline, teuma file jih hana bak alat nyoe.\n\nNeusimpan lom jinoe? Meunyoe hana, tanda jih teuma jisampoh.</string>
+<string name="cache_import_missing_message">Cadangan nyoe jipeutanda video nyang ka jisimpan offline padahai file jih hana bak alat nyoe (mandum %1$d).\n\nNeusimpan lom jinoe? Meunyoe hana, tanda jih teuma jisampoh.</string>
 <string name="cache_import_recache_button">Simpan lom</string>
 <string name="cache_import_clear_button">Sampoh tanda</string>
-<string name="cache_import_recaching_toast">%1$d video teungoh jisimpan lom mangat jeuet kalon offline</string>
-<string name="cache_import_cleared_toast">%1$d tanda ka jisampoh nyang video jih hana bak alat nyoe</string>
+<string name="cache_import_recaching_toast">Video nyang hana teungoh jisimpan lom mangat jeuet kalon offline</string>
+<string name="cache_import_cleared_toast">Tanda video nyang hana bak alat nyoe ka jisampoh</string>
 <string name="refresh">Peubaro</string>
 </resources>

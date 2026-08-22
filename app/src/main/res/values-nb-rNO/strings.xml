@@ -677,10 +677,10 @@
 <string name="player_uncache_title">Slett offlinekopien</string>
 <string name="player_uncache_desc">Fjern denne videoen fra offlinelagringen og lukk spilleren</string>
 <string name="cache_import_missing_title">Lagrede videoer mangler</string>
-<string name="cache_import_missing_message">Denne sikkerhetskopien merker %1$d videoer som lagret offline, men filene deres finnes ikke på denne enheten.\n\nVil du lagre dem på nytt nå? Hvis ikke, blir merkene fjernet.</string>
+<string name="cache_import_missing_message">Denne sikkerhetskopien merker videoer som lagret offline der filene ikke finnes på denne enheten (%1$d totalt).\n\nVil du lagre dem på nytt nå? Hvis ikke, blir merkene fjernet.</string>
 <string name="cache_import_recache_button">Lagre på nytt</string>
 <string name="cache_import_clear_button">Fjern merkene</string>
-<string name="cache_import_recaching_toast">%1$d videoer lagres på nytt for offlinevisning</string>
-<string name="cache_import_cleared_toast">Fjernet %1$d merker der videoene ikke finnes på denne enheten</string>
+<string name="cache_import_recaching_toast">De manglende videoene lagres på nytt for offlinevisning</string>
+<string name="cache_import_cleared_toast">Fjernet merkene for videoer som ikke finnes på denne enheten</string>
 <string name="refresh">Oppdater</string>
 </resources>

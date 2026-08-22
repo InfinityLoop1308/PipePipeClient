@@ -676,10 +676,10 @@
 <string name="player_uncache_title">Dzēst bezsaistes kopiju</string>
 <string name="player_uncache_desc">Noņemt šo video no bezsaistes krātuves un aizvērt atskaņotāju</string>
 <string name="cache_import_missing_title">Trūkst saglabāto video</string>
-<string name="cache_import_missing_message">Šī dublējumkopija atzīmē %1$d video kā saglabātus bezsaistē, bet to failu šajā ierīcē nav.\n\nSaglabāt tos tagad vēlreiz? Ja nē, atzīmes tiks notīrītas.</string>
+<string name="cache_import_missing_message">Šī dublējumkopija atzīmē kā bezsaistē saglabātus video, kuru failu šajā ierīcē nav (kopā %1$d).\n\nSaglabāt tos tagad vēlreiz? Ja nē, atzīmes tiks notīrītas.</string>
 <string name="cache_import_recache_button">Saglabāt vēlreiz</string>
 <string name="cache_import_clear_button">Notīrīt atzīmes</string>
-<string name="cache_import_recaching_toast">%1$d video tiek saglabāti vēlreiz skatīšanai bezsaistē</string>
-<string name="cache_import_cleared_toast">Notīrītas %1$d atzīmes, kuru video šajā ierīcē nav</string>
+<string name="cache_import_recaching_toast">Trūkstošie video tiek saglabāti vēlreiz skatīšanai bezsaistē</string>
+<string name="cache_import_cleared_toast">Notīrītas to video atzīmes, kuru nav šajā ierīcē</string>
 <string name="refresh">Atsvaidzināt</string>
 </resources>

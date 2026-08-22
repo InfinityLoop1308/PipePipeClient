@@ -465,10 +465,10 @@
 <string name="player_uncache_title">Izbriši kopijo za brez povezave</string>
 <string name="player_uncache_desc">Odstrani ta videoposnetek iz shrambe za brez povezave in zapri predvajalnik</string>
 <string name="cache_import_missing_title">Manjkajo shranjeni videoposnetki</string>
-<string name="cache_import_missing_message">Ta varnostna kopija označuje %1$d videoposnetkov kot shranjene brez povezave, vendar njihovih datotek ni v tej napravi.\n\nAli jih zdaj znova shranim? Če ne, bodo oznake počiščene.</string>
+<string name="cache_import_missing_message">Ta varnostna kopija označuje kot shranjene brez povezave videoposnetke, katerih datotek ni v tej napravi (skupaj %1$d).\n\nAli jih zdaj znova shranim? Če ne, bodo oznake počiščene.</string>
 <string name="cache_import_recache_button">Znova shrani</string>
 <string name="cache_import_clear_button">Počisti oznake</string>
-<string name="cache_import_recaching_toast">%1$d videoposnetkov se znova shranjuje za ogled brez povezave</string>
-<string name="cache_import_cleared_toast">Počiščenih je %1$d oznak, katerih videoposnetkov ni v tej napravi</string>
+<string name="cache_import_recaching_toast">Manjkajoči videoposnetki se znova shranjujejo za ogled brez povezave</string>
+<string name="cache_import_cleared_toast">Počiščene so oznake videoposnetkov, ki jih ni v tej napravi</string>
 <string name="refresh">Osveži</string>
 </resources>

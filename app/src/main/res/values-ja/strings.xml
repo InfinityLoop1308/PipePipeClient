@@ -1063,10 +1063,10 @@
 <string name="player_uncache_title">オフライン保存を削除</string>
 <string name="player_uncache_desc">この動画をオフライン保存から削除してプレーヤーを閉じます</string>
 <string name="cache_import_missing_title">保存済みの動画がありません</string>
-<string name="cache_import_missing_message">このバックアップは %1$d 件の動画をオフライン保存済みとしていますが、そのファイルはこの端末にありません。\n\n今すぐ保存し直しますか？しない場合、その印は消去されます。</string>
+<string name="cache_import_missing_message">このバックアップは、ファイルがこの端末にない動画をオフライン保存済みとしています（全 %1$d 件）。\n\n今すぐ保存し直しますか？しない場合、その印は消去されます。</string>
 <string name="cache_import_recache_button">保存し直す</string>
 <string name="cache_import_clear_button">印を消去</string>
-<string name="cache_import_recaching_toast">%1$d 件の動画をオフライン視聴用に保存し直しています</string>
-<string name="cache_import_cleared_toast">この端末に動画がない印を %1$d 件消去しました</string>
+<string name="cache_import_recaching_toast">見つからない動画をオフライン視聴用に保存し直しています</string>
+<string name="cache_import_cleared_toast">この端末にない動画の印を消去しました</string>
 <string name="refresh">更新</string>
 </resources>

@@ -613,10 +613,10 @@
 <string name="player_uncache_title">ਆਫ਼ਲਾਈਨ ਕਾਪੀ ਮਿਟਾਓ</string>
 <string name="player_uncache_desc">ਇਸ ਵੀਡੀਓ ਨੂੰ ਆਫ਼ਲਾਈਨ ਭੰਡਾਰ ਵਿੱਚੋਂ ਹਟਾਓ ਅਤੇ ਪਲੇਅਰ ਬੰਦ ਕਰੋ</string>
 <string name="cache_import_missing_title">ਸੰਭਾਲੇ ਵੀਡੀਓ ਨਹੀਂ ਮਿਲ ਰਹੇ</string>
-<string name="cache_import_missing_message">ਇਹ ਬੈਕਅੱਪ %1$d ਵੀਡੀਓ ਨੂੰ ਆਫ਼ਲਾਈਨ ਸੰਭਾਲੇ ਵਜੋਂ ਦਰਸਾਉਂਦਾ ਹੈ, ਪਰ ਉਨ੍ਹਾਂ ਦੀਆਂ ਫ਼ਾਈਲਾਂ ਇਸ ਡਿਵਾਈਸ ਉੱਤੇ ਨਹੀਂ ਹਨ।\n\nਹੁਣੇ ਦੁਬਾਰਾ ਸੰਭਾਲਣਾ ਹੈ? ਨਹੀਂ ਤਾਂ ਉਨ੍ਹਾਂ ਦੇ ਨਿਸ਼ਾਨ ਮਿਟਾ ਦਿੱਤੇ ਜਾਣਗੇ।</string>
+<string name="cache_import_missing_message">ਇਹ ਬੈਕਅੱਪ ਉਹਨਾਂ ਵੀਡੀਓ ਨੂੰ ਆਫ਼ਲਾਈਨ ਸੰਭਾਲੇ ਵਜੋਂ ਦਰਸਾਉਂਦਾ ਹੈ ਜਿਨ੍ਹਾਂ ਦੀਆਂ ਫ਼ਾਈਲਾਂ ਇਸ ਡਿਵਾਈਸ ਉੱਤੇ ਨਹੀਂ ਹਨ (ਕੁੱਲ %1$d)।\n\nਹੁਣੇ ਦੁਬਾਰਾ ਸੰਭਾਲਣਾ ਹੈ? ਨਹੀਂ ਤਾਂ ਉਨ੍ਹਾਂ ਦੇ ਨਿਸ਼ਾਨ ਮਿਟਾ ਦਿੱਤੇ ਜਾਣਗੇ।</string>
 <string name="cache_import_recache_button">ਦੁਬਾਰਾ ਸੰਭਾਲੋ</string>
 <string name="cache_import_clear_button">ਨਿਸ਼ਾਨ ਮਿਟਾਓ</string>
-<string name="cache_import_recaching_toast">%1$d ਵੀਡੀਓ ਆਫ਼ਲਾਈਨ ਦੇਖਣ ਲਈ ਦੁਬਾਰਾ ਸੰਭਾਲੇ ਜਾ ਰਹੇ ਹਨ</string>
-<string name="cache_import_cleared_toast">%1$d ਨਿਸ਼ਾਨ ਮਿਟਾਏ ਗਏ ਜਿਨ੍ਹਾਂ ਦੇ ਵੀਡੀਓ ਇਸ ਡਿਵਾਈਸ ਉੱਤੇ ਨਹੀਂ ਹਨ</string>
+<string name="cache_import_recaching_toast">ਗੁੰਮ ਵੀਡੀਓ ਆਫ਼ਲਾਈਨ ਦੇਖਣ ਲਈ ਦੁਬਾਰਾ ਸੰਭਾਲੇ ਜਾ ਰਹੇ ਹਨ</string>
+<string name="cache_import_cleared_toast">ਇਸ ਡਿਵਾਈਸ ਉੱਤੇ ਨਾ ਹੋਣ ਵਾਲੇ ਵੀਡੀਓ ਦੇ ਨਿਸ਼ਾਨ ਮਿਟਾਏ ਗਏ</string>
 <string name="refresh">ਤਾਜ਼ਾ ਕਰੋ</string>
 </resources>

@@ -95,10 +95,10 @@
 <string name="player_uncache_title">Busak salinan offline</string>
 <string name="player_uncache_desc">Busak video iki saka panyimpenan offline lan tutup pemuter</string>
 <string name="cache_import_missing_title">Video sing kasimpen ora ana</string>
-<string name="cache_import_missing_message">Cadhangan iki menehi tandha %1$d video minangka kasimpen offline, nanging berkase ora ana ing piranti iki.\n\nDisimpen maneh saiki? Yen ora, tandhane bakal diresiki.</string>
+<string name="cache_import_missing_message">Cadhangan iki menehi tandha minangka kasimpen offline video sing berkase ora ana ing piranti iki (gunggung %1$d).\n\nDisimpen maneh saiki? Yen ora, tandhane bakal diresiki.</string>
 <string name="cache_import_recache_button">Simpen maneh</string>
 <string name="cache_import_clear_button">Resiki tandha</string>
-<string name="cache_import_recaching_toast">%1$d video lagi disimpen maneh kanggo ditonton offline</string>
-<string name="cache_import_cleared_toast">%1$d tandha diresiki sing videone ora ana ing piranti iki</string>
+<string name="cache_import_recaching_toast">Video sing ora ana lagi disimpen maneh kanggo ditonton offline</string>
+<string name="cache_import_cleared_toast">Tandha video sing ora ana ing piranti iki wis diresiki</string>
 <string name="refresh">Segerake</string>
 </resources>

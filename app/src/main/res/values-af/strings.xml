@@ -38,10 +38,10 @@
 <string name="player_uncache_title">Vee die vanlyn kopie uit</string>
 <string name="player_uncache_desc">Verwyder hierdie video uit die vanlyn berging en sluit die speler</string>
 <string name="cache_import_missing_title">Gestoorde video\'s ontbreek</string>
-<string name="cache_import_missing_message">Hierdie rugsteun merk %1$d video\'s as vanlyn gestoor, maar hul lêers is nie op hierdie toestel nie.\n\nStoor hulle nou weer? Indien nie, word hul merke uitgevee.</string>
+<string name="cache_import_missing_message">Hierdie rugsteun merk video\'s as vanlyn gestoor waarvan die lêers nie op hierdie toestel is nie (%1$d in totaal).\n\nStoor hulle nou weer? Indien nie, word hul merke uitgevee.</string>
 <string name="cache_import_recache_button">Stoor weer</string>
 <string name="cache_import_clear_button">Vee die merke uit</string>
-<string name="cache_import_recaching_toast">%1$d video\'s word weer gestoor om vanlyn te kyk</string>
-<string name="cache_import_cleared_toast">%1$d merke uitgevee waarvan die video\'s nie op hierdie toestel is nie</string>
+<string name="cache_import_recaching_toast">Die ontbrekende video\'s word weer gestoor om vanlyn te kyk</string>
+<string name="cache_import_cleared_toast">Merke uitgevee van video\'s wat nie op hierdie toestel is nie</string>
 <string name="refresh">Verfris</string>
 </resources>

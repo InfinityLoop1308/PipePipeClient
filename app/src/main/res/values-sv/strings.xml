@@ -703,10 +703,10 @@
 <string name="player_uncache_title">Ta bort offlinekopian</string>
 <string name="player_uncache_desc">Ta bort den här videon från offlinelagringen och stäng spelaren</string>
 <string name="cache_import_missing_title">Sparade videor saknas</string>
-<string name="cache_import_missing_message">Den här säkerhetskopian markerar %1$d videor som sparade offline, men deras filer finns inte på den här enheten.\n\nVill du spara dem igen nu? Annars rensas markeringarna.</string>
+<string name="cache_import_missing_message">Den här säkerhetskopian markerar videor som sparade offline vars filer inte finns på den här enheten (%1$d totalt).\n\nVill du spara dem igen nu? Annars rensas markeringarna.</string>
 <string name="cache_import_recache_button">Spara igen</string>
 <string name="cache_import_clear_button">Rensa markeringarna</string>
-<string name="cache_import_recaching_toast">%1$d videor sparas igen för offlinevisning</string>
-<string name="cache_import_cleared_toast">Rensade %1$d markeringar vars videor inte finns på den här enheten</string>
+<string name="cache_import_recaching_toast">De saknade videorna sparas igen för offlinevisning</string>
+<string name="cache_import_cleared_toast">Rensade markeringarna för videor som inte finns på den här enheten</string>
 <string name="refresh">Uppdatera</string>
 </resources>

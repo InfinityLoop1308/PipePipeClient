@@ -1034,10 +1034,10 @@
 <string name="player_uncache_title">Rimuovi la copia offline</string>
 <string name="player_uncache_desc">Rimuovi questo video dall\'archivio offline e chiudi il lettore</string>
 <string name="cache_import_missing_title">Mancano dei video salvati</string>
-<string name="cache_import_missing_message">Questo backup segna %1$d video come salvati offline, ma i loro file non sono su questo dispositivo.\n\nSalvarli di nuovo adesso? In caso contrario, i loro contrassegni saranno cancellati.</string>
+<string name="cache_import_missing_message">Questo backup segna come salvati offline dei video i cui file non sono su questo dispositivo (%1$d in tutto).\n\nSalvarli di nuovo adesso? In caso contrario, i loro contrassegni saranno cancellati.</string>
 <string name="cache_import_recache_button">Salva di nuovo</string>
 <string name="cache_import_clear_button">Cancella i contrassegni</string>
-<string name="cache_import_recaching_toast">%1$d video vengono salvati di nuovo per la visione offline</string>
-<string name="cache_import_cleared_toast">Cancellati %1$d contrassegni i cui video non sono su questo dispositivo</string>
+<string name="cache_import_recaching_toast">I video mancanti vengono salvati di nuovo per la visione offline</string>
+<string name="cache_import_cleared_toast">Cancellati i contrassegni dei video che non sono su questo dispositivo</string>
 <string name="refresh">Aggiorna</string>
 </resources>

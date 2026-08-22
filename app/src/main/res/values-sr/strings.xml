@@ -657,10 +657,10 @@
 <string name="player_uncache_title">Обриши копију за ван мреже</string>
 <string name="player_uncache_desc">Уклони овај видео из складишта за ван мреже и затвори плејер</string>
 <string name="cache_import_missing_title">Недостају сачувани видеи</string>
-<string name="cache_import_missing_message">Ова резервна копија означава %1$d видеа као сачуване ван мреже, али њихове датотеке нису на овом уређају.\n\nСачувати их поново сада? Ако не, ознаке ће бити обрисане.</string>
+<string name="cache_import_missing_message">Ова резервна копија означава као сачуване ван мреже видее чије датотеке нису на овом уређају (укупно %1$d).\n\nСачувати их поново сада? Ако не, ознаке ће бити обрисане.</string>
 <string name="cache_import_recache_button">Сачувај поново</string>
 <string name="cache_import_clear_button">Обриши ознаке</string>
-<string name="cache_import_recaching_toast">%1$d видеа се поново чувају за гледање ван мреже</string>
-<string name="cache_import_cleared_toast">Обрисано је %1$d ознака чији видеи нису на овом уређају</string>
+<string name="cache_import_recaching_toast">Видеи који недостају се поново чувају за гледање ван мреже</string>
+<string name="cache_import_cleared_toast">Обрисане су ознаке видеа који нису на овом уређају</string>
 <string name="refresh">Освежи</string>
 </resources>

@@ -205,10 +205,10 @@
 <string name="player_uncache_title">Kkes tanɣelt war azḍa</string>
 <string name="player_uncache_desc">Kkes asit-ad zeg uḥḍu war azḍa tqqned amurar</string>
 <string name="cache_import_missing_title">Isiten ittwaḥḍan ulac-ten</string>
-<string name="cache_import_missing_message">Tanɣelt-ad tessemata %1$d n isiten am ittwaḥḍan war azḍa, maca ifuyla nsen ulac-ten deg umssuds-ad.\n\nAd ttwaḥḍan daɣ ɣila? Meḥsub uhu, timatarin nsen ad ttwakksent.</string>
+<string name="cache_import_missing_message">Tanɣelt-ad tessemata isiten am ittwaḥḍan war azḍa, maca ifuyla nsen ulac-ten deg umssuds-ad (s umata %1$d).\n\nAd ttwaḥḍan daɣ ɣila? Meḥsub uhu, timatarin nsen ad ttwakksent.</string>
 <string name="cache_import_recache_button">Ḥḍu daɣ</string>
 <string name="cache_import_clear_button">Kkes timatarin</string>
-<string name="cache_import_recaching_toast">%1$d n isiten ttwaḥḍan daɣ i uẓerri war azḍa</string>
-<string name="cache_import_cleared_toast">Ttwakksent %1$d n tmatarin nna isiten nsent ulac-ten deg umssuds-ad</string>
+<string name="cache_import_recaching_toast">Isiten ixuṣṣen ttwaḥḍan daɣ i uẓerri war azḍa</string>
+<string name="cache_import_cleared_toast">Ttwakksent timatarin n isiten ur nelli deg umssuds-ad</string>
 <string name="refresh">Smaynu</string>
 </resources>

@@ -374,10 +374,10 @@
 <string name="player_uncache_title">ลบสำเนาออฟไลน์</string>
 <string name="player_uncache_desc">นำวิดีโอนี้ออกจากที่เก็บออฟไลน์แล้วปิดโปรแกรมเล่น</string>
 <string name="cache_import_missing_title">วิดีโอที่บันทึกไว้หายไป</string>
-<string name="cache_import_missing_message">ข้อมูลสำรองนี้ระบุว่ามีวิดีโอ %1$d รายการที่บันทึกไว้แบบออฟไลน์ แต่ไฟล์ของวิดีโอเหล่านั้นไม่อยู่ในอุปกรณ์นี้\n\nบันทึกใหม่เลยไหม ถ้าไม่ เครื่องหมายของวิดีโอเหล่านั้นจะถูกล้าง</string>
+<string name="cache_import_missing_message">ข้อมูลสำรองนี้ระบุว่ามีวิดีโอที่บันทึกไว้แบบออฟไลน์ แต่ไฟล์ของวิดีโอเหล่านั้นไม่อยู่ในอุปกรณ์นี้ (รวม %1$d รายการ)\n\nบันทึกใหม่เลยไหม ถ้าไม่ เครื่องหมายของวิดีโอเหล่านั้นจะถูกล้าง</string>
 <string name="cache_import_recache_button">บันทึกใหม่</string>
 <string name="cache_import_clear_button">ล้างเครื่องหมาย</string>
-<string name="cache_import_recaching_toast">กำลังบันทึกวิดีโอ %1$d รายการใหม่ไว้ดูแบบออฟไลน์</string>
-<string name="cache_import_cleared_toast">ล้างเครื่องหมาย %1$d รายการที่วิดีโอไม่อยู่ในอุปกรณ์นี้</string>
+<string name="cache_import_recaching_toast">กำลังบันทึกวิดีโอที่หายไปใหม่ไว้ดูแบบออฟไลน์</string>
+<string name="cache_import_cleared_toast">ล้างเครื่องหมายของวิดีโอที่ไม่อยู่ในอุปกรณ์นี้แล้ว</string>
 <string name="refresh">รีเฟรช</string>
 </resources>

@@ -680,10 +680,10 @@
 <string name="player_uncache_title">Offline másolat törlése</string>
 <string name="player_uncache_desc">A videó eltávolítása az offline tárolóból és a lejátszó bezárása</string>
 <string name="cache_import_missing_title">Hiányoznak a mentett videók</string>
-<string name="cache_import_missing_message">Ez a biztonsági mentés %1$d videót jelöl offline mentettként, de a fájljaik nincsenek ezen az eszközön.\n\nMented őket most újra? Ha nem, a jelöléseik törlődnek.</string>
+<string name="cache_import_missing_message">Ez a biztonsági mentés offline mentettként jelöl olyan videókat, amelyek fájljai nincsenek ezen az eszközön (összesen %1$d).\n\nMented őket most újra? Ha nem, a jelöléseik törlődnek.</string>
 <string name="cache_import_recache_button">Mentés újra</string>
 <string name="cache_import_clear_button">Jelölések törlése</string>
-<string name="cache_import_recaching_toast">%1$d videó mentése újra offline megtekintéshez</string>
-<string name="cache_import_cleared_toast">%1$d jelölés törölve, amelyek videói nincsenek ezen az eszközön</string>
+<string name="cache_import_recaching_toast">A hiányzó videók újra mentése offline megtekintéshez</string>
+<string name="cache_import_cleared_toast">Törölve azon videók jelölései, amelyek nincsenek ezen az eszközön</string>
 <string name="refresh">Frissítés</string>
 </resources>

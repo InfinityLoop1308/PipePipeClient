@@ -649,10 +649,10 @@
 <string name="player_uncache_title">ഓഫ്‌ലൈൻ പകർപ്പ് ഇല്ലാതാക്കുക</string>
 <string name="player_uncache_desc">ഈ വീഡിയോ ഓഫ്‌ലൈൻ സംഭരണത്തിൽ നിന്ന് നീക്കി പ്ലെയർ അടയ്ക്കുക</string>
 <string name="cache_import_missing_title">സൂക്ഷിച്ച വീഡിയോകൾ കാണുന്നില്ല</string>
-<string name="cache_import_missing_message">ഈ ബാക്കപ്പ് %1$d വീഡിയോകൾ ഓഫ്‌ലൈനായി സൂക്ഷിച്ചതായി അടയാളപ്പെടുത്തുന്നു, പക്ഷേ അവയുടെ ഫയലുകൾ ഈ ഉപകരണത്തിലില്ല.\n\nഇപ്പോൾ വീണ്ടും സൂക്ഷിക്കണോ? ഇല്ലെങ്കിൽ അവയുടെ അടയാളങ്ങൾ മായ്ക്കും.</string>
+<string name="cache_import_missing_message">ഈ ബാക്കപ്പ്, ഫയലുകൾ ഈ ഉപകരണത്തിലില്ലാത്ത വീഡിയോകൾ ഓഫ്‌ലൈനായി സൂക്ഷിച്ചതായി അടയാളപ്പെടുത്തുന്നു (ആകെ %1$d).\n\nഇപ്പോൾ വീണ്ടും സൂക്ഷിക്കണോ? ഇല്ലെങ്കിൽ അവയുടെ അടയാളങ്ങൾ മായ്ക്കും.</string>
 <string name="cache_import_recache_button">വീണ്ടും സൂക്ഷിക്കുക</string>
 <string name="cache_import_clear_button">അടയാളങ്ങൾ മായ്ക്കുക</string>
-<string name="cache_import_recaching_toast">%1$d വീഡിയോകൾ ഓഫ്‌ലൈനായി കാണാൻ വീണ്ടും സൂക്ഷിക്കുന്നു</string>
-<string name="cache_import_cleared_toast">ഈ ഉപകരണത്തിൽ വീഡിയോകളില്ലാത്ത %1$d അടയാളങ്ങൾ മായ്ച്ചു</string>
+<string name="cache_import_recaching_toast">കാണാനില്ലാത്ത വീഡിയോകൾ ഓഫ്‌ലൈനായി കാണാൻ വീണ്ടും സൂക്ഷിക്കുന്നു</string>
+<string name="cache_import_cleared_toast">ഈ ഉപകരണത്തിലില്ലാത്ത വീഡിയോകളുടെ അടയാളങ്ങൾ മായ്ച്ചു</string>
 <string name="refresh">പുതുക്കുക</string>
 </resources>

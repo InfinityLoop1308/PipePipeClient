@@ -72,10 +72,10 @@
 <string name="player_uncache_title">ଅଫଲାଇନ ନକଲ ବିଲୋପ କରନ୍ତୁ</string>
 <string name="player_uncache_desc">ଏହି ଭିଡିଓକୁ ଅଫଲାଇନ ଭଣ୍ଡାରରୁ ହଟାଇ ପ୍ଲେୟାର ବନ୍ଦ କରନ୍ତୁ</string>
 <string name="cache_import_missing_title">ସଞ୍ଚିତ ଭିଡିଓ ମିଳୁନାହିଁ</string>
-<string name="cache_import_missing_message">ଏହି ବ୍ୟାକଅପ %1$d ଭିଡିଓକୁ ଅଫଲାଇନ ସଞ୍ଚିତ ବୋଲି ଚିହ୍ନିତ କରିଛି, ମାତ୍ର ସେମାନଙ୍କ ଫାଇଲ ଏହି ଯନ୍ତ୍ରରେ ନାହିଁ।\n\nଏବେ ପୁଣି ସଞ୍ଚୟ କରିବେ କି? ନଚେତ୍ ସେମାନଙ୍କ ଚିହ୍ନ ଲିଭାଇ ଦିଆଯିବ।</string>
+<string name="cache_import_missing_message">ଏହି ବ୍ୟାକଅପ ସେହି ଭିଡିଓକୁ ଅଫଲାଇନ ସଞ୍ଚିତ ବୋଲି ଚିହ୍ନିତ କରିଛି ଯାହାର ଫାଇଲ ଏହି ଯନ୍ତ୍ରରେ ନାହିଁ (ମୋଟ %1$d)।\n\nଏବେ ପୁଣି ସଞ୍ଚୟ କରିବେ କି? ନଚେତ୍ ସେମାନଙ୍କ ଚିହ୍ନ ଲିଭାଇ ଦିଆଯିବ।</string>
 <string name="cache_import_recache_button">ପୁଣି ସଞ୍ଚୟ କରନ୍ତୁ</string>
 <string name="cache_import_clear_button">ଚିହ୍ନ ଲିଭାନ୍ତୁ</string>
-<string name="cache_import_recaching_toast">%1$d ଭିଡିଓ ଅଫଲାଇନରେ ଦେଖିବା ପାଇଁ ପୁଣି ସଞ୍ଚୟ ହେଉଛି</string>
-<string name="cache_import_cleared_toast">%1$d ଚିହ୍ନ ଲିଭାଗଲା ଯାହାର ଭିଡିଓ ଏହି ଯନ୍ତ୍ରରେ ନାହିଁ</string>
+<string name="cache_import_recaching_toast">ନଥିବା ଭିଡିଓ ଅଫଲାଇନରେ ଦେଖିବା ପାଇଁ ପୁଣି ସଞ୍ଚୟ ହେଉଛି</string>
+<string name="cache_import_cleared_toast">ଏହି ଯନ୍ତ୍ରରେ ନଥିବା ଭିଡିଓର ଚିହ୍ନ ଲିଭାଗଲା</string>
 <string name="refresh">ସତେଜ କରନ୍ତୁ</string>
 </resources>

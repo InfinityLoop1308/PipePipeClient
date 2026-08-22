@@ -1096,10 +1096,10 @@
 <string name="player_uncache_title">Eliminar la copia sin conexión</string>
 <string name="player_uncache_desc">Quitar este vídeo del almacenamiento sin conexión y cerrar el reproductor</string>
 <string name="cache_import_missing_title">Faltan vídeos guardados</string>
-<string name="cache_import_missing_message">Esta copia de seguridad marca %1$d vídeos como guardados sin conexión, pero sus archivos no están en este dispositivo.\n\n¿Quieres guardarlos de nuevo ahora? Si no, se borrarán sus marcas.</string>
+<string name="cache_import_missing_message">Esta copia de seguridad marca como guardados sin conexión vídeos cuyos archivos no están en este dispositivo (%1$d en total).\n\n¿Quieres guardarlos de nuevo ahora? Si no, se borrarán sus marcas.</string>
 <string name="cache_import_recache_button">Guardar de nuevo</string>
 <string name="cache_import_clear_button">Borrar las marcas</string>
-<string name="cache_import_recaching_toast">Se están guardando de nuevo %1$d vídeos para verlos sin conexión</string>
-<string name="cache_import_cleared_toast">Se han borrado %1$d marcas cuyos vídeos no están en este dispositivo</string>
+<string name="cache_import_recaching_toast">Los vídeos que faltan se están guardando de nuevo para verlos sin conexión</string>
+<string name="cache_import_cleared_toast">Se han borrado las marcas de los vídeos que no están en este dispositivo</string>
 <string name="refresh">Actualizar</string>
 </resources>

@@ -1149,10 +1149,10 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="player_uncache_title">Xóa bản ngoại tuyến</string>
 <string name="player_uncache_desc">Gỡ video này khỏi bộ nhớ ngoại tuyến và đóng trình phát</string>
 <string name="cache_import_missing_title">Thiếu video đã lưu</string>
-<string name="cache_import_missing_message">Bản sao lưu này đánh dấu %1$d video là đã lưu ngoại tuyến, nhưng tệp của chúng không có trên thiết bị này.\n\nLưu lại ngay bây giờ? Nếu không, các dấu này sẽ bị xóa.</string>
+<string name="cache_import_missing_message">Bản sao lưu này đánh dấu là đã lưu ngoại tuyến những video mà tệp của chúng không có trên thiết bị này (tổng cộng %1$d).\n\nLưu lại ngay bây giờ? Nếu không, các dấu này sẽ bị xóa.</string>
 <string name="cache_import_recache_button">Lưu lại</string>
 <string name="cache_import_clear_button">Xóa các dấu</string>
-<string name="cache_import_recaching_toast">Đang lưu lại %1$d video để xem ngoại tuyến</string>
-<string name="cache_import_cleared_toast">Đã xóa %1$d dấu có video không nằm trên thiết bị này</string>
+<string name="cache_import_recaching_toast">Đang lưu lại các video còn thiếu để xem ngoại tuyến</string>
+<string name="cache_import_cleared_toast">Đã xóa dấu của những video không có trên thiết bị này</string>
 <string name="refresh">Làm mới</string>
 </resources>

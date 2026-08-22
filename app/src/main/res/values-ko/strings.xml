@@ -532,10 +532,10 @@
 <string name="player_uncache_title">오프라인 저장 삭제</string>
 <string name="player_uncache_desc">이 동영상을 오프라인 저장소에서 제거하고 재생기를 닫습니다</string>
 <string name="cache_import_missing_title">저장된 동영상이 없습니다</string>
-<string name="cache_import_missing_message">이 백업은 %1$d개의 동영상을 오프라인 저장됨으로 표시하지만, 해당 파일이 이 기기에 없습니다.\n\n지금 다시 저장할까요? 그렇지 않으면 표시가 지워집니다.</string>
+<string name="cache_import_missing_message">이 백업은 파일이 이 기기에 없는 동영상을 오프라인 저장됨으로 표시합니다(총 %1$d개).\n\n지금 다시 저장할까요? 그렇지 않으면 표시가 지워집니다.</string>
 <string name="cache_import_recache_button">다시 저장</string>
 <string name="cache_import_clear_button">표시 지우기</string>
-<string name="cache_import_recaching_toast">%1$d개의 동영상을 오프라인 시청용으로 다시 저장하고 있습니다</string>
-<string name="cache_import_cleared_toast">이 기기에 동영상이 없는 표시 %1$d개를 지웠습니다</string>
+<string name="cache_import_recaching_toast">없는 동영상을 오프라인 시청용으로 다시 저장하고 있습니다</string>
+<string name="cache_import_cleared_toast">이 기기에 없는 동영상의 표시를 지웠습니다</string>
 <string name="refresh">새로 고침</string>
 </resources>

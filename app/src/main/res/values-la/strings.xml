@@ -150,10 +150,10 @@
 <string name="player_uncache_title">Exemplar sine rete delere</string>
 <string name="player_uncache_desc">Hanc visionem ex thesauro sine rete remove et lusorem claude</string>
 <string name="cache_import_missing_title">Visiones servatae desunt</string>
-<string name="cache_import_missing_message">Haec copia %1$d visiones ut sine rete servatas notat, sed earum fasciculi in hoc instrumento non sunt.\n\nNunc iterum servare? Si non, notae delebuntur.</string>
+<string name="cache_import_missing_message">Haec copia visiones ut sine rete servatas notat quarum fasciculi in hoc instrumento non sunt (%1$d in summa).\n\nNunc iterum servare? Si non, notae delebuntur.</string>
 <string name="cache_import_recache_button">Iterum servare</string>
 <string name="cache_import_clear_button">Notas delere</string>
-<string name="cache_import_recaching_toast">%1$d visiones iterum ad spectandum sine rete servantur</string>
-<string name="cache_import_cleared_toast">%1$d notae deletae quarum visiones in hoc instrumento non sunt</string>
+<string name="cache_import_recaching_toast">Visiones absentes iterum ad spectandum sine rete servantur</string>
+<string name="cache_import_cleared_toast">Notae visionum quae in hoc instrumento non sunt deletae</string>
 <string name="refresh">Renovare</string>
 </resources>

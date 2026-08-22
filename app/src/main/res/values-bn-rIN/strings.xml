@@ -310,10 +310,10 @@
 <string name="player_uncache_title">অফলাইন কপি মুছুন</string>
 <string name="player_uncache_desc">এই ভিডিওটি অফলাইন সংরক্ষণ থেকে সরান এবং প্লেয়ার বন্ধ করুন</string>
 <string name="cache_import_missing_title">সংরক্ষিত ভিডিও পাওয়া যাচ্ছে না</string>
-<string name="cache_import_missing_message">এই ব্যাকআপে %1$d টি ভিডিও অফলাইনে সংরক্ষিত হিসেবে চিহ্নিত, কিন্তু সেগুলোর ফাইল এই যন্ত্রে নেই।\n\nএখনই আবার সংরক্ষণ করবেন? না করলে তাদের চিহ্ন মুছে ফেলা হবে।</string>
+<string name="cache_import_missing_message">এই ব্যাকআপে এমন ভিডিও অফলাইনে সংরক্ষিত হিসেবে চিহ্নিত, যেগুলোর ফাইল এই যন্ত্রে নেই (মোট %1$d)।\n\nএখনই আবার সংরক্ষণ করবেন? না করলে তাদের চিহ্ন মুছে ফেলা হবে।</string>
 <string name="cache_import_recache_button">আবার সংরক্ষণ</string>
 <string name="cache_import_clear_button">চিহ্ন মুছুন</string>
-<string name="cache_import_recaching_toast">%1$d টি ভিডিও অফলাইনে দেখার জন্য আবার সংরক্ষণ করা হচ্ছে</string>
-<string name="cache_import_cleared_toast">%1$d টি চিহ্ন মুছে ফেলা হয়েছে যেগুলোর ভিডিও এই যন্ত্রে নেই</string>
+<string name="cache_import_recaching_toast">অনুপস্থিত ভিডিওগুলো অফলাইনে দেখার জন্য আবার সংরক্ষণ করা হচ্ছে</string>
+<string name="cache_import_cleared_toast">এই যন্ত্রে নেই এমন ভিডিওর চিহ্ন মুছে ফেলা হয়েছে</string>
 <string name="refresh">রিফ্রেশ</string>
 </resources>

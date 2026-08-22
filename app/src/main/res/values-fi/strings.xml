@@ -680,10 +680,10 @@
 <string name="player_uncache_title">Poista offline-kopio</string>
 <string name="player_uncache_desc">Poista tämä video offline-tallennustilasta ja sulje soitin</string>
 <string name="cache_import_missing_title">Tallennettuja videoita puuttuu</string>
-<string name="cache_import_missing_message">Tämä varmuuskopio merkitsee %1$d videota offline-tallennetuiksi, mutta niiden tiedostoja ei ole tällä laitteella.\n\nTallennetaanko ne nyt uudelleen? Jos ei, merkinnät tyhjennetään.</string>
+<string name="cache_import_missing_message">Tämä varmuuskopio merkitsee offline-tallennetuiksi videoita, joiden tiedostoja ei ole tällä laitteella (yhteensä %1$d).\n\nTallennetaanko ne nyt uudelleen? Jos ei, merkinnät tyhjennetään.</string>
 <string name="cache_import_recache_button">Tallenna uudelleen</string>
 <string name="cache_import_clear_button">Tyhjennä merkinnät</string>
-<string name="cache_import_recaching_toast">%1$d videota tallennetaan uudelleen offline-katselua varten</string>
-<string name="cache_import_cleared_toast">Tyhjennettiin %1$d merkintää, joiden videoita ei ole tällä laitteella</string>
+<string name="cache_import_recaching_toast">Puuttuvat videot tallennetaan uudelleen offline-katselua varten</string>
+<string name="cache_import_cleared_toast">Tyhjennettiin niiden videoiden merkinnät, joita ei ole tällä laitteella</string>
 <string name="refresh">Päivitä</string>
 </resources>

@@ -550,10 +550,10 @@
 <string name="player_uncache_title">अफलाइन प्रति मेट्नुहोस्</string>
 <string name="player_uncache_desc">यो भिडियो अफलाइन भण्डारबाट हटाउनुहोस् र प्लेयर बन्द गर्नुहोस्</string>
 <string name="cache_import_missing_title">सुरक्षित भिडियोहरू भेटिएनन्</string>
-<string name="cache_import_missing_message">यो ब्याकअपले %1$d भिडियोलाई अफलाइन सुरक्षित भनी चिन्ह लगाएको छ, तर तिनका फाइल यो यन्त्रमा छैनन्।\n\nअहिले नै फेरि सुरक्षित गर्ने? होइन भने तिनका चिन्हहरू मेटिनेछन्।</string>
+<string name="cache_import_missing_message">यो ब्याकअपले फाइल यो यन्त्रमा नभएका भिडियोलाई अफलाइन सुरक्षित भनी चिन्ह लगाएको छ (जम्मा %1$d)।\n\nअहिले नै फेरि सुरक्षित गर्ने? होइन भने तिनका चिन्हहरू मेटिनेछन्।</string>
 <string name="cache_import_recache_button">फेरि सुरक्षित गर्नुहोस्</string>
 <string name="cache_import_clear_button">चिन्हहरू मेट्नुहोस्</string>
-<string name="cache_import_recaching_toast">%1$d भिडियो अफलाइन हेर्नका लागि फेरि सुरक्षित गरिँदै छन्</string>
-<string name="cache_import_cleared_toast">%1$d चिन्ह मेटिए जसका भिडियो यो यन्त्रमा छैनन्</string>
+<string name="cache_import_recaching_toast">हराएका भिडियो अफलाइन हेर्नका लागि फेरि सुरक्षित गरिँदै छन्</string>
+<string name="cache_import_cleared_toast">यो यन्त्रमा नभएका भिडियोका चिन्हहरू मेटिए</string>
 <string name="refresh">ताजा गर्नुहोस्</string>
 </resources>

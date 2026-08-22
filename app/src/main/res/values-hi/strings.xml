@@ -555,10 +555,10 @@
 <string name="player_uncache_title">ऑफ़लाइन प्रति हटाएँ</string>
 <string name="player_uncache_desc">इस वीडियो को ऑफ़लाइन संग्रह से हटाएँ और प्लेयर बंद करें</string>
 <string name="cache_import_missing_title">सहेजे गए वीडियो नहीं मिले</string>
-<string name="cache_import_missing_message">यह बैकअप %1$d वीडियो को ऑफ़लाइन सहेजा हुआ बताता है, पर उनकी फ़ाइलें इस डिवाइस पर नहीं हैं।\n\nक्या उन्हें अभी दोबारा सहेजें? नहीं तो उनके निशान मिटा दिए जाएँगे।</string>
+<string name="cache_import_missing_message">यह बैकअप ऐसे वीडियो को ऑफ़लाइन सहेजा हुआ बताता है जिनकी फ़ाइलें इस डिवाइस पर नहीं हैं (कुल %1$d)।\n\nक्या उन्हें अभी दोबारा सहेजें? नहीं तो उनके निशान मिटा दिए जाएँगे।</string>
 <string name="cache_import_recache_button">दोबारा सहेजें</string>
 <string name="cache_import_clear_button">निशान मिटाएँ</string>
-<string name="cache_import_recaching_toast">%1$d वीडियो ऑफ़लाइन देखने के लिए दोबारा सहेजे जा रहे हैं</string>
-<string name="cache_import_cleared_toast">%1$d निशान मिटाए गए जिनके वीडियो इस डिवाइस पर नहीं हैं</string>
+<string name="cache_import_recaching_toast">गायब वीडियो ऑफ़लाइन देखने के लिए दोबारा सहेजे जा रहे हैं</string>
+<string name="cache_import_cleared_toast">उन वीडियो के निशान मिटा दिए गए जो इस डिवाइस पर नहीं हैं</string>
 <string name="refresh">ताज़ा करें</string>
 </resources>

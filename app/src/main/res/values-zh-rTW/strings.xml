@@ -1094,10 +1094,10 @@
 <string name="player_uncache_title">刪除快取</string>
 <string name="player_uncache_desc">從離線快取中移除此影片並關閉播放器</string>
 <string name="cache_import_missing_title">快取的影片已遺失</string>
-<string name="cache_import_missing_message">此備份將 %1$d 部影片標記為已離線快取，但它們的檔案不在本裝置上。\n\n現在要重新快取嗎？若不，這些標記將被清除。</string>
+<string name="cache_import_missing_message">此備份把一些影片標記為已離線快取，但它們的檔案不在本裝置上（共 %1$d 部）。\n\n現在要重新快取嗎？若不，這些標記將被清除。</string>
 <string name="cache_import_recache_button">重新快取</string>
 <string name="cache_import_clear_button">清除標記</string>
-<string name="cache_import_recaching_toast">正在重新快取 %1$d 部影片以便離線觀看</string>
-<string name="cache_import_cleared_toast">已清除 %1$d 個標記，其影片不在本裝置上</string>
+<string name="cache_import_recaching_toast">正在重新快取遺失的影片以便離線觀看</string>
+<string name="cache_import_cleared_toast">已清除不在本裝置上的影片的快取標記</string>
 <string name="refresh">重新整理</string>
 </resources>

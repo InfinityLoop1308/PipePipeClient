@@ -35,10 +35,10 @@
 <string name="player_uncache_title">حذف النسخة المحفوظة</string>
 <string name="player_uncache_desc">إزالة هذا الفيديو من التخزين دون اتصال وإغلاق المشغّل</string>
 <string name="cache_import_missing_title">مقاطع فيديو محفوظة مفقودة</string>
-<string name="cache_import_missing_message">تشير هذه النسخة الاحتياطية إلى %1$d مقطع فيديو على أنها محفوظة دون اتصال، لكن ملفاتها ليست على هذا الجهاز.\n\nهل تريد حفظها من جديد الآن؟ وإن لم ترد، فسيتم مسح علاماتها.</string>
+<string name="cache_import_missing_message">تشير هذه النسخة الاحتياطية إلى مقاطع فيديو على أنها محفوظة دون اتصال، لكن ملفاتها ليست على هذا الجهاز (%1$d في المجموع).\n\nهل تريد حفظها من جديد الآن؟ وإن لم ترد، فسيتم مسح علاماتها.</string>
 <string name="cache_import_recache_button">حفظ من جديد</string>
 <string name="cache_import_clear_button">مسح العلامات</string>
-<string name="cache_import_recaching_toast">يجري حفظ %1$d مقطع فيديو من جديد للمشاهدة دون اتصال</string>
-<string name="cache_import_cleared_toast">مُسحت %1$d علامة مقاطعها غير موجودة على هذا الجهاز</string>
+<string name="cache_import_recaching_toast">يجري حفظ المقاطع المفقودة من جديد للمشاهدة دون اتصال</string>
+<string name="cache_import_cleared_toast">مُسحت علامات المقاطع غير الموجودة على هذا الجهاز</string>
 <string name="refresh">تحديث</string>
 </resources>

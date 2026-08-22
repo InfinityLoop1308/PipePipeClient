@@ -729,10 +729,10 @@
 <string name="player_uncache_title">מחיקת העותק הלא מקוון</string>
 <string name="player_uncache_desc">הסרת הסרטון הזה מהאחסון הלא מקוון וסגירת הנגן</string>
 <string name="cache_import_missing_title">חסרים סרטונים שמורים</string>
-<string name="cache_import_missing_message">הגיבוי הזה מסמן %1$d סרטונים כשמורים ללא חיבור, אבל הקבצים שלהם אינם במכשיר הזה.\n\nלשמור אותם שוב עכשיו? אם לא, הסימונים שלהם יימחקו.</string>
+<string name="cache_import_missing_message">הגיבוי הזה מסמן כשמורים ללא חיבור סרטונים שהקבצים שלהם אינם במכשיר הזה (%1$d בסך הכול).\n\nלשמור אותם שוב עכשיו? אם לא, הסימונים שלהם יימחקו.</string>
 <string name="cache_import_recache_button">לשמור שוב</string>
 <string name="cache_import_clear_button">מחיקת הסימונים</string>
-<string name="cache_import_recaching_toast">%1$d סרטונים נשמרים שוב לצפייה ללא חיבור</string>
-<string name="cache_import_cleared_toast">נמחקו %1$d סימונים שהסרטונים שלהם אינם במכשיר הזה</string>
+<string name="cache_import_recaching_toast">הסרטונים החסרים נשמרים שוב לצפייה ללא חיבור</string>
+<string name="cache_import_cleared_toast">נמחקו הסימונים של סרטונים שאינם במכשיר הזה</string>
 <string name="refresh">רענון</string>
 </resources>

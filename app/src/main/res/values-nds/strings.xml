@@ -35,10 +35,10 @@
 <string name="player_uncache_title">Offline-Kopie wegdoon</string>
 <string name="player_uncache_desc">Dit Video ut den Offline-Spieker wegdoon un den Speler tomaken</string>
 <string name="cache_import_missing_title">Sekerte Videos fehlt</string>
-<string name="cache_import_missing_message">Disse Sekerheitskopie markeert %1$d Videos as offline sekert, man ehr Dateien sünd nich op dit Gerät.\n\nNu nochmal sekern? Wenn nich, warrt de Markeren wegdaan.</string>
+<string name="cache_import_missing_message">Disse Sekerheitskopie markeert Videos as offline sekert, ehr Dateien aver nich op dit Gerät sünd (tosamen %1$d).\n\nNu nochmal sekern? Wenn nich, warrt de Markeren wegdaan.</string>
 <string name="cache_import_recache_button">Nochmal sekern</string>
 <string name="cache_import_clear_button">Markeren wegdoon</string>
-<string name="cache_import_recaching_toast">%1$d Videos warrt nochmal för dat Kieken ahn Nett sekert</string>
-<string name="cache_import_cleared_toast">%1$d Markeren wegdaan, de ehr Videos nich op dit Gerät sünd</string>
+<string name="cache_import_recaching_toast">De fehlen Videos warrt nochmal för dat Kieken ahn Nett sekert</string>
+<string name="cache_import_cleared_toast">Markeren vun Videos wegdaan, de nich op dit Gerät sünd</string>
 <string name="refresh">Opfrischen</string>
 </resources>
