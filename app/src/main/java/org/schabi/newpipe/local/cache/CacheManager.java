@@ -156,12 +156,25 @@ public final class CacheManager {
     public static File getCacheDirFor(@NonNull final Context context,
                                       final int serviceId,
                                       @NonNull final String streamId) {
-        final String safeId = streamId.replaceAll("[^A-Za-z0-9_.-]", "_");
-        final File dir = new File(getCacheRootDir(context), serviceId + "_" + safeId);
+        final File dir = cacheDirPathFor(context, serviceId, streamId);
         if (!dir.exists()) {
             dir.mkdirs();
         }
         return dir;
+    }
+
+    /**
+     * Where a stream's cached files belong, without creating anything. Callers that are only
+     * asking whether a file is there (see {@code CacheImportReconciler}) must use this rather than
+     * {@link #getCacheDirFor}, which would leave an empty folder behind for every stream it was
+     * asked about.
+     */
+    @NonNull
+    public static File cacheDirPathFor(@NonNull final Context context,
+                                       final int serviceId,
+                                       @NonNull final String streamId) {
+        final String safeId = streamId.replaceAll("[^A-Za-z0-9_.-]", "_");
+        return new File(getCacheRootDir(context), serviceId + "_" + safeId);
     }
 
     @NonNull

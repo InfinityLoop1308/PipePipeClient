@@ -23,6 +23,7 @@ import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.localization.ContentCountry;
 import org.schabi.newpipe.extractor.localization.Localization;
+import org.schabi.newpipe.local.cache.CacheImportReconciler;
 import org.schabi.newpipe.local.subscription.SubscriptionManager;
 import org.schabi.newpipe.local.subscription.SubscriptionsImportExportHelper;
 import org.schabi.newpipe.streams.io.NoFileManagerSafeGuard;
@@ -34,6 +35,7 @@ import org.schabi.newpipe.util.ZipHelper;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
@@ -43,6 +45,7 @@ import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
@@ -54,6 +57,7 @@ public class BackupSettingsFragment extends BasePreferenceFragment {
 
     private ContentSettingsManager manager;
     private SubscriptionManager subscriptionManager;
+    private NewPipeFileLocator fileLocator;
     private final CompositeDisposable disposables = new CompositeDisposable();
 
     private String importExportDataPathKey;
@@ -75,7 +79,8 @@ public class BackupSettingsFragment extends BasePreferenceFragment {
     public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
         final File homeDir = ContextCompat.getDataDir(requireContext());
         Objects.requireNonNull(homeDir);
-        manager = new ContentSettingsManager(new NewPipeFileLocator(homeDir));
+        fileLocator = new NewPipeFileLocator(homeDir);
+        manager = new ContentSettingsManager(fileLocator);
         manager.deleteSettingsFile();
 
         importExportDataPathKey = getString(R.string.import_export_data_path);
@@ -242,22 +247,69 @@ public class BackupSettingsFragment extends BasePreferenceFragment {
 
                 alert.setNegativeButton(R.string.cancel, (dialog, which) -> {
                     dialog.dismiss();
-                    finishImport(importDataUri);
+                    askAboutUncachedStreams(importDataUri);
                 });
                 alert.setPositiveButton(R.string.ok, (dialog, which) -> {
                     dialog.dismiss();
                     SharedPreferences sharedPreferences = PreferenceManager
                             .getDefaultSharedPreferences(requireContext());
                     manager.loadSharedPreferences(sharedPreferences);
-                    finishImport(importDataUri);
+                    askAboutUncachedStreams(importDataUri);
                 });
                 alert.show();
             } else {
-                finishImport(importDataUri);
+                askAboutUncachedStreams(importDataUri);
             }
         } catch (final Exception e) {
             ErrorUtil.showUiErrorSnackbar(this, "Importing database", e);
         }
+    }
+
+    /**
+     * A backup carries the database and the settings, never the cached media files - those live
+     * outside it, in app-private storage, and the import does not touch them. So the imported
+     * database regularly marks videos as cached for offline viewing that this device has no files
+     * for. Ask what should become of those before restarting; whichever way the user answers,
+     * {@link CacheImportReconciler} then makes the table match the cache directory once the app
+     * has restarted onto the imported database.
+     */
+    private void askAboutUncachedStreams(final Uri importDataUri) {
+        final Context context = requireContext();
+        disposables.add(Single
+                .fromCallable(() -> CacheImportReconciler
+                        .scanBackupForUncachedFlags(context, fileLocator.getDb()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(missing -> {
+                    if (missing.isEmpty()) {
+                        CacheImportReconciler.schedulePostImportWork(context, false, missing);
+                        finishImport(importDataUri);
+                        return;
+                    }
+                    new AlertDialog.Builder(requireActivity())
+                            .setTitle(R.string.cache_import_missing_title)
+                            .setMessage(getString(R.string.cache_import_missing_message,
+                                    missing.size()))
+                            .setCancelable(false)
+                            .setPositiveButton(R.string.cache_import_recache_button, (d, id) -> {
+                                CacheImportReconciler
+                                        .schedulePostImportWork(context, true, missing);
+                                finishImport(importDataUri);
+                            })
+                            .setNegativeButton(R.string.cache_import_clear_button, (d, id) -> {
+                                CacheImportReconciler
+                                        .schedulePostImportWork(context, false, missing);
+                                finishImport(importDataUri);
+                            })
+                            .show();
+                }, e -> {
+                    // The import itself is done and must not be held up by this; reconciling
+                    // after the restart still cleans up whatever is stale.
+                    Log.w(TAG, "could not check the imported backup for cached videos", e);
+                    CacheImportReconciler.schedulePostImportWork(context, false,
+                            Collections.emptyList());
+                    finishImport(importDataUri);
+                }));
     }
 
     /**

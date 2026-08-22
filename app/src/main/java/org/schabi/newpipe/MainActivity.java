@@ -69,6 +69,7 @@ import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.fragments.MainFragment;
 import org.schabi.newpipe.fragments.detail.VideoDetailFragment;
 import org.schabi.newpipe.fragments.list.search.SearchFragment;
+import org.schabi.newpipe.local.cache.CacheImportReconciler;
 import org.schabi.newpipe.local.feed.notifications.NotificationWorker;
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.event.OnKeyDownListener;
@@ -178,6 +179,10 @@ public class MainActivity extends AppCompatActivity {
 
         final App app = App.getApp();
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(app);
+
+        // A database import restarts the app; this is the first chance to make the offline cache
+        // table match the files that are actually there. No-op unless an import just happened.
+        CacheImportReconciler.runPendingImportWork(this);
 
         String audioLang = prefs.getString(getString(R.string.preferred_audio_language_key), "original");
         if (!Arrays.asList("original", "en", "fr", "de", "es", "pt", "ru", "tr", "zh", "ja", "hi", "ko", "th", "vi", "bn", "id", "ar").contains(audioLang)) {
