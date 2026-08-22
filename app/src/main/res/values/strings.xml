@@ -490,9 +490,9 @@
 <string name="limit_mobile_data_usage_title">Limit resolution when using mobile data</string>
 <string-array name="limit_data_usage_description_list">
 <item>@string/limit_data_usage_none_description</item>
-<item>1080p60</item>
+<item>2160p</item>
+<item>1440p</item>
 <item>1080p</item>
-<item>720p60</item>
 <item>720p</item>
 <item>480p</item>
 <item>360p</item>
@@ -940,8 +940,6 @@
 <string name="decoder_init_failure">Decoder initialization failed</string>
 <string name="unable_to_decode_summary">Your device lacks the required hardware decoders, so you cannot play this video in PipePipe.\nPlease download and play it in VLC.</string>
 <string name="settings_category_gestures_summary">Gestures</string>
-<string name="resize_pinch">Pinch</string>
-<string name="pinch_to_zoom_selected">Pinch to zoom.</string>
 <string name="settings_category_bullet_comments_summary">Bullet Comment Settings</string>
 <string name="settings_category_backup_title">Backup</string>
 <string name="settings_category_advanced_title">Advanced</string>
@@ -958,6 +956,7 @@
 <string name="search_result">Search results</string>
 <string name="filter_field_summary">Apply Filter To</string>
 <string name="channel_videos">Channel videos</string>
+<string name="channel_is_blocked">This channel is in your block list</string>
 <string name="success">Success</string>
 <string name="settings_category_proxy_title">Proxy (Supporters)</string>
 <string name="proxy_token_title">Token</string>
@@ -1085,4 +1084,27 @@
 <string name="sabr_backoff_notification_channel_description">Notifications when YouTube requires a playback request to wait</string>
 <string name="sabr_backoff_notification_title">Waiting for YouTube</string>
 <string name="sabr_backoff_notification_content">YouTube forces us to wait %1$d seconds before continuing playback</string>
+<string name="remember_search_filters_title">Remember search filters</string>
+<string name="remember_search_filters_summary">Restore the selected service, content type, and sort filters when starting a new search</string>
+<string name="import_subscriptions_title">Import subscriptions</string>
+<string name="import_subscriptions_summary">Import subscriptions from a previous JSON export</string>
+<string name="export_subscriptions_title">Export subscriptions</string>
+<string name="export_subscriptions_summary">Export subscriptions to a JSON file</string>
+<string name="import_youtube_subscriptions_title">Import from YouTube</string>
+<string name="import_youtube_subscriptions_summary">Import subscriptions from Google Takeout</string>
+<string name="import_soundcloud_subscriptions_title">Import from SoundCloud</string>
+<string name="import_soundcloud_subscriptions_summary">Import subscriptions from a SoundCloud profile</string>
+<string name="clear_subscriptions_title">Clear subscriptions</string>
+<string name="clear_subscriptions_summary">Remove all subscribed channels from PipePipe</string>
+<string name="clear_subscriptions_confirmation">Clear all subscriptions? This cannot be undone.</string>
+<string name="subscriptions_cleared">Subscriptions cleared</string>
+<string name="fetch_subscription_details_title">Fetch channel details?</string>
+<string name="fetch_subscription_details_message">Fetching channel thumbnails and subscriber counts requires visiting each subscribed channel. The time required depends on the number of subscriptions and may be long for a large subscription list. If you skip this step, a channel\'s details will still be updated automatically when you open it manually.</string>
+<string name="fetch">Fetch</string>
+<string name="skip">Skip</string>
+<string name="subscription_details_update_ongoing">Fetching channel details…</string>
+<string name="subscription_details_update_complete">Channel details updated</string>
+<string name="subscription_details_update_failed">Could not update channel details</string>
+<string name="resize_pinch">Pinch</string>
+<string name="pinch_to_zoom_selected">Pinch to zoom.</string>
 </resources>
