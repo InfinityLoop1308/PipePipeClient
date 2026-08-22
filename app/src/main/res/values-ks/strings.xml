@@ -1,2 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources><string name="controls_cache_title">آف لائن محفوظ کریو</string>
+<string name="controls_cache_desc">آف لائن ویچھنہ خٲطرٕ ویڈیو، آڈیو تہٕ میٹا ڈیٹا محفوظ کریو، تہٕ ویچھتھ پتہٕ ہٹٲویو</string>
+<string name="controls_cache_delete_title">آف لائن نقل مٹٲویو</string>
+<string name="controls_cache_delete_desc">یہٕ ویڈیو آف لائن ذخیرس منٛز ہٹٲویو</string>
+<string name="controls_cache_progress_title">محفوظ کران… %1$d%%</string>
+<string name="cache_processing_title">کٲم کران…</string>
+<string name="cache_incomplete_status">نامکمل — مٹٲویو تہٕ دوبارٕ محفوظ کریو</string>
+<string name="cache_processing_notification">“%1$s” پؠٹھ کٲم کران…</string>
+<string name="cache_started">آف لائن ویچھنہ خٲطرٕ محفوظ کرُن شروع سپد</string>
+<string name="cache_removed">آف لائن ذخیرس منٛز ہٹاومُت</string>
+<string name="cache_remove_confirm_title">آف لائن ذخیرس منٛز ہٹٲویو؟</string>
+<string name="cache_remove_confirm_message">محفوظ ویڈیو/آڈیو فایلہ ییہ مٹٲوٕنہ۔ توہہِ ہؠکیو یہٕ پتہٕ دوبارٕ محفوظ کرِتھ۔</string>
+<string name="cache_notification_title">آف لائن ویچھنہ خٲطرٕ محفوظ کران</string>
+<string name="cache_notification_done">“%1$s” آف لائن ویچھنہ خٲطرٕ محفوظ سپد</string>
+<string name="cache_notification_failed">“%1$s” محفوظ کرنہٕ آو نہٕ</string>
+<string name="cached_videos_title">آف لائن ویڈیو</string>
+<string name="cached_videos_empty">آف لائن ویچھنہ خٲطرٕ وول کانہہ ویڈیو محفوظ نہٕ چھُ۔ اکھ رلاونہٕ خٲطرٕ ویڈیوہٕ صفحس پؠٹھ آف لائن بٹن دبٲویو۔</string>
+<string name="playing_from_cache">آف لائن ذخیرس منٛز چلان</string>
+<string name="cache_offline_badge_desc">آف لائن ویچھنہ خٲطرٕ محفوظ</string>
+<string name="cache_downloading_badge_desc">آف لائن ویچھنہ خٲطرٕ محفوظ کران…</string>
+<string name="feed_toggle_show_cached_only">صرف محفوظ ہاوِو</string>
+<string name="cache_failed_toast">ویڈیو محفوظ کرنہٕ آو نہٕ</string>
+<string name="cache_failed_no_streams">یمہ ویڈیوہٕ خٲطرٕ آو نہٕ کانہہ محفوظ کرنہٕ لایق سٹریم لبنہٕ۔</string>
+<string name="cache_dialog_title">آف لائن ویچھنہ خٲطرٕ محفوظ کریو</string>
+<string name="cache_quality_label">معیار</string>
+<string name="cache_action">محفوظ کریو</string>
+<string name="cache_hint_no_video">یمہ ویڈیوہٕ خٲطرٕ چھُ نہٕ کانہہ محفوظ کرنہٕ لایق ویڈیو معیار — صرف آڈیو۔</string>
+<string name="cache_hint_no_audio">یمہ ویڈیوہٕ خٲطرٕ چھُ نہٕ کانہہ محفوظ کرنہٕ لایق آڈیو ٹریک — صرف ویڈیو۔</string>
+<string name="cache_hint_reduced">کینٛہہ معیار چھِ نہٕ فہرستس منٛز: صرف سیدٕ ڈاؤن لوڈ گژھن وول سٹریم ہؠکن محفوظ کرِتھ۔</string>
+<string name="settings_category_caching_title">آف لائن ذخیرٕ</string>
+<string name="cache_use_default_quality_title">طےشدہ معیارس منٛز محفوظ کریو</string>
+<string name="cache_use_default_quality_summary">معیار ژارُن چھوڑِتھ سیدٕ طےشدہ ویڈیو تہٕ آڈیو معیارس منٛز محفوظ کریو</string>
+<string name="cache_use_default_quality_checkbox">ہمیشہ طےشدہ معیار استعمال کریو</string>
+<string name="player_uncache_title">آف لائن نقل مٹٲویو</string>
+<string name="player_uncache_desc">یہٕ ویڈیو آف لائن ذخیرس منٛز ہٹٲویو تہٕ پلیئر بند کریو</string>
+<string name="cache_import_missing_title">محفوظ ویڈیو چھِ نہٕ لبنہٕ آمٕتؠ</string>
+<string name="cache_import_missing_message">یہٕ بیک اپ چھُ %1$d ویڈیو آف لائن محفوظ ہاوان، مگر تِمن ہٕنٛدؠ فایلہ چھِ نہٕ یمہ آلس پؠٹھ۔\n\nوۄنؠ دوبارٕ محفوظ کریو؟ اگر نہٕ، تہ تِمن ہٕنٛدؠ نشان ییکھ مٹٲوٕنہ۔</string>
+<string name="cache_import_recache_button">دوبارٕ محفوظ کریو</string>
+<string name="cache_import_clear_button">نشان مٹٲویو</string>
+<string name="cache_import_recaching_toast">%1$d ویڈیو چھِ آف لائن ویچھنہ خٲطرٕ دوبارٕ محفوظ گژھان</string>
+<string name="cache_import_cleared_toast">%1$d نشان مٹٲوٕنہ آیہ یمن ہٕنٛدؠ ویڈیو چھِ نہٕ یمہ آلس پؠٹھ</string>
+<string name="refresh">تازٕ کریو</string>
+</resources>

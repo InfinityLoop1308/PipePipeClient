@@ -1,2 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources><string name="controls_cache_title">Offline sekern</string>
+<string name="controls_cache_desc">Video, Audio un Metadaten för dat Kieken ahn Nett sekern un achteran wedder wegdoon</string>
+<string name="controls_cache_delete_title">Offline-Kopie wegdoon</string>
+<string name="controls_cache_delete_desc">Dit Video ut den Offline-Spieker wegdoon</string>
+<string name="controls_cache_progress_title">Warrt sekert… %1$d%%</string>
+<string name="cache_processing_title">Warrt bearbeidt…</string>
+<string name="cache_incomplete_status">Nich vullstännig – wegdoon un nochmal sekern</string>
+<string name="cache_processing_notification">„%1$s“ warrt bearbeidt…</string>
+<string name="cache_started">Sekern för dat Kieken ahn Nett hett anfungen</string>
+<string name="cache_removed">Ut den Offline-Spieker wegdaan</string>
+<string name="cache_remove_confirm_title">Ut den Offline-Spieker wegdoon?</string>
+<string name="cache_remove_confirm_message">De sekerten Video-/Audiodateien warrt wegdaan. Du kannst dat Video later wedder sekern.</string>
+<string name="cache_notification_title">Sekern för dat Kieken ahn Nett</string>
+<string name="cache_notification_done">„%1$s“ för dat Kieken ahn Nett sekert</string>
+<string name="cache_notification_failed">„%1$s“ kunn nich sekert warrn</string>
+<string name="cached_videos_title">Offline sekerte Videos</string>
+<string name="cached_videos_empty">Noch keen Videos för dat Kieken ahn Nett sekert. Tipp op de Siet vun een Video op den Offline-Knoop, üm een tofögen.</string>
+<string name="playing_from_cache">Afspelen ut den Offline-Spieker</string>
+<string name="cache_offline_badge_desc">För dat Kieken ahn Nett sekert</string>
+<string name="cache_downloading_badge_desc">Warrt för dat Kieken ahn Nett sekert…</string>
+<string name="feed_toggle_show_cached_only">Bloots sekerte wiesen</string>
+<string name="cache_failed_toast">Video kunn nich sekert warrn</string>
+<string name="cache_failed_no_streams">För dit Video is keen sekerbore Stream funnen worrn.</string>
+<string name="cache_dialog_title">För dat Kieken ahn Nett sekern</string>
+<string name="cache_quality_label">Gööd</string>
+<string name="cache_action">Sekern</string>
+<string name="cache_hint_no_video">Keen sekerbore Videogööd för dit Video – bloots Audio.</string>
+<string name="cache_hint_no_audio">Keen sekerbore Audiospoor för dit Video – bloots Video.</string>
+<string name="cache_hint_reduced">Enige Gööden fehlt: bloots direkt daalladbore Streams köönt sekert warrn.</string>
+<string name="settings_category_caching_title">Offline-Spieker</string>
+<string name="cache_use_default_quality_title">In de Standardgööd sekern</string>
+<string name="cache_use_default_quality_summary">De Göödutwahl överspringen un fuurts mit de Standardgööd för Video un Audio sekern</string>
+<string name="cache_use_default_quality_checkbox">Jümmers de Standardgööd bruken</string>
+<string name="player_uncache_title">Offline-Kopie wegdoon</string>
+<string name="player_uncache_desc">Dit Video ut den Offline-Spieker wegdoon un den Speler tomaken</string>
+<string name="cache_import_missing_title">Sekerte Videos fehlt</string>
+<string name="cache_import_missing_message">Disse Sekerheitskopie markeert %1$d Videos as offline sekert, man ehr Dateien sünd nich op dit Gerät.\n\nNu nochmal sekern? Wenn nich, warrt de Markeren wegdaan.</string>
+<string name="cache_import_recache_button">Nochmal sekern</string>
+<string name="cache_import_clear_button">Markeren wegdoon</string>
+<string name="cache_import_recaching_toast">%1$d Videos warrt nochmal för dat Kieken ahn Nett sekert</string>
+<string name="cache_import_cleared_toast">%1$d Markeren wegdaan, de ehr Videos nich op dit Gerät sünd</string>
+<string name="refresh">Opfrischen</string>
+</resources>

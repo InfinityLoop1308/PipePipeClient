@@ -1,2 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources><string name="controls_cache_title">Offline bewaren</string>
+<string name="controls_cache_desc">Video, gheluut ende gegevene bewaren om sonder net te siene, ende daer na weder af doen</string>
+<string name="controls_cache_delete_title">Offline afschrift af doen</string>
+<string name="controls_cache_delete_desc">Desen video uut der offline bewaringhe af doen</string>
+<string name="controls_cache_progress_title">Wert bewaert… %1$d%%</string>
+<string name="cache_processing_title">Wert verwarct…</string>
+<string name="cache_incomplete_status">Onvolcomen — af doet ende bewaert weder</string>
+<string name="cache_processing_notification">‘%1$s’ wert verwarct…</string>
+<string name="cache_started">Bewaren om sonder net te siene es begonnen</string>
+<string name="cache_removed">Uut der offline bewaringhe ghedaen</string>
+<string name="cache_remove_confirm_title">Uut der offline bewaringhe doen?</string>
+<string name="cache_remove_confirm_message">Die bewaerde video- ende gheluutbestande selen af ghedaen werden. Ghi moget den video later weder bewaren.</string>
+<string name="cache_notification_title">Bewaren om sonder net te siene</string>
+<string name="cache_notification_done">‘%1$s’ bewaert om sonder net te siene</string>
+<string name="cache_notification_failed">‘%1$s’ en conste niet bewaert werden</string>
+<string name="cached_videos_title">Offline bewaerde videos</string>
+<string name="cached_videos_empty">Noch gheen videos bewaert om sonder net te siene. Roert den offline cnoop op des videos side om eenen toe te doene.</string>
+<string name="playing_from_cache">Spelende uut der offline bewaringhe</string>
+<string name="cache_offline_badge_desc">Bewaert om sonder net te siene</string>
+<string name="cache_downloading_badge_desc">Wert bewaert om sonder net te siene…</string>
+<string name="feed_toggle_show_cached_only">Allene bewaerde toghen</string>
+<string name="cache_failed_toast">Die video en conste niet bewaert werden</string>
+<string name="cache_failed_no_streams">Voor desen video en es gheen bewaerlike stroom vonden.</string>
+<string name="cache_dialog_title">Bewaren om sonder net te siene</string>
+<string name="cache_quality_label">Ghoetheit</string>
+<string name="cache_action">Bewaren</string>
+<string name="cache_hint_no_video">Gheen bewaerlike videoghoetheit voor desen video — allene gheluut.</string>
+<string name="cache_hint_no_audio">Gheen bewaerlic gheluutspoor voor desen video — allene video.</string>
+<string name="cache_hint_reduced">Sommighe ghoetheden ontbreken: allene stromen die men rechte halen mach moghen bewaert werden.</string>
+<string name="settings_category_caching_title">Offline bewaringhe</string>
+<string name="cache_use_default_quality_title">In der ghewoenliker ghoetheit bewaren</string>
+<string name="cache_use_default_quality_summary">Die kiesinghe der ghoetheit overslaen ende terstont bewaren met der ghewoenliker ghoetheit van video ende gheluut</string>
+<string name="cache_use_default_quality_checkbox">Altoos die ghewoenlike ghoetheit ghebruken</string>
+<string name="player_uncache_title">Offline afschrift af doen</string>
+<string name="player_uncache_desc">Desen video uut der offline bewaringhe doen ende den speler sluten</string>
+<string name="cache_import_missing_title">Bewaerde videos ontbreken</string>
+<string name="cache_import_missing_message">Dese bewaringhe teykent %1$d videos als offline bewaert, maer hare bestande en sijn niet op desen toestelle.\n\nNu weder bewaren? Ist niet, so werden die teykene ghewischt.</string>
+<string name="cache_import_recache_button">Weder bewaren</string>
+<string name="cache_import_clear_button">Teykene wisschen</string>
+<string name="cache_import_recaching_toast">%1$d videos werden weder bewaert om sonder net te siene</string>
+<string name="cache_import_cleared_toast">%1$d teykene ghewischt welker videos niet op desen toestelle en sijn</string>
+<string name="refresh">Vernieuwen</string>
+</resources>
