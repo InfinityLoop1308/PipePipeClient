@@ -494,9 +494,9 @@ của YouTube
 <string name="limit_mobile_data_usage_title">Giới hạn độ phân giải khi sử dụng dữ liệu di động</string>
 <string-array name="limit_data_usage_description_list">
 <item>@string/limit_data_usage_none_description</item>
-<item>1080p60</item>
+<item>2160p</item>
+<item>1440p</item>
 <item>1080p</item>
-<item>720p60</item>
 <item>720p</item>
 <item>480p</item>
 <item>360p</item>
@@ -1092,4 +1092,25 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sabr_backoff_notification_content">YouTube buộc chúng ta phải đợi %1$d giây trước khi tiếp tục phát</string>
 <string name="playback_speed_gesture_control_title">Vuốt để điều khiển tốc độ phát lại</string>
 <string name="playback_speed_gesture_control_summary">Vuốt ở giữa để điều khiển tốc độ phát. Vô hiệu hóa điều khiển bằng cử chỉ toàn màn hình</string>
+<string name="remember_search_filters_title">Ghi nhớ bộ lọc tìm kiếm</string>
+<string name="remember_search_filters_summary">Khôi phục các bộ lọc về dịch vụ, loại nội dung và sắp xếp đã chọn khi bắt đầu một tìm kiếm mới</string>
+<string name="import_subscriptions_title">Nhập đăng ký</string>
+<string name="import_subscriptions_summary">Nhập đăng ký từ bản xuất JSON trước đó</string>
+<string name="export_subscriptions_title">Xuất đăng ký</string>
+<string name="export_subscriptions_summary">Xuất đăng ký sang tệp JSON</string>
+<string name="import_youtube_subscriptions_title">Nhập từ YouTube</string>
+<string name="import_youtube_subscriptions_summary">Nhập các đăng ký từ Google Takeout</string>
+<string name="import_soundcloud_subscriptions_title">Nhập từ SoundCloud</string>
+<string name="import_soundcloud_subscriptions_summary">Nhập các đăng ký từ một hồ sơ SoundCloud</string>
+<string name="clear_subscriptions_title">Xóa đăng ký</string>
+<string name="clear_subscriptions_summary">Xóa tất cả các kênh đã đăng ký khỏi PipePipe</string>
+<string name="clear_subscriptions_confirmation">Xóa tất cả đăng ký? Hành động này không thể hoàn tác.</string>
+<string name="subscriptions_cleared">Đã xóa đăng ký</string>
+<string name="fetch_subscription_details_title">Lấy thông tin chi tiết kênh?</string>
+<string name="fetch_subscription_details_message">Việc tải ảnh thu nhỏ và số lượng người đăng ký của kênh yêu cầu phải truy cập vào từng kênh đã đăng ký. Thời gian thực hiện phụ thuộc vào số lượng kênh đăng ký và có thể kéo dài nếu danh sách đăng ký lớn. Nếu bạn bỏ qua bước này, thông tin chi tiết của kênh vẫn sẽ được cập nhật tự động khi bạn mở thủ công.</string>
+<string name="fetch">Lấy</string>
+<string name="skip">Bỏ qua</string>
+<string name="subscription_details_update_ongoing">Đang lấy thông tin chi tiết kênh…</string>
+<string name="subscription_details_update_complete">Đã cập nhật thông tin chi tiết kênh</string>
+<string name="subscription_details_update_failed">Không thể cập nhật thông tin chi tiết kênh</string>
 </resources>

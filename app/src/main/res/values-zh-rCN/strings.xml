@@ -454,9 +454,9 @@
 <string name="limit_mobile_data_usage_title">使用移动数据时限制分辨率</string>
 <string-array name="limit_data_usage_description_list">
 <item>@string/limit_data_usage_none_description</item>
-<item>1080p60</item>
+<item>2160p</item>
+<item>1440p</item>
 <item>1080p</item>
-<item>720p60</item>
 <item>720p</item>
 <item>480p</item>
 <item>360p</item>
@@ -1047,4 +1047,25 @@
 <string name="sabr_backoff_notification_content">YouTube 强制我们等待 %1$d 秒后才能继续播放</string>
 <string name="playback_speed_gesture_control_title">滑动控制播放速度</string>
 <string name="playback_speed_gesture_control_summary">在中间滑动以控制播放速度。将禁用全屏手势控制</string>
+<string name="remember_search_filters_title">记住搜索筛选条件</string>
+<string name="remember_search_filters_summary">开始新搜索时恢复所选的服务、内容类型和排序筛选条件</string>
+<string name="import_subscriptions_title">导入订阅</string>
+<string name="import_subscriptions_summary">从之前的 JSON 导出文件中导入订阅</string>
+<string name="export_subscriptions_title">导出订阅</string>
+<string name="export_subscriptions_summary">将订阅导出为 JSON 文件</string>
+<string name="import_youtube_subscriptions_title">从 YouTube 导入</string>
+<string name="import_youtube_subscriptions_summary">从 Google Takeout 导入订阅</string>
+<string name="import_soundcloud_subscriptions_title">从 SoundCloud 导入</string>
+<string name="import_soundcloud_subscriptions_summary">从 SoundCloud 个人资料导入订阅</string>
+<string name="clear_subscriptions_title">清除订阅</string>
+<string name="clear_subscriptions_summary">从 PipePipe 中移除所有订阅频道</string>
+<string name="clear_subscriptions_confirmation">清除所有订阅？此操作无法撤销。</string>
+<string name="subscriptions_cleared">订阅已清除</string>
+<string name="fetch_subscription_details_title">获取频道详情？</string>
+<string name="fetch_subscription_details_message">获取频道缩略图和订阅者数量需要访问每一个已订阅的频道。所需时间取决于订阅数量，如果订阅列表很大，可能需要较长时间。如果您跳过此步骤，当您手动打开频道时，频道的详细信息仍会自动更新。</string>
+<string name="fetch">获取</string>
+<string name="skip">跳过</string>
+<string name="subscription_details_update_ongoing">正在获取频道详情…</string>
+<string name="subscription_details_update_complete">频道详情已更新</string>
+<string name="subscription_details_update_failed">无法更新频道详情</string>
 </resources>

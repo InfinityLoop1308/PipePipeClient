@@ -150,8 +150,8 @@ public class AdvancedSettingsFragment extends BasePreferenceFragment implements 
         final String[] values = getResources().getStringArray(
                 R.array.youtube_player_client_values);
         if (loggedIn) {
-            preference.setEntries(new CharSequence[]{entries[2]});
-            preference.setEntryValues(new CharSequence[]{values[2]});
+            preference.setEntries(new CharSequence[]{entries[2], entries[3]});
+            preference.setEntryValues(new CharSequence[]{values[2], values[3]});
         } else {
             preference.setEntries(new CharSequence[]{entries[0], entries[1], entries[3]});
             preference.setEntryValues(new CharSequence[]{values[0], values[1], values[3]});

@@ -1,6 +1,7 @@
 package org.schabi.newpipe.settings;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.preference.Preference;
@@ -18,8 +20,11 @@ import org.schabi.newpipe.NewPipeDatabase;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.localization.ContentCountry;
 import org.schabi.newpipe.extractor.localization.Localization;
+import org.schabi.newpipe.local.subscription.SubscriptionManager;
+import org.schabi.newpipe.local.subscription.SubscriptionsImportExportHelper;
 import org.schabi.newpipe.streams.io.NoFileManagerSafeGuard;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
 import org.schabi.newpipe.util.NavigationHelper;
@@ -48,14 +53,23 @@ public class BackupSettingsFragment extends BasePreferenceFragment {
             = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
 
     private ContentSettingsManager manager;
+    private SubscriptionManager subscriptionManager;
     private final CompositeDisposable disposables = new CompositeDisposable();
 
     private String importExportDataPathKey;
+    private SubscriptionsImportExportHelper subscriptionsImportExportHelper;
 
     private final ActivityResultLauncher<Intent> requestImportPathLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), this::requestImportPathResult);
     private final ActivityResultLauncher<Intent> requestExportPathLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), this::requestExportPathResult);
+
+    @Override
+    public void onAttach(@NonNull final Context context) {
+        super.onAttach(context);
+        subscriptionsImportExportHelper = new SubscriptionsImportExportHelper(this);
+        subscriptionManager = new SubscriptionManager(context);
+    }
 
     @Override
     public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
@@ -95,6 +109,58 @@ public class BackupSettingsFragment extends BasePreferenceFragment {
             return true;
         });
 
+        final Preference importSubscriptionsPreference =
+                requirePreference(R.string.import_subscriptions_key);
+        importSubscriptionsPreference.setOnPreferenceClickListener((final Preference p) -> {
+            subscriptionsImportExportHelper.importSubscriptions();
+            return true;
+        });
+
+        final Preference importYouTubeSubscriptionsPreference =
+                requirePreference(R.string.import_youtube_subscriptions_key);
+        importYouTubeSubscriptionsPreference.setOnPreferenceClickListener((final Preference p) -> {
+            NavigationHelper.openSubscriptionsImportFragment(getParentFragmentManager(),
+                    R.id.settings_fragment_holder, ServiceList.YouTube.getServiceId());
+            return true;
+        });
+
+        final Preference importSoundCloudSubscriptionsPreference =
+                requirePreference(R.string.import_soundcloud_subscriptions_key);
+        importSoundCloudSubscriptionsPreference.setOnPreferenceClickListener(
+                (final Preference p) -> {
+                    NavigationHelper.openSubscriptionsImportFragment(getParentFragmentManager(),
+                            R.id.settings_fragment_holder, ServiceList.SoundCloud.getServiceId());
+                    return true;
+                });
+
+        final Preference exportSubscriptionsPreference =
+                requirePreference(R.string.export_subscriptions_key);
+        exportSubscriptionsPreference.setOnPreferenceClickListener((final Preference p) -> {
+            subscriptionsImportExportHelper.exportSubscriptions();
+            return true;
+        });
+
+        final Preference clearSubscriptionsPreference =
+                requirePreference(R.string.clear_subscriptions_key);
+        clearSubscriptionsPreference.setOnPreferenceClickListener((final Preference p) -> {
+            new AlertDialog.Builder(requireContext())
+                    .setTitle(R.string.clear_subscriptions_title)
+                    .setMessage(R.string.clear_subscriptions_confirmation)
+                    .setNegativeButton(R.string.cancel, null)
+                    .setPositiveButton(R.string.clear, (dialog, which) ->
+                            clearSubscriptions())
+                    .show();
+            return true;
+        });
+
+    }
+
+    private void clearSubscriptions() {
+        disposables.add(subscriptionManager.deleteAllSubscriptions()
+                .subscribe(
+                        () -> Toast.makeText(requireContext(), R.string.subscriptions_cleared,
+                                Toast.LENGTH_SHORT).show(),
+                        e -> ErrorUtil.showUiErrorSnackbar(this, "Clearing subscriptions", e)));
     }
 
     @Override

@@ -1000,4 +1000,25 @@ Voulez-vous continuer?</string>
 <string name="sabr_backoff_notification_content">YouTube nous oblige à attendre %1$d secondes avant de reprendre la lecture</string>
 <string name="playback_speed_gesture_control_title">Balayez pour contrôler la vitesse de lecture</string>
 <string name="playback_speed_gesture_control_summary">Glissez au milieu pour contrôler la vitesse de lecture. Désactive le contrôle gestuel en plein écran.</string>
+<string name="remember_search_filters_title">Mémoriser les filtres de recherche</string>
+<string name="remember_search_filters_summary">Restaurer le service sélectionné, le type de contenu et les filtres de tri lors du lancement d\'une nouvelle recherche</string>
+<string name="import_subscriptions_title">Importer les abonnements</string>
+<string name="import_subscriptions_summary">Importer les abonnements à partir d\'un précédent export JSON</string>
+<string name="export_subscriptions_title">Exporter les abonnements</string>
+<string name="export_subscriptions_summary">Exporter les abonnements vers un fichier JSON</string>
+<string name="import_youtube_subscriptions_title">Importer depuis YouTube</string>
+<string name="import_youtube_subscriptions_summary">Importer les abonnements depuis Google Takeout</string>
+<string name="import_soundcloud_subscriptions_title">Importer depuis SoundCloud</string>
+<string name="import_soundcloud_subscriptions_summary">Importer les abonnements depuis un profil SoundCloud</string>
+<string name="clear_subscriptions_title">Effacer les abonnements</string>
+<string name="clear_subscriptions_summary">Supprimer toutes les chaînes abonnées de PipePipe</string>
+<string name="clear_subscriptions_confirmation">Effacer tous les abonnements ? Cette action est irréversible.</string>
+<string name="subscriptions_cleared">Abonnements effacés</string>
+<string name="fetch_subscription_details_title">Récupérer les détails de la chaîne ?</string>
+<string name="fetch_subscription_details_message">La récupération des miniatures de chaîne et du nombre d\'abonnés nécessite de visiter chaque chaîne à laquelle vous êtes abonné. Le temps nécessaire dépend du nombre d\'abonnements et peut être long pour une grande liste d\'abonnements. Si vous ignorez cette étape, les détails d\'une chaîne seront tout de même mis à jour automatiquement lorsque vous l\'ouvrirez manuellement.</string>
+<string name="fetch">Récupérer</string>
+<string name="skip">Ignorer</string>
+<string name="subscription_details_update_ongoing">Récupération des détails de la chaîne…</string>
+<string name="subscription_details_update_complete">Détails de la chaîne mis à jour</string>
+<string name="subscription_details_update_failed">Impossible de mettre à jour les détails de la chaîne</string>
 </resources>

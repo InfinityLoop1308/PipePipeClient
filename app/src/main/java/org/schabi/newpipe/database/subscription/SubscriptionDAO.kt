@@ -127,6 +127,19 @@ abstract class SubscriptionDAO : BasicDAO<SubscriptionEntity> {
     internal abstract fun silentInsertAllInternal(entities: List<SubscriptionEntity>): List<Long>
 
     @Transaction
+    open fun insertAllIgnoringExisting(
+        entities: List<SubscriptionEntity>
+    ): List<SubscriptionEntity> {
+        val insertUidList = silentInsertAllInternal(entities)
+
+        return entities.mapIndexedNotNull { index, entity ->
+            insertUidList[index].takeIf { it != -1L }?.let { uid ->
+                entity.apply { this.uid = uid }
+            }
+        }
+    }
+
+    @Transaction
     open fun upsertAll(entities: List<SubscriptionEntity>): List<SubscriptionEntity> {
         val insertUidList = silentInsertAllInternal(entities)
 

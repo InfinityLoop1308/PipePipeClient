@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,8 +41,10 @@ import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.views.SuperScrollLayoutManager;
 
 import javax.annotation.Nonnull;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
@@ -278,6 +281,12 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
             @Override
             public void selected(final ChannelInfoItem selectedItem) {
                 try {
+                    if (isChannelBlocked(selectedItem.getName())) {
+                        Toast.makeText(requireContext(),
+                                R.string.channel_is_blocked,
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     onItemSelected(selectedItem);
                     NavigationHelper.openChannelFragment(getFM(),
                             selectedItem.getServiceId(),
@@ -294,6 +303,12 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
             @Override
             public void selected(final PlaylistInfoItem selectedItem) {
                 try {
+                    if (isChannelBlocked(selectedItem.getUploaderName())) {
+                        Toast.makeText(requireContext(),
+                                R.string.channel_is_blocked,
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     onItemSelected(selectedItem);
                     NavigationHelper.openPlaylistFragment(getFM(),
                             selectedItem.getServiceId(),
@@ -541,5 +556,22 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
      */
     protected ItemViewMode getItemViewMode() {
         return ThemeHelper.getItemViewMode(requireContext());
+    }
+
+    /**
+     * Check if a channel name is in the user's block list.
+     * @param channelName the channel name to check
+     * @return true if the channel is blocked
+     */
+    protected boolean isChannelBlocked(@Nullable final String channelName) {
+        if (channelName == null || channelName.isEmpty()) {
+            return false;
+        }
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(requireContext());
+        final Set<String> blockedChannels = prefs.getStringSet(
+                getString(R.string.filter_by_channel_key) + "_set",
+                new HashSet<>());
+        return blockedChannels.contains(channelName);
     }
 }

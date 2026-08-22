@@ -1037,4 +1037,25 @@
 <string name="sabr_backoff_notification_content">YouTube 強制我們等待 %1$d 秒後才能繼續播放</string>
 <string name="playback_speed_gesture_control_title">滑動以控制播放速度</string>
 <string name="playback_speed_gesture_control_summary">在中間滑動以控制播放速度。會停用全螢幕手勢控制。</string>
+<string name="remember_search_filters_title">記住搜尋篩選器</string>
+<string name="remember_search_filters_summary">開始新搜尋時，還原選取的服務、內容類型與排序篩選器</string>
+<string name="import_subscriptions_title">匯入訂閱</string>
+<string name="import_subscriptions_summary">從先前的 JSON 匯出檔匯入訂閱</string>
+<string name="export_subscriptions_title">匯出訂閱</string>
+<string name="export_subscriptions_summary">將訂閱匯出至 JSON 檔案</string>
+<string name="import_youtube_subscriptions_title">從 YouTube 匯入</string>
+<string name="import_youtube_subscriptions_summary">從 Google Takeout 匯入訂閱</string>
+<string name="import_soundcloud_subscriptions_title">從 SoundCloud 匯入</string>
+<string name="import_soundcloud_subscriptions_summary">從 SoundCloud 個人檔案匯入訂閱</string>
+<string name="clear_subscriptions_title">清除訂閱</string>
+<string name="clear_subscriptions_summary">從 PipePipe 移除所有已訂閱的頻道</string>
+<string name="clear_subscriptions_confirmation">清除所有訂閱？此操作無法復原。</string>
+<string name="subscriptions_cleared">訂閱已清除</string>
+<string name="fetch_subscription_details_title">擷取頻道詳細資訊？</string>
+<string name="fetch_subscription_details_message">擷取頻道縮圖和訂閱人數需要造訪每一個已訂閱的頻道。所需時間取決於訂閱數量，若訂閱清單龐大，可能會需要較長時間。如果您略過此步驟，當您手動開啟頻道時，頻道的詳細資訊仍會自動更新。</string>
+<string name="fetch">擷取</string>
+<string name="skip">略過</string>
+<string name="subscription_details_update_ongoing">正在擷取頻道詳細資訊…</string>
+<string name="subscription_details_update_complete">頻道詳細資訊已更新</string>
+<string name="subscription_details_update_failed">無法更新頻道詳細資訊</string>
 </resources>

@@ -194,7 +194,7 @@ public class StatisticsPlaylistFragment
             editText.requestFocus();
             InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
-            activity.findViewById(R.id.action_search_local).setVisibility(View.GONE);
+            item.setVisible(false);
             searchClear = customView.findViewById(R.id.toolbar_search_clear_local);
             searchClear.setOnClickListener(v -> {
                 if (TextUtils.isEmpty(editText.getText())) {
@@ -474,11 +474,7 @@ public class StatisticsPlaylistFragment
         actionBar.setCustomView(null);
         actionBar.setDisplayShowCustomEnabled(false);
 
-        try {
-            activity.findViewById(R.id.action_search_local).setVisibility(View.VISIBLE);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        activity.invalidateOptionsMenu();
         
         if(itemListAdapter != null) {
             itemListAdapter.clearFilter();

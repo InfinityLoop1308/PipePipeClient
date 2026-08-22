@@ -8,6 +8,7 @@ import org.schabi.newpipe.App;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.services.youtube.YoutubeParsingHelper;
 import org.schabi.newpipe.views.YouTubeLoginWebViewActivity;
+import org.schabi.newpipe.youtube.LocalDomPoTokenProvider;
 
 public class YouTubeAccountSettingsFragment extends BaseAccountSettingsFragment {
 
@@ -62,6 +63,7 @@ public class YouTubeAccountSettingsFragment extends BaseAccountSettingsFragment 
                     .putString(getCookiesKey(), cookies)
                     .putString(getString(R.string.youtube_po_token_key), pot)
                     .apply();
+            LocalDomPoTokenProvider.INSTANCE.invalidate();
             onLoginSuccess();
         } catch (Exception e) {
             Toast.makeText(requireContext(), R.string.try_again, Toast.LENGTH_SHORT).show();
@@ -70,8 +72,11 @@ public class YouTubeAccountSettingsFragment extends BaseAccountSettingsFragment 
 
     @Override
     protected void performLogout() {
-        defaultPreferences.edit().putString(getCookiesKey(), "").apply();
-        defaultPreferences.edit().putString(getString(R.string.youtube_po_token_key), "").apply();
+        defaultPreferences.edit()
+                .putString(getCookiesKey(), "")
+                .putString(getString(R.string.youtube_po_token_key), "")
+                .apply();
+        LocalDomPoTokenProvider.INSTANCE.invalidate();
         onLogoutSuccess();
     }
 

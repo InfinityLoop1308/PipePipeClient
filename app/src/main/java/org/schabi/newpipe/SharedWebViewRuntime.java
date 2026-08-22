@@ -2,7 +2,6 @@ package org.schabi.newpipe;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -68,7 +67,6 @@ public final class SharedWebViewRuntime {
     private static volatile SharedWebViewRuntime instance;
 
     private final Context appContext;
-    private final Context webViewContext;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private final Object initLock = new Object();
     private final ConcurrentHashMap<String, SabrLocalDomCallbacks> sabrLocalDomCallbacks =
@@ -89,9 +87,6 @@ public final class SharedWebViewRuntime {
 
     private SharedWebViewRuntime(final Context context) {
         appContext = context.getApplicationContext();
-        final Configuration configuration =
-                new Configuration(appContext.getResources().getConfiguration());
-        webViewContext = appContext.createConfigurationContext(configuration);
     }
 
     @NonNull
@@ -284,7 +279,7 @@ public final class SharedWebViewRuntime {
         try {
             Log.i(TAG, "creating WebView attempt=" + attempt.number + " elapsedMs="
                     + attempt.elapsedMs());
-            final WebView view = new WebView(webViewContext);
+            final WebView view = new WebView(appContext);
             attempt.view = view;
             Log.i(TAG, "created WebView attempt=" + attempt.number + " elapsedMs="
                     + attempt.elapsedMs());

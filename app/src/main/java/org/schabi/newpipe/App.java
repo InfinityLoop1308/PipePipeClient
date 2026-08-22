@@ -165,7 +165,7 @@ public class App extends MultiDexApplication {
         final String defaultClient = loggedIn ? "tv_downgraded" : "visionos";
         final String selectedClient = prefs.getString(playerClientKey, defaultClient);
         final boolean allowed = loggedIn
-                ? "tv_downgraded".equals(selectedClient)
+                ? "tv_downgraded".equals(selectedClient) || "mweb".equals(selectedClient)
                 : "mweb".equals(selectedClient)
                         || "android_vr".equals(selectedClient)
                         || "visionos".equals(selectedClient);

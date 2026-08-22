@@ -1,13 +1,10 @@
 package org.schabi.newpipe.local.subscription
 
-import android.app.Activity
 import android.content.*
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.*
 import android.widget.Toast
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -33,19 +30,13 @@ import org.schabi.newpipe.local.subscription.dialog.FeedGroupDialog
 import org.schabi.newpipe.local.subscription.dialog.FeedGroupReorderDialog
 import org.schabi.newpipe.local.subscription.item.*
 import org.schabi.newpipe.local.subscription.item.HeaderWithMenuItem.Companion.PAYLOAD_UPDATE_VISIBILITY_MENU_ITEM
-import org.schabi.newpipe.local.subscription.services.SubscriptionsExportService
 import org.schabi.newpipe.local.subscription.services.SubscriptionsExportService.EXPORT_COMPLETE_ACTION
-import org.schabi.newpipe.local.subscription.services.SubscriptionsImportService
-import org.schabi.newpipe.local.subscription.services.SubscriptionsImportService.*
-import org.schabi.newpipe.streams.io.NoFileManagerSafeGuard
-import org.schabi.newpipe.streams.io.StoredFileHelper
+import org.schabi.newpipe.local.subscription.services.SubscriptionsImportService.IMPORT_COMPLETE_ACTION
 import org.schabi.newpipe.util.NavigationHelper
 import org.schabi.newpipe.util.OnClickGesture
 import org.schabi.newpipe.util.ThemeHelper.getGridSpanCountChannels
 import org.schabi.newpipe.util.ThemeHelper.shouldUseGridLayout
 import org.schabi.newpipe.util.external_communication.ShareUtils
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.math.max
 
 class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
@@ -54,6 +45,7 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
 
     private lateinit var viewModel: SubscriptionViewModel
     private lateinit var subscriptionManager: SubscriptionManager
+    private lateinit var importExportHelper: SubscriptionsImportExportHelper
     private val disposables: CompositeDisposable = CompositeDisposable()
 
     private var subscriptionBroadcastReceiver: BroadcastReceiver? = null
@@ -64,11 +56,6 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
     private lateinit var importExportItem: FeedImportExportItem
     private lateinit var feedGroupsSortMenuItem: HeaderWithMenuItem
     private val subscriptionsSection = Section()
-
-    private val requestExportLauncher =
-        registerForActivityResult(StartActivityForResult(), this::requestExportResult)
-    private val requestImportLauncher =
-        registerForActivityResult(StartActivityForResult(), this::requestImportResult)
 
     @JvmField
     var itemsListState: Parcelable? = null
@@ -93,6 +80,7 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         subscriptionManager = SubscriptionManager(requireContext())
+        importExportHelper = SubscriptionsImportExportHelper(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -179,49 +167,8 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
         NavigationHelper.openSubscriptionsImportFragment(fragmentManager, serviceId)
     }
 
-    private fun onImportPreviousSelected() {
-        NoFileManagerSafeGuard.launchSafe(
-            requestImportLauncher,
-            StoredFileHelper.getPicker(activity, JSON_MIME_TYPE),
-            TAG,
-            requireContext()
-        )
-    }
-
-    private fun onExportSelected() {
-        val date = SimpleDateFormat("yyyyMMddHHmm", Locale.ENGLISH).format(Date())
-        val exportName = "newpipe_subscriptions_$date.json"
-
-        NoFileManagerSafeGuard.launchSafe(
-            requestExportLauncher,
-            StoredFileHelper.getNewPicker(activity, exportName, JSON_MIME_TYPE, null),
-            TAG,
-            requireContext()
-        )
-    }
-
     private fun openReorderDialog() {
         FeedGroupReorderDialog().show(parentFragmentManager, null)
-    }
-
-    private fun requestExportResult(result: ActivityResult) {
-        if (result.data != null && result.resultCode == Activity.RESULT_OK) {
-            activity.startService(
-                Intent(activity, SubscriptionsExportService::class.java)
-                    .putExtra(SubscriptionsExportService.KEY_FILE_PATH, result.data?.data)
-            )
-        }
-    }
-
-    private fun requestImportResult(result: ActivityResult) {
-        if (result.data != null && result.resultCode == Activity.RESULT_OK) {
-            ImportConfirmationDialog.show(
-                this,
-                Intent(activity, SubscriptionsImportService::class.java)
-                    .putExtra(KEY_MODE, PREVIOUS_EXPORT_MODE)
-                    .putExtra(KEY_VALUE, result.data?.data)
-            )
-        }
     }
 
     // ////////////////////////////////////////////////////////////////////////
@@ -272,9 +219,9 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
 
         // Import/Export section
         importExportItem = FeedImportExportItem(
-            { onImportPreviousSelected() },
+            { importExportHelper.importSubscriptions() },
             { onImportFromServiceSelected(it) },
-            { onExportSelected() },
+            { importExportHelper.exportSubscriptions() },
             importExportItemExpandedState ?: false,
             { query -> viewModel.updateSearchQuery(query) }
         )
@@ -466,9 +413,5 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
     override fun hideLoading() {
         super.hideLoading()
         binding.itemsList.animate(true, 200)
-    }
-
-    companion object {
-        const val JSON_MIME_TYPE = "application/json"
     }
 }

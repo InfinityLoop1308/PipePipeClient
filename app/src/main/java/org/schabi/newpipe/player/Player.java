@@ -123,6 +123,7 @@ import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.PlayerService.PlayerType;
 import org.schabi.newpipe.player.bulletComments.MovieBulletCommentsPlayer;
+import org.schabi.newpipe.player.datasource.SabrLogicException;
 import org.schabi.newpipe.player.event.DisplayPortion;
 import org.schabi.newpipe.player.event.PlayerEventListener;
 import org.schabi.newpipe.player.event.PlayerGestureListener;
@@ -3206,10 +3207,10 @@ public final class Player implements
         saveStreamProgressState();
         boolean isCatchableException = false;
 
-        if (containsSabrAttestationException(error)) {
+        if (containsTerminalSabrException(error)) {
             // Attestation retries are handled inside the media bridge. An attestation exception
-            // reaching the player has exhausted those recovery paths and must remain terminal
-            // instead of rebuilding the source with a fresh retry budget.
+            // reaching the player has exhausted those recovery paths. SABR logic exceptions
+            // describe broken source invariants, so rebuilding the same source cannot recover.
             onPlaybackShutdown();
         } else {
 
@@ -3307,10 +3308,11 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         }
     }
 
-    private static boolean containsSabrAttestationException(@NonNull final Throwable error) {
+    private static boolean containsTerminalSabrException(@NonNull final Throwable error) {
         Throwable current = error;
         while (current != null) {
-            if (current instanceof SabrAttestationException) {
+            if (current instanceof SabrAttestationException
+                    || current instanceof SabrLogicException) {
                 return true;
             }
             current = current.getCause();

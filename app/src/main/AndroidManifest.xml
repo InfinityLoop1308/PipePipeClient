@@ -128,6 +128,9 @@
             android:name=".local.subscription.services.SubscriptionsImportService"
             android:foregroundServiceType="dataSync" />
         <service
+            android:name=".local.subscription.services.SubscriptionsFetchService"
+            android:foregroundServiceType="dataSync" />
+        <service
             android:name=".local.subscription.services.SubscriptionsExportService"
             android:foregroundServiceType="dataSync" />
         <service

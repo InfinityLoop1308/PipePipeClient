@@ -9,11 +9,13 @@ import androidx.room.PrimaryKey;
 
 import org.schabi.newpipe.extractor.channel.ChannelInfo;
 import org.schabi.newpipe.extractor.channel.ChannelInfoItem;
+import org.schabi.newpipe.extractor.subscription.SubscriptionItem;
 import org.schabi.newpipe.util.Constants;
 
 import static org.schabi.newpipe.database.subscription.SubscriptionEntity.SUBSCRIPTION_SERVICE_ID;
 import static org.schabi.newpipe.database.subscription.SubscriptionEntity.SUBSCRIPTION_TABLE;
 import static org.schabi.newpipe.database.subscription.SubscriptionEntity.SUBSCRIPTION_URL;
+import static org.schabi.newpipe.extractor.channel.ChannelExtractor.UNKNOWN_SUBSCRIBER_COUNT;
 
 @Entity(tableName = SUBSCRIPTION_TABLE,
         indices = {@Index(value = {SUBSCRIPTION_SERVICE_ID, SUBSCRIPTION_URL}, unique = true)})
@@ -59,6 +61,16 @@ public class SubscriptionEntity {
         result.setUrl(info.getUrl());
         result.setData(info.getName(), info.getAvatarUrl(), info.getDescription(),
                 info.getSubscriberCount());
+        return result;
+    }
+
+    @Ignore
+    public static SubscriptionEntity from(@NonNull final SubscriptionItem item) {
+        final SubscriptionEntity result = new SubscriptionEntity();
+        result.setServiceId(item.getServiceId());
+        result.setUrl(item.getUrl());
+        result.setName(item.getName());
+        result.setSubscriberCount(UNKNOWN_SUBSCRIBER_COUNT);
         return result;
     }
 
@@ -139,7 +151,8 @@ public class SubscriptionEntity {
     public ChannelInfoItem toChannelInfoItem() {
         final ChannelInfoItem item = new ChannelInfoItem(getServiceId(), getUrl(), getName());
         item.setThumbnailUrl(getAvatarUrl());
-        item.setSubscriberCount(getSubscriberCount());
+        item.setSubscriberCount(getSubscriberCount() == null
+                ? UNKNOWN_SUBSCRIBER_COUNT : getSubscriberCount());
         item.setDescription(getDescription());
         return item;
     }

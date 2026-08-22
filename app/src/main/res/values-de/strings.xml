@@ -983,4 +983,25 @@
 <string name="sabr_backoff_notification_content">YouTube zwingt uns, %1$d Sekunden zu warten, bevor die Wiedergabe fortgesetzt wird</string>
 <string name="playback_speed_gesture_control_title">Wischen zur Steuerung der Wiedergabegeschwindigkeit</string>
 <string name="playback_speed_gesture_control_summary">In der Mitte wischen, um die Wiedergabegeschwindigkeit zu steuern. Deaktiviert die Vollbild-Gestensteuerung.</string>
+<string name="remember_search_filters_title">Suchfilter merken</string>
+<string name="remember_search_filters_summary">Ausgewählten Dienst, Inhaltstyp und Sortierfilter beim Starten einer neuen Suche wiederherstellen</string>
+<string name="import_subscriptions_title">Abonnements importieren</string>
+<string name="import_subscriptions_summary">Abonnements aus einem vorherigen JSON-Export importieren</string>
+<string name="export_subscriptions_title">Abonnements exportieren</string>
+<string name="export_subscriptions_summary">Abonnements in eine JSON-Datei exportieren</string>
+<string name="import_youtube_subscriptions_title">Von YouTube importieren</string>
+<string name="import_youtube_subscriptions_summary">Abonnements aus Google Takeout importieren</string>
+<string name="import_soundcloud_subscriptions_title">Von SoundCloud importieren</string>
+<string name="import_soundcloud_subscriptions_summary">Abonnements von einem SoundCloud-Profil importieren</string>
+<string name="clear_subscriptions_title">Abonnements löschen</string>
+<string name="clear_subscriptions_summary">Alle abonnierten Kanäle aus PipePipe entfernen</string>
+<string name="clear_subscriptions_confirmation">Alle Abonnements löschen? Dies kann nicht rückgängig gemacht werden.</string>
+<string name="subscriptions_cleared">Abonnements gelöscht</string>
+<string name="fetch_subscription_details_title">Kanaldetails abrufen?</string>
+<string name="fetch_subscription_details_message">Das Abrufen von Kanal-Miniaturansichten und Abonnentenzahlen erfordert den Besuch jedes abonnierten Kanals. Die benötigte Zeit hängt von der Anzahl der Abonnements ab und kann bei einer großen Abonnementliste lange dauern. Wenn Sie diesen Schritt überspringen, werden die Details eines Kanals dennoch automatisch aktualisiert, wenn Sie ihn manuell öffnen.</string>
+<string name="fetch">Abrufen</string>
+<string name="skip">Überspringen</string>
+<string name="subscription_details_update_ongoing">Kanaldetails werden abgerufen…</string>
+<string name="subscription_details_update_complete">Kanaldetails aktualisiert</string>
+<string name="subscription_details_update_failed">Kanaldetails konnten nicht aktualisiert werden</string>
 </resources>

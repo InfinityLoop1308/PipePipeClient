@@ -135,7 +135,7 @@
     </string-array>
 
     <string name="default_resolution_key">default_resolution</string>
-    <string name="default_resolution_value">720p60</string>
+    <string name="default_resolution_value">720p</string>
     <string name="show_higher_resolutions_key">show_higher_resolutions</string>
     <string name="default_popup_resolution_key">default_popup_resolution</string>
     <string name="default_popup_resolution_value">480p</string>
@@ -143,9 +143,9 @@
 
     <string-array name="resolution_list_values">
         <item>@string/best_resolution_key</item>
-        <item>1080p60</item>
+        <item>2160p</item>
+        <item>1440p</item>
         <item>1080p</item>
-        <item>720p60</item>
         <item>720p</item>
         <item>480p</item>
         <item>360p</item>
@@ -154,9 +154,9 @@
     </string-array>
     <string-array name="resolution_list_description">
         <item>@string/best_resolution</item>
-        <item>1080p60</item>
+        <item>2160p</item>
+        <item>1440p</item>
         <item>1080p</item>
-        <item>720p60</item>
         <item>720p</item>
         <item>480p</item>
         <item>360p</item>
@@ -1350,9 +1350,9 @@
     <string name="limit_mobile_data_usage_value">@string/limit_data_usage_none_key</string>
     <string-array name="limit_data_usage_values_list">
         <item>@string/limit_data_usage_none_key</item>
-        <item>1080p60</item>
+        <item>2160p</item>
+        <item>1440p</item>
         <item>1080p</item>
-        <item>720p60</item>
         <item>720p</item>
         <item>480p</item>
         <item>360p</item>
@@ -1793,4 +1793,10 @@
         <item>@string/sponsor_block_skip_mode_manual_value</item>
         <item>@string/sponsor_block_skip_mode_highlight_value</item>
     </string-array>
+    <string name="remember_search_filters_key">remember_search_filters</string>
+    <string name="import_subscriptions_key">import_subscriptions</string>
+    <string name="export_subscriptions_key">export_subscriptions</string>
+    <string name="import_youtube_subscriptions_key">import_youtube_subscriptions</string>
+    <string name="import_soundcloud_subscriptions_key">import_soundcloud_subscriptions</string>
+    <string name="clear_subscriptions_key">clear_subscriptions</string>
 </resources>

@@ -1006,4 +1006,25 @@
 <string name="sabr_backoff_notification_content">YouTubeの制限により、再生を続行する前に %1$d 秒待機する必要があります</string>
 <string name="playback_speed_gesture_control_title">スワイプで再生速度を調整</string>
 <string name="playback_speed_gesture_control_summary">中央をスワイプして再生速度を調整します。フルスクリーンのジェスチャー操作は無効になります。</string>
+<string name="remember_search_filters_title">検索フィルターを記憶する</string>
+<string name="remember_search_filters_summary">新しい検索を開始する際に、選択したサービス、コンテンツタイプ、および並べ替えフィルターを復元します。</string>
+<string name="import_subscriptions_title">サブスクリプションのインポート</string>
+<string name="import_subscriptions_summary">以前のJSONエクスポートからサブスクリプションをインポートします</string>
+<string name="export_subscriptions_title">サブスクリプションのエクスポート</string>
+<string name="export_subscriptions_summary">サブスクリプションをJSONファイルにエクスポートします</string>
+<string name="import_youtube_subscriptions_title">YouTubeからインポート</string>
+<string name="import_youtube_subscriptions_summary">Google Takeoutから登録チャンネルをインポート</string>
+<string name="import_soundcloud_subscriptions_title">SoundCloudからインポート</string>
+<string name="import_soundcloud_subscriptions_summary">SoundCloudのプロフィールからサブスクリプションをインポート</string>
+<string name="clear_subscriptions_title">登録チャンネルを消去</string>
+<string name="clear_subscriptions_summary">PipePipeからすべての登録チャンネルを削除します</string>
+<string name="clear_subscriptions_confirmation">すべての登録チャンネルを消去しますか？この操作は元に戻せません。</string>
+<string name="subscriptions_cleared">登録チャンネルを消去しました</string>
+<string name="fetch_subscription_details_title">チャンネルの詳細を取得しますか？</string>
+<string name="fetch_subscription_details_message">チャンネルのサムネイルと登録者数を取得するには、登録している各チャンネルにアクセスする必要があります。所要時間は登録数によって異なり、登録リストが膨大な場合は時間がかかる可能性があります。この手順をスキップした場合でも、手動でチャンネルを開いた際にその詳細は自動的に更新されます。</string>
+<string name="fetch">取得</string>
+<string name="skip">スキップ</string>
+<string name="subscription_details_update_ongoing">チャンネルの詳細を取得中…</string>
+<string name="subscription_details_update_complete">チャンネルの詳細を更新しました</string>
+<string name="subscription_details_update_failed">チャンネルの詳細を更新できませんでした</string>
 </resources>

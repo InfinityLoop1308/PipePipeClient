@@ -977,4 +977,25 @@
 <string name="sabr_backoff_notification_content">YouTube ci costringe ad aspettare %1$d secondi prima di continuare la riproduzione</string>
 <string name="playback_speed_gesture_control_title">Scorri per controllare la velocità di riproduzione</string>
 <string name="playback_speed_gesture_control_summary">Scorri al centro per controllare la velocità di riproduzione. Disabilita il controllo dei gesti a schermo intero</string>
+<string name="remember_search_filters_title">Ricorda i filtri di ricerca</string>
+<string name="remember_search_filters_summary">Ripristina il servizio, il tipo di contenuto e i filtri di ordinamento selezionati all\'avvio di una nuova ricerca</string>
+<string name="import_subscriptions_title">Importa iscrizioni</string>
+<string name="import_subscriptions_summary">Importa le iscrizioni da una precedente esportazione JSON</string>
+<string name="export_subscriptions_title">Esporta iscrizioni</string>
+<string name="export_subscriptions_summary">Esporta le iscrizioni in un file JSON</string>
+<string name="import_youtube_subscriptions_title">Importa da YouTube</string>
+<string name="import_youtube_subscriptions_summary">Importa le iscrizioni da Google Takeout</string>
+<string name="import_soundcloud_subscriptions_title">Importa da SoundCloud</string>
+<string name="import_soundcloud_subscriptions_summary">Importa le iscrizioni da un profilo SoundCloud</string>
+<string name="clear_subscriptions_title">Cancella iscrizioni</string>
+<string name="clear_subscriptions_summary">Rimuovi tutti i canali a cui sei iscritto da PipePipe</string>
+<string name="clear_subscriptions_confirmation">Cancellare tutte le iscrizioni? Questa operazione non può essere annullata.</string>
+<string name="subscriptions_cleared">Iscrizioni cancellate</string>
+<string name="fetch_subscription_details_title">Recuperare i dettagli del canale?</string>
+<string name="fetch_subscription_details_message">Il recupero delle miniature dei canali e del numero di iscritti richiede di visitare ciascun canale a cui si è iscritti. Il tempo necessario dipende dal numero di iscrizioni e potrebbe essere lungo per una lista di iscrizioni molto ampia. Se salti questo passaggio, i dettagli di un canale verranno comunque aggiornati automaticamente quando lo apri manualmente.</string>
+<string name="fetch">Recupera</string>
+<string name="skip">Salta</string>
+<string name="subscription_details_update_ongoing">Recupero dei dettagli del canale in corso…</string>
+<string name="subscription_details_update_complete">Dettagli del canale aggiornati</string>
+<string name="subscription_details_update_failed">Impossibile aggiornare i dettagli del canale</string>
 </resources>

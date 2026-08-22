@@ -216,6 +216,9 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     public static int getPersistedSearchServiceId(final Context context,
                                                   final int fallbackServiceId) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if (!shouldRememberSearchFilters(prefs)) {
+            return fallbackServiceId;
+        }
         final int serviceId = prefs.getInt(SEARCH_FILTER_LAST_SERVICE_KEY, fallbackServiceId);
         try {
             NewPipe.getService(serviceId);
@@ -226,9 +229,13 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     }
 
     public static void setPersistedSearchServiceId(final Context context, final int serviceId) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if (!shouldRememberSearchFilters(prefs)) {
+            return;
+        }
         try {
             NewPipe.getService(serviceId);
-            PreferenceManager.getDefaultSharedPreferences(context).edit()
+            prefs.edit()
                     .putInt(SEARCH_FILTER_LAST_SERVICE_KEY, serviceId)
                     .apply();
         } catch (final Exception ignored) {
@@ -239,12 +246,18 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
                                                         final int filterServiceId,
                                                         final int fallbackFilterId) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if (!shouldRememberSearchFilters(prefs)) {
+            return fallbackFilterId;
+        }
         return prefs.getInt(getSearchFilterContentKey(filterServiceId), fallbackFilterId);
     }
 
     public static ArrayList<Integer> getPersistedSearchSortFilterIds(final Context context,
                                                                      final int filterServiceId) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if (!shouldRememberSearchFilters(prefs)) {
+            return new ArrayList<>();
+        }
         return deserializeFilterIds(prefs.getString(getSearchFilterSortKey(filterServiceId), ""));
     }
 
@@ -1227,7 +1240,8 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
     }
 
     private void restorePersistedSearchFilters(final SharedPreferences prefs) {
-        if (userSelectedContentFilterList != null || userSelectedSortFilterList != null) {
+        if (!shouldRememberSearchFilters(prefs)
+                || userSelectedContentFilterList != null || userSelectedSortFilterList != null) {
             return;
         }
 
@@ -1264,8 +1278,11 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         final int resolvedServiceId = filterServiceId == SearchFilterDialog.YOUTUBE_MUSIC_SERVICE_ID
                 ? ServiceList.YouTube.getServiceId()
                 : filterServiceId;
-        final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(
-                activity).edit();
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        if (!shouldRememberSearchFilters(prefs)) {
+            return;
+        }
+        final SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(SEARCH_FILTER_LAST_SERVICE_KEY, resolvedServiceId);
         editor.putInt(SEARCH_FILTER_LAST_UI_SERVICE_KEY_PREFIX + resolvedServiceId,
                 filterServiceId);
@@ -1286,6 +1303,11 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
 
     private static String getSearchFilterSortKey(final int filterServiceId) {
         return SEARCH_FILTER_SORT_KEY_PREFIX + filterServiceId;
+    }
+
+    private static boolean shouldRememberSearchFilters(final SharedPreferences prefs) {
+        return prefs.getBoolean(
+                App.getApp().getString(R.string.remember_search_filters_key), false);
     }
 
     private ArrayList<Integer> getFilterIds(final List<FilterItem> filterItems) {

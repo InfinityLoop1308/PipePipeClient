@@ -528,8 +528,14 @@ public final class NavigationHelper {
 
     public static void openSubscriptionsImportFragment(final FragmentManager fragmentManager,
                                                        final int serviceId) {
+        openSubscriptionsImportFragment(fragmentManager, R.id.fragment_holder, serviceId);
+    }
+
+    public static void openSubscriptionsImportFragment(final FragmentManager fragmentManager,
+                                                       final int fragmentHolderId,
+                                                       final int serviceId) {
         defaultTransaction(fragmentManager)
-                .replace(R.id.fragment_holder, SubscriptionsImportFragment.getInstance(serviceId))
+                .replace(fragmentHolderId, SubscriptionsImportFragment.getInstance(serviceId))
                 .addToBackStack(null)
                 .commit();
     }

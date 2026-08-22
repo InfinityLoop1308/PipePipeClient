@@ -2,7 +2,7 @@ package org.schabi.newpipe.player.datasource;
 
 import java.io.IOException;
 
-final class SabrLogicException extends IOException {
+public final class SabrLogicException extends IOException {
     SabrLogicException(final String message) {
         super(message);
     }

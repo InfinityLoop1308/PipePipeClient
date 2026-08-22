@@ -15,6 +15,7 @@ import org.schabi.newpipe.extractor.ListInfo
 import org.schabi.newpipe.extractor.channel.ChannelInfo
 import org.schabi.newpipe.extractor.feed.FeedInfo
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
+import org.schabi.newpipe.extractor.subscription.SubscriptionItem
 import org.schabi.newpipe.local.feed.FeedDatabaseManager
 import org.schabi.newpipe.local.feed.service.FeedUpdateInfo
 import org.schabi.newpipe.util.ExtractorHelper
@@ -65,6 +66,25 @@ class SubscriptionManager(context: Context) {
         return listEntities
     }
 
+    fun insertAll(subscriptionItems: List<SubscriptionItem>): List<SubscriptionEntity> =
+        subscriptionTable.insertAllIgnoringExisting(
+            subscriptionItems.map { SubscriptionEntity.from(it) }
+        )
+
+    fun updateChannelInfo(subscriptionId: Long, info: ChannelInfo) {
+        val subscriptionEntity = subscriptionTable.getSubscription(subscriptionId)
+        if (info.name == null) return
+
+        subscriptionEntity.setData(
+            info.name,
+            info.avatarUrl,
+            info.description,
+            info.subscriberCount
+        )
+        subscriptionTable.update(subscriptionEntity)
+        feedDatabaseManager.upsertAll(subscriptionId, info.relatedItems)
+    }
+
     fun updateChannelInfo(info: ChannelInfo): Completable = subscriptionTable.getSubscription(info.serviceId, info.url)
         .flatMapCompletable {
             Completable.fromRunnable {
@@ -107,6 +127,12 @@ class SubscriptionManager(context: Context) {
 
     fun deleteSubscription(serviceId: Int, url: String): Completable {
         return Completable.fromCallable { subscriptionTable.deleteSubscription(serviceId, url) }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun deleteAllSubscriptions(): Completable {
+        return Completable.fromAction { subscriptionTable.deleteAll() }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }

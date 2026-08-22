@@ -1,6 +1,7 @@
 package org.schabi.newpipe.local.subscription;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -60,6 +61,7 @@ public class SubscriptionsImportFragment extends BaseFragment {
     private TextView infoTextView;
     private EditText inputText;
     private Button inputButton;
+    private SubscriptionImportDetailsCoordinator detailsCoordinator;
 
     private final ActivityResultLauncher<Intent> requestImportFileLauncher =
             registerForActivityResult(new StartActivityForResult(), this::requestImportFileResult);
@@ -77,6 +79,12 @@ public class SubscriptionsImportFragment extends BaseFragment {
     ///////////////////////////////////////////////////////////////////////////
     // Fragment LifeCycle
     ///////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public void onAttach(@NonNull final Context context) {
+        super.onAttach(context);
+        detailsCoordinator = new SubscriptionImportDetailsCoordinator(this);
+    }
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -177,7 +185,7 @@ public class SubscriptionsImportFragment extends BaseFragment {
     }
 
     public void onImportUrl(final String value) {
-        ImportConfirmationDialog.show(this, new Intent(activity, SubscriptionsImportService.class)
+        activity.startService(new Intent(activity, SubscriptionsImportService.class)
                 .putExtra(KEY_MODE, CHANNEL_URL_MODE)
                 .putExtra(KEY_VALUE, value)
                 .putExtra(Constants.KEY_SERVICE_ID, currentServiceId));
@@ -200,8 +208,7 @@ public class SubscriptionsImportFragment extends BaseFragment {
         }
 
         if (result.getResultCode() == Activity.RESULT_OK && result.getData().getData() != null) {
-            ImportConfirmationDialog.show(this,
-                    new Intent(activity, SubscriptionsImportService.class)
+            activity.startService(new Intent(activity, SubscriptionsImportService.class)
                             .putExtra(KEY_MODE, INPUT_STREAM_MODE)
                             .putExtra(KEY_VALUE, result.getData().getData())
                             .putExtra(Constants.KEY_SERVICE_ID, currentServiceId));

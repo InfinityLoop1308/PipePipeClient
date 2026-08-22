@@ -11,6 +11,7 @@ internal enum class YoutubePoTokenBinding {
 
 internal data class YoutubePageAttestationBootstrap(
     val visitorData: String,
+    val dataSyncId: String?,
     val clientName: String,
     val clientVersion: String,
     val binding: YoutubePoTokenBinding,
@@ -55,6 +56,9 @@ internal fun parseYoutubePageAttestationBootstrap(
             ?: clientConfig.getString("VISITOR_DATA")?.takeIf(String::isNotEmpty)
         )?.replace("%3D", "=", ignoreCase = true)
         ?: throw SabrProtocolException("YouTube home has no anonymous visitor data")
+    val dataSyncId = configs.asSequence()
+        .mapNotNull { it.getString("DATASYNC_ID")?.takeIf(String::isNotEmpty) }
+        .lastOrNull()
     val client = clientConfig.getObject("INNERTUBE_CONTEXT")?.getObject("client")
         ?: throw SabrProtocolException("YouTube home has no Innertube client context")
     val clientName = client.getString("clientName")?.takeIf(String::isNotEmpty)
@@ -81,6 +85,7 @@ internal fun parseYoutubePageAttestationBootstrap(
     }
     return YoutubePageAttestationBootstrap(
         visitorData,
+        dataSyncId,
         clientName,
         clientVersion,
         binding,

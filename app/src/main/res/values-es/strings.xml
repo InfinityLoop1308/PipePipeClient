@@ -1039,4 +1039,25 @@
 <string name="sabr_backoff_notification_content">YouTube nos obliga a esperar %1$d segundos antes de continuar la reproducción</string>
 <string name="playback_speed_gesture_control_title">Desliza para controlar la velocidad de reproducción</string>
 <string name="playback_speed_gesture_control_summary">Desliza en el centro para controlar la velocidad de reproducción. Desactiva el control por gestos en pantalla completa.</string>
+<string name="remember_search_filters_title">Recordar filtros de búsqueda</string>
+<string name="remember_search_filters_summary">Restaurar los filtros seleccionados de servicio, tipo de contenido y orden al iniciar una nueva búsqueda</string>
+<string name="import_subscriptions_title">Importar suscripciones</string>
+<string name="import_subscriptions_summary">Importar suscripciones de una exportación JSON anterior</string>
+<string name="export_subscriptions_title">Exportar suscripciones</string>
+<string name="export_subscriptions_summary">Exportar suscripciones a un archivo JSON</string>
+<string name="import_youtube_subscriptions_title">Importar desde YouTube</string>
+<string name="import_youtube_subscriptions_summary">Importar suscripciones desde Google Takeout</string>
+<string name="import_soundcloud_subscriptions_title">Importar desde SoundCloud</string>
+<string name="import_soundcloud_subscriptions_summary">Importar suscripciones desde un perfil de SoundCloud</string>
+<string name="clear_subscriptions_title">Borrar suscripciones</string>
+<string name="clear_subscriptions_summary">Eliminar todos los canales suscritos de PipePipe</string>
+<string name="clear_subscriptions_confirmation">¿Borrar todas las suscripciones? Esto no se puede deshacer.</string>
+<string name="subscriptions_cleared">Suscripciones borradas</string>
+<string name="fetch_subscription_details_title">¿Obtener detalles del canal?</string>
+<string name="fetch_subscription_details_message">Obtener las miniaturas de los canales y el recuento de suscriptores requiere visitar cada canal suscrito. El tiempo requerido depende del número de suscripciones y puede ser largo para una lista de suscripciones grande. Si omites este paso, los detalles de un canal se actualizarán automáticamente cuando lo abras manualmente.</string>
+<string name="fetch">Obtener</string>
+<string name="skip">Omitir</string>
+<string name="subscription_details_update_ongoing">Obteniendo detalles del canal…</string>
+<string name="subscription_details_update_complete">Detalles del canal actualizados</string>
+<string name="subscription_details_update_failed">No se pudieron actualizar los detalles del canal</string>
 </resources>

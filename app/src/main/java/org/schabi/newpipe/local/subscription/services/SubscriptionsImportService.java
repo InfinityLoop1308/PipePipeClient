@@ -24,7 +24,6 @@ import static org.schabi.newpipe.streams.io.StoredFileHelper.DEFAULT_MIME;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -37,25 +36,18 @@ import org.schabi.newpipe.App;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.subscription.SubscriptionEntity;
 import org.schabi.newpipe.extractor.NewPipe;
-import org.schabi.newpipe.extractor.channel.ChannelInfo;
 import org.schabi.newpipe.extractor.subscription.SubscriptionItem;
-import org.schabi.newpipe.ktx.ExceptionUtils;
 import org.schabi.newpipe.streams.io.SharpInputStream;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
 import org.schabi.newpipe.util.Constants;
-import org.schabi.newpipe.util.ExtractorHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Flowable;
-import io.reactivex.rxjava3.core.Notification;
-import io.reactivex.rxjava3.functions.Consumer;
-import io.reactivex.rxjava3.functions.Function;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class SubscriptionsImportService extends BaseImportExportService {
@@ -64,6 +56,7 @@ public class SubscriptionsImportService extends BaseImportExportService {
     public static final int PREVIOUS_EXPORT_MODE = 2;
     public static final String KEY_MODE = "key_mode";
     public static final String KEY_VALUE = "key_value";
+    public static final String KEY_INSERTED_SUBSCRIPTION_IDS = "inserted_subscription_ids";
 
     /**
      * A {@link LocalBroadcastManager local broadcast} will be made with this action
@@ -72,18 +65,8 @@ public class SubscriptionsImportService extends BaseImportExportService {
     public static final String IMPORT_COMPLETE_ACTION = App.PACKAGE_NAME + ".local.subscription"
             + ".services.SubscriptionsImportService.IMPORT_COMPLETE";
 
-    /**
-     * How many extractions running in parallel.
-     */
-    public static final int PARALLEL_EXTRACTIONS = 8;
-
-    /**
-     * Number of items to buffer to mass-insert in the subscriptions table,
-     * this leads to a better performance as we can then use db transactions.
-     */
-    public static final int BUFFER_COUNT_BEFORE_INSERT = 50;
-
     private Subscription subscription;
+    private long[] insertedSubscriptionIds = new long[0];
     private int currentMode;
     private int currentServiceId;
     @Nullable
@@ -195,27 +178,15 @@ public class SubscriptionsImportService extends BaseImportExportService {
 
         flowable.doOnNext(subscriptionItems ->
                 eventListener.onSizeReceived(subscriptionItems.size()))
-                .flatMap(Flowable::fromIterable)
-
-                .parallel(PARALLEL_EXTRACTIONS)
-                .runOn(Schedulers.io())
-                .map((Function<SubscriptionItem, Notification<ChannelInfo>>) subscriptionItem -> {
-                    try {
-                        return Notification.createOnNext(ExtractorHelper
-                                .getChannelInfo(subscriptionItem.getServiceId(),
-                                        subscriptionItem.getUrl(), true)
-                                .blockingGet());
-                    } catch (final Throwable e) {
-                        return Notification.createOnError(e);
-                    }
-                })
-                .sequential()
-
                 .observeOn(Schedulers.io())
-                .doOnNext(getNotificationsConsumer())
-
-                .buffer(BUFFER_COUNT_BEFORE_INSERT)
-                .map(upsertBatch())
+                .map(subscriptionItems -> {
+                    final List<SubscriptionEntity> inserted =
+                            subscriptionManager.insertAll(subscriptionItems);
+                    for (final SubscriptionItem item : subscriptionItems) {
+                        eventListener.onItemCompleted(item.getName());
+                    }
+                    return inserted;
+                })
 
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -232,6 +203,10 @@ public class SubscriptionsImportService extends BaseImportExportService {
 
             @Override
             public void onNext(final List<SubscriptionEntity> successfulInserted) {
+                insertedSubscriptionIds = new long[successfulInserted.size()];
+                for (int i = 0; i < successfulInserted.size(); i++) {
+                    insertedSubscriptionIds[i] = successfulInserted.get(i).getUid();
+                }
                 if (DEBUG) {
                     Log.d(TAG, "startImport() " + successfulInserted.size()
                             + " items successfully inserted into the database");
@@ -247,44 +222,12 @@ public class SubscriptionsImportService extends BaseImportExportService {
             @Override
             public void onComplete() {
                 LocalBroadcastManager.getInstance(SubscriptionsImportService.this)
-                        .sendBroadcast(new Intent(IMPORT_COMPLETE_ACTION));
+                        .sendBroadcast(new Intent(IMPORT_COMPLETE_ACTION)
+                                .putExtra(KEY_INSERTED_SUBSCRIPTION_IDS,
+                                        insertedSubscriptionIds));
                 showToast(R.string.import_complete_toast);
                 stopService();
             }
-        };
-    }
-
-    private Consumer<Notification<ChannelInfo>> getNotificationsConsumer() {
-        return notification -> {
-            if (notification.isOnNext()) {
-                final String name = notification.getValue().getName();
-                eventListener.onItemCompleted(!TextUtils.isEmpty(name) ? name : "");
-            } else if (notification.isOnError()) {
-                final Throwable error = notification.getError();
-                final Throwable cause = error.getCause();
-                if (error instanceof IOException) {
-                    throw error;
-                } else if (cause instanceof IOException) {
-                    throw cause;
-                } else if (ExceptionUtils.isNetworkRelated(error)) {
-                    throw new IOException(error);
-                }
-
-                eventListener.onItemCompleted("");
-            }
-        };
-    }
-
-    private Function<List<Notification<ChannelInfo>>, List<SubscriptionEntity>> upsertBatch() {
-        return notificationList -> {
-            final List<ChannelInfo> infoList = new ArrayList<>(notificationList.size());
-            for (final Notification<ChannelInfo> n : notificationList) {
-                if (n.isOnNext()) {
-                    infoList.add(n.getValue());
-                }
-            }
-
-            return subscriptionManager.upsertAll(infoList);
         };
     }
 

@@ -52,14 +52,22 @@ public final class PipePipeMigrations {
         }
     };
 
+    public static final Migration MIGRATION_4_5 = new Migration(4, 5) {
+        @Override
+        protected void migrate(final Context context, final SharedPreferences preferences) {
+            migrateHighFrameRateResolutionPreferences(context, preferences);
+        }
+    };
+
     private static final Migration[] PIPEPIPE_MIGRATIONS = {
             MIGRATION_0_1,
             MIGRATION_1_2,
             MIGRATION_2_3,
             MIGRATION_3_4,
+            MIGRATION_4_5,
     };
 
-    public static final int VERSION = 4;
+    public static final int VERSION = 5;
 
     public static void initMigrations(final Context context, final boolean isFirstRun) {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -221,6 +229,27 @@ public final class PipePipeMigrations {
             final String newValue = legacyValues.get(oldValue);
             if (newValue != null && !newValue.equals(oldValue)) {
                 editor.putString(preferenceKey, newValue);
+            }
+        }
+
+        editor.apply();
+    }
+
+    private static void migrateHighFrameRateResolutionPreferences(
+            final Context context,
+            final SharedPreferences preferences) {
+        final int[] preferenceKeys = {
+                R.string.default_resolution_key,
+                R.string.default_popup_resolution_key,
+                R.string.limit_mobile_data_usage_key,
+        };
+        final SharedPreferences.Editor editor = preferences.edit();
+
+        for (final int preferenceKeyId : preferenceKeys) {
+            final String preferenceKey = context.getString(preferenceKeyId);
+            final String oldValue = preferences.getString(preferenceKey, null);
+            if (oldValue != null && oldValue.matches("\\d+p60")) {
+                editor.putString(preferenceKey, oldValue.replaceFirst("p60$", "p"));
             }
         }
 

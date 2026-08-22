@@ -25,8 +25,10 @@ public final class SabrSourceSpec {
     @NonNull private final YoutubeSabrInfo.Format bootstrapVideoFormat;
     @NonNull private final Map<String, YoutubeSabrInfo.Format> formatsByKey;
     @NonNull private final Map<YoutubeSabrInfo.Format, String> keysByFormat;
-    @NonNull private final Map<YoutubeSabrInfo.Format, byte[]> initializationData =
-            new ConcurrentHashMap<>();
+    @NonNull private final AtomicReference<byte[]> audioInitializationData =
+            new AtomicReference<>();
+    @NonNull private final AtomicReference<byte[]> videoInitializationData =
+            new AtomicReference<>();
     @NonNull private final AtomicReference<List<SabrMediaSegment>> bootstrapMediaSegments;
 
     SabrSourceSpec(@NonNull final String videoId,
@@ -109,13 +111,26 @@ public final class SabrSourceSpec {
 
     @Nullable
     byte[] getInitializationData(@NonNull final YoutubeSabrInfo.Format format) {
-        final byte[] data = initializationData.get(format);
+        final byte[] data;
+        if (format.isAudio()) {
+            data = audioInitializationData.get();
+        } else if (format.isVideo()) {
+            data = videoInitializationData.get();
+        } else {
+            return null;
+        }
         return data == null ? null : data.clone();
     }
 
     void putInitializationData(@NonNull final YoutubeSabrInfo.Format format,
                                @NonNull final byte[] data) {
-        initializationData.putIfAbsent(format, data.clone());
+        if (format.isAudio()) {
+            audioInitializationData.compareAndSet(null, data.clone());
+        } else if (format.isVideo()) {
+            videoInitializationData.compareAndSet(null, data.clone());
+        } else {
+            throw new IllegalArgumentException("SABR format has no track type");
+        }
     }
 
     long getDurationMs() {
