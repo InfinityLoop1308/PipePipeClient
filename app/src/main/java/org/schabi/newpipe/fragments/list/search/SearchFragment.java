@@ -1004,6 +1004,10 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         showMetaInfoInTextView(null, searchBinding.searchMetaInfoTextView,
                 searchBinding.searchMetaInfoSeparator, disposables);
         hideKeyboardSearch();
+        suggestionPublisher.onNext(theSearchString);
+        startLoading(false);
+        // Must be subscribed after startLoading(): it calls disposables.clear(), which would
+        // cancel the history write before it even reached the IO thread.
         disposables.add(historyRecordManager.onSearched(serviceId, theSearchString)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -1011,8 +1015,6 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
                         throwable -> showSnackBarError(new ErrorInfo(throwable, UserAction.SEARCHED,
                                 theSearchString, serviceId))
                 ));
-        suggestionPublisher.onNext(theSearchString);
-        startLoading(false);
     }
 
     @Override
