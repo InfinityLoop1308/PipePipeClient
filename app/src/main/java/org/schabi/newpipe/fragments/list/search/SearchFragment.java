@@ -1017,13 +1017,14 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         showMetaInfoInTextView(null, searchBinding.searchMetaInfoTextView,
                 searchBinding.searchMetaInfoSeparator, disposables);
         hideKeyboardSearch();
-        disposables.add(historyRecordManager.onSearched(serviceId, theSearchString)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        ignored -> { },
-                        throwable -> showSnackBarError(new ErrorInfo(throwable, UserAction.SEARCHED,
-                                theSearchString, serviceId))
-                ));
+        // Fire-and-forget: deliberately not added to `disposables`, which is cleared by
+        // startLoading(), onPause() and onDestroy() and would cancel the history write
+        // before it even reached the IO thread.
+        historyRecordManager.onSearched(serviceId, theSearchString)
+                .doOnError(throwable -> Log.e(TAG,
+                        "Failed to save search history for \"" + theSearchString + "\"", throwable))
+                .onErrorComplete()
+                .subscribe();
         suggestionPublisher.onNext(theSearchString);
         startLoading(false);
     }
