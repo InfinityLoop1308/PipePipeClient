@@ -1009,4 +1009,6 @@
 <string name="pinch_to_zoom_selected">Zum Zoomen zusammenziehen.</string>
 <string name="rotate_fullscreen_to_video_orientation_title">Vollbild auf Videoausrichtung drehen</string>
 <string name="rotate_fullscreen_to_video_orientation_summary">Bildschirm im Vollbildmodus basierend auf dem Video ins Hoch- oder Querformat drehen</string>
+<string name="rotation_controls_fullscreen_title">Bei Drehung automatisch den Vollbildmodus umschalten</string>
+<string name="rotation_controls_fullscreen_summary">Wenn die automatische Bildschirmdrehung des Systems aktiviert ist, wird bei einer Drehung ins Querformat der Vollbildmodus aktiviert und bei einer Drehung ins Hochformat beendet</string>
 </resources>

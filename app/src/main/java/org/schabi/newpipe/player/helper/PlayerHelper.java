@@ -59,6 +59,7 @@ import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
+import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ListHelper;
 
 import java.lang.annotation.Retention;
@@ -496,6 +497,12 @@ public final class PlayerHelper {
         // 0: Screen orientation is locked
         return android.provider.Settings.System.getInt(
                 context.getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 0) == 0;
+    }
+
+    public static boolean shouldRotationControlFullscreen(@NonNull final Context context) {
+        return !globalScreenOrientationLocked(context)
+                && getPreferences(context).getBoolean(context.getString(
+                        R.string.rotation_controls_fullscreen_key), !DeviceUtils.isTablet(context));
     }
 
     public static boolean shouldRotateFullscreenToVideoOrientation(

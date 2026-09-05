@@ -1003,4 +1003,6 @@
 <string name="pinch_to_zoom_selected">Pizzica per ingrandire.</string>
 <string name="rotate_fullscreen_to_video_orientation_title">Ruota lo schermo intero in base all\'orientamento del video</string>
 <string name="rotate_fullscreen_to_video_orientation_summary">Ruota lo schermo in verticale o in orizzontale in base al video mentre è a schermo intero</string>
+<string name="rotation_controls_fullscreen_title">Passa automaticamente a schermo intero alla rotazione</string>
+<string name="rotation_controls_fullscreen_summary">Quando la rotazione automatica del sistema è attivata, ruotando in orizzontale si entra a schermo intero e ruotando in verticale si esce dallo schermo intero</string>
 </resources>

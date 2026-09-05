@@ -130,4 +130,10 @@
             android:title="@string/rotate_fullscreen_to_video_orientation_title"
             app:singleLineTitle="false"
             app:iconSpaceReserved="false" />
+    <SwitchPreferenceCompat
+            android:key="@string/rotation_controls_fullscreen_key"
+            android:summary="@string/rotation_controls_fullscreen_summary"
+            android:title="@string/rotation_controls_fullscreen_title"
+            app:singleLineTitle="false"
+            app:iconSpaceReserved="false" />
 </PreferenceScreen>
