@@ -3621,7 +3621,12 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         if (playQueue == null) {
             return;
         }
-
+        
+        if (playQueue.size() == 1)
+        {
+            fastForward();
+            return;
+        }
         saveStreamProgressState();
         playQueue.offsetIndex(+1);
         triggerProgressUpdate();
