@@ -250,6 +250,7 @@ public final class VideoDetailFragment
                                    final boolean playAfterConnect) {
         player = connectedPlayer;
         playerService = connectedPlayerService;
+        updateBottomSheetDraggableForFullscreen();
 
         // It will do nothing if the player is not in fullscreen mode
         hideSystemUiIfNeeded();
@@ -2211,6 +2212,7 @@ public final class VideoDetailFragment
 
     @Override
     public void onFullscreenStateChanged(final boolean fullscreen) {
+        updateBottomSheetDraggableForFullscreen();
         setupBrightness();
         if (!isPlayerAndPlayerServiceAvailable()
                 || playerService.getView() == null
@@ -2493,6 +2495,23 @@ public final class VideoDetailFragment
                 newBottomPadding);
     }
 
+    /**
+     * While the player is in fullscreen the bottom-sheet drag gesture (which collapses the whole
+     * page into the mini player) must never start: a vertical swipe in fullscreen belongs to the
+     * player's own gesture handling (exit fullscreen / volume / brightness).
+     *
+     * <p>Material's {@link BottomSheetBehavior#setDraggable(boolean)} makes
+     * {@code onInterceptTouchEvent} bail out on the very first check, so the sheet can no longer
+     * steal the touch stream from the player (not even via the initial-move race or the two-finger
+     * branch in {@link org.schabi.newpipe.player.event.CustomBottomSheetBehavior}).
+     */
+    private void updateBottomSheetDraggableForFullscreen() {
+        if (bottomSheetBehavior == null) {
+            return;
+        }
+        bottomSheetBehavior.setDraggable(!(isPlayerAvailable() && player.isFullscreen()));
+    }
+
     private void setupBottomPlayer() {
         final CoordinatorLayout.LayoutParams params =
                 (CoordinatorLayout.LayoutParams) binding.appBarLayout.getLayoutParams();
@@ -2502,6 +2521,9 @@ public final class VideoDetailFragment
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
         bottomSheetState = sanitizeBottomSheetState(bottomSheetState);
         bottomSheetBehavior.setState(bottomSheetState);
+        // The player may already be in fullscreen when this view is (re)created
+        // (e.g. after a rotation while playing fullscreen): keep the drag disabled in that case.
+        updateBottomSheetDraggableForFullscreen();
         final int peekHeight = getResources().getDimensionPixelSize(R.dimen.mini_player_height);
         if (bottomSheetState != BottomSheetBehavior.STATE_HIDDEN) {
             manageSpaceAtTheBottom(false);

@@ -62,6 +62,11 @@ public class PlayerGestureListener
     private boolean isPendingScreenRotation = false;
     private boolean isFullscreenRotationGesture = false;
 
+    /** Minimum cumulative vertical travel (px) that counts as an up/down fullscreen swipe. */
+    private static final float FULLSCREEN_GESTURE_MIN_TRAVEL = 40f;
+    /** A swipe is only a horizontal seek when it is this much flatter than vertical. */
+    private static final float FULLSCREEN_SEEK_FLATNESS = 1.5f;
+
     public PlayerGestureListener(final Player player, final PlayerServiceInterface service) {
         super(player, service.getInstance());
         maxVolume = player.getAudioReactor().getMaxVolume();
@@ -141,13 +146,34 @@ public class PlayerGestureListener
                 return;
             }
 
-            final boolean isHorizontal = Math.abs(distanceX) > Math.abs(distanceY);
-            if (!isHorizontal && isFullscreenGestureEnabled &&
-                    ((player.isFullscreen() && distanceY < 0 && portion == DisplayPortion.MIDDLE) ||
-                            (!player.isFullscreen() && distanceY > 0))) {
-                isPendingScreenRotation = true;
-                isFullscreenRotationGesture = true;
-                return;
+            // Decide the fullscreen toggle from the total travel since the touch went down,
+            // not from the per-frame delta. Once the intent is latched it is sticky until the
+            // finger goes up, exactly like the brightness/volume gestures on the sides.
+            final float totalDx = movingEvent.getX() - initialEvent.getX();
+            final float totalDy = movingEvent.getY() - initialEvent.getY(); // > 0 = moved down
+            final boolean movedDown = totalDy >= FULLSCREEN_GESTURE_MIN_TRAVEL;
+            final boolean movedUp = totalDy <= -FULLSCREEN_GESTURE_MIN_TRAVEL;
+
+            if (isFullscreenGestureEnabled) {
+                if (player.isFullscreen()) {
+                    // Exit fullscreen: a downward drag started in the middle third, judged the
+                    // same way as the side gestures (selection by start position, sticky once
+                    // engaged), so a little drift cannot be hijacked by the seek gesture.
+                    if (movedDown && portion == DisplayPortion.MIDDLE) {
+                        isPendingScreenRotation = true;
+                        isFullscreenRotationGesture = true;
+                        return;
+                    }
+                } else {
+                    // Enter fullscreen: while not in fullscreen there is no other gesture on the
+                    // player, so any swipe that meaningfully travels upwards (even diagonal)
+                    // belongs to the fullscreen gesture.
+                    if (movedUp) {
+                        isPendingScreenRotation = true;
+                        isFullscreenRotationGesture = true;
+                        return;
+                    }
+                }
             }
 
             if(!player.isFullscreen()) {
@@ -156,16 +182,23 @@ public class PlayerGestureListener
 
             final boolean isPlaybackSpeedGestureEnabled =
                     PlayerHelper.isPlaybackSpeedGestureEnabled(service);
+            final boolean isHorizontal = Math.abs(distanceX) > Math.abs(distanceY);
             if (!isHorizontal && isPlaybackSpeedGestureEnabled && player.isFullscreen()
                     && portion == DisplayPortion.MIDDLE) {
                 onScrollMainSpeed(distanceY);
                 return;
             }
 
-            if (isSwipeSeekGestureEnabled && isHorizontal) {
+            // Only treat the swipe as a horizontal seek when it is clearly flatter than vertical;
+            // otherwise an only-slightly diagonal down-swipe in the middle third would lock the
+            // seek mode and the exit-fullscreen intent above could never be reached.
+            final boolean isSeekSwipe = isSwipeSeekGestureEnabled
+                    && Math.abs(totalDx) > Math.abs(totalDy) * FULLSCREEN_SEEK_FLATNESS;
+            if (isSeekSwipe) {
                 onScrollMainSeek(distanceX);
                 return;
             }
+
             // -- Brightness and Volume control --
             final boolean isBrightnessGestureEnabled =
                     PlayerHelper.isBrightnessGestureEnabled(service);

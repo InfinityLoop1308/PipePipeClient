@@ -110,6 +110,11 @@ abstract class BasePlayerGestureListener(
 
     private var velocityTracker: VelocityTracker? = null
 
+    /** True while the current main-player touch stream is claimed by the player itself. */
+    private var mainStreamClaimed = false
+    /** Y of the ACTION_DOWN, used to hand the stream back to the bottom sheet on real down-drags. */
+    private var mainStreamDownY = 0f
+
     private fun onTouchInMain(v: View, event: MotionEvent): Boolean {
         if (player.isPinchToZoomEnabled &&
             event.actionMasked == MotionEvent.ACTION_POINTER_DOWN
@@ -137,24 +142,40 @@ abstract class BasePlayerGestureListener(
                 velocityTracker?.clear()
                 velocityTracker = velocityTracker ?: VelocityTracker.obtain()
                 velocityTracker?.addMovement(event)
+
+                // Claim the touch stream from the ancestors (the bottom sheet) immediately on
+                // DOWN instead of frame-by-frame afterwards. Otherwise a fast swipe whose first
+                // move already exceeds the sheet's touch slop is intercepted by the sheet before
+                // we ever get a chance to disallow it - which made the swipe-up-fullscreen
+                // gesture silently fail ("no reaction") or even turn into the minimize gesture.
+                mainStreamClaimed =
+                    player.isFullscreen || player.isFullscreenGestureEnabled
+                mainStreamDownY = event.y
+                v.parent.requestDisallowInterceptTouchEvent(mainStreamClaimed)
             }
             MotionEvent.ACTION_MOVE -> {
                 if (isPinchingInMain) return true
                 velocityTracker?.addMovement(event)
-                velocityTracker?.computeCurrentVelocity(1000)
-                val yVelocity = velocityTracker?.yVelocity ?: 0f
 
-                // Check if swiping up (negative y velocity)
-                if (yVelocity < 0) {
-                    v.parent.requestDisallowInterceptTouchEvent(player.isFullscreenGestureEnabled || player.isFullscreen)
-                } else {
-                    v.parent.requestDisallowInterceptTouchEvent(player.isFullscreen)
+                // While not fullscreen, hand the stream back to the bottom sheet as soon as the
+                // drag is decisively downward: that is the page-minimize gesture, which the sheet
+                // is allowed to take over. Handing it back is what keeps swipe-down-to-minimize
+                // working even though we claimed the touch on DOWN. Everything else (upwards or
+                // short flicks) stays with the player.
+                if (mainStreamClaimed && !player.isFullscreen) {
+                    val relinquish = event.pointerCount > 1
+                        || event.y - mainStreamDownY >= RELINQUISH_DOWN_TRAVEL_PX
+                    if (relinquish) {
+                        mainStreamClaimed = false
+                        v.parent.requestDisallowInterceptTouchEvent(false)
+                    }
                 }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 v.parent.requestDisallowInterceptTouchEvent(false)
                 velocityTracker?.recycle()
                 velocityTracker = null
+                mainStreamClaimed = false
 
                 if (isPinchingInMain) {
                     player.onPinchZoomEnd()
@@ -589,5 +610,12 @@ abstract class BasePlayerGestureListener(
 
         private const val DOUBLE_TAP_DELAY = 550L
         private const val MOVEMENT_THRESHOLD = 40
+
+        /**
+         * Downward travel (px) after which an in-page touch claimed on ACTION_DOWN is handed back
+         * to the bottom sheet (i.e. the page-minimize gesture). Below this the player keeps the
+         * stream, so an up-swipe that starts with a small downward dip still reaches fullscreen.
+         */
+        private const val RELINQUISH_DOWN_TRAVEL_PX = 40f
     }
 }
