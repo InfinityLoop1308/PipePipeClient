@@ -1,6 +1,7 @@
 package org.schabi.newpipe.info_list.holder;
 
 import android.content.SharedPreferences;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
@@ -14,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.text.HtmlCompat;
 import androidx.core.text.util.LinkifyCompat;
 
 import androidx.preference.PreferenceManager;
@@ -21,6 +23,7 @@ import org.schabi.newpipe.R;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.comments.CommentsInfoItem;
+import org.schabi.newpipe.extractor.stream.Description;
 import org.schabi.newpipe.info_list.InfoItemBuilder;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.util.CommentTextOnTouchListener;
@@ -50,6 +53,7 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
     private final Button itemContentReplyButton;
 
     private String commentText;
+    private CharSequence commentContent;
     private String streamUrl;
 
     private boolean shouldEllipsize = false;
@@ -104,8 +108,7 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
         streamUrl = item.getUrl();
 
         itemContentView.setMinLines(COMMENT_DEFAULT_LINES);
-        commentText = item.getCommentText();
-        itemContentView.setText(commentText, TextView.BufferType.SPANNABLE);
+        setCommentContent(item.getCommentText());
         itemContentView.setOnTouchListener(CommentTextOnTouchListener.INSTANCE);
 
         if (shouldEllipsize) {
@@ -166,6 +169,25 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
         });
     }
 
+    private void setCommentContent(final Description description) {
+        final String content = description.getContent();
+        if (description.getType() == Description.HTML) {
+            try {
+                // YouTube comments carry their formatting (bold/italic/strikethrough and links)
+                // as HTML, with user text HTML-escaped
+                commentContent = HtmlCompat.fromHtml(content, HtmlCompat.FROM_HTML_MODE_LEGACY);
+            } catch (final RuntimeException e) {
+                Log.e(TAG, "Unable to parse comment HTML, falling back to plain text", e);
+                commentContent = content;
+            }
+        } else {
+            commentContent = content;
+        }
+        itemContentView.setText(commentContent, TextView.BufferType.SPANNABLE);
+        // The plain text of the full comment, used for copying and collapse comparisons
+        commentText = itemContentView.getText().toString();
+    }
+
     private void openCommentAuthor(final CommentsInfoItem item) {
         if (TextUtils.isEmpty(item.getUploaderUrl())) {
             return;
@@ -219,8 +241,10 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
             if (end == -1) {
                 end = Math.max(endOfLastLine - 2, 0);
             }
-            final String newVal = itemContentView.getText().subSequence(0, end) + " …";
-            itemContentView.setText(newVal);
+            final CharSequence text = itemContentView.getText();
+            final SpannableStringBuilder newVal =
+                    new SpannableStringBuilder(text.subSequence(0, end)).append(" …");
+            itemContentView.setText(newVal, TextView.BufferType.SPANNABLE);
             hasEllipsis = true;
         }
 
@@ -245,7 +269,7 @@ public class CommentsMiniInfoItemHolder extends InfoItemHolder {
 
     private void expand() {
         itemContentView.setMaxLines(COMMENT_EXPANDED_LINES);
-        itemContentView.setText(commentText);
+        itemContentView.setText(commentContent, TextView.BufferType.SPANNABLE);
         linkify();
         determineLinkFocus();
     }
