@@ -4,6 +4,7 @@
     <item
         android:id="@+id/menu_item_sort"
         android:icon="@drawable/ic_sort"
+        android:orderInCategory="1"
         android:title="@string/sort"
         android:visible="false"
         app:showAsAction="ifRoom" />

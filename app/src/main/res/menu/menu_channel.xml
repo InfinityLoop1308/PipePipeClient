@@ -6,6 +6,7 @@
     <item
         android:id="@+id/menu_item_search"
         android:icon="@drawable/ic_search"
+        android:orderInCategory="0"
         android:title="@string/search"
         android:visible="false"
         app:showAsAction="ifRoom"
@@ -14,13 +15,14 @@
     <item
         android:id="@+id/menu_item_share"
         android:icon="@drawable/ic_share"
+        android:orderInCategory="2"
         android:title="@string/share"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_item_notify"
         android:checkable="true"
-        android:orderInCategory="1"
+        android:orderInCategory="3"
         android:title="@string/get_notified"
         android:visible="false"
         app:showAsAction="never"
@@ -28,13 +30,13 @@
 
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="2"
+        android:orderInCategory="4"
         android:title="@string/settings"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_item_openInBrowser"
-        android:orderInCategory="3"
+        android:orderInCategory="5"
         android:title="@string/open_in_browser"
         app:showAsAction="never" />
 </menu>
