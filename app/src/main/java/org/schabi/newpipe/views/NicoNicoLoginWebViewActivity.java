@@ -1,6 +1,7 @@
 package org.schabi.newpipe.views;
 
 import android.content.Intent;
+import android.webkit.WebSettings;
 import android.webkit.WebViewClient;
 
 public class NicoNicoLoginWebViewActivity extends BaseLoginWebViewActivity {
@@ -17,7 +18,9 @@ public class NicoNicoLoginWebViewActivity extends BaseLoginWebViewActivity {
 
     @Override
     protected void configureWebView() {
-        // NicoNico uses default WebView configuration
+        WebSettings settings = webView.getSettings();
+        settings.setJavaScriptEnabled(true);
+        settings.setDomStorageEnabled(true);
     }
 
     @Override
