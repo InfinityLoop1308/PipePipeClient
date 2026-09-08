@@ -1034,4 +1034,5 @@
 <string name="rotate_fullscreen_to_video_orientation_summary">全画面表示時に、動画に合わせて画面を縦向きまたは横向きに回転させます</string>
 <string name="rotation_controls_fullscreen_title">回転時に全画面表示を自動的に切り替える</string>
 <string name="rotation_controls_fullscreen_summary">システムの自動回転がオンの場合、横向きに回転すると全画面表示になり、縦向きに回転すると全画面表示を終了します</string>
+<string name="niconico_login_summary">トークンは必要な場合にのみ使用されます。古いWebViewを搭載した古い端末では、ログインページが正しく動作しない場合があります。</string>
 </resources>

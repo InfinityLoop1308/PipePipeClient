@@ -1091,4 +1091,5 @@
 <string name="rotate_fullscreen_to_video_orientation_summary">Obróć ekran do orientacji pionowej lub poziomej na podstawie wideo w trybie pełnoekranowym</string>
 <string name="rotation_controls_fullscreen_title">Automatycznie przełączaj tryb pełnoekranowy przy obrocie</string>
 <string name="rotation_controls_fullscreen_summary">Gdy systemowe automatyczne obracanie jest włączone, obrót do orientacji poziomej włącza tryb pełnoekranowy, a obrót do orientacji pionowej z niego wychodzi</string>
+<string name="niconico_login_summary">Tokeny będą używane tylko w razie potrzeby. Strona logowania może nie działać na starszych urządzeniach z przestarzałym WebView.</string>
 </resources>

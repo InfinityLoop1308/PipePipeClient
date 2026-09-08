@@ -1111,4 +1111,5 @@
 <string name="rotate_fullscreen_to_video_orientation_summary">Rotate the screen to portrait or landscape based on the video while in fullscreen</string>
     <string name="rotation_controls_fullscreen_title">Automatically switch fullscreen on rotation</string>
     <string name="rotation_controls_fullscreen_summary">When system auto-rotate is enabled, rotating to landscape enters fullscreen and rotating to portrait exits fullscreen</string>
+    <string name="niconico_login_summary">Tokens will only be used when necessary. The login page may not work on older devices with an outdated WebView.</string>
 </resources>

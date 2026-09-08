@@ -1120,4 +1120,5 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="rotate_fullscreen_to_video_orientation_summary">Xoay màn hình sang dọc hoặc ngang dựa trên video khi ở chế độ toàn màn hình</string>
 <string name="rotation_controls_fullscreen_title">Tự động chuyển đổi chế độ toàn màn hình khi xoay</string>
 <string name="rotation_controls_fullscreen_summary">Khi tính năng tự động xoay của hệ thống được bật, xoay sang hướng ngang sẽ vào chế độ toàn màn hình và xoay sang hướng dọc sẽ thoát chế độ toàn màn hình</string>
+<string name="niconico_login_summary">Token sẽ chỉ được sử dụng khi cần thiết. Trang đăng nhập có thể không hoạt động trên các thiết bị cũ với WebView đã lỗi thời.</string>
 </resources>

@@ -1011,4 +1011,5 @@
 <string name="rotate_fullscreen_to_video_orientation_summary">Bildschirm im Vollbildmodus basierend auf dem Video ins Hoch- oder Querformat drehen</string>
 <string name="rotation_controls_fullscreen_title">Bei Drehung automatisch den Vollbildmodus umschalten</string>
 <string name="rotation_controls_fullscreen_summary">Wenn die automatische Bildschirmdrehung des Systems aktiviert ist, wird bei einer Drehung ins Querformat der Vollbildmodus aktiviert und bei einer Drehung ins Hochformat beendet</string>
+<string name="niconico_login_summary">Tokens werden nur bei Bedarf verwendet. Die Anmeldeseite funktioniert möglicherweise nicht auf älteren Geräten mit einer veralteten WebView.</string>
 </resources>

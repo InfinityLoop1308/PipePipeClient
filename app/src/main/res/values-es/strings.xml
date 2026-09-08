@@ -1067,4 +1067,5 @@
 <string name="rotate_fullscreen_to_video_orientation_summary">Rotar la pantalla a vertical u horizontal según el video mientras se está en pantalla completa</string>
 <string name="rotation_controls_fullscreen_title">Cambiar automáticamente a pantalla completa al girar</string>
 <string name="rotation_controls_fullscreen_summary">Cuando la rotación automática del sistema está activada, al girar a horizontal se entra en pantalla completa y al girar a vertical se sale de la pantalla completa</string>
+<string name="niconico_login_summary">Los tokens solo se usarán cuando sea necesario. La página de inicio de sesión podría no funcionar en dispositivos antiguos con un WebView desactualizado.</string>
 </resources>

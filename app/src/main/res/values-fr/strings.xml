@@ -1028,4 +1028,5 @@ Voulez-vous continuer?</string>
 <string name="rotate_fullscreen_to_video_orientation_summary">Faire pivoter l\'écran en mode portrait ou paysage en fonction de la vidéo en mode plein écran</string>
 <string name="rotation_controls_fullscreen_title">Basculer automatiquement en plein écran lors de la rotation</string>
 <string name="rotation_controls_fullscreen_summary">Lorsque la rotation automatique du système est activée, la rotation en mode paysage active le plein écran et la rotation en mode portrait quitte le plein écran</string>
+<string name="niconico_login_summary">Les jetons ne seront utilisés que lorsque cela est nécessaire. La page de connexion peut ne pas fonctionner sur les anciens appareils avec un WebView obsolète.</string>
 </resources>

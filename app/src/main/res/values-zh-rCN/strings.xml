@@ -1073,6 +1073,7 @@
 <string name="pinch_to_zoom_selected">捏合以缩放。</string>
 <string name="rotate_fullscreen_to_video_orientation_title">全屏时旋转至视频方向</string>
 <string name="rotate_fullscreen_to_video_orientation_summary">在全屏模式下，根据视频将屏幕旋转为竖屏或横屏</string>
-    <string name="rotation_controls_fullscreen_title">旋转时自动切换全屏</string>
-    <string name="rotation_controls_fullscreen_summary">系统自动旋转开启时，旋转到横屏会进入全屏，旋转到竖屏会退出全屏</string>
+<string name="rotation_controls_fullscreen_title">旋转时自动切换全屏</string>
+<string name="rotation_controls_fullscreen_summary">系统自动旋转开启时，旋转到横屏会进入全屏，旋转到竖屏会退出全屏</string>
+<string name="niconico_login_summary">Token 仅在必要时使用。登录页面可能无法在 WebView 过时的老旧设备上运行。</string>
 </resources>

@@ -1005,4 +1005,5 @@
 <string name="rotate_fullscreen_to_video_orientation_summary">Ruota lo schermo in verticale o in orizzontale in base al video mentre è a schermo intero</string>
 <string name="rotation_controls_fullscreen_title">Passa automaticamente a schermo intero alla rotazione</string>
 <string name="rotation_controls_fullscreen_summary">Quando la rotazione automatica del sistema è attivata, ruotando in orizzontale si entra a schermo intero e ruotando in verticale si esce dallo schermo intero</string>
+<string name="niconico_login_summary">I token verranno utilizzati solo quando necessario. La pagina di accesso potrebbe non funzionare su dispositivi meno recenti con una WebView obsoleta.</string>
 </resources>
