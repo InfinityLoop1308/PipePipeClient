@@ -803,7 +803,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在背景播放時自動隨機播放您的本地播放列表</string>
-<string name="update_log">### 新功能\n\n- 新增調整播放速度的手勢\n- 新增雙指縮放支援\n- 新增對較高預設影片解析度的支援\n- 新增清除所有訂閱的選項\n- 恢復對 SABR 播放的支援\n\n### 錯誤修正\n\n- 修正登入使用者收到「無法提供內容」錯誤而無法觀看影片的問題\n- 修正藍牙硬體控制無效的問題\n- 修正電視上無法快轉或倒轉的問題\n- 修正 Mix 播放清單與「主題」頻道無法正確解析的問題 (YouTube)\n- 修正未過濾來自已封鎖頻道的播放清單的問題\n- 修正透過點擊導覽仍可進入已封鎖頻道的問題\n- 修正本機播放清單中缺少付費標示的問題\n- 修正搜尋無結果且付費曲目顯示一般錯誤的問題 (Bandcamp)\n- 修正特定裝置在執行某些操作時閃退的問題\n\n### 行為\n\n- 搜尋篩選器保留功能現在為可選，且預設為停用\n- 匯入訂閱時擷取頻道資訊功能現在為可選\n- 訂閱更新失敗現在會提示錯誤並附帶詳細報告\n- 長按「未載入」區域現在會顯示更新失敗的頻道清單\n\n### UI\n\n- 訂閱匯入與匯出選項現在也可在「備份設定」中找到</string>
+<string name="update_log">### 新功能\n\n- 最佳化全螢幕與螢幕旋轉邏輯，並新增相關設定選項\n- 恢復支援觀看與搜尋直播 (NicoNico)\n- 現在點擊影片標題列的任何位置即可展開/收起標題詳細資訊\n\n### 問題修正\n\n- 修正全螢幕滑動手勢不穩定且可能意外將影片縮小的問題\n- 修正搜尋歷史紀錄隨機無法儲存或未移至頂部的問題\n- 修正留言中的粗體/斜體/刪除線樣式未正確套用的問題\n- 修正特定電視在啟動時崩潰的問題。\n- 修正重新整理沒有影片的頻道訂閱時發生的錯誤 (YouTube)\n- 修正登入時出現空白畫面的問題 (NicoNico)\n- 修正影片無法播放的問題 (BiliBili)\n- 修正 SponsorBlock 無法正常運作的問題 (BiliBili)</string>
 <string name="speeding_playback_title">按住以加速播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這項計畫</string>

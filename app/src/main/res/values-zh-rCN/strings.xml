@@ -815,7 +815,7 @@
 <string name="sponsor_promote">成为支持者</string>
 <string name="random_play_order_title">随机顺序</string>
 <string name="random_play_order_summary">在后台播放时自动随机播放您的本地播放列表</string>
-<string name="update_log">### 新功能\n\n- 新增调整播放速度的手势\n- 新增双指缩放支持\n- 新增对更高默认视频分辨率的支持\n- 新增清除所有订阅的选项\n- 恢复对 SABR 播放的支持\n\n### 问题修复\n\n- 修复了登录用户收到“内容不可用”错误且无法观看视频的问题\n- 修复了蓝牙硬件控制不起作用的问题\n- 修复了在电视端无法快进或快退的问题\n- 修复了 Mix 播放列表和“主题”频道解析不正确的问题（YouTube）\n- 修复了未过滤来自已屏蔽频道的播放列表的问题\n- 修复了仍可通过点击导航访问已屏蔽频道的问题\n- 修复了本地播放列表中缺失付费标识的问题\n- 修复了搜索无结果且付费曲目显示常规错误的问题（Bandcamp）\n- 修复了特定设备在进行某些操作时崩溃的问题\n\n### 行为\n\n- 搜索过滤条件的保留现在设为可选，且默认禁用\n- 导入订阅时获取频道信息现在设为可选\n- 订阅更新失败现在会提示错误并提供详细报告\n- 长按“未加载”区域现在会显示更新失败的频道列表\n\n### UI\n\n- 订阅导入和导出选项现在也可在“备份设置”中找到</string>
+<string name="update_log">### 新功能\n\n- 优化了全屏和屏幕旋转逻辑，并添加了相关的配置设置\n- 恢复了对观看和搜索直播的支持 (NicoNico)\n- 现在点击视频标题行的任意位置即可展开/折叠标题详情\n\n### 问题修复\n\n- 修复了全屏滑动手势不稳定且可能意外最小化视频的问题\n- 修复了搜索历史记录随机未保存或未移至顶部的问题\n- 修复了评论中粗体/斜体/删除线样式未正确应用的问题\n- 修复了在某些电视上启动时崩溃的问题。\n- 修复了刷新没有视频的频道订阅时发生的错误 (YouTube)\n- 修复了登录时的白屏问题 (NicoNico)\n- 修复了视频无法播放的问题 (BiliBili)\n- 修复了 SponsorBlock 无法正常工作的问题 (BiliBili)</string>
 <string name="speeding_playback_title">长按以加快播放</string>
 <string name="view_on_github">在GitHub上查看</string>
 <string name="donation_dialog_title">支持该项目</string>
