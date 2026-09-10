@@ -381,6 +381,18 @@ public final class VideoDetailFragment
     }
 
     @Override
+    public void onViewStateRestored(@Nullable final Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        // The setExpanded() done by scrollToTop() only schedules the expand for the next layout,
+        // which the configuration change caused by entering fullscreen cancels. The player
+        // service keeps isFullscreen, so the fullscreen event is not re-emitted to this new
+        // fragment and the restored collapsed offset would leave the player off-screen.
+        if (isPlayerAvailable() && player.isFullscreen() && binding != null) {
+            binding.appBarLayout.setExpanded(true, false);
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
