@@ -26,8 +26,6 @@ import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeMode.MINIMIZ
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Service;
@@ -43,18 +41,15 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.AnticipateInterpolator;
 import android.widget.*;
 
 import androidx.annotation.NonNull;
@@ -62,7 +57,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.AppCompatImageButton;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.core.view.ViewCompat;
@@ -97,7 +91,6 @@ import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.databinding.PlayerBinding;
-import org.schabi.newpipe.databinding.PlayerPopupCloseOverlayBinding;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
@@ -302,12 +295,7 @@ public final class Player implements
     // Popup player
     //////////////////////////////////////////////////////////////////////////*/
 
-    private PlayerPopupCloseOverlayBinding closeOverlayBinding;
-
-    private boolean isPopupClosing = false;
-
-    private float screenWidth;
-    private float screenHeight;
+    @NonNull private final PopupWindowController popupWindowController;
 
     /*//////////////////////////////////////////////////////////////////////////
     // Popup player window manager
@@ -318,8 +306,8 @@ public final class Player implements
     public static final int ONGOING_PLAYBACK_WINDOW_FLAGS = IDLE_WINDOW_FLAGS
             | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
 
-    @Nullable private WindowManager.LayoutParams popupLayoutParams; // null if player is not popup
-    @Nullable private final WindowManager windowManager;
+    // The popup window state (layout params, window manager, screen size and the
+    // drag-to-close overlay) lives in PopupWindowController.
 
     /*//////////////////////////////////////////////////////////////////////////
     // Gestures
@@ -428,7 +416,7 @@ public final class Player implements
         videoResolver = new VideoPlaybackResolver(context, dataSource, getQualityResolver());
         audioResolver = new AudioPlaybackResolver(context, dataSource);
 
-        windowManager = ContextCompat.getSystemService(context, WindowManager.class);
+        popupWindowController = new PopupWindowController(this);
         longPressSpeedingFactor = Float.parseFloat(prefs.getString(context.getString(R.string.speeding_playback_key), "3"));
 
         isFullscreenGestureEnabled = PlayerHelper.isFullscreenGestureEnabled(context);
@@ -1057,49 +1045,12 @@ public final class Player implements
 
     @SuppressLint("RtlHardcoded")
     private void initPopup() {
-        if (DEBUG) {
-            Log.d(TAG, "initPopup() called");
-        }
-
-        // Popup is already added to windowManager
-        if (popupHasParent()) {
-            return;
-        }
-
-        updateScreenSize();
-
-        popupLayoutParams = retrievePopupLayoutParamsFromPrefs(this);
-        binding.surfaceView.setHeights(popupLayoutParams.height, popupLayoutParams.height);
-
-        checkPopupPositionBounds();
-
-        binding.loadingPanel.setMinimumWidth(popupLayoutParams.width);
-        binding.loadingPanel.setMinimumHeight(popupLayoutParams.height);
-
-        service.removeViewFromParent();
-        Objects.requireNonNull(windowManager).addView(binding.getRoot(), popupLayoutParams);
-
-        // Popup doesn't have aspectRatio selector, using FIT automatically
-        setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+        popupWindowController.initPopup();
     }
 
     @SuppressLint("RtlHardcoded")
     private void initPopupCloseOverlay() {
-        if (DEBUG) {
-            Log.d(TAG, "initPopupCloseOverlay() called");
-        }
-
-        // closeOverlayView is already added to windowManager
-        if (closeOverlayBinding != null) {
-            return;
-        }
-
-        closeOverlayBinding = PlayerPopupCloseOverlayBinding.inflate(LayoutInflater.from(context));
-
-        final WindowManager.LayoutParams closeOverlayLayoutParams = buildCloseOverlayLayoutParams();
-        closeOverlayBinding.closeButton.setVisibility(View.GONE);
-        Objects.requireNonNull(windowManager).addView(
-                closeOverlayBinding.getRoot(), closeOverlayLayoutParams);
+        popupWindowController.initPopupCloseOverlay();
     }
     //endregion
 
@@ -1333,7 +1284,10 @@ public final class Player implements
                 }
                 if (popupPlayerSelected()) {
                     updateScreenSize();
-                    changePopupSize(popupLayoutParams.width);
+                    final WindowManager.LayoutParams params = getPopupLayoutParams();
+                    if (params != null) {
+                        changePopupSize(params.width);
+                    }
                     checkPopupPositionBounds();
                 }
                 final boolean landscape = service.isLandscape();
@@ -1515,6 +1469,7 @@ public final class Player implements
     private float calculateMaxEndScreenThumbnailHeight() {
         // ensure that screenHeight is initialized and thus not 0
         updateScreenSize();
+        final float screenHeight = getScreenHeight();
 
         if (DeviceUtils.isTv(context) && !isFullscreen) {
             final int videoInfoHeight =
@@ -1537,49 +1492,12 @@ public final class Player implements
     //////////////////////////////////////////////////////////////////////////*/
     //region Popup player utils
 
-    /**
-     * Check if {@link #popupLayoutParams}' position is within a arbitrary boundary
-     * that goes from (0, 0) to (screenWidth, screenHeight).
-     * <p>
-     * If it's out of these boundaries, {@link #popupLayoutParams}' position is changed
-     * and {@code true} is returned to represent this change.
-     * </p>
-     */
     public void checkPopupPositionBounds() {
-        if (DEBUG) {
-            Log.d(TAG, "checkPopupPositionBounds() called with: "
-                    + "screenWidth = [" + screenWidth + "], "
-                    + "screenHeight = [" + screenHeight + "]");
-        }
-        if (popupLayoutParams == null) {
-            return;
-        }
-
-        if (popupLayoutParams.x < 0) {
-            popupLayoutParams.x = 0;
-        } else if (popupLayoutParams.x > screenWidth - popupLayoutParams.width) {
-            popupLayoutParams.x = (int) (screenWidth - popupLayoutParams.width);
-        }
-
-        if (popupLayoutParams.y < 0) {
-            popupLayoutParams.y = 0;
-        } else if (popupLayoutParams.y > screenHeight - popupLayoutParams.height) {
-            popupLayoutParams.y = (int) (screenHeight - popupLayoutParams.height);
-        }
+        popupWindowController.checkPopupPositionBounds();
     }
 
     public void updateScreenSize() {
-        if (windowManager != null) {
-            final DisplayMetrics metrics = new DisplayMetrics();
-            windowManager.getDefaultDisplay().getMetrics(metrics);
-
-            screenWidth = metrics.widthPixels;
-            screenHeight = metrics.heightPixels;
-            if (DEBUG) {
-                Log.d(TAG, "updateScreenSize() called: screenWidth = ["
-                        + screenWidth + "], screenHeight = [" + screenHeight + "]");
-            }
-        }
+        popupWindowController.updateScreenSize();
     }
 
     /**
@@ -1588,124 +1506,21 @@ public final class Player implements
      *              {@link PlayerHelper#getMinimumVideoHeight(float)}
      */
     public void changePopupSize(final int width) {
-        if (DEBUG) {
-            Log.d(TAG, "changePopupSize() called with: width = [" + width + "]");
-        }
-
-        if (anyPopupViewIsNull()) {
-            return;
-        }
-
-        final float minimumWidth = context.getResources().getDimension(R.dimen.popup_minimum_width);
-        final int actualWidth = (int) (width > screenWidth ? screenWidth
-                : (width < minimumWidth ? minimumWidth : width));
-        final int actualHeight = (int) getMinimumVideoHeight(width);
-        if (DEBUG) {
-            Log.d(TAG, "updatePopupSize() updated values:"
-                    + "  width = [" + actualWidth + "], height = [" + actualHeight + "]");
-        }
-
-        popupLayoutParams.width = actualWidth;
-        popupLayoutParams.height = actualHeight;
-        binding.surfaceView.setHeights(popupLayoutParams.height, popupLayoutParams.height);
-        Objects.requireNonNull(windowManager)
-                .updateViewLayout(binding.getRoot(), popupLayoutParams);
+        popupWindowController.changePopupSize(width);
     }
 
     private void changePopupWindowFlags(final int flags) {
-        if (DEBUG) {
-            Log.d(TAG, "changePopupWindowFlags() called with: flags = [" + flags + "]");
-        }
-
-        if (!anyPopupViewIsNull()) {
-            popupLayoutParams.flags = flags;
-            Objects.requireNonNull(windowManager)
-                    .updateViewLayout(binding.getRoot(), popupLayoutParams);
-        }
+        popupWindowController.changePopupWindowFlags(flags);
     }
 
     public void closePopup() {
-        if (DEBUG) {
-            Log.d(TAG, "closePopup() called, isPopupClosing = " + isPopupClosing);
-        }
-        if (isPopupClosing) {
-            return;
-        }
-        isPopupClosing = true;
-
-        saveStreamProgressState();
-        Objects.requireNonNull(windowManager).removeView(binding.getRoot());
-
-        animatePopupOverlayAndFinishService();
+        popupWindowController.closePopup();
     }
 
     public void removePopupFromView() {
-        if (windowManager != null) {
-            // Close popup menus before removing from view to prevent crash
-            closeAllPopupMenus();
-            
-            // wrap in try-catch since it could sometimes generate errors randomly
-            try {
-                if (popupHasParent()) {
-                    windowManager.removeView(binding.getRoot());
-                }
-            } catch (final IllegalArgumentException e) {
-                Log.w(TAG, "Failed to remove popup from window manager", e);
-            }
-
-            try {
-                final boolean closeOverlayHasParent = closeOverlayBinding != null
-                        && closeOverlayBinding.getRoot().getParent() != null;
-                if (closeOverlayHasParent) {
-                    windowManager.removeView(closeOverlayBinding.getRoot());
-                }
-            } catch (final IllegalArgumentException e) {
-                Log.w(TAG, "Failed to remove popup overlay from window manager", e);
-            }
-        }
+        popupWindowController.removePopupFromView();
     }
 
-    private void animatePopupOverlayAndFinishService() {
-        final int targetTranslationY =
-                (int) (closeOverlayBinding.closeButton.getRootView().getHeight()
-                        - closeOverlayBinding.closeButton.getY());
-
-        closeOverlayBinding.closeButton.animate().setListener(null).cancel();
-        closeOverlayBinding.closeButton.animate()
-                .setInterpolator(new AnticipateInterpolator())
-                .translationY(targetTranslationY)
-                .setDuration(400)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationCancel(final Animator animation) {
-                        end();
-                    }
-
-                    @Override
-                    public void onAnimationEnd(final Animator animation) {
-                        end();
-                    }
-
-                    private void end() {
-                        Objects.requireNonNull(windowManager)
-                                .removeView(closeOverlayBinding.getRoot());
-                        closeOverlayBinding = null;
-                        service.stopService();
-                    }
-                }).start();
-    }
-
-    private boolean popupHasParent() {
-        return binding != null
-                && binding.getRoot().getLayoutParams() instanceof WindowManager.LayoutParams
-                && binding.getRoot().getParent() != null;
-    }
-
-    private boolean anyPopupViewIsNull() {
-        // TODO understand why checking getParentActivity() != null
-        return popupLayoutParams == null || windowManager == null
-                || getParentActivity() != null || binding.getRoot().getParent() == null;
-    }
     //endregion
 
 
@@ -4152,7 +3967,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         videoResolver.setSelectedStream(stream);
     }
 
-    private void closeAllPopupMenus() {
+    void closeAllPopupMenus() {
         if (menuController != null) {
             menuController.closeAllPopupMenus();
         }
@@ -4708,27 +4523,8 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         }
     }
 
-    private int distanceFromCloseButton(@NonNull final MotionEvent popupMotionEvent) {
-        final int closeOverlayButtonX = closeOverlayBinding.closeButton.getLeft()
-                + closeOverlayBinding.closeButton.getWidth() / 2;
-        final int closeOverlayButtonY = closeOverlayBinding.closeButton.getTop()
-                + closeOverlayBinding.closeButton.getHeight() / 2;
-
-        final float fingerX = popupLayoutParams.x + popupMotionEvent.getX();
-        final float fingerY = popupLayoutParams.y + popupMotionEvent.getY();
-
-        return (int) Math.sqrt(Math.pow(closeOverlayButtonX - fingerX, 2)
-                + Math.pow(closeOverlayButtonY - fingerY, 2));
-    }
-
-    private float getClosingRadius() {
-        final int buttonRadius = closeOverlayBinding.closeButton.getWidth() / 2;
-        // 20% wider than the button itself
-        return buttonRadius * 1.2f;
-    }
-
     public boolean isInsideClosingRadius(@NonNull final MotionEvent popupMotionEvent) {
-        return distanceFromCloseButton(popupMotionEvent) <= getClosingRadius();
+        return popupWindowController.isInsideClosingRadius(popupMotionEvent);
     }
     //endregion
 
@@ -5081,7 +4877,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     }
 
     public boolean isPopupClosing() {
-        return isPopupClosing;
+        return popupWindowController.isPopupClosing();
     }
 
 
@@ -5134,7 +4930,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     }
 
     public FloatingActionButton getCloseOverlayButton() {
-        return closeOverlayBinding.closeButton;
+        return popupWindowController.getCloseOverlayButton();
     }
 
     public View getLoadingPanel() {
@@ -5159,20 +4955,20 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
 
     @Nullable
     public WindowManager.LayoutParams getPopupLayoutParams() {
-        return popupLayoutParams;
+        return popupWindowController.getPopupLayoutParams();
     }
 
     @Nullable
     public WindowManager getWindowManager() {
-        return windowManager;
+        return popupWindowController.getWindowManager();
     }
 
     public float getScreenWidth() {
-        return screenWidth;
+        return popupWindowController.getScreenWidth();
     }
 
     public float getScreenHeight() {
-        return screenHeight;
+        return popupWindowController.getScreenHeight();
     }
 
     public View getRootView() {
