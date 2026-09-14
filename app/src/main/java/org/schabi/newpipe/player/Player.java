@@ -193,21 +193,6 @@ public final class Player implements
     // Playback states live in PlayerPlaybackState.
 
     /*//////////////////////////////////////////////////////////////////////////
-    // Intent
-    //////////////////////////////////////////////////////////////////////////*/
-
-    public static final String REPEAT_MODE = "repeat_mode";
-    public static final String PLAYBACK_QUALITY = "playback_quality";
-    public static final String PLAY_QUEUE_KEY = "play_queue_key";
-    public static final String ENQUEUE = "enqueue";
-    public static final String ENQUEUE_NEXT = "enqueue_next";
-    public static final String RESUME_PLAYBACK = "resume_playback";
-    public static final String PLAY_WHEN_READY = "play_when_ready";
-    public static final String PLAYER_TYPE = "player_type";
-    public static final String IS_MUTED = "is_muted";
-    public static final String VIDEO_SEGMENTS = "video_segments";
-
-    /*//////////////////////////////////////////////////////////////////////////
     // Time constants
     //////////////////////////////////////////////////////////////////////////*/
 
@@ -755,7 +740,7 @@ public final class Player implements
             PlaybackStartupTrace.mark(startupTraceId, "service_intent_received");
         }
         // fail fast if no play queue was provided
-        final String queueCache = intent.getStringExtra(PLAY_QUEUE_KEY);
+        final String queueCache = intent.getStringExtra(PlayerIntentConstants.PLAY_QUEUE_KEY);
         if (queueCache == null) {
             return;
         }
@@ -769,17 +754,15 @@ public final class Player implements
         // We need to setup audioOnly before super(), see "sourceOf"
         isAudioOnly = audioPlayerSelected();
 
-//        if (intent.hasExtra(PLAYBACK_QUALITY)) {
-//            setPlaybackQuality(intent.getStringExtra(PLAYBACK_QUALITY));
-//        }
-
         // Resolve enqueue intents
-        if (intent.getBooleanExtra(ENQUEUE, false) && playQueue != null) {
+        if (intent.getBooleanExtra(PlayerIntentConstants.ENQUEUE, false)
+                && playQueue != null) {
             playQueue.append(newQueue.getStreams());
             return;
 
         // Resolve enqueue next intents
-        } else if (intent.getBooleanExtra(ENQUEUE_NEXT, false) && playQueue != null) {
+        } else if (intent.getBooleanExtra(PlayerIntentConstants.ENQUEUE_NEXT, false)
+                && playQueue != null) {
             final int currentIndex = playQueue.getIndex();
             playQueue.append(newQueue.getStreams());
             playQueue.move(playQueue.size() - 1, currentIndex + 1);
@@ -806,9 +789,11 @@ public final class Player implements
                 R.string.playback_skip_silence_key), getPlaybackSkipSilence());
 
         final boolean samePlayQueue = playQueue != null && playQueue.equals(newQueue);
-        final int repeatMode = intent.getIntExtra(REPEAT_MODE, getRepeatMode());
-        final boolean playWhenReady = intent.getBooleanExtra(PLAY_WHEN_READY, true);
-        final boolean isMuted = intent.getBooleanExtra(IS_MUTED, isMuted());
+        final int repeatMode = intent.getIntExtra(PlayerIntentConstants.REPEAT_MODE,
+                getRepeatMode());
+        final boolean playWhenReady = intent.getBooleanExtra(
+                PlayerIntentConstants.PLAY_WHEN_READY, true);
+        final boolean isMuted = intent.getBooleanExtra(PlayerIntentConstants.IS_MUTED, isMuted());
 
         /*
          * TODO As seen in #7427 this does not work:
@@ -849,7 +834,7 @@ public final class Player implements
             }
             simpleExoPlayer.setPlayWhenReady(playWhenReady);
 
-        } else if (intent.getBooleanExtra(RESUME_PLAYBACK, false)
+        } else if (intent.getBooleanExtra(PlayerIntentConstants.RESUME_PLAYBACK, false)
                 && isPlaybackResumeEnabled(this)
                 && !samePlayQueue
                 && !newQueue.isEmpty()

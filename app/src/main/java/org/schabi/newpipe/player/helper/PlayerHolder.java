@@ -15,6 +15,7 @@ import org.schabi.newpipe.App;
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.player.PlayerBinderInterface;
+import org.schabi.newpipe.player.PlayerIntentConstants;
 import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.PlayerPlaybackState;
@@ -184,7 +185,7 @@ public final class PlayerHolder {
         }
 
         final Intent serviceIntent = new Intent(context, DeviceUtils.getPlayerServiceClass());
-        serviceIntent.setAction(PlayerService.BIND_PLAYER_HOLDER_ACTION);
+        serviceIntent.setAction(PlayerIntentConstants.BIND_PLAYER_HOLDER_ACTION);
         try {
             bound = context.bindService(serviceIntent, serviceConnection,
                     Context.BIND_AUTO_CREATE);

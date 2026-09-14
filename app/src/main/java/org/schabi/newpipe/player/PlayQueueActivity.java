@@ -166,7 +166,7 @@ public final class PlayQueueActivity extends AppCompatActivity
 
     private void bind() {
         final Intent bindIntent = new Intent(this, DeviceUtils.getPlayerServiceClass());
-        bindIntent.setAction(PlayerService.BIND_PLAYER_HOLDER_ACTION);
+        bindIntent.setAction(PlayerIntentConstants.BIND_PLAYER_HOLDER_ACTION);
         final boolean success = bindService(bindIntent, serviceConnection, BIND_AUTO_CREATE);
         if (!success) {
             unbindService(serviceConnection);

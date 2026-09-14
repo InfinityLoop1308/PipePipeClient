@@ -1,6 +1,6 @@
 package org.schabi.newpipe.player;
 
-import static org.schabi.newpipe.player.Player.PLAYER_TYPE;
+import static org.schabi.newpipe.player.PlayerIntentConstants.PLAYER_TYPE;
 
 import android.content.Intent;
 
