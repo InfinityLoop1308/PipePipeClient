@@ -279,7 +279,6 @@ public final class Player implements
     // Popup menus ("popup" means that they pop up, not that they belong to the popup player)
     //////////////////////////////////////////////////////////////////////////*/
 
-    private boolean isSomePopupMenuVisible = false;
     private PlayerMenuController menuController;
 
     // Aspect ratio forced by the user, 0 means "auto" (use the video's own aspect ratio)
@@ -3868,7 +3867,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         showHideShadow(true, DEFAULT_CONTROLS_DURATION);
         animate(binding.playbackControlRoot, true, DEFAULT_CONTROLS_DURATION,
                 AnimationType.ALPHA, 0, () -> {
-                    if (getCurrentState().isPlaying() && !isSomePopupMenuVisible) {
+                    if (getCurrentState().isPlaying() && !menuController.isSomePopupMenuVisible()) {
                         if (v.getId() == binding.playPauseButton.getId()
                                 // Hide controls in fullscreen immediately
                                 || (v.getId() == binding.screenRotationButton.getId()
@@ -4551,15 +4550,11 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
 
 
     public boolean isSomePopupMenuVisible() {
-        return isSomePopupMenuVisible;
+        return menuController.isSomePopupMenuVisible();
     }
 
     public boolean isFullscreenGestureEnabled() {
         return isFullscreenGestureEnabled;
-    }
-
-    public void setSomePopupMenuVisible(final boolean somePopupMenuVisible) {
-        isSomePopupMenuVisible = somePopupMenuVisible;
     }
 
     public ImageButton getPlayPauseButton() {

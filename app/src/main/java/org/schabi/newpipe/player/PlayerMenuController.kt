@@ -25,7 +25,9 @@ import java.util.Locale
  *
  * All the logic that builds those menus and reacts to their items stays here, so that [Player]
  * only exposes a few package-private accessors for the playback state and view primitives it
- * actually needs. This is a view/event helper: it does not hold playback state itself.
+ * actually needs. It also owns whether a popup menu is currently visible, so that the gesture
+ * listener and [Player] can query it without [Player] holding that flag. This is a view/event
+ * helper: it does not hold playback state itself.
  */
 class PlayerMenuController(
     private val player: Player
@@ -55,6 +57,10 @@ class PlayerMenuController(
     private val audioTrackPopupMenu: PopupMenu
     private val displayModePopupMenu: PopupMenu
 
+    /** Whether any of the popup menus is currently visible. */
+    var isSomePopupMenuVisible = false
+        private set
+
     init {
         val binding = player.binding
         val themeWrapper = ContextThemeWrapper(player.context, R.style.DarkPopupMenu)
@@ -75,7 +81,7 @@ class PlayerMenuController(
         }
 
         qualityPopupMenu.show()
-        player.setSomePopupMenuVisible(true)
+        isSomePopupMenuVisible = true
 
         player.selectedVideoStream?.let { videoStream ->
             player.binding.qualityTextView.text =
@@ -103,7 +109,7 @@ class PlayerMenuController(
                 .show(player.parentActivity!!.supportFragmentManager, null)
         } else {
             playbackSpeedPopupMenu.show()
-            player.setSomePopupMenuVisible(true)
+            isSomePopupMenuVisible = true
         }
 
         player.manageControlsAfterOnClick(v)
@@ -114,7 +120,7 @@ class PlayerMenuController(
             Log.d(TAG, "onCaptionClicked() called")
         }
         captionPopupMenu.show()
-        player.setSomePopupMenuVisible(true)
+        isSomePopupMenuVisible = true
     }
 
     fun onAudioTrackClicked() {
@@ -122,7 +128,7 @@ class PlayerMenuController(
             Log.d(TAG, "onAudioTrackClicked() called")
         }
         audioTrackPopupMenu.show()
-        player.setSomePopupMenuVisible(true)
+        isSomePopupMenuVisible = true
     }
 
     fun onDisplayModeClicked() {
@@ -132,7 +138,7 @@ class PlayerMenuController(
         // rebuild on every open so the checkmark reflects the current resize mode / forced ratio
         buildDisplayModeMenu()
         displayModePopupMenu.show()
-        player.setSomePopupMenuVisible(true)
+        isSomePopupMenuVisible = true
     }
 
     //////////////////////////////////////////////////////////////////////////
@@ -422,7 +428,7 @@ class PlayerMenuController(
         if (MainActivity.DEBUG) {
             Log.d(TAG, "onDismiss() called with: menu = [$menu]")
         }
-        player.setSomePopupMenuVisible(false) //TODO check if this works
+        isSomePopupMenuVisible = false
         player.selectedVideoStream?.let {
             player.binding.qualityTextView.text = it.resolution
         }
@@ -437,7 +443,7 @@ class PlayerMenuController(
         playbackSpeedPopupMenu.dismiss()
         captionPopupMenu.dismiss()
         displayModePopupMenu.dismiss()
-        player.setSomePopupMenuVisible(false)
+        isSomePopupMenuVisible = false
     }
 
     //////////////////////////////////////////////////////////////////////////
