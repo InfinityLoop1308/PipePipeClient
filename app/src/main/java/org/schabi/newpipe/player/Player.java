@@ -281,10 +281,6 @@ public final class Player implements
 
     private PlayerMenuController menuController;
 
-    // Aspect ratio forced by the user, 0 means "auto" (use the video's own aspect ratio)
-    private float forcedAspectRatio;
-    private float videoNaturalAspectRatio;
-
     /*//////////////////////////////////////////////////////////////////////////
     // Popup player
     //////////////////////////////////////////////////////////////////////////*/
@@ -428,14 +424,13 @@ public final class Player implements
         binding = playerBinding;
         setupSubtitleView();
 
-        updateDisplayModeButtonText();
-
         binding.playbackSeekBar.getThumb()
                 .setColorFilter(new PorterDuffColorFilter(Color.RED, PorterDuff.Mode.SRC_IN));
         binding.playbackSeekBar.getProgressDrawable()
                 .setColorFilter(new PorterDuffColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY));
 
         menuController = new PlayerMenuController(this);
+        menuController.updateDisplayModeButtonText();
 
         binding.progressBarLoadingPanel.getIndeterminateDrawable()
                 .setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY));
@@ -3170,17 +3165,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
 
         // Zoom belongs to the current video, matching the transient behavior of the official app.
         resetPinchZoom();
-        if (PlayerHelper.isPinchToZoomEnabled(context)) {
-            forcedAspectRatio = 0.0f;
-            setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
-        }
-
-        // a forced aspect ratio is a per-video correction, don't carry it over to the next one;
-        // it temporarily forced the resize mode to Fit, so restore the persisted resize mode
-        if (forcedAspectRatio > 0) {
-            forcedAspectRatio = 0.0f;
-            setResizeMode(PlayerHelper.retrieveResizeModeFromPrefs(this));
-        }
+        menuController.resetDisplayModeForNewVideo();
 
         initThumbnail(info.getThumbnailUrl());
         registerStreamViewed();
@@ -4064,28 +4049,11 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     }
 
     void setResizeMode(@AspectRatioFrameLayout.ResizeMode final int resizeMode) {
-        binding.surfaceView.setResizeMode(resizeMode);
-        updateDisplayModeButtonText();
-    }
-
-    /**
-     * Updates the display-mode button label: the forced aspect ratio takes precedence over the
-     * resize mode, since selecting an aspect ratio is what the user sees applied.
-     */
-    void updateDisplayModeButtonText() {
-        binding.resizeTextView.setText(PlayerHelper.isPinchToZoomEnabled(context)
-                ? getContext().getString(R.string.resize_pinch)
-                : forcedAspectRatio > 0
-                ? PlayerHelper.aspectRatioNameOf(forcedAspectRatio)
-                : PlayerHelper.resizeTypeOf(context, binding.surfaceView.getResizeMode()));
+        menuController.setResizeMode(resizeMode);
     }
 
     public boolean isPinchToZoomEnabled() {
         return isFullscreen && PlayerHelper.isPinchToZoomEnabled(context);
-    }
-
-    void setForcedAspectRatio(final float aspectRatio) {
-        forcedAspectRatio = aspectRatio;
     }
 
     void resetPinchZoom() {
@@ -4095,11 +4063,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     }
 
     public void onPinchZoomStart(final float focusX, final float focusY) {
-        forcedAspectRatio = 0.0f;
-        if (videoNaturalAspectRatio > 0.0f) {
-            binding.surfaceView.setAspectRatio(videoNaturalAspectRatio);
-        }
-        setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+        menuController.onPinchZoomStart();
         binding.surfaceView.beginPinchGesture(
                 focusX - binding.surfaceView.getLeft(),
                 focusY - binding.surfaceView.getTop());
@@ -4138,9 +4102,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                     + "pixelWidthHeightRatio = [" + videoSize.pixelWidthHeightRatio + "]");
         }
 
-        videoNaturalAspectRatio = ((float) videoSize.width) / videoSize.height;
-        binding.surfaceView.setAspectRatio(forcedAspectRatio > 0
-                ? forcedAspectRatio : videoNaturalAspectRatio);
+        menuController.onVideoSizeChanged(videoSize.width, videoSize.height);
         isVerticalVideo = videoSize.width < videoSize.height;
 
         if (isFullscreen) {
@@ -4658,14 +4620,6 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
 
     int getSelectedStreamIndex() {
         return selectedStreamIndex;
-    }
-
-    float getForcedAspectRatio() {
-        return forcedAspectRatio;
-    }
-
-    float getVideoNaturalAspectRatio() {
-        return videoNaturalAspectRatio;
     }
 
     @NonNull

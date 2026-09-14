@@ -25,9 +25,10 @@ import java.util.Locale
  *
  * All the logic that builds those menus and reacts to their items stays here, so that [Player]
  * only exposes a few package-private accessors for the playback state and view primitives it
- * actually needs. It also owns whether a popup menu is currently visible, so that the gesture
- * listener and [Player] can query it without [Player] holding that flag. This is a view/event
- * helper: it does not hold playback state itself.
+ * actually needs. It also owns whether a popup menu is currently visible and the display-mode
+ * state (the forced and natural aspect ratios), so that the gesture listener, [Player] and
+ * [PopupWindowController] can query or apply it without [Player] holding that state. This is a
+ * view/event helper: it does not hold playback state itself.
  */
 class PlayerMenuController(
     private val player: Player
@@ -59,6 +60,14 @@ class PlayerMenuController(
 
     /** Whether any of the popup menus is currently visible. */
     var isSomePopupMenuVisible = false
+        private set
+
+    /** Aspect ratio forced by the user, 0 means "auto" (use the video's own aspect ratio). */
+    var forcedAspectRatio = 0.0f
+        private set
+
+    /** The video's own aspect ratio, 0 until ExoPlayer reports the first video size. */
+    var videoNaturalAspectRatio = 0.0f
         private set
 
     init {
@@ -307,7 +316,7 @@ class PlayerMenuController(
 
         // a forced aspect ratio takes precedence: when active, no resize mode is the "current" one
         val pinchActive = PlayerHelper.isPinchToZoomEnabled(player.context)
-        val ratioActive = player.getForcedAspectRatio() > 0 && !pinchActive
+        val ratioActive = forcedAspectRatio > 0 && !pinchActive
         val currentResizeMode = player.binding.surfaceView.resizeMode
         var activeItem: MenuItem? = null
 
@@ -354,7 +363,7 @@ class PlayerMenuController(
                 applyForcedAspectRatio(ratio)
                 true
             }
-            if (ratioActive && Math.abs(player.getForcedAspectRatio() - ratio) < 0.001f) {
+            if (ratioActive && Math.abs(forcedAspectRatio - ratio) < 0.001f) {
                 activeItem = ratioItem
             }
             order++
@@ -447,33 +456,87 @@ class PlayerMenuController(
     }
 
     //////////////////////////////////////////////////////////////////////////
-    // Display mode actions
+    // Display mode state and actions
     //////////////////////////////////////////////////////////////////////////
+
+    fun setResizeMode(resizeMode: @AspectRatioFrameLayout.ResizeMode Int) {
+        player.binding.surfaceView.setResizeMode(resizeMode)
+        updateDisplayModeButtonText()
+    }
+
+    /**
+     * Updates the display-mode button label: the forced aspect ratio takes precedence over the
+     * resize mode, since selecting an aspect ratio is what the user sees applied.
+     */
+    fun updateDisplayModeButtonText() {
+        val text = when {
+            PlayerHelper.isPinchToZoomEnabled(player.context) ->
+                player.context.getString(R.string.resize_pinch)
+            forcedAspectRatio > 0 ->
+                PlayerHelper.aspectRatioNameOf(forcedAspectRatio)
+            else ->
+                PlayerHelper.resizeTypeOf(player.context, player.binding.surfaceView.resizeMode)
+        }
+        player.binding.resizeTextView.setText(text)
+    }
+
+    /**
+     * Resets the display-mode state for a newly loaded video. A pinch zoom or a forced aspect
+     * ratio is a per-video adjustment and must not leak into the next stream; a forced ratio also
+     * temporarily forced the resize mode to Fit, so the persisted resize mode is restored.
+     */
+    fun resetDisplayModeForNewVideo() {
+        if (PlayerHelper.isPinchToZoomEnabled(player.context)) {
+            forcedAspectRatio = 0.0f
+            setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT)
+        }
+        if (forcedAspectRatio > 0f) {
+            forcedAspectRatio = 0.0f
+            setResizeMode(PlayerHelper.retrieveResizeModeFromPrefs(player))
+        }
+    }
+
+    /** The video's own ratio supersedes a forced one when a pinch gesture starts. */
+    fun onPinchZoomStart() {
+        forcedAspectRatio = 0.0f
+        if (videoNaturalAspectRatio > 0.0f) {
+            player.binding.surfaceView.setAspectRatio(videoNaturalAspectRatio)
+        }
+        setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT)
+    }
+
+    /** Records the video's own aspect ratio and re-applies the effective one to the surface. */
+    fun onVideoSizeChanged(width: Int, height: Int) {
+        videoNaturalAspectRatio = width.toFloat() / height
+        player.binding.surfaceView.setAspectRatio(
+            if (forcedAspectRatio > 0f) forcedAspectRatio else videoNaturalAspectRatio
+        )
+    }
 
     private fun onResizeModeSelected(resizeMode: Int) {
         PlayerHelper.setPinchToZoomEnabled(player.context, false)
         player.resetPinchZoom()
         // a resize mode supersedes any forced aspect ratio, which would otherwise have no effect
-        player.setForcedAspectRatio(0.0f)
-        if (player.getVideoNaturalAspectRatio() > 0) {
-            player.binding.surfaceView.setAspectRatio(player.getVideoNaturalAspectRatio())
+        forcedAspectRatio = 0.0f
+        if (videoNaturalAspectRatio > 0) {
+            player.binding.surfaceView.setAspectRatio(videoNaturalAspectRatio)
         }
-        player.setResizeMode(resizeMode)
+        setResizeMode(resizeMode)
         PlayerHelper.saveResizeMode(player, resizeMode)
     }
 
     private fun applyForcedAspectRatio(aspectRatio: Float) {
         PlayerHelper.setPinchToZoomEnabled(player.context, false)
         player.resetPinchZoom()
-        player.setForcedAspectRatio(aspectRatio)
+        forcedAspectRatio = aspectRatio
         // a forced aspect ratio is only meaningful with Fit; this resize mode change is per-video
         // and is intentionally not persisted, so the saved resize mode is restored on the next video
-        player.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT)
+        setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT)
 
         val effectiveRatio = if (aspectRatio > 0) {
             aspectRatio
         } else {
-            player.getVideoNaturalAspectRatio()
+            videoNaturalAspectRatio
         }
         if (effectiveRatio > 0) {
             player.binding.surfaceView.setAspectRatio(effectiveRatio)
@@ -481,14 +544,14 @@ class PlayerMenuController(
     }
 
     private fun onPinchModeSelected() {
-        player.setForcedAspectRatio(0.0f)
+        forcedAspectRatio = 0.0f
         PlayerHelper.setPinchToZoomEnabled(player.context, true)
-        if (player.getVideoNaturalAspectRatio() > 0.0f) {
-            player.binding.surfaceView.setAspectRatio(player.getVideoNaturalAspectRatio())
+        if (videoNaturalAspectRatio > 0.0f) {
+            player.binding.surfaceView.setAspectRatio(videoNaturalAspectRatio)
         }
-        player.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT)
+        setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT)
         player.resetPinchZoom()
-        player.updateDisplayModeButtonText()
+        updateDisplayModeButtonText()
         Toast.makeText(player.context, R.string.pinch_to_zoom_selected, Toast.LENGTH_SHORT).show()
     }
 
@@ -497,8 +560,8 @@ class PlayerMenuController(
         val input = EditText(activity)
         input.setHint(R.string.aspect_ratio_custom_hint)
         input.inputType = InputType.TYPE_CLASS_TEXT
-        if (player.getForcedAspectRatio() > 0) {
-            input.setText(PlayerHelper.aspectRatioNameOf(player.getForcedAspectRatio()))
+        if (forcedAspectRatio > 0) {
+            input.setText(PlayerHelper.aspectRatioNameOf(forcedAspectRatio))
         }
         AlertDialog.Builder(activity)
             .setTitle(R.string.aspect_ratio_custom_title)
