@@ -129,9 +129,8 @@ import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemBuilder;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemHolder;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemTouchCallback;
-import org.schabi.newpipe.player.resolver.AudioPlaybackResolver;
-import org.schabi.newpipe.player.resolver.QualityResolver;
-import org.schabi.newpipe.player.resolver.VideoPlaybackResolver;
+import org.schabi.newpipe.player.resolver.PlayerQualityResolver;
+import org.schabi.newpipe.player.resolver.SourceResolver;
 import org.schabi.newpipe.player.resolver.VideoPlaybackResolver.SourceType;
 import org.schabi.newpipe.player.seekbarpreview.SeekbarPreviewThumbnailHelper;
 import org.schabi.newpipe.player.seekbarpreview.SeekbarPreviewThumbnailHolder;
@@ -225,8 +224,7 @@ public final class Player implements
     @NonNull private final LoadController loadController;
     @NonNull private final DefaultRenderersFactory renderFactory;
 
-    @NonNull private final VideoPlaybackResolver videoResolver;
-    @NonNull private final AudioPlaybackResolver audioResolver;
+    @NonNull private final SourceResolver sourceResolver;
 
     public final PlayerServiceInterface service; //TODO try to remove and replace everything with context
 
@@ -393,8 +391,8 @@ public final class Player implements
         }
         renderFactory.setEnableDecoderFallback(true);
 
-        videoResolver = new VideoPlaybackResolver(context, dataSource, getQualityResolver());
-        audioResolver = new AudioPlaybackResolver(context, dataSource);
+        sourceResolver = new SourceResolver(context, dataSource,
+                new PlayerQualityResolver(context, this::videoPlayerSelected));
 
         popupWindowController = new PopupWindowController(this);
         longPressSpeedingFactor = Float.parseFloat(prefs.getString(context.getString(R.string.speeding_playback_key), "3"));
@@ -402,29 +400,6 @@ public final class Player implements
         isFullscreenGestureEnabled = PlayerHelper.isFullscreenGestureEnabled(context);
     }
 
-    private QualityResolver getQualityResolver() {
-        return new QualityResolver() {
-            @Override
-            public int getDefaultResolutionIndex(final List<VideoStream> sortedVideos) {
-                return videoPlayerSelected()
-                        ? ListHelper.getDefaultResolutionIndex(context, sortedVideos)
-                        : ListHelper.getPopupDefaultResolutionIndex(context, sortedVideos);
-            }
-
-            @Override
-            public int getOverrideResolutionIndex(final List<VideoStream> sortedVideos,
-                                                  final String selectedResolution,
-                                                  @Nullable final String selectedCodec) {
-                return ListHelper.getResolutionAndCodecIndex(
-                        selectedResolution, selectedCodec, sortedVideos);
-            }
-
-            @Override
-            public int getCurrentAudioQualityIndex(List<AudioStream> audioStreams) {
-                return ListHelper.getDefaultAudioFormat(context, audioStreams);
-            }
-        };
-    }
     //endregion
 
 
@@ -3677,40 +3652,11 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     @Override // own playback listener
     @Nullable
     public MediaSource sourceOf(final PlayQueueItem item, final StreamInfo info) {
-        PlaybackStartupTrace.mark(startupTraceId, "resolver_started");
         final long initialPositionMs = shouldSeek()
                 && item.getRecoveryPosition() != PlayQueueItem.RECOVERY_UNSET
                 ? item.getRecoveryPosition() : 0;
-        final MediaSource resolved;
-        if (audioPlayerSelected()) {
-            resolved = Optional.ofNullable(audioResolver.resolve(info))
-                    .orElse(videoResolver.resolve(info, initialPositionMs));
-            PlaybackStartupTrace.mark(startupTraceId, "resolver_finished");
-            return resolved;
-        }
-
-        if (isAudioOnly && videoResolver.getStreamSourceType().orElse(
-                SourceType.VIDEO_WITH_AUDIO_OR_AUDIO_ONLY)
-                == SourceType.VIDEO_WITH_AUDIO_OR_AUDIO_ONLY) {
-            // If the current info has only video streams with audio and if the stream is played as
-            // audio, we need to use the audio resolver, otherwise the video stream will be played
-            // in background.
-            resolved = Optional.ofNullable(audioResolver.resolve(info))
-                    .orElse(videoResolver.resolve(info, initialPositionMs));
-            PlaybackStartupTrace.mark(startupTraceId, "resolver_finished");
-            return resolved;
-        }
-
-        // Even if the stream is played in background, we need to use the video resolver if the
-        // info played is separated video-only and audio-only streams; otherwise, if the audio
-        // resolver was called when the app was in background, the app will only stream audio when
-        // the user come back to the app and will never fetch the video stream.
-        // Note that the video is not fetched when the app is in background because the video
-        // renderer is fully disabled (see useVideoSource method), except for HLS streams
-        // (see https://github.com/google/ExoPlayer/issues/9282).
-        resolved = videoResolver.resolve(info, initialPositionMs);
-        PlaybackStartupTrace.mark(startupTraceId, "resolver_finished");
-        return resolved;
+        return sourceResolver.resolve(playerType, isAudioOnly, info, initialPositionMs,
+                startupTraceId);
     }
 
     public void disablePreloadingOfCurrentTrack() {
@@ -3816,7 +3762,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     //region Popup menus
 
     void setSelectedStream(@NonNull final VideoStream stream) {
-        videoResolver.setSelectedStream(stream);
+        sourceResolver.setSelectedStream(stream);
     }
 
     void closeAllPopupMenus() {
@@ -3914,7 +3860,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
 
         menuController.buildAudioTrackMenu(audioStreams);
 
-        final String currentAudioTrack = videoResolver.getAudioTrack();
+        final String currentAudioTrack = sourceResolver.getAudioTrack();
         final int selectedIndex;
         if (currentAudioTrack != null) {
             int idx = -1;
@@ -3943,8 +3889,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     void setAudioTrack(@Nullable final String audioTrackId) {
         saveStreamProgressState();
         setRecovery();
-        videoResolver.setAudioTrack(audioTrackId);
-        audioResolver.setAudioTrack(audioTrackId);
+        sourceResolver.setAudioTrack(audioTrackId);
         if (isCurrentStreamSabr() && !exoPlayerIsNull()) {
             final DefaultTrackSelector.Parameters.Builder parameters =
                     trackSelector.buildUponParameters();
@@ -4534,7 +4479,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
 
         // In the case we don't know the source type, fallback to the one with video with audio or
         // audio-only source.
-        final SourceType sourceType = videoResolver.getStreamSourceType().orElse(
+        final SourceType sourceType = sourceResolver.getStreamSourceType().orElse(
                 SourceType.VIDEO_WITH_AUDIO_OR_AUDIO_ONLY);
 
         // A SABR source already exposes both audio and video, so background / foreground video
