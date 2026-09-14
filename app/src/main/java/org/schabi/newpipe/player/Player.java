@@ -43,15 +43,12 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
-import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
@@ -64,13 +61,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.AppCompatImageButton;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GestureDetectorCompat;
-import androidx.core.view.MenuCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentManager;
@@ -131,8 +125,6 @@ import org.schabi.newpipe.player.helper.LoadController;
 import org.schabi.newpipe.player.helper.MediaSessionManager;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.player.helper.PlayerHelper;
-import org.schabi.newpipe.player.listeners.view.PlaybackSpeedClickListener;
-import org.schabi.newpipe.player.listeners.view.QualityClickListener;
 import org.schabi.newpipe.player.mediaitem.MediaItemTag;
 import org.schabi.newpipe.player.mediasession.PlayerServiceInterface;
 import org.schabi.newpipe.player.playback.MediaSourceManager;
@@ -180,8 +172,6 @@ public final class Player implements
         Listener,
         SeekBar.OnSeekBarChangeListener,
         View.OnClickListener,
-        PopupMenu.OnMenuItemClickListener,
-        PopupMenu.OnDismissListener,
         View.OnLongClickListener {
     public static final boolean DEBUG = MainActivity.DEBUG;
     public static final String TAG = Player.class.getSimpleName();
@@ -206,8 +196,6 @@ public final class Player implements
     /*//////////////////////////////////////////////////////////////////////////
     // Other constants
     //////////////////////////////////////////////////////////////////////////*/
-
-    private static final float[] PLAYBACK_SPEEDS = {0.1f, 0.3f, 0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 1.75f, 2.0f, 2.25f, 2.5f, 2.75f, 3.0f, 5.0f, 10.0f};
 
     private static final int RENDERER_UNAVAILABLE = -1;
     // Cooldown between automatic recoveries from a surface-released decoder-init failure, so a
@@ -303,19 +291,8 @@ public final class Player implements
     // Popup menus ("popup" means that they pop up, not that they belong to the popup player)
     //////////////////////////////////////////////////////////////////////////*/
 
-    private static final int POPUP_MENU_ID_QUALITY = 69;
-    private static final int POPUP_MENU_ID_PLAYBACK_SPEED = 79;
-    private static final int POPUP_MENU_ID_CAPTION = 89;
-    private static final int POPUP_MENU_ID_AUDIO_TRACK = 99;
-    private static final int POPUP_MENU_ID_DISPLAY_MODE = 109;
-    private static final int POPUP_MENU_ID_ASPECT_RATIO = 119;
-
     private boolean isSomePopupMenuVisible = false;
-    private PopupMenu qualityPopupMenu;
-    private PopupMenu playbackSpeedPopupMenu;
-    private PopupMenu captionPopupMenu;
-    private PopupMenu audioTrackPopupMenu;
-    private PopupMenu displayModePopupMenu;
+    private PlayerMenuController menuController;
 
     // Aspect ratio forced by the user, 0 means "auto" (use the video's own aspect ratio)
     private float forcedAspectRatio;
@@ -510,14 +487,7 @@ public final class Player implements
         binding.playbackSeekBar.getProgressDrawable()
                 .setColorFilter(new PorterDuffColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY));
 
-        final ContextThemeWrapper themeWrapper = new ContextThemeWrapper(getContext(),
-                R.style.DarkPopupMenu);
-
-        qualityPopupMenu = new PopupMenu(themeWrapper, binding.qualityTextView);
-        playbackSpeedPopupMenu = new PopupMenu(context, binding.playbackSpeed);
-        captionPopupMenu = new PopupMenu(themeWrapper, binding.captionTextView);
-        audioTrackPopupMenu = new PopupMenu(themeWrapper, binding.audioTrackTextView);
-        displayModePopupMenu = new PopupMenu(themeWrapper, binding.resizeTextView);
+        menuController = new PlayerMenuController(this);
 
         binding.progressBarLoadingPanel.getIndeterminateDrawable()
                 .setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY));
@@ -574,10 +544,9 @@ public final class Player implements
     }
 
     private void initListeners() {
-        binding.qualityTextView.setOnClickListener(
-                new QualityClickListener(this, qualityPopupMenu));
+        binding.qualityTextView.setOnClickListener(v -> menuController.onQualityClicked(v));
         binding.playbackSpeed.setOnClickListener(
-                new PlaybackSpeedClickListener(this, playbackSpeedPopupMenu));
+                v -> menuController.onPlaybackSpeedClicked(v));
 
         binding.playbackSeekBar.setOnSeekBarChangeListener(this);
         binding.captionTextView.setOnClickListener(this);
@@ -1044,7 +1013,7 @@ public final class Player implements
         playQueue.setRecovery(queuePos, windowPos);
     }
 
-    private void reloadPlayQueueManager() {
+    void reloadPlayQueueManager() {
         if (playQueueManager != null) {
             playQueueManager.dispose();
         }
@@ -2259,7 +2228,7 @@ public final class Player implements
         }
     }
 
-    private void hideSystemUIIfNeeded() {
+    void hideSystemUIIfNeeded() {
         if (fragmentListener != null) {
             fragmentListener.hideSystemUiIfNeeded();
         }
@@ -4131,7 +4100,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                 availableStreams = currentMetadata.getMaybeQuality().get().getSortedVideoStreams();
                 selectedStreamIndex =
                         currentMetadata.getMaybeQuality().get().getSelectedVideoStreamIndex();
-                buildQualityMenu();
+                menuController.buildQualityMenu();
 
                 binding.qualityTextView.setVisibility(View.VISIBLE);
                 binding.surfaceView.setVisibility(View.VISIBLE);
@@ -4141,7 +4110,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                 break;
         }
 
-        buildPlaybackSpeedMenu();
+        menuController.buildPlaybackSpeedMenu();
         binding.playbackSpeed.setVisibility(View.VISIBLE);
     }
 
@@ -4175,200 +4144,18 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
 
 
     /*//////////////////////////////////////////////////////////////////////////
-    // Popup menus ("popup" means that they pop up, not that they belong to the popup player)
+    // Popup menus
     //////////////////////////////////////////////////////////////////////////*/
-    //region Popup menus ("popup" means that they pop up, not that they belong to the popup player)
+    //region Popup menus
 
-    private void buildQualityMenu() {
-        if (qualityPopupMenu == null) {
-            return;
-        }
-        qualityPopupMenu.getMenu().removeGroup(POPUP_MENU_ID_QUALITY);
-
-        for (int i = 0; i < availableStreams.size(); i++) {
-            final VideoStream videoStream = availableStreams.get(i);
-            qualityPopupMenu.getMenu().add(POPUP_MENU_ID_QUALITY, i, Menu.NONE, videoStream.getCodec().toUpperCase().split("\\.")[0] + " " + videoStream.resolution);
-        }
-        if (getSelectedVideoStream() != null) {
-            binding.qualityTextView.setText(getSelectedVideoStream().resolution);
-        }
-        qualityPopupMenu.setOnMenuItemClickListener(this);
-        qualityPopupMenu.setOnDismissListener(this);
-    }
-
-    private void buildPlaybackSpeedMenu() {
-        if (playbackSpeedPopupMenu == null) {
-            return;
-        }
-        playbackSpeedPopupMenu.getMenu().removeGroup(POPUP_MENU_ID_PLAYBACK_SPEED);
-
-        for (int i = 0; i < PLAYBACK_SPEEDS.length; i++) {
-            playbackSpeedPopupMenu.getMenu().add(POPUP_MENU_ID_PLAYBACK_SPEED, i, Menu.NONE,
-                    formatSpeed(PLAYBACK_SPEEDS[i]));
-        }
-        binding.playbackSpeed.setText(formatSpeed(getPlaybackSpeed()));
-        playbackSpeedPopupMenu.setOnMenuItemClickListener(this);
-        playbackSpeedPopupMenu.setOnDismissListener(this);
-    }
-
-    private void buildCaptionMenu(@NonNull final List<String> availableLanguages) {
-        if (captionPopupMenu == null) {
-            return;
-        }
-        captionPopupMenu.getMenu().removeGroup(POPUP_MENU_ID_CAPTION);
-        captionPopupMenu.setOnDismissListener(this);
-
-        // Add option for turning off caption
-        final MenuItem captionOffItem = captionPopupMenu.getMenu().add(POPUP_MENU_ID_CAPTION,
-                0, Menu.NONE, R.string.caption_none);
-        captionOffItem.setOnMenuItemClickListener(menuItem -> {
-            final int textRendererIndex = getCaptionRendererIndex();
-            if (textRendererIndex != RENDERER_UNAVAILABLE) {
-                trackSelector.setParameters(trackSelector.buildUponParameters()
-                        .setRendererDisabled(textRendererIndex, true));
-            }
-            prefs.edit().remove(context.getString(R.string.caption_user_set_key)).apply();
-            return true;
-        });
-
-        // Add all available captions
-        for (int i = 0; i < availableLanguages.size(); i++) {
-            final String captionLanguage = availableLanguages.get(i);
-            final MenuItem captionItem = captionPopupMenu.getMenu().add(POPUP_MENU_ID_CAPTION,
-                    i + 1, Menu.NONE, captionLanguage);
-            captionItem.setOnMenuItemClickListener(menuItem -> {
-                final int textRendererIndex = getCaptionRendererIndex();
-                if (textRendererIndex != RENDERER_UNAVAILABLE) {
-                    // DefaultTrackSelector will select for text tracks in the following order.
-                    // When multiple tracks share the same rank, a random track will be chosen.
-                    // 1. ANY track exactly matching preferred language name
-                    // 2. ANY track exactly matching preferred language stem
-                    // 3. ROLE_FLAG_CAPTION track matching preferred language stem
-                    // 4. ROLE_FLAG_DESCRIBES_MUSIC_AND_SOUND track matching preferred language stem
-                    // This means if a caption track of preferred language is not available,
-                    // then an auto-generated track of that language will be chosen automatically.
-                    trackSelector.setParameters(trackSelector.buildUponParameters()
-                            .setPreferredTextLanguages(captionLanguage,
-                                    PlayerHelper.captionLanguageStemOf(captionLanguage))
-                            .setPreferredTextRoleFlags(C.ROLE_FLAG_CAPTION)
-                            .setRendererDisabled(textRendererIndex, false));
-                    prefs.edit().putString(context.getString(R.string.caption_user_set_key),
-                            captionLanguage).apply();
-                }
-                return true;
-            });
-        }
-
-        // apply caption language from previous user preference
-        final int textRendererIndex = getCaptionRendererIndex();
-        if (textRendererIndex == RENDERER_UNAVAILABLE) {
-            return;
-        }
-
-        // If user prefers to show no caption, then disable the renderer.
-        // Otherwise, DefaultTrackSelector may automatically find an available caption
-        // and display that.
-        final String userPreferredLanguage =
-                prefs.getString(context.getString(R.string.caption_user_set_key), null);
-        if (userPreferredLanguage == null) {
-            trackSelector.setParameters(trackSelector.buildUponParameters()
-                    .setRendererDisabled(textRendererIndex, true));
-            return;
-        }
-
-        // Only set preferred language if it does not match the user preference,
-        // otherwise there might be an infinite cycle at onTextTracksChanged.
-        final List<String> selectedPreferredLanguages =
-                trackSelector.getParameters().preferredTextLanguages;
-        if (!selectedPreferredLanguages.contains(userPreferredLanguage)) {
-            trackSelector.setParameters(trackSelector.buildUponParameters()
-                    .setPreferredTextLanguages(userPreferredLanguage,
-                            PlayerHelper.captionLanguageStemOf(userPreferredLanguage))
-                    .setPreferredTextRoleFlags(C.ROLE_FLAG_CAPTION)
-                    .setRendererDisabled(textRendererIndex, false));
-        }
-    }
-
-    /**
-     * Called when an item of the quality selector or the playback speed selector is selected.
-     */
-    @Override
-    public boolean onMenuItemClick(@NonNull final MenuItem menuItem) {
-        if (DEBUG) {
-            Log.d(TAG, "onMenuItemClick() called with: "
-                    + "menuItem = [" + menuItem + "], "
-                    + "menuItem.getItemId = [" + menuItem.getItemId() + "]");
-        }
-
-        if (menuItem.getGroupId() == POPUP_MENU_ID_QUALITY) {
-            final int menuItemIndex = menuItem.getItemId();
-            if (selectedStreamIndex == menuItemIndex || availableStreams == null
-                    || availableStreams.size() <= menuItemIndex) {
-                return true;
-            }
-
-            saveStreamProgressState(); //TODO added, check if good
-            setRecovery();
-            setSelectedStream(availableStreams.get(menuItemIndex));
-            reloadPlayQueueManager();
-
-            binding.qualityTextView.setText(menuItem.getTitle());
-            return true;
-        } else if (menuItem.getGroupId() == POPUP_MENU_ID_PLAYBACK_SPEED) {
-            final int speedIndex = menuItem.getItemId();
-            final float speed = PLAYBACK_SPEEDS[speedIndex];
-
-            setPlaybackSpeed(speed);
-            binding.playbackSpeed.setText(formatSpeed(speed));
-        }
-
-        return false;
-    }
-
-    /**
-     * Called when some popup menu is dismissed.
-     */
-    @Override
-    public void onDismiss(@Nullable final PopupMenu menu) {
-        if (DEBUG) {
-            Log.d(TAG, "onDismiss() called with: menu = [" + menu + "]");
-        }
-        isSomePopupMenuVisible = false; //TODO check if this works
-        if (getSelectedVideoStream() != null) {
-            binding.qualityTextView.setText(getSelectedVideoStream().resolution);
-        }
-        if (isPlaying()) {
-            hideControls(DEFAULT_CONTROLS_DURATION, 0);
-            hideSystemUIIfNeeded();
-        }
-    }
-
-    private void onCaptionClicked() {
-        if (DEBUG) {
-            Log.d(TAG, "onCaptionClicked() called");
-        }
-        captionPopupMenu.show();
-        isSomePopupMenuVisible = true;
-    }
-
-    private void setSelectedStream(@NonNull final VideoStream stream) {
+    void setSelectedStream(@NonNull final VideoStream stream) {
         videoResolver.setSelectedStream(stream);
     }
 
     private void closeAllPopupMenus() {
-        if (qualityPopupMenu != null) {
-            qualityPopupMenu.dismiss();
+        if (menuController != null) {
+            menuController.closeAllPopupMenus();
         }
-        if (playbackSpeedPopupMenu != null) {
-            playbackSpeedPopupMenu.dismiss();
-        }
-        if (captionPopupMenu != null) {
-            captionPopupMenu.dismiss();
-        }
-        if (displayModePopupMenu != null) {
-            displayModePopupMenu.dismiss();
-        }
-        isSomePopupMenuVisible = false;
     }
     //endregion
 
@@ -4427,7 +4214,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                 .findFirst();
 
         // Build UI
-        buildCaptionMenu(availableLanguages);
+        menuController.buildCaptionMenu(availableLanguages);
         if (trackSelector.getParameters().getRendererDisabled(getCaptionRendererIndex())
                 || !selectedTracks.isPresent()) {
             binding.captionTextView.setText(R.string.caption_none);
@@ -4458,7 +4245,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
             return;
         }
 
-        buildAudioTrackMenu(audioStreams);
+        menuController.buildAudioTrackMenu(audioStreams);
 
         final String currentAudioTrack = videoResolver.getAudioTrack();
         final int selectedIndex;
@@ -4486,29 +4273,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         binding.audioTrackTextView.setVisibility(View.VISIBLE);
     }
 
-    private void buildAudioTrackMenu(@NonNull final List<AudioStream> audioStreams) {
-        if (audioTrackPopupMenu == null) {
-            return;
-        }
-        audioTrackPopupMenu.getMenu().removeGroup(POPUP_MENU_ID_AUDIO_TRACK);
-        audioTrackPopupMenu.setOnDismissListener(this);
-
-        for (int i = 0; i < audioStreams.size(); i++) {
-            final AudioStream audioStream = audioStreams.get(i);
-            final String trackName = audioStream.getAudioTrackName() != null
-                    ? audioStream.getAudioTrackName()
-                    : (audioStream.getAudioLocale() != null ? audioStream.getAudioLocale() : "Unknown");
-            final MenuItem audioTrackItem = audioTrackPopupMenu.getMenu().add(
-                    POPUP_MENU_ID_AUDIO_TRACK, i, Menu.NONE, trackName);
-            final String trackId = audioStream.getAudioTrackId();
-            audioTrackItem.setOnMenuItemClickListener(menuItem -> {
-                setAudioTrack(trackId);
-                return true;
-            });
-        }
-    }
-
-    private void setAudioTrack(@Nullable final String audioTrackId) {
+    void setAudioTrack(@Nullable final String audioTrackId) {
         saveStreamProgressState();
         setRecovery();
         videoResolver.setAudioTrack(audioTrackId);
@@ -4528,15 +4293,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         reloadPlayQueueManager();
     }
 
-    private void onAudioTrackClicked() {
-        if (DEBUG) {
-            Log.d(TAG, "onAudioTrackClicked() called");
-        }
-        audioTrackPopupMenu.show();
-        isSomePopupMenuVisible = true;
-    }
-
-    private int getCaptionRendererIndex() {
+    int getCaptionRendererIndex() {
         if (exoPlayerIsNull()) {
             return RENDERER_UNAVAILABLE;
         }
@@ -4564,11 +4321,11 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
             Log.d(TAG, "onClick() called with: v = [" + v + "]");
         }
         if (v.getId() == binding.resizeTextView.getId()) {
-            onDisplayModeClicked();
+            menuController.onDisplayModeClicked();
         } else if (v.getId() == binding.captionTextView.getId()) {
-            onCaptionClicked();
+            menuController.onCaptionClicked();
         } else if (v.getId() == binding.audioTrackTextView.getId()) {
-            onAudioTrackClicked();
+            menuController.onAudioTrackClicked();
         } else if (v.getId() == binding.playbackLiveSync.getId()) {
             seekToDefault();
         } else if (v.getId() == binding.playPauseButton.getId()) {
@@ -4823,7 +4580,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                 : R.drawable.ic_fullscreen));
     }
 
-    private void setResizeMode(@AspectRatioFrameLayout.ResizeMode final int resizeMode) {
+    void setResizeMode(@AspectRatioFrameLayout.ResizeMode final int resizeMode) {
         binding.surfaceView.setResizeMode(resizeMode);
         updateDisplayModeButtonText();
     }
@@ -4832,7 +4589,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
      * Updates the display-mode button label: the forced aspect ratio takes precedence over the
      * resize mode, since selecting an aspect ratio is what the user sees applied.
      */
-    private void updateDisplayModeButtonText() {
+    void updateDisplayModeButtonText() {
         binding.resizeTextView.setText(PlayerHelper.isPinchToZoomEnabled(context)
                 ? getContext().getString(R.string.resize_pinch)
                 : forcedAspectRatio > 0
@@ -4840,144 +4597,15 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                 : PlayerHelper.resizeTypeOf(context, binding.surfaceView.getResizeMode()));
     }
 
-    void onDisplayModeClicked() {
-        if (DEBUG) {
-            Log.d(TAG, "onDisplayModeClicked() called");
-        }
-        if (displayModePopupMenu == null) {
-            return;
-        }
-        // rebuild on every open so the checkmark reflects the current resize mode / forced ratio
-        buildDisplayModeMenu();
-        displayModePopupMenu.show();
-        isSomePopupMenuVisible = true;
-    }
-
-    /**
-     * Builds the single display-mode menu that combines the resize modes (Fit / Fill / Zoom) with
-     * the forced aspect ratios (1:1 / 4:3 / ... / Custom). Picking a resize mode clears any forced
-     * aspect ratio; picking an aspect ratio applies it with the resize mode set to Fit.
-     */
-    private void buildDisplayModeMenu() {
-        if (displayModePopupMenu == null) {
-            return;
-        }
-        final Menu menu = displayModePopupMenu.getMenu();
-        menu.removeGroup(POPUP_MENU_ID_DISPLAY_MODE);
-        menu.removeGroup(POPUP_MENU_ID_ASPECT_RATIO);
-        // draw a divider between the resize-mode group and the aspect-ratio group
-        MenuCompat.setGroupDividerEnabled(menu, true);
-        displayModePopupMenu.setOnDismissListener(this);
-
-        // a forced aspect ratio takes precedence: when active, no resize mode is the "current" one
-        final boolean pinchActive = PlayerHelper.isPinchToZoomEnabled(context);
-        final boolean ratioActive = forcedAspectRatio > 0 && !pinchActive;
-        final int currentResizeMode = binding.surfaceView.getResizeMode();
-        MenuItem activeItem = null;
-
-        int order = 0;
-        for (final int resizeMode : new int[]{
-                AspectRatioFrameLayout.RESIZE_MODE_FIT,
-                AspectRatioFrameLayout.RESIZE_MODE_FILL,
-                AspectRatioFrameLayout.RESIZE_MODE_ZOOM}) {
-            final MenuItem resizeItem = menu.add(POPUP_MENU_ID_DISPLAY_MODE, order, order,
-                    PlayerHelper.resizeTypeOf(context, resizeMode));
-            resizeItem.setOnMenuItemClickListener(menuItem -> {
-                onResizeModeSelected(resizeMode);
-                return true;
-            });
-            if (!ratioActive && !pinchActive && resizeMode == currentResizeMode) {
-                activeItem = resizeItem;
-            }
-            order++;
-        }
-
-        final MenuItem pinchItem = menu.add(POPUP_MENU_ID_DISPLAY_MODE, order, order,
-                R.string.resize_pinch);
-        pinchItem.setOnMenuItemClickListener(menuItem -> {
-            onPinchModeSelected();
-            return true;
-        });
-        if (pinchActive) {
-            activeItem = pinchItem;
-        }
-        order++;
-
-        for (int i = 0; i < PlayerHelper.ASPECT_RATIO_VALUES.length; i++) {
-            final float ratio = PlayerHelper.ASPECT_RATIO_VALUES[i];
-            final MenuItem ratioItem = menu.add(POPUP_MENU_ID_ASPECT_RATIO, order, order,
-                    PlayerHelper.ASPECT_RATIO_LABELS[i]);
-            ratioItem.setOnMenuItemClickListener(menuItem -> {
-                setForcedAspectRatio(ratio);
-                return true;
-            });
-            if (ratioActive && Math.abs(forcedAspectRatio - ratio) < 0.001f) {
-                activeItem = ratioItem;
-            }
-            order++;
-        }
-
-        final MenuItem customItem = menu.add(POPUP_MENU_ID_ASPECT_RATIO, order, order,
-                R.string.aspect_ratio_custom);
-        customItem.setOnMenuItemClickListener(menuItem -> {
-            openCustomAspectRatioDialog();
-            return true;
-        });
-        // a forced ratio that matches none of the presets is a custom value
-        if (ratioActive && activeItem == null) {
-            activeItem = customItem;
-        }
-
-        menu.setGroupCheckable(POPUP_MENU_ID_DISPLAY_MODE, true, true);
-        menu.setGroupCheckable(POPUP_MENU_ID_ASPECT_RATIO, true, true);
-        if (activeItem != null) {
-            activeItem.setChecked(true);
-        }
-    }
-
-    private void onResizeModeSelected(@AspectRatioFrameLayout.ResizeMode final int resizeMode) {
-        PlayerHelper.setPinchToZoomEnabled(context, false);
-        resetPinchZoom();
-        // a resize mode supersedes any forced aspect ratio, which would otherwise have no effect
-        forcedAspectRatio = 0.0f;
-        if (videoNaturalAspectRatio > 0) {
-            binding.surfaceView.setAspectRatio(videoNaturalAspectRatio);
-        }
-        setResizeMode(resizeMode);
-        PlayerHelper.saveResizeMode(this, resizeMode);
-    }
-
-    private void setForcedAspectRatio(final float aspectRatio) {
-        PlayerHelper.setPinchToZoomEnabled(context, false);
-        resetPinchZoom();
-        forcedAspectRatio = aspectRatio;
-        // a forced aspect ratio is only meaningful with Fit; this resize mode change is per-video
-        // and is intentionally not persisted, so the saved resize mode is restored on the next video
-        setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
-
-        final float effectiveRatio = aspectRatio > 0 ? aspectRatio : videoNaturalAspectRatio;
-        if (effectiveRatio > 0) {
-            binding.surfaceView.setAspectRatio(effectiveRatio);
-        }
-    }
-
     public boolean isPinchToZoomEnabled() {
         return isFullscreen && PlayerHelper.isPinchToZoomEnabled(context);
     }
 
-    private void onPinchModeSelected() {
-        forcedAspectRatio = 0.0f;
-        PlayerHelper.setPinchToZoomEnabled(context, true);
-        if (videoNaturalAspectRatio > 0.0f) {
-            binding.surfaceView.setAspectRatio(videoNaturalAspectRatio);
-        }
-        setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
-        resetPinchZoom();
-        updateDisplayModeButtonText();
-        Toast.makeText(context, R.string.pinch_to_zoom_selected, Toast.LENGTH_SHORT).show();
+    void setForcedAspectRatio(final float aspectRatio) {
+        forcedAspectRatio = aspectRatio;
     }
 
-    private void resetPinchZoom() {
+    void resetPinchZoom() {
         binding.surfaceView.resetPinchScale();
         binding.pinchZoomIndicator.animate().cancel();
         binding.pinchZoomIndicator.setVisibility(View.GONE);
@@ -5015,33 +4643,6 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         binding.pinchZoomIndicator.animate().cancel();
         binding.pinchZoomIndicator.animate().alpha(0.0f).setStartDelay(250L).setDuration(180L)
                 .withEndAction(() -> binding.pinchZoomIndicator.setVisibility(View.GONE)).start();
-    }
-
-    private void openCustomAspectRatioDialog() {
-        final AppCompatActivity activity = getParentActivity();
-        if (activity == null) {
-            return;
-        }
-        final EditText input = new EditText(activity);
-        input.setHint(R.string.aspect_ratio_custom_hint);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        if (forcedAspectRatio > 0) {
-            input.setText(PlayerHelper.aspectRatioNameOf(forcedAspectRatio));
-        }
-        new AlertDialog.Builder(activity)
-                .setTitle(R.string.aspect_ratio_custom_title)
-                .setView(input)
-                .setPositiveButton(R.string.ok, (dialog, which) -> {
-                    final float ratio = PlayerHelper.parseAspectRatio(input.getText().toString());
-                    if (ratio > 0) {
-                        setForcedAspectRatio(ratio);
-                    } else {
-                        Toast.makeText(context, R.string.aspect_ratio_invalid, Toast.LENGTH_SHORT)
-                                .show();
-                    }
-                })
-                .setNegativeButton(R.string.cancel, null)
-                .show();
     }
 
     @Override // exoplayer listener
@@ -5588,6 +5189,28 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
 
     public PlayerBinding getBinding() {
         return binding;
+    }
+
+    @Nullable
+    List<VideoStream> getAvailableStreams() {
+        return availableStreams;
+    }
+
+    int getSelectedStreamIndex() {
+        return selectedStreamIndex;
+    }
+
+    float getForcedAspectRatio() {
+        return forcedAspectRatio;
+    }
+
+    float getVideoNaturalAspectRatio() {
+        return videoNaturalAspectRatio;
+    }
+
+    @NonNull
+    DefaultTrackSelector getTrackSelector() {
+        return trackSelector;
     }
 
     public long getCurrentPosition() {
