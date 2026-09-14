@@ -95,7 +95,6 @@ import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.*;
-import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrAttestationException;
 import org.schabi.newpipe.extractor.stream.*;
 import org.schabi.newpipe.fragments.OnScrollBelowItemsListener;
@@ -105,7 +104,6 @@ import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.PlayerService.PlayerType;
-import org.schabi.newpipe.player.bulletComments.MovieBulletCommentsPlayer;
 import org.schabi.newpipe.player.datasource.SabrLogicException;
 import org.schabi.newpipe.player.event.DisplayPortion;
 import org.schabi.newpipe.player.event.PlayerEventListener;
@@ -353,6 +351,13 @@ public final class Player implements
     //////////////////////////////////////////////////////////////////////////*/
 
     @NonNull private final SponsorBlockController sponsorBlockController;
+
+    /*//////////////////////////////////////////////////////////////////////////
+    // Bullet comments
+    //////////////////////////////////////////////////////////////////////////*/
+
+    @NonNull private final BulletCommentsController bulletCommentsController;
+
     /*//////////////////////////////////////////////////////////////////////////
     // Gesture
     //////////////////////////////////////////////////////////////////////////*/
@@ -370,6 +375,7 @@ public final class Player implements
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         sponsorBlockController = new SponsorBlockController(this);
+        bulletCommentsController = new BulletCommentsController(this);
 
         recordManager = new HistoryRecordManager(context);
 
@@ -901,10 +907,7 @@ public final class Player implements
             playQueueAdapter.unsetSelectedListener();
             playQueueAdapter.dispose();
         }
-        if(bcPlayer != null){
-            bcPlayer.disconnect();
-            clearBCPlayer();
-        }
+        bulletCommentsController.destroy();
         cancelEnqueueTimer();
         dataSource.disconnectWebSocketClients();
     }
@@ -2007,8 +2010,8 @@ public final class Player implements
                 break;
             case PLAYING:
                 onPlaying();
-                initBCPlayer();
-                startBCPlayer();
+                bulletCommentsController.init();
+                bulletCommentsController.start();
                 break;
             case BUFFERING:
                 onBuffering();
@@ -2016,16 +2019,16 @@ public final class Player implements
             case PAUSED:
                 cancelEnqueueTimer();
                 onPaused();
-                pauseBCPlayer();
+                bulletCommentsController.pause();
                 break;
             case PAUSED_SEEK:
                 cancelEnqueueTimer();
                 onPausedSeek();
-                pauseBCPlayer();
+                bulletCommentsController.pause();
                 break;
             case COMPLETED:
                 onCompleted();
-                completeBCPlayer();
+                bulletCommentsController.complete();
                 break;
             case PREFLIGHT:
             default:
@@ -2040,149 +2043,17 @@ public final class Player implements
         }
     }
 
-    private MovieBulletCommentsPlayer bcPlayer = null;
-
-    private Duration getCurrentPositionDuration() {
-        if (currentItem == null) {
-            return null;
-        }
-        return Duration.ofMillis(simpleExoPlayer.getCurrentPosition());
-    }
-
-    private Duration getDurationInDuration() {
-        if (currentItem == null) {
-            return null;
-        }
-        return Duration.ofMillis(simpleExoPlayer.getDuration());
-    }
-
-    /*////////////////////////////////////////////////
-     * BulletCommentsPlayer
-     *////////////////////////////////////////////////
-    //region BulletCommentsPlayer
-    private void initBCPlayer() {
-        try {
-            if (currentMetadata != null && NewPipe.getService(currentMetadata.getServiceId())
-                    .getServiceInfo()
-                    .getMediaCapabilities()
-                    .contains(StreamingService.ServiceInfo.MediaCapability.BULLET_COMMENTS)
-                    && !audioPlayerSelected()) {
-                if(bcPlayer!= null){
-                    if(utils.DetimestampedEqual(bcPlayer.getUrl(), currentMetadata.getStreamUrl())){
-                        return ;
-                    }
-                    bcPlayer.disconnect();
-                }
-                clearBCPlayer();
-                bcPlayer = new MovieBulletCommentsPlayer(binding.bulletCommentsView);
-                bcPlayer.setInitialData(currentMetadata.getServiceId(),
-                        currentMetadata.getStreamUrl());
-                bcPlayer.init();
-                Log.d(TAG, "BulletCommentsView initialized.");
-            } else {
-                Log.i(TAG, "Current service does not have MediaCapability of BULLET_COMMENTS"
-                        + ", skipping BulletCommentsView initialization.");
-            }
-        } catch (final ExtractionException e) {
-            Log.e(TAG, Log.getStackTraceString(e));
-        }
-        isBCPlayerVisible = prefs.getBoolean("isBCPlayerVisible", false);
-        Log.i(TAG, "BulletCommentPlayer initial visibility: " + isBCPlayerVisible);
-        if (bcPlayer == null) {
-            // If set to INVISIBLE, the space remains.
-            binding.switchCommentsVisibility.setVisibility(View.GONE);
-        } else {
-            binding.switchCommentsVisibility.setVisibility(View.VISIBLE);
-            binding.switchCommentsVisibility.setImageDrawable(isBCPlayerVisible?AppCompatResources.getDrawable(context,
-                    R.drawable.ic_bullet_comment_enabled):AppCompatResources.getDrawable(context,
-                    R.drawable.ic_bullet_comment_disabled));
-        }
-    }
-
-    private Disposable bcPlayerDrawCommentsObservable = null;
+    /*//////////////////////////////////////////////////////////////////////////
+    // Bullet comments
+    //////////////////////////////////////////////////////////////////////////*/
 
     public void startBCPlayer() {
-        if (bcPlayer == null | bcPlayerDrawCommentsObservable != null | !isBCPlayerVisible) {
-            return;
-        }
-        bcPlayer.start(getCurrentPositionDuration());
-        bcPlayerDrawCommentsObservable = Observable.interval(
-                        bcPlayer.INTERVAL.toMillis(),
-                        TimeUnit.MILLISECONDS
-                )
-                .observeOn(AndroidSchedulers.mainThread())
-                .map(s -> {
-                    Duration ret = getCurrentPositionDuration();
-                    if(currentItem!= null && currentItem.getStartAt() != -1 && currentItem.getStreamType() == StreamType.LIVE_STREAM){
-                        ret = Duration.ofMillis(new Date().getTime() - currentItem.getStartAt());
-                    }
-                    if(ret == null){
-                        return Duration.ofMillis(-1);
-                    }
-                    return ret;
-                })
-                .subscribe(s ->  {
-                            if(isPlaying() && !audioPlayerSelected()){
-                                bcPlayer.drawComments(s.plus(bcPlayer.INTERVAL));
-                            }
-                        },
-                        e -> Log.e(TAG, Log.getStackTraceString(e))
-                );
-        Log.d(TAG, "BulletCommentsView started.");
-    }
-
-    private void completeBCPlayer() {
-        if (bcPlayer == null | !isBCPlayerVisible | currentMetadata == null) {
-            return;
-        }
-        bcPlayer.complete(Objects.requireNonNull(getDurationInDuration()));
-        clearBCPlayer();
-        Log.d(TAG, "BulletCommentsView completed.");
+        bulletCommentsController.start();
     }
 
     public void pauseBCPlayer() {
-        if (bcPlayer == null) {
-            return;
-        }
-        if (bcPlayerDrawCommentsObservable != null) {
-            bcPlayerDrawCommentsObservable.dispose();
-            bcPlayerDrawCommentsObservable = null;
-            Log.d(TAG, "BulletCommentsView observable disposed.");
-        }
-        bcPlayer.pause();
-        Log.d(TAG, "BulletCommentsView paused.");
+        bulletCommentsController.pause();
     }
-
-    private void clearBCPlayer() {
-        if (bcPlayer == null) {
-            return;
-        }
-        if (bcPlayerDrawCommentsObservable != null) {
-            bcPlayerDrawCommentsObservable.dispose();
-            bcPlayerDrawCommentsObservable = null;
-            Log.d(TAG, "BulletCommentsView observable disposed.");
-        }
-        bcPlayer.clear();
-        Log.d(TAG, "BulletCommentsView cleared.");
-    }
-
-    private boolean isBCPlayerVisible = false;
-
-    private void onSwitchBCPlayerVisibilityClicked() {
-        isBCPlayerVisible = !isBCPlayerVisible;
-        prefs.edit().putBoolean("isBCPlayerVisible", isBCPlayerVisible).apply();
-        binding.switchCommentsVisibility.setImageDrawable(isBCPlayerVisible?AppCompatResources.getDrawable(context,
-                R.drawable.ic_bullet_comment_enabled):AppCompatResources.getDrawable(context,
-                R.drawable.ic_bullet_comment_disabled));
-        Log.i(TAG, "BulletCommentPlayer visibility changed to " + isBCPlayerVisible);
-        if (isBCPlayerVisible) {
-            startBCPlayer();
-        } else {
-            clearBCPlayer();
-        }
-    }
-
-    //endregion BulletCommentsPlayer
 
     private void onPrepared(final boolean playWhenReady) {
         if (DEBUG) {
@@ -3316,8 +3187,9 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         registerStreamViewed();
         updateStreamRelatedViews();
         showHideKodiButton();
-        initBCPlayer(); // TODO: bullet comments may be reset unexpectedly for round play streams
-        startBCPlayer();
+        // TODO: bullet comments may be reset unexpectedly for round play streams
+        bulletCommentsController.init();
+        bulletCommentsController.start();
 
         binding.titleTextView.setText(info.getName());
         binding.channelTextView.setText(info.getUploaderName());
@@ -3952,7 +3824,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
             ShareUtils.shareText(context, getVideoTitle(), getVideoUrlAtCurrentTime(),
                     currentItem.getThumbnailUrl());
         } else if (v.getId() == binding.switchCommentsVisibility.getId()) {
-            onSwitchBCPlayerVisibilityClicked();
+            bulletCommentsController.toggleVisibility();
         } else if (v.getId() == binding.playWithKodi.getId()) {
             onPlayWithKodiClicked();
         } else if (v.getId() == binding.openInBrowser.getId()) {
@@ -4806,6 +4678,16 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         return trackSelector;
     }
 
+    @Nullable
+    PlayQueueItem getCurrentItem() {
+        return currentItem;
+    }
+
+    @Nullable
+    MediaItemTag getCurrentMetadata() {
+        return currentMetadata;
+    }
+
     public long getCurrentPosition() {
         return exoPlayerIsNull() ? 0 : simpleExoPlayer.getCurrentPosition();
     }
@@ -4908,7 +4790,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
 
     public void onBufferingFailed() {
         pause();
-        pauseBCPlayer();
+        bulletCommentsController.pause();
         currentState = PlayerPlaybackState.PAUSED;
         notifyPlaybackUpdateToListeners();
         dataSource.disconnectWebSocketClients();
