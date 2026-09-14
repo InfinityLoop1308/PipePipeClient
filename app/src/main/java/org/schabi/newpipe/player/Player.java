@@ -110,7 +110,6 @@ import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.*;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrAttestationException;
-import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockAction;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockSegment;
 import org.schabi.newpipe.extractor.stream.*;
 import org.schabi.newpipe.fragments.OnScrollBelowItemsListener;
@@ -224,7 +223,6 @@ public final class Player implements
     public static final int DEFAULT_CONTROLS_HIDE_TIME = 2000;  // 2 Seconds
     public static final int DPAD_CONTROLS_HIDE_TIME = 7000;  // 7 Seconds
     public static final int SEEK_OVERLAY_DURATION = 450; // 450 millis
-    private static final int UNSKIP_WINDOW_MILLIS = 5000; // 5 seconds
 
     /*//////////////////////////////////////////////////////////////////////////
     // Other constants
@@ -1940,19 +1938,18 @@ public final class Player implements
             final boolean showManualButtons = prefs.getBoolean(
                     context.getString(R.string.sponsor_block_show_manual_skip_key), false);
             // per-sponsorBlockSegment category skip setting
-            final SponsorBlockSecondaryMode secondaryMode = getSecondaryMode(sponsorBlockSegment);
+            final SponsorBlockSecondaryMode secondaryMode =
+                    SponsorBlockHelper.getSecondaryMode(context, sponsorBlockSegment);
 
             // show/hide manual skip buttons
             if (showManualButtons && secondaryMode != SponsorBlockSecondaryMode.HIGHLIGHT) {
-                if (currentProgress < sponsorBlockSegment.endTime
-                        && currentProgress > sponsorBlockSegment.startTime) {
+                if (SponsorBlockHelper.isInSegment(sponsorBlockSegment, currentProgress)) {
                     showAutoSkip();
                 } else {
                     hideAutoSkip();
                 }
 
-                if (currentProgress > sponsorBlockSegment.startTime
-                        && currentProgress < sponsorBlockSegment.endTime + UNSKIP_WINDOW_MILLIS) {
+                if (SponsorBlockHelper.isInUnskipWindow(sponsorBlockSegment, currentProgress)) {
                     showAutoUnskip();
                 } else {
                     hideAutoUnskip();
@@ -1981,20 +1978,12 @@ public final class Player implements
             }
 
             // Do not skip if highlight mode. Do not skip if manual mode + no explicit bypass
-            if (secondaryMode == SponsorBlockSecondaryMode.DISABLED
-                    || secondaryMode == SponsorBlockSecondaryMode.HIGHLIGHT
-                    || (secondaryMode == SponsorBlockSecondaryMode.MANUAL
-                    && !bypassSecondaryMode)) {
+            if (!SponsorBlockHelper.shouldSkipForMode(secondaryMode, bypassSecondaryMode)) {
                 return;
             }
 
-            int skipTarget = isRewind
-                    ? (int) Math.ceil((sponsorBlockSegment.startTime)) - 1
-                    : (int) Math.ceil((sponsorBlockSegment.endTime));
-
-            if (skipTarget < 0) {
-                skipTarget = 0;
-            }
+            final int skipTarget = SponsorBlockHelper.calculateSkipTarget(
+                    sponsorBlockSegment, isRewind);
 
             // temporarily force EXACT seek parameters to prevent infinite skip looping
             final SeekParameters seekParams = simpleExoPlayer.getSeekParameters();
@@ -5680,7 +5669,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     public void setSponsorBlockMode(final SponsorBlockMode mode) {
         sponsorBlockMode = mode;
         // Also set pref
-        prefs.edit().putString(context.getString(R.string.pref_sponsorblock_mode_key), mode.name()).apply();
+        SponsorBlockHelper.setSponsorBlockMode(context, mode);
     }
 
     public Optional<SponsorBlockSegment> getSkippableSponsorBlockSegment(final int progress) {
@@ -5690,30 +5679,21 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                 return null;
             }
 
-            for (final SponsorBlockSegment sponsorBlockSegment : sponsorBlockSegments) {
-                if (sponsorBlockSegment.action != SponsorBlockAction.SKIP) {
-                    continue;
-                }
-
-                if (progress < sponsorBlockSegment.startTime) {
-                    continue;
-                }
-
-                if (progress > sponsorBlockSegment.endTime) {
-                    continue;
-                }
-
-                return sponsorBlockSegment;
+            final SponsorBlockSegment skippableSegment =
+                    SponsorBlockHelper.getSkippableSponsorBlockSegment(
+                            sponsorBlockSegments, progress);
+            if (skippableSegment != null) {
+                return skippableSegment;
             }
 
             // fallback on old SponsorBlockSegment (for un-skip)
             if (lastSegment != null
-                    && progress > lastSegment.endTime + UNSKIP_WINDOW_MILLIS) {
+                    && progress > lastSegment.endTime + SponsorBlockHelper.UNSKIP_WINDOW_MILLIS) {
                 // un-skip window is over
                 hideUnskipButtons();
                 destroyUnskipVars();
             } else if (lastSegment != null
-                    && progress < lastSegment.endTime + UNSKIP_WINDOW_MILLIS
+                    && progress < lastSegment.endTime + SponsorBlockHelper.UNSKIP_WINDOW_MILLIS
                     && progress >= lastSegment.startTime) {
                 // use old sponsorBlockSegment if exists AND currentProgress in bounds
                 return lastSegment;
@@ -5739,84 +5719,6 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         if (DEBUG) {
             Log.d("SPONSOR_BLOCK", "Destroyed last segment variables (UNSKIP)");
         }
-    }
-
-    private SponsorBlockSecondaryMode getSecondaryMode(final SponsorBlockSegment segment) {
-        if (segment == null) {
-            return SponsorBlockSecondaryMode.DISABLED;
-        }
-
-        // get pref
-        final String defaultValue = context.getString(
-                R.string.sponsor_block_skip_mode_automatic_value);
-        final String key;
-        switch (segment.category) {
-            case SPONSOR:
-                key = prefs.getString(
-                        context.getString(R.string.sponsor_block_category_sponsor_mode_key),
-                        defaultValue);
-                break;
-            case INTRO:
-                key = prefs.getString(
-                        context.getString(R.string.sponsor_block_category_intro_mode_key),
-                        defaultValue);
-                break;
-            case OUTRO:
-                key = prefs.getString(
-                        context.getString(R.string.sponsor_block_category_outro_mode_key),
-                        defaultValue);
-                break;
-            case INTERACTION:
-                key = prefs.getString(
-                        context.getString(R.string.sponsor_block_category_interaction_mode_key),
-                        defaultValue);
-                break;
-            case HIGHLIGHT:
-                key = context.getString(R.string.sponsor_block_skip_mode_highlight_value);
-                break;
-            case SELF_PROMO:
-                key = prefs.getString(
-                        context.getString(R.string.sponsor_block_category_self_promo_mode_key),
-                        defaultValue);
-                break;
-            case NON_MUSIC:
-                key = prefs.getString(
-                        context.getString(R.string.sponsor_block_category_non_music_mode_key),
-                        defaultValue);
-                break;
-            case PREVIEW:
-                key = prefs.getString(
-                        context.getString(R.string.sponsor_block_category_preview_mode_key),
-                        defaultValue);
-                break;
-            case FILLER:
-                key = prefs.getString(
-                        context.getString(R.string.sponsor_block_category_filler_mode_key),
-                        defaultValue);
-                break;
-            default:
-                key = "";
-                break;
-        }
-
-        // map pref to enum
-        final SponsorBlockSecondaryMode pref;
-        if (key.equals(context.getString(R.string.sponsor_block_skip_mode_automatic_value))) {
-            pref = SponsorBlockSecondaryMode.ENABLED;
-        } else if (key.equals(context.getString(R.string.sponsor_block_skip_mode_manual_value))) {
-            pref = SponsorBlockSecondaryMode.MANUAL;
-        } else if (key.equals(context.getString(
-                R.string.sponsor_block_skip_mode_highlight_value))) {
-            pref = SponsorBlockSecondaryMode.HIGHLIGHT;
-        } else {
-            pref = SponsorBlockSecondaryMode.DISABLED;
-        }
-        if (DEBUG) {
-            Log.d("SPONSOR_BLOCK", "Sponsor segment secondary mode: category = ["
-                    + segment.category + "], preference = [" + pref + "]");
-        }
-
-        return pref;
     }
 
     public void onMarkSeekbarRequested(@NonNull final StreamInfo streamInfo) {
