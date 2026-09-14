@@ -1008,9 +1008,7 @@ public final class Player implements
             bcPlayer.disconnect();
             clearBCPlayer();
         }
-        if(enqueueTimer != null){
-            enqueueTimer.cancel(true);
-        }
+        cancelEnqueueTimer();
         dataSource.disconnectWebSocketClients();
     }
 
@@ -2420,16 +2418,12 @@ public final class Player implements
                 onBuffering();
                 break;
             case PAUSED:
-                if(enqueueTimer != null){
-                    enqueueTimer.cancel(true);
-                }
+                cancelEnqueueTimer();
                 onPaused();
                 pauseBCPlayer();
                 break;
             case PAUSED_SEEK:
-                if(enqueueTimer != null){
-                    enqueueTimer.cancel(true);
-                }
+                cancelEnqueueTimer();
                 onPausedSeek();
                 pauseBCPlayer();
                 break;
@@ -2442,6 +2436,12 @@ public final class Player implements
                 break;
         }
         notifyPlaybackUpdateToListeners();
+    }
+
+    private void cancelEnqueueTimer() {
+        if (enqueueTimer != null) {
+            enqueueTimer.cancel(true);
+        }
     }
 
     private MovieBulletCommentsPlayer bcPlayer = null;
@@ -3029,9 +3029,7 @@ public final class Player implements
             Log.d(TAG, "ExoPlayer - onTracksChanged(), "
                     + "track group size = " + tracks.getGroups().size());
         }
-        if(enqueueTimer != null){
-            enqueueTimer.cancel(true);
-        }
+        cancelEnqueueTimer();
         onTextTracksChanged(tracks);
         onAudioTracksChanged();
     }
