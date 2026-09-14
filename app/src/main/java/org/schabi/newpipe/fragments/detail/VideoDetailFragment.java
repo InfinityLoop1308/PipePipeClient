@@ -87,6 +87,7 @@ import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.PlayerService.PlayerType;
 import org.schabi.newpipe.player.Player;
+import org.schabi.newpipe.player.PlayerPlaybackState;
 import org.schabi.newpipe.player.PlaybackStartupTrace;
 import org.schabi.newpipe.player.PlayerUiModeHelper;
 import org.schabi.newpipe.player.event.OnKeyDownListener;
@@ -2118,14 +2119,14 @@ public final class VideoDetailFragment
     }
 
     @Override
-    public void onPlaybackUpdate(final int state,
+    public void onPlaybackUpdate(final PlayerPlaybackState state,
                                  final int repeatMode,
                                  final boolean shuffled,
                                  final PlaybackParameters parameters) {
         setOverlayPlayPauseImage(player != null && player.isPlaying());
 
         switch (state) {
-            case Player.STATE_PLAYING:
+            case PLAYING:
                 if (binding.positionView.getAlpha() != 1.0f
                         && player.getPlayQueue() != null
                         && player.getPlayQueue().getItem() != null

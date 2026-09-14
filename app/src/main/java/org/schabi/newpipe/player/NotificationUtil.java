@@ -300,9 +300,7 @@ public final class NotificationUtil {
                 }
 
             case NotificationConstants.PLAY_PAUSE_BUFFERING:
-                if (player.getCurrentState() == Player.STATE_PREFLIGHT
-                        || player.getCurrentState() == Player.STATE_BLOCKED
-                        || player.getCurrentState() == Player.STATE_BUFFERING) {
+                if (player.getCurrentState().isLoading()) {
                     // null intent -> show hourglass icon that does nothing when clicked
                     return new NotificationCompat.Action(R.drawable.ic_hourglass_top,
                             player.getContext().getApplicationContext().getString(R.string.notification_action_buffering),
@@ -310,13 +308,11 @@ public final class NotificationUtil {
                 }
 
             case NotificationConstants.PLAY_PAUSE:
-                if (player.getCurrentState() == Player.STATE_COMPLETED) {
+                if (player.getCurrentState().isCompleted()) {
                     return getAction(player, R.drawable.ic_replay,
                             R.string.exo_controls_pause_description, ACTION_PLAY_PAUSE);
                 } else if (player.isPlaying()
-                        || player.getCurrentState() == Player.STATE_PREFLIGHT
-                        || player.getCurrentState() == Player.STATE_BLOCKED
-                        || player.getCurrentState() == Player.STATE_BUFFERING) {
+                        || player.getCurrentState().isLoading()) {
                     return getAction(player, R.drawable.exo_notification_pause,
                             R.string.exo_controls_pause_description, ACTION_PLAY_PAUSE);
                 } else {

@@ -190,13 +190,7 @@ public final class Player implements
     // States
     //////////////////////////////////////////////////////////////////////////*/
 
-    public static final int STATE_PREFLIGHT = -1;
-    public static final int STATE_BLOCKED = 123;
-    public static final int STATE_PLAYING = 124;
-    public static final int STATE_BUFFERING = 125;
-    public static final int STATE_PAUSED = 126;
-    public static final int STATE_PAUSED_SEEK = 127;
-    public static final int STATE_COMPLETED = 128;
+    // Playback states live in PlayerPlaybackState.
 
     /*//////////////////////////////////////////////////////////////////////////
     // Intent
@@ -276,7 +270,7 @@ public final class Player implements
     //////////////////////////////////////////////////////////////////////////*/
 
     private PlayerType playerType = PlayerType.VIDEO;
-    private int currentState = STATE_PREFLIGHT;
+    private PlayerPlaybackState currentState = PlayerPlaybackState.PREFLIGHT;
 
     // audio only mode does not mean that player type is background, but that the player was
     // minimized to background but will resume automatically to the original player type
@@ -307,7 +301,7 @@ public final class Player implements
         @Override
         public void run() {
             updateSabrBackoffCountdown();
-            if (currentState == STATE_BLOCKED
+            if (currentState.isBlocked()
                     || (!exoPlayerIsNull() && simpleExoPlayer.getPlaybackState()
                     == com.google.android.exoplayer2.Player.STATE_BUFFERING)) {
                 sabrBackoffHandler.postDelayed(this, 250L);
@@ -720,7 +714,7 @@ public final class Player implements
                             return FastSeekDirection.BACKWARD;
                         } else if (portion == DisplayPortion.RIGHT) {
                             // Check if it's possible to fast-forward
-                            if (currentState == STATE_COMPLETED
+                            if (currentState.isCompleted()
                                     || simpleExoPlayer.getCurrentPosition()
                                     >= simpleExoPlayer.getDuration()) {
                                 return FastSeekDirection.NONE;
@@ -1829,7 +1823,7 @@ public final class Player implements
         if (duration != binding.playbackSeekBar.getMax()) {
             setVideoDurationToControls(duration);
         }
-        if (currentState != STATE_PAUSED) {
+        if (!currentState.isPaused()) {
             updatePlayBackElementsCurrentDuration(currentProgress);
         }
         if (simpleExoPlayer.isLoading() || bufferPercent > 90) {
@@ -1906,10 +1900,10 @@ public final class Player implements
         if (prefs.getBoolean(context.getString(R.string.force_end_on_overtime_key), false)
                 && currentItem != null
                 && currentItem.getStreamType() == StreamType.VIDEO_STREAM
-                && currentState != STATE_COMPLETED
+                && !currentState.isCompleted()
                 && duration > 0
                 && currentProgress > duration + 3000) {
-            changeState(STATE_COMPLETED);
+            changeState(PlayerPlaybackState.COMPLETED);
             saveStreamProgressStateCompleted();
             isPrepared = false;
             return;
@@ -2137,8 +2131,8 @@ public final class Player implements
         if (DEBUG) {
             Log.d(TAG, "onStartTrackingTouch() called with: seekBar = [" + seekBar + "]");
         }
-        if (currentState != STATE_PAUSED_SEEK) {
-            changeState(STATE_PAUSED_SEEK);
+        if (!currentState.isPausedSeek()) {
+            changeState(PlayerPlaybackState.PAUSED_SEEK);
         }
 
         saveWasPlaying();
@@ -2168,8 +2162,8 @@ public final class Player implements
         animate(binding.currentDisplaySeek, false, 200, AnimationType.SCALE_AND_ALPHA);
         animate(binding.currentSeekbarPreviewThumbnail, false, 200, AnimationType.SCALE_AND_ALPHA);
 
-        if (currentState == STATE_PAUSED_SEEK) {
-            changeState(STATE_BUFFERING);
+        if (currentState.isPausedSeek()) {
+            changeState(PlayerPlaybackState.BUFFERING);
         }
         if (!isProgressLoopRunning()) {
             startProgressLoop();
@@ -2324,7 +2318,7 @@ public final class Player implements
                     + "playbackState = [" + playbackState + "]");
         }
 
-        if (currentState == STATE_PAUSED_SEEK) {
+        if (currentState.isPausedSeek()) {
             if (DEBUG) {
                 Log.d(TAG, "updatePlaybackState() is currently blocked");
             }
@@ -2337,7 +2331,7 @@ public final class Player implements
                 break;
             case com.google.android.exoplayer2.Player.STATE_BUFFERING: // 2
                 if (isPrepared) {
-                    changeState(STATE_BUFFERING);
+                    changeState(PlayerPlaybackState.BUFFERING);
                 }
                 break;
             case com.google.android.exoplayer2.Player.STATE_READY: //3
@@ -2346,14 +2340,15 @@ public final class Player implements
                     isPrepared = true;
                     onPrepared(playWhenReady);
                 }
-                changeState(playWhenReady ? STATE_PLAYING : STATE_PAUSED);
+                changeState(playWhenReady
+                        ? PlayerPlaybackState.PLAYING : PlayerPlaybackState.PAUSED);
                 if (Build.VERSION.SDK_INT >= 37) {
                     NotificationUtil.getInstance()
                             .createNotificationAndStartForeground(this, service.getInstance());
                 }
                 break;
             case com.google.android.exoplayer2.Player.STATE_ENDED: // 4
-                changeState(STATE_COMPLETED);
+                changeState(PlayerPlaybackState.COMPLETED);
                 saveStreamProgressStateCompleted();
                 isPrepared = false;
                 break;
@@ -2363,7 +2358,7 @@ public final class Player implements
     @Override // exoplayer listener
     public void onIsLoadingChanged(final boolean isLoading) {
         if (!isLoading) {
-            if(currentState == STATE_PAUSED && isProgressLoopRunning()){
+            if(currentState.isPaused() && isProgressLoopRunning()){
                 stopProgressLoop();
             }
         } else {
@@ -2387,7 +2382,7 @@ public final class Player implements
         simpleExoPlayer.stop();
         isPrepared = false;
 
-        changeState(STATE_BLOCKED);
+        changeState(PlayerPlaybackState.BLOCKED);
     }
 
     @Override // own playback listener
@@ -2399,48 +2394,51 @@ public final class Player implements
         if (exoPlayerIsNull()) {
             return;
         }
-        if (currentState == STATE_BLOCKED) {
-            changeState(STATE_BUFFERING);
+        if (currentState.isBlocked()) {
+            changeState(PlayerPlaybackState.BUFFERING);
         }
         PlaybackStartupTrace.mark(startupTraceId, "media_source_attached");
         simpleExoPlayer.setMediaSource(mediaSource, false);
         simpleExoPlayer.prepare();
     }
 
-    public void changeState(final int state) {
+    public void changeState(final PlayerPlaybackState state) {
         if (DEBUG) {
             Log.d(TAG, "changeState() called with: state = [" + state + "]");
         }
         currentState = state;
         switch (state) {
-            case STATE_BLOCKED:
+            case BLOCKED:
                 onBlocked();
                 break;
-            case STATE_PLAYING:
+            case PLAYING:
                 onPlaying();
                 initBCPlayer();
                 startBCPlayer();
                 break;
-            case STATE_BUFFERING:
+            case BUFFERING:
                 onBuffering();
                 break;
-            case STATE_PAUSED:
+            case PAUSED:
                 if(enqueueTimer != null){
                     enqueueTimer.cancel(true);
                 }
                 onPaused();
                 pauseBCPlayer();
                 break;
-            case STATE_PAUSED_SEEK:
+            case PAUSED_SEEK:
                 if(enqueueTimer != null){
                     enqueueTimer.cancel(true);
                 }
                 onPausedSeek();
                 pauseBCPlayer();
                 break;
-            case STATE_COMPLETED:
+            case COMPLETED:
                 onCompleted();
                 completeBCPlayer();
+                break;
+            case PREFLIGHT:
+            default:
                 break;
         }
         notifyPlaybackUpdateToListeners();
@@ -3084,7 +3082,7 @@ public final class Player implements
             case DISCONTINUITY_REASON_SEEK_ADJUSTMENT:
             case DISCONTINUITY_REASON_INTERNAL:
                 // Player index may be invalid when playback is blocked
-                if (getCurrentState() != STATE_BLOCKED && newIndex != playQueue.getIndex()) {
+                if (!getCurrentState().isBlocked() && newIndex != playQueue.getIndex()) {
                     saveStreamProgressStateCompleted(); // current stream has ended
                     playQueue.setIndex(newIndex);
                 }
@@ -3348,7 +3346,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
      * @param currentProgress
      */
     private void updatePlayBackElementsCurrentDuration(final int currentProgress) {
-        if (currentState != STATE_PAUSED_SEEK) {
+        if (!getCurrentState().isPausedSeek()) {
             binding.playbackSeekBar.setProgress(currentProgress);
         }
         // YouTube livestreams use DASH and getCurrentPosition() works correctly
@@ -3540,7 +3538,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
 
         audioReactor.requestAudioFocus();
 
-        if (currentState == STATE_COMPLETED && playQueue != null && playQueue.getItem() != null &&
+        if (getCurrentState().isCompleted() && playQueue != null && playQueue.getItem() != null &&
                 playQueue.getItem().getRecoveryPosition() / 1000 >= playQueue.getItem().getDuration() - 5) {
             if (playQueue.getIndex() == 0) {
                 seekToDefault();
@@ -3573,7 +3571,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
 
         if (getPlayWhenReady()
                 // When state is completed (replay button is shown) then (re)play and do not pause
-                && currentState != STATE_COMPLETED) {
+                && !getCurrentState().isCompleted()) {
             pause();
         } else {
             play();
@@ -4638,7 +4636,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
      * @param v – The view that was clicked
      */
     public void manageControlsAfterOnClick(@NonNull final View v) {
-        if (currentState == STATE_COMPLETED) {
+        if (getCurrentState().isCompleted()) {
             return;
         }
 
@@ -4646,7 +4644,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         showHideShadow(true, DEFAULT_CONTROLS_DURATION);
         animate(binding.playbackControlRoot, true, DEFAULT_CONTROLS_DURATION,
                 AnimationType.ALPHA, 0, () -> {
-                    if (currentState == STATE_PLAYING && !isSomePopupMenuVisible) {
+                    if (getCurrentState().isPlaying() && !isSomePopupMenuVisible) {
                         if (v.getId() == binding.playPauseButton.getId()
                                 // Hide controls in fullscreen immediately
                                 || (v.getId() == binding.screenRotationButton.getId()
@@ -4703,7 +4701,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                     return false;
                 }
 
-                if (currentState == Player.STATE_BLOCKED) {
+                if (getCurrentState().isBlocked()) {
                     return true;
                 }
 
@@ -5247,11 +5245,11 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
 
     private void notifyPlaybackUpdateToListeners() {
         if (fragmentListener != null && !exoPlayerIsNull() && playQueue != null) {
-            fragmentListener.onPlaybackUpdate(currentState, getRepeatMode(),
+            fragmentListener.onPlaybackUpdate(getCurrentState(), getRepeatMode(),
                     playQueue.isShuffled(), simpleExoPlayer.getPlaybackParameters());
         }
         if (activityListener != null && !exoPlayerIsNull() && playQueue != null) {
-            activityListener.onPlaybackUpdate(currentState, getRepeatMode(),
+            activityListener.onPlaybackUpdate(getCurrentState(), getRepeatMode(),
                     playQueue.isShuffled(), getPlaybackParameters());
         }
     }
@@ -5407,7 +5405,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         return Optional.ofNullable(currentMetadata).flatMap(MediaItemTag::getMaybeStreamInfo);
     }
 
-    public int getCurrentState() {
+    public PlayerPlaybackState getCurrentState() {
         return currentState;
     }
 
@@ -5763,7 +5761,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     public void onBufferingFailed() {
         pause();
         pauseBCPlayer();
-        currentState = STATE_PAUSED;
+        currentState = PlayerPlaybackState.PAUSED;
         notifyPlaybackUpdateToListeners();
         dataSource.disconnectWebSocketClients();
     }

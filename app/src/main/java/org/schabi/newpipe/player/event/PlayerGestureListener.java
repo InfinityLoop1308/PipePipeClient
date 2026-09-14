@@ -5,7 +5,6 @@ import static org.schabi.newpipe.ktx.AnimationType.SCALE_AND_ALPHA;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.player.Player.DEFAULT_CONTROLS_DURATION;
 import static org.schabi.newpipe.player.Player.DEFAULT_CONTROLS_HIDE_TIME;
-import static org.schabi.newpipe.player.Player.STATE_PLAYING;
 
 import java.util.Locale;
 
@@ -103,7 +102,7 @@ public class PlayerGestureListener
         // -- Controls are not visible --
 
         // When player is completed show controls and don't hide them later
-        if (player.getCurrentState() == Player.STATE_COMPLETED) {
+        if (player.getCurrentState().isCompleted()) {
             player.showControls(0);
         } else {
             player.showControlsThenHide();
@@ -389,7 +388,7 @@ public class PlayerGestureListener
                     + player.getPlayerType() + "]");
         }
 
-        if (player.isControlsVisible() && player.getCurrentState() == STATE_PLAYING) {
+        if (player.isControlsVisible() && player.getCurrentState().isPlaying()) {
             player.hideControls(DEFAULT_CONTROLS_DURATION, DEFAULT_CONTROLS_HIDE_TIME);
         }
 

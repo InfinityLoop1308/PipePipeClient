@@ -17,6 +17,7 @@ import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.player.PlayerBinderInterface;
 import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.Player;
+import org.schabi.newpipe.player.PlayerPlaybackState;
 import org.schabi.newpipe.player.event.PlayerServiceEventListener;
 import org.schabi.newpipe.player.event.PlayerServiceExtendedEventListener;
 import org.schabi.newpipe.player.mediasession.PlayerServiceInterface;
@@ -270,7 +271,7 @@ public final class PlayerHolder {
                 }
 
                 @Override
-                public void onPlaybackUpdate(final int state,
+                public void onPlaybackUpdate(final PlayerPlaybackState state,
                                              final int repeatMode,
                                              final boolean shuffled,
                                              final PlaybackParameters parameters) {

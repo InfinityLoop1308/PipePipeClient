@@ -8,6 +8,7 @@ import android.view.*
 import org.schabi.newpipe.ktx.animate
 import org.schabi.newpipe.player.PlayerService
 import org.schabi.newpipe.player.Player
+import org.schabi.newpipe.player.PlayerPlaybackState
 import org.schabi.newpipe.player.helper.PlayerHelper
 import org.schabi.newpipe.player.helper.PlayerHelper.savePopupPositionAndSizeToPrefs
 import kotlin.math.abs
@@ -354,7 +355,7 @@ abstract class BasePlayerGestureListener(
             return true
         } else {
             super.onSingleTapConfirmed(e)
-            if (player.currentState == Player.STATE_BLOCKED)
+            if (player.currentState == PlayerPlaybackState.BLOCKED)
                 return true
 
             onSingleTap(PlayerService.PlayerType.VIDEO)
@@ -429,7 +430,7 @@ abstract class BasePlayerGestureListener(
         val isHorizontal = abs(distanceX) > abs(distanceY)
         // require a mostly vertical swipe so horizontal seeking is not hijacked
         if (!isMovingInMain && !isHorizontal && insideThreshold ||
-            player.currentState == Player.STATE_COMPLETED
+            player.currentState == PlayerPlaybackState.COMPLETED
         ) {
             return false
         }

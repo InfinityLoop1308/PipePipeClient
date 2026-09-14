@@ -449,7 +449,8 @@ public final class PlayQueueActivity extends AppCompatActivity
     }
 
     @Override
-    public void onPlaybackUpdate(final int state, final int repeatMode, final boolean shuffled,
+    public void onPlaybackUpdate(final PlayerPlaybackState state, final int repeatMode,
+                                 final boolean shuffled,
                                  final PlaybackParameters parameters) {
         onStateChanged(state);
         onPlayModeChanged(repeatMode, shuffled);
@@ -519,17 +520,17 @@ public final class PlayQueueActivity extends AppCompatActivity
     // Binding Service Helper
     ////////////////////////////////////////////////////////////////////////////
 
-    private void onStateChanged(final int state) {
+    private void onStateChanged(final PlayerPlaybackState state) {
         switch (state) {
-            case Player.STATE_PAUSED:
+            case PAUSED:
                 queueControlBinding.controlPlayPause
                         .setImageResource(R.drawable.ic_play_arrow);
                 break;
-            case Player.STATE_PLAYING:
+            case PLAYING:
                 queueControlBinding.controlPlayPause
                         .setImageResource(R.drawable.ic_pause);
                 break;
-            case Player.STATE_COMPLETED:
+            case COMPLETED:
                 queueControlBinding.controlPlayPause
                         .setImageResource(R.drawable.ic_replay);
                 break;
@@ -538,9 +539,9 @@ public final class PlayQueueActivity extends AppCompatActivity
         }
 
         switch (state) {
-            case Player.STATE_PAUSED:
-            case Player.STATE_PLAYING:
-            case Player.STATE_COMPLETED:
+            case PAUSED:
+            case PLAYING:
+            case COMPLETED:
                 queueControlBinding.controlPlayPause.setClickable(true);
                 queueControlBinding.controlPlayPause.setVisibility(View.VISIBLE);
                 queueControlBinding.controlProgressBar.setVisibility(View.GONE);
