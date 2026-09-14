@@ -97,7 +97,6 @@ import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.*;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrAttestationException;
-import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockSegment;
 import org.schabi.newpipe.extractor.stream.*;
 import org.schabi.newpipe.fragments.OnScrollBelowItemsListener;
 import org.schabi.newpipe.fragments.detail.VideoDetailFragment;
@@ -354,11 +353,8 @@ public final class Player implements
     /*//////////////////////////////////////////////////////////////////////////
     // SponsorBlock
     //////////////////////////////////////////////////////////////////////////*/
-    private SponsorBlockMode sponsorBlockMode = SponsorBlockMode.DISABLED;
-    private SponsorBlockSegment lastSegment;
-    private boolean autoSkipGracePeriod = false;
 
-    private final SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
+    @NonNull private final SponsorBlockController sponsorBlockController;
     /*//////////////////////////////////////////////////////////////////////////
     // Gesture
     //////////////////////////////////////////////////////////////////////////*/
@@ -375,23 +371,7 @@ public final class Player implements
         wasLandscape = service.isLandscape();
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-        final boolean isSponsorBlockEnabled = prefs.getBoolean(
-                context.getString(R.string.sponsor_block_enable_key), true);
-
-        setSponsorBlockMode(isSponsorBlockEnabled
-                ? SponsorBlockMode.ENABLED
-                : SponsorBlockMode.DISABLED);
-
-        preferenceChangeListener =
-                (sharedPreferences, key) -> {
-                    if (context.getString(R.string.sponsor_block_enable_key).equals(key)) {
-                        setSponsorBlockMode(sharedPreferences.getBoolean(key, true)
-                                ? SponsorBlockMode.ENABLED
-                                : SponsorBlockMode.DISABLED);
-                    }
-                };
-
-        prefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+        sponsorBlockController = new SponsorBlockController(this);
 
         recordManager = new HistoryRecordManager(context);
 
@@ -964,6 +944,7 @@ public final class Player implements
         
         destroyPlayer();
         unregisterBroadcastReceiver();
+        sponsorBlockController.destroy();
 
         databaseUpdateDisposable.clear();
         progressUpdateDisposable.set(null);
@@ -1642,10 +1623,10 @@ public final class Player implements
         triggerProgressUpdate(isRewind, false, false, false);
     }
 
-    private void triggerProgressUpdate(final boolean isRewind,
-                                       final boolean isGracedRewind,
-                                       final boolean bypassSecondaryMode,
-                                       final boolean isUnSkip) {
+    void triggerProgressUpdate(final boolean isRewind,
+                               final boolean isGracedRewind,
+                               final boolean bypassSecondaryMode,
+                               final boolean isUnSkip) {
         if (exoPlayerIsNull()) {
             return;
         }
@@ -1680,139 +1661,10 @@ public final class Player implements
                 currentProgress,
                 (int) simpleExoPlayer.getDuration(),
                 simpleExoPlayer.getBufferedPercentage());
-        triggerCheckForSponsorBlockSegments(currentProgress, isRewind,
-                isGracedRewind, bypassSecondaryMode, isUnSkip);
-    }
-
-    private void triggerCheckForSponsorBlockSegments(final int currentProgress,
-                                                     final boolean isRewind,
-                                                     final boolean isGracedRewind,
-                                                     final boolean bypassSecondaryMode,
-                                                     final boolean isUnSkip) {
-        if (sponsorBlockMode != SponsorBlockMode.ENABLED || !isPrepared) {
-            return;
+        if (isPrepared) {
+            sponsorBlockController.onProgress(currentProgress, isRewind,
+                    isGracedRewind, bypassSecondaryMode, isUnSkip);
         }
-
-        getSkippableSponsorBlockSegment(currentProgress).ifPresent(sponsorBlockSegment -> {
-
-            final boolean showManualButtons = prefs.getBoolean(
-                    context.getString(R.string.sponsor_block_show_manual_skip_key), false);
-            // per-sponsorBlockSegment category skip setting
-            final SponsorBlockSecondaryMode secondaryMode =
-                    SponsorBlockHelper.getSecondaryMode(context, sponsorBlockSegment);
-
-            // show/hide manual skip buttons
-            if (showManualButtons && secondaryMode != SponsorBlockSecondaryMode.HIGHLIGHT) {
-                if (SponsorBlockHelper.isInSegment(sponsorBlockSegment, currentProgress)) {
-                    showAutoSkip();
-                } else {
-                    hideAutoSkip();
-                }
-
-                if (SponsorBlockHelper.isInUnskipWindow(sponsorBlockSegment, currentProgress)) {
-                    showAutoUnskip();
-                } else {
-                    hideAutoUnskip();
-                }
-            }
-
-            if (DEBUG) {
-                Log.d("SPONSOR_BLOCK", "Un-skip grace: isGracedRewind = "
-                        + isGracedRewind + ", autoSkipGracePeriod = " + autoSkipGracePeriod);
-            }
-
-            // temporarily pause auto skipping
-            // bypass grace when this is an un-skip request
-            if (!isGracedRewind) {
-                if (autoSkipGracePeriod) {
-                    return;
-                }
-            } else {
-
-                autoSkipGracePeriod = true;
-            }
-
-            // prevent skip looping in unship window
-            if (lastSegment == sponsorBlockSegment && !bypassSecondaryMode) {
-                return;
-            }
-
-            // Do not skip if highlight mode. Do not skip if manual mode + no explicit bypass
-            if (!SponsorBlockHelper.shouldSkipForMode(secondaryMode, bypassSecondaryMode)) {
-                return;
-            }
-
-            final int skipTarget = SponsorBlockHelper.calculateSkipTarget(
-                    sponsorBlockSegment, isRewind);
-
-            // temporarily force EXACT seek parameters to prevent infinite skip looping
-            final SeekParameters seekParams = simpleExoPlayer.getSeekParameters();
-            simpleExoPlayer.setSeekParameters(SeekParameters.EXACT);
-
-            seekTo(skipTarget);
-
-            simpleExoPlayer.setSeekParameters(seekParams);
-            if (!isRewind || isGracedRewind) {
-                // DO NOT TRACK for non-graced rewinds to work, BUT always track for graced
-                lastSegment = sponsorBlockSegment;
-            }
-
-            if (isUnSkip) {
-                return;
-            }
-
-            final boolean canShowNotifications = prefs.getBoolean(
-                    context.getString(R.string.sponsor_block_notifications_key), false);
-
-            if (canShowNotifications) {
-                final String toastText =
-                        SponsorBlockHelper.convertCategoryToSkipMessage(
-                                context, sponsorBlockSegment.category);
-
-                Toast.makeText(context, toastText, Toast.LENGTH_SHORT).show();
-            }
-
-            if (DEBUG) {
-                Log.d("SPONSOR_BLOCK", "Skipped segment: currentProgress = ["
-                        + currentProgress + "], skipped to = [" + skipTarget + "]");
-            }
-        });
-    }
-
-    public void showAutoUnskip() {
-        binding.unskipButton.setVisibility(View.VISIBLE);
-    }
-
-    public void hideAutoUnskip() {
-        binding.unskipButton.setVisibility(View.GONE);
-    }
-
-    public void showAutoSkip() {
-        binding.skipButton.setVisibility(View.VISIBLE);
-    }
-    public void hideAutoSkip() {
-        binding.skipButton.setVisibility(View.GONE);
-    }
-    public void onUnskipClicked() {
-        if (DEBUG) {
-            Log.d(TAG, "onUnskipClicked() called");
-        }
-        toggleUnskip();
-    }
-
-    public void onSkipClicked() {
-        if (DEBUG) {
-            Log.d(TAG, "onSkipClicked() called");
-        }
-        toggleSkip();
-    }
-    public void toggleUnskip() {
-        triggerProgressUpdate(true, true, true, true);
-    }
-
-    public void toggleSkip() {
-        autoSkipGracePeriod = false;
-        triggerProgressUpdate(false, true, true, false);
     }
 
     private Disposable getProgressUpdateDisposable() {
@@ -3399,7 +3251,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
             return;
         }
 
-        destroyUnskipVars(); // destroy, else rewind into segment won't skip
+        sponsorBlockController.onNonGracedRewind(); // else rewind into segment won't skip
         triggerProgressUpdate(true);
     }
     //endregion
@@ -4178,9 +4030,9 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
             context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_HIDE_MAIN_PLAYER));
             service.stopService();
         } else if (v.getId() == binding.skipButton.getId()) {
-            onSkipClicked();
+            sponsorBlockController.onSkipClicked();
         } else if (v.getId() == binding.unskipButton.getId()) {
-            onUnskipClicked();
+            sponsorBlockController.onUnskipClicked();
         }
 
         manageControlsAfterOnClick(v);
@@ -5062,66 +4914,15 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     //region
 
     public SponsorBlockMode getSponsorBlockMode() {
-        return sponsorBlockMode;
+        return sponsorBlockController.getMode();
     }
 
     public void setSponsorBlockMode(final SponsorBlockMode mode) {
-        sponsorBlockMode = mode;
-        // Also set pref
-        SponsorBlockHelper.setSponsorBlockMode(context, mode);
-    }
-
-    public Optional<SponsorBlockSegment> getSkippableSponsorBlockSegment(final int progress) {
-        return getCurrentStreamInfo().map(info -> {
-            final SponsorBlockSegment[] sponsorBlockSegments = info.getSponsorBlockSegments();
-            if (sponsorBlockSegments == null) {
-                return null;
-            }
-
-            final SponsorBlockSegment skippableSegment =
-                    SponsorBlockHelper.getSkippableSponsorBlockSegment(
-                            sponsorBlockSegments, progress);
-            if (skippableSegment != null) {
-                return skippableSegment;
-            }
-
-            // fallback on old SponsorBlockSegment (for un-skip)
-            if (lastSegment != null
-                    && progress > lastSegment.endTime + SponsorBlockHelper.UNSKIP_WINDOW_MILLIS) {
-                // un-skip window is over
-                hideUnskipButtons();
-                destroyUnskipVars();
-            } else if (lastSegment != null
-                    && progress < lastSegment.endTime + SponsorBlockHelper.UNSKIP_WINDOW_MILLIS
-                    && progress >= lastSegment.startTime) {
-                // use old sponsorBlockSegment if exists AND currentProgress in bounds
-                return lastSegment;
-            }
-
-            hideUnskipButtons();
-            return null;
-        });
-    }
-
-    private void hideUnskipButtons() {
-        if (DEBUG) {
-            Log.d("SPONSOR_BLOCK", "Hiding manual skip buttons (UNSKIP)");
-        }
-        hideAutoSkip();
-        hideAutoUnskip();
-    }
-
-    private void destroyUnskipVars() {
-        lastSegment = null;
-        autoSkipGracePeriod = false;
-
-        if (DEBUG) {
-            Log.d("SPONSOR_BLOCK", "Destroyed last segment variables (UNSKIP)");
-        }
+        sponsorBlockController.setMode(mode);
     }
 
     public void onMarkSeekbarRequested(@NonNull final StreamInfo streamInfo) {
-        SponsorBlockHelper.markSegments(context, binding.playbackSeekBar, streamInfo);
+        sponsorBlockController.markSeekbarSegments(streamInfo);
     }
     //endregion
 
