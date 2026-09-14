@@ -411,7 +411,6 @@ public final class Player implements
     // SponsorBlock
     //////////////////////////////////////////////////////////////////////////*/
     private SponsorBlockMode sponsorBlockMode = SponsorBlockMode.DISABLED;
-    private int lastSkipTarget = -1;
     private SponsorBlockSegment lastSegment;
     private boolean autoSkipGracePeriod = false;
 

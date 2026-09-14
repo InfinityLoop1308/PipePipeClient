@@ -212,7 +212,8 @@ public final class SponsorBlockHelper {
     public static void setSponsorBlockMode(final Context context, final SponsorBlockMode mode) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         prefs.edit()
-                .putString(context.getString(R.string.pref_sponsorblock_mode_key), mode.name())
+                .putBoolean(context.getString(R.string.sponsor_block_enable_key),
+                        mode == SponsorBlockMode.ENABLED)
                 .apply();
     }
 
