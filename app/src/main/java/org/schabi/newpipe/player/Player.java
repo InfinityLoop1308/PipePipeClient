@@ -2455,7 +2455,7 @@ public final class Player implements
                          @NonNull final com.google.android.exoplayer2.Player.Events events) {
         Listener.super.onEvents(player, events);
         ExoMediaItems.fromMediaItem(player.getCurrentMediaItem()).ifPresent(tag -> {
-            if (tag.equals(currentMetadata)) {
+            if (tag == currentMetadata) {
                 return; // we still have the same metadata, no need to do anything
             }
             final StreamInfo previousInfo = Optional.ofNullable(currentMetadata)

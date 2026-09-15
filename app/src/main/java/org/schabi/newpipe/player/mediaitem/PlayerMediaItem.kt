@@ -16,7 +16,8 @@ import java.util.UUID
  *
  * The content itself is identified by [url]. [uuid] identifies the queue slot / playback
  * instance: it is assigned once and survives serialization, so it can be used for queue lookups
- * and media source replacement instead of referential equality.
+ * and media source replacement instead of referential equality, and it is the only field that
+ * takes part in equality.
  *
  * It only describes the content: per-slot playback state (the recovery position, whether the
  * entry was auto-enqueued) is owned by the [org.schabi.newpipe.player.playqueue.PlayQueue],
@@ -51,6 +52,11 @@ data class PlayerMediaItem(
         copy(extras = extras.plus(key, value))
 
     fun withErrors(newErrors: List<Exception>): PlayerMediaItem = copy(errors = newErrors)
+
+    override fun equals(other: Any?): Boolean =
+        this === other || (other is PlayerMediaItem && uuid == other.uuid)
+
+    override fun hashCode(): Int = uuid.hashCode()
 
     /**
      * The uploader name, exposed under the extractor's naming for Java callers.
