@@ -27,7 +27,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -193,6 +192,7 @@ public final class Player implements
     @NonNull private final PlayerSabrBackoffCountdown sabrBackoffCountdown;
     @NonNull private final PlayerBroadcastReceiver broadcastReceiverController;
     @NonNull private final PlayerListeners listeners;
+    @NonNull private final PlayerPlaybackStateController playbackStateController;
 
     public final PlayerServiceInterface service; //TODO try to remove and replace everything with context
 
@@ -319,6 +319,7 @@ public final class Player implements
         sponsorBlockController = new SponsorBlockController(this);
         bulletCommentsController = new BulletCommentsController(this);
         listeners = new PlayerListeners(this);
+        playbackStateController = new PlayerPlaybackStateController(this);
         progressController = new PlayerProgressController(this);
         thumbnailController = new PlayerThumbnailController(this);
         surfaceController = new PlayerSurfaceController(this);
@@ -421,7 +422,7 @@ public final class Player implements
                 playerMediaSession, service.getMediaSession(),
                 service.getMediaBrowserPlaybackPreparer());
 
-        registerBroadcastReceiver();
+        broadcastReceiverController.register();
 
         // Setup video view
         surfaceController.setupVideoSurface();
@@ -842,8 +843,8 @@ public final class Player implements
             simpleExoPlayer.release();
         }
         stateHolder.setPlaying(false);
-        if (isProgressLoopRunning()) {
-            stopProgressLoop();
+        if (progressController.isProgressLoopRunning()) {
+            progressController.stopProgressLoop();
         }
         if (playQueue != null) {
             playQueue.dispose();
@@ -877,7 +878,7 @@ public final class Player implements
         closeAllPopupMenus();
         
         destroyPlayer();
-        unregisterBroadcastReceiver();
+        broadcastReceiverController.unregister();
         sponsorBlockController.destroy();
 
         databaseUpdateDisposable.clear();
@@ -1091,29 +1092,9 @@ public final class Player implements
 
 
     /*//////////////////////////////////////////////////////////////////////////
-    // Broadcast receiver
-    //////////////////////////////////////////////////////////////////////////*/
-    //region Broadcast receiver
-
-    private void registerBroadcastReceiver() {
-        broadcastReceiverController.register();
-    }
-
-    private void unregisterBroadcastReceiver() {
-        broadcastReceiverController.unregister();
-    }
-    //endregion
-
-
-
-    /*//////////////////////////////////////////////////////////////////////////
     // Thumbnail loading
     //////////////////////////////////////////////////////////////////////////*/
     //region Thumbnail loading
-
-    private void initThumbnail(final String url) {
-        thumbnailController.initThumbnail(url);
-    }
 
     public void updateEndScreenThumbnail() {
         thumbnailController.updateEndScreenThumbnail();
@@ -1144,7 +1125,7 @@ public final class Player implements
         popupWindowController.changePopupSize(width);
     }
 
-    private void changePopupWindowFlags(final int flags) {
+    void changePopupWindowFlags(final int flags) {
         popupWindowController.changePopupWindowFlags(flags);
     }
 
@@ -1211,18 +1192,6 @@ public final class Player implements
     // Progress loop and updates
     //////////////////////////////////////////////////////////////////////////*/
     //region Progress loop and updates
-
-    private void startProgressLoop() {
-        progressController.startProgressLoop();
-    }
-
-    private void stopProgressLoop() {
-        progressController.stopProgressLoop();
-    }
-
-    private boolean isProgressLoopRunning() {
-        return progressController.isProgressLoopRunning();
-    }
 
     public void triggerProgressUpdate() {
         progressController.triggerProgressUpdate();
@@ -1371,387 +1340,63 @@ public final class Player implements
     //////////////////////////////////////////////////////////////////////////*/
     //region Playback states
     void onPlayWhenReadyChanged(final boolean playWhenReady, final int reason) {
-        if (DEBUG) {
-            Log.d(TAG, "ExoPlayer - onPlayWhenReadyChanged() called with: "
-                    + "playWhenReady = [" + playWhenReady + "], "
-                    + "reason = [" + reason + "]");
-        }
-        final int playbackState = exoPlayerIsNull()
-                ? com.google.android.exoplayer2.Player.STATE_IDLE
-                : simpleExoPlayer.getPlaybackState();
-        updatePlaybackState(playWhenReady, playbackState);
+        playbackStateController.onPlayWhenReadyChanged(playWhenReady, reason);
     }
 
     void onPlaybackStateChanged(final int playbackState) {
-        if (DEBUG) {
-            Log.d(TAG, "ExoPlayer - onPlaybackStateChanged() called with: "
-                    + "playbackState = [" + playbackState + "]");
-        }
-        updatePlaybackState(getPlayWhenReady(), playbackState);
-    }
-
-    private void updatePlaybackState(final boolean playWhenReady, final int playbackState) {
-        if (DEBUG) {
-            Log.d(TAG, "ExoPlayer - onPlayerStateChanged() called with: "
-                    + "playWhenReady = [" + playWhenReady + "], "
-                    + "playbackState = [" + playbackState + "]");
-        }
-
-        if (getCurrentState().isPausedSeek()) {
-            if (DEBUG) {
-                Log.d(TAG, "updatePlaybackState() is currently blocked");
-            }
-            return;
-        }
-
-        switch (playbackState) {
-            case com.google.android.exoplayer2.Player.STATE_IDLE: // 1
-                isPrepared = false;
-                break;
-            case com.google.android.exoplayer2.Player.STATE_BUFFERING: // 2
-                if (isPrepared) {
-                    changeState(PlayerPlaybackState.BUFFERING);
-                }
-                break;
-            case com.google.android.exoplayer2.Player.STATE_READY: //3
-                PlaybackStartupTrace.mark(startupTraceId, "player_ready");
-                if (!isPrepared) {
-                    isPrepared = true;
-                    onPrepared(playWhenReady);
-                }
-                changeState(playWhenReady
-                        ? PlayerPlaybackState.PLAYING : PlayerPlaybackState.PAUSED);
-                if (Build.VERSION.SDK_INT >= 37) {
-                    NotificationUtil.getInstance()
-                            .createNotificationAndStartForeground(this, service.getInstance());
-                }
-                break;
-            case com.google.android.exoplayer2.Player.STATE_ENDED: // 4
-                changeState(PlayerPlaybackState.COMPLETED);
-                saveStreamProgressStateCompleted();
-                isPrepared = false;
-                break;
-        }
+        playbackStateController.onPlaybackStateChanged(playbackState);
     }
 
     void onIsPlayingChanged(final boolean isPlaying) {
-        stateHolder.setPlaying(isPlaying);
+        playbackStateController.onIsPlayingChanged(isPlaying);
     }
 
     void onIsLoadingChanged(final boolean isLoading) {
-        if (!isLoading) {
-            if(getCurrentState().isPaused() && isProgressLoopRunning()){
-                stopProgressLoop();
-            }
-        } else {
-            if(!isProgressLoopRunning()){
-                startProgressLoop();
-            }
-        }
+        playbackStateController.onIsLoadingChanged(isLoading);
     }
 
     void onPlaybackBlock() {
-        if (exoPlayerIsNull()) {
-            return;
-        }
-        if (DEBUG) {
-            Log.d(TAG, "Playback - onPlaybackBlock() called");
-        }
-
-        currentItem = null;
-        currentMetadata = null;
-        stateHolder.setCurrentItem(null);
-        simpleExoPlayer.stop();
-        isPrepared = false;
-
-        changeState(PlayerPlaybackState.BLOCKED);
+        playbackStateController.onPlaybackBlock();
     }
 
     void onPlaybackUnblock(final MediaSource mediaSource) {
-        if (DEBUG) {
-            Log.d(TAG, "Playback - onPlaybackUnblock() called");
-        }
-
-        if (exoPlayerIsNull()) {
-            return;
-        }
-        if (getCurrentState().isBlocked()) {
-            changeState(PlayerPlaybackState.BUFFERING);
-        }
-        PlaybackStartupTrace.mark(startupTraceId, "media_source_attached");
-        simpleExoPlayer.setMediaSource(mediaSource, false);
-        simpleExoPlayer.prepare();
+        playbackStateController.onPlaybackUnblock(mediaSource);
     }
 
     public void changeState(final PlayerPlaybackState state) {
-        if (DEBUG) {
-            Log.d(TAG, "changeState() called with: state = [" + state + "]");
-        }
-        stateHolder.setPlaybackState(state);
-        switch (state) {
-            case BLOCKED:
-                onBlocked();
-                break;
-            case PLAYING:
-                onPlaying();
-                bulletCommentsController.init();
-                bulletCommentsController.start();
-                break;
-            case BUFFERING:
-                onBuffering();
-                break;
-            case PAUSED:
-                cancelEnqueueTimer();
-                onPaused();
-                bulletCommentsController.pause();
-                break;
-            case PAUSED_SEEK:
-                cancelEnqueueTimer();
-                onPausedSeek();
-                bulletCommentsController.pause();
-                break;
-            case COMPLETED:
-                onCompleted();
-                bulletCommentsController.complete();
-                break;
-            case PREFLIGHT:
-            default:
-                break;
-        }
-        notifyPlaybackUpdateToListeners();
+        playbackStateController.changeState(state);
     }
 
-    private void cancelEnqueueTimer() {
+    void onBuffering() {
+        playbackStateController.onBuffering();
+    }
+
+    public void startBCPlayer() {
+        playbackStateController.startBCPlayer();
+    }
+
+    public void pauseBCPlayer() {
+        playbackStateController.pauseBCPlayer();
+    }
+
+    void cancelEnqueueTimer() {
         if (enqueueTimer != null) {
             enqueueTimer.cancel(true);
         }
     }
 
-    /*//////////////////////////////////////////////////////////////////////////
-    // Bullet comments
-    //////////////////////////////////////////////////////////////////////////*/
-
-    public void startBCPlayer() {
-        bulletCommentsController.start();
-    }
-
-    public void pauseBCPlayer() {
-        bulletCommentsController.pause();
-    }
-
-    private void onPrepared(final boolean playWhenReady) {
-        if (DEBUG) {
-            Log.d(TAG, "onPrepared() called with: playWhenReady = [" + playWhenReady + "]");
-        }
-
-        setVideoDurationToControls((int) simpleExoPlayer.getDuration());
-
-        binding.playbackSpeed.setText(formatSpeed(getPlaybackSpeed()));
-        if (playWhenReady) {
-            audioReactor.requestAudioFocus();
-        }
-    }
-
-    private void onBlocked() {
-        if (DEBUG) {
-            Log.d(TAG, "onBlocked() called");
-        }
-        startSabrBackoffCountdown();
-        if (!isProgressLoopRunning()) {
-            startProgressLoop();
-        }
-
-        // if we are e.g. switching players, hide controls
-        hideControls(DEFAULT_CONTROLS_DURATION, 0);
-
-        binding.playbackSeekBar.setEnabled(false);
-        binding.playbackSeekBar.getThumb()
-                .setColorFilter(new PorterDuffColorFilter(Color.RED, PorterDuff.Mode.SRC_IN));
-
-        binding.loadingPanel.setBackgroundColor(Color.BLACK);
-        animate(binding.loadingPanel, true, 0);
-        animate(binding.surfaceForeground, true, 100);
-
-        binding.playPauseButton.setImageResource(R.drawable.ic_play_arrow);
-        animatePlayButtons(false, 100);
-        binding.getRoot().setKeepScreenOn(false);
-
-        NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, false);
-    }
-
-    private void onPlaying() {
-        if (DEBUG) {
-            Log.d(TAG, "onPlaying() called");
-        }
-        stopSabrBackoffCountdown();
-        if (!isProgressLoopRunning()) {
-            startProgressLoop();
-        }
-
-        updateStreamRelatedViews();
-
-        if(getCurrentStreamInfo().isPresent()){
-            StreamInfo streamInfo = getCurrentStreamInfo().get();
-            if(streamInfo.isRoundPlayStream() && (
-                    enqueueTimer == null || enqueueTimer.isDone() || enqueueTimer.isCancelled())){
-                enqueueTimer = executor.schedule(() -> maybeAutoQueueNextStream(streamInfo, true),
-                        Math.max(simpleExoPlayer.getDuration()
-                                - simpleExoPlayer.getCurrentPosition() - 1000, 0), MILLISECONDS);
-            }
-        }
-
-        binding.playbackSeekBar.setEnabled(true);
-        binding.playbackSeekBar.getThumb()
-                .setColorFilter(new PorterDuffColorFilter(Color.RED, PorterDuff.Mode.SRC_IN));
-
-        binding.loadingPanel.setVisibility(View.GONE);
-
-        animate(binding.currentDisplaySeek, false, 200, AnimationType.SCALE_AND_ALPHA);
-
-        animate(binding.playPauseButton, false, 80, AnimationType.SCALE_AND_ALPHA, 0,
-                () -> {
-                    binding.playPauseButton.setImageResource(R.drawable.ic_pause);
-                    animatePlayButtons(true, 200);
-                    if (!isQueueVisible) {
-                        binding.playPauseButton.requestFocus();
-                    }
-                });
-
-        changePopupWindowFlags(ONGOING_PLAYBACK_WINDOW_FLAGS);
-        binding.getRoot().setKeepScreenOn(true);
-
-        NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, false);
-    }
-
-    void onBuffering() {
-        if (DEBUG) {
-            Log.d(TAG, "onBuffering() called");
-        }
-        binding.loadingPanel.setBackgroundColor(Color.TRANSPARENT);
-        binding.loadingPanel.setVisibility(View.VISIBLE);
-        startSabrBackoffCountdown();
-
-        binding.getRoot().setKeepScreenOn(true);
-        if (NotificationUtil.getInstance().shouldUpdateBufferingSlot()) {
-            NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, false);
-        }
-    }
-
-    private void onPaused() {
-        if (DEBUG) {
-            Log.d(TAG, "onPaused() called");
-        }
-        stopSabrBackoffCountdown();
-        if (isProgressLoopRunning()) {
-            stopProgressLoop();
-        }
-
-        // Don't let UI elements popup during double tap seeking. This state is entered sometimes
-        // during seeking/loading. This if-else check ensures that the controls aren't popping up.
-        if (!playerGestureListener.isDoubleTapping()) {
-            showControls(400);
-            binding.loadingPanel.setVisibility(View.GONE);
-
-            animate(binding.playPauseButton, false, 80, AnimationType.SCALE_AND_ALPHA, 0,
-                    () -> {
-                        binding.playPauseButton.setImageResource(R.drawable.ic_play_arrow);
-                        animatePlayButtons(true, 200);
-                        if (!isQueueVisible) {
-                            binding.playPauseButton.requestFocus();
-                        }
-                    });
-        }
-        changePopupWindowFlags(IDLE_WINDOW_FLAGS);
-
-        // Remove running notification when user does not want minimization to background or popup
-        if (PlayerHelper.getMinimizeOnExitAction(context) == MINIMIZE_ON_EXIT_MODE_NONE
-                && videoPlayerSelected()) {
-            NotificationUtil.getInstance().cancelNotificationAndStopForeground(service.getInstance());
-        } else {
-            NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, false);
-        }
-
-        binding.getRoot().setKeepScreenOn(false);
-    }
-
-    private void onPausedSeek() {
-        if (DEBUG) {
-            Log.d(TAG, "onPausedSeek() called");
-        }
-
-        stopSabrBackoffCountdown();
-        animatePlayButtons(false, 100);
-        binding.getRoot().setKeepScreenOn(true);
-
-        NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, false);
-    }
-
-    private void onCompleted() {
-        if (DEBUG) {
-            Log.d(TAG, "onCompleted() called" + (playQueue == null ? ". playQueue is null" : ""));
-        }
-        stopSabrBackoffCountdown();
-        if (playQueue == null) {
-            return;
-        }
-
-        animate(binding.playPauseButton, false, 0, AnimationType.SCALE_AND_ALPHA, 0,
-                () -> {
-                    binding.playPauseButton.setImageResource(R.drawable.ic_replay);
-                    animatePlayButtons(true, DEFAULT_CONTROLS_DURATION);
-                });
-
-        binding.getRoot().setKeepScreenOn(false);
-        changePopupWindowFlags(IDLE_WINDOW_FLAGS);
-
-        NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, false);
-
-        if (playQueue.getIndex() < playQueue.size() - 1) {
-            playQueue.offsetIndex(+1);
-        }
-        if (isProgressLoopRunning()) {
-            stopProgressLoop();
-        }
-
-        // When a (short) video ends the elements have to display the correct values - see #6180
-        updatePlayBackElementsCurrentDuration(binding.playbackSeekBar.getMax());
-
-        showControls(500);
-        animate(binding.currentDisplaySeek, false, 200, AnimationType.SCALE_AND_ALPHA);
-        binding.loadingPanel.setVisibility(View.GONE);
-        animate(binding.surfaceForeground, true, 100);
-    }
-
-    private void startSabrBackoffCountdown() {
+    void startSabrBackoffCountdown() {
         sabrBackoffCountdown.start();
     }
 
-    private void stopSabrBackoffCountdown() {
+    void stopSabrBackoffCountdown() {
         sabrBackoffCountdown.stop();
     }
 
-    private void animatePlayButtons(final boolean show, final int duration) {
-        animate(binding.playPauseButton, show, duration, AnimationType.SCALE_AND_ALPHA);
-
-        boolean showQueueButtons = show;
-        if (playQueue == null) {
-            showQueueButtons = false;
-        }
-
-        if (!showQueueButtons || playQueue.getIndex() > 0) {
-            animate(
-                    binding.playPreviousButton,
-                    showQueueButtons,
-                    duration,
-                    AnimationType.SCALE_AND_ALPHA);
-        }
-        if (!showQueueButtons || playQueue.getIndex() + 1 < playQueue.getStreams().size()) {
-            animate(
-                    binding.playNextButton,
-                    showQueueButtons,
-                    duration,
-                    AnimationType.SCALE_AND_ALPHA);
-        }
+    void clearCurrentMediaItems() {
+        currentItem = null;
+        currentMetadata = null;
+        stateHolder.setCurrentItem(null);
     }
     //endregion
 
@@ -2374,7 +2019,7 @@ public final class Player implements
         resetPinchZoom();
         menuController.resetDisplayModeForNewVideo();
 
-        initThumbnail(info.getThumbnailUrl());
+        thumbnailController.initThumbnail(info.getThumbnailUrl());
         registerStreamViewed();
         updateStreamRelatedViews();
         showHideKodiButton();
@@ -2500,6 +2145,20 @@ public final class Player implements
                 playQueue.getStreams(), dontAutoQueueLongVideos);
         if (autoQueue != null) {
             playQueue.appendAutoQueued(autoQueue.getStreams());
+        }
+    }
+
+    /**
+     * Schedules the auto-queue of the next part of a round-play stream when playback is about to
+     * end. The scheduling is only done if there is no pending enqueue timer.
+     *
+     * @param streamInfo the current stream info, which must be a round-play stream
+     */
+    void scheduleRoundPlayAutoQueue(@NonNull final StreamInfo streamInfo) {
+        if (enqueueTimer == null || enqueueTimer.isDone() || enqueueTimer.isCancelled()) {
+            enqueueTimer = executor.schedule(() -> maybeAutoQueueNextStream(streamInfo, true),
+                    Math.max(simpleExoPlayer.getDuration()
+                            - simpleExoPlayer.getCurrentPosition() - 1000, 0), MILLISECONDS);
         }
     }
 
@@ -2729,7 +2388,7 @@ public final class Player implements
                 ? availableStreams.get(selectedStreamIndex) : null;
     }
 
-    private void updateStreamRelatedViews() {
+    void updateStreamRelatedViews() {
         if (!getCurrentStreamInfo().isPresent()) {
             return;
         }
@@ -3678,6 +3337,19 @@ public final class Player implements
     }
 
     @NonNull
+    BulletCommentsController getBulletCommentsController() {
+        return bulletCommentsController;
+    }
+
+    PlayerGestureListener getPlayerGestureListener() {
+        return playerGestureListener;
+    }
+
+    long getStartupTraceId() {
+        return startupTraceId;
+    }
+
+    @NonNull
     SponsorBlockController getSponsorBlockController() {
         return sponsorBlockController;
     }
@@ -3723,20 +3395,6 @@ public final class Player implements
 
     //endregion
 
-
-    /*//////////////////////////////////////////////////////////////////////////
-    // SurfaceHolderCallback helpers
-    //////////////////////////////////////////////////////////////////////////*/
-    //region SurfaceHolderCallback helpers
-
-    private void setupVideoSurface() {
-        surfaceController.setupVideoSurface();
-    }
-
-    private void cleanupVideoSurface() {
-        surfaceController.cleanupVideoSurface();
-    }
-    //endregion
 
     /*//////////////////////////////////////////////////////////////////////////
     // SponsorBlock
