@@ -2,7 +2,6 @@ package org.schabi.newpipe.error
 
 import android.os.Parcelable
 import androidx.annotation.StringRes
-import com.google.android.exoplayer2.ExoPlaybackException
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import org.schabi.newpipe.R
@@ -18,6 +17,7 @@ import org.schabi.newpipe.extractor.exceptions.NeedLoginException
 import org.schabi.newpipe.extractor.exceptions.WebViewUnavailableException
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor.DeobfuscateException
 import org.schabi.newpipe.ktx.isNetworkRelated
+import org.schabi.newpipe.player.PlayerError
 import java.io.PrintWriter
 import java.io.StringWriter
 import kotlin.math.min
@@ -124,11 +124,11 @@ class ErrorInfo(
                 throwable is NeedLoginException -> R.string.need_login_hint
                 throwable is WebViewUnavailableException -> R.string.webview_unavailable_youtube_hint
                 throwable is ExtractionException -> R.string.parsing_error
-                throwable is ExoPlaybackException -> {
+                throwable is PlayerError -> {
                     when (throwable.type) {
-                        ExoPlaybackException.TYPE_SOURCE -> R.string.player_stream_failure
-                        ExoPlaybackException.TYPE_UNEXPECTED -> R.string.player_recoverable_failure
-                        ExoPlaybackException.TYPE_RENDERER -> R.string.decoder_init_failure
+                        PlayerError.Type.SOURCE -> R.string.player_stream_failure
+                        PlayerError.Type.UNEXPECTED -> R.string.player_recoverable_failure
+                        PlayerError.Type.RENDERER -> R.string.decoder_init_failure
                         else -> R.string.player_unrecoverable_failure
                     }
                 }

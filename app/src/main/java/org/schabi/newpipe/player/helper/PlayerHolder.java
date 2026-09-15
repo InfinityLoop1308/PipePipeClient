@@ -8,12 +8,12 @@ import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
-import com.google.android.exoplayer2.PlaybackException;
 
 import org.schabi.newpipe.App;
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.player.PlayerBinderInterface;
+import org.schabi.newpipe.player.PlayerError;
 import org.schabi.newpipe.player.PlayerIntentConstants;
 import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.Player;
@@ -251,7 +251,7 @@ public final class PlayerHolder {
                 }
 
                 @Override
-                public void onPlayerError(final PlaybackException error,
+                public void onPlayerError(final PlayerError error,
                                           final boolean isCatchableException) {
                     if (listener != null) {
                         listener.onPlayerError(error, isCatchableException);

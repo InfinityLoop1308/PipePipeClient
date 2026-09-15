@@ -2732,13 +2732,14 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
             }
         }
 
+        final PlayerError playerError = toPlayerError(error);
         if (!isCatchableException) {
             showMediaCodecWorkaroundHint(error);
-            createErrorNotification(error);
+            createErrorNotification(playerError);
         }
 
         if (fragmentListener != null) {
-            fragmentListener.onPlayerError(error, isCatchableException);
+            fragmentListener.onPlayerError(playerError, isCatchableException);
         }
     }
 
@@ -2802,7 +2803,34 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         return false;
     }
 
-    private void createErrorNotification(@NonNull final PlaybackException error) {
+    @NonNull
+    private static PlayerError toPlayerError(@NonNull final PlaybackException error) {
+        final PlayerError.Type type;
+        if (error instanceof ExoPlaybackException) {
+            switch (((ExoPlaybackException) error).type) {
+                case ExoPlaybackException.TYPE_SOURCE:
+                    type = PlayerError.Type.SOURCE;
+                    break;
+                case ExoPlaybackException.TYPE_RENDERER:
+                    type = PlayerError.Type.RENDERER;
+                    break;
+                case ExoPlaybackException.TYPE_UNEXPECTED:
+                    type = PlayerError.Type.UNEXPECTED;
+                    break;
+                case ExoPlaybackException.TYPE_REMOTE:
+                    type = PlayerError.Type.REMOTE;
+                    break;
+                default:
+                    type = PlayerError.Type.OTHER;
+                    break;
+            }
+        } else {
+            type = PlayerError.Type.OTHER;
+        }
+        return new PlayerError(error.errorCode, error.getErrorCodeName(), type, error);
+    }
+
+    private void createErrorNotification(@NonNull final PlayerError error) {
         final ErrorInfo errorInfo;
         if (currentMetadata == null) {
             errorInfo = new ErrorInfo(error, UserAction.PLAY_STREAM,

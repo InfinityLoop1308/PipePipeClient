@@ -46,7 +46,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.tabs.TabLayout;
@@ -86,6 +85,7 @@ import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.PlayerService.PlayerType;
 import org.schabi.newpipe.player.Player;
+import org.schabi.newpipe.player.PlayerError;
 import org.schabi.newpipe.player.VideoDetailPlayerCrasher;
 import org.schabi.newpipe.player.PlayerPlaybackState;
 import org.schabi.newpipe.player.PlayerPlaybackParameters;
@@ -2203,7 +2203,7 @@ public final class VideoDetailFragment
     }
 
     @Override
-    public void onPlayerError(final PlaybackException error, final boolean isCatchableException) {
+    public void onPlayerError(final PlayerError error, final boolean isCatchableException) {
         if (!isCatchableException) {
             // Properly exit from fullscreen
             if (isPlayerAvailable()) {
