@@ -56,14 +56,14 @@ class BulletCommentsController(private val player: Player) {
             ) {
                 val existing = bcPlayer
                 if (existing != null) {
-                    if (utils.DetimestampedEqual(existing.url, metadata.streamUrl)) {
+                    if (utils.DetimestampedEqual(existing.url, metadata.url)) {
                         return
                     }
                     existing.disconnect()
                 }
                 clear()
                 bcPlayer = MovieBulletCommentsPlayer(player.binding.bulletCommentsView).apply {
-                    setInitialData(metadata.serviceId, metadata.streamUrl)
+                    setInitialData(metadata.serviceId, metadata.url)
                     init()
                 }
                 Log.d(TAG, "BulletCommentsView initialized.")

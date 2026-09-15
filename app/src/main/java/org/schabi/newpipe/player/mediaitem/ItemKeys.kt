@@ -22,5 +22,5 @@ object ItemKeys {
      * The sorted video streams and the selected index that produced this media item.
      */
     @JvmField
-    val QUALITY = Extras.Key<MediaItemTag.Quality>("quality")
+    val QUALITY = Extras.Key<MediaItemQuality>("quality")
 }

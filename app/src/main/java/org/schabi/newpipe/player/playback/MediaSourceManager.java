@@ -13,7 +13,8 @@ import com.google.android.exoplayer2.source.MediaSource;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
-import org.schabi.newpipe.player.mediaitem.MediaItemTag;
+import org.schabi.newpipe.player.mediaitem.ExoMediaItems;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.player.mediasource.FailedMediaSource;
 import org.schabi.newpipe.player.mediasource.LoadedMediaSource;
 import org.schabi.newpipe.player.mediasource.ManagedMediaSource;
@@ -429,7 +430,7 @@ public class MediaSourceManager {
     private Single<ManagedMediaSource> getLoadedMediaSource(@NonNull final PlayQueueItem stream) {
         return stream.getStream().map(streamInfo -> {
             final MediaSource source = playbackListener.sourceOf(stream, streamInfo);
-            if (source == null || !MediaItemTag.from(source.getMediaItem()).isPresent()) {
+            if (source == null || !ExoMediaItems.fromMediaItem(source.getMediaItem()).isPresent()) {
                 final String message = "Unable to resolve source from stream info. "
                         + "URL: " + stream.getUrl() + ", "
                         + "audio count: " + streamInfo.getAudioStreams().size() + ", "
@@ -439,10 +440,10 @@ public class MediaSourceManager {
                         FailedMediaSource.of(stream, new MediaSourceResolutionException(message));
             }
 
-            final MediaItemTag tag = MediaItemTag.from(source.getMediaItem()).get();
+            final PlayerMediaItem item = ExoMediaItems.fromMediaItem(source.getMediaItem()).get();
             final long expiration = System.currentTimeMillis()
                     + ServiceHelper.getCacheExpirationMillis(streamInfo.getServiceId());
-            return new LoadedMediaSource(source, tag, stream, expiration);
+            return new LoadedMediaSource(source, item, stream, expiration);
         }).onErrorReturn(throwable -> {
             // ExtractionException = stream info load failure; IllegalStateException = a resolver
             // source-build failure (e.g. SABR probe / session creation), thrown by sourceOf. Both are

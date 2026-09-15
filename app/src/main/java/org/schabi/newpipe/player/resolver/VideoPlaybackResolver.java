@@ -21,8 +21,9 @@ import org.schabi.newpipe.extractor.stream.SubtitlesStream;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.player.helper.PlayerHelper;
-import org.schabi.newpipe.player.mediaitem.MediaItemTag;
-import org.schabi.newpipe.player.mediaitem.StreamInfoTag;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
+import org.schabi.newpipe.player.mediaitem.MediaItems;
+import org.schabi.newpipe.player.mediaitem.MediaItemQuality;
 import org.schabi.newpipe.util.ListHelper;
 
 import java.io.IOException;
@@ -143,9 +144,9 @@ public class VideoPlaybackResolver implements PlaybackResolver {
                 index = 0;
             }
         }
-        final MediaItemTag tag = StreamInfoTag.of(info, videos, index);
+        final PlayerMediaItem tag = MediaItems.forStreamInfo(info, videos, index);
         @Nullable final VideoStream video = tag.getMaybeQuality()
-                .map(MediaItemTag.Quality::getSelectedVideoStream)
+                .map(MediaItemQuality::getSelectedVideoStream)
                 .orElse(null);
 
         if (video != null) {

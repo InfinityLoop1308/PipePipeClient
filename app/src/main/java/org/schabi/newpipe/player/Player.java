@@ -115,7 +115,8 @@ import org.schabi.newpipe.player.helper.LoadController;
 import org.schabi.newpipe.player.helper.MediaSessionManager;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.player.helper.PlayerHelper;
-import org.schabi.newpipe.player.mediaitem.MediaItemTag;
+import org.schabi.newpipe.player.mediaitem.ExoMediaItems;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.player.mediasession.PlayerServiceInterface;
 import org.schabi.newpipe.player.playback.MediaSourceManager;
 import org.schabi.newpipe.player.playback.PlaybackListener;
@@ -205,7 +206,7 @@ public final class Player implements
     @Nullable private MediaSourceManager playQueueManager;
 
     @Nullable private PlayQueueItem currentItem;
-    @Nullable private MediaItemTag currentMetadata;
+    @Nullable private PlayerMediaItem currentMetadata;
     @Nullable private Bitmap currentThumbnail;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -2453,12 +2454,12 @@ public final class Player implements
     public void onEvents(@NonNull final com.google.android.exoplayer2.Player player,
                          @NonNull final com.google.android.exoplayer2.Player.Events events) {
         Listener.super.onEvents(player, events);
-        MediaItemTag.from(player.getCurrentMediaItem()).ifPresent(tag -> {
+        ExoMediaItems.fromMediaItem(player.getCurrentMediaItem()).ifPresent(tag -> {
             if (tag == currentMetadata) {
                 return; // we still have the same metadata, no need to do anything
             }
             final StreamInfo previousInfo = Optional.ofNullable(currentMetadata)
-                    .flatMap(MediaItemTag::getMaybeStreamInfo).orElse(null);
+                    .flatMap(PlayerMediaItem::getMaybeStreamInfo).orElse(null);
             currentMetadata = tag;
 
             if (!currentMetadata.getErrors().isEmpty()) {
@@ -2467,7 +2468,7 @@ public final class Player implements
                         currentMetadata.getErrors(),
                         UserAction.PLAY_STREAM,
                         "Loading failed for [" + currentMetadata.getTitle()
-                                + "]: " + currentMetadata.getStreamUrl(),
+                                + "]: " + currentMetadata.getUrl(),
                         currentMetadata.getServiceId());
                 ErrorUtil.createNotification(context, errorInfo);
             }
@@ -2786,7 +2787,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         } else {
             errorInfo = new ErrorInfo(error, UserAction.PLAY_STREAM,
                     "Player error[type=" + error.getErrorCodeName()
-                            + "] occurred while playing " + currentMetadata.getStreamUrl(),
+                            + "] occurred while playing " + currentMetadata.getUrl(),
                     currentMetadata.getServiceId());
         }
         ErrorUtil.createNotification(context, errorInfo);
@@ -3216,7 +3217,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     private String getVideoUrl() {
         return currentMetadata == null
                 ? context.getString(R.string.unknown_content)
-                : currentMetadata.getStreamUrl();
+                : currentMetadata.getUrl();
     }
 
     @NonNull
@@ -4412,7 +4413,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     //region Getters
 
     public Optional<StreamInfo> getCurrentStreamInfo() {
-        return Optional.ofNullable(currentMetadata).flatMap(MediaItemTag::getMaybeStreamInfo);
+        return Optional.ofNullable(currentMetadata).flatMap(PlayerMediaItem::getMaybeStreamInfo);
     }
 
     public PlayerPlaybackState getCurrentState() {
@@ -4633,7 +4634,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     }
 
     @Nullable
-    MediaItemTag getCurrentMetadata() {
+    PlayerMediaItem getCurrentMetadata() {
         return currentMetadata;
     }
 

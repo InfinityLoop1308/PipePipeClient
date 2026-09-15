@@ -1,7 +1,9 @@
 package org.schabi.newpipe.player.mediaitem
 
+import org.schabi.newpipe.extractor.stream.StreamInfo
 import org.schabi.newpipe.extractor.stream.StreamType
 import java.io.Serializable
+import java.util.Optional
 import java.util.UUID
 
 /**
@@ -41,6 +43,18 @@ data class PlayerMediaItem(
         copy(extras = extras.plus(key, value))
 
     fun withErrors(newErrors: List<Exception>): PlayerMediaItem = copy(errors = newErrors)
+
+    /**
+     * The resolved stream, if this item was produced from one.
+     */
+    val maybeStreamInfo: Optional<StreamInfo>
+        get() = Optional.ofNullable(extras[ItemKeys.STREAM_INFO])
+
+    /**
+     * The selected video quality, if this item came from a video stream.
+     */
+    val maybeQuality: Optional<MediaItemQuality>
+        get() = Optional.ofNullable(extras[ItemKeys.QUALITY])
 
     class Builder {
         private var uuid: String = newUuid()

@@ -8,7 +8,8 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.upstream.TransferListener;
 
-import org.schabi.newpipe.player.mediaitem.MediaItemTag;
+import org.schabi.newpipe.player.mediaitem.ExoMediaItems;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 
 import androidx.annotation.NonNull;
@@ -33,14 +34,14 @@ public class LoadedMediaSource extends CompositeMediaSource<Integer> implements 
      *                          available for playback.
      */
     public LoadedMediaSource(@NonNull final MediaSource source,
-                             @NonNull final MediaItemTag tag,
+                             @NonNull final PlayerMediaItem tag,
                              @NonNull final PlayQueueItem stream,
                              final long expireTimestamp) {
         this.source = source;
         this.stream = stream;
         this.expireTimestamp = expireTimestamp;
 
-        this.mediaItem = tag.withUuid(stream.getUuid()).asMediaItem();
+        this.mediaItem = ExoMediaItems.asExoMediaItem(tag.withUuid(stream.getUuid()));
     }
 
     public PlayQueueItem getStream() {
