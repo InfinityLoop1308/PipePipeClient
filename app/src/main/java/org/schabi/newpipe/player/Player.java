@@ -7,9 +7,6 @@ import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_SEEK;
 import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT;
 import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_SKIP;
 import static com.google.android.exoplayer2.Player.DiscontinuityReason;
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_ONE;
 import static org.schabi.newpipe.QueueItemMenuUtil.openPopupMenu;
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 import static org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty;
@@ -52,7 +49,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.core.view.ViewCompat;
@@ -212,6 +208,7 @@ public final class Player implements
 
     @NonNull private final SourceResolver sourceResolver;
     @NonNull private final PlayerErrorHandler playerErrorHandler;
+    @NonNull private final RepeatShuffleController repeatShuffleController;
 
     public final PlayerServiceInterface service; //TODO try to remove and replace everything with context
 
@@ -387,6 +384,7 @@ public final class Player implements
         sourceResolver = new SourceResolver(context, dataSource,
                 new PlayerQualityResolver(context, this::videoPlayerSelected));
         playerErrorHandler = new PlayerErrorHandler(this);
+        repeatShuffleController = new RepeatShuffleController(this);
 
         popupWindowController = new PopupWindowController(this);
         longPressSpeedingFactor = Float.parseFloat(prefs.getString(context.getString(R.string.speeding_playback_key), "3"));
@@ -696,8 +694,9 @@ public final class Player implements
                 R.string.playback_skip_silence_key), getPlaybackSkipSilence());
 
         final boolean samePlayQueue = playQueue != null && playQueue.equals(newQueue);
-        final RepeatMode repeatMode = fromExoPlayerRepeatMode(intent.getIntExtra(
-                PlayerIntentConstants.REPEAT_MODE, toExoPlayerRepeatMode(getRepeatMode())));
+        final RepeatMode repeatMode = RepeatShuffleController.fromExoPlayerRepeatMode(
+                intent.getIntExtra(PlayerIntentConstants.REPEAT_MODE,
+                        RepeatShuffleController.toExoPlayerRepeatMode(getRepeatMode())));
         final boolean playWhenReady = intent.getBooleanExtra(
                 PlayerIntentConstants.PLAY_WHEN_READY, true);
         final boolean isMuted = intent.getBooleanExtra(PlayerIntentConstants.IS_MUTED, isMuted());
@@ -849,7 +848,7 @@ public final class Player implements
 
         setRepeatMode(repeatMode);
         // #6825 - Ensure that the shuffle-button is in the correct state on the UI
-        setShuffleButton(binding.shuffleButton, simpleExoPlayer.getShuffleModeEnabled());
+        repeatShuffleController.updateShuffleButton();
         setPlaybackParameters(playbackSpeed, playbackPitch, playbackSkipSilence);
 
         notifyQueueUpdateToListeners();
@@ -2292,113 +2291,35 @@ public final class Player implements
     //region Repeat and shuffle
 
     public void onRepeatClicked() {
-        if (DEBUG) {
-            Log.d(TAG, "onRepeatClicked() called");
-        }
-        setRepeatMode(nextRepeatMode(getRepeatMode()));
+        repeatShuffleController.onRepeatClicked();
     }
 
     public void onShuffleClicked() {
-        if (DEBUG) {
-            Log.d(TAG, "onShuffleClicked() called");
-        }
-
-        if (exoPlayerIsNull()) {
-            return;
-        }
-        simpleExoPlayer.setShuffleModeEnabled(!simpleExoPlayer.getShuffleModeEnabled());
+        repeatShuffleController.onShuffleClicked();
     }
 
     public RepeatMode getRepeatMode() {
-        return stateHolder.getRepeatMode().getValue();
-    }
-
-    private static RepeatMode fromExoPlayerRepeatMode(final int repeatMode) {
-        switch (repeatMode) {
-            case REPEAT_MODE_ONE:
-                return RepeatMode.ONE;
-            case REPEAT_MODE_ALL:
-                return RepeatMode.ALL;
-            case REPEAT_MODE_OFF:
-            default:
-                return RepeatMode.OFF;
-        }
-    }
-
-    private static int toExoPlayerRepeatMode(final RepeatMode repeatMode) {
-        switch (repeatMode) {
-            case ONE:
-                return REPEAT_MODE_ONE;
-            case ALL:
-                return REPEAT_MODE_ALL;
-            case OFF:
-            default:
-                return REPEAT_MODE_OFF;
-        }
+        return repeatShuffleController.getRepeatMode();
     }
 
     public void setRepeatMode(final RepeatMode repeatMode) {
-        if (!exoPlayerIsNull()) {
-            simpleExoPlayer.setRepeatMode(toExoPlayerRepeatMode(repeatMode));
-        }
+        repeatShuffleController.setRepeatMode(repeatMode);
     }
 
     void onRepeatModeChanged(final int repeatMode) {
-        final RepeatMode mode = fromExoPlayerRepeatMode(repeatMode);
-        if (DEBUG) {
-            Log.d(TAG, "ExoPlayer - onRepeatModeChanged() called with: "
-                    + "repeatMode = [" + mode + "]");
-        }
-        stateHolder.setRepeatMode(mode);
-        setRepeatModeButton(binding.repeatButton, mode);
-        onShuffleOrRepeatModeChanged();
+        repeatShuffleController.onRepeatModeChanged(repeatMode);
     }
 
     void onShuffleModeEnabledChanged(final boolean shuffleModeEnabled) {
-        if (DEBUG) {
-            Log.d(TAG, "ExoPlayer - onShuffleModeEnabledChanged() called with: "
-                    + "mode = [" + shuffleModeEnabled + "]");
-        }
-
-        stateHolder.setShuffleModeEnabled(shuffleModeEnabled);
-
-        if (playQueue != null) {
-            if (shuffleModeEnabled) {
-                playQueue.shuffle();
-            } else {
-                playQueue.unshuffle();
-            }
-        }
-
-        setShuffleButton(binding.shuffleButton, shuffleModeEnabled);
-        onShuffleOrRepeatModeChanged();
+        repeatShuffleController.onShuffleModeEnabledChanged(shuffleModeEnabled);
     }
 
-    private void onShuffleOrRepeatModeChanged() {
+    void onShuffleOrRepeatModeChanged() {
         if (playerMediaSession != null) {
             playerMediaSession.refresh();
         }
         notifyPlaybackUpdateToListeners();
         NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, false);
-    }
-
-    private void setRepeatModeButton(final AppCompatImageButton imageButton,
-                                     final RepeatMode repeatMode) {
-        switch (repeatMode) {
-            case OFF:
-                imageButton.setImageResource(R.drawable.exo_controls_repeat_off);
-                break;
-            case ONE:
-                imageButton.setImageResource(R.drawable.exo_controls_repeat_one);
-                break;
-            case ALL:
-                imageButton.setImageResource(R.drawable.exo_controls_repeat_all);
-                break;
-        }
-    }
-
-    private void setShuffleButton(@NonNull final ImageButton button, final boolean shuffled) {
-        button.setImageAlpha(shuffled ? 255 : 77);
     }
     //endregion
 
