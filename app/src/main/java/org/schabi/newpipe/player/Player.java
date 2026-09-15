@@ -118,7 +118,6 @@ import org.schabi.newpipe.player.mediaitem.ExoMediaItems;
 import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.player.mediasession.PlayerServiceInterface;
 import org.schabi.newpipe.player.playback.MediaSourceManager;
-import org.schabi.newpipe.player.playback.PlaybackListener;
 import org.schabi.newpipe.player.playback.PlayerMediaSession;
 import org.schabi.newpipe.player.playback.SurfaceHolderCallback;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
@@ -156,7 +155,6 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.disposables.SerialDisposable;
 
 public final class Player implements
-        PlaybackListener,
         SeekBar.OnSeekBarChangeListener,
         View.OnClickListener,
         View.OnLongClickListener {
@@ -232,6 +230,8 @@ public final class Player implements
     private PlayerType playerType = PlayerType.VIDEO;
 
     @NonNull private final PlayerStateHolder stateHolder = new PlayerStateHolder();
+    @NonNull private final PlaybackListenerAdapter playbackListenerAdapter =
+            new PlaybackListenerAdapter(this);
 
     // audio only mode does not mean that player type is background, but that the player was
     // minimized to background but will resume automatically to the original player type
@@ -964,12 +964,11 @@ public final class Player implements
         }
 
         if (playQueue != null) {
-            playQueueManager = new MediaSourceManager(context, this, playQueue);
+            playQueueManager = new MediaSourceManager(context, playbackListenerAdapter, playQueue);
         }
     }
 
-    @Override // own playback listener
-    public void onPlaybackShutdown() {
+    void onPlaybackShutdown() {
         if (DEBUG) {
             Log.d(TAG, "onPlaybackShutdown() called");
         }
@@ -1965,8 +1964,7 @@ public final class Player implements
         }
     }
 
-    @Override // own playback listener
-    public void onPlaybackBlock() {
+    void onPlaybackBlock() {
         if (exoPlayerIsNull()) {
             return;
         }
@@ -1983,8 +1981,7 @@ public final class Player implements
         changeState(PlayerPlaybackState.BLOCKED);
     }
 
-    @Override // own playback listener
-    public void onPlaybackUnblock(final MediaSource mediaSource) {
+    void onPlaybackUnblock(final MediaSource mediaSource) {
         if (DEBUG) {
             Log.d(TAG, "Playback - onPlaybackUnblock() called");
         }
@@ -2824,8 +2821,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         }
     }
 
-    @Override // own playback listener (this is a getter)
-    public boolean isApproachingPlaybackEdge(final long timeToEndMillis) {
+    boolean isApproachingPlaybackEdge(final long timeToEndMillis) {
         // If live, then not near playback edge
         // If not playing, then not approaching playback edge
         if (exoPlayerIsNull() || isLive() || !isPlaying()) {
@@ -2860,8 +2856,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         return timelineWindow.getDefaultPositionMs() <= simpleExoPlayer.getCurrentPosition();
     }
 
-    @Override // own playback listener
-    public void onPlaybackSynchronize(@NonNull final PlayerMediaItem item, final boolean wasBlocked) {
+    void onPlaybackSynchronize(@NonNull final PlayerMediaItem item, final boolean wasBlocked) {
         if (DEBUG) {
             Log.d(TAG, "Playback - onPlaybackSynchronize(was blocked: " + wasBlocked
                     + ") called with item=[" + item.getTitle() + "], url=[" + item.getUrl() + "]");
@@ -3324,8 +3319,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         playQueue.setIndex(index);
     }
 
-    @Override
-    public void onPlayQueueEdited() {
+    void onPlayQueueEdited() {
         notifyPlaybackUpdateToListeners();
         showOrHideButtons();
         NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, false);
@@ -3511,9 +3505,8 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         };
     }
 
-    @Override // own playback listener
     @Nullable
-    public MediaSource sourceOf(final PlayerMediaItem item, final StreamInfo info) {
+    MediaSource sourceOf(final PlayerMediaItem item, final StreamInfo info) {
         final long recoveryPosition = playQueue == null
                 ? PlayQueue.RECOVERY_UNSET : playQueue.getRecoveryPosition(item);
         final long initialPositionMs = shouldSeek()
