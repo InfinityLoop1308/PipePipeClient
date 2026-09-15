@@ -178,7 +178,7 @@ class PlayerErrorHandler(private val player: Player) {
             createErrorNotification(playerError)
         }
 
-        player.fragmentListener?.onPlayerError(playerError, isCatchableException)
+        player.listeners.onPlayerError(playerError, isCatchableException)
     }
 
     private fun recoverFromNetworkError() {
