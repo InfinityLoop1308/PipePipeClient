@@ -618,7 +618,13 @@ public abstract class PlayQueue implements Serializable {
 
     @Override
     public int hashCode() {
-        return streams.hashCode();
+        // Must agree with equals(), which compares the index and the content of every entry.
+        int result = getIndex();
+        for (final PlayerMediaItem item : streams) {
+            result = 31 * result + item.getServiceId();
+            result = 31 * result + item.getUrl().hashCode();
+        }
+        return result;
     }
 
     public boolean isDisposed() {
