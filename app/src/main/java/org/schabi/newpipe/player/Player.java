@@ -1,6 +1,5 @@
 package org.schabi.newpipe.player;
 
-import static com.google.android.exoplayer2.PlaybackException.*;
 import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_AUTO_TRANSITION;
 import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_INTERNAL;
 import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_REMOVE;
@@ -25,7 +24,6 @@ import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.Service;
 import android.content.*;
 import android.content.res.Resources;
@@ -93,7 +91,6 @@ import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.*;
-import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrAttestationException;
 import org.schabi.newpipe.extractor.stream.*;
 import org.schabi.newpipe.fragments.OnScrollBelowItemsListener;
 import org.schabi.newpipe.fragments.detail.VideoDetailFragment;
@@ -102,7 +99,6 @@ import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.PlayerService.PlayerType;
-import org.schabi.newpipe.player.datasource.SabrLogicException;
 import org.schabi.newpipe.player.event.DisplayPortion;
 import org.schabi.newpipe.player.event.PlayerEventListener;
 import org.schabi.newpipe.player.event.PlayerGestureListener;
@@ -182,10 +178,6 @@ public final class Player implements
     //////////////////////////////////////////////////////////////////////////*/
 
     private static final int RENDERER_UNAVAILABLE = -1;
-    // Cooldown between automatic recoveries from a surface-released decoder-init failure, so a
-    // genuinely broken surface can't loop recover->fail forever.
-    private static final long SURFACE_ERROR_RECOVERY_COOLDOWN_MS = 10_000;
-    private long lastSurfaceErrorRecoveryMs;
     private static final int MAX_RETRY_COUNT = 2;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -219,6 +211,7 @@ public final class Player implements
     @NonNull private final DefaultRenderersFactory renderFactory;
 
     @NonNull private final SourceResolver sourceResolver;
+    @NonNull private final PlayerErrorHandler playerErrorHandler;
 
     public final PlayerServiceInterface service; //TODO try to remove and replace everything with context
 
@@ -393,6 +386,7 @@ public final class Player implements
 
         sourceResolver = new SourceResolver(context, dataSource,
                 new PlayerQualityResolver(context, this::videoPlayerSelected));
+        playerErrorHandler = new PlayerErrorHandler(this);
 
         popupWindowController = new PopupWindowController(this);
         longPressSpeedingFactor = Float.parseFloat(prefs.getString(context.getString(R.string.speeding_playback_key), "3"));
@@ -2137,7 +2131,7 @@ public final class Player implements
         NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, false);
     }
 
-    private void onBuffering() {
+    void onBuffering() {
         if (DEBUG) {
             Log.d(TAG, "onBuffering() called");
         }
@@ -2604,245 +2598,11 @@ public final class Player implements
     //region Errors
 
     /**
-     * Process exceptions produced by {@link com.google.android.exoplayer2.ExoPlayer ExoPlayer}.
-     * <p>There are multiple types of errors:</p>
-     * <ul>
-     * <li>{@link PlaybackException#ERROR_CODE_BEHIND_LIVE_WINDOW BEHIND_LIVE_WINDOW}:
-     * If the playback on livestreams are lagged too far behind the current playable
-     * window. Then we seek to the latest timestamp and restart the playback.
-     * This error is <b>catchable</b>.
-     * </li>
-     * <li>From {@link PlaybackException#ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE BAD_IO} to
-     * {@link PlaybackException#ERROR_CODE_PARSING_MANIFEST_UNSUPPORTED UNSUPPORTED_FORMATS}:
-     * If the stream source is validated by the extractor but not recognized by the player,
-     * then we can try to recover playback by signalling an error on the {@link PlayQueue}.</li>
-     * <li>For {@link PlaybackException#ERROR_CODE_TIMEOUT PLAYER_TIMEOUT},
-     * {@link PlaybackException#ERROR_CODE_IO_UNSPECIFIED MEDIA_SOURCE_RESOLVER_TIMEOUT} and
-     * {@link PlaybackException#ERROR_CODE_IO_NETWORK_CONNECTION_FAILED NO_NETWORK}:
-     * We can keep set the recovery record and keep to player at the current state until
-     * it is ready to play by restarting the {@link MediaSourceManager}.</li>
-     * <li>On any ExoPlayer specific issue internal to its device interaction, such as
-     * {@link PlaybackException#ERROR_CODE_DECODER_INIT_FAILED DECODER_ERROR}:
-     * We terminate the playback.</li>
-     * <li>For any other unspecified issue internal: We set a recovery and try to restart
-     * the playback.</li>
-     * For any error above that is <b>not</b> explicitly <b>catchable</b>, the player will
-     * create a notification so users are aware.
-     * </ul>
-     * @see com.google.android.exoplayer2.Player.Listener#onPlayerError(PlaybackException)
-     * */
-    // Any error code not explicitly covered here are either unrelated to NewPipe use case
-    // (e.g. DRM) or not recoverable (e.g. Decoder error). In both cases, the player should
-    // shutdown.
-    @SuppressLint("SwitchIntDef")
-    void onPlayerError(@NonNull final PlaybackException error) {
-        Log.e(TAG, "ExoPlayer - onPlayerError() called with:", error);
-
-        saveStreamProgressState();
-        boolean isCatchableException = false;
-
-        if (containsTerminalSabrException(error)) {
-            // Attestation retries are handled inside the media bridge. An attestation exception
-            // reaching the player has exhausted those recovery paths. SABR logic exceptions
-            // describe broken source invariants, so rebuilding the same source cannot recover.
-            onPlaybackShutdown();
-        } else {
-
-            switch (error.errorCode) {
-            case ERROR_CODE_BEHIND_LIVE_WINDOW:
-                isCatchableException = true;
-                simpleExoPlayer.seekToDefaultPosition();
-                simpleExoPlayer.prepare();
-                // Inform the user that we are reloading the stream by
-                // switching to the buffering state
-                onBuffering();
-                break;
-            case ERROR_CODE_IO_FILE_NOT_FOUND:
-            case ERROR_CODE_IO_NO_PERMISSION:
-            case ERROR_CODE_IO_CLEARTEXT_NOT_PERMITTED:
-            case ERROR_CODE_IO_READ_POSITION_OUT_OF_RANGE:
-            case ERROR_CODE_PARSING_CONTAINER_MALFORMED:
-            case ERROR_CODE_PARSING_MANIFEST_MALFORMED:
-            case ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED:
-            case ERROR_CODE_PARSING_MANIFEST_UNSUPPORTED:
-                // Source errors, signal on playQueue and move on:
-                if (!exoPlayerIsNull() && playQueue != null) {
-                    onBufferingFailed();
-                }
-                break;
-            case ERROR_CODE_IO_UNSPECIFIED:
-                if (error.getCause().getMessage() != null
-                        && error.getCause().getMessage().contains("Response code: 403")) {
-                    try {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity())
-                                .setTitle(R.string.network_error)
-                                .setMessage(R.string.ip_blocked_summary)
-                                .setPositiveButton(R.string.ok, (dialog, which) -> {
-                                    // Handle "Yes" click
-                                });
-                        builder.show();
-                    } catch (Exception e) {
-                        e.printStackTrace(); // when there is no context, e.g. background playing
-                    }
-                    onPlaybackShutdown();
-                    break;
-                }
-            case ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE:
-            case ERROR_CODE_IO_BAD_HTTP_STATUS:
-            case ERROR_CODE_TIMEOUT:
-            case ERROR_CODE_IO_NETWORK_CONNECTION_FAILED:
-            case ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT:
-            case ERROR_CODE_UNSPECIFIED:
-                setRecovery();
-                reloadPlayQueueManager();
-                break;
-case ERROR_CODE_DECODER_INIT_FAILED: {
-                final boolean surfaceReleased = isSurfaceReleasedError(error);
-                if (surfaceReleased && System.currentTimeMillis() - lastSurfaceErrorRecoveryMs
-                        > SURFACE_ERROR_RECOVERY_COOLDOWN_MS) {
-                    // The decoder died because the video surface was released under it (screen off /
-                    // surface lifecycle race), NOT because the device lacks a decoder. Recover like a
-                    // stream error instead of killing playback with the misleading "no hardware
-                    // decoder, use VLC" dialog. Cooldown-bounded so a genuinely broken surface still
-                    // falls through to shutdown below.
-                    lastSurfaceErrorRecoveryMs = System.currentTimeMillis();
-                    setRecovery();
-                    reloadPlayQueueManager();
-                    break;
-                }
-                // Only show the dialog when a hosting activity exists AND the failure is really
-                // about decoding capability. getParentActivity() is null in the background/popup
-                // player, and AlertDialog.Builder(null) NPEs -> the app crashed on a decoder-init
-                // failure while backgrounded. The error notification below still surfaces it.
-                final AppCompatActivity parentActivity = getParentActivity();
-                if (parentActivity != null && !surfaceReleased) {
-                    new AlertDialog.Builder(parentActivity)
-                            .setTitle(R.string.decoder_init_failure)
-                            .setMessage(R.string.unable_to_decode_summary)
-                            .setPositiveButton(R.string.ok, (dialog, which) -> { })
-                            .show();
-                }
-                onPlaybackShutdown();
-                break;
-            }
-            default:
-                // API, remote and renderer errors belong here:
-                onPlaybackShutdown();
-                break;
-            }
-        }
-
-        final PlayerError playerError = toPlayerError(error);
-        if (!isCatchableException) {
-            showMediaCodecWorkaroundHint(error);
-            createErrorNotification(playerError);
-        }
-
-        if (fragmentListener != null) {
-            fragmentListener.onPlayerError(playerError, isCatchableException);
-        }
-    }
-
-    private static boolean containsTerminalSabrException(@NonNull final Throwable error) {
-        Throwable current = error;
-        while (current != null) {
-            if (current instanceof SabrAttestationException
-                    || current instanceof SabrLogicException) {
-                return true;
-            }
-            current = current.getCause();
-        }
-        return false;
-    }
-
-    private void showMediaCodecWorkaroundHint(@NonNull final PlaybackException error) {
-        if (error.errorCode != ERROR_CODE_DECODING_FAILED
-                && error.errorCode != ERROR_CODE_FAILED_RUNTIME_CHECK) {
-            return;
-        }
-        try {
-            final String stackTrace = Log.getStackTraceString(error);
-            final boolean hasSetOutputSurface = stackTrace.contains("setOutputSurface");
-            final boolean hasAsyncCodecAdapter =
-                    stackTrace.contains("AsynchronousMediaCodecAdapter")
-                            || stackTrace.contains("AsynchronousMediaCodecBufferEnqueuer");
-            final int message;
-            if (hasSetOutputSurface && !prefs.getBoolean(context.getString(
-                    R.string.always_use_exoplayer_set_output_surface_workaround_key), false)) {
-                message = R.string.media_codec_surface_workaround_hint;
-            } else if (hasAsyncCodecAdapter && !prefs.getBoolean(context.getString(
-                    R.string.disable_exoplayer_media_codec_async_queueing_key), false)) {
-                message = R.string.media_codec_async_workaround_hint;
-            } else {
-                return;
-            }
-
-            new AlertDialog.Builder(getParentActivity())
-                    .setTitle(R.string.media_codec_workaround_hint_title)
-                    .setMessage(message)
-                    .setPositiveButton(R.string.ok, null)
-                    .show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * True when a decoder-init failure was caused by the video surface being released under the
-     * codec (screen off / surface lifecycle race) rather than by a missing/unsupported decoder.
+     * Process exceptions produced by ExoPlayer. The playback error policy lives in
+     * {@link PlayerErrorHandler}.
      */
-    private static boolean isSurfaceReleasedError(@NonNull final PlaybackException error) {
-        Throwable cause = error.getCause();
-        for (int depth = 0; cause != null && depth < 8; depth++, cause = cause.getCause()) {
-            final String message = cause.getMessage();
-            if (cause instanceof IllegalArgumentException && message != null
-                    && message.toLowerCase(Locale.US).contains("surface")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @NonNull
-    private static PlayerError toPlayerError(@NonNull final PlaybackException error) {
-        final PlayerError.Type type;
-        if (error instanceof ExoPlaybackException) {
-            switch (((ExoPlaybackException) error).type) {
-                case ExoPlaybackException.TYPE_SOURCE:
-                    type = PlayerError.Type.SOURCE;
-                    break;
-                case ExoPlaybackException.TYPE_RENDERER:
-                    type = PlayerError.Type.RENDERER;
-                    break;
-                case ExoPlaybackException.TYPE_UNEXPECTED:
-                    type = PlayerError.Type.UNEXPECTED;
-                    break;
-                case ExoPlaybackException.TYPE_REMOTE:
-                    type = PlayerError.Type.REMOTE;
-                    break;
-                default:
-                    type = PlayerError.Type.OTHER;
-                    break;
-            }
-        } else {
-            type = PlayerError.Type.OTHER;
-        }
-        return new PlayerError(error.errorCode, error.getErrorCodeName(), type, error);
-    }
-
-    private void createErrorNotification(@NonNull final PlayerError error) {
-        final ErrorInfo errorInfo;
-        if (currentMetadata == null) {
-            errorInfo = new ErrorInfo(error, UserAction.PLAY_STREAM,
-                    "Player error[type=" + error.getErrorCodeName()
-                            + "] occurred, currentMetadata is null");
-        } else {
-            errorInfo = new ErrorInfo(error, UserAction.PLAY_STREAM,
-                    "Player error[type=" + error.getErrorCodeName()
-                            + "] occurred while playing " + currentMetadata.getUrl(),
-                    currentMetadata.getServiceId());
-        }
-        ErrorUtil.createNotification(context, errorInfo);
+    void onPlayerError(@NonNull final PlaybackException error) {
+        playerErrorHandler.onPlayerError(error);
     }
     //endregion
 
