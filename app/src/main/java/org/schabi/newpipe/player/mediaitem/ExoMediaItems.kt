@@ -28,8 +28,7 @@ object ExoMediaItems {
 
         return MediaItem.fromUri(item.url)
             .buildUpon()
-            // Media ids must be unique within a playlist, so the instance uuid is used, not the
-            // content mediaId.
+            // Media ids must be unique within a playlist, so the per-entry uuid is used.
             .setMediaId(item.uuid)
             .setMediaMetadata(mediaMetadata.build())
             .setRequestMetadata(requestMetadata)

@@ -14,12 +14,9 @@ import java.util.UUID
  * Portable, immutable representation of one playable entry, used both as the value type of the
  * media item model and as the entry held by a play queue.
  *
- * It carries two levels of identity:
- * - [uuid] identifies the queue slot / playback instance. It is assigned once and survives
- *   serialization, so it can be used for queue lookups and media source replacement instead
- *   of referential equality;
- * - [mediaId] identifies the content itself (service + url) and is stable across
- *   re-resolutions.
+ * The content itself is identified by [url]. [uuid] identifies the queue slot / playback
+ * instance: it is assigned once and survives serialization, so it can be used for queue lookups
+ * and media source replacement instead of referential equality.
  *
  * It only describes the content: per-slot playback state (the recovery position, whether the
  * entry was auto-enqueued) is owned by the [org.schabi.newpipe.player.playqueue.PlayQueue],
@@ -34,7 +31,6 @@ import java.util.UUID
  */
 data class PlayerMediaItem(
     val uuid: String,
-    val mediaId: String,
     val serviceId: Int,
     val url: String,
     val title: String,
@@ -75,7 +71,6 @@ data class PlayerMediaItem(
 
     class Builder {
         private var uuid: String = newUuid()
-        private var mediaId: String = ""
         private var serviceId: Int = 0
         private var url: String = ""
         private var title: String = ""
@@ -93,7 +88,6 @@ data class PlayerMediaItem(
 
         constructor(item: PlayerMediaItem) {
             uuid = item.uuid
-            mediaId = item.mediaId
             serviceId = item.serviceId
             url = item.url
             title = item.title
@@ -109,8 +103,6 @@ data class PlayerMediaItem(
         }
 
         fun uuid(value: String) = apply { uuid = value }
-
-        fun mediaId(value: String) = apply { mediaId = value }
 
         fun serviceId(value: Int) = apply { serviceId = value }
 
@@ -142,7 +134,6 @@ data class PlayerMediaItem(
 
         fun build(): PlayerMediaItem = PlayerMediaItem(
             uuid = uuid,
-            mediaId = mediaId,
             serviceId = serviceId,
             url = url,
             title = title,
@@ -162,12 +153,6 @@ data class PlayerMediaItem(
         private const val PLACEHOLDER = "Placeholder"
 
         /**
-         * Builds the stable content identity of a stream.
-         */
-        @JvmStatic
-        fun mediaIdOf(serviceId: Int, url: String): String = "$serviceId:$url"
-
-        /**
          * @return a new instance identity, used for a single queue slot / playback instance
          */
         @JvmStatic
@@ -180,7 +165,6 @@ data class PlayerMediaItem(
         fun forStreamInfoItem(item: StreamInfoItem): PlayerMediaItem =
             Builder()
                 .uuid(newUuid())
-                .mediaId(mediaIdOf(item.serviceId, item.url))
                 .serviceId(item.serviceId)
                 .url(item.url)
                 .title(item.name)
@@ -231,7 +215,6 @@ data class PlayerMediaItem(
         @JvmStatic
         fun placeholder(): PlayerMediaItem = Builder()
             .uuid(newUuid())
-            .mediaId(PLACEHOLDER)
             .serviceId(NO_SERVICE_ID)
             .url(PLACEHOLDER)
             .title(PLACEHOLDER)
@@ -245,7 +228,6 @@ data class PlayerMediaItem(
         private fun base(streamInfo: StreamInfo): Builder =
             Builder()
                 .uuid(newUuid())
-                .mediaId(mediaIdOf(streamInfo.serviceId, streamInfo.url))
                 .serviceId(streamInfo.serviceId)
                 .url(streamInfo.url)
                 .title(streamInfo.name)
