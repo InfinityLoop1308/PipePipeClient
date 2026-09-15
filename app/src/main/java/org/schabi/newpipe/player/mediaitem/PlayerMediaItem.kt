@@ -9,6 +9,7 @@ import java.io.Serializable
 import java.util.Optional
 import java.util.UUID
 
+//TODO: merge forXXXXX
 /**
  * Portable, immutable representation of one playable entry, used both as the value type of the
  * media item model and as the entry held by a play queue.
