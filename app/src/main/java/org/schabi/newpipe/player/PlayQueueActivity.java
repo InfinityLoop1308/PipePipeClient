@@ -22,8 +22,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.exoplayer2.PlaybackParameters;
-
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.ActivityPlayerQueueControlBinding;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
@@ -449,9 +447,9 @@ public final class PlayQueueActivity extends AppCompatActivity
     }
 
     @Override
-    public void onPlaybackUpdate(final PlayerPlaybackState state, final int repeatMode,
+    public void onPlaybackUpdate(final PlayerPlaybackState state, final RepeatMode repeatMode,
                                  final boolean shuffled,
-                                 final PlaybackParameters parameters) {
+                                 final PlayerPlaybackParameters parameters) {
         onStateChanged(state);
         onPlayModeChanged(repeatMode, shuffled);
         onPlaybackParameterChanged(parameters);
@@ -554,17 +552,17 @@ public final class PlayQueueActivity extends AppCompatActivity
         }
     }
 
-    private void onPlayModeChanged(final int repeatMode, final boolean shuffled) {
+    private void onPlayModeChanged(final RepeatMode repeatMode, final boolean shuffled) {
         switch (repeatMode) {
-            case com.google.android.exoplayer2.Player.REPEAT_MODE_OFF:
+            case OFF:
                 queueControlBinding.controlRepeat
                         .setImageResource(R.drawable.exo_controls_repeat_off);
                 break;
-            case com.google.android.exoplayer2.Player.REPEAT_MODE_ONE:
+            case ONE:
                 queueControlBinding.controlRepeat
                         .setImageResource(R.drawable.exo_controls_repeat_one);
                 break;
-            case com.google.android.exoplayer2.Player.REPEAT_MODE_ALL:
+            case ALL:
                 queueControlBinding.controlRepeat
                         .setImageResource(R.drawable.exo_controls_repeat_all);
                 break;
@@ -574,7 +572,7 @@ public final class PlayQueueActivity extends AppCompatActivity
         queueControlBinding.controlShuffle.setImageAlpha(shuffleAlpha);
     }
 
-    private void onPlaybackParameterChanged(@Nullable final PlaybackParameters parameters) {
+    private void onPlaybackParameterChanged(@Nullable final PlayerPlaybackParameters parameters) {
         if (parameters != null) {
             if (menu != null && player != null) {
                 final MenuItem item = menu.findItem(R.id.action_playback_speed);

@@ -1,6 +1,5 @@
 package org.schabi.newpipe.player
 
-import com.google.android.exoplayer2.PlaybackParameters
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -48,14 +47,14 @@ class PlayerStateHolder {
     private val _bufferedPosition = MutableStateFlow(0L)
     val bufferedPosition: StateFlow<Long> = _bufferedPosition.asStateFlow()
 
-    private val _repeatMode = MutableStateFlow(com.google.android.exoplayer2.Player.REPEAT_MODE_OFF)
-    val repeatMode: StateFlow<Int> = _repeatMode.asStateFlow()
+    private val _repeatMode = MutableStateFlow(RepeatMode.OFF)
+    val repeatMode: StateFlow<RepeatMode> = _repeatMode.asStateFlow()
 
     private val _shuffleModeEnabled = MutableStateFlow(false)
     val shuffleModeEnabled: StateFlow<Boolean> = _shuffleModeEnabled.asStateFlow()
 
-    private val _playbackParameters = MutableStateFlow(PlaybackParameters(1f))
-    val playbackParameters: StateFlow<PlaybackParameters> = _playbackParameters.asStateFlow()
+    private val _playbackParameters = MutableStateFlow(PlayerPlaybackParameters(1f, 1f))
+    val playbackParameters: StateFlow<PlayerPlaybackParameters> = _playbackParameters.asStateFlow()
 
     private val _availableStreams = MutableStateFlow<List<VideoStream>>(emptyList())
     val availableStreams: StateFlow<List<VideoStream>> = _availableStreams.asStateFlow()
@@ -95,7 +94,7 @@ class PlayerStateHolder {
         _bufferedPosition.value = position
     }
 
-    fun setRepeatMode(repeatMode: Int) {
+    fun setRepeatMode(repeatMode: RepeatMode) {
         _repeatMode.value = repeatMode
     }
 
@@ -103,7 +102,7 @@ class PlayerStateHolder {
         _shuffleModeEnabled.value = enabled
     }
 
-    fun setPlaybackParameters(parameters: PlaybackParameters) {
+    fun setPlaybackParameters(parameters: PlayerPlaybackParameters) {
         _playbackParameters.value = parameters
     }
 

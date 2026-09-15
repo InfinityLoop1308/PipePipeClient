@@ -47,7 +47,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.exoplayer2.PlaybackException;
-import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.tabs.TabLayout;
@@ -89,6 +88,8 @@ import org.schabi.newpipe.player.PlayerService.PlayerType;
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.VideoDetailPlayerCrasher;
 import org.schabi.newpipe.player.PlayerPlaybackState;
+import org.schabi.newpipe.player.PlayerPlaybackParameters;
+import org.schabi.newpipe.player.RepeatMode;
 import org.schabi.newpipe.player.PlaybackStartupTrace;
 import org.schabi.newpipe.player.PlayerUiModeHelper;
 import org.schabi.newpipe.player.event.OnKeyDownListener;
@@ -2121,9 +2122,9 @@ public final class VideoDetailFragment
 
     @Override
     public void onPlaybackUpdate(final PlayerPlaybackState state,
-                                 final int repeatMode,
+                                 final RepeatMode repeatMode,
                                  final boolean shuffled,
-                                 final PlaybackParameters parameters) {
+                                 final PlayerPlaybackParameters parameters) {
         setOverlayPlayPauseImage(player != null && player.isPlaying());
 
         switch (state) {

@@ -6,11 +6,9 @@ import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 
 import org.schabi.newpipe.player.Player;
+import org.schabi.newpipe.player.RepeatMode;
 import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.player.mediasession.MediaSessionCallback;
-
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
-import static org.schabi.newpipe.player.helper.PlayerHelper.nextRepeatMode;
 
 public class PlayerMediaSession implements MediaSessionCallback {
     public final Player player;
@@ -108,16 +106,16 @@ public class PlayerMediaSession implements MediaSessionCallback {
     public void changePlayMode() {
         int correctMode = this.mode; // this.mode change after the following calls
         exoPlayer.setShuffleModeEnabled(false);
-        player.setRepeatMode(REPEAT_MODE_OFF);
+        player.setRepeatMode(RepeatMode.OFF);
         switch (correctMode) {
             case 0: // shuffle
                 player.onShuffleClicked();
                 break;
             case 1: // repeat_one
-                player.setRepeatMode(com.google.android.exoplayer2.Player.REPEAT_MODE_ONE);
+                player.setRepeatMode(RepeatMode.ONE);
                 break;
             case 2: // repeat_all
-                player.setRepeatMode(com.google.android.exoplayer2.Player.REPEAT_MODE_ALL);
+                player.setRepeatMode(RepeatMode.ALL);
                 break;
             case 3: // repeat_none
             default:

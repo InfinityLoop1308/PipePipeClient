@@ -11,7 +11,6 @@ import static com.google.android.exoplayer2.Player.DiscontinuityReason;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_ONE;
-import static com.google.android.exoplayer2.Player.RepeatMode;
 import static org.schabi.newpipe.QueueItemMenuUtil.openPopupMenu;
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 import static org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty;
@@ -695,15 +694,16 @@ public final class Player implements
         }
         trackSelector.setParameters(parametersBuilder);
 
-        final PlaybackParameters savedParameters = retrievePlaybackParametersFromPrefs(this);
+        final PlayerPlaybackParameters savedParameters =
+                retrievePlaybackParametersFromPrefs(this);
         final float playbackSpeed = savedParameters.speed;
         final float playbackPitch = savedParameters.pitch;
         final boolean playbackSkipSilence = getPrefs().getBoolean(getContext().getString(
                 R.string.playback_skip_silence_key), getPlaybackSkipSilence());
 
         final boolean samePlayQueue = playQueue != null && playQueue.equals(newQueue);
-        final int repeatMode = intent.getIntExtra(PlayerIntentConstants.REPEAT_MODE,
-                getRepeatMode());
+        final RepeatMode repeatMode = fromExoPlayerRepeatMode(intent.getIntExtra(
+                PlayerIntentConstants.REPEAT_MODE, toExoPlayerRepeatMode(getRepeatMode())));
         final boolean playWhenReady = intent.getBooleanExtra(
                 PlayerIntentConstants.PLAY_WHEN_READY, true);
         final boolean isMuted = intent.getBooleanExtra(PlayerIntentConstants.IS_MUTED, isMuted());
@@ -823,7 +823,7 @@ public final class Player implements
     }
 
     private void initPlayback(@NonNull final PlayQueue queue,
-                              @RepeatMode final int repeatMode,
+                              final RepeatMode repeatMode,
                               final float playbackSpeed,
                               final float playbackPitch,
                               final boolean playbackSkipSilence,
@@ -1502,7 +1502,7 @@ public final class Player implements
         return !exoPlayerIsNull() && simpleExoPlayer.getSkipSilenceEnabled();
     }
 
-    public PlaybackParameters getPlaybackParameters() {
+    public PlayerPlaybackParameters getPlaybackParameters() {
         return stateHolder.getPlaybackParameters().getValue();
     }
 
@@ -2315,24 +2315,48 @@ public final class Player implements
         simpleExoPlayer.setShuffleModeEnabled(!simpleExoPlayer.getShuffleModeEnabled());
     }
 
-    @RepeatMode
-    public int getRepeatMode() {
+    public RepeatMode getRepeatMode() {
         return stateHolder.getRepeatMode().getValue();
     }
 
-    public void setRepeatMode(@RepeatMode final int repeatMode) {
-        if (!exoPlayerIsNull()) {
-            simpleExoPlayer.setRepeatMode(repeatMode);
+    private static RepeatMode fromExoPlayerRepeatMode(final int repeatMode) {
+        switch (repeatMode) {
+            case REPEAT_MODE_ONE:
+                return RepeatMode.ONE;
+            case REPEAT_MODE_ALL:
+                return RepeatMode.ALL;
+            case REPEAT_MODE_OFF:
+            default:
+                return RepeatMode.OFF;
         }
     }
 
-    void onRepeatModeChanged(@RepeatMode final int repeatMode) {
+    private static int toExoPlayerRepeatMode(final RepeatMode repeatMode) {
+        switch (repeatMode) {
+            case ONE:
+                return REPEAT_MODE_ONE;
+            case ALL:
+                return REPEAT_MODE_ALL;
+            case OFF:
+            default:
+                return REPEAT_MODE_OFF;
+        }
+    }
+
+    public void setRepeatMode(final RepeatMode repeatMode) {
+        if (!exoPlayerIsNull()) {
+            simpleExoPlayer.setRepeatMode(toExoPlayerRepeatMode(repeatMode));
+        }
+    }
+
+    void onRepeatModeChanged(final int repeatMode) {
+        final RepeatMode mode = fromExoPlayerRepeatMode(repeatMode);
         if (DEBUG) {
             Log.d(TAG, "ExoPlayer - onRepeatModeChanged() called with: "
-                    + "repeatMode = [" + repeatMode + "]");
+                    + "repeatMode = [" + mode + "]");
         }
-        stateHolder.setRepeatMode(repeatMode);
-        setRepeatModeButton(binding.repeatButton, repeatMode);
+        stateHolder.setRepeatMode(mode);
+        setRepeatModeButton(binding.repeatButton, mode);
         onShuffleOrRepeatModeChanged();
     }
 
@@ -2365,15 +2389,15 @@ public final class Player implements
     }
 
     private void setRepeatModeButton(final AppCompatImageButton imageButton,
-                                     @RepeatMode final int repeatMode) {
+                                     final RepeatMode repeatMode) {
         switch (repeatMode) {
-            case REPEAT_MODE_OFF:
+            case OFF:
                 imageButton.setImageResource(R.drawable.exo_controls_repeat_off);
                 break;
-            case REPEAT_MODE_ONE:
+            case ONE:
                 imageButton.setImageResource(R.drawable.exo_controls_repeat_one);
                 break;
-            case REPEAT_MODE_ALL:
+            case ALL:
                 imageButton.setImageResource(R.drawable.exo_controls_repeat_all);
                 break;
         }
@@ -2504,7 +2528,8 @@ public final class Player implements
             Log.d(TAG, "ExoPlayer - playbackParameters(), speed = [" + playbackParameters.speed
                     + "], pitch = [" + playbackParameters.pitch + "]");
         }
-        stateHolder.setPlaybackParameters(playbackParameters);
+        stateHolder.setPlaybackParameters(new PlayerPlaybackParameters(
+                playbackParameters.speed, playbackParameters.pitch));
         binding.playbackSpeed.setText(formatSpeed(playbackParameters.speed));
     }
 
@@ -2530,7 +2555,7 @@ public final class Player implements
             case DISCONTINUITY_REASON_REMOVE:
                 // When player is in single repeat mode and a period transition occurs,
                 // we need to register a view count here since no metadata has changed
-                if (getRepeatMode() == REPEAT_MODE_ONE && newIndex == playQueue.getIndex()) {
+                if (getRepeatMode() == RepeatMode.ONE && newIndex == playQueue.getIndex()) {
                     registerStreamViewed();
                     break;
                 }
@@ -3284,7 +3309,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
             }
         }
         if (!forceEnqueue && (playQueue.getIndex() != playQueue.size() - 1
-                || getRepeatMode() != REPEAT_MODE_OFF
+                || getRepeatMode() != RepeatMode.OFF
                 || !PlayerHelper.isAutoQueueEnabled(context))) {
             return;
         }
@@ -4259,7 +4284,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     private void notifyPlaybackUpdateToListeners() {
         if (fragmentListener != null && !exoPlayerIsNull() && playQueue != null) {
             fragmentListener.onPlaybackUpdate(getCurrentState(), getRepeatMode(),
-                    playQueue.isShuffled(), simpleExoPlayer.getPlaybackParameters());
+                    playQueue.isShuffled(), getPlaybackParameters());
         }
         if (activityListener != null && !exoPlayerIsNull() && playQueue != null) {
             activityListener.onPlaybackUpdate(getCurrentState(), getRepeatMode(),

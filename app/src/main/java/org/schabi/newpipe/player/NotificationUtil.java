@@ -27,8 +27,6 @@ import org.schabi.newpipe.util.NavigationHelper;
 import java.util.List;
 
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_ONE;
 import static org.schabi.newpipe.player.PlayerService.ACTION_CLOSE;
 import static org.schabi.newpipe.player.PlayerService.ACTION_FAST_FORWARD;
 import static org.schabi.newpipe.player.PlayerService.ACTION_FAST_REWIND;
@@ -321,13 +319,13 @@ public final class NotificationUtil {
                 }
 
             case NotificationConstants.REPEAT:
-                if (player.getRepeatMode() == REPEAT_MODE_ALL) {
+                if (player.getRepeatMode() == RepeatMode.ALL) {
                     return getAction(player, R.drawable.exo_media_action_repeat_all,
                             R.string.exo_controls_repeat_all_description, ACTION_REPEAT);
-                } else if (player.getRepeatMode() == REPEAT_MODE_ONE) {
+                } else if (player.getRepeatMode() == RepeatMode.ONE) {
                     return getAction(player, R.drawable.exo_media_action_repeat_one,
                             R.string.exo_controls_repeat_one_description, ACTION_REPEAT);
-                } else /* player.getRepeatMode() == REPEAT_MODE_OFF */ {
+                } else /* player.getRepeatMode() == RepeatMode.OFF */ {
                     return getAction(player, R.drawable.exo_media_action_repeat_off,
                             R.string.exo_controls_repeat_off_description, ACTION_REPEAT);
                 }
