@@ -119,7 +119,7 @@ import static org.schabi.newpipe.extractor.services.bilibili.utils.isFirstP;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.ktx.ViewUtils.animateRotation;
 import static org.schabi.newpipe.player.helper.PlayerHelper.globalScreenOrientationLocked;
-import static org.schabi.newpipe.player.mediaitem.PlayerMediaItem.RECOVERY_UNSET;
+import static org.schabi.newpipe.player.playqueue.PlayQueue.RECOVERY_UNSET;
 import static org.schabi.newpipe.util.ExtractorHelper.showMetaInfoInTextView;
 
 public final class VideoDetailFragment
@@ -2018,7 +2018,7 @@ public final class VideoDetailFragment
                 && prefs.getBoolean(activity.getString(R.string.enable_playback_resume_key), true);
         if (!playbackResumeEnabled) {
             if (playQueue == null || playQueue.getStreams().isEmpty()
-                    || playQueue.getItem().getRecoveryPosition() == RECOVERY_UNSET) {
+                    || playQueue.getRecoveryPosition(playQueue.getIndex()) == RECOVERY_UNSET) {
                 binding.positionView.setVisibility(View.INVISIBLE);
                 binding.detailPositionView.setVisibility(View.GONE);
                 // TODO: Remove this check when separation of concerns is done.
@@ -2029,7 +2029,7 @@ public final class VideoDetailFragment
                 }
             } else {
                 // Show saved position from backStack if user allows it
-                showPlaybackProgress(playQueue.getItem().getRecoveryPosition(),
+                showPlaybackProgress(playQueue.getRecoveryPosition(playQueue.getIndex()),
                         playQueue.getItem().getDuration() * 1000);
                 animate(binding.positionView, true, 500);
                 animate(binding.detailPositionView, true, 500);

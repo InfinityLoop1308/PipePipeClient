@@ -721,7 +721,7 @@ public final class Player implements
                 && newQueue.size() == 1 && newQueue.getItem() != null
                 && playQueue != null && playQueue.size() == 1 && playQueue.getItem() != null
                 && newQueue.getItem().getUrl().equals(playQueue.getItem().getUrl())
-                && newQueue.getItem().getRecoveryPosition() != PlayerMediaItem.RECOVERY_UNSET) {
+                && newQueue.getRecoveryPosition(newQueue.getItem()) != PlayQueue.RECOVERY_UNSET) {
             // Player can have state = IDLE when playback is stopped or failed
             // and we should retry in this case
             if (simpleExoPlayer.getPlaybackState()
@@ -729,7 +729,8 @@ public final class Player implements
                 simpleExoPlayer.prepare();
             }
             if (shouldSeek()) {
-                simpleExoPlayer.seekTo(playQueue.getIndex(), newQueue.getItem().getRecoveryPosition());
+                simpleExoPlayer.seekTo(playQueue.getIndex(),
+                        newQueue.getRecoveryPosition(newQueue.getItem()));
             }
             simpleExoPlayer.setPlayWhenReady(playWhenReady);
 
@@ -751,7 +752,7 @@ public final class Player implements
                 && !samePlayQueue
                 && !newQueue.isEmpty()
                 && newQueue.getItem() != null
-                && newQueue.getItem().getRecoveryPosition() == PlayerMediaItem.RECOVERY_UNSET) {
+                && newQueue.getRecoveryPosition(newQueue.getItem()) == PlayQueue.RECOVERY_UNSET) {
             databaseUpdateDisposable.add(recordManager.loadStreamState(newQueue.getItem())
                     .observeOn(AndroidSchedulers.mainThread())
                     // Do not place initPlayback() in doFinally() because
@@ -2901,8 +2902,8 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                         + "size=[" + currentPlaylistSize + "].");
             }
 
-            if (item.getRecoveryPosition() != PlayerMediaItem.RECOVERY_UNSET && shouldSeek()) {
-                simpleExoPlayer.seekTo(currentPlayQueueIndex, item.getRecoveryPosition());
+            if (playQueue.getRecoveryPosition(item) != PlayQueue.RECOVERY_UNSET && shouldSeek()) {
+                simpleExoPlayer.seekTo(currentPlayQueueIndex, playQueue.getRecoveryPosition(item));
                 playQueue.unsetRecovery(currentPlayQueueIndex);
             } else {
                 simpleExoPlayer.seekToDefaultPosition(currentPlayQueueIndex);
@@ -2999,7 +3000,8 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         audioReactor.requestAudioFocus();
 
         if (getCurrentState().isCompleted() && playQueue != null && playQueue.getItem() != null &&
-                playQueue.getItem().getRecoveryPosition() / 1000 >= playQueue.getItem().getDuration() - 5) {
+                playQueue.getRecoveryPosition(playQueue.getItem()) / 1000
+                        >= playQueue.getItem().getDuration() - 5) {
             if (playQueue.getIndex() == 0) {
                 seekToDefault();
             } else {
@@ -3280,7 +3282,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         ){
             int p = Integer.parseInt(info.getUrl().split(Pattern.quote("?p="))[1].split("&")[0]);
             if(partitions.size() > p){
-                playQueue.append(getAutoQueuedSinglePlayQueue(partitions.get(p)).getStreams());
+                playQueue.appendAutoQueued(getAutoQueuedSinglePlayQueue(partitions.get(p)).getStreams());
             }
         }
         if (!forceEnqueue && (playQueue.getIndex() != playQueue.size() - 1
@@ -3297,7 +3299,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         final PlayQueue autoQueue = PlayerHelper.autoQueueOf(info,
                 playQueue.getStreams(), dontAutoQueueLongVideos);
         if (autoQueue != null) {
-            playQueue.append(autoQueue.getStreams());
+            playQueue.appendAutoQueued(autoQueue.getStreams());
         }
     }
 
@@ -3509,9 +3511,11 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     @Override // own playback listener
     @Nullable
     public MediaSource sourceOf(final PlayerMediaItem item, final StreamInfo info) {
+        final long recoveryPosition = playQueue == null
+                ? PlayQueue.RECOVERY_UNSET : playQueue.getRecoveryPosition(item);
         final long initialPositionMs = shouldSeek()
-                && item.getRecoveryPosition() != PlayerMediaItem.RECOVERY_UNSET
-                ? item.getRecoveryPosition() : 0;
+                && recoveryPosition != PlayQueue.RECOVERY_UNSET
+                ? recoveryPosition : 0;
         return sourceResolver.resolve(playerType, isAudioOnly, info, initialPositionMs,
                 startupTraceId);
     }

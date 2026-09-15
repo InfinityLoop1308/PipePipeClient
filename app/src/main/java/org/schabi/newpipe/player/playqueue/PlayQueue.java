@@ -19,7 +19,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -41,12 +43,31 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
  */
 public abstract class PlayQueue implements Serializable {
     public static final boolean DEBUG = MainActivity.DEBUG;
+
+    /**
+     * The recovery position of an entry that has no saved playback progress.
+     */
+    public static final long RECOVERY_UNSET = Long.MIN_VALUE;
+
     @NonNull
     private final AtomicInteger queueIndex;
     private final List<PlayerMediaItem> history = new ArrayList<>();
 
     private List<PlayerMediaItem> backup;
     private List<PlayerMediaItem> streams;
+
+    /**
+     * Recovery positions of the queue entries, keyed by their stable uuid. This is per-slot
+     * playback state, so it is owned by the queue instead of the immutable media item.
+     */
+    private final Map<String, Long> recoveryPositions = new HashMap<>();
+
+    /**
+     * The uuid of the entry that was enqueued automatically, or null when the queue tail was
+     * added by the user. Auto-enqueuing only ever appends a single entry at the tail.
+     */
+    @Nullable
+    private String autoQueuedUuid;
 
     private transient BehaviorSubject<PlayQueueEvent> eventBroadcast;
     private transient Flowable<PlayQueueEvent> broadcastReceiver;
@@ -286,17 +307,38 @@ public abstract class PlayQueue implements Serializable {
      * @param items {@link PlayerMediaItem}s to append
      */
     public synchronized void append(@NonNull final List<PlayerMediaItem> items) {
+        appendInternal(items, false);
+    }
+
+    /**
+     * Appends entries the player chose automatically (related streams, next partition, ...).
+     * The tail is remembered so that a later user action can drop it again.
+     *
+     * @param items {@link PlayerMediaItem}s to append
+     */
+    public synchronized void appendAutoQueued(@NonNull final List<PlayerMediaItem> items) {
+        appendInternal(items, true);
+    }
+
+    private synchronized void appendInternal(@NonNull final List<PlayerMediaItem> items,
+                                             final boolean autoQueued) {
         final List<PlayerMediaItem> itemList = new ArrayList<>(items);
 
         if (isShuffled()) {
             backup.addAll(itemList);
             Collections.shuffle(itemList);
         }
-        if (!streams.isEmpty() && streams.get(streams.size() - 1).isAutoQueued()
-                && !itemList.get(0).isAutoQueued()) {
+        if (!itemList.isEmpty() && !streams.isEmpty() && autoQueuedUuid != null
+                && autoQueuedUuid.equals(streams.get(streams.size() - 1).getUuid())
+                && !autoQueued) {
+            // A user enqueue overrides the speculative auto-enqueued tail.
             streams.remove(streams.size() - 1);
+            autoQueuedUuid = null;
         }
         streams.addAll(itemList);
+        if (autoQueued && !itemList.isEmpty()) {
+            autoQueuedUuid = itemList.get(itemList.size() - 1).getUuid();
+        }
 
         broadcast(new AppendEvent(itemList.size()));
     }
@@ -348,8 +390,14 @@ public abstract class PlayQueue implements Serializable {
             queueIndex.set(0);
         }
 
+        final PlayerMediaItem removedItem = streams.get(removeIndex);
         if (backup != null) {
-            backup.remove(getItem(removeIndex));
+            backup.remove(removedItem);
+        }
+
+        recoveryPositions.remove(removedItem.getUuid());
+        if (removedItem.getUuid().equals(autoQueuedUuid)) {
+            autoQueuedUuid = null;
         }
 
         history.remove(streams.remove(removeIndex));
@@ -388,7 +436,11 @@ public abstract class PlayQueue implements Serializable {
             queueIndex.incrementAndGet();
         }
 
-        final PlayerMediaItem playQueueItem = streams.remove(source).withAutoQueued(false);
+        final PlayerMediaItem playQueueItem = streams.remove(source);
+        // Moving an entry by hand makes it a deliberate user choice, no longer an auto-enqueue.
+        if (playQueueItem.getUuid().equals(autoQueuedUuid)) {
+            autoQueuedUuid = null;
+        }
         streams.add(target, playQueueItem);
         broadcast(new MoveEvent(source, target));
     }
@@ -407,22 +459,27 @@ public abstract class PlayQueue implements Serializable {
             return;
         }
 
-        streams.set(index, streams.get(index).withRecoveryPosition(position));
+        recoveryPositions.put(streams.get(index).getUuid(), position);
         broadcast(new RecoveryEvent(index, position));
     }
 
     /**
-     * Replaces the item at the index with a copy carrying the given auto-queued flag.
-     *
-     * @param index       index of the item
-     * @param autoQueued  whether the item was enqueued automatically
+     * @param item the entry to look up
+     * @return the saved recovery position of the given entry, or {@link #RECOVERY_UNSET}
      */
-    public synchronized void setAutoQueued(final int index, final boolean autoQueued) {
-        if (index < 0 || index >= streams.size()) {
-            return;
-        }
+    public synchronized long getRecoveryPosition(@NonNull final PlayerMediaItem item) {
+        return recoveryPositions.getOrDefault(item.getUuid(), RECOVERY_UNSET);
+    }
 
-        streams.set(index, streams.get(index).withAutoQueued(autoQueued));
+    /**
+     * @param index the index of the entry to look up
+     * @return the saved recovery position of the entry at the index, or {@link #RECOVERY_UNSET}
+     */
+    public synchronized long getRecoveryPosition(final int index) {
+        if (index < 0 || index >= streams.size()) {
+            return RECOVERY_UNSET;
+        }
+        return getRecoveryPosition(streams.get(index));
     }
 
     /**
@@ -434,7 +491,7 @@ public abstract class PlayQueue implements Serializable {
      * @param index index of the item
      */
     public synchronized void unsetRecovery(final int index) {
-        setRecovery(index, PlayerMediaItem.RECOVERY_UNSET);
+        setRecovery(index, RECOVERY_UNSET);
     }
 
     /**

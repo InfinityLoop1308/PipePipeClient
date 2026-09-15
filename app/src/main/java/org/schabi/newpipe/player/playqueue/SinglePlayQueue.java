@@ -16,6 +16,9 @@ public final class SinglePlayQueue extends PlayQueue {
 
     public SinglePlayQueue(final StreamInfo info) {
         super(0, Collections.singletonList(MediaItems.forQueueItem(info)));
+        if (info.getStartPosition() > 0) {
+            setRecovery(getIndex(), info.getStartPosition() * 1000);
+        }
     }
 
     public SinglePlayQueue(final StreamInfo info, final long startPosition) {

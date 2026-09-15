@@ -540,9 +540,9 @@ public final class PlayerHelper {
 
     public static SinglePlayQueue getAutoQueuedSinglePlayQueue(
             final StreamInfoItem streamInfoItem) {
-        final SinglePlayQueue singlePlayQueue = new SinglePlayQueue(streamInfoItem);
-        singlePlayQueue.setAutoQueued(singlePlayQueue.getIndex(), true);
-        return singlePlayQueue;
+        // The queue marks the entry as auto-enqueued when it is appended, see
+        // PlayQueue#appendAutoQueued.
+        return new SinglePlayQueue(streamInfoItem);
     }
 
 

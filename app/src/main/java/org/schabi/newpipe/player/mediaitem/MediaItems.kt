@@ -94,8 +94,8 @@ object MediaItems {
         .streamType(StreamType.NONE)
         .build()
 
-    private fun base(streamInfo: StreamInfo): PlayerMediaItem.Builder {
-        val builder = PlayerMediaItem.Builder()
+    private fun base(streamInfo: StreamInfo): PlayerMediaItem.Builder =
+        PlayerMediaItem.Builder()
             .uuid(PlayerMediaItem.newUuid())
             .mediaId(PlayerMediaItem.mediaIdOf(streamInfo.serviceId, streamInfo.url))
             .serviceId(streamInfo.serviceId)
@@ -108,10 +108,4 @@ object MediaItems {
             .streamType(streamInfo.streamType)
             .isRoundPlayStream(streamInfo.isRoundPlayStream)
             .startAt(streamInfo.startAt)
-
-        if (streamInfo.startPosition > 0) {
-            builder.recoveryPosition(streamInfo.startPosition * 1000)
-        }
-        return builder
-    }
 }

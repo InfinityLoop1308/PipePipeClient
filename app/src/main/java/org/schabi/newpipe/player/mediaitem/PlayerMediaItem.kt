@@ -17,9 +17,12 @@ import java.util.UUID
  * - [mediaId] identifies the content itself (service + url) and is stable across
  *   re-resolutions.
  *
+ * It only describes the content: per-slot playback state (the recovery position, whether the
+ * entry was auto-enqueued) is owned by the [org.schabi.newpipe.player.playqueue.PlayQueue],
+ * which is also what keeps this type comparable and portable.
+ *
  * Strategy-specific data is exchanged through [extras] (see [ItemKeys]), never through direct
- * references between strategies. Any modification returns a new [PlayerMediaItem] instance, so
- * even the queue-slot state ([recoveryPosition], [isAutoQueued]) is replaced instead of mutated.
+ * references between strategies. Any modification returns a new [PlayerMediaItem] instance.
  *
  * The Java-friendly [Builder] is kept so the surrounding Java player code can construct items
  * without dealing with the many-argument constructor.
@@ -37,8 +40,6 @@ data class PlayerMediaItem(
     val streamType: StreamType,
     val isRoundPlayStream: Boolean = false,
     val startAt: Long = 0,
-    val isAutoQueued: Boolean = false,
-    val recoveryPosition: Long = RECOVERY_UNSET,
     val errors: List<Exception> = emptyList(),
     val extras: Extras = Extras.EMPTY,
 ) : Serializable {
@@ -49,11 +50,6 @@ data class PlayerMediaItem(
         copy(extras = extras.plus(key, value))
 
     fun withErrors(newErrors: List<Exception>): PlayerMediaItem = copy(errors = newErrors)
-
-    fun withRecoveryPosition(newRecoveryPosition: Long): PlayerMediaItem =
-        copy(recoveryPosition = newRecoveryPosition)
-
-    fun withAutoQueued(autoQueued: Boolean): PlayerMediaItem = copy(isAutoQueued = autoQueued)
 
     /**
      * The uploader name, exposed under the extractor's naming for Java callers.
@@ -85,8 +81,6 @@ data class PlayerMediaItem(
         private var streamType: StreamType = StreamType.NONE
         private var isRoundPlayStream: Boolean = false
         private var startAt: Long = 0
-        private var isAutoQueued: Boolean = false
-        private var recoveryPosition: Long = RECOVERY_UNSET
         private var errors: List<Exception> = emptyList()
         private var extras: Extras = Extras.EMPTY
 
@@ -105,8 +99,6 @@ data class PlayerMediaItem(
             streamType = item.streamType
             isRoundPlayStream = item.isRoundPlayStream
             startAt = item.startAt
-            isAutoQueued = item.isAutoQueued
-            recoveryPosition = item.recoveryPosition
             errors = item.errors
             extras = item.extras
         }
@@ -135,10 +127,6 @@ data class PlayerMediaItem(
 
         fun startAt(value: Long) = apply { startAt = value }
 
-        fun isAutoQueued(value: Boolean) = apply { isAutoQueued = value }
-
-        fun recoveryPosition(value: Long) = apply { recoveryPosition = value }
-
         fun errors(value: List<Exception>) = apply { errors = value }
 
         fun extras(value: Extras) = apply { extras = value }
@@ -160,19 +148,12 @@ data class PlayerMediaItem(
             streamType = streamType,
             isRoundPlayStream = isRoundPlayStream,
             startAt = startAt,
-            isAutoQueued = isAutoQueued,
-            recoveryPosition = recoveryPosition,
             errors = errors,
             extras = extras,
         )
     }
 
     companion object {
-        /**
-         * The recovery position of an item that has no saved playback progress.
-         */
-        const val RECOVERY_UNSET: Long = Long.MIN_VALUE
-
         /**
          * Builds the stable content identity of a stream.
          */
