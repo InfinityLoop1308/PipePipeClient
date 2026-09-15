@@ -22,7 +22,6 @@ import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
-import org.schabi.newpipe.player.mediaitem.MediaItems;
 import org.schabi.newpipe.player.mediaitem.MediaItemQuality;
 import org.schabi.newpipe.util.ListHelper;
 
@@ -144,7 +143,7 @@ public class VideoPlaybackResolver implements PlaybackResolver {
                 index = 0;
             }
         }
-        final PlayerMediaItem tag = MediaItems.forStreamInfo(info, videos, index);
+        final PlayerMediaItem tag = PlayerMediaItem.forStreamInfo(info, videos, index);
         @Nullable final VideoStream video = tag.getMaybeQuality()
                 .map(MediaItemQuality::getSelectedVideoStream)
                 .orElse(null);

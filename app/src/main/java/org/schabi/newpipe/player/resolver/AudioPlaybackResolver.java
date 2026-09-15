@@ -16,7 +16,6 @@ import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
-import org.schabi.newpipe.player.mediaitem.MediaItems;
 import org.schabi.newpipe.util.ListHelper;
 
 import java.io.IOException;
@@ -60,7 +59,7 @@ public class AudioPlaybackResolver implements PlaybackResolver {
         }
 
         final AudioStream audio = audioStreams.get(index);
-        final PlayerMediaItem tag = MediaItems.forStreamInfo(info);
+        final PlayerMediaItem tag = PlayerMediaItem.forStreamInfo(info);
 
         try {
             return PlaybackResolver.buildMediaSource(

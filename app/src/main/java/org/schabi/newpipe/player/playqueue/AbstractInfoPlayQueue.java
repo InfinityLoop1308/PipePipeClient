@@ -8,7 +8,6 @@ import org.schabi.newpipe.extractor.ListExtractor;
 import org.schabi.newpipe.extractor.ListInfo;
 import org.schabi.newpipe.extractor.Page;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
-import org.schabi.newpipe.player.mediaitem.MediaItems;
 import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 
 import java.util.List;
@@ -138,6 +137,6 @@ abstract class AbstractInfoPlayQueue<T extends ListInfo<StreamInfoItem>>
     }
 
     private static List<PlayerMediaItem> extractListItems(final List<StreamInfoItem> infoItems) {
-        return infoItems.stream().map(MediaItems::forStreamInfoItem).collect(Collectors.toList());
+        return infoItems.stream().map(PlayerMediaItem::forStreamInfoItem).collect(Collectors.toList());
     }
 }

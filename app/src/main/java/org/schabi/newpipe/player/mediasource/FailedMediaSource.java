@@ -13,7 +13,6 @@ import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.upstream.TransferListener;
 
 import org.schabi.newpipe.player.mediaitem.ExoMediaItems;
-import org.schabi.newpipe.player.mediaitem.MediaItems;
 import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 
 import java.io.IOException;
@@ -58,7 +57,7 @@ public class FailedMediaSource extends BaseMediaSource implements ManagedMediaSo
         this.error = error;
         this.retryTimestamp = retryTimestamp;
         this.mediaItem = ExoMediaItems.asExoMediaItem(
-                MediaItems.forQueueItemFailure(playQueueItem, Collections.singletonList(error)));
+                PlayerMediaItem.forQueueItemFailure(playQueueItem, Collections.singletonList(error)));
     }
 
     public static FailedMediaSource of(@NonNull final PlayerMediaItem playQueueItem,

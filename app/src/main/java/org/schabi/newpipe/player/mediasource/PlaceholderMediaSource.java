@@ -8,7 +8,6 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.Allocator;
 
 import org.schabi.newpipe.player.mediaitem.ExoMediaItems;
-import org.schabi.newpipe.player.mediaitem.MediaItems;
 import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 
 import androidx.annotation.NonNull;
@@ -16,7 +15,7 @@ import androidx.annotation.NonNull;
 final class PlaceholderMediaSource
         extends CompositeMediaSource<Void> implements ManagedMediaSource {
     public static final PlaceholderMediaSource COPY = new PlaceholderMediaSource();
-    private static final MediaItem MEDIA_ITEM = ExoMediaItems.asExoMediaItem(MediaItems.placeholder());
+    private static final MediaItem MEDIA_ITEM = ExoMediaItems.asExoMediaItem(PlayerMediaItem.placeholder());
 
     private PlaceholderMediaSource() { }
 

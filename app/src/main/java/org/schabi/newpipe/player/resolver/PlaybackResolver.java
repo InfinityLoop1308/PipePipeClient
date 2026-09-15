@@ -45,7 +45,6 @@ import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.player.helper.NonUriHlsPlaylistParserFactory;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
-import org.schabi.newpipe.player.mediaitem.MediaItems;
 import org.schabi.newpipe.util.StreamTypeUtil;
 import org.schabi.newpipe.App;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
@@ -78,7 +77,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             return null;
         }
 
-        final PlayerMediaItem tag = MediaItems.forStreamInfo(info);
+        final PlayerMediaItem tag = PlayerMediaItem.forStreamInfo(info);
         // Prefer DASH over HLS because of an exoPlayer bug that causes the background player to
         // also fetch the video stream even if it is supposed to just fetch the audio stream.
         if (!info.getDashMpdUrl().isEmpty()) {
