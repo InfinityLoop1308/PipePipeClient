@@ -56,8 +56,8 @@ import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.extractor.utils.Utils;
 import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.Player;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
-import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ListHelper;
@@ -265,10 +265,10 @@ public final class PlayerHelper {
      */
     @Nullable
     public static PlayQueue autoQueueOf(@NonNull final StreamInfo info,
-                                        @NonNull final List<PlayQueueItem> existingItems,
+                                        @NonNull final List<PlayerMediaItem> existingItems,
                                         boolean dontAutoQueueLong) {
         final Set<String> urls = new HashSet<>(existingItems.size());
-        for (final PlayQueueItem item : existingItems) {
+        for (final PlayerMediaItem item : existingItems) {
             urls.add(item.getUrl());
         }
 
@@ -541,7 +541,7 @@ public final class PlayerHelper {
     public static SinglePlayQueue getAutoQueuedSinglePlayQueue(
             final StreamInfoItem streamInfoItem) {
         final SinglePlayQueue singlePlayQueue = new SinglePlayQueue(streamInfoItem);
-        Objects.requireNonNull(singlePlayQueue.getItem()).setAutoQueued(true);
+        singlePlayQueue.setAutoQueued(singlePlayQueue.getIndex(), true);
         return singlePlayQueue;
     }
 

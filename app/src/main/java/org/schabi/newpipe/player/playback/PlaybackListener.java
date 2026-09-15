@@ -6,7 +6,7 @@ import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.source.MediaSource;
 
 import org.schabi.newpipe.extractor.stream.StreamInfo;
-import org.schabi.newpipe.player.playqueue.PlayQueueItem;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 
 public interface PlaybackListener {
     /**
@@ -54,7 +54,7 @@ public interface PlaybackListener {
      * @param item          item the player should be playing/synchronized to
      * @param wasBlocked    was the player recently released from blocking state
      */
-    void onPlaybackSynchronize(@NonNull PlayQueueItem item, boolean wasBlocked);
+    void onPlaybackSynchronize(@NonNull PlayerMediaItem item, boolean wasBlocked);
 
     /**
      * Requests the listener to resolve a stream info into a media source
@@ -67,7 +67,7 @@ public interface PlaybackListener {
      * @return the corresponding {@link MediaSource}
      */
     @Nullable
-    MediaSource sourceOf(PlayQueueItem item, StreamInfo info);
+    MediaSource sourceOf(PlayerMediaItem item, StreamInfo info);
 
     /**
      * Called when the play queue can no longer be played or used.

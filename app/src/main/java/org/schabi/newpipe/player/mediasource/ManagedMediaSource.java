@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.exoplayer2.source.MediaSource;
 
-import org.schabi.newpipe.player.playqueue.PlayQueueItem;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 
 public interface ManagedMediaSource extends MediaSource {
     /**
@@ -17,14 +17,14 @@ public interface ManagedMediaSource extends MediaSource {
      *                        being played.
      * @return whether this could be replaces
      */
-    boolean shouldBeReplacedWith(@NonNull PlayQueueItem newIdentity, boolean isInterruptable);
+    boolean shouldBeReplacedWith(@NonNull PlayerMediaItem newIdentity, boolean isInterruptable);
 
     /**
-     * Determines if the {@link PlayQueueItem} is the one the
+     * Determines if the {@link PlayerMediaItem} is the one the
      * {@link ManagedMediaSource} encapsulates over.
      *
      * @param stream play queue item to check
      * @return whether this source is for the specified stream
      */
-    boolean isStreamEqual(@NonNull PlayQueueItem stream);
+    boolean isStreamEqual(@NonNull PlayerMediaItem stream);
 }

@@ -10,14 +10,13 @@ import com.google.android.exoplayer2.upstream.TransferListener;
 
 import org.schabi.newpipe.player.mediaitem.ExoMediaItems;
 import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
-import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class LoadedMediaSource extends CompositeMediaSource<Integer> implements ManagedMediaSource {
     private final MediaSource source;
-    private final PlayQueueItem stream;
+    private final PlayerMediaItem stream;
     private final MediaItem mediaItem;
     private final long expireTimestamp;
 
@@ -35,7 +34,7 @@ public class LoadedMediaSource extends CompositeMediaSource<Integer> implements 
      */
     public LoadedMediaSource(@NonNull final MediaSource source,
                              @NonNull final PlayerMediaItem tag,
-                             @NonNull final PlayQueueItem stream,
+                             @NonNull final PlayerMediaItem stream,
                              final long expireTimestamp) {
         this.source = source;
         this.stream = stream;
@@ -44,7 +43,7 @@ public class LoadedMediaSource extends CompositeMediaSource<Integer> implements 
         this.mediaItem = ExoMediaItems.asExoMediaItem(tag.withUuid(stream.getUuid()));
     }
 
-    public PlayQueueItem getStream() {
+    public PlayerMediaItem getStream() {
         return stream;
     }
 
@@ -104,14 +103,14 @@ public class LoadedMediaSource extends CompositeMediaSource<Integer> implements 
     }
 
     @Override
-    public boolean shouldBeReplacedWith(@NonNull final PlayQueueItem newIdentity,
+    public boolean shouldBeReplacedWith(@NonNull final PlayerMediaItem newIdentity,
                                         final boolean isInterruptable) {
         return !newIdentity.getUuid().equals(stream.getUuid())
                 || (isInterruptable && isExpired());
     }
 
     @Override
-    public boolean isStreamEqual(@NonNull final PlayQueueItem otherStream) {
+    public boolean isStreamEqual(@NonNull final PlayerMediaItem otherStream) {
         return stream.getUuid().equals(otherStream.getUuid());
     }
 }

@@ -13,8 +13,8 @@ import androidx.fragment.app.FragmentManager;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.download.DownloadDialog;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
-import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.SparseItemUtil;
 
@@ -25,7 +25,7 @@ public final class QueueItemMenuUtil {
     }
 
     public static void openPopupMenu(final PlayQueue playQueue,
-                                     final PlayQueueItem item,
+                                     final PlayerMediaItem item,
                                      final View view,
                                      final boolean hideDetails,
                                      final FragmentManager fragmentManager,

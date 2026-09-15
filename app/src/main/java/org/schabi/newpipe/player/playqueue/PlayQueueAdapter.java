@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.player.playqueue.events.AppendEvent;
 import org.schabi.newpipe.player.playqueue.events.ErrorEvent;
 import org.schabi.newpipe.player.playqueue.events.MoveEvent;
@@ -160,7 +161,7 @@ public class PlayQueueAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         notifyItemChanged(playQueue.size());
     }
 
-    public List<PlayQueueItem> getItems() {
+    public List<PlayerMediaItem> getItems() {
         return playQueue.getStreams();
     }
 

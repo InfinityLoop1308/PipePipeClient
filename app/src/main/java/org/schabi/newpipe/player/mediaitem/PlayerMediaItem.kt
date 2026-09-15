@@ -7,7 +7,8 @@ import java.util.Optional
 import java.util.UUID
 
 /**
- * Portable, immutable representation of one playable entry.
+ * Portable, immutable representation of one playable entry, used both as the value type of the
+ * media item model and as the entry held by a play queue.
  *
  * It carries two levels of identity:
  * - [uuid] identifies the queue slot / playback instance. It is assigned once and survives
@@ -17,10 +18,11 @@ import java.util.UUID
  *   re-resolutions.
  *
  * Strategy-specific data is exchanged through [extras] (see [ItemKeys]), never through direct
- * references between strategies. Any modification returns a new [PlayerMediaItem] instance.
+ * references between strategies. Any modification returns a new [PlayerMediaItem] instance, so
+ * even the queue-slot state ([recoveryPosition], [isAutoQueued]) is replaced instead of mutated.
  *
  * The Java-friendly [Builder] is kept so the surrounding Java player code can construct items
- * without dealing with the twelve-argument constructor.
+ * without dealing with the many-argument constructor.
  */
 data class PlayerMediaItem(
     val uuid: String,
@@ -28,11 +30,15 @@ data class PlayerMediaItem(
     val serviceId: Int,
     val url: String,
     val title: String,
-    val uploaderName: String,
+    val uploader: String,
     val uploaderUrl: String?,
-    val durationSeconds: Long,
+    val duration: Long,
     val thumbnailUrl: String?,
     val streamType: StreamType,
+    val isRoundPlayStream: Boolean = false,
+    val startAt: Long = 0,
+    val isAutoQueued: Boolean = false,
+    val recoveryPosition: Long = RECOVERY_UNSET,
     val errors: List<Exception> = emptyList(),
     val extras: Extras = Extras.EMPTY,
 ) : Serializable {
@@ -43,6 +49,16 @@ data class PlayerMediaItem(
         copy(extras = extras.plus(key, value))
 
     fun withErrors(newErrors: List<Exception>): PlayerMediaItem = copy(errors = newErrors)
+
+    fun withRecoveryPosition(newRecoveryPosition: Long): PlayerMediaItem =
+        copy(recoveryPosition = newRecoveryPosition)
+
+    fun withAutoQueued(autoQueued: Boolean): PlayerMediaItem = copy(isAutoQueued = autoQueued)
+
+    /**
+     * The uploader name, exposed under the extractor's naming for Java callers.
+     */
+    fun getUploaderName(): String = uploader
 
     /**
      * The resolved stream, if this item was produced from one.
@@ -62,11 +78,15 @@ data class PlayerMediaItem(
         private var serviceId: Int = 0
         private var url: String = ""
         private var title: String = ""
-        private var uploaderName: String = ""
+        private var uploader: String = ""
         private var uploaderUrl: String? = null
-        private var durationSeconds: Long = 0
+        private var duration: Long = 0
         private var thumbnailUrl: String? = null
         private var streamType: StreamType = StreamType.NONE
+        private var isRoundPlayStream: Boolean = false
+        private var startAt: Long = 0
+        private var isAutoQueued: Boolean = false
+        private var recoveryPosition: Long = RECOVERY_UNSET
         private var errors: List<Exception> = emptyList()
         private var extras: Extras = Extras.EMPTY
 
@@ -78,11 +98,15 @@ data class PlayerMediaItem(
             serviceId = item.serviceId
             url = item.url
             title = item.title
-            uploaderName = item.uploaderName
+            uploader = item.uploader
             uploaderUrl = item.uploaderUrl
-            durationSeconds = item.durationSeconds
+            duration = item.duration
             thumbnailUrl = item.thumbnailUrl
             streamType = item.streamType
+            isRoundPlayStream = item.isRoundPlayStream
+            startAt = item.startAt
+            isAutoQueued = item.isAutoQueued
+            recoveryPosition = item.recoveryPosition
             errors = item.errors
             extras = item.extras
         }
@@ -97,15 +121,23 @@ data class PlayerMediaItem(
 
         fun title(value: String) = apply { title = value }
 
-        fun uploaderName(value: String) = apply { uploaderName = value }
+        fun uploader(value: String) = apply { uploader = value }
 
         fun uploaderUrl(value: String?) = apply { uploaderUrl = value }
 
-        fun durationSeconds(value: Long) = apply { durationSeconds = value }
+        fun duration(value: Long) = apply { duration = value }
 
         fun thumbnailUrl(value: String?) = apply { thumbnailUrl = value }
 
         fun streamType(value: StreamType) = apply { streamType = value }
+
+        fun isRoundPlayStream(value: Boolean) = apply { isRoundPlayStream = value }
+
+        fun startAt(value: Long) = apply { startAt = value }
+
+        fun isAutoQueued(value: Boolean) = apply { isAutoQueued = value }
+
+        fun recoveryPosition(value: Long) = apply { recoveryPosition = value }
 
         fun errors(value: List<Exception>) = apply { errors = value }
 
@@ -121,17 +153,26 @@ data class PlayerMediaItem(
             serviceId = serviceId,
             url = url,
             title = title,
-            uploaderName = uploaderName,
+            uploader = uploader,
             uploaderUrl = uploaderUrl,
-            durationSeconds = durationSeconds,
+            duration = duration,
             thumbnailUrl = thumbnailUrl,
             streamType = streamType,
+            isRoundPlayStream = isRoundPlayStream,
+            startAt = startAt,
+            isAutoQueued = isAutoQueued,
+            recoveryPosition = recoveryPosition,
             errors = errors,
             extras = extras,
         )
     }
 
     companion object {
+        /**
+         * The recovery position of an item that has no saved playback progress.
+         */
+        const val RECOVERY_UNSET: Long = Long.MIN_VALUE
+
         /**
          * Builds the stable content identity of a stream.
          */

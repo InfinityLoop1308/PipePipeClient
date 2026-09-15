@@ -16,7 +16,7 @@ object ExoMediaItems {
     @JvmStatic
     fun asExoMediaItem(item: PlayerMediaItem): MediaItem {
         val mediaMetadata = MediaMetadata.Builder()
-            .setArtist(item.uploaderName)
+            .setArtist(item.uploader)
             .setDescription(item.title)
             .setDisplayTitle(item.title)
             .setTitle(item.title)

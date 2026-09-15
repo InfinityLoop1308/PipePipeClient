@@ -341,7 +341,7 @@ public final class ExtractorHelper {
     static void cacheInfo(final int serviceId, @NonNull final String requestedUrl,
                           @NonNull final Info info, @NonNull final InfoItem.InfoType infoType) {
         CACHE.putInfo(serviceId, requestedUrl, info, infoType);
-        // StreamInfo can canonicalize its URL. PlayQueueItem keeps that canonical URL, while the
+        // StreamInfo can canonicalize its URL. PlayerMediaItem keeps that canonical URL, while the
         // detail request was cached under the originally entered URL. Cache both keys so clicking
         // play cannot trigger a second full extraction.
         if (infoType == InfoItem.InfoType.STREAM

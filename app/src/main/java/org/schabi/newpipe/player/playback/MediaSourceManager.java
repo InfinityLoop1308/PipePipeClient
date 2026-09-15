@@ -14,13 +14,14 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.player.mediaitem.ExoMediaItems;
+import org.schabi.newpipe.player.mediaitem.ExtractorStreamInfoResolver;
 import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
+import org.schabi.newpipe.player.mediaitem.StreamInfoResolver;
 import org.schabi.newpipe.player.mediasource.FailedMediaSource;
 import org.schabi.newpipe.player.mediasource.LoadedMediaSource;
 import org.schabi.newpipe.player.mediasource.ManagedMediaSource;
 import org.schabi.newpipe.player.mediasource.ManagedMediaSourcePlaylist;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
-import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.player.playqueue.events.MoveEvent;
 import org.schabi.newpipe.player.playqueue.events.PlayQueueEvent;
 import org.schabi.newpipe.player.playqueue.events.RemoveEvent;
@@ -59,7 +60,7 @@ public class MediaSourceManager {
      * streams before will only be cached for future usage.
      * </p>
      *
-     * @see #onMediaSourceReceived(PlayQueueItem, ManagedMediaSource)
+     * @see #onMediaSourceReceived(PlayerMediaItem, ManagedMediaSource)
      */
     private static final int WINDOW_SIZE = 1;
 
@@ -69,7 +70,7 @@ public class MediaSourceManager {
      * {@link #loaderReactor} in order to load a new set of items.
      *
      * @see #loadImmediate()
-     * @see #maybeLoadItem(PlayQueueItem)
+     * @see #maybeLoadItem(PlayerMediaItem)
      */
     private static final int MAXIMUM_LOADER_SIZE = WINDOW_SIZE * 2 + 1;
     @NonNull
@@ -120,7 +121,10 @@ public class MediaSourceManager {
     @NonNull
     private final CompositeDisposable loaderReactor;
     @NonNull
-    private final Set<PlayQueueItem> loadingItems;
+    private final Set<String> loadingItems;
+
+    @NonNull
+    private final StreamInfoResolver streamInfoResolver;
 
     @NonNull
     private final AtomicBoolean isBlocked;
@@ -133,7 +137,7 @@ public class MediaSourceManager {
     public MediaSourceManager(@NonNull final Context context,
                               @NonNull final PlaybackListener listener,
                               @NonNull final PlayQueue playQueue) {
-        this(context, listener, playQueue, 400L,
+        this(context, listener, playQueue, ExtractorStreamInfoResolver.INSTANCE, 400L,
                 /*playbackNearEndGapMillis=*/TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS),
                 /*progressUpdateIntervalMillis*/TimeUnit.MILLISECONDS.convert(2, TimeUnit.SECONDS));
     }
@@ -141,6 +145,7 @@ public class MediaSourceManager {
     private MediaSourceManager(@NonNull final Context context,
                                @NonNull final PlaybackListener listener,
                                @NonNull final PlayQueue playQueue,
+                               @NonNull final StreamInfoResolver streamInfoResolver,
                                final long loadDebounceMillis,
                                final long playbackNearEndGapMillis,
                                final long progressUpdateIntervalMillis) {
@@ -156,6 +161,7 @@ public class MediaSourceManager {
         this.context = context;
         this.playbackListener = listener;
         this.playQueue = playQueue;
+        this.streamInfoResolver = streamInfoResolver;
 
         this.playbackNearEndGapMillis = playbackNearEndGapMillis;
         this.progressUpdateIntervalMillis = progressUpdateIntervalMillis;
@@ -302,7 +308,7 @@ public class MediaSourceManager {
         }
 
         final ManagedMediaSource mediaSource = playlist.get(playQueue.getIndex());
-        final PlayQueueItem playQueueItem = playQueue.getItem();
+        final PlayerMediaItem playQueueItem = playQueue.getItem();
         if (mediaSource == null || playQueueItem == null) {
             return false;
         }
@@ -348,7 +354,7 @@ public class MediaSourceManager {
             Log.d(TAG, "maybeSync() called.");
         }
 
-        final PlayQueueItem currentItem = playQueue.getItem();
+        final PlayerMediaItem currentItem = playQueue.getItem();
         if (isBlocked.get() || currentItem == null) {
             return;
         }
@@ -399,12 +405,12 @@ public class MediaSourceManager {
         maybeClearLoaders();
 
         maybeLoadItem(itemsToLoad.center);
-        for (final PlayQueueItem item : itemsToLoad.neighbors) {
+        for (final PlayerMediaItem item : itemsToLoad.neighbors) {
             maybeLoadItem(item);
         }
     }
 
-    private void maybeLoadItem(@NonNull final PlayQueueItem item) {
+    private void maybeLoadItem(@NonNull final PlayerMediaItem item) {
         if (DEBUG) {
             Log.d(TAG, "maybeLoadItem() called.");
         }
@@ -412,13 +418,13 @@ public class MediaSourceManager {
             return;
         }
 
-        if (!loadingItems.contains(item) && isCorrectionNeeded(item)) {
+        if (!loadingItems.contains(item.getUuid()) && isCorrectionNeeded(item)) {
             if (DEBUG) {
                 Log.d(TAG, "MediaSource - Loading=[" + item.getTitle() + "] "
                         + "with url=[" + item.getUrl() + "]");
             }
 
-            loadingItems.add(item);
+            loadingItems.add(item.getUuid());
             final Disposable loader = getLoadedMediaSource(item)
                     .observeOn(AndroidSchedulers.mainThread())
                     /* No exception handling since getLoadedMediaSource guarantees nonnull return */
@@ -427,8 +433,8 @@ public class MediaSourceManager {
         }
     }
 
-    private Single<ManagedMediaSource> getLoadedMediaSource(@NonNull final PlayQueueItem stream) {
-        return stream.getStream().map(streamInfo -> {
+    private Single<ManagedMediaSource> getLoadedMediaSource(@NonNull final PlayerMediaItem stream) {
+        return streamInfoResolver.streamOf(stream).map(streamInfo -> {
             final MediaSource source = playbackListener.sourceOf(stream, streamInfo);
             if (source == null || !ExoMediaItems.fromMediaItem(source.getMediaItem()).isPresent()) {
                 final String message = "Unable to resolve source from stream info. "
@@ -460,14 +466,14 @@ public class MediaSourceManager {
         });
     }
 
-    private void onMediaSourceReceived(@NonNull final PlayQueueItem item,
+    private void onMediaSourceReceived(@NonNull final PlayerMediaItem item,
                                        @NonNull final ManagedMediaSource mediaSource) {
         if (DEBUG) {
             Log.d(TAG, "MediaSource - Loaded=[" + item.getTitle()
                     + "] with url=[" + item.getUrl() + "]");
         }
 
-        loadingItems.remove(item);
+        loadingItems.remove(item.getUuid());
 
         final int itemIndex = playQueue.indexOf(item);
         // Only update the playlist timeline for items at the current index or after.
@@ -484,19 +490,19 @@ public class MediaSourceManager {
     /**
      * Checks if the corresponding MediaSource in
      * {@link com.google.android.exoplayer2.source.ConcatenatingMediaSource}
-     * for a given {@link PlayQueueItem} needs replacement, either due to gapless playback
+     * for a given {@link PlayerMediaItem} needs replacement, either due to gapless playback
      * readiness or playlist desynchronization.
      * <p>
-     * If the given {@link PlayQueueItem} is currently being played and is already loaded,
+     * If the given {@link PlayerMediaItem} is currently being played and is already loaded,
      * then correction is not only needed if the playlist is desynchronized. Otherwise, the
      * check depends on the status (e.g. expiration or placeholder) of the
      * {@link ManagedMediaSource}.
      * </p>
      *
-     * @param item {@link PlayQueueItem} to check
+     * @param item {@link PlayerMediaItem} to check
      * @return whether a correction is needed
      */
-    private boolean isCorrectionNeeded(@NonNull final PlayQueueItem item) {
+    private boolean isCorrectionNeeded(@NonNull final PlayerMediaItem item) {
         final int index = playQueue.indexOf(item);
         final ManagedMediaSource mediaSource = playlist.get(index);
         return mediaSource != null && mediaSource.shouldBeReplacedWith(item,
@@ -516,7 +522,7 @@ public class MediaSourceManager {
      */
     private void maybeRenewCurrentIndex() {
         final int currentIndex = playQueue.getIndex();
-        final PlayQueueItem currentItem = playQueue.getItem();
+        final PlayerMediaItem currentItem = playQueue.getItem();
         final ManagedMediaSource currentSource = playlist.get(currentIndex);
         if (currentItem == null || currentSource == null) {
             return;
@@ -538,7 +544,8 @@ public class MediaSourceManager {
         if (DEBUG) {
             Log.d(TAG, "MediaSource - maybeClearLoaders() called.");
         }
-        if (!loadingItems.contains(playQueue.getItem())
+        final PlayerMediaItem currentItem = playQueue.getItem();
+        if ((currentItem == null || !loadingItems.contains(currentItem.getUuid()))
                 && loaderReactor.size() > MAXIMUM_LOADER_SIZE) {
             loaderReactor.clear();
             loadingItems.clear();
@@ -573,7 +580,7 @@ public class MediaSourceManager {
     private static ItemsToLoad getItemsToLoad(@NonNull final PlayQueue playQueue) {
         // The current item has higher priority
         final int currentIndex = playQueue.getIndex();
-        final PlayQueueItem currentItem = playQueue.getItem(currentIndex);
+        final PlayerMediaItem currentItem = playQueue.getItem(currentIndex);
         if (currentItem == null) {
             return null;
         }
@@ -584,7 +591,7 @@ public class MediaSourceManager {
         final int leftBound = Math.max(0, currentIndex - MediaSourceManager.WINDOW_SIZE);
         final int rightLimit = currentIndex + MediaSourceManager.WINDOW_SIZE + 1;
         final int rightBound = Math.min(playQueue.size(), rightLimit);
-        final Set<PlayQueueItem> neighbors = new ArraySet<>(
+        final Set<PlayerMediaItem> neighbors = new ArraySet<>(
                 playQueue.getStreams().subList(leftBound, rightBound));
 
         // Do a round robin
@@ -600,12 +607,12 @@ public class MediaSourceManager {
 
     private static class ItemsToLoad {
         @NonNull
-        private final PlayQueueItem center;
+        private final PlayerMediaItem center;
         @NonNull
-        private final Collection<PlayQueueItem> neighbors;
+        private final Collection<PlayerMediaItem> neighbors;
 
-        ItemsToLoad(@NonNull final PlayQueueItem center,
-                    @NonNull final Collection<PlayQueueItem> neighbors) {
+        ItemsToLoad(@NonNull final PlayerMediaItem center,
+                    @NonNull final Collection<PlayerMediaItem> neighbors) {
             this.center = center;
             this.neighbors = neighbors;
         }

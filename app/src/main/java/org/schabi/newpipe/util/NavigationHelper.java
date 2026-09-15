@@ -57,8 +57,8 @@ import org.schabi.newpipe.player.PlayQueueActivity;
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.helper.PlayerHolder;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
-import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.settings.SettingsActivity;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
@@ -134,7 +134,7 @@ public final class NavigationHelper {
     /* PLAY */
     public static void playOnMainPlayer(final AppCompatActivity activity,
                                         @NonNull final PlayQueue playQueue) {
-        final PlayQueueItem item = playQueue.getItem();
+        final PlayerMediaItem item = playQueue.getItem();
         if (item != null) {
             openVideoDetailFragment(activity, activity.getSupportFragmentManager(),
                     item.getServiceId(), item.getUrl(), item.getTitle(), playQueue,
@@ -145,7 +145,7 @@ public final class NavigationHelper {
     public static void playOnMainPlayer(final Context context,
                                         @NonNull final PlayQueue playQueue,
                                         final boolean switchingPlayers) {
-        final PlayQueueItem item = playQueue.getItem();
+        final PlayerMediaItem item = playQueue.getItem();
         if (item != null) {
             openVideoDetail(context,
                     item.getServiceId(), item.getUrl(), item.getTitle(), playQueue,

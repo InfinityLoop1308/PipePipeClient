@@ -30,9 +30,9 @@ import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.fragments.OnScrollBelowItemsListener;
 import org.schabi.newpipe.player.event.PlayerEventListener;
 import org.schabi.newpipe.player.helper.PlaybackParameterDialog;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueAdapter;
-import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemBuilder;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemHolder;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemTouchCallback;
@@ -313,14 +313,14 @@ public final class PlayQueueActivity extends AppCompatActivity
     private PlayQueueItemBuilder.OnSelectedListener getOnSelectedListener() {
         return new PlayQueueItemBuilder.OnSelectedListener() {
             @Override
-            public void selected(final PlayQueueItem item, final View view) {
+            public void selected(final PlayerMediaItem item, final View view) {
                 if (player != null) {
                     player.selectQueueItem(item);
                 }
             }
 
             @Override
-            public void held(final PlayQueueItem item, final View view) {
+            public void held(final PlayerMediaItem item, final View view) {
                 if (player != null && player.getPlayQueue().indexOf(item) != -1) {
                     openPopupMenu(player.getPlayQueue(), item, view, false,
                             getSupportFragmentManager(), PlayQueueActivity.this);

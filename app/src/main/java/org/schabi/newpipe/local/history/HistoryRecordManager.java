@@ -45,7 +45,8 @@ import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.local.feed.FeedViewModel;
-import org.schabi.newpipe.player.playqueue.PlayQueueItem;
+import org.schabi.newpipe.player.mediaitem.ExtractorStreamInfoResolver;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.util.ExtractorHelper;
 
 import java.time.OffsetDateTime;
@@ -267,8 +268,8 @@ public class HistoryRecordManager {
         }).subscribeOn(Schedulers.io());
     }
 
-    public Maybe<StreamStateEntity> loadStreamState(final PlayQueueItem queueItem) {
-        return queueItem.getStream()
+    public Maybe<StreamStateEntity> loadStreamState(final PlayerMediaItem queueItem) {
+        return ExtractorStreamInfoResolver.INSTANCE.streamOf(queueItem)
                 .map(info -> streamTable.upsert(new StreamEntity(info)))
                 .flatMapPublisher(streamStateTable::getState)
                 .firstElement()

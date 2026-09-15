@@ -124,7 +124,6 @@ import org.schabi.newpipe.player.playback.PlayerMediaSession;
 import org.schabi.newpipe.player.playback.SurfaceHolderCallback;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueAdapter;
-import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemBuilder;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemHolder;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemTouchCallback;
@@ -205,7 +204,7 @@ public final class Player implements
 
     @Nullable private MediaSourceManager playQueueManager;
 
-    @Nullable private PlayQueueItem currentItem;
+    @Nullable private PlayerMediaItem currentItem;
     @Nullable private PlayerMediaItem currentMetadata;
     @Nullable private Bitmap currentThumbnail;
 
@@ -722,7 +721,7 @@ public final class Player implements
                 && newQueue.size() == 1 && newQueue.getItem() != null
                 && playQueue != null && playQueue.size() == 1 && playQueue.getItem() != null
                 && newQueue.getItem().getUrl().equals(playQueue.getItem().getUrl())
-                && newQueue.getItem().getRecoveryPosition() != PlayQueueItem.RECOVERY_UNSET) {
+                && newQueue.getItem().getRecoveryPosition() != PlayerMediaItem.RECOVERY_UNSET) {
             // Player can have state = IDLE when playback is stopped or failed
             // and we should retry in this case
             if (simpleExoPlayer.getPlaybackState()
@@ -752,7 +751,7 @@ public final class Player implements
                 && !samePlayQueue
                 && !newQueue.isEmpty()
                 && newQueue.getItem() != null
-                && newQueue.getItem().getRecoveryPosition() == PlayQueueItem.RECOVERY_UNSET) {
+                && newQueue.getItem().getRecoveryPosition() == PlayerMediaItem.RECOVERY_UNSET) {
             databaseUpdateDisposable.add(recordManager.loadStreamState(newQueue.getItem())
                     .observeOn(AndroidSchedulers.mainThread())
                     // Do not place initPlayback() in doFinally() because
@@ -2455,7 +2454,7 @@ public final class Player implements
                          @NonNull final com.google.android.exoplayer2.Player.Events events) {
         Listener.super.onEvents(player, events);
         ExoMediaItems.fromMediaItem(player.getCurrentMediaItem()).ifPresent(tag -> {
-            if (tag == currentMetadata) {
+            if (tag.equals(currentMetadata)) {
                 return; // we still have the same metadata, no need to do anything
             }
             final StreamInfo previousInfo = Optional.ofNullable(currentMetadata)
@@ -2859,7 +2858,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     }
 
     @Override // own playback listener
-    public void onPlaybackSynchronize(@NonNull final PlayQueueItem item, final boolean wasBlocked) {
+    public void onPlaybackSynchronize(@NonNull final PlayerMediaItem item, final boolean wasBlocked) {
         if (DEBUG) {
             Log.d(TAG, "Playback - onPlaybackSynchronize(was blocked: " + wasBlocked
                     + ") called with item=[" + item.getTitle() + "], url=[" + item.getUrl() + "]");
@@ -2868,7 +2867,8 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
             return;
         }
 
-        final boolean hasPlayQueueItemChanged = !item.equals(currentItem);
+        final boolean hasPlayQueueItemChanged = currentItem == null
+                || !item.getUuid().equals(currentItem.getUuid());
 
         final int currentPlayQueueIndex = playQueue.indexOf(item);
         final int currentPlaylistIndex = simpleExoPlayer.getCurrentMediaItemIndex();
@@ -2901,7 +2901,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                         + "size=[" + currentPlaylistSize + "].");
             }
 
-            if (item.getRecoveryPosition() != PlayQueueItem.RECOVERY_UNSET && shouldSeek()) {
+            if (item.getRecoveryPosition() != PlayerMediaItem.RECOVERY_UNSET && shouldSeek()) {
                 simpleExoPlayer.seekTo(currentPlayQueueIndex, item.getRecoveryPosition());
                 playQueue.unsetRecovery(currentPlayQueueIndex);
             } else {
@@ -3301,7 +3301,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         }
     }
 
-    public void selectQueueItem(final PlayQueueItem item) {
+    public void selectQueueItem(final PlayerMediaItem item) {
         if (playQueue == null || exoPlayerIsNull()) {
             return;
         }
@@ -3485,12 +3485,12 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     private PlayQueueItemBuilder.OnSelectedListener getOnSelectedListener() {
         return new PlayQueueItemBuilder.OnSelectedListener() {
             @Override
-            public void selected(final PlayQueueItem item, final View view) {
+            public void selected(final PlayerMediaItem item, final View view) {
                 selectQueueItem(item);
             }
 
             @Override
-            public void held(final PlayQueueItem item, final View view) {
+            public void held(final PlayerMediaItem item, final View view) {
                 if (playQueue.indexOf(item) != -1) {
                     openPopupMenu(playQueue, item, view, true,
                             getParentActivity().getSupportFragmentManager(), context);
@@ -3508,9 +3508,9 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
 
     @Override // own playback listener
     @Nullable
-    public MediaSource sourceOf(final PlayQueueItem item, final StreamInfo info) {
+    public MediaSource sourceOf(final PlayerMediaItem item, final StreamInfo info) {
         final long initialPositionMs = shouldSeek()
-                && item.getRecoveryPosition() != PlayQueueItem.RECOVERY_UNSET
+                && item.getRecoveryPosition() != PlayerMediaItem.RECOVERY_UNSET
                 ? item.getRecoveryPosition() : 0;
         return sourceResolver.resolve(playerType, isAudioOnly, info, initialPositionMs,
                 startupTraceId);
@@ -3589,7 +3589,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         int before = 0;
         int after = 0;
 
-        final List<PlayQueueItem> streams = playQueue.getStreams();
+        final List<PlayerMediaItem> streams = playQueue.getStreams();
         final int nStreams = streams.size();
 
         for (int i = 0; i < nStreams; i++) {
@@ -4629,7 +4629,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     }
 
     @Nullable
-    PlayQueueItem getCurrentItem() {
+    PlayerMediaItem getCurrentItem() {
         return currentItem;
     }
 

@@ -6,6 +6,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.PicassoHelper;
 
@@ -20,7 +21,7 @@ public class PlayQueueItemBuilder {
         this.onItemClickListener = listener;
     }
 
-    public void buildStreamInfoItem(final PlayQueueItemHolder holder, final PlayQueueItem item) {
+    public void buildStreamInfoItem(final PlayQueueItemHolder holder, final PlayerMediaItem item) {
         if (!TextUtils.isEmpty(item.getTitle())) {
             holder.itemVideoTitleView.setText(item.getTitle());
         }
@@ -64,9 +65,9 @@ public class PlayQueueItemBuilder {
     }
 
     public interface OnSelectedListener {
-        void selected(PlayQueueItem item, View view);
+        void selected(PlayerMediaItem item, View view);
 
-        void held(PlayQueueItem item, View view);
+        void held(PlayerMediaItem item, View view);
 
         void onStartDrag(PlayQueueItemHolder viewHolder);
     }

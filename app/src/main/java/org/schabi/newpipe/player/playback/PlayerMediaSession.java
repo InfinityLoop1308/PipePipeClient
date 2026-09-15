@@ -6,8 +6,8 @@ import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 
 import org.schabi.newpipe.player.Player;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.player.mediasession.MediaSessionCallback;
-import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
 import static org.schabi.newpipe.player.helper.PlayerHelper.nextRepeatMode;
@@ -62,7 +62,7 @@ public class PlayerMediaSession implements MediaSessionCallback {
         if (player.getPlayQueue() == null) {
             return null;
         }
-        final PlayQueueItem item = player.getPlayQueue().getItem(index);
+        final PlayerMediaItem item = player.getPlayQueue().getItem(index);
         if (item == null) {
             return null;
         }

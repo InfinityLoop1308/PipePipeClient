@@ -9,7 +9,7 @@ import com.google.android.exoplayer2.upstream.Allocator;
 
 import org.schabi.newpipe.player.mediaitem.ExoMediaItems;
 import org.schabi.newpipe.player.mediaitem.MediaItems;
-import org.schabi.newpipe.player.playqueue.PlayQueueItem;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 
 import androidx.annotation.NonNull;
 
@@ -42,13 +42,13 @@ final class PlaceholderMediaSource
     public void releasePeriod(final MediaPeriod mediaPeriod) { }
 
     @Override
-    public boolean shouldBeReplacedWith(@NonNull final PlayQueueItem newIdentity,
+    public boolean shouldBeReplacedWith(@NonNull final PlayerMediaItem newIdentity,
                                         final boolean isInterruptable) {
         return true;
     }
 
     @Override
-    public boolean isStreamEqual(@NonNull final PlayQueueItem stream) {
+    public boolean isStreamEqual(@NonNull final PlayerMediaItem stream) {
         return false;
     }
 }
