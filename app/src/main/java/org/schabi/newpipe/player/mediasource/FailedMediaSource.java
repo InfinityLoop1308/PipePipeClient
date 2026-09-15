@@ -57,7 +57,7 @@ public class FailedMediaSource extends BaseMediaSource implements ManagedMediaSo
         this.error = error;
         this.retryTimestamp = retryTimestamp;
         this.mediaItem = ExoMediaItems.asExoMediaItem(
-                PlayerMediaItem.forQueueItemFailure(playQueueItem, Collections.singletonList(error)));
+                playQueueItem.withErrors(Collections.singletonList(error)));
     }
 
     public static FailedMediaSource of(@NonNull final PlayerMediaItem playQueueItem,

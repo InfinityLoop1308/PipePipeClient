@@ -225,16 +225,6 @@ data class PlayerMediaItem(
             .build()
 
         /**
-         * A stream that failed to resolve, keeping the queue item's uuid so the failed media
-         * source still refers to the same queue slot.
-         */
-        @JvmStatic
-        fun forQueueItemFailure(
-            item: PlayerMediaItem,
-            errors: List<Exception>,
-        ): PlayerMediaItem = item.withErrors(errors)
-
-        /**
          * A dummy item for a stream that has not been resolved yet.
          */
         @JvmStatic
