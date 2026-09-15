@@ -69,8 +69,6 @@ import com.google.android.exoplayer2.text.CueGroup;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.ui.CaptionStyleCompat;
-import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoSize;
@@ -173,7 +171,7 @@ public final class Player implements
     // Other constants
     //////////////////////////////////////////////////////////////////////////*/
 
-    private static final int RENDERER_UNAVAILABLE = -1;
+    static final int RENDERER_UNAVAILABLE = -1;
     private static final int MAX_RETRY_COUNT = 2;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -209,6 +207,7 @@ public final class Player implements
     @NonNull private final SourceResolver sourceResolver;
     @NonNull private final PlayerErrorHandler playerErrorHandler;
     @NonNull private final RepeatShuffleController repeatShuffleController;
+    @NonNull private final PlayerTracksController tracksController;
 
     public final PlayerServiceInterface service; //TODO try to remove and replace everything with context
 
@@ -385,6 +384,7 @@ public final class Player implements
                 new PlayerQualityResolver(context, this::videoPlayerSelected));
         playerErrorHandler = new PlayerErrorHandler(this);
         repeatShuffleController = new RepeatShuffleController(this);
+        tracksController = new PlayerTracksController(this);
 
         popupWindowController = new PopupWindowController(this);
         longPressSpeedingFactor = Float.parseFloat(prefs.getString(context.getString(R.string.speeding_playback_key), "3"));
@@ -413,7 +413,7 @@ public final class Player implements
 
     private void initViews(@NonNull final PlayerBinding playerBinding) {
         binding = playerBinding;
-        setupSubtitleView();
+        tracksController.setupSubtitleView();
 
         binding.playbackSeekBar.getThumb()
                 .setColorFilter(new PorterDuffColorFilter(Color.RED, PorterDuff.Mode.SRC_IN));
@@ -2434,8 +2434,8 @@ public final class Player implements
                     + "track group size = " + tracks.getGroups().size());
         }
         cancelEnqueueTimer();
-        onTextTracksChanged(tracks);
-        onAudioTracksChanged();
+        tracksController.onTextTracksChanged(tracks);
+        tracksController.onAudioTracksChanged();
     }
 
     void onPlaybackParametersChanged(@NonNull final PlaybackParameters playbackParameters) {
@@ -2647,7 +2647,7 @@ public final class Player implements
         return !prefs.getBoolean(context.getString(R.string.always_start_from_beginning_key), false);
     }
 
-    private boolean isCurrentStreamSabr() {
+    boolean isCurrentStreamSabr() {
         return getCurrentStreamInfo().map(info -> {
             for (final VideoStream s : info.getVideoOnlyStreams()) {
                 if (s.getDeliveryMethod() == DeliveryMethod.SABR) {
@@ -2921,7 +2921,7 @@ public final class Player implements
 
         notifyMetadataUpdateToListeners();
 
-        onAudioTracksChanged();
+        tracksController.onAudioTracksChanged();
 
         if (areSegmentsVisible) {
             if (segmentAdapter.setItems(info)) {
@@ -3371,146 +3371,12 @@ public final class Player implements
     //////////////////////////////////////////////////////////////////////////*/
     //region Captions (text tracks)
 
-    private void setupSubtitleView() {
-        final float captionScale = PlayerHelper.getCaptionScale(context);
-        final CaptionStyleCompat captionStyle = PlayerHelper.getCaptionStyle(context);
-        if (popupPlayerSelected()) {
-            final float captionRatio = (captionScale - 1.0f) / 5.0f + 1.0f;
-            binding.subtitleView.setFractionalTextSize(
-                    SubtitleView.DEFAULT_TEXT_SIZE_FRACTION * captionRatio);
-        } else {
-            binding.subtitleView.setFractionalTextSize(
-                    SubtitleView.DEFAULT_TEXT_SIZE_FRACTION * captionScale);
-        }
-        binding.subtitleView.setApplyEmbeddedStyles(captionStyle == CaptionStyleCompat.DEFAULT);
-        binding.subtitleView.setStyle(captionStyle);
-    }
-
-    private void onTextTracksChanged(@NonNull final Tracks currentTrack) {
-        if (binding == null) {
-            return;
-        }
-
-        final boolean trackTypeTextSupported = !currentTrack.containsType(C.TRACK_TYPE_TEXT)
-                || currentTrack.isTypeSupported(C.TRACK_TYPE_TEXT, false);
-        if (trackSelector.getCurrentMappedTrackInfo() == null || !trackTypeTextSupported) {
-            binding.captionTextView.setVisibility(View.GONE);
-            return;
-        }
-
-        // Extract all loaded languages
-        final List<Tracks.Group> textTracks = currentTrack
-                .getGroups()
-                .stream()
-                .filter(trackGroupInfo -> C.TRACK_TYPE_TEXT == trackGroupInfo.getType())
-                .collect(Collectors.toList());
-        final List<String> availableLanguages = textTracks.stream()
-                .map(Tracks.Group::getMediaTrackGroup)
-                .filter(textTrack -> textTrack.length > 0)
-                .map(textTrack -> textTrack.getFormat(0).language)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        stateHolder.setAvailableSubtitles(availableLanguages);
-
-        // Find selected text track
-        final Optional<Format> selectedTracks = textTracks.stream()
-                .filter(Tracks.Group::isSelected)
-                .filter(info -> info.getMediaTrackGroup().length >= 1)
-                .map(info -> info.getMediaTrackGroup().getFormat(0))
-                .findFirst();
-
-        // Build UI
-        menuController.buildCaptionMenu(availableLanguages);
-        if (trackSelector.getParameters().getRendererDisabled(getCaptionRendererIndex())
-                || !selectedTracks.isPresent()) {
-            binding.captionTextView.setText(R.string.caption_none);
-        } else {
-            binding.captionTextView.setText(selectedTracks.get().language);
-        }
-        binding.captionTextView.setVisibility(
-                availableLanguages.isEmpty() ? View.GONE : View.VISIBLE);
-    }
-
-    private void onAudioTracksChanged() {
-        if (binding == null) {
-            return;
-        }
-
-        final Optional<StreamInfo> optStreamInfo = getCurrentStreamInfo();
-        if (!optStreamInfo.isPresent()) {
-            binding.audioTrackTextView.setVisibility(View.GONE);
-            return;
-        }
-
-        final StreamInfo streamInfo = optStreamInfo.get();
-        final List<AudioStream> audioStreams = ListHelper.getFilteredAudioStreams(
-                context, streamInfo.getAudioStreams());
-        stateHolder.setAvailableAudioLanguages(audioStreams);
-
-        if (audioStreams.size() <= 1) {
-            binding.audioTrackTextView.setVisibility(View.GONE);
-            return;
-        }
-
-        menuController.buildAudioTrackMenu(audioStreams);
-
-        final String currentAudioTrack = sourceResolver.getAudioTrack();
-        final int selectedIndex;
-        if (currentAudioTrack != null) {
-            int idx = -1;
-            for (int i = 0; i < audioStreams.size(); i++) {
-                if (currentAudioTrack.equals(audioStreams.get(i).getAudioTrackId())) {
-                    idx = i;
-                    break;
-                }
-            }
-            selectedIndex = idx >= 0 ? idx : 0;
-        } else {
-            selectedIndex = ListHelper.getDefaultAudioFormat(context, audioStreams);
-        }
-
-        if (selectedIndex >= 0 && selectedIndex < audioStreams.size()) {
-            final AudioStream selected = audioStreams.get(selectedIndex);
-            binding.audioTrackTextView.setText(
-                    selected.getAudioTrackName() != null
-                            ? selected.getAudioTrackName()
-                            : (selected.getAudioLocale() != null ? selected.getAudioLocale() : "Unknown"));
-        }
-
-        binding.audioTrackTextView.setVisibility(View.VISIBLE);
-    }
-
     void setAudioTrack(@Nullable final String audioTrackId) {
-        saveStreamProgressState();
-        setRecovery();
-        sourceResolver.setAudioTrack(audioTrackId);
-        if (isCurrentStreamSabr() && !exoPlayerIsNull()) {
-            final DefaultTrackSelector.Parameters.Builder parameters =
-                    trackSelector.buildUponParameters();
-            if (audioTrackId == null || audioTrackId.isEmpty()) {
-                parameters.setPreferredAudioLanguages();
-            } else {
-                parameters.setPreferredAudioLanguages(
-                        audioTrackId.split("[._-]", 2)[0]);
-            }
-            trackSelector.setParameters(parameters);
-            return;
-        }
-        reloadPlayQueueManager();
+        tracksController.setAudioTrack(audioTrackId);
     }
 
     int getCaptionRendererIndex() {
-        if (exoPlayerIsNull()) {
-            return RENDERER_UNAVAILABLE;
-        }
-
-        for (int t = 0; t < simpleExoPlayer.getRendererCount(); t++) {
-            if (simpleExoPlayer.getRendererType(t) == C.TRACK_TYPE_TEXT) {
-                return t;
-            }
-        }
-
-        return RENDERER_UNAVAILABLE;
+        return tracksController.getCaptionRendererIndex();
     }
     //endregion
 
@@ -4371,6 +4237,16 @@ public final class Player implements
     @NonNull
     DefaultTrackSelector getTrackSelector() {
         return trackSelector;
+    }
+
+    @NonNull
+    PlayerMenuController getMenuController() {
+        return menuController;
+    }
+
+    @NonNull
+    SourceResolver getSourceResolver() {
+        return sourceResolver;
     }
 
     @Nullable
