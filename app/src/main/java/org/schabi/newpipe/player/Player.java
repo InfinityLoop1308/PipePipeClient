@@ -233,6 +233,8 @@ public final class Player implements
     private PlayerType playerType = PlayerType.VIDEO;
     private PlayerPlaybackState currentState = PlayerPlaybackState.PREFLIGHT;
 
+    @NonNull private final PlayerStateHolder stateHolder = new PlayerStateHolder();
+
     // audio only mode does not mean that player type is background, but that the player was
     // minimized to background but will resume automatically to the original player type
     private boolean isAudioOnly = false;
@@ -881,6 +883,7 @@ public final class Player implements
             simpleExoPlayer.stop();
             simpleExoPlayer.release();
         }
+        stateHolder.setPlaying(false);
         if (isProgressLoopRunning()) {
             stopProgressLoop();
         }
@@ -1501,10 +1504,7 @@ public final class Player implements
     }
 
     public PlaybackParameters getPlaybackParameters() {
-        if (exoPlayerIsNull()) {
-            return PlaybackParameters.DEFAULT;
-        }
-        return simpleExoPlayer.getPlaybackParameters();
+        return stateHolder.getPlaybackParameters().getValue();
     }
 
     /**
@@ -1629,6 +1629,10 @@ public final class Player implements
             isPrepared = false;
             return;
         }
+
+        stateHolder.setCurrentPosition(currentProgress);
+        stateHolder.setDuration(duration);
+        stateHolder.setBufferedPosition(simpleExoPlayer.getBufferedPosition());
 
         onUpdateProgress(
                 currentProgress,
@@ -1948,6 +1952,11 @@ public final class Player implements
     }
 
     @Override // exoplayer listener
+    public void onIsPlayingChanged(final boolean isPlaying) {
+        stateHolder.setPlaying(isPlaying);
+    }
+
+    @Override // exoplayer listener
     public void onIsLoadingChanged(final boolean isLoading) {
         if (!isLoading) {
             if(currentState.isPaused() && isProgressLoopRunning()){
@@ -1971,6 +1980,7 @@ public final class Player implements
 
         currentItem = null;
         currentMetadata = null;
+        stateHolder.setCurrentItem(null);
         simpleExoPlayer.stop();
         isPrepared = false;
 
@@ -1999,6 +2009,7 @@ public final class Player implements
             Log.d(TAG, "changeState() called with: state = [" + state + "]");
         }
         currentState = state;
+        stateHolder.setPlaybackState(state);
         switch (state) {
             case BLOCKED:
                 onBlocked();
@@ -2314,7 +2325,7 @@ public final class Player implements
 
     @RepeatMode
     public int getRepeatMode() {
-        return exoPlayerIsNull() ? REPEAT_MODE_OFF : simpleExoPlayer.getRepeatMode();
+        return stateHolder.getRepeatMode().getValue();
     }
 
     public void setRepeatMode(@RepeatMode final int repeatMode) {
@@ -2329,6 +2340,7 @@ public final class Player implements
             Log.d(TAG, "ExoPlayer - onRepeatModeChanged() called with: "
                     + "repeatMode = [" + repeatMode + "]");
         }
+        stateHolder.setRepeatMode(repeatMode);
         setRepeatModeButton(binding.repeatButton, repeatMode);
         onShuffleOrRepeatModeChanged();
     }
@@ -2339,6 +2351,8 @@ public final class Player implements
             Log.d(TAG, "ExoPlayer - onShuffleModeEnabledChanged() called with: "
                     + "mode = [" + shuffleModeEnabled + "]");
         }
+
+        stateHolder.setShuffleModeEnabled(shuffleModeEnabled);
 
         if (playQueue != null) {
             if (shuffleModeEnabled) {
@@ -2461,6 +2475,8 @@ public final class Player implements
             final StreamInfo previousInfo = Optional.ofNullable(currentMetadata)
                     .flatMap(PlayerMediaItem::getMaybeStreamInfo).orElse(null);
             currentMetadata = tag;
+            stateHolder.setCurrentItem(tag);
+            stateHolder.setCurrentItemIndex(player.getCurrentMediaItemIndex());
 
             if (!currentMetadata.getErrors().isEmpty()) {
                 // new errors might have been added even if previousInfo == tag.getMaybeStreamInfo()
@@ -2502,6 +2518,7 @@ public final class Player implements
             Log.d(TAG, "ExoPlayer - playbackParameters(), speed = [" + playbackParameters.speed
                     + "], pitch = [" + playbackParameters.pitch + "]");
         }
+        stateHolder.setPlaybackParameters(playbackParameters);
         binding.playbackSpeed.setText(formatSpeed(playbackParameters.speed));
     }
 
@@ -2880,6 +2897,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
             return;
         }
         currentItem = item;
+        stateHolder.setCurrentItem(item);
 
         // Check if on wrong window
         if (currentPlayQueueIndex != playQueue.getIndex()) {
@@ -3574,6 +3592,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                 availableStreams = currentMetadata.getMaybeQuality().get().getSortedVideoStreams();
                 selectedStreamIndex =
                         currentMetadata.getMaybeQuality().get().getSelectedVideoStreamIndex();
+                stateHolder.setAvailableStreams(availableStreams);
                 menuController.buildQualityMenu();
 
                 binding.qualityTextView.setVisibility(View.VISIBLE);
@@ -3679,6 +3698,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                 .map(textTrack -> textTrack.getFormat(0).language)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+        stateHolder.setAvailableSubtitles(availableLanguages);
 
         // Find selected text track
         final Optional<Format> selectedTracks = textTracks.stream()
@@ -3713,6 +3733,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         final StreamInfo streamInfo = optStreamInfo.get();
         final List<AudioStream> audioStreams = ListHelper.getFilteredAudioStreams(
                 context, streamInfo.getAudioStreams());
+        stateHolder.setAvailableAudioLanguages(audioStreams);
 
         if (audioStreams.size() <= 1) {
             binding.audioTrackTextView.setVisibility(View.GONE);
@@ -4421,7 +4442,16 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     }
 
     public PlayerPlaybackState getCurrentState() {
-        return currentState;
+        return stateHolder.getPlaybackState().getValue();
+    }
+
+    /**
+     * Observable state of the player, for the UI and the strategies.
+     * The player is the only writer; see {@link PlayerStateHolder}.
+     */
+    @NonNull
+    public PlayerStateHolder getStateHolder() {
+        return stateHolder;
     }
 
     public boolean exoPlayerIsNull() {
@@ -4433,7 +4463,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     }
 
     public boolean isPlaying() {
-        return !exoPlayerIsNull() && simpleExoPlayer.isPlaying();
+        return stateHolder.isPlaying().getValue();
     }
 
     public boolean getPlayWhenReady() {
@@ -4746,6 +4776,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
         pause();
         bulletCommentsController.pause();
         currentState = PlayerPlaybackState.PAUSED;
+        stateHolder.setPlaybackState(PlayerPlaybackState.PAUSED);
         notifyPlaybackUpdateToListeners();
         dataSource.disconnectWebSocketClients();
     }
