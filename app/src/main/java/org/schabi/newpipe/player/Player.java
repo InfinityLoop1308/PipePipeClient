@@ -7,7 +7,6 @@ import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_SEEK;
 import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT;
 import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_SKIP;
 import static com.google.android.exoplayer2.Player.DiscontinuityReason;
-import static org.schabi.newpipe.QueueItemMenuUtil.openPopupMenu;
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 import static org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
@@ -46,8 +45,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.exoplayer2.*;
 import com.google.android.exoplayer2.Player.PositionInfo;
@@ -73,7 +70,6 @@ import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.*;
 import org.schabi.newpipe.extractor.stream.*;
-import org.schabi.newpipe.fragments.OnScrollBelowItemsListener;
 import org.schabi.newpipe.fragments.detail.VideoDetailFragment;
 import org.schabi.newpipe.info_list.StreamSegmentAdapter;
 import org.schabi.newpipe.ktx.AnimationType;
@@ -97,9 +93,6 @@ import org.schabi.newpipe.player.playback.MediaSourceManager;
 import org.schabi.newpipe.player.playback.PlayerMediaSession;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueAdapter;
-import org.schabi.newpipe.player.playqueue.PlayQueueItemBuilder;
-import org.schabi.newpipe.player.playqueue.PlayQueueItemHolder;
-import org.schabi.newpipe.player.playqueue.PlayQueueItemTouchCallback;
 import org.schabi.newpipe.player.resolver.PlayerQualityResolver;
 import org.schabi.newpipe.player.resolver.SourceResolver;
 import org.schabi.newpipe.player.resolver.VideoPlaybackResolver.SourceType;
@@ -160,8 +153,6 @@ public final class Player implements
 
     // play queue might be null e.g. while player is starting
     @Nullable private PlayQueue playQueue;
-    private PlayQueueAdapter playQueueAdapter;
-    private StreamSegmentAdapter segmentAdapter;
 
     @Nullable private MediaSourceManager playQueueManager;
 
@@ -193,6 +184,7 @@ public final class Player implements
     @NonNull private final PlayerBroadcastReceiver broadcastReceiverController;
     @NonNull private final PlayerListeners listeners;
     @NonNull private final PlayerPlaybackStateController playbackStateController;
+    @NonNull private final PlayerQueueController queueController;
 
     public final PlayerServiceInterface service; //TODO try to remove and replace everything with context
 
@@ -228,9 +220,6 @@ public final class Player implements
     private final Handler controlsVisibilityHandler = new Handler();
 
     // fullscreen player
-    private boolean isQueueVisible = false;
-    private boolean areSegmentsVisible = false;
-    private ItemTouchHelper itemTouchHelper;
 
     /*//////////////////////////////////////////////////////////////////////////
     // Popup menus ("popup" means that they pop up, not that they belong to the popup player)
@@ -320,6 +309,7 @@ public final class Player implements
         bulletCommentsController = new BulletCommentsController(this);
         listeners = new PlayerListeners(this);
         playbackStateController = new PlayerPlaybackStateController(this);
+        queueController = new PlayerQueueController(this);
         progressController = new PlayerProgressController(this);
         thumbnailController = new PlayerThumbnailController(this);
         surfaceController = new PlayerSurfaceController(this);
@@ -459,8 +449,8 @@ public final class Player implements
         gestureDetector = new GestureDetectorCompat(context, playerGestureListener);
         binding.getRoot().setOnTouchListener(playerGestureListener);
 
-        binding.queueButton.setOnClickListener(v -> onQueueClicked());
-        binding.segmentsButton.setOnClickListener(v -> onSegmentsClicked());
+        binding.queueButton.setOnClickListener(v -> queueController.onQueueClicked());
+        binding.segmentsButton.setOnClickListener(v -> queueController.onSegmentsClicked());
         binding.repeatButton.setOnClickListener(v -> onRepeatClicked());
         binding.shuffleButton.setOnClickListener(v -> onShuffleClicked());
         binding.addToPlaylistButton.setOnClickListener(v -> {
@@ -797,11 +787,7 @@ public final class Player implements
         reloadPlayQueueManager();
         PlaybackStartupTrace.mark(startupTraceId, "media_source_manager_ready");
 
-        if (playQueueAdapter != null) {
-            playQueueAdapter.dispose();
-        }
-        playQueueAdapter = new PlayQueueAdapter(context, playQueue);
-        segmentAdapter = new StreamSegmentAdapter(getStreamSegmentListener());
+        queueController.initAdapters();
 
         simpleExoPlayer.setVolume(isMuted ? 0 : 1);
         if (playQueue != null) {
@@ -860,10 +846,7 @@ public final class Player implements
             mediaSessionManager = null;
         }
 
-        if (playQueueAdapter != null) {
-            playQueueAdapter.unsetSelectedListener();
-            playQueueAdapter.dispose();
-        }
+        queueController.disposeAdapters();
         bulletCommentsController.destroy();
         cancelEnqueueTimer();
         dataSource.disconnectWebSocketClients();
@@ -2040,16 +2023,7 @@ public final class Player implements
 
         tracksController.onAudioTracksChanged();
 
-        if (areSegmentsVisible) {
-            if (segmentAdapter.setItems(info)) {
-                final int adapterPosition = getNearestStreamSegmentPosition(
-                        simpleExoPlayer.getCurrentPosition());
-                segmentAdapter.selectSegmentAt(adapterPosition);
-                binding.itemsList.scrollToPosition(adapterPosition);
-            } else {
-                closeItemsList();
-            }
-        }
+        queueController.onMetadataChanged(info);
 
         onMarkSeekbarRequested(info);
     }
@@ -2186,184 +2160,12 @@ public final class Player implements
         NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, false);
     }
 
-    private void onQueueClicked() {
-        isQueueVisible = true;
-
-        hideSystemUIIfNeeded();
-        buildQueue();
-
-        binding.itemsListHeaderTitle.setVisibility(View.GONE);
-        binding.itemsListHeaderDuration.setVisibility(View.VISIBLE);
-        binding.shuffleButton.setVisibility(View.VISIBLE);
-        binding.repeatButton.setVisibility(View.VISIBLE);
-        binding.addToPlaylistButton.setVisibility(View.VISIBLE);
-
-        hideControls(0, 0);
-        binding.itemsListPanel.requestFocus();
-        animate(binding.itemsListPanel, true, DEFAULT_CONTROLS_DURATION,
-                AnimationType.SLIDE_AND_ALPHA);
-
-        binding.itemsList.scrollToPosition(playQueue.getIndex());
-
-        updateQueueTime((int) simpleExoPlayer.getCurrentPosition());
-    }
-
-    private void buildQueue() {
-        binding.itemsList.setAdapter(playQueueAdapter);
-        binding.itemsList.setClickable(true);
-        binding.itemsList.setLongClickable(true);
-
-        binding.itemsList.clearOnScrollListeners();
-        binding.itemsList.addOnScrollListener(getQueueScrollListener());
-
-        itemTouchHelper = new ItemTouchHelper(getItemTouchCallback());
-        itemTouchHelper.attachToRecyclerView(binding.itemsList);
-
-        playQueueAdapter.setSelectedListener(getOnSelectedListener());
-
-        binding.itemsListClose.setOnClickListener(view -> closeItemsList());
-    }
-
-    private void onSegmentsClicked() {
-        areSegmentsVisible = true;
-
-        hideSystemUIIfNeeded();
-        buildSegments();
-
-        binding.itemsListHeaderTitle.setVisibility(View.VISIBLE);
-        binding.itemsListHeaderDuration.setVisibility(View.GONE);
-        binding.shuffleButton.setVisibility(View.GONE);
-        binding.repeatButton.setVisibility(View.GONE);
-        binding.addToPlaylistButton.setVisibility(View.GONE);
-
-        hideControls(0, 0);
-        binding.itemsListPanel.requestFocus();
-        animate(binding.itemsListPanel, true, DEFAULT_CONTROLS_DURATION,
-                AnimationType.SLIDE_AND_ALPHA);
-
-        final int adapterPosition = getNearestStreamSegmentPosition(simpleExoPlayer
-                .getCurrentPosition());
-        segmentAdapter.selectSegmentAt(adapterPosition);
-        binding.itemsList.scrollToPosition(adapterPosition);
-    }
-
-    private void buildSegments() {
-        binding.itemsList.setAdapter(segmentAdapter);
-        binding.itemsList.setClickable(true);
-        binding.itemsList.setLongClickable(false);
-
-        binding.itemsList.clearOnScrollListeners();
-        if (itemTouchHelper != null) {
-            itemTouchHelper.attachToRecyclerView(null);
-        }
-
-        getCurrentStreamInfo().ifPresent(segmentAdapter::setItems);
-
-        binding.shuffleButton.setVisibility(View.GONE);
-        binding.repeatButton.setVisibility(View.GONE);
-        binding.addToPlaylistButton.setVisibility(View.GONE);
-        binding.itemsListClose.setOnClickListener(view -> closeItemsList());
-    }
-
     public void closeItemsList() {
-        if (isQueueVisible || areSegmentsVisible) {
-            isQueueVisible = false;
-            areSegmentsVisible = false;
-
-            if (itemTouchHelper != null) {
-                itemTouchHelper.attachToRecyclerView(null);
-            }
-
-            animate(binding.itemsListPanel, false, DEFAULT_CONTROLS_DURATION,
-                    AnimationType.SLIDE_AND_ALPHA, 0, () -> {
-                        // Even when queueLayout is GONE it receives touch events
-                        // and ruins normal behavior of the app. This line fixes it
-                        binding.itemsListPanel.setTranslationY(
-                                -binding.itemsListPanel.getHeight() * 5);
-                    });
-
-            // clear focus, otherwise a white rectangle remains on top of the player
-            binding.itemsListClose.clearFocus();
-            binding.playPauseButton.requestFocus();
-        }
-    }
-
-    private OnScrollBelowItemsListener getQueueScrollListener() {
-        return new OnScrollBelowItemsListener() {
-            @Override
-            public void onScrolledDown(final RecyclerView recyclerView) {
-                if (playQueue != null && !playQueue.isComplete()) {
-                    playQueue.fetch();
-                } else if (binding != null) {
-                    binding.itemsList.clearOnScrollListeners();
-                }
-            }
-        };
-    }
-
-    private StreamSegmentAdapter.StreamSegmentListener getStreamSegmentListener() {
-        return (item, seconds) -> {
-            segmentAdapter.selectSegment(item);
-            seekTo(seconds * 1000L);
-            triggerProgressUpdate();
-        };
+        queueController.closeItemsList();
     }
 
     int getNearestStreamSegmentPosition(final long playbackPosition) {
-        int nearestPosition = 0;
-        final List<StreamSegment> segments = getCurrentStreamInfo()
-                .map(StreamInfo::getStreamSegments)
-                .orElse(Collections.emptyList());
-
-        for (int i = 0; i < segments.size(); i++) {
-            if (segments.get(i).getStartTimeSeconds() * 1000L > playbackPosition) {
-                break;
-            }
-            nearestPosition++;
-        }
-        return Math.max(0, nearestPosition - 1);
-    }
-
-    private ItemTouchHelper.SimpleCallback getItemTouchCallback() {
-        return new PlayQueueItemTouchCallback() {
-            @Override
-            public void onMove(final int sourceIndex, final int targetIndex) {
-                if (playQueue != null) {
-                    playQueue.move(sourceIndex, targetIndex);
-                }
-            }
-
-            @Override
-            public void onSwiped(final int index) {
-                if (index != -1) {
-                    playQueue.remove(index);
-                }
-            }
-        };
-    }
-
-    private PlayQueueItemBuilder.OnSelectedListener getOnSelectedListener() {
-        return new PlayQueueItemBuilder.OnSelectedListener() {
-            @Override
-            public void selected(final PlayerMediaItem item, final View view) {
-                selectQueueItem(item);
-            }
-
-            @Override
-            public void held(final PlayerMediaItem item, final View view) {
-                if (playQueue.indexOf(item) != -1) {
-                    openPopupMenu(playQueue, item, view, true,
-                            getParentActivity().getSupportFragmentManager(), context);
-                }
-            }
-
-            @Override
-            public void onStartDrag(final PlayQueueItemHolder viewHolder) {
-                if (itemTouchHelper != null) {
-                    itemTouchHelper.startDrag(viewHolder);
-                }
-            }
-        };
+        return queueController.getNearestStreamSegmentPosition(playbackPosition);
     }
 
     @Nullable
@@ -2447,29 +2249,7 @@ public final class Player implements
     }
 
     void updateQueueTime(final int currentTime) {
-        final int currentStream = playQueue.getIndex();
-        int before = 0;
-        int after = 0;
-
-        final List<PlayerMediaItem> streams = playQueue.getStreams();
-        final int nStreams = streams.size();
-
-        for (int i = 0; i < nStreams; i++) {
-            if (i < currentStream) {
-                before += streams.get(i).getDuration();
-            } else {
-                after += streams.get(i).getDuration();
-            }
-        }
-
-        before *= 1000;
-        after *= 1000;
-
-        binding.itemsListHeaderDuration.setText(
-                String.format("%s/%s",
-                        getTimeString(currentTime + before),
-                        getTimeString(before + after)
-                ));
+        queueController.updateQueueTime(currentTime);
     }
     //endregion
 
@@ -2635,7 +2415,7 @@ public final class Player implements
             case KeyEvent.KEYCODE_DPAD_RIGHT:
             case KeyEvent.KEYCODE_DPAD_CENTER:
                 if ((binding.getRoot().hasFocus() && !binding.playbackControlRoot.hasFocus())
-                        || isQueueVisible) {
+                        || isQueueVisible()) {
                     // do not interfere with focus in playlist and play queue etc.
                     return false;
                 }
@@ -3295,7 +3075,7 @@ public final class Player implements
     }
 
     public PlayQueueAdapter getPlayQueueAdapter() {
-        return playQueueAdapter;
+        return queueController.getPlayQueueAdapter();
     }
 
     public PlayerBinding getBinding() {
@@ -3356,15 +3136,15 @@ public final class Player implements
 
     @NonNull
     StreamSegmentAdapter getSegmentAdapter() {
-        return segmentAdapter;
+        return queueController.getSegmentAdapter();
     }
 
     boolean isQueueVisible() {
-        return isQueueVisible;
+        return queueController.isQueueVisible();
     }
 
     boolean areSegmentsVisible() {
-        return areSegmentsVisible;
+        return queueController.areSegmentsVisible();
     }
 
     boolean isPrepared() {
