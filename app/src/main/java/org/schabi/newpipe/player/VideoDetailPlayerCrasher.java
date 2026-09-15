@@ -1,4 +1,4 @@
-package org.schabi.newpipe.fragments.detail;
+package org.schabi.newpipe.player;
 
 import android.content.Context;
 import android.util.Log;
@@ -20,7 +20,6 @@ import com.google.android.exoplayer2.PlaybackException;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.ListRadioIconItemBinding;
 import org.schabi.newpipe.databinding.SingleChoiceDialogViewBinding;
-import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.util.ThemeHelper;
 
 import java.io.IOException;

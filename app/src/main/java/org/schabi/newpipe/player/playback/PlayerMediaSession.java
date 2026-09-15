@@ -107,7 +107,7 @@ public class PlayerMediaSession implements MediaSessionCallback {
     }
     public void changePlayMode() {
         int correctMode = this.mode; // this.mode change after the following calls
-        player.simpleExoPlayer.setShuffleModeEnabled(false);
+        exoPlayer.setShuffleModeEnabled(false);
         player.setRepeatMode(REPEAT_MODE_OFF);
         switch (correctMode) {
             case 0: // shuffle

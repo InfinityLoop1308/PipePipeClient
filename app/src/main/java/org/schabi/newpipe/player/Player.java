@@ -8,7 +8,6 @@ import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_SEEK;
 import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT;
 import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_SKIP;
 import static com.google.android.exoplayer2.Player.DiscontinuityReason;
-import static com.google.android.exoplayer2.Player.Listener;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_ONE;
@@ -158,7 +157,6 @@ import io.reactivex.rxjava3.disposables.SerialDisposable;
 
 public final class Player implements
         PlaybackListener,
-        Listener,
         SeekBar.OnSeekBarChangeListener,
         View.OnClickListener,
         View.OnLongClickListener {
@@ -212,7 +210,8 @@ public final class Player implements
     // Player
     //////////////////////////////////////////////////////////////////////////*/
 
-    public ExoPlayer simpleExoPlayer;
+    ExoPlayer simpleExoPlayer;
+    private ExoPlayerEventAdapter exoPlayerEventAdapter;
     private AudioReactor audioReactor;
     @Nullable private MediaSessionManager mediaSessionManager;
     private PlayerMediaSession playerMediaSession;
@@ -231,7 +230,6 @@ public final class Player implements
     //////////////////////////////////////////////////////////////////////////*/
 
     private PlayerType playerType = PlayerType.VIDEO;
-    private PlayerPlaybackState currentState = PlayerPlaybackState.PREFLIGHT;
 
     @NonNull private final PlayerStateHolder stateHolder = new PlayerStateHolder();
 
@@ -264,7 +262,7 @@ public final class Player implements
         @Override
         public void run() {
             updateSabrBackoffCountdown();
-            if (currentState.isBlocked()
+            if (getCurrentState().isBlocked()
                     || (!exoPlayerIsNull() && simpleExoPlayer.getPlaybackState()
                     == com.google.android.exoplayer2.Player.STATE_BUFFERING)) {
                 sabrBackoffHandler.postDelayed(this, 250L);
@@ -453,7 +451,8 @@ public final class Player implements
                 .setTrackSelector(trackSelector)
                 .setLoadControl(loadController)
                 .build();
-        simpleExoPlayer.addListener(this);
+        exoPlayerEventAdapter = new ExoPlayerEventAdapter(this);
+        simpleExoPlayer.addListener(exoPlayerEventAdapter);
         simpleExoPlayer.setPlayWhenReady(playOnReady);
         simpleExoPlayer.setSeekParameters(PlayerHelper.getSeekParameters(context));
         simpleExoPlayer.setWakeMode(C.WAKE_MODE_NETWORK);
@@ -613,7 +612,7 @@ public final class Player implements
                             return FastSeekDirection.BACKWARD;
                         } else if (portion == DisplayPortion.RIGHT) {
                             // Check if it's possible to fast-forward
-                            if (currentState.isCompleted()
+                            if (getCurrentState().isCompleted()
                                     || simpleExoPlayer.getCurrentPosition()
                                     >= simpleExoPlayer.getDuration()) {
                                 return FastSeekDirection.NONE;
@@ -879,7 +878,8 @@ public final class Player implements
         cleanupVideoSurface();
 
         if (!exoPlayerIsNull()) {
-            simpleExoPlayer.removeListener(this);
+            simpleExoPlayer.removeListener(exoPlayerEventAdapter);
+            exoPlayerEventAdapter = null;
             simpleExoPlayer.stop();
             simpleExoPlayer.release();
         }
@@ -1544,7 +1544,7 @@ public final class Player implements
         if (duration != binding.playbackSeekBar.getMax()) {
             setVideoDurationToControls(duration);
         }
-        if (!currentState.isPaused()) {
+        if (!getCurrentState().isPaused()) {
             updatePlayBackElementsCurrentDuration(currentProgress);
         }
         if (simpleExoPlayer.isLoading() || bufferPercent > 90) {
@@ -1621,7 +1621,7 @@ public final class Player implements
         if (prefs.getBoolean(context.getString(R.string.force_end_on_overtime_key), false)
                 && currentItem != null
                 && currentItem.getStreamType() == StreamType.VIDEO_STREAM
-                && !currentState.isCompleted()
+                && !getCurrentState().isCompleted()
                 && duration > 0
                 && currentProgress > duration + 3000) {
             changeState(PlayerPlaybackState.COMPLETED);
@@ -1727,7 +1727,7 @@ public final class Player implements
         if (DEBUG) {
             Log.d(TAG, "onStartTrackingTouch() called with: seekBar = [" + seekBar + "]");
         }
-        if (!currentState.isPausedSeek()) {
+        if (!getCurrentState().isPausedSeek()) {
             changeState(PlayerPlaybackState.PAUSED_SEEK);
         }
 
@@ -1758,7 +1758,7 @@ public final class Player implements
         animate(binding.currentDisplaySeek, false, 200, AnimationType.SCALE_AND_ALPHA);
         animate(binding.currentSeekbarPreviewThumbnail, false, 200, AnimationType.SCALE_AND_ALPHA);
 
-        if (currentState.isPausedSeek()) {
+        if (getCurrentState().isPausedSeek()) {
             changeState(PlayerPlaybackState.BUFFERING);
         }
         if (!isProgressLoopRunning()) {
@@ -1885,8 +1885,7 @@ public final class Player implements
     // Playback states
     //////////////////////////////////////////////////////////////////////////*/
     //region Playback states
-    @Override
-    public void onPlayWhenReadyChanged(final boolean playWhenReady, final int reason) {
+    void onPlayWhenReadyChanged(final boolean playWhenReady, final int reason) {
         if (DEBUG) {
             Log.d(TAG, "ExoPlayer - onPlayWhenReadyChanged() called with: "
                     + "playWhenReady = [" + playWhenReady + "], "
@@ -1898,8 +1897,7 @@ public final class Player implements
         updatePlaybackState(playWhenReady, playbackState);
     }
 
-    @Override
-    public void onPlaybackStateChanged(final int playbackState) {
+    void onPlaybackStateChanged(final int playbackState) {
         if (DEBUG) {
             Log.d(TAG, "ExoPlayer - onPlaybackStateChanged() called with: "
                     + "playbackState = [" + playbackState + "]");
@@ -1914,7 +1912,7 @@ public final class Player implements
                     + "playbackState = [" + playbackState + "]");
         }
 
-        if (currentState.isPausedSeek()) {
+        if (getCurrentState().isPausedSeek()) {
             if (DEBUG) {
                 Log.d(TAG, "updatePlaybackState() is currently blocked");
             }
@@ -1951,15 +1949,13 @@ public final class Player implements
         }
     }
 
-    @Override // exoplayer listener
-    public void onIsPlayingChanged(final boolean isPlaying) {
+    void onIsPlayingChanged(final boolean isPlaying) {
         stateHolder.setPlaying(isPlaying);
     }
 
-    @Override // exoplayer listener
-    public void onIsLoadingChanged(final boolean isLoading) {
+    void onIsLoadingChanged(final boolean isLoading) {
         if (!isLoading) {
-            if(currentState.isPaused() && isProgressLoopRunning()){
+            if(getCurrentState().isPaused() && isProgressLoopRunning()){
                 stopProgressLoop();
             }
         } else {
@@ -1996,7 +1992,7 @@ public final class Player implements
         if (exoPlayerIsNull()) {
             return;
         }
-        if (currentState.isBlocked()) {
+        if (getCurrentState().isBlocked()) {
             changeState(PlayerPlaybackState.BUFFERING);
         }
         PlaybackStartupTrace.mark(startupTraceId, "media_source_attached");
@@ -2008,7 +2004,6 @@ public final class Player implements
         if (DEBUG) {
             Log.d(TAG, "changeState() called with: state = [" + state + "]");
         }
-        currentState = state;
         stateHolder.setPlaybackState(state);
         switch (state) {
             case BLOCKED:
@@ -2334,8 +2329,7 @@ public final class Player implements
         }
     }
 
-    @Override
-    public void onRepeatModeChanged(@RepeatMode final int repeatMode) {
+    void onRepeatModeChanged(@RepeatMode final int repeatMode) {
         if (DEBUG) {
             Log.d(TAG, "ExoPlayer - onRepeatModeChanged() called with: "
                     + "repeatMode = [" + repeatMode + "]");
@@ -2345,8 +2339,7 @@ public final class Player implements
         onShuffleOrRepeatModeChanged();
     }
 
-    @Override
-    public void onShuffleModeEnabledChanged(final boolean shuffleModeEnabled) {
+    void onShuffleModeEnabledChanged(final boolean shuffleModeEnabled) {
         if (DEBUG) {
             Log.d(TAG, "ExoPlayer - onShuffleModeEnabledChanged() called with: "
                     + "mode = [" + shuffleModeEnabled + "]");
@@ -2464,10 +2457,8 @@ public final class Player implements
      * @param events The {@link com.google.android.exoplayer2.Player.Events} that has triggered
      *               the player state changes.
      **/
-    @Override
-    public void onEvents(@NonNull final com.google.android.exoplayer2.Player player,
-                         @NonNull final com.google.android.exoplayer2.Player.Events events) {
-        Listener.super.onEvents(player, events);
+    void onEvents(@NonNull final com.google.android.exoplayer2.Player player,
+                  @NonNull final com.google.android.exoplayer2.Player.Events events) {
         ExoMediaItems.fromMediaItem(player.getCurrentMediaItem()).ifPresent(tag -> {
             if (tag == currentMetadata) {
                 return; // we still have the same metadata, no need to do anything
@@ -2501,8 +2492,7 @@ public final class Player implements
         });
     }
 
-    @Override
-    public void onTracksChanged(@NonNull final Tracks tracks) {
+    void onTracksChanged(@NonNull final Tracks tracks) {
         if (DEBUG) {
             Log.d(TAG, "ExoPlayer - onTracksChanged(), "
                     + "track group size = " + tracks.getGroups().size());
@@ -2512,8 +2502,7 @@ public final class Player implements
         onAudioTracksChanged();
     }
 
-    @Override
-    public void onPlaybackParametersChanged(@NonNull final PlaybackParameters playbackParameters) {
+    void onPlaybackParametersChanged(@NonNull final PlaybackParameters playbackParameters) {
         if (DEBUG) {
             Log.d(TAG, "ExoPlayer - playbackParameters(), speed = [" + playbackParameters.speed
                     + "], pitch = [" + playbackParameters.pitch + "]");
@@ -2522,10 +2511,9 @@ public final class Player implements
         binding.playbackSpeed.setText(formatSpeed(playbackParameters.speed));
     }
 
-    @Override
-    public void onPositionDiscontinuity(@NonNull final PositionInfo oldPosition,
-                                        @NonNull final PositionInfo newPosition,
-                                        @DiscontinuityReason final int discontinuityReason) {
+    void onPositionDiscontinuity(@NonNull final PositionInfo oldPosition,
+                                 @NonNull final PositionInfo newPosition,
+                                 @DiscontinuityReason final int discontinuityReason) {
         if (DEBUG) {
             Log.d(TAG, "ExoPlayer - onPositionDiscontinuity() called with "
                     + "oldPositionIndex = [" + oldPosition.mediaItemIndex + "], "
@@ -2569,15 +2557,13 @@ public final class Player implements
         }
     }
 
-    @Override
-    public void onRenderedFirstFrame() {
+    void onRenderedFirstFrame() {
         PlaybackStartupTrace.finish(startupTraceId);
         //TODO check if this causes black screen when switching to fullscreen
         animate(binding.surfaceForeground, false, DEFAULT_CONTROLS_DURATION);
     }
 
-    @Override
-    public void onCues(@NonNull final CueGroup cueGroup) {
+    void onCues(@NonNull final CueGroup cueGroup) {
         binding.subtitleView.setCues(cueGroup.cues);
     }
 
@@ -2627,8 +2613,7 @@ public final class Player implements
     // (e.g. DRM) or not recoverable (e.g. Decoder error). In both cases, the player should
     // shutdown.
     @SuppressLint("SwitchIntDef")
-    @Override
-    public void onPlayerError(@NonNull final PlaybackException error) {
+    void onPlayerError(@NonNull final PlaybackException error) {
         Log.e(TAG, "ExoPlayer - onPlayerError() called with:", error);
 
         saveStreamProgressState();
@@ -4118,8 +4103,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
                 .withEndAction(() -> binding.pinchZoomIndicator.setVisibility(View.GONE)).start();
     }
 
-    @Override // exoplayer listener
-    public void onVideoSizeChanged(@NonNull final VideoSize videoSize) {
+    void onVideoSizeChanged(@NonNull final VideoSize videoSize) {
         if (DEBUG) {
             Log.d(TAG, "onVideoSizeChanged() called with: "
                     + "width / height = [" + videoSize.width + " / " + videoSize.height
@@ -4775,7 +4759,6 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
     public void onBufferingFailed() {
         pause();
         bulletCommentsController.pause();
-        currentState = PlayerPlaybackState.PAUSED;
         stateHolder.setPlaybackState(PlayerPlaybackState.PAUSED);
         notifyPlaybackUpdateToListeners();
         dataSource.disconnectWebSocketClients();
