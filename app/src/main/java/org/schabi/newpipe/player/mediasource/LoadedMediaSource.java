@@ -40,7 +40,7 @@ public class LoadedMediaSource extends CompositeMediaSource<Integer> implements 
         this.stream = stream;
         this.expireTimestamp = expireTimestamp;
 
-        this.mediaItem = tag.withExtras(this).asMediaItem();
+        this.mediaItem = tag.withUuid(stream.getUuid()).asMediaItem();
     }
 
     public PlayQueueItem getStream() {
@@ -105,11 +105,12 @@ public class LoadedMediaSource extends CompositeMediaSource<Integer> implements 
     @Override
     public boolean shouldBeReplacedWith(@NonNull final PlayQueueItem newIdentity,
                                         final boolean isInterruptable) {
-        return newIdentity != stream || (isInterruptable && isExpired());
+        return !newIdentity.getUuid().equals(stream.getUuid())
+                || (isInterruptable && isExpired());
     }
 
     @Override
     public boolean isStreamEqual(@NonNull final PlayQueueItem otherStream) {
-        return this.stream == otherStream;
+        return stream.getUuid().equals(otherStream.getUuid());
     }
 }

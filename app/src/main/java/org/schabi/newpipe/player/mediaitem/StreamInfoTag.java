@@ -1,115 +1,64 @@
 package org.schabi.newpipe.player.mediaitem;
 
-import com.google.android.exoplayer2.MediaItem;
-
 import org.schabi.newpipe.extractor.stream.StreamInfo;
-import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /**
- * This {@link MediaItemTag} object contains metadata for a resolved stream
- * that is ready for playback. This object guarantees the {@link StreamInfo}
- * is available and may provide the {@link Quality} of video stream used in
- * the {@link MediaItem}.
+ * A {@link MediaItemTag} for a resolved stream that is ready for playback.
+ *
+ * <p>The underlying {@link StreamInfo} and the selected {@link Quality} are stored as typed
+ * {@link Extras} entries ({@link ItemKeys#STREAM_INFO} and {@link ItemKeys#QUALITY}), not as
+ * hardcoded fields, so downstream strategies only depend on the extras registry.</p>
  **/
 public final class StreamInfoTag implements MediaItemTag {
     @NonNull
-    private final StreamInfo streamInfo;
-    @Nullable
-    private final MediaItemTag.Quality quality;
-    @Nullable
-    private final Object extras;
+    private final PlayerMediaItem playerMediaItem;
 
-    private StreamInfoTag(@NonNull final StreamInfo streamInfo,
-                          @Nullable final MediaItemTag.Quality quality,
-                          @Nullable final Object extras) {
-        this.streamInfo = streamInfo;
-        this.quality = quality;
-        this.extras = extras;
+    private StreamInfoTag(@NonNull final PlayerMediaItem playerMediaItem) {
+        this.playerMediaItem = playerMediaItem;
     }
 
     public static StreamInfoTag of(@NonNull final StreamInfo streamInfo,
                                    @NonNull final List<VideoStream> sortedVideoStreams,
                                    final int selectedVideoStreamIndex) {
         final Quality quality = Quality.of(sortedVideoStreams, selectedVideoStreamIndex);
-        return new StreamInfoTag(streamInfo, quality, null);
+        return new StreamInfoTag(base(streamInfo).putExtra(ItemKeys.QUALITY, quality).build());
     }
 
     public static StreamInfoTag of(@NonNull final StreamInfo streamInfo) {
-        return new StreamInfoTag(streamInfo, null, null);
+        return new StreamInfoTag(base(streamInfo).build());
     }
 
-    @Override
-    public List<Exception> getErrors() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public int getServiceId() {
-        return streamInfo.getServiceId();
-    }
-
-    @Override
-    public String getTitle() {
-        return streamInfo.getName();
-    }
-
-    @Override
-    public String getUploaderName() {
-        return streamInfo.getUploaderName();
-    }
-
-    @Override
-    public long getDurationSeconds() {
-        return streamInfo.getDuration();
-    }
-
-    @Override
-    public String getStreamUrl() {
-        return streamInfo.getUrl();
-    }
-
-    @Override
-    public String getThumbnailUrl() {
-        return streamInfo.getThumbnailUrl();
-    }
-
-    @Override
-    public String getUploaderUrl() {
-        return streamInfo.getUploaderUrl();
-    }
-
-    @Override
-    public StreamType getStreamType() {
-        return streamInfo.getStreamType();
+    @NonNull
+    private static PlayerMediaItem.Builder base(@NonNull final StreamInfo streamInfo) {
+        return new PlayerMediaItem.Builder()
+                .uuid(PlayerMediaItem.newUuid())
+                .mediaId(PlayerMediaItem.mediaIdOf(streamInfo.getServiceId(),
+                        streamInfo.getUrl()))
+                .serviceId(streamInfo.getServiceId())
+                .url(streamInfo.getUrl())
+                .title(streamInfo.getName())
+                .uploaderName(streamInfo.getUploaderName())
+                .uploaderUrl(streamInfo.getUploaderUrl())
+                .durationSeconds(streamInfo.getDuration())
+                .thumbnailUrl(streamInfo.getThumbnailUrl())
+                .streamType(streamInfo.getStreamType())
+                .putExtra(ItemKeys.STREAM_INFO, streamInfo);
     }
 
     @NonNull
     @Override
-    public Optional<StreamInfo> getMaybeStreamInfo() {
-        return Optional.of(streamInfo);
+    public PlayerMediaItem getPlayerMediaItem() {
+        return playerMediaItem;
     }
 
     @NonNull
     @Override
-    public Optional<Quality> getMaybeQuality() {
-        return Optional.ofNullable(quality);
-    }
-
-    @Override
-    public <T> Optional<T> getMaybeExtras(@NonNull final Class<T> type) {
-        return Optional.ofNullable(extras).map(type::cast);
-    }
-
-    @Override
-    public StreamInfoTag withExtras(@NonNull final Object extra) {
-        return new StreamInfoTag(streamInfo, quality, extra);
+    public MediaItemTag withPlayerMediaItem(@NonNull final PlayerMediaItem item) {
+        return new StreamInfoTag(item);
     }
 }

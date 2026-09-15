@@ -5,7 +5,6 @@ import android.net.Uri;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.MediaItem.RequestMetadata;
 import com.google.android.exoplayer2.MediaMetadata;
-import com.google.android.exoplayer2.Player;
 
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamType;
@@ -13,51 +12,148 @@ import org.schabi.newpipe.extractor.stream.VideoStream;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
- * Metadata container and accessor used by player internals.
+ * ExoPlayer-facing view over a {@link PlayerMediaItem}.
  *
- * This interface ensures consistency of fetching metadata on each stream,
- * which is encapsulated in a {@link MediaItem} and delivered via ExoPlayer's
- * {@link Player.Listener} on event triggers to the downstream users.
+ * <p>The portable state lives in {@link #getPlayerMediaItem()}; this interface only adapts it to
+ * the ExoPlayer {@link MediaItem} world ({@link #asMediaItem()}) and keeps the historical
+ * metadata accessors used by the player internals. Metadata that used to be hardcoded
+ * ({@link StreamInfo}, {@link Quality}) is now carried as typed {@link Extras} entries, so
+ * strategies can read and publish it without referencing each other.</p>
  **/
 public interface MediaItemTag {
 
-    List<Exception> getErrors();
+    /**
+     * @return the portable, immutable representation backing this tag
+     */
+    @NonNull
+    PlayerMediaItem getPlayerMediaItem();
 
-    int getServiceId();
+    /**
+     * Returns a tag of the same kind backed by {@code item}. Used to derive an updated immutable
+     * media item (new uuid, new extras, new errors).
+     */
+    @NonNull
+    MediaItemTag withPlayerMediaItem(@NonNull PlayerMediaItem item);
 
-    String getTitle();
+    @NonNull
+    default Extras getExtras() {
+        return getPlayerMediaItem().getExtras();
+    }
 
-    String getUploaderName();
+    @NonNull
+    default String getUuid() {
+        return getPlayerMediaItem().getUuid();
+    }
 
-    long getDurationSeconds();
+    @NonNull
+    default String getMediaId() {
+        return getPlayerMediaItem().getMediaId();
+    }
 
-    String getStreamUrl();
+    @NonNull
+    default MediaItemTag withUuid(@NonNull final String uuid) {
+        return withPlayerMediaItem(getPlayerMediaItem().withUuid(uuid));
+    }
 
-    String getThumbnailUrl();
+    @NonNull
+    default <T> MediaItemTag withExtra(@NonNull final Extras.Key<T> key,
+                                       @Nullable final T value) {
+        return withPlayerMediaItem(getPlayerMediaItem().withExtra(key, value));
+    }
 
-    String getUploaderUrl();
+    @NonNull
+    default List<Exception> getErrors() {
+        return getPlayerMediaItem().getErrors();
+    }
 
-    StreamType getStreamType();
+    default int getServiceId() {
+        return getPlayerMediaItem().getServiceId();
+    }
+
+    @NonNull
+    default String getTitle() {
+        return getPlayerMediaItem().getTitle();
+    }
+
+    @NonNull
+    default String getUploaderName() {
+        return getPlayerMediaItem().getUploaderName();
+    }
+
+    default long getDurationSeconds() {
+        return getPlayerMediaItem().getDurationSeconds();
+    }
+
+    @NonNull
+    default String getStreamUrl() {
+        return getPlayerMediaItem().getUrl();
+    }
+
+    @Nullable
+    default String getThumbnailUrl() {
+        return getPlayerMediaItem().getThumbnailUrl();
+    }
+
+    @Nullable
+    default String getUploaderUrl() {
+        return getPlayerMediaItem().getUploaderUrl();
+    }
+
+    @NonNull
+    default StreamType getStreamType() {
+        return getPlayerMediaItem().getStreamType();
+    }
 
     @NonNull
     default Optional<StreamInfo> getMaybeStreamInfo() {
-        return Optional.empty();
+        return Optional.ofNullable(getExtras().get(ItemKeys.STREAM_INFO));
     }
 
     @NonNull
     default Optional<Quality> getMaybeQuality() {
-        return Optional.empty();
+        return Optional.ofNullable(getExtras().get(ItemKeys.QUALITY));
     }
 
-    <T> Optional<T> getMaybeExtras(@NonNull Class<T> type);
+    /**
+     * The media id handed to ExoPlayer / the media session. It must be unique within the
+     * playlist, so the instance {@link #getUuid() uuid} is used. The content identity is
+     * available separately as {@link PlayerMediaItem#getMediaId()}.
+     */
+    @NonNull
+    default String makeMediaId() {
+        return getUuid();
+    }
 
-    <T> MediaItemTag withExtras(@NonNull T extra);
+    @NonNull
+    default MediaItem asMediaItem() {
+        final MediaMetadata.Builder mediaMetadata = new MediaMetadata.Builder()
+                .setArtist(getUploaderName())
+                .setDescription(getTitle())
+                .setDisplayTitle(getTitle())
+                .setTitle(getTitle());
+
+        final String thumbnailUrl = getThumbnailUrl();
+        if (thumbnailUrl != null) {
+            mediaMetadata.setArtworkUri(Uri.parse(thumbnailUrl));
+        }
+
+        final RequestMetadata requestMetaData = new RequestMetadata.Builder()
+                .setMediaUri(Uri.parse(getStreamUrl()))
+                .build();
+
+        return MediaItem.fromUri(getStreamUrl())
+                .buildUpon()
+                .setMediaId(makeMediaId())
+                .setMediaMetadata(mediaMetadata.build())
+                .setRequestMetadata(requestMetaData)
+                .setTag(this)
+                .build();
+    }
 
     @NonNull
     static Optional<MediaItemTag> from(@Nullable final MediaItem mediaItem) {
@@ -67,34 +163,6 @@ public interface MediaItemTag {
         }
 
         return Optional.of((MediaItemTag) mediaItem.localConfiguration.tag);
-    }
-
-    @NonNull
-    default String makeMediaId() {
-        return UUID.randomUUID().toString() + "[" + getTitle() + "]";
-    }
-
-    @NonNull
-    default MediaItem asMediaItem() {
-        final MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                .setArtworkUri(Uri.parse(getThumbnailUrl()))
-                .setArtist(getUploaderName())
-                .setDescription(getTitle())
-                .setDisplayTitle(getTitle())
-                .setTitle(getTitle())
-                .build();
-
-        final RequestMetadata requestMetaData = new RequestMetadata.Builder()
-                .setMediaUri(Uri.parse(getStreamUrl()))
-                .build();
-
-        return MediaItem.fromUri(getStreamUrl())
-                .buildUpon()
-                .setMediaId(makeMediaId())
-                .setMediaMetadata(mediaMetadata)
-                .setRequestMetadata(requestMetaData)
-                .setTag(this)
-                .build();
     }
 
     final class Quality {

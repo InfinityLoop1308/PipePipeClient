@@ -58,7 +58,6 @@ public class FailedMediaSource extends BaseMediaSource implements ManagedMediaSo
         this.retryTimestamp = retryTimestamp;
         this.mediaItem = ExceptionTag
                 .of(playQueueItem, Collections.singletonList(error))
-                .withExtras(this)
                 .asMediaItem();
     }
 
@@ -162,12 +161,12 @@ public class FailedMediaSource extends BaseMediaSource implements ManagedMediaSo
     @Override
     public boolean shouldBeReplacedWith(@NonNull final PlayQueueItem newIdentity,
                                         final boolean isInterruptable) {
-        return newIdentity != playQueueItem || canRetry();
+        return !newIdentity.getUuid().equals(playQueueItem.getUuid()) || canRetry();
     }
 
     @Override
     public boolean isStreamEqual(@NonNull final PlayQueueItem stream) {
-        return playQueueItem == stream;
+        return playQueueItem.getUuid().equals(stream.getUuid());
     }
 
     public static class FailedMediaSourceException extends Exception {

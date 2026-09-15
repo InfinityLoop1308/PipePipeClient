@@ -3,83 +3,48 @@ package org.schabi.newpipe.player.mediaitem;
 import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.util.Constants;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /**
- * This is a Placeholding {@link MediaItemTag}, designed as a dummy metadata object for
- * any stream that has not been resolved.
+ * A dummy {@link MediaItemTag} used as a placeholder for streams that have not been resolved.
  *
- * This object cannot be instantiated and does not hold real metadata of any form.
- * */
+ * <p>This object does not hold real metadata of any form.</p>
+ **/
 public final class PlaceholderTag implements MediaItemTag {
-    public static final PlaceholderTag EMPTY = new PlaceholderTag(null);
+    public static final PlaceholderTag EMPTY = new PlaceholderTag(placeholderItem());
     private static final String UNKNOWN_VALUE_INTERNAL = "Placeholder";
 
-    @Nullable
-    private final Object extras;
+    @NonNull
+    private final PlayerMediaItem playerMediaItem;
 
-    private PlaceholderTag(@Nullable final Object extras) {
-        this.extras = extras;
+    private PlaceholderTag(@NonNull final PlayerMediaItem playerMediaItem) {
+        this.playerMediaItem = playerMediaItem;
+    }
+
+    private static PlayerMediaItem placeholderItem() {
+        return new PlayerMediaItem.Builder()
+                .uuid(PlayerMediaItem.newUuid())
+                .mediaId(UNKNOWN_VALUE_INTERNAL)
+                .serviceId(Constants.NO_SERVICE_ID)
+                .url(UNKNOWN_VALUE_INTERNAL)
+                .title(UNKNOWN_VALUE_INTERNAL)
+                .uploaderName(UNKNOWN_VALUE_INTERNAL)
+                .uploaderUrl(UNKNOWN_VALUE_INTERNAL)
+                .durationSeconds(0)
+                .thumbnailUrl(UNKNOWN_VALUE_INTERNAL)
+                .streamType(StreamType.NONE)
+                .build();
     }
 
     @NonNull
     @Override
-    public List<Exception> getErrors() {
-        return Collections.emptyList();
+    public PlayerMediaItem getPlayerMediaItem() {
+        return playerMediaItem;
     }
 
+    @NonNull
     @Override
-    public int getServiceId() {
-        return Constants.NO_SERVICE_ID;
-    }
-
-    @Override
-    public String getTitle() {
-        return UNKNOWN_VALUE_INTERNAL;
-    }
-
-    @Override
-    public String getUploaderName() {
-        return UNKNOWN_VALUE_INTERNAL;
-    }
-
-    @Override
-    public long getDurationSeconds() {
-        return 0;
-    }
-
-    @Override
-    public String getStreamUrl() {
-        return UNKNOWN_VALUE_INTERNAL;
-    }
-
-    @Override
-    public String getThumbnailUrl() {
-        return UNKNOWN_VALUE_INTERNAL;
-    }
-
-    @Override
-    public String getUploaderUrl() {
-        return UNKNOWN_VALUE_INTERNAL;
-    }
-
-    @Override
-    public StreamType getStreamType() {
-        return StreamType.NONE;
-    }
-
-    @Override
-    public <T> Optional<T> getMaybeExtras(@NonNull final Class<T> type) {
-        return Optional.ofNullable(extras).map(type::cast);
-    }
-
-    @Override
-    public <T> MediaItemTag withExtras(@NonNull final T extra) {
-        return new PlaceholderTag(extra);
+    public MediaItemTag withPlayerMediaItem(@NonNull final PlayerMediaItem item) {
+        return new PlaceholderTag(item);
     }
 }

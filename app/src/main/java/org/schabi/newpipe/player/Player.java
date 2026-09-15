@@ -2867,7 +2867,7 @@ case ERROR_CODE_DECODER_INIT_FAILED: {
             return;
         }
 
-        final boolean hasPlayQueueItemChanged = currentItem != item;
+        final boolean hasPlayQueueItemChanged = !item.equals(currentItem);
 
         final int currentPlayQueueIndex = playQueue.indexOf(item);
         final int currentPlaylistIndex = simpleExoPlayer.getCurrentMediaItemIndex();

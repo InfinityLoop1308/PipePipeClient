@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 final class PlaceholderMediaSource
         extends CompositeMediaSource<Void> implements ManagedMediaSource {
     public static final PlaceholderMediaSource COPY = new PlaceholderMediaSource();
-    private static final MediaItem MEDIA_ITEM = PlaceholderTag.EMPTY.withExtras(COPY).asMediaItem();
+    private static final MediaItem MEDIA_ITEM = PlaceholderTag.EMPTY.asMediaItem();
 
     private PlaceholderMediaSource() { }
 

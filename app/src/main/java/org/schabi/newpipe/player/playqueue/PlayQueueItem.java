@@ -10,6 +10,8 @@ import org.schabi.newpipe.player.PlaybackStartupTrace;
 import org.schabi.newpipe.util.ExtractorHelper;
 
 import java.io.Serializable;
+import java.util.Objects;
+import java.util.UUID;
 
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -18,6 +20,8 @@ public class PlayQueueItem implements Serializable {
     public static final long RECOVERY_UNSET = Long.MIN_VALUE;
     private static final String EMPTY_STRING = "";
 
+    @NonNull
+    private final String uuid;
     @NonNull
     private final String title;
     @NonNull
@@ -64,6 +68,7 @@ public class PlayQueueItem implements Serializable {
                           @Nullable final String thumbnailUrl, @Nullable final String uploader,
                           final String uploaderUrl, @NonNull final StreamType streamType,
                           final boolean isRoundPlayStream, final long startAt) {
+        this.uuid = UUID.randomUUID().toString();
         this.title = name != null ? name : EMPTY_STRING;
         this.url = url != null ? url : EMPTY_STRING;
         this.serviceId = serviceId;
@@ -76,6 +81,15 @@ public class PlayQueueItem implements Serializable {
         this.startAt = startAt;
 
         this.recoveryPosition = RECOVERY_UNSET;
+    }
+
+    /**
+     * Stable identity of this queue slot. It survives serialization, so queue lookups and media
+     * source replacement can be based on it instead of referential equality.
+     */
+    @NonNull
+    public String getUuid() {
+        return uuid;
     }
 
     @NonNull
@@ -157,5 +171,17 @@ public class PlayQueueItem implements Serializable {
 
     public long getStartAt() {
         return startAt;
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        return this == other
+                || (other instanceof PlayQueueItem
+                && uuid.equals(((PlayQueueItem) other).uuid));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid);
     }
 }

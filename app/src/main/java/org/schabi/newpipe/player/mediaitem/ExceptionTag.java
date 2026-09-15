@@ -1,99 +1,54 @@
 package org.schabi.newpipe.player.mediaitem;
 
-import org.schabi.newpipe.extractor.stream.StreamInfo;
-import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 
 import java.util.List;
-import java.util.Optional;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /**
- * This {@link MediaItemTag} object is designed to contain metadata for a stream
- * that has failed to load. It supplies metadata from an underlying
- * {@link PlayQueueItem}, which is used by the internal players to resolve actual
- * playback info.
+ * A {@link MediaItemTag} for a stream that failed to load.
  *
- * This {@link MediaItemTag} does not contain any {@link StreamInfo} that can be
- * used to start playback and can be detected by checking {@link ExceptionTag#getErrors()}
- * when in generic form.
+ * <p>Metadata is taken from the underlying {@link PlayQueueItem}, including its stable
+ * {@link PlayerMediaItem#getUuid() uuid}, so the failed media source still refers to the same
+ * queue slot as the stream it replaced. The errors are carried on the backing
+ * {@link PlayerMediaItem}.</p>
  **/
 public final class ExceptionTag implements MediaItemTag {
     @NonNull
-    private final PlayQueueItem item;
-    @NonNull
-    private final List<Exception> errors;
-    @Nullable
-    private final Object extras;
+    private final PlayerMediaItem playerMediaItem;
 
-    private ExceptionTag(@NonNull final PlayQueueItem item,
-                         @NonNull final List<Exception> errors,
-                         @Nullable final Object extras) {
-        this.item = item;
-        this.errors = errors;
-        this.extras = extras;
+    private ExceptionTag(@NonNull final PlayerMediaItem playerMediaItem) {
+        this.playerMediaItem = playerMediaItem;
     }
 
     public static ExceptionTag of(@NonNull final PlayQueueItem playQueueItem,
                                   @NonNull final List<Exception> errors) {
-        return new ExceptionTag(playQueueItem, errors, null);
+        return new ExceptionTag(new PlayerMediaItem.Builder()
+                .uuid(playQueueItem.getUuid())
+                .mediaId(PlayerMediaItem.mediaIdOf(playQueueItem.getServiceId(),
+                        playQueueItem.getUrl()))
+                .serviceId(playQueueItem.getServiceId())
+                .url(playQueueItem.getUrl())
+                .title(playQueueItem.getTitle())
+                .uploaderName(playQueueItem.getUploader())
+                .uploaderUrl(playQueueItem.getUploaderUrl())
+                .durationSeconds(playQueueItem.getDuration())
+                .thumbnailUrl(playQueueItem.getThumbnailUrl())
+                .streamType(playQueueItem.getStreamType())
+                .errors(errors)
+                .build());
     }
 
     @NonNull
     @Override
-    public List<Exception> getErrors() {
-        return errors;
+    public PlayerMediaItem getPlayerMediaItem() {
+        return playerMediaItem;
     }
 
+    @NonNull
     @Override
-    public int getServiceId() {
-        return item.getServiceId();
-    }
-
-    @Override
-    public String getTitle() {
-        return item.getTitle();
-    }
-
-    @Override
-    public String getUploaderName() {
-        return item.getUploader();
-    }
-
-    @Override
-    public long getDurationSeconds() {
-        return item.getDuration();
-    }
-
-    @Override
-    public String getStreamUrl() {
-        return item.getUrl();
-    }
-
-    @Override
-    public String getThumbnailUrl() {
-        return item.getThumbnailUrl();
-    }
-
-    @Override
-    public String getUploaderUrl() {
-        return item.getUploaderUrl();
-    }
-
-    @Override
-    public StreamType getStreamType() {
-        return item.getStreamType();
-    }
-
-    @Override
-    public <T> Optional<T> getMaybeExtras(@NonNull final Class<T> type) {
-        return Optional.ofNullable(extras).map(type::cast);
-    }
-
-    @Override
-    public <T> MediaItemTag withExtras(@NonNull final T extra) {
-        return new ExceptionTag(item, errors, extra);
+    public MediaItemTag withPlayerMediaItem(@NonNull final PlayerMediaItem item) {
+        return new ExceptionTag(item);
     }
 }

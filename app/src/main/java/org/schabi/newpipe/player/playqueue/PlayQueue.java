@@ -187,14 +187,19 @@ public abstract class PlayQueue implements Serializable {
     }
 
     /**
-     * Returns the index of the given item using referential equality.
-     * May be null despite play queue contains identical item.
+     * Returns the index of the given item using its stable {@link PlayQueueItem#getUuid() uuid}.
+     * This keeps working after serialization instead of relying on referential equality.
      *
      * @param item the item to find the index of
-     * @return the index of the given item
+     * @return the index of the given item, or -1 if it is not in the queue
      */
     public int indexOf(@NonNull final PlayQueueItem item) {
-        return streams.indexOf(item);
+        for (int i = 0; i < streams.size(); i++) {
+            if (streams.get(i).getUuid().equals(item.getUuid())) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /**
