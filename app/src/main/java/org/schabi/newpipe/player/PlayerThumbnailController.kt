@@ -57,14 +57,14 @@ class PlayerThumbnailController(private val player: Player) {
                 updateEndScreenThumbnail()
             }
 
-            override fun onBitmapFailed(e: Exception, errorDrawable: Drawable) {
+            override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
                 Log.e(Player.TAG, "Thumbnail - onBitmapFailed() called with: url = [$url]", e)
                 currentThumbnail = null
                 NotificationUtil.getInstance()
                     .createNotificationIfNeededAndUpdate(player, false)
             }
 
-            override fun onPrepareLoad(placeHolderDrawable: Drawable) {
+            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
                 if (Player.DEBUG) {
                     Log.d(Player.TAG, "Thumbnail - onLoadingStarted() called with: url = [$url]")
                 }
