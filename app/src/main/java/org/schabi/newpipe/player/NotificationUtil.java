@@ -389,10 +389,11 @@ public final class NotificationUtil {
         final boolean scaleImageToSquareAspectRatio = player.getPrefs().getBoolean(
                 player.getContext().getApplicationContext().getString(R.string.scale_to_square_image_in_notifications_key),
                 false);
-        if (scaleImageToSquareAspectRatio) {
-            builder.setLargeIcon(getBitmapWithSquareAspectRatio(player.getThumbnail()));
+        final Bitmap thumbnail = player.getThumbnail();
+        if (scaleImageToSquareAspectRatio && thumbnail != null) {
+            builder.setLargeIcon(getBitmapWithSquareAspectRatio(thumbnail));
         } else {
-            builder.setLargeIcon(player.getThumbnail());
+            builder.setLargeIcon(thumbnail);
         }
     }
 

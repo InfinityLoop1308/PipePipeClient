@@ -104,13 +104,13 @@ class PlayerThumbnailController(private val player: Player) {
         player.binding.endScreen.setImageBitmap(endScreenBitmap)
     }
 
-    fun getThumbnail(): Bitmap {
+    fun getThumbnail(): Bitmap? {
         if (currentThumbnail == null) {
             currentThumbnail = BitmapFactory.decodeResource(
                 player.context.resources, R.drawable.dummy_thumbnail
             )
         }
-        return currentThumbnail!!
+        return currentThumbnail
     }
 
     /**
