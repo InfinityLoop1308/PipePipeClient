@@ -194,7 +194,7 @@ public final class Player implements
 
     private PlayerType playerType = PlayerType.VIDEO;
 
-    @NonNull private final PlayerStateHolder stateHolder = new PlayerStateHolder();
+    private PlayerPlaybackState currentState = PlayerPlaybackState.PREFLIGHT;
     @NonNull private final PlaybackListenerAdapter playbackListenerAdapter =
             new PlaybackListenerAdapter(this);
 
@@ -828,7 +828,6 @@ public final class Player implements
             simpleExoPlayer.stop();
             simpleExoPlayer.release();
         }
-        stateHolder.setPlaying(false);
         if (progressController.isProgressLoopRunning()) {
             progressController.stopProgressLoop();
         }
@@ -1146,7 +1145,11 @@ public final class Player implements
     }
 
     public PlayerPlaybackParameters getPlaybackParameters() {
-        return stateHolder.getPlaybackParameters().getValue();
+        if (exoPlayerIsNull()) {
+            return new PlayerPlaybackParameters(1f, 1f);
+        }
+        final PlaybackParameters parameters = simpleExoPlayer.getPlaybackParameters();
+        return new PlayerPlaybackParameters(parameters.speed, parameters.pitch);
     }
 
     /**
@@ -1330,10 +1333,6 @@ public final class Player implements
         playbackStateController.onPlaybackStateChanged(playbackState);
     }
 
-    void onIsPlayingChanged(final boolean isPlaying) {
-        playbackStateController.onIsPlayingChanged(isPlaying);
-    }
-
     void onIsLoadingChanged(final boolean isLoading) {
         playbackStateController.onIsLoadingChanged(isLoading);
     }
@@ -1379,7 +1378,6 @@ public final class Player implements
     void clearCurrentMediaItems() {
         currentItem = null;
         currentMetadata = null;
-        stateHolder.setCurrentItem(null);
     }
     //endregion
 
@@ -1502,8 +1500,6 @@ public final class Player implements
             final StreamInfo previousInfo = Optional.ofNullable(currentMetadata)
                     .flatMap(PlayerMediaItem::getMaybeStreamInfo).orElse(null);
             currentMetadata = tag;
-            stateHolder.setCurrentItem(tag);
-            stateHolder.setCurrentItemIndex(player.getCurrentMediaItemIndex());
 
             if (!currentMetadata.getErrors().isEmpty()) {
                 // new errors might have been added even if previousInfo == tag.getMaybeStreamInfo()
@@ -1543,8 +1539,6 @@ public final class Player implements
             Log.d(TAG, "ExoPlayer - playbackParameters(), speed = [" + playbackParameters.speed
                     + "], pitch = [" + playbackParameters.pitch + "]");
         }
-        stateHolder.setPlaybackParameters(new PlayerPlaybackParameters(
-                playbackParameters.speed, playbackParameters.pitch));
         binding.playbackSpeed.setText(formatSpeed(playbackParameters.speed));
     }
 
@@ -1711,7 +1705,6 @@ public final class Player implements
             return;
         }
         currentItem = item;
-        stateHolder.setCurrentItem(item);
 
         // Check if on wrong window
         if (currentPlayQueueIndex != playQueue.getIndex()) {
@@ -2233,7 +2226,6 @@ public final class Player implements
                 availableStreams = currentMetadata.getMaybeQuality().get().getSortedVideoStreams();
                 selectedStreamIndex =
                         currentMetadata.getMaybeQuality().get().getSelectedVideoStreamIndex();
-                stateHolder.setAvailableStreams(availableStreams);
                 menuController.buildQualityMenu();
 
                 binding.qualityTextView.setVisibility(View.VISIBLE);
@@ -2876,16 +2868,11 @@ public final class Player implements
     }
 
     public PlayerPlaybackState getCurrentState() {
-        return stateHolder.getPlaybackState().getValue();
+        return currentState;
     }
 
-    /**
-     * Observable state of the player, for the UI and the strategies.
-     * The player is the only writer; see {@link PlayerStateHolder}.
-     */
-    @NonNull
-    public PlayerStateHolder getStateHolder() {
-        return stateHolder;
+    void setCurrentState(final PlayerPlaybackState state) {
+        currentState = state;
     }
 
     public boolean exoPlayerIsNull() {
@@ -2897,7 +2884,7 @@ public final class Player implements
     }
 
     public boolean isPlaying() {
-        return stateHolder.isPlaying().getValue();
+        return !exoPlayerIsNull() && simpleExoPlayer.isPlaying();
     }
 
     public boolean getPlayWhenReady() {
@@ -3232,7 +3219,7 @@ public final class Player implements
     public void onBufferingFailed() {
         pause();
         bulletCommentsController.pause();
-        stateHolder.setPlaybackState(PlayerPlaybackState.PAUSED);
+        setCurrentState(PlayerPlaybackState.PAUSED);
         notifyPlaybackUpdateToListeners();
         dataSource.disconnectWebSocketClients();
     }

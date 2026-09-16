@@ -12,10 +12,10 @@ import org.schabi.newpipe.player.helper.PlayerHelper
 /**
  * Owns the repeat and shuffle state of a [Player].
  *
- * The state itself lives in the [PlayerStateHolder]; this controller owns the ExoPlayer
- * translation and the UI of the repeat and shuffle buttons. [Player] only keeps delegate
- * methods with the same names, so existing callers (the notification, the media session, the
- * play queue activity, the ExoPlayer listener callbacks) are unaffected.
+ * The state lives in ExoPlayer; this controller owns the ExoPlayer translation and the UI of
+ * the repeat and shuffle buttons. [Player] only keeps delegate methods with the same names, so
+ * existing callers (the notification, the media session, the play queue activity, the ExoPlayer
+ * listener callbacks) are unaffected.
  */
 class RepeatShuffleController(private val player: Player) {
 
@@ -39,7 +39,11 @@ class RepeatShuffleController(private val player: Player) {
     }
 
     val repeatMode: RepeatMode
-        get() = player.getStateHolder().repeatMode.value
+        get() = if (player.exoPlayerIsNull()) {
+            RepeatMode.OFF
+        } else {
+            fromExoPlayerRepeatMode(player.simpleExoPlayer.repeatMode)
+        }
 
     fun setRepeatMode(repeatMode: RepeatMode) {
         if (!player.exoPlayerIsNull()) {
@@ -53,7 +57,6 @@ class RepeatShuffleController(private val player: Player) {
             Log.d(Player.TAG, "ExoPlayer - onRepeatModeChanged() called with: "
                 + "repeatMode = [$mode]")
         }
-        player.getStateHolder().setRepeatMode(mode)
         setRepeatModeButton(player.binding.repeatButton, mode)
         player.onShuffleOrRepeatModeChanged()
     }
@@ -63,8 +66,6 @@ class RepeatShuffleController(private val player: Player) {
             Log.d(Player.TAG, "ExoPlayer - onShuffleModeEnabledChanged() called with: "
                 + "mode = [$shuffleModeEnabled]")
         }
-
-        player.getStateHolder().setShuffleModeEnabled(shuffleModeEnabled)
 
         val playQueue = player.playQueue
         if (playQueue != null) {

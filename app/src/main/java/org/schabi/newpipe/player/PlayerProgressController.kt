@@ -104,10 +104,6 @@ class PlayerProgressController(private val player: Player) {
             return
         }
 
-        player.stateHolder.setCurrentPosition(currentProgress.toLong())
-        player.stateHolder.setDuration(duration.toLong())
-        player.stateHolder.setBufferedPosition(exoPlayer.bufferedPosition)
-
         onUpdateProgress(
             currentProgress,
             exoPlayer.duration.toInt(),

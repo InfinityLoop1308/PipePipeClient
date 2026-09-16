@@ -65,7 +65,6 @@ class PlayerTracksController(private val player: Player) {
             .map { textTrack -> textTrack.getFormat(0).language }
             .collect(Collectors.toList())
             .filterNotNull()
-        player.getStateHolder().setAvailableSubtitles(availableLanguages)
 
         // Find selected text track
         val selectedTracks = textTracks.stream()
@@ -100,7 +99,6 @@ class PlayerTracksController(private val player: Player) {
         val audioStreams = ListHelper.getFilteredAudioStreams(
             player.getContext(), streamInfo.audioStreams
         )
-        player.getStateHolder().setAvailableAudioLanguages(audioStreams)
 
         if (audioStreams.size <= 1) {
             binding.audioTrackTextView.visibility = View.GONE

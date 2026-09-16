@@ -99,10 +99,6 @@ class PlayerPlaybackStateController(private val player: Player) {
         }
     }
 
-    fun onIsPlayingChanged(isPlaying: Boolean) {
-        player.stateHolder.setPlaying(isPlaying)
-    }
-
     fun onIsLoadingChanged(isLoading: Boolean) {
         if (!isLoading) {
             if (player.currentState.isPaused && player.progressController.isProgressLoopRunning()) {
@@ -150,7 +146,7 @@ class PlayerPlaybackStateController(private val player: Player) {
         if (Player.DEBUG) {
             Log.d(Player.TAG, "changeState() called with: state = [$state]")
         }
-        player.stateHolder.setPlaybackState(state)
+        player.currentState = state
         when (state) {
             PlayerPlaybackState.BLOCKED -> onBlocked()
 

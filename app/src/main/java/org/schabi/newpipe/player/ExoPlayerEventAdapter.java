@@ -48,11 +48,6 @@ final class ExoPlayerEventAdapter implements com.google.android.exoplayer2.Playe
     }
 
     @Override
-    public void onIsPlayingChanged(final boolean isPlaying) {
-        player.onIsPlayingChanged(isPlaying);
-    }
-
-    @Override
     public void onIsLoadingChanged(final boolean isLoading) {
         player.onIsLoadingChanged(isLoading);
     }
