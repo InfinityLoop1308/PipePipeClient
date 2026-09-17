@@ -7,7 +7,6 @@ import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_SEEK;
 import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT;
 import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_SKIP;
 import static com.google.android.exoplayer2.Player.DiscontinuityReason;
-import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 import static org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty;
 import static org.schabi.newpipe.player.PlayerService.*;
 import static org.schabi.newpipe.player.helper.PlayerHelper.*;
@@ -48,9 +47,6 @@ import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.databinding.PlayerBinding;
-import org.schabi.newpipe.error.ErrorInfo;
-import org.schabi.newpipe.error.ErrorUtil;
-import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.*;
 import org.schabi.newpipe.extractor.stream.*;
 import org.schabi.newpipe.info_list.StreamSegmentAdapter;
@@ -64,7 +60,6 @@ import org.schabi.newpipe.player.helper.LoadController;
 import org.schabi.newpipe.player.helper.MediaSessionManager;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.player.helper.PlayerHelper;
-import org.schabi.newpipe.player.mediaitem.ExoMediaItems;
 import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.player.mediasession.PlayerServiceInterface;
 import org.schabi.newpipe.player.playback.MediaSourceManager;
@@ -118,8 +113,7 @@ public final class Player {
 
     @Nullable private MediaSourceManager playQueueManager;
 
-    @Nullable private PlayerMediaItem currentItem;
-    @Nullable private PlayerMediaItem currentMetadata;
+    // What is being played right now lives in PlayerMetadataController.
 
     /*//////////////////////////////////////////////////////////////////////////
     // Player
@@ -157,6 +151,7 @@ public final class Player {
     @NonNull private final PlayerSourceController sourceController;
     @NonNull private final PlayerLayoutController layoutController;
     @NonNull private final PlayerUiModeController uiModeController;
+    @NonNull private final PlayerMetadataController metadataController;
 
     public final PlayerServiceInterface service; //TODO try to remove and replace everything with context
 
@@ -300,6 +295,7 @@ public final class Player {
         sourceController = new PlayerSourceController(this);
         layoutController = new PlayerLayoutController(this);
         uiModeController = new PlayerUiModeController(this);
+        metadataController = new PlayerMetadataController(this);
     }
 
     //endregion
@@ -785,12 +781,11 @@ public final class Player {
     }
 
     void clearCurrentMediaItems() {
-        currentItem = null;
-        currentMetadata = null;
+        metadataController.clearCurrentMediaItems();
     }
 
     void setCurrentItem(@Nullable final PlayerMediaItem item) {
-        currentItem = item;
+        metadataController.setCurrentItem(item);
     }
     //endregion
 
@@ -868,49 +863,12 @@ public final class Player {
     //region ExoPlayer listeners (that didn't fit in other categories)
 
     /**
-     * <p>Listens for event or state changes on ExoPlayer. When any event happens, we check for
-     * changes in the currently-playing metadata and update the encapsulating
-     * {@link Player}. Downstream listeners are also informed.</p>
-     *
-     * <p>When the renewed metadata contains any error, it is reported as a notification.
-     * This is done because not all source resolution errors are {@link PlaybackException}, which
-     * are also captured by {@link ExoPlayer} and stops the playback.</p>
-     *
-     * @param player The {@link com.google.android.exoplayer2.Player} whose state changed.
-     * @param events The {@link com.google.android.exoplayer2.Player.Events} that has triggered
-     *               the player state changes.
-     **/
-    void onEvents(@NonNull final com.google.android.exoplayer2.Player player,
+     * Forwards an ExoPlayer events callback. What the callback decides about the currently
+     * playing metadata lives in {@link PlayerMetadataController#onEvents}.
+     */
+    void onEvents(@NonNull final com.google.android.exoplayer2.Player exoPlayer,
                   @NonNull final com.google.android.exoplayer2.Player.Events events) {
-        ExoMediaItems.fromMediaItem(player.getCurrentMediaItem()).ifPresent(tag -> {
-            if (tag == currentMetadata) {
-                return; // we still have the same metadata, no need to do anything
-            }
-            final StreamInfo previousInfo = Optional.ofNullable(currentMetadata)
-                    .flatMap(PlayerMediaItem::getMaybeStreamInfo).orElse(null);
-            currentMetadata = tag;
-
-            if (!currentMetadata.getErrors().isEmpty()) {
-                // new errors might have been added even if previousInfo == tag.getMaybeStreamInfo()
-                final ErrorInfo errorInfo = new ErrorInfo(
-                        currentMetadata.getErrors(),
-                        UserAction.PLAY_STREAM,
-                        "Loading failed for [" + currentMetadata.getTitle()
-                                + "]: " + currentMetadata.getUrl(),
-                        currentMetadata.getServiceId());
-                ErrorUtil.createNotification(context, errorInfo);
-            }
-
-            currentMetadata.getMaybeStreamInfo().ifPresent(info -> {
-                if (DEBUG) {
-                    Log.d(TAG, "ExoPlayer - onEvents() update stream info: " + info.getName());
-                }
-                if (previousInfo == null || !previousInfo.getUrl().equals(info.getUrl())) {
-                    // only update with the new stream info if it has actually changed
-                    updateMetadataWith(info);
-                }
-            });
-        });
+        metadataController.onEvents(exoPlayer, events);
     }
 
     void onTracksChanged(@NonNull final Tracks tracks) {
@@ -1127,83 +1085,26 @@ public final class Player {
     // Metadata
     //////////////////////////////////////////////////////////////////////////*/
     //region Metadata
-
-    private void onMetadataChanged(@NonNull final StreamInfo info) {
-        if (DEBUG) {
-            Log.d(TAG, "Playback - onMetadataChanged() called, playing: " + info.getName());
-        }
-
-        // Zoom belongs to the current video, matching the transient behavior of the official app.
-        gestureController.resetPinchZoom();
-        menuController.resetDisplayModeForNewVideo();
-
-        thumbnailController.initThumbnail(info.getThumbnailUrl());
-        registerStreamViewed();
-        layoutController.updateStreamRelatedViews();
-        layoutController.showHideKodiButton();
-        // TODO: bullet comments may be reset unexpectedly for round play streams
-        bulletCommentsController.init();
-        bulletCommentsController.start();
-
-        binding.titleTextView.setText(info.getName());
-        binding.channelTextView.setText(info.getUploaderName());
-
-        progressController.resetPreviewThumbnails(info.getPreviewFrames());
-
-        NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, false);
-
-        mediaSessionManager.setPlayer(this);
-
-        notifyMetadataUpdateToListeners();
-
-        tracksController.onAudioTracksChanged();
-
-        queueController.onMetadataChanged(info);
-
-        onMarkSeekbarRequested(info);
-    }
-
-    private void updateMetadataWith(@NonNull final StreamInfo streamInfo) {
-        if (exoPlayerIsNull()) {
-            return;
-        }
-
-        autoQueueController.maybeAutoQueueNextStream(streamInfo, false);
-        onMetadataChanged(streamInfo);
-        NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, true);
-    }
-
+    // What is being played and the fan out of a new StreamInfo live in
+    // PlayerMetadataController, these are only delegates.
     @NonNull
     String getVideoUrl() {
-        return currentMetadata == null
-                ? context.getString(R.string.unknown_content)
-                : currentMetadata.getUrl();
+        return metadataController.getVideoUrl();
     }
 
     @NonNull
     String getVideoUrlAtCurrentTime() {
-        final int timeSeconds = binding.playbackSeekBar.getProgress() / 1000;
-        String videoUrl = getVideoUrl();
-        if (!isLive() && timeSeconds >= 0 && currentMetadata != null
-                && currentMetadata.getServiceId() == YouTube.getServiceId()) {
-            // Timestamp doesn't make sense in a live stream so drop it
-            videoUrl += ("&t=" + timeSeconds);
-        }
-        return videoUrl;
+        return metadataController.getVideoUrlAtCurrentTime();
     }
 
     @NonNull
     public String getVideoTitle() {
-        return currentMetadata == null
-                ? context.getString(R.string.unknown_content)
-                : currentMetadata.getTitle();
+        return metadataController.getVideoTitle();
     }
 
     @NonNull
     public String getUploaderName() {
-        return currentMetadata == null
-                ? context.getString(R.string.unknown_content)
-                : currentMetadata.getUploaderName();
+        return metadataController.getUploaderName();
     }
 
     @Nullable
@@ -1458,7 +1359,8 @@ public final class Player {
     //region Getters
 
     public Optional<StreamInfo> getCurrentStreamInfo() {
-        return Optional.ofNullable(currentMetadata).flatMap(PlayerMediaItem::getMaybeStreamInfo);
+        return Optional.ofNullable(getCurrentMetadata())
+                .flatMap(PlayerMediaItem::getMaybeStreamInfo);
     }
 
     public PlayerPlaybackState getCurrentState() {
@@ -1661,6 +1563,21 @@ public final class Player {
         return clickController;
     }
 
+    @NonNull
+    PlayerLayoutController getLayoutController() {
+        return layoutController;
+    }
+
+    @NonNull
+    PlayerThumbnailController getThumbnailController() {
+        return thumbnailController;
+    }
+
+    @NonNull
+    PlayerTracksController getTracksController() {
+        return tracksController;
+    }
+
     void setPlayerType(final PlayerType type) {
         playerType = type;
     }
@@ -1733,12 +1650,12 @@ public final class Player {
 
     @Nullable
     PlayerMediaItem getCurrentItem() {
-        return currentItem;
+        return metadataController.getCurrentItem();
     }
 
     @Nullable
-    PlayerMediaItem getCurrentMetadata() {
-        return currentMetadata;
+    public PlayerMediaItem getCurrentMetadata() {
+        return metadataController.getCurrentMetadata();
     }
 
     public long getCurrentPosition() {

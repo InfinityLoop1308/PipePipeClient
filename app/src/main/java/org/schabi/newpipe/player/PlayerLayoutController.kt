@@ -16,6 +16,7 @@ import com.google.android.exoplayer2.PlaybackParameters
 import com.google.android.exoplayer2.text.CueGroup
 import org.schabi.newpipe.R
 import org.schabi.newpipe.databinding.PlayerBinding
+import org.schabi.newpipe.extractor.stream.StreamInfo
 import org.schabi.newpipe.extractor.stream.StreamType
 import org.schabi.newpipe.ktx.animate
 import org.schabi.newpipe.ktx.animateRotation
@@ -211,6 +212,15 @@ class PlayerLayoutController(private val player: Player) {
         binding.playbackSpeed.setPadding(buttonsPad, buttonsPad, buttonsPad, buttonsPad)
         binding.playbackSpeed.minimumWidth = buttonsMinWidth
         binding.captionTextView.setPadding(buttonsPad, buttonsPad, buttonsPad, buttonsPad)
+    }
+
+    /**
+     * The two rows that say what is playing. Everything else a new [StreamInfo] implies is
+     * decided by [PlayerMetadataController], which calls this along with the rest.
+     */
+    fun updateMetadataViews(info: StreamInfo) {
+        player.binding.titleTextView.text = info.name
+        player.binding.channelTextView.text = info.uploaderName
     }
 
     fun showHideKodiButton() {
