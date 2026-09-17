@@ -16,7 +16,6 @@ import static org.schabi.newpipe.player.helper.PlayerHelper.*;
 import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_BACKGROUND;
 import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_NONE;
 import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_POPUP;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import android.annotation.SuppressLint;
 import android.content.*;
@@ -99,10 +98,6 @@ import org.schabi.newpipe.views.ExpandableSurfaceView;
 import android.widget.TextView;
 
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -181,6 +176,7 @@ public final class Player implements
     @NonNull private final PlayerQueueController queueController;
     @NonNull private final PlayerGestureController gestureController;
     @NonNull private final PlayerControlsVisibilityController controlsVisibilityController;
+    @NonNull private final AutoQueueController autoQueueController;
 
     public final PlayerServiceInterface service; //TODO try to remove and replace everything with context
 
@@ -259,9 +255,6 @@ public final class Player implements
     @NonNull private final SharedPreferences prefs;
     @NonNull private final HistoryRecordManager recordManager;
 
-    private Future<?> enqueueTimer;
-    private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);;
-
 
     /*//////////////////////////////////////////////////////////////////////////
     // Constructor
@@ -329,6 +322,7 @@ public final class Player implements
         popupWindowController = new PopupWindowController(this);
         gestureController = new PlayerGestureController(this);
         controlsVisibilityController = new PlayerControlsVisibilityController(this);
+        autoQueueController = new AutoQueueController(this);
     }
 
     //endregion
@@ -766,7 +760,7 @@ public final class Player implements
 
         queueController.disposeAdapters();
         bulletCommentsController.destroy();
-        cancelEnqueueTimer();
+        autoQueueController.cancelEnqueueTimer();
         dataSource.disconnectWebSocketClients();
     }
 
@@ -1213,12 +1207,6 @@ public final class Player implements
         playbackStateController.pauseBCPlayer();
     }
 
-    void cancelEnqueueTimer() {
-        if (enqueueTimer != null) {
-            enqueueTimer.cancel(true);
-        }
-    }
-
     void startSabrBackoffCountdown() {
         sabrBackoffCountdown.start();
     }
@@ -1381,7 +1369,7 @@ public final class Player implements
             Log.d(TAG, "ExoPlayer - onTracksChanged(), "
                     + "track group size = " + tracks.getGroups().size());
         }
-        cancelEnqueueTimer();
+        autoQueueController.cancelEnqueueTimer();
         tracksController.onTextTracksChanged(tracks);
         tracksController.onAudioTracksChanged();
     }
@@ -1878,7 +1866,7 @@ public final class Player implements
             return;
         }
 
-        maybeAutoQueueNextStream(streamInfo, false);
+        autoQueueController.maybeAutoQueueNextStream(streamInfo, false);
         onMetadataChanged(streamInfo);
         NotificationUtil.getInstance().createNotificationIfNeededAndUpdate(this, true);
     }
@@ -1928,58 +1916,6 @@ public final class Player implements
     // Play queue, segments and streams
     //////////////////////////////////////////////////////////////////////////*/
     //region Play queue, segments and streams
-
-    private void maybeAutoQueueNextStream(@NonNull final StreamInfo info, boolean forceEnqueue) {
-        if (playQueue == null) {
-            return;
-        }
-        List<StreamInfoItem> partitions = info.getPartitions();
-        if(partitions.size() > 1
-                && playQueue.getStreams().stream()
-                .map(result -> result.getUrl().split("p="))
-                .filter(parts -> parts.length == 2)
-                .map(parts -> new String[]{parts[0], parts[1]})
-                .reduce((a, b) -> Integer.parseInt(a[1]) + 1 == Integer.parseInt(b[1]) && a[0].equals(b[0]) ? b : new String[]{"", "-1"})
-                .filter(result -> !Arrays.equals(result, new String[]{"", "-1"}))
-                .isPresent()
-                && playQueue.getIndex() == playQueue.size() - 1
-        ){
-            int p = Integer.parseInt(info.getUrl().split(Pattern.quote("?p="))[1].split("&")[0]);
-            if(partitions.size() > p){
-                playQueue.appendAutoQueued(getAutoQueuedSinglePlayQueue(partitions.get(p)).getStreams());
-            }
-        }
-        if (!forceEnqueue && (playQueue.getIndex() != playQueue.size() - 1
-                || getRepeatMode() != RepeatMode.OFF
-                || !PlayerHelper.isAutoQueueEnabled(context))) {
-            return;
-        }
-
-        boolean dontAutoQueueLongVideos = prefs.getBoolean(
-            context.getString(R.string.dont_auto_queue_long_key), true
-        );
-
-        // auto queue when starting playback on the last item when not repeating
-        final PlayQueue autoQueue = PlayerHelper.autoQueueOf(info,
-                playQueue.getStreams(), dontAutoQueueLongVideos);
-        if (autoQueue != null) {
-            playQueue.appendAutoQueued(autoQueue.getStreams());
-        }
-    }
-
-    /**
-     * Schedules the auto-queue of the next part of a round-play stream when playback is about to
-     * end. The scheduling is only done if there is no pending enqueue timer.
-     *
-     * @param streamInfo the current stream info, which must be a round-play stream
-     */
-    void scheduleRoundPlayAutoQueue(@NonNull final StreamInfo streamInfo) {
-        if (enqueueTimer == null || enqueueTimer.isDone() || enqueueTimer.isCancelled()) {
-            enqueueTimer = executor.schedule(() -> maybeAutoQueueNextStream(streamInfo, true),
-                    Math.max(simpleExoPlayer.getDuration()
-                            - simpleExoPlayer.getCurrentPosition() - 1000, 0), MILLISECONDS);
-        }
-    }
 
     public void selectQueueItem(final PlayerMediaItem item) {
         if (playQueue == null || exoPlayerIsNull()) {
@@ -2766,6 +2702,11 @@ public final class Player implements
     @NonNull
     PlayerControlsVisibilityController getControlsVisibilityController() {
         return controlsVisibilityController;
+    }
+
+    @NonNull
+    AutoQueueController getAutoQueueController() {
+        return autoQueueController;
     }
 
     @NonNull

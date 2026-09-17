@@ -159,13 +159,13 @@ class PlayerPlaybackStateController(private val player: Player) {
             PlayerPlaybackState.BUFFERING -> onBuffering()
 
             PlayerPlaybackState.PAUSED -> {
-                player.cancelEnqueueTimer()
+                player.autoQueueController.cancelEnqueueTimer()
                 onPaused()
                 player.bulletCommentsController.pause()
             }
 
             PlayerPlaybackState.PAUSED_SEEK -> {
-                player.cancelEnqueueTimer()
+                player.autoQueueController.cancelEnqueueTimer()
                 onPausedSeek()
                 player.bulletCommentsController.pause()
             }
@@ -242,7 +242,7 @@ class PlayerPlaybackStateController(private val player: Player) {
 
         player.currentStreamInfo.orElse(null)?.let { streamInfo ->
             if (streamInfo.isRoundPlayStream()) {
-                player.scheduleRoundPlayAutoQueue(streamInfo)
+                player.autoQueueController.scheduleRoundPlayAutoQueue(streamInfo)
             }
         }
 
