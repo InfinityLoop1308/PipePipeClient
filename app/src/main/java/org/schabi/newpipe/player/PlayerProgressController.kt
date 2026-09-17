@@ -29,7 +29,7 @@ import java.util.function.IntSupplier
  * state machine and [SponsorBlockController] are unaffected, and it keeps implementing
  * [SeekBar.OnSeekBarChangeListener] by forwarding to this controller.
  */
-class PlayerProgressController(private val player: Player) {
+class PlayerProgressController(private val player: Player) : SeekBar.OnSeekBarChangeListener {
 
     private val progressUpdateDisposable = SerialDisposable()
 
@@ -180,7 +180,7 @@ class PlayerProgressController(private val player: Player) {
 
     // Seekbar listener //
 
-    fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+    override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
         // Currently we don't need method execution when fromUser is false
         if (!fromUser) {
             return
@@ -249,7 +249,7 @@ class PlayerProgressController(private val player: Player) {
         }
     }
 
-    fun onStartTrackingTouch(seekBar: SeekBar) {
+    override fun onStartTrackingTouch(seekBar: SeekBar) {
         if (Player.DEBUG) {
             Log.d(Player.TAG, "onStartTrackingTouch() called with: seekBar = [$seekBar]")
         }
@@ -271,7 +271,7 @@ class PlayerProgressController(private val player: Player) {
         )
     }
 
-    fun onStopTrackingTouch(seekBar: SeekBar) {
+    override fun onStopTrackingTouch(seekBar: SeekBar) {
         if (Player.DEBUG) {
             Log.d(Player.TAG, "onStopTrackingTouch() called with: seekBar = [$seekBar]")
         }

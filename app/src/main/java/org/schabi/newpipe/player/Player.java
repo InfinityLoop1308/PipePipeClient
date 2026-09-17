@@ -24,7 +24,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.net.Uri;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -65,10 +64,8 @@ import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.*;
 import org.schabi.newpipe.extractor.stream.*;
-import org.schabi.newpipe.fragments.detail.VideoDetailFragment;
 import org.schabi.newpipe.info_list.StreamSegmentAdapter;
 import org.schabi.newpipe.ktx.AnimationType;
-import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.player.PlayerService.PlayerType;
 import org.schabi.newpipe.player.event.PlayerEventListener;
 import org.schabi.newpipe.player.event.PlayerServiceEventListener;
@@ -88,10 +85,8 @@ import org.schabi.newpipe.player.playqueue.PlayQueueAdapter;
 import org.schabi.newpipe.player.resolver.PlayerQualityResolver;
 import org.schabi.newpipe.player.resolver.SourceResolver;
 import org.schabi.newpipe.player.resolver.VideoPlaybackResolver.SourceType;
-import org.schabi.newpipe.sleep.SleepTimerService;
 import org.schabi.newpipe.util.*;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
-import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.views.ExpandableSurfaceView;
 import android.widget.TextView;
 
@@ -100,10 +95,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
-public final class Player implements
-        SeekBar.OnSeekBarChangeListener,
-        View.OnClickListener,
-        View.OnLongClickListener {
+public final class Player {
     public static final boolean DEBUG = MainActivity.DEBUG;
     public static final String TAG = Player.class.getSimpleName();
 
@@ -175,6 +167,7 @@ public final class Player implements
     @NonNull private final PlayerStartController startController;
     @NonNull private final PlayerTransportController transportController;
     @NonNull private final PlayerHistoryController historyController;
+    @NonNull private final PlayerClickController clickController;
 
     public final PlayerServiceInterface service; //TODO try to remove and replace everything with context
 
@@ -315,6 +308,7 @@ public final class Player implements
         startController = new PlayerStartController(this);
         transportController = new PlayerTransportController(this);
         historyController = new PlayerHistoryController(this);
+        clickController = new PlayerClickController(this);
     }
 
     //endregion
@@ -408,47 +402,9 @@ public final class Player implements
     }
 
     private void initListeners() {
-        binding.qualityTextView.setOnClickListener(v -> menuController.onQualityClicked(v));
-        binding.playbackSpeed.setOnClickListener(
-                v -> menuController.onPlaybackSpeedClicked(v));
-
-        binding.playbackSeekBar.setOnSeekBarChangeListener(this);
-        binding.captionTextView.setOnClickListener(this);
-        binding.audioTrackTextView.setOnClickListener(this);
-        binding.resizeTextView.setOnClickListener(this);
-        binding.playbackLiveSync.setOnClickListener(this);
+        clickController.setup();
 
         gestureController.setup();
-
-        binding.queueButton.setOnClickListener(v -> queueController.onQueueClicked());
-        binding.segmentsButton.setOnClickListener(v -> queueController.onSegmentsClicked());
-        binding.repeatButton.setOnClickListener(v -> onRepeatClicked());
-        binding.shuffleButton.setOnClickListener(v -> onShuffleClicked());
-        binding.addToPlaylistButton.setOnClickListener(v -> {
-            if (getParentActivity() != null) {
-                onAddToPlaylistClicked(getParentActivity().getSupportFragmentManager());
-            }
-        });
-
-        binding.playPauseButton.setOnClickListener(this);
-        binding.playPreviousButton.setOnClickListener(this);
-        binding.playNextButton.setOnClickListener(this);
-
-        binding.moreOptionsButton.setOnClickListener(this);
-        binding.moreOptionsButton.setOnLongClickListener(this);
-        binding.share.setOnClickListener(this);
-        binding.share.setOnLongClickListener(this);
-        binding.fullScreenButton.setOnClickListener(this);
-        binding.screenRotationButton.setOnClickListener(this);
-        binding.switchCommentsVisibility.setOnClickListener(this);
-        binding.playWithKodi.setOnClickListener(this);
-        binding.openInBrowser.setOnClickListener(this);
-        binding.playerCloseButton.setOnClickListener(this);
-        binding.switchMute.setOnClickListener(this);
-        binding.sleepTimer.setOnClickListener(this);
-        binding.sleepTimer.setOnLongClickListener(this);
-        binding.skipButton.setOnClickListener(this);
-        binding.unskipButton.setOnClickListener(this);
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.itemsListPanel, (view, windowInsets) -> {
             final Insets cutout = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout());
@@ -723,7 +679,7 @@ public final class Player implements
             binding.channelTextView.setVisibility(View.GONE);
             binding.sleepTimer.setVisibility(View.GONE);
         }
-        setMuteButton(binding.switchMute, isMuted());
+        clickController.setMuteButton(binding.switchMute, isMuted());
 
         animateRotation(binding.moreOptionsButton, DEFAULT_CONTROLS_DURATION, 0);
     }
@@ -894,22 +850,6 @@ public final class Player implements
                 bypassSecondaryMode, isUnSkip);
     }
 
-    @Override // seekbar listener
-    public void onProgressChanged(final SeekBar seekBar, final int progress,
-                                  final boolean fromUser) {
-        progressController.onProgressChanged(seekBar, progress, fromUser);
-    }
-
-    @Override // seekbar listener
-    public void onStartTrackingTouch(final SeekBar seekBar) {
-        progressController.onStartTrackingTouch(seekBar);
-    }
-
-    @Override // seekbar listener
-    public void onStopTrackingTouch(final SeekBar seekBar) {
-        progressController.onStopTrackingTouch(seekBar);
-    }
-
     public void saveWasPlaying() {
         progressController.saveWasPlaying();
     }
@@ -1059,21 +999,7 @@ public final class Player implements
     //region Playlist append
 
     public void onAddToPlaylistClicked(@NonNull final FragmentManager fragmentManager) {
-        if (DEBUG) {
-            Log.d(TAG, "onAddToPlaylistClicked() called");
-        }
-
-        if (getPlayQueue() != null) {
-            PlaylistDialog.createCorrespondingDialog(
-                    getContext(),
-                    getPlayQueue()
-                            .getStreams()
-                            .stream()
-                            .map(StreamEntity::new)
-                            .collect(Collectors.toList()),
-                    dialog -> dialog.show(fragmentManager, TAG)
-            );
-        }
+        clickController.onAddToPlaylistClicked(fragmentManager);
     }
     //endregion
 
@@ -1085,21 +1011,11 @@ public final class Player implements
     //region Mute / Unmute
 
     public void onMuteUnmuteButtonClicked() {
-        if (DEBUG) {
-            Log.d(TAG, "onMuteUnmuteButtonClicked() called");
-        }
-        simpleExoPlayer.setVolume(isMuted() ? 1 : 0);
-        notifyPlaybackUpdateToListeners();
-        setMuteButton(binding.switchMute, isMuted());
+        clickController.onMuteUnmuteButtonClicked();
     }
 
     boolean isMuted() {
         return !exoPlayerIsNull() && simpleExoPlayer.getVolume() == 0;
-    }
-
-    private void setMuteButton(@NonNull final ImageButton button, final boolean isMuted) {
-        button.setImageDrawable(AppCompatResources.getDrawable(context, isMuted
-                ? R.drawable.ic_volume_off : R.drawable.ic_volume_up));
     }
     //endregion
 
@@ -1436,14 +1352,14 @@ public final class Player implements
     }
 
     @NonNull
-    private String getVideoUrl() {
+    String getVideoUrl() {
         return currentMetadata == null
                 ? context.getString(R.string.unknown_content)
                 : currentMetadata.getUrl();
     }
 
     @NonNull
-    private String getVideoUrlAtCurrentTime() {
+    String getVideoUrlAtCurrentTime() {
         final int timeSeconds = binding.playbackSeekBar.getProgress() / 1000;
         String videoUrl = getVideoUrl();
         if (!isLive() && timeSeconds >= 0 && currentMetadata != null
@@ -1638,152 +1554,16 @@ public final class Player implements
     //////////////////////////////////////////////////////////////////////////*/
     //region Click listeners
 
-    @Override
-    public void onClick(final View v) {
-        if (DEBUG) {
-            Log.d(TAG, "onClick() called with: v = [" + v + "]");
-        }
-        if (v.getId() == binding.resizeTextView.getId()) {
-            menuController.onDisplayModeClicked();
-        } else if (v.getId() == binding.captionTextView.getId()) {
-            menuController.onCaptionClicked();
-        } else if (v.getId() == binding.audioTrackTextView.getId()) {
-            menuController.onAudioTrackClicked();
-        } else if (v.getId() == binding.playbackLiveSync.getId()) {
-            seekToDefault();
-        } else if (v.getId() == binding.playPauseButton.getId()) {
-            playPause();
-        } else if (v.getId() == binding.playPreviousButton.getId()) {
-            playPrevious();
-        } else if (v.getId() == binding.playNextButton.getId()) {
-            playNext();
-        } else if (v.getId() == binding.moreOptionsButton.getId()) {
-            onMoreOptionsClicked();
-        } else if (v.getId() == binding.share.getId()) {
-            ShareUtils.shareText(context, getVideoTitle(), getVideoUrlAtCurrentTime(),
-                    currentItem.getThumbnailUrl());
-        } else if (v.getId() == binding.switchCommentsVisibility.getId()) {
-            bulletCommentsController.toggleVisibility();
-        } else if (v.getId() == binding.playWithKodi.getId()) {
-            onPlayWithKodiClicked();
-        } else if (v.getId() == binding.openInBrowser.getId()) {
-            onOpenInBrowserClicked();
-        } else if (v.getId() == binding.sleepTimer.getId()) {
-            onSleepTimerClicked();
-        } else if (v.getId() == binding.fullScreenButton.getId()) {
-            setRecovery();
-            if (popupPlayerSelected()) {
-                // Clean up popup properly before switching to main player
-                service.stopService();
-            }
-            NavigationHelper.playOnMainPlayer(context, playQueue, true);
-            return;
-        } else if (v.getId() == binding.screenRotationButton.getId()) {
-            PlayerUiModeHelper.setFullscreen(this, !isFullscreen);
-        } else if (v.getId() == binding.switchMute.getId()) {
-            onMuteUnmuteButtonClicked();
-        } else if (v.getId() == binding.playerCloseButton.getId()) {
-            context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_HIDE_MAIN_PLAYER));
-            service.stopService();
-        } else if (v.getId() == binding.skipButton.getId()) {
-            sponsorBlockController.onSkipClicked();
-        } else if (v.getId() == binding.unskipButton.getId()) {
-            sponsorBlockController.onUnskipClicked();
-        }
-
-        manageControlsAfterOnClick(v);
-    }
-
     /**
      * Manages the controls after a click occurred on the player UI.
      * @param v - The view that was clicked
      */
     public void manageControlsAfterOnClick(@NonNull final View v) {
-        controlsVisibilityController.manageControlsAfterOnClick(v);
-    }
-
-    @Override
-    public boolean onLongClick(final View v) {
-        if (v.getId() == binding.moreOptionsButton.getId() && isFullscreen) {
-            listeners.onMoreOptionsLongClicked();
-            hideControls(0, 0);
-            hideSystemUIIfNeeded();
-        } else if (v.getId() == binding.share.getId()) {
-            ShareUtils.copyToClipboard(context, getVideoUrlAtCurrentTime());
-        } else if (v.getId() == binding.sleepTimer.getId()) {
-            onSleepTimerLongClicked();
-        }
-        return true;
+        clickController.manageControlsAfterOnClick(v);
     }
 
     public boolean onKeyDown(final int keyCode) {
         return gestureController.onKeyDown(keyCode);
-    }
-
-    private void onMoreOptionsClicked() {
-        if (DEBUG) {
-            Log.d(TAG, "onMoreOptionsClicked() called");
-        }
-
-        final boolean isMoreControlsVisible =
-                binding.secondaryControls.getVisibility() == View.VISIBLE;
-
-        animateRotation(binding.moreOptionsButton, DEFAULT_CONTROLS_DURATION,
-                isMoreControlsVisible ? 0 : 180);
-        animate(binding.secondaryControls, !isMoreControlsVisible, DEFAULT_CONTROLS_DURATION,
-                AnimationType.SLIDE_AND_ALPHA, 0, () -> {
-                    // Fix for a ripple effect on background drawable.
-                    // When view returns from GONE state it takes more milliseconds than returning
-                    // from INVISIBLE state. And the delay makes ripple background end to fast
-                    if (isMoreControlsVisible) {
-                        binding.secondaryControls.setVisibility(View.INVISIBLE);
-                    }
-                });
-        showControls(DEFAULT_CONTROLS_DURATION);
-    }
-
-    private void onPlayWithKodiClicked() {
-        if (currentMetadata != null) {
-            pause();
-            try {
-                NavigationHelper.playWithKore(context, Uri.parse(getVideoUrl()));
-            } catch (final Exception e) {
-                if (DEBUG) {
-                    Log.i(TAG, "Failed to start kore", e);
-                }
-                KoreUtils.showInstallKoreDialog(getParentActivity());
-            }
-        }
-    }
-
-    private void onOpenInBrowserClicked() {
-        getCurrentStreamInfo()
-                .map(Info::getOriginalUrl)
-                .ifPresent(originalUrl -> ShareUtils.openUrlInBrowser(
-                        Objects.requireNonNull(getParentActivity()), originalUrl));
-    }
-
-    private void onSleepTimerClicked() {
-        AppCompatActivity activity = getParentActivity();
-        assert activity != null;
-        Intent serviceIntent = new Intent(activity, SleepTimerService.class);
-        serviceIntent.setAction(SleepTimerService.ACTION_START_TIMER);
-        // get time from shared preferences
-        int time = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(activity).getString(
-                activity.getString(R.string.sleep_timer_length_key), String.valueOf(15)
-        ));
-        serviceIntent.putExtra("timeInMillis", time * 60000); // 60 seconds
-        activity.startService(serviceIntent);
-        binding.sleepTimer.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.ic_timer));
-    }
-
-    private void onSleepTimerLongClicked() {
-        AppCompatActivity activity = getParentActivity();
-        assert activity != null;
-        Intent serviceIntent = new Intent(activity, SleepTimerService.class);
-        serviceIntent.setAction(SleepTimerService.ACTION_STOP_TIMER);
-        activity.startService(serviceIntent);
-        binding.sleepTimer.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.ic_timer_off));
     }
     //endregion
 
