@@ -123,6 +123,17 @@ public class PlayerService extends Service implements PlayerServiceInterface {
             Log.d(TAG, "onStartCommand() called with: intent = [" + intent
                     + "], flags = [" + flags + "], startId = [" + startId + "]");
         }
+        if (intent == null) {
+            // The system restarted the service with a null intent, which happens when the process
+            // was killed while a start was still pending. The pending start might have been
+            // issued with startForegroundService(), so a foreground notification must be posted
+            // to avoid ForegroundServiceDidNotStartInTimeException; then the service is stopped,
+            // since there is nothing to play.
+            Log.w(TAG, "onStartCommand() got a null intent, closing the service");
+            NotificationUtil.getInstance().startForegroundWithDummyNotification(this);
+            stopService();
+            return START_NOT_STICKY;
+        }
         if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())
                 && player.getPlayQueue() == null) {
             // Player is not working, no need to process media button's action

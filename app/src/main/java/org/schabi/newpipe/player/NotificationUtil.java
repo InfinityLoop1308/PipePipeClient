@@ -217,6 +217,39 @@ public final class NotificationUtil {
         }
     }
 
+    /**
+     * Puts the given service in the foreground with a minimal placeholder notification.
+     * This is needed when the system restarts the service with a null intent (e.g. the process
+     * was killed while a {@code startForegroundService()} call was still pending): in that case
+     * {@code startForeground()} must still be called, otherwise the app crashes with
+     * {@code ForegroundServiceDidNotStartInTimeException}. The caller is expected to stop the
+     * service (and thus remove the notification) right after.
+     * @param service the service to put in the foreground
+     */
+    public void startForegroundWithDummyNotification(final Service service) {
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(service,
+                service.getString(R.string.notification_channel_id))
+                .setContentTitle(service.getString(R.string.app_name))
+                .setSmallIcon(R.drawable.ic_pipepipe)
+                .setCategory(NotificationCompat.CATEGORY_TRANSPORT)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setShowWhen(false);
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                service.startForeground(NOTIFICATION_ID, builder.build(),
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+            } else {
+                service.startForeground(NOTIFICATION_ID, builder.build());
+            }
+        } catch (final Exception e) {
+            // on Android 12+ startForeground() throws ForegroundServiceStartNotAllowedException
+            // if the app is in the background without an exemption; there is nothing we can do
+            // in that case, but at least the service can still be stopped without crashing
+            Log.e(TAG, "Could not start foreground with dummy notification", e);
+        }
+    }
+
     void cancelNotificationAndStopForeground(final Service service) {
         ServiceCompat.stopForeground(service, ServiceCompat.STOP_FOREGROUND_REMOVE);
 
