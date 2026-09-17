@@ -44,7 +44,6 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.exoplayer2.*;
 import com.google.android.exoplayer2.Player.PositionInfo;
-import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.Tracks;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.text.CueGroup;
@@ -177,6 +176,7 @@ public final class Player implements
     @NonNull private final PlayerControlsVisibilityController controlsVisibilityController;
     @NonNull private final AutoQueueController autoQueueController;
     @NonNull private final PlayerStartController startController;
+    @NonNull private final PlayerTransportController transportController;
 
     public final PlayerServiceInterface service; //TODO try to remove and replace everything with context
 
@@ -324,6 +324,7 @@ public final class Player implements
         controlsVisibilityController = new PlayerControlsVisibilityController(this);
         autoQueueController = new AutoQueueController(this);
         startController = new PlayerStartController(this);
+        transportController = new PlayerTransportController(this);
     }
 
     //endregion
@@ -1014,6 +1015,10 @@ public final class Player implements
         currentItem = null;
         currentMetadata = null;
     }
+
+    void setCurrentItem(@Nullable final PlayerMediaItem item) {
+        currentItem = item;
+    }
     //endregion
 
 
@@ -1268,32 +1273,11 @@ public final class Player implements
      * @param currentProgress
      */
     void updatePlayBackElementsCurrentDuration(final int currentProgress) {
-        if (!getCurrentState().isPausedSeek()) {
-            binding.playbackSeekBar.setProgress(currentProgress);
-        }
-        // YouTube livestreams use DASH and getCurrentPosition() works correctly
-        // Other services (HLS) need startAt hack to show correct time
-        if (currentItem != null
-                && StreamTypeUtil.isLiveStream(currentItem.getStreamType())
-                && currentMetadata != null
-                && currentMetadata.getServiceId() != YouTube.getServiceId()
-                && currentItem.getStartAt() != -1) {
-            binding.playbackCurrentTime.setText(getTimeString((int) (new Date().getTime() - currentItem.getStartAt())));
-        } else {
-            binding.playbackCurrentTime.setText(getTimeString(currentProgress));
-        }
+        transportController.updatePlayBackElementsCurrentDuration(currentProgress);
     }
 
     boolean isApproachingPlaybackEdge(final long timeToEndMillis) {
-        // If live, then not near playback edge
-        // If not playing, then not approaching playback edge
-        if (exoPlayerIsNull() || isLive() || !isPlaying()) {
-            return false;
-        }
-
-        final long currentPositionMillis = simpleExoPlayer.getCurrentPosition();
-        final long currentDurationMillis = simpleExoPlayer.getDuration();
-        return currentDurationMillis - currentPositionMillis < timeToEndMillis;
+        return transportController.isApproachingPlaybackEdge(timeToEndMillis);
     }
 
     /**
@@ -1303,72 +1287,11 @@ public final class Player implements
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isLiveEdge() {
-        if (exoPlayerIsNull() || !isLive()) {
-            return false;
-        }
-
-        final Timeline currentTimeline = simpleExoPlayer.getCurrentTimeline();
-        final int currentWindowIndex = simpleExoPlayer.getCurrentMediaItemIndex();
-        if (currentTimeline.isEmpty() || currentWindowIndex < 0
-                || currentWindowIndex >= currentTimeline.getWindowCount()) {
-            return false;
-        }
-
-        final Timeline.Window timelineWindow = new Timeline.Window();
-        currentTimeline.getWindow(currentWindowIndex, timelineWindow);
-        return timelineWindow.getDefaultPositionMs() <= simpleExoPlayer.getCurrentPosition();
+        return transportController.isLiveEdge();
     }
 
     void onPlaybackSynchronize(@NonNull final PlayerMediaItem item, final boolean wasBlocked) {
-        if (DEBUG) {
-            Log.d(TAG, "Playback - onPlaybackSynchronize(was blocked: " + wasBlocked
-                    + ") called with item=[" + item.getTitle() + "], url=[" + item.getUrl() + "]");
-        }
-        if (exoPlayerIsNull() || playQueue == null) {
-            return;
-        }
-
-        final boolean hasPlayQueueItemChanged = currentItem == null
-                || !item.getUuid().equals(currentItem.getUuid());
-
-        final int currentPlayQueueIndex = playQueue.indexOf(item);
-        final int currentPlaylistIndex = simpleExoPlayer.getCurrentMediaItemIndex();
-        final int currentPlaylistSize = simpleExoPlayer.getCurrentTimeline().getWindowCount();
-
-        // If nothing to synchronize
-        if (!hasPlayQueueItemChanged) {
-            return;
-        }
-        currentItem = item;
-
-        // Check if on wrong window
-        if (currentPlayQueueIndex != playQueue.getIndex()) {
-            Log.e(TAG, "Playback - Play Queue may be desynchronized: item "
-                    + "index=[" + currentPlayQueueIndex + "], "
-                    + "queue index=[" + playQueue.getIndex() + "]");
-
-            // Check if bad seek position
-        } else if ((currentPlaylistSize > 0 && currentPlayQueueIndex >= currentPlaylistSize)
-                || currentPlayQueueIndex < 0) {
-            Log.e(TAG, "Playback - Trying to seek to invalid "
-                    + "index=[" + currentPlayQueueIndex + "] with "
-                    + "playlist length=[" + currentPlaylistSize + "]");
-
-        } else if (wasBlocked || currentPlaylistIndex != currentPlayQueueIndex || !isPlaying()) {
-            if (DEBUG) {
-                Log.d(TAG, "Playback - Rewinding to correct "
-                        + "index=[" + currentPlayQueueIndex + "], "
-                        + "from=[" + currentPlaylistIndex + "], "
-                        + "size=[" + currentPlaylistSize + "].");
-            }
-
-            if (playQueue.getRecoveryPosition(item) != PlayQueue.RECOVERY_UNSET && shouldSeek()) {
-                simpleExoPlayer.seekTo(currentPlayQueueIndex, playQueue.getRecoveryPosition(item));
-                playQueue.unsetRecovery(currentPlayQueueIndex);
-            } else {
-                simpleExoPlayer.seekToDefaultPosition(currentPlayQueueIndex);
-            }
-        }
+        transportController.onPlaybackSynchronize(item, wasBlocked);
     }
 
     public boolean shouldSeek() {
@@ -1397,33 +1320,11 @@ public final class Player implements
     }
 
     public void seekTo(final long positionMillis) {
-        if (DEBUG) {
-            Log.d(TAG, "seekBy() called with: position = [" + positionMillis + "]");
-        }
-        if (!exoPlayerIsNull()) {
-            // prevent invalid positions when fast-forwarding/-rewinding
-            long normalizedPositionMillis = positionMillis;
-            if (normalizedPositionMillis < 0) {
-                normalizedPositionMillis = 0;
-            } else if (normalizedPositionMillis > simpleExoPlayer.getDuration()) {
-                normalizedPositionMillis = simpleExoPlayer.getDuration();
-            }
-
-            simpleExoPlayer.seekTo(normalizedPositionMillis);
-        }
-    }
-
-    private void seekBy(final long offsetMillis) {
-        if (DEBUG) {
-            Log.d(TAG, "seekBy() called with: offsetMillis = [" + offsetMillis + "]");
-        }
-        seekTo(simpleExoPlayer.getCurrentPosition() + offsetMillis);
+        transportController.seekTo(positionMillis);
     }
 
     public void seekToDefault() {
-        if (!exoPlayerIsNull()) {
-            simpleExoPlayer.seekToDefaultPosition();
-        }
+        transportController.seekToDefault();
     }
 
     /**
@@ -1432,13 +1333,7 @@ public final class Player implements
      * @param duration
      */
     void setVideoDurationToControls(final int duration) {
-        binding.playbackEndTime.setText(getTimeString(duration));
-
-        binding.playbackSeekBar.setMax(duration);
-        // This is important for Android TVs otherwise it would apply the default from
-        // setMax/Min methods which is (max - min) / 20
-        binding.playbackSeekBar.setKeyProgressIncrement(
-                PlayerHelper.retrieveSeekDurationFromPreferences(this));
+        transportController.setVideoDurationToControls(duration);
     }
     //endregion
 
@@ -1450,112 +1345,31 @@ public final class Player implements
     //region Player actions (play, pause, previous, fast-forward, ...)
 
     public void play() {
-        if (DEBUG) {
-            Log.d(TAG, "play() called");
-        }
-        if (audioReactor == null || playQueue == null || exoPlayerIsNull()) {
-            return;
-        }
-
-        audioReactor.requestAudioFocus();
-
-        if (getCurrentState().isCompleted() && playQueue != null && playQueue.getItem() != null &&
-                playQueue.getRecoveryPosition(playQueue.getItem()) / 1000
-                        >= playQueue.getItem().getDuration() - 5) {
-            if (playQueue.getIndex() == 0) {
-                seekToDefault();
-            } else {
-                playQueue.setIndex(0);
-            }
-        }
-
-        simpleExoPlayer.play();
-        saveStreamProgressState();
+        transportController.play();
     }
 
     public void pause() {
-        if (DEBUG) {
-            Log.d(TAG, "pause() called");
-        }
-        if (audioReactor == null || exoPlayerIsNull()) {
-            return;
-        }
-
-        audioReactor.abandonAudioFocus();
-        simpleExoPlayer.pause();
-        saveStreamProgressState();
+        transportController.pause();
     }
 
     public void playPause() {
-        if (DEBUG) {
-            Log.d(TAG, "onPlayPause() called");
-        }
-
-        if (getPlayWhenReady()
-                // When state is completed (replay button is shown) then (re)play and do not pause
-                && !getCurrentState().isCompleted()) {
-            pause();
-        } else {
-            play();
-        }
+        transportController.playPause();
     }
 
     public void playPrevious() {
-        if (DEBUG) {
-            Log.d(TAG, "onPlayPrevious() called");
-        }
-        if (exoPlayerIsNull() || playQueue == null) {
-            return;
-        }
-
-        /* If current playback has run for PLAY_PREV_ACTIVATION_LIMIT_MILLIS milliseconds,
-         * restart current track. Also restart the track if the current track
-         * is the first in a queue.*/
-        if (simpleExoPlayer.getCurrentPosition() > PLAY_PREV_ACTIVATION_LIMIT_MILLIS
-                || playQueue.getIndex() == 0) {
-            seekToDefault();
-            playQueue.offsetIndex(0);
-        } else {
-            saveStreamProgressState();
-            playQueue.offsetIndex(-1);
-        }
-        triggerProgressUpdate();
+        transportController.playPrevious();
     }
 
     public void playNext() {
-        if (DEBUG) {
-            Log.d(TAG, "onPlayNext() called");
-        }
-        if (playQueue == null) {
-            return;
-        }
-
-        saveStreamProgressState();
-        playQueue.offsetIndex(+1);
-        triggerProgressUpdate();
+        transportController.playNext();
     }
 
     public void fastForward() {
-        if (DEBUG) {
-            Log.d(TAG, "fastRewind() called");
-        }
-        seekBy(retrieveSeekDurationFromPreferences(this));
-        triggerProgressUpdate(true);
+        transportController.fastForward();
     }
 
     public void fastRewind() {
-        if (DEBUG) {
-            Log.d(TAG, "fastRewind() called");
-        }
-        seekBy(-retrieveSeekDurationFromPreferences(this));
-        if (prefs.getBoolean(
-                context.getString(R.string.sponsor_block_graced_rewind_key), false)) {
-            triggerProgressUpdate(true, true, false, false);
-            return;
-        }
-
-        sponsorBlockController.onNonGracedRewind(); // else rewind into segment won't skip
-        triggerProgressUpdate(true);
+        transportController.fastRewind();
     }
     //endregion
 
@@ -2344,7 +2158,7 @@ public final class Player implements
         return !exoPlayerIsNull() && simpleExoPlayer.isLoading();
     }
 
-    private boolean isLive() {
+    boolean isLive() {
         try {
             return !exoPlayerIsNull() && simpleExoPlayer.isCurrentMediaItemDynamic();
         } catch (final IndexOutOfBoundsException e) {
