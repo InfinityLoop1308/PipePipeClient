@@ -91,7 +91,7 @@ import org.schabi.newpipe.player.PlayerPlaybackState;
 import org.schabi.newpipe.player.PlayerPlaybackParameters;
 import org.schabi.newpipe.player.RepeatMode;
 import org.schabi.newpipe.player.PlaybackStartupTrace;
-import org.schabi.newpipe.player.PlayerUiModeHelper;
+import org.schabi.newpipe.player.PlayerUiModeController;
 import org.schabi.newpipe.player.event.OnKeyDownListener;
 import org.schabi.newpipe.player.event.PlayerServiceExtendedEventListener;
 import org.schabi.newpipe.player.helper.PlayerHelper;
@@ -328,7 +328,7 @@ public final class VideoDetailFragment
             @Override
             public void onChange(final boolean selfChange) {
                 if (activity != null && !globalScreenOrientationLocked(activity)) {
-                    PlayerUiModeHelper.setOrientation(activity, player,
+                    PlayerUiModeController.setOrientation(activity,
                             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
                 }
             }
@@ -896,7 +896,7 @@ public final class VideoDetailFragment
             if (!DeviceUtils.isTablet(activity)) {
                 player.pause();
             }
-            PlayerUiModeHelper.setFullscreen(player, false);
+            player.changeFullscreen(false);
             setAutoPlay(false);
             return true;
         }
@@ -911,7 +911,7 @@ public final class VideoDetailFragment
 
         // That means that we are on the start of the stack,
         if (stack.size() <= 1) {
-            PlayerUiModeHelper.setOrientation(activity, player,
+            PlayerUiModeController.setOrientation(activity,
                     ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             return false; // let MainActivity handle the onBack (e.g. to minimize the mini player)
         }
@@ -1335,7 +1335,7 @@ public final class VideoDetailFragment
         final boolean useExternalAudioPlayer = false;
 
         if (isPlayerAvailable()) {
-            PlayerUiModeHelper.setFullscreen(player, false);
+            player.changeFullscreen(false);
         }
 
         if (isPlayerAvailable()) {
@@ -1367,7 +1367,7 @@ public final class VideoDetailFragment
         }
 
         if (isPlayerAvailable()) {
-            PlayerUiModeHelper.setFullscreen(player, false);
+            player.changeFullscreen(false);
         }
 
         final PlayQueue queue = setupPlayQueueForIntent(append);
@@ -1394,7 +1394,7 @@ public final class VideoDetailFragment
             // restored (i.e. bottomSheetState) to STATE_EXPANDED.
             bottomSheetState = BottomSheetBehavior.STATE_EXPANDED;
             if (isPlayerAvailable()) {
-                PlayerUiModeHelper.setFullscreen(player, true);
+                player.changeFullscreen(true);
             } else {
                 // TODO: preserve the fullscreen request until the Player service is connected.
             }
@@ -1743,7 +1743,7 @@ public final class VideoDetailFragment
                         if (player != null) {
                             moveFocusToMainFragment(false);
                             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                            PlayerUiModeHelper.setFullscreen(player, true);
+                            player.changeFullscreen(true);
                         }
                         break;
                 }
@@ -2207,7 +2207,7 @@ public final class VideoDetailFragment
         if (!isCatchableException) {
             // Properly exit from fullscreen
             if (isPlayerAvailable()) {
-                PlayerUiModeHelper.setFullscreen(player, false);
+                player.changeFullscreen(false);
             }
             hideMainPlayerOnLoadingNewStream();
         }

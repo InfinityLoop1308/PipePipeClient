@@ -16,8 +16,10 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import org.schabi.newpipe.MainActivity
 import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.stream.AudioStream
+import org.schabi.newpipe.extractor.stream.VideoStream
 import org.schabi.newpipe.player.helper.PlaybackParameterDialog
 import org.schabi.newpipe.player.helper.PlayerHelper
+import org.schabi.newpipe.player.mediaitem.MediaItemQuality
 import java.util.Locale
 
 /**
@@ -25,10 +27,11 @@ import java.util.Locale
  *
  * All the logic that builds those menus and reacts to their items stays here, so that [Player]
  * only exposes a few package-private accessors for the playback state and view primitives it
- * actually needs. It also owns whether a popup menu is currently visible and the display-mode
- * state (the forced and natural aspect ratios), so that the gesture listener, [Player] and
- * [PopupWindowController] can query or apply it without [Player] holding that state. This is a
- * view/event helper: it does not hold playback state itself.
+ * actually needs. It also owns whether a popup menu is currently visible, the display-mode
+ * state (the forced and natural aspect ratios) and which quality the current item is played
+ * at, so that the gesture listener, [Player] and [PopupWindowController] can query or apply
+ * them without [Player] holding that state. This is a view/event helper: it does not hold
+ * playback state itself.
  */
 class PlayerMenuController(
     private val player: Player
@@ -70,6 +73,18 @@ class PlayerMenuController(
     var videoNaturalAspectRatio = 0.0f
         private set
 
+    /**
+     * The quality of the item being played, read straight from its metadata. It used to be
+     * cached on [Player], which kept showing the previous video's resolutions whenever the
+     * current metadata carried no quality at all.
+     */
+    private val quality: MediaItemQuality?
+        get() = player.currentMetadata?.maybeQuality?.orElse(null)
+
+    /** The stream the user selected (or the one the resolver picked), null while unknown. */
+    val selectedVideoStream: VideoStream?
+        get() = quality?.selectedVideoStream
+
     init {
         val binding = player.binding
         val themeWrapper = ContextThemeWrapper(player.context, R.style.DarkPopupMenu)
@@ -92,7 +107,7 @@ class PlayerMenuController(
         qualityPopupMenu.show()
         isSomePopupMenuVisible = true
 
-        player.selectedVideoStream?.let { videoStream ->
+        selectedVideoStream?.let { videoStream ->
             player.binding.qualityTextView.text =
                 videoStream.codec.uppercase(Locale.getDefault())
                     .split("\\.".toRegex()).toTypedArray()[0] + " " + videoStream.resolution
@@ -157,7 +172,7 @@ class PlayerMenuController(
     fun buildQualityMenu() {
         qualityPopupMenu.menu.removeGroup(POPUP_MENU_ID_QUALITY)
 
-        val availableStreams = player.getAvailableStreams() ?: return
+        val availableStreams = quality?.sortedVideoStreams ?: return
         for (i in availableStreams.indices) {
             val videoStream = availableStreams[i]
             qualityPopupMenu.menu.add(
@@ -166,7 +181,7 @@ class PlayerMenuController(
                     + " " + videoStream.resolution
             )
         }
-        player.selectedVideoStream?.let {
+        selectedVideoStream?.let {
             player.binding.qualityTextView.text = it.resolution
         }
         qualityPopupMenu.setOnMenuItemClickListener(this)
@@ -405,8 +420,9 @@ class PlayerMenuController(
 
         if (menuItem.groupId == POPUP_MENU_ID_QUALITY) {
             val menuItemIndex = menuItem.itemId
-            val availableStreams = player.getAvailableStreams()
-            if (player.getSelectedStreamIndex() == menuItemIndex || availableStreams == null
+            val selectedQuality = quality ?: return true
+            val availableStreams = selectedQuality.sortedVideoStreams
+            if (selectedQuality.selectedVideoStreamIndex == menuItemIndex
                 || availableStreams.size <= menuItemIndex
             ) {
                 return true
@@ -438,7 +454,7 @@ class PlayerMenuController(
             Log.d(TAG, "onDismiss() called with: menu = [$menu]")
         }
         isSomePopupMenuVisible = false
-        player.selectedVideoStream?.let {
+        selectedVideoStream?.let {
             player.binding.qualityTextView.text = it.resolution
         }
         if (player.isPlaying) {

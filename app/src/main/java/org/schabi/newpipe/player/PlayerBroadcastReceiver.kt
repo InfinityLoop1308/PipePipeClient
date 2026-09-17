@@ -120,7 +120,7 @@ class PlayerBroadcastReceiver(private val player: Player) {
                 if (wasLandscape != landscape) {
                     wasLandscape = landscape
                     if (player.listeners.isFragmentVisible) {
-                        PlayerUiModeHelper.onOrientationChanged(player, landscape)
+                        player.uiModeController.onOrientationChanged(landscape)
                     }
                 }
                 // Close popup menus to prevent crash when view is not attached after rotation

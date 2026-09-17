@@ -127,7 +127,7 @@ class PlayerClickController(private val player: Player) :
             NavigationHelper.playOnMainPlayer(player.context, player.playQueue!!, true)
             return
         } else if (v.id == binding.screenRotationButton.id) {
-            PlayerUiModeHelper.setFullscreen(player, !player.isFullscreen)
+            player.changeFullscreen(!player.isFullscreen)
         } else if (v.id == binding.switchMute.id) {
             onMuteUnmuteButtonClicked()
         } else if (v.id == binding.playerCloseButton.id) {

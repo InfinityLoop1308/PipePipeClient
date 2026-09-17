@@ -23,7 +23,6 @@ import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.Player;
-import org.schabi.newpipe.player.PlayerUiModeHelper;
 import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.mediasession.PlayerServiceInterface;
 
@@ -395,7 +394,7 @@ public class PlayerGestureListener
         if (playerType == PlayerService.PlayerType.VIDEO) {
             // Handle pending screen rotation gesture
             if (isPendingScreenRotation && isFullscreenRotationGesture) {
-                PlayerUiModeHelper.setFullscreen(player, !player.isFullscreen());
+                player.changeFullscreen(!player.isFullscreen());
                 isPendingScreenRotation = false;
                 isFullscreenRotationGesture = false;
                 return; // Exit early to avoid other cleanup actions

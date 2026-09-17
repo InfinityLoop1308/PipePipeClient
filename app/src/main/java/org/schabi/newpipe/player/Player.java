@@ -9,8 +9,6 @@ import static com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_SKIP;
 import static com.google.android.exoplayer2.Player.DiscontinuityReason;
 import static org.schabi.newpipe.extractor.ServiceList.YouTube;
 import static org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty;
-import static org.schabi.newpipe.ktx.ViewUtils.animate;
-import static org.schabi.newpipe.ktx.ViewUtils.animateRotation;
 import static org.schabi.newpipe.player.PlayerService.*;
 import static org.schabi.newpipe.player.helper.PlayerHelper.*;
 import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_BACKGROUND;
@@ -19,11 +17,7 @@ import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeMode.MINIMIZ
 
 import android.annotation.SuppressLint;
 import android.content.*;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,10 +28,6 @@ import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 
@@ -84,7 +74,6 @@ import org.schabi.newpipe.player.playqueue.PlayQueueAdapter;
 import org.schabi.newpipe.player.resolver.PlayerQualityResolver;
 import org.schabi.newpipe.player.resolver.SourceResolver;
 import org.schabi.newpipe.util.*;
-import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.views.ExpandableSurfaceView;
 import android.widget.TextView;
 
@@ -166,6 +155,8 @@ public final class Player {
     @NonNull private final PlayerHistoryController historyController;
     @NonNull private final PlayerClickController clickController;
     @NonNull private final PlayerSourceController sourceController;
+    @NonNull private final PlayerLayoutController layoutController;
+    @NonNull private final PlayerUiModeController uiModeController;
 
     public final PlayerServiceInterface service; //TODO try to remove and replace everything with context
 
@@ -183,12 +174,11 @@ public final class Player {
     // minimized to background but will resume automatically to the original player type
     private boolean isAudioOnly = false;
     private boolean isPrepared = false;
-    private boolean isFullscreen = false;
-    private boolean isVerticalVideo = false;
     private long startupTraceId;
 
-    private List<VideoStream> availableStreams;
-    private int selectedStreamIndex;
+    // Whether the player is fullscreen and whether the video is vertical live in
+    // PlayerUiModeController. The available qualities and the selected one live in
+    // PlayerMenuController.
 
     /*//////////////////////////////////////////////////////////////////////////
     // Views
@@ -308,6 +298,8 @@ public final class Player {
         historyController = new PlayerHistoryController(this);
         clickController = new PlayerClickController(this);
         sourceController = new PlayerSourceController(this);
+        layoutController = new PlayerLayoutController(this);
+        uiModeController = new PlayerUiModeController(this);
     }
 
     //endregion
@@ -333,22 +325,11 @@ public final class Player {
         binding = playerBinding;
         tracksController.setupSubtitleView();
 
-        binding.playbackSeekBar.getThumb()
-                .setColorFilter(new PorterDuffColorFilter(Color.RED, PorterDuff.Mode.SRC_IN));
-        binding.playbackSeekBar.getProgressDrawable()
-                .setColorFilter(new PorterDuffColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY));
-
+        // Created here because it needs the binding, unlike the other controllers.
         menuController = new PlayerMenuController(this);
+
+        layoutController.initViews(playerBinding);
         menuController.updateDisplayModeButtonText();
-
-        binding.progressBarLoadingPanel.getIndeterminateDrawable()
-                .setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY));
-
-        binding.titleTextView.setSelected(true);
-        binding.channelTextView.setSelected(true);
-
-        // Prevent hiding of bottom sheet via swipe inside queue
-        binding.itemsList.setNestedScrollingEnabled(false);
     }
 
     void initPlayer(final boolean playOnReady) {
@@ -405,45 +386,7 @@ public final class Player {
 
         gestureController.setup();
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.itemsListPanel, (view, windowInsets) -> {
-            final Insets cutout = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout());
-            if (!cutout.equals(Insets.NONE)) {
-                view.setPadding(cutout.left, cutout.top, cutout.right, cutout.bottom);
-            }
-            return windowInsets;
-        });
-
-        // PlaybackControlRoot already consumed window insets but we should pass them to
-        // player_overlays and fast_seek_overlay too. Without it they will be off-centered.
-        binding.playbackControlRoot.addOnLayoutChangeListener(
-                (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-                    binding.playerOverlays.setPadding(
-                            v.getPaddingLeft(),
-                            v.getPaddingTop(),
-                            v.getPaddingRight(),
-                            v.getPaddingBottom());
-                    if(v.getPaddingLeft() != 0 || v.getPaddingTop() != 0
-                            || v.getPaddingRight() != 0 || v.getPaddingBottom() != 0){
-                        binding.playButtons.setPadding(
-                                -v.getPaddingLeft(), -v.getPaddingTop(),-v.getPaddingRight(),-v.getPaddingBottom());
-                        binding.loadingPanelWrapper.setPadding(
-                                -v.getPaddingLeft(), -v.getPaddingTop(),-v.getPaddingRight(),-v.getPaddingBottom());
-                    } else {
-                        binding.playButtons.setPadding(0, 0, 0, 0);
-                        binding.loadingPanelWrapper.setPadding(0, 0, 0, 0);
-                    }
-
-                    // If we added padding to the fast seek overlay, too, it would not go under the
-                    // system ui. Instead we apply negative margins equal to the window insets of
-                    // the opposite side, so that the view covers all of the player (overflowing on
-                    // some sides) and its center coincides with the center of other controls.
-                    final RelativeLayout.LayoutParams fastSeekParams = (RelativeLayout.LayoutParams)
-                            binding.fastSeekOverlay.getLayoutParams();
-                    fastSeekParams.leftMargin = -v.getPaddingRight();
-                    fastSeekParams.topMargin = -v.getPaddingBottom();
-                    fastSeekParams.rightMargin = -v.getPaddingLeft();
-                    fastSeekParams.bottomMargin = -v.getPaddingTop();
-                });
+        layoutController.setupWindowInsets();
     }
 
 
@@ -585,13 +528,7 @@ public final class Player {
     //region Player type specific setup
 
     void initVideoPlayer() {
-        // Pinch zoom owns video scaling while enabled; otherwise restore the regular display mode.
-        setResizeMode(PlayerHelper.isPinchToZoomEnabled(context)
-                ? AspectRatioFrameLayout.RESIZE_MODE_FIT
-                : PlayerHelper.retrieveResizeModeFromPrefs(this));
-        binding.surfaceView.resetPinchScale();
-        binding.getRoot().setLayoutParams(new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        uiModeController.initVideoPlayer();
     }
 
     @SuppressLint("RtlHardcoded")
@@ -611,6 +548,7 @@ public final class Player {
     // Elements visibility and size: popup and main players have different look
     //////////////////////////////////////////////////////////////////////////*/
     //region Elements visibility and size: popup and main players have different look
+    // The decisions themselves live in PlayerLayoutController, these are only delegates.
 
     /**
      * This method ensures that popup and main players have different look.
@@ -618,69 +556,7 @@ public final class Player {
      * Additional measuring should be done inside {@link #setupElementsSize}.
      */
     void setupElementsVisibility() {
-        if (popupPlayerSelected()) {
-            binding.fullScreenButton.setVisibility(View.VISIBLE);
-            binding.screenRotationButton.setVisibility(View.GONE);
-            binding.resizeTextView.setVisibility(View.GONE);
-            binding.getRoot().findViewById(R.id.metadataView).setVisibility(View.GONE);
-            binding.queueButton.setVisibility(View.GONE);
-            binding.segmentsButton.setVisibility(View.GONE);
-            binding.moreOptionsButton.setVisibility(View.GONE);
-            binding.topControls.setOrientation(LinearLayout.HORIZONTAL);
-            binding.primaryControls.getLayoutParams().width
-                    = LinearLayout.LayoutParams.WRAP_CONTENT;
-            binding.secondaryControls.setAlpha(1.0f);
-            binding.secondaryControls.setVisibility(View.VISIBLE);
-            binding.secondaryControls.setTranslationY(0);
-            binding.share.setVisibility(View.GONE);
-            binding.switchCommentsVisibility.setVisibility(View.GONE);
-            binding.playWithKodi.setVisibility(View.GONE);
-            binding.openInBrowser.setVisibility(View.GONE);
-            binding.sleepTimer.setVisibility(View.GONE);
-            binding.switchMute.setVisibility(View.GONE);
-            binding.playerCloseButton.setVisibility(View.GONE);
-            binding.topControls.bringToFront();
-            binding.topControls.setClickable(false);
-            binding.topControls.setFocusable(false);
-            binding.bottomControls.bringToFront();
-            closeItemsList();
-        } else if (videoPlayerSelected()) {
-            binding.fullScreenButton.setVisibility(View.GONE);
-            setupScreenRotationButton();
-            binding.resizeTextView.setVisibility(View.VISIBLE);
-            binding.getRoot().findViewById(R.id.metadataView).setVisibility(View.VISIBLE);
-            binding.moreOptionsButton.setVisibility(View.VISIBLE);
-            binding.topControls.setOrientation(LinearLayout.VERTICAL);
-            binding.primaryControls.getLayoutParams().width
-                    = LinearLayout.LayoutParams.MATCH_PARENT;
-            binding.secondaryControls.setVisibility(View.INVISIBLE);
-            binding.moreOptionsButton.setImageDrawable(AppCompatResources.getDrawable(context,
-                    R.drawable.ic_expand_more));
-            binding.share.setVisibility(View.VISIBLE);
-            binding.switchCommentsVisibility.setVisibility(View.VISIBLE);
-            binding.openInBrowser.setVisibility(View.VISIBLE);
-            binding.sleepTimer.setVisibility(View.VISIBLE);
-            binding.switchMute.setVisibility(View.VISIBLE);
-            binding.playerCloseButton.setVisibility(isFullscreen ? View.GONE : View.VISIBLE);
-            // Top controls have a large minHeight which is allows to drag the player
-            // down in fullscreen mode (just larger area to make easy to locate by finger)
-            binding.topControls.setClickable(true);
-            binding.topControls.setFocusable(true);
-        }
-        showHideKodiButton();
-
-        if (isFullscreen) {
-            binding.titleTextView.setVisibility(View.VISIBLE);
-            binding.channelTextView.setVisibility(View.VISIBLE);
-            binding.sleepTimer.setVisibility(View.VISIBLE);
-        } else {
-            binding.titleTextView.setVisibility(View.GONE);
-            binding.channelTextView.setVisibility(View.GONE);
-            binding.sleepTimer.setVisibility(View.GONE);
-        }
-        clickController.setMuteButton(binding.switchMute, isMuted());
-
-        animateRotation(binding.moreOptionsButton, DEFAULT_CONTROLS_DURATION, 0);
+        layoutController.setupElementsVisibility();
     }
 
     /**
@@ -688,41 +564,9 @@ public final class Player {
      * Popup player has small padding in comparison with the main player
      */
     void setupElementsSize() {
-        final Resources res = context.getResources();
-        final int buttonsMinWidth;
-        final int playerTopPad;
-        final int controlsPad;
-        final int buttonsPad;
-
-        if (popupPlayerSelected()) {
-            buttonsMinWidth = 0;
-            playerTopPad = 0;
-            controlsPad = res.getDimensionPixelSize(R.dimen.player_popup_controls_padding);
-            buttonsPad = res.getDimensionPixelSize(R.dimen.player_popup_buttons_padding);
-        } else if (videoPlayerSelected()) {
-            buttonsMinWidth = res.getDimensionPixelSize(R.dimen.player_main_buttons_min_width);
-            playerTopPad = res.getDimensionPixelSize(R.dimen.player_main_top_padding);
-            controlsPad = res.getDimensionPixelSize(R.dimen.player_main_controls_padding);
-            buttonsPad = res.getDimensionPixelSize(R.dimen.player_main_buttons_padding);
-        } else {
-            return;
-        }
-
-        binding.topControls.setPaddingRelative(controlsPad, playerTopPad, controlsPad, 0);
-        binding.bottomControls.setPaddingRelative(controlsPad, 0, controlsPad, 0);
-        binding.qualityTextView.setPadding(buttonsPad, buttonsPad, buttonsPad, buttonsPad);
-        binding.playbackSpeed.setPadding(buttonsPad, buttonsPad, buttonsPad, buttonsPad);
-        binding.playbackSpeed.setMinimumWidth(buttonsMinWidth);
-        binding.captionTextView.setPadding(buttonsPad, buttonsPad, buttonsPad, buttonsPad);
+        layoutController.setupElementsSize();
     }
 
-    private void showHideKodiButton() {
-        // show kodi button if it supports the current service and it is enabled in settings
-        binding.playWithKodi.setVisibility(videoPlayerSelected()
-                && playQueue != null && playQueue.getItem() != null
-                && KoreUtils.shouldShowPlayWithKodi(context, playQueue.getItem().getServiceId())
-                ? View.VISIBLE : View.GONE);
-    }
     //endregion
 
 
@@ -1079,12 +923,9 @@ public final class Player {
         tracksController.onAudioTracksChanged();
     }
 
-    void onPlaybackParametersChanged(@NonNull final PlaybackParameters playbackParameters) {
-        if (DEBUG) {
-            Log.d(TAG, "ExoPlayer - playbackParameters(), speed = [" + playbackParameters.speed
-                    + "], pitch = [" + playbackParameters.pitch + "]");
-        }
-        binding.playbackSpeed.setText(formatSpeed(playbackParameters.speed));
+    void onPlaybackParametersChanged(
+            @NonNull final PlaybackParameters playbackParameters) {
+        layoutController.onPlaybackParametersChanged(playbackParameters);
     }
 
     void onPositionDiscontinuity(@NonNull final PositionInfo oldPosition,
@@ -1135,12 +976,11 @@ public final class Player {
 
     void onRenderedFirstFrame() {
         PlaybackStartupTrace.finish(startupTraceId);
-        //TODO check if this causes black screen when switching to fullscreen
-        animate(binding.surfaceForeground, false, DEFAULT_CONTROLS_DURATION);
+        layoutController.onRenderedFirstFrame();
     }
 
     void onCues(@NonNull final CueGroup cueGroup) {
-        binding.subtitleView.setCues(cueGroup.cues);
+        layoutController.onCues(cueGroup);
     }
 
     public void onPrepare() {
@@ -1299,8 +1139,8 @@ public final class Player {
 
         thumbnailController.initThumbnail(info.getThumbnailUrl());
         registerStreamViewed();
-        updateStreamRelatedViews();
-        showHideKodiButton();
+        layoutController.updateStreamRelatedViews();
+        layoutController.showHideKodiButton();
         // TODO: bullet comments may be reset unexpectedly for round play streams
         bulletCommentsController.init();
         bulletCommentsController.start();
@@ -1426,68 +1266,8 @@ public final class Player {
         loadController.disablePreloadingOfCurrentTrack();
     }
 
-    @Nullable
-    public VideoStream getSelectedVideoStream() {
-        return (selectedStreamIndex >= 0 && availableStreams != null
-                && availableStreams.size() > selectedStreamIndex)
-                ? availableStreams.get(selectedStreamIndex) : null;
-    }
-
     void updateStreamRelatedViews() {
-        if (!getCurrentStreamInfo().isPresent()) {
-            return;
-        }
-        final StreamInfo info = getCurrentStreamInfo().get();
-
-        binding.qualityTextView.setVisibility(View.GONE);
-        binding.playbackSpeed.setVisibility(View.GONE);
-
-        binding.playbackEndTime.setVisibility(View.GONE);
-        binding.playbackLiveSync.setVisibility(View.GONE);
-
-        switch (info.getStreamType()) {
-            case AUDIO_STREAM:
-                binding.surfaceView.setVisibility(View.GONE);
-                binding.endScreen.setVisibility(View.VISIBLE);
-                binding.playbackEndTime.setVisibility(View.VISIBLE);
-                break;
-
-            case AUDIO_LIVE_STREAM:
-                binding.surfaceView.setVisibility(View.GONE);
-                binding.endScreen.setVisibility(View.VISIBLE);
-                binding.playbackLiveSync.setVisibility(View.VISIBLE);
-                break;
-
-            case LIVE_STREAM:
-                binding.surfaceView.setVisibility(View.VISIBLE);
-                binding.endScreen.setVisibility(View.GONE);
-                binding.playbackLiveSync.setVisibility(View.VISIBLE);
-                break;
-
-            case VIDEO_STREAM:
-            case POST_LIVE_STREAM:
-                if (currentMetadata == null
-                        || !currentMetadata.getMaybeQuality().isPresent()
-                        || (info.getVideoStreams().isEmpty()
-                        && info.getVideoOnlyStreams().isEmpty())) {
-                    break;
-                }
-
-                availableStreams = currentMetadata.getMaybeQuality().get().getSortedVideoStreams();
-                selectedStreamIndex =
-                        currentMetadata.getMaybeQuality().get().getSelectedVideoStreamIndex();
-                menuController.buildQualityMenu();
-
-                binding.qualityTextView.setVisibility(View.VISIBLE);
-                binding.surfaceView.setVisibility(View.VISIBLE);
-            default:
-                binding.endScreen.setVisibility(View.GONE);
-                binding.playbackEndTime.setVisibility(View.VISIBLE);
-                break;
-        }
-
-        menuController.buildPlaybackSpeedMenu();
-        binding.playbackSpeed.setVisibility(View.VISIBLE);
+        layoutController.updateStreamRelatedViews();
     }
 
     void updateQueueTime(final int currentTime) {
@@ -1555,52 +1335,15 @@ public final class Player {
     // Video size, resize, orientation, fullscreen
     //////////////////////////////////////////////////////////////////////////*/
     //region Video size, resize, orientation, fullscreen
+    // The fullscreen and orientation decisions live in PlayerUiModeController, these are only
+    // delegates.
 
-    void setFullscreen(final boolean fullscreen) {
-        if (DEBUG) {
-            Log.d(TAG, "setFullscreen() called with: fullscreen = [" + fullscreen + "]");
-        }
-        if (isFullscreen == fullscreen
-                || popupPlayerSelected()
-                || exoPlayerIsNull()
-                || !listeners.hasFragmentListener()) {
-            return;
-        }
-
-        isFullscreen = fullscreen;
-        // Pinch zoom is fullscreen-only and never survives either direction of the transition.
-        gestureController.resetPinchZoom();
-        if (!isFullscreen) {
-            // Apply window insets because Android will not do it when orientation changes
-            // from landscape to portrait (open vertical video to reproduce)
-            binding.playbackControlRoot.setPadding(0, 0, 0, 0);
-        } else {
-            // Hide the controls while Android calculates the new window insets.
-            hideControls(0, 0);
-        }
-        listeners.onFullscreenStateChanged(isFullscreen);
-
-        if (isFullscreen) {
-            binding.titleTextView.setVisibility(View.VISIBLE);
-            binding.channelTextView.setVisibility(View.VISIBLE);
-            binding.playerCloseButton.setVisibility(View.GONE);
-            binding.sleepTimer.setVisibility(View.VISIBLE);
-        } else {
-            binding.titleTextView.setVisibility(View.GONE);
-            binding.channelTextView.setVisibility(View.GONE);
-            binding.playerCloseButton.setVisibility(
-                    videoPlayerSelected() ? View.VISIBLE : View.GONE);
-            binding.sleepTimer.setVisibility(View.GONE);
-        }
-        setupScreenRotationButton();
-    }
-
-    private void setupScreenRotationButton() {
-        binding.screenRotationButton.setVisibility(
-                videoPlayerSelected() ? View.VISIBLE : View.GONE);
-        binding.screenRotationButton.setImageDrawable(AppCompatResources.getDrawable(context,
-                isFullscreen ? R.drawable.ic_fullscreen_exit
-                : R.drawable.ic_fullscreen));
+    /**
+     * Enter or leave fullscreen, letting the screen orientation follow the player. This is the
+     * entry point for everything outside the player.
+     */
+    public void changeFullscreen(final boolean fullscreen) {
+        uiModeController.changeFullscreen(fullscreen);
     }
 
     void setResizeMode(@AspectRatioFrameLayout.ResizeMode final int resizeMode) {
@@ -1608,22 +1351,7 @@ public final class Player {
     }
 
     void onVideoSizeChanged(@NonNull final VideoSize videoSize) {
-        if (DEBUG) {
-            Log.d(TAG, "onVideoSizeChanged() called with: "
-                    + "width / height = [" + videoSize.width + " / " + videoSize.height
-                    + " = " + (((float) videoSize.width) / videoSize.height) + "], "
-                    + "unappliedRotationDegrees = [" + videoSize.unappliedRotationDegrees + "], "
-                    + "pixelWidthHeightRatio = [" + videoSize.pixelWidthHeightRatio + "]");
-        }
-
-        menuController.onVideoSizeChanged(videoSize.width, videoSize.height);
-        isVerticalVideo = videoSize.width < videoSize.height;
-
-        if (isFullscreen) {
-            PlayerUiModeHelper.applyVideoOrientation(this);
-        }
-
-        setupScreenRotationButton();
+        uiModeController.onVideoSizeChanged(videoSize);
     }
 
     //endregion
@@ -1817,11 +1545,7 @@ public final class Player {
     }
 
     public boolean isFullscreen() {
-        return isFullscreen;
-    }
-
-    public boolean isVerticalVideo() {
-        return isVerticalVideo;
+        return uiModeController.isFullscreen();
     }
 
     public boolean isPopupClosing() {
@@ -1887,15 +1611,6 @@ public final class Player {
         return binding;
     }
 
-    @Nullable
-    List<VideoStream> getAvailableStreams() {
-        return availableStreams;
-    }
-
-    int getSelectedStreamIndex() {
-        return selectedStreamIndex;
-    }
-
     @NonNull
     DefaultTrackSelector getTrackSelector() {
         return trackSelector;
@@ -1934,6 +1649,16 @@ public final class Player {
     @NonNull
     PlayerHistoryController getHistoryController() {
         return historyController;
+    }
+
+    @NonNull
+    PlayerUiModeController getUiModeController() {
+        return uiModeController;
+    }
+
+    @NonNull
+    PlayerClickController getClickController() {
+        return clickController;
     }
 
     void setPlayerType(final PlayerType type) {

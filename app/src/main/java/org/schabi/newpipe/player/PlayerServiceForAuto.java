@@ -212,7 +212,7 @@ public final class PlayerServiceForAuto extends MediaBrowserServiceCompat implem
         if (player != null) {
             // Exit from fullscreen when user closes the player via notification
             if (player.isFullscreen()) {
-                PlayerUiModeHelper.setFullscreen(player, false);
+                player.changeFullscreen(false);
             }
             removeViewFromParent();
 
