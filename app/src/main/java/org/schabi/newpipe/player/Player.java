@@ -102,7 +102,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
 public final class Player implements
@@ -177,6 +176,7 @@ public final class Player implements
     @NonNull private final PlayerGestureController gestureController;
     @NonNull private final PlayerControlsVisibilityController controlsVisibilityController;
     @NonNull private final AutoQueueController autoQueueController;
+    @NonNull private final PlayerStartController startController;
 
     public final PlayerServiceInterface service; //TODO try to remove and replace everything with context
 
@@ -323,6 +323,7 @@ public final class Player implements
         gestureController = new PlayerGestureController(this);
         controlsVisibilityController = new PlayerControlsVisibilityController(this);
         autoQueueController = new AutoQueueController(this);
+        startController = new PlayerStartController(this);
     }
 
     //endregion
@@ -366,7 +367,7 @@ public final class Player implements
         binding.itemsList.setNestedScrollingEnabled(false);
     }
 
-    private void initPlayer(final boolean playOnReady) {
+    void initPlayer(final boolean playOnReady) {
         if (DEBUG) {
             Log.d(TAG, "initPlayer() called with: playOnReady = [" + playOnReady + "]");
         }
@@ -384,10 +385,7 @@ public final class Player implements
 
 
         audioReactor = new AudioReactor(context, simpleExoPlayer);
-        playerMediaSession = new PlayerMediaSession(this, simpleExoPlayer);
-        mediaSessionManager = new MediaSessionManager(context, simpleExoPlayer,
-                playerMediaSession, service.getMediaSession(),
-                service.getMediaBrowserPlaybackPreparer());
+        setupMediaSession();
 
         broadcastReceiverController.register();
 
@@ -409,6 +407,13 @@ public final class Player implements
 
     private DefaultTrackSelector createTrackSelector() {
         return new DefaultTrackSelector(context, PlayerHelper.getQualitySelector());
+    }
+
+    void setupMediaSession() {
+        playerMediaSession = new PlayerMediaSession(this, simpleExoPlayer);
+        mediaSessionManager = new MediaSessionManager(context, simpleExoPlayer,
+                playerMediaSession, service.getMediaSession(),
+                service.getMediaBrowserPlaybackPreparer());
     }
 
     private void initListeners() {
@@ -505,218 +510,8 @@ public final class Player implements
     //////////////////////////////////////////////////////////////////////////*/
     //region Playback initialization via intent
 
-    @SuppressWarnings("MethodLength")
     public void handleIntent(@NonNull final Intent intent) {
-        final long intentStartupTraceId = PlaybackStartupTrace.fromIntent(intent);
-        if (intentStartupTraceId > 0) {
-            startupTraceId = intentStartupTraceId;
-            PlaybackStartupTrace.mark(startupTraceId, "service_intent_received");
-        }
-        // fail fast if no play queue was provided
-        final String queueCache = intent.getStringExtra(PlayerIntentConstants.PLAY_QUEUE_KEY);
-        if (queueCache == null) {
-            return;
-        }
-        final PlayQueue newQueue = SerializedCache.getInstance().take(queueCache, PlayQueue.class);
-        if (newQueue == null) {
-            return;
-        }
-
-        final PlayerType oldPlayerType = playerType;
-        playerType = retrievePlayerTypeFromIntent(intent);
-        // We need to setup audioOnly before super(), see "sourceOf"
-        isAudioOnly = audioPlayerSelected();
-
-        // Resolve enqueue intents
-        if (intent.getBooleanExtra(PlayerIntentConstants.ENQUEUE, false)
-                && playQueue != null) {
-            playQueue.append(newQueue.getStreams());
-            return;
-
-        // Resolve enqueue next intents
-        } else if (intent.getBooleanExtra(PlayerIntentConstants.ENQUEUE_NEXT, false)
-                && playQueue != null) {
-            final int currentIndex = playQueue.getIndex();
-            playQueue.append(newQueue.getStreams());
-            playQueue.move(playQueue.size() - 1, currentIndex + 1);
-            return;
-        }
-
-        final DefaultTrackSelector.Parameters.Builder parametersBuilder =
-                trackSelector.buildUponParameters();
-        parametersBuilder.setTrackTypeDisabled(C.TRACK_TYPE_TEXT, audioPlayerSelected());
-        parametersBuilder.setTrackTypeDisabled(C.TRACK_TYPE_VIDEO, audioPlayerSelected());
-        final String preferredAudioLanguage = prefs.getString(
-                context.getString(R.string.preferred_audio_language_key), "original");
-        if ("original".equals(preferredAudioLanguage)) {
-            parametersBuilder.setPreferredAudioLanguages();
-        } else {
-            parametersBuilder.setPreferredAudioLanguages(preferredAudioLanguage);
-        }
-        trackSelector.setParameters(parametersBuilder);
-
-        final PlayerPlaybackParameters savedParameters =
-                retrievePlaybackParametersFromPrefs(this);
-        final float playbackSpeed = savedParameters.speed;
-        final float playbackPitch = savedParameters.pitch;
-        final boolean playbackSkipSilence = getPrefs().getBoolean(getContext().getString(
-                R.string.playback_skip_silence_key), getPlaybackSkipSilence());
-
-        final boolean samePlayQueue = playQueue != null && playQueue.equals(newQueue);
-        final RepeatMode repeatMode = RepeatShuffleController.fromExoPlayerRepeatMode(
-                intent.getIntExtra(PlayerIntentConstants.REPEAT_MODE,
-                        RepeatShuffleController.toExoPlayerRepeatMode(getRepeatMode())));
-        final boolean playWhenReady = intent.getBooleanExtra(
-                PlayerIntentConstants.PLAY_WHEN_READY, true);
-        final boolean isMuted = intent.getBooleanExtra(PlayerIntentConstants.IS_MUTED, isMuted());
-
-        /*
-         * TODO As seen in #7427 this does not work:
-         * There are 3 situations when playback shouldn't be started from scratch (zero timestamp):
-         * 1. User pressed on a timestamp link and the same video should be rewound to the timestamp
-         * 2. User changed a player from, for example. main to popup, or from audio to main, etc
-         * 3. User chose to resume a video based on a saved timestamp from history of played videos
-         * In those cases time will be saved because re-init of the play queue is a not an instant
-         *  task and requires network calls
-         * */
-        // seek to timestamp if stream is already playing
-        if (!exoPlayerIsNull()
-                && newQueue.size() == 1 && newQueue.getItem() != null
-                && playQueue != null && playQueue.size() == 1 && playQueue.getItem() != null
-                && newQueue.getItem().getUrl().equals(playQueue.getItem().getUrl())
-                && newQueue.getRecoveryPosition(newQueue.getItem()) != PlayQueue.RECOVERY_UNSET) {
-            // Player can have state = IDLE when playback is stopped or failed
-            // and we should retry in this case
-            if (simpleExoPlayer.getPlaybackState()
-                    == com.google.android.exoplayer2.Player.STATE_IDLE) {
-                simpleExoPlayer.prepare();
-            }
-            if (shouldSeek()) {
-                simpleExoPlayer.seekTo(playQueue.getIndex(),
-                        newQueue.getRecoveryPosition(newQueue.getItem()));
-            }
-            simpleExoPlayer.setPlayWhenReady(playWhenReady);
-
-        } else if (!exoPlayerIsNull()
-                && samePlayQueue
-                && playQueue != null
-                && !playQueue.isDisposed()) {
-            // Do not re-init the same PlayQueue. Save time
-            // Player can have state = IDLE when playback is stopped or failed
-            // and we should retry in this case
-            if (simpleExoPlayer.getPlaybackState()
-                    == com.google.android.exoplayer2.Player.STATE_IDLE) {
-                simpleExoPlayer.prepare();
-            }
-            simpleExoPlayer.setPlayWhenReady(playWhenReady);
-
-        } else if (intent.getBooleanExtra(PlayerIntentConstants.RESUME_PLAYBACK, false)
-                && isPlaybackResumeEnabled(this)
-                && !samePlayQueue
-                && !newQueue.isEmpty()
-                && newQueue.getItem() != null
-                && newQueue.getRecoveryPosition(newQueue.getItem()) == PlayQueue.RECOVERY_UNSET) {
-            databaseUpdateDisposable.add(recordManager.loadStreamState(newQueue.getItem())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    // Do not place initPlayback() in doFinally() because
-                    // it restarts playback after destroy()
-                    //.doFinally()
-                    .subscribe(
-                            state -> {
-                                if (!state.isFinished(newQueue.getItem().getDuration())) {
-                                    // resume playback only if the stream was not played to the end
-                                    newQueue.setRecovery(newQueue.getIndex(),
-                                            state.getProgressMillis());
-                                }
-                                initPlayback(newQueue, repeatMode, playbackSpeed, playbackPitch,
-                                        playbackSkipSilence, playWhenReady, isMuted);
-                            },
-                            error -> {
-                                if (DEBUG) {
-                                    Log.w(TAG, "Failed to start playback", error);
-                                }
-                                // In case any error we can start playback without history
-                                initPlayback(newQueue, repeatMode, playbackSpeed, playbackPitch,
-                                        playbackSkipSilence, playWhenReady, isMuted);
-                            },
-                            () -> {
-                                // Completed but not found in history
-                                initPlayback(newQueue, repeatMode, playbackSpeed, playbackPitch,
-                                        playbackSkipSilence, playWhenReady, isMuted);
-                            }
-                    ));
-        } else {
-            // Good to go...
-            // In a case of equal PlayQueues we can re-init old one but only when it is disposed
-            initPlayback(samePlayQueue ? playQueue : newQueue, repeatMode, playbackSpeed,
-                    playbackPitch, playbackSkipSilence, playWhenReady, isMuted);
-        }
-
-        if (oldPlayerType != playerType && playQueue != null) {
-            setRecovery();
-            reloadPlayQueueManager();
-        }
-
-        setupElementsVisibility();
-        setupElementsSize();
-
-        if (audioPlayerSelected()) {
-            service.removeViewFromParent();
-        } else if (popupPlayerSelected()) {
-            binding.getRoot().setVisibility(View.VISIBLE);
-            initPopup();
-            initPopupCloseOverlay();
-            binding.playPauseButton.requestFocus();
-        } else {
-            binding.getRoot().setVisibility(View.VISIBLE);
-            initVideoPlayer();
-            closeItemsList();
-            // Android TV: without it focus will frame the whole player
-            binding.playPauseButton.requestFocus();
-
-            // Note: This is for automatically playing (when "Resume playback" is off), see #6179
-            if (getPlayWhenReady()) {
-                play();
-            } else {
-                pause();
-            }
-        }
-        NavigationHelper.sendPlayerStartedEvent(context);
-    }
-
-    private void initPlayback(@NonNull final PlayQueue queue,
-                              final RepeatMode repeatMode,
-                              final float playbackSpeed,
-                              final float playbackPitch,
-                              final boolean playbackSkipSilence,
-                              final boolean playOnReady,
-                              final boolean isMuted) {
-        PlaybackStartupTrace.mark(startupTraceId, "player_init_started");
-        destroyPlayer();
-        initPlayer(playOnReady);
-
-        playQueue = queue;
-        playQueue.init();
-        reloadPlayQueueManager();
-        PlaybackStartupTrace.mark(startupTraceId, "media_source_manager_ready");
-
-        queueController.initAdapters();
-
-        simpleExoPlayer.setVolume(isMuted ? 0 : 1);
-        if (playQueue != null) {
-            simpleExoPlayer.setShuffleModeEnabled(playQueue.isShuffled());
-            playerMediaSession = new PlayerMediaSession(this, simpleExoPlayer);
-            mediaSessionManager = new MediaSessionManager(context, simpleExoPlayer,
-                    playerMediaSession, service.getMediaSession(),
-                    service.getMediaBrowserPlaybackPreparer());
-        }
-
-        setRepeatMode(repeatMode);
-        // #6825 - Ensure that the shuffle-button is in the correct state on the UI
-        repeatShuffleController.updateShuffleButton();
-        setPlaybackParameters(playbackSpeed, playbackPitch, playbackSkipSilence);
-
-        notifyQueueUpdateToListeners();
+        startController.handleIntent(intent);
     }
     //endregion
 
@@ -727,7 +522,7 @@ public final class Player implements
     //////////////////////////////////////////////////////////////////////////*/
     //region Destroy and recovery
 
-    private void destroyPlayer() {
+    void destroyPlayer() {
         if (DEBUG) {
             Log.d(TAG, "destroyPlayer() called");
         }
@@ -843,7 +638,7 @@ public final class Player implements
     //////////////////////////////////////////////////////////////////////////*/
     //region Player type specific setup
 
-    private void initVideoPlayer() {
+    void initVideoPlayer() {
         // Pinch zoom owns video scaling while enabled; otherwise restore the regular display mode.
         setResizeMode(PlayerHelper.isPinchToZoomEnabled(context)
                 ? AspectRatioFrameLayout.RESIZE_MODE_FIT
@@ -854,12 +649,12 @@ public final class Player implements
     }
 
     @SuppressLint("RtlHardcoded")
-    private void initPopup() {
+    void initPopup() {
         popupWindowController.initPopup();
     }
 
     @SuppressLint("RtlHardcoded")
-    private void initPopupCloseOverlay() {
+    void initPopupCloseOverlay() {
         popupWindowController.initPopupCloseOverlay();
     }
     //endregion
@@ -876,7 +671,7 @@ public final class Player implements
      * We use one layout for both players and need to decide what to show and what to hide.
      * Additional measuring should be done inside {@link #setupElementsSize}.
      */
-    private void setupElementsVisibility() {
+    void setupElementsVisibility() {
         if (popupPlayerSelected()) {
             binding.fullScreenButton.setVisibility(View.VISIBLE);
             binding.screenRotationButton.setVisibility(View.GONE);
@@ -946,7 +741,7 @@ public final class Player implements
      * Changes padding, size of elements based on player selected right now.
      * Popup player has small padding in comparison with the main player
      */
-    private void setupElementsSize() {
+    void setupElementsSize() {
         final Resources res = context.getResources();
         final int buttonsMinWidth;
         final int playerTopPad;
@@ -2707,6 +2502,46 @@ public final class Player implements
     @NonNull
     AutoQueueController getAutoQueueController() {
         return autoQueueController;
+    }
+
+    @NonNull
+    PlayerQueueController getQueueController() {
+        return queueController;
+    }
+
+    @NonNull
+    RepeatShuffleController getRepeatShuffleController() {
+        return repeatShuffleController;
+    }
+
+    @NonNull
+    CompositeDisposable getDatabaseUpdateDisposable() {
+        return databaseUpdateDisposable;
+    }
+
+    @NonNull
+    HistoryRecordManager getRecordManager() {
+        return recordManager;
+    }
+
+    void setPlayerType(final PlayerType type) {
+        playerType = type;
+    }
+
+    boolean isAudioOnly() {
+        return isAudioOnly;
+    }
+
+    void setAudioOnly(final boolean audioOnly) {
+        isAudioOnly = audioOnly;
+    }
+
+    void setStartupTraceId(final long id) {
+        startupTraceId = id;
+    }
+
+    void setPlayQueue(@Nullable final PlayQueue queue) {
+        playQueue = queue;
     }
 
     @NonNull
