@@ -26,7 +26,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.net.Uri;
-import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -181,6 +180,7 @@ public final class Player implements
     @NonNull private final PlayerPlaybackStateController playbackStateController;
     @NonNull private final PlayerQueueController queueController;
     @NonNull private final PlayerGestureController gestureController;
+    @NonNull private final PlayerControlsVisibilityController controlsVisibilityController;
 
     public final PlayerServiceInterface service; //TODO try to remove and replace everything with context
 
@@ -211,7 +211,6 @@ public final class Player implements
 
     private PlayerBinding binding;
 
-    private final Handler controlsVisibilityHandler = new Handler();
 
     // fullscreen player
 
@@ -329,6 +328,7 @@ public final class Player implements
 
         popupWindowController = new PopupWindowController(this);
         gestureController = new PlayerGestureController(this);
+        controlsVisibilityController = new PlayerControlsVisibilityController(this);
     }
 
     //endregion
@@ -1143,98 +1143,31 @@ public final class Player implements
     //region Controls showing / hiding
 
     public boolean isControlsVisible() {
-        return binding != null && binding.playbackControlRoot.getVisibility() == View.VISIBLE;
+        return controlsVisibilityController.isControlsVisible();
     }
 
     public void showControlsThenHide() {
-        if (DEBUG) {
-            Log.d(TAG, "showControlsThenHide() called");
-        }
-        showOrHideButtons();
-        showSystemUIPartially();
-
-        final int hideTime = binding.playbackControlRoot.isInTouchMode()
-                ? DEFAULT_CONTROLS_HIDE_TIME
-                : DPAD_CONTROLS_HIDE_TIME;
-
-        showHideShadow(true, DEFAULT_CONTROLS_DURATION);
-        animate(binding.playbackControlRoot, true, DEFAULT_CONTROLS_DURATION,
-                AnimationType.ALPHA, 0, () -> hideControls(DEFAULT_CONTROLS_DURATION, hideTime));
+        controlsVisibilityController.showControlsThenHide();
     }
 
     public void showControls(final long duration) {
-        if (DEBUG) {
-            Log.d(TAG, "showControls() called");
-        }
-        showOrHideButtons();
-        showSystemUIPartially();
-        controlsVisibilityHandler.removeCallbacksAndMessages(null);
-        showHideShadow(true, duration);
-        animate(binding.playbackControlRoot, true, duration);
+        controlsVisibilityController.showControls(duration);
     }
 
     public void hideControls(final long duration, final long delay) {
-        if (DEBUG) {
-            Log.d(TAG, "hideControls() called with: duration = [" + duration
-                    + "], delay = [" + delay + "]");
-        }
-
-        showOrHideButtons();
-
-        controlsVisibilityHandler.removeCallbacksAndMessages(null);
-        controlsVisibilityHandler.postDelayed(() -> {
-            showHideShadow(false, duration);
-            animate(binding.playbackControlRoot, false, duration, AnimationType.ALPHA,
-                    0, this::hideSystemUIIfNeeded);
-        }, delay);
+        controlsVisibilityController.hideControls(duration, delay);
     }
 
-    public void showHideShadow(final boolean show, final long duration) {
-        animate(binding.playbackControlsShadow, show, duration, AnimationType.ALPHA, 0, null);
-        animate(binding.playerTopShadow, show, duration, AnimationType.ALPHA, 0, null);
-        animate(binding.playerBottomShadow, show, duration, AnimationType.ALPHA, 0, null);
-    }
-
-    private void showOrHideButtons() {
-        if (playQueue == null) {
-            return;
-        }
-
-        final boolean showPrev = playQueue.getIndex() != 0;
-        final boolean showNext = playQueue.getIndex() + 1 != playQueue.getStreams().size();
-        final boolean showQueue = true;
-        /* only when stream has segments and is not playing in popup player */
-        final boolean showSegment = !popupPlayerSelected()
-                && !getCurrentStreamInfo()
-                .map(StreamInfo::getStreamSegments)
-                .map(List::isEmpty)
-                .orElse(/*no stream info=*/true);
-
-        binding.playPreviousButton.setVisibility(showPrev ? View.VISIBLE : View.INVISIBLE);
-        binding.playPreviousButton.setAlpha(showPrev ? 1.0f : 0.0f);
-        binding.playNextButton.setVisibility(showNext ? View.VISIBLE : View.INVISIBLE);
-        binding.playNextButton.setAlpha(showNext ? 1.0f : 0.0f);
-        binding.queueButton.setVisibility(showQueue ? View.VISIBLE : View.GONE);
-        binding.queueButton.setAlpha(showQueue ? 1.0f : 0.0f);
-        binding.segmentsButton.setVisibility(showSegment ? View.VISIBLE : View.GONE);
-        binding.segmentsButton.setAlpha(showSegment ? 1.0f : 0.0f);
+    void showOrHideButtons() {
+        controlsVisibilityController.showOrHideButtons();
     }
 
     void showSystemUIPartially() {
-        final AppCompatActivity activity = getParentActivity();
-        if (isFullscreen && activity != null) {
-            activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
-            activity.getWindow().setNavigationBarColor(Color.TRANSPARENT);
-            final int visibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-            activity.getWindow().getDecorView().setSystemUiVisibility(visibility);
-            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }
+        controlsVisibilityController.showSystemUIPartially();
     }
 
     void hideSystemUIIfNeeded() {
-        listeners.hideSystemUIIfNeeded();
+        controlsVisibilityController.hideSystemUIIfNeeded();
     }
     //endregion
 
@@ -2263,28 +2196,10 @@ public final class Player implements
 
     /**
      * Manages the controls after a click occurred on the player UI.
-     * @param v – The view that was clicked
+     * @param v - The view that was clicked
      */
     public void manageControlsAfterOnClick(@NonNull final View v) {
-        if (getCurrentState().isCompleted()) {
-            return;
-        }
-
-        controlsVisibilityHandler.removeCallbacksAndMessages(null);
-        showHideShadow(true, DEFAULT_CONTROLS_DURATION);
-        animate(binding.playbackControlRoot, true, DEFAULT_CONTROLS_DURATION,
-                AnimationType.ALPHA, 0, () -> {
-                    if (getCurrentState().isPlaying() && !menuController.isSomePopupMenuVisible()) {
-                        if (v.getId() == binding.playPauseButton.getId()
-                                // Hide controls in fullscreen immediately
-                                || (v.getId() == binding.screenRotationButton.getId()
-                                && isFullscreen)) {
-                            hideControls(0, 0);
-                        } else {
-                            hideControls(DEFAULT_CONTROLS_DURATION, DEFAULT_CONTROLS_HIDE_TIME);
-                        }
-                    }
-                });
+        controlsVisibilityController.manageControlsAfterOnClick(v);
     }
 
     @Override
@@ -2846,6 +2761,11 @@ public final class Player implements
     @NonNull
     public PlayerGestureController getGestureController() {
         return gestureController;
+    }
+
+    @NonNull
+    PlayerControlsVisibilityController getControlsVisibilityController() {
+        return controlsVisibilityController;
     }
 
     @NonNull
