@@ -69,7 +69,6 @@ import org.schabi.newpipe.fragments.detail.VideoDetailFragment;
 import org.schabi.newpipe.info_list.StreamSegmentAdapter;
 import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
-import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.PlayerService.PlayerType;
 import org.schabi.newpipe.player.event.PlayerEventListener;
 import org.schabi.newpipe.player.event.PlayerServiceEventListener;
@@ -100,8 +99,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
 public final class Player implements
         SeekBar.OnSeekBarChangeListener,
@@ -177,6 +174,7 @@ public final class Player implements
     @NonNull private final AutoQueueController autoQueueController;
     @NonNull private final PlayerStartController startController;
     @NonNull private final PlayerTransportController transportController;
+    @NonNull private final PlayerHistoryController historyController;
 
     public final PlayerServiceInterface service; //TODO try to remove and replace everything with context
 
@@ -242,18 +240,11 @@ public final class Player implements
     // zoom state live in PlayerGestureController.
 
     /*//////////////////////////////////////////////////////////////////////////
-    // Listeners and disposables
-    //////////////////////////////////////////////////////////////////////////*/
-
-    @NonNull private final CompositeDisposable databaseUpdateDisposable = new CompositeDisposable();
-
-    /*//////////////////////////////////////////////////////////////////////////
     // Utils
     //////////////////////////////////////////////////////////////////////////*/
 
     @NonNull private final Context context;
     @NonNull private final SharedPreferences prefs;
-    @NonNull private final HistoryRecordManager recordManager;
 
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -293,8 +284,6 @@ public final class Player implements
         sabrBackoffCountdown = new PlayerSabrBackoffCountdown(this);
         broadcastReceiverController = new PlayerBroadcastReceiver(this);
 
-        recordManager = new HistoryRecordManager(context);
-
         broadcastReceiverController.setup();
 
         trackSelector = createTrackSelector();
@@ -325,6 +314,7 @@ public final class Player implements
         autoQueueController = new AutoQueueController(this);
         startController = new PlayerStartController(this);
         transportController = new PlayerTransportController(this);
+        historyController = new PlayerHistoryController(this);
     }
 
     //endregion
@@ -572,7 +562,7 @@ public final class Player implements
         broadcastReceiverController.unregister();
         sponsorBlockController.destroy();
 
-        databaseUpdateDisposable.clear();
+        historyController.clear();
         progressController.stopProgressLoop();
         PicassoHelper.cancelTag(PicassoHelper.PLAYER_THUMBNAIL_TAG); // cancel thumbnail loading
 
@@ -1381,50 +1371,15 @@ public final class Player implements
     //region StreamInfo history: views and progress
 
     private void registerStreamViewed() {
-        getCurrentStreamInfo().ifPresent(info -> databaseUpdateDisposable
-                .add(recordManager.onViewed(info).onErrorComplete().subscribe()));
-    }
-
-    private void saveStreamProgressState(final long progressMillis) {
-        if (!getCurrentStreamInfo().isPresent()
-                || !prefs.getBoolean(context.getString(R.string.enable_watch_history_key), true)) {
-            return;
-        }
-        if (DEBUG) {
-            Log.d(TAG, "saveStreamProgressState() called with: progressMillis=" + progressMillis
-                    + ", currentMetadata=[" + getCurrentStreamInfo().get().getName() + "]");
-        }
-
-        databaseUpdateDisposable
-                .add(recordManager.saveStreamState(getCurrentStreamInfo().get(), progressMillis)
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(e -> {
-                    if (DEBUG) {
-                        e.printStackTrace();
-                    }
-                })
-                .onErrorComplete()
-                .subscribe());
+        historyController.registerStreamViewed();
     }
 
     public void saveStreamProgressState() {
-        if (exoPlayerIsNull() || currentMetadata == null || playQueue == null
-                || playQueue.getIndex() != simpleExoPlayer.getCurrentMediaItemIndex()) {
-            // Make sure play queue and current window index are equal, to prevent saving state for
-            // the wrong stream on discontinuity (e.g. when the stream just changed but the
-            // playQueue index and currentMetadata still haven't updated)
-            return;
-        }
-        // Save current position. It will help to restore this position once a user
-        // wants to play prev or next stream from the queue
-        playQueue.setRecovery(playQueue.getIndex(), simpleExoPlayer.getContentPosition());
-        saveStreamProgressState(simpleExoPlayer.getCurrentPosition());
+        historyController.saveStreamProgressState();
     }
 
     public void saveStreamProgressStateCompleted() {
-        // current stream has ended, so the progress is its duration (+1 to overcome rounding)
-        getCurrentStreamInfo().ifPresent(info ->
-                saveStreamProgressState((info.getDuration() + 1) * 1000));
+        historyController.saveStreamProgressStateCompleted();
     }
     //endregion
 
@@ -2329,13 +2284,8 @@ public final class Player implements
     }
 
     @NonNull
-    CompositeDisposable getDatabaseUpdateDisposable() {
-        return databaseUpdateDisposable;
-    }
-
-    @NonNull
-    HistoryRecordManager getRecordManager() {
-        return recordManager;
+    PlayerHistoryController getHistoryController() {
+        return historyController;
     }
 
     void setPlayerType(final PlayerType type) {

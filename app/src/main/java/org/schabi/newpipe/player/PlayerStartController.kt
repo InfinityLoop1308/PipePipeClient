@@ -1,10 +1,8 @@
 package org.schabi.newpipe.player
 
 import android.content.Intent
-import android.util.Log
 import android.view.View
 import com.google.android.exoplayer2.C
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import org.schabi.newpipe.R
 import org.schabi.newpipe.player.helper.PlayerHelper
 import org.schabi.newpipe.player.playqueue.PlayQueue
@@ -141,32 +139,16 @@ class PlayerStartController(private val player: Player) {
             && newQueue.getItem() != null
             && newQueue.getRecoveryPosition(newQueue.getItem()!!) == PlayQueue.RECOVERY_UNSET
         ) {
-            player.databaseUpdateDisposable.add(
-                player.recordManager.loadStreamState(newQueue.getItem())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    // Do not place initPlayback() in doFinally() because
-                    // it restarts playback after destroy()
-                    //.doFinally()
-                    .subscribe({ state ->
-                        if (!state.isFinished(newQueue.getItem()!!.duration)) {
-                            // resume playback only if the stream was not played to the end
-                            newQueue.setRecovery(newQueue.index, state.progressMillis)
-                        }
-                        initPlayback(newQueue, repeatMode, playbackSpeed, playbackPitch,
-                            playbackSkipSilence, playWhenReady, isMuted)
-                    }, { error ->
-                        if (Player.DEBUG) {
-                            Log.w(Player.TAG, "Failed to start playback", error)
-                        }
-                        // In case any error we can start playback without history
-                        initPlayback(newQueue, repeatMode, playbackSpeed, playbackPitch,
-                            playbackSkipSilence, playWhenReady, isMuted)
-                    }, {
-                        // Completed but not found in history
-                        initPlayback(newQueue, repeatMode, playbackSpeed, playbackPitch,
-                            playbackSkipSilence, playWhenReady, isMuted)
-                    })
-            )
+            player.historyController.startPlaybackWithSavedProgress(
+                newQueue.getItem()!!
+            ) { savedMillis ->
+                if (savedMillis != null) {
+                    // resume playback only if the stream was not played to the end
+                    newQueue.setRecovery(newQueue.index, savedMillis)
+                }
+                initPlayback(newQueue, repeatMode, playbackSpeed, playbackPitch,
+                    playbackSkipSilence, playWhenReady, isMuted)
+            }
         } else {
             // Good to go...
             // In a case of equal PlayQueues we can re-init old one but only when it is disposed
