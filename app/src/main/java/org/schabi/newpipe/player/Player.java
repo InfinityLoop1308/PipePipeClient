@@ -47,7 +47,6 @@ import com.google.android.exoplayer2.Tracks;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.text.CueGroup;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Util;
@@ -84,7 +83,6 @@ import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueAdapter;
 import org.schabi.newpipe.player.resolver.PlayerQualityResolver;
 import org.schabi.newpipe.player.resolver.SourceResolver;
-import org.schabi.newpipe.player.resolver.VideoPlaybackResolver.SourceType;
 import org.schabi.newpipe.util.*;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.views.ExpandableSurfaceView;
@@ -92,7 +90,6 @@ import android.widget.TextView;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 
 public final class Player {
@@ -168,6 +165,7 @@ public final class Player {
     @NonNull private final PlayerTransportController transportController;
     @NonNull private final PlayerHistoryController historyController;
     @NonNull private final PlayerClickController clickController;
+    @NonNull private final PlayerSourceController sourceController;
 
     public final PlayerServiceInterface service; //TODO try to remove and replace everything with context
 
@@ -309,6 +307,7 @@ public final class Player {
         transportController = new PlayerTransportController(this);
         historyController = new PlayerHistoryController(this);
         clickController = new PlayerClickController(this);
+        sourceController = new PlayerSourceController(this);
     }
 
     //endregion
@@ -1205,24 +1204,7 @@ public final class Player {
     }
 
     boolean isCurrentStreamSabr() {
-        return getCurrentStreamInfo().map(info -> {
-            for (final VideoStream s : info.getVideoOnlyStreams()) {
-                if (s.getDeliveryMethod() == DeliveryMethod.SABR) {
-                    return true;
-                }
-            }
-            for (final VideoStream s : info.getVideoStreams()) {
-                if (s.getDeliveryMethod() == DeliveryMethod.SABR) {
-                    return true;
-                }
-            }
-            for (final AudioStream s : info.getAudioStreams()) {
-                if (s.getDeliveryMethod() == DeliveryMethod.SABR) {
-                    return true;
-                }
-            }
-            return false;
-        }).orElse(false);
+        return sourceController.isCurrentStreamSabr();
     }
 
     public void seekTo(final long positionMillis) {
@@ -1736,123 +1718,9 @@ public final class Player {
     }
 
     void useVideoSource(final boolean videoEnabled) {
-        if (playQueue == null || isAudioOnly == !videoEnabled || audioPlayerSelected()) {
-            return;
-        }
-
-        isAudioOnly = !videoEnabled;
-        // When a user returns from background, controls could be hidden but SystemUI will be shown
-        // 100%. Hide it.
-        if (!isAudioOnly && !isControlsVisible()) {
-            hideSystemUIIfNeeded();
-        }
-
-        // The current metadata may be null sometimes (for e.g. when using an unstable connection
-        // in livestreams) so we will be not able to execute the block below.
-        // Reload the play queue manager in this case, which is the behavior when we don't know the
-        // index of the video renderer or playQueueManagerReloadingNeeded returns true.
-        final Optional<StreamInfo> optCurrentStreamInfo = getCurrentStreamInfo();
-        if (!optCurrentStreamInfo.isPresent()) {
-            reloadPlayQueueManager();
-            setRecovery();
-            return;
-        }
-
-        final StreamInfo info = optCurrentStreamInfo.get();
-
-        // In the case we don't know the source type, fallback to the one with video with audio or
-        // audio-only source.
-        final SourceType sourceType = sourceResolver.getStreamSourceType().orElse(
-                SourceType.VIDEO_WITH_AUDIO_OR_AUDIO_ONLY);
-
-        // A SABR source already exposes both audio and video, so background / foreground video
-        // toggles only need to update Media3 track selection instead of rebuilding the source.
-        if (!isCurrentStreamSabr()
-                && playQueueManagerReloadingNeeded(sourceType, info, getVideoRendererIndex())) {
-            reloadPlayQueueManager();
-        } else {
-            final StreamType streamType = info.getStreamType();
-            if (streamType == StreamType.AUDIO_STREAM
-                    || streamType == StreamType.AUDIO_LIVE_STREAM) {
-                // Nothing to do more than setting the recovery position
-                setRecovery();
-                return;
-            }
-
-            final DefaultTrackSelector.Parameters.Builder parametersBuilder =
-                    trackSelector.buildUponParameters();
-
-            // Enable/disable the video track and the ability to select subtitles
-            parametersBuilder.setTrackTypeDisabled(C.TRACK_TYPE_TEXT, !videoEnabled);
-            parametersBuilder.setTrackTypeDisabled(C.TRACK_TYPE_VIDEO, !videoEnabled);
-
-            trackSelector.setParameters(parametersBuilder);
-        }
-
-        setRecovery();
+        sourceController.useVideoSource(videoEnabled);
     }
 
-    /**
-     * Return whether the play queue manager needs to be reloaded when switching player type.
-     *
-     * <p>
-     * The play queue manager needs to be reloaded if the video renderer index is not known and if
-     * the content is not an audio content, but also if none of the following cases is met:
-     *
-     * <ul>
-     *     <li>the content is an {@link StreamType#AUDIO_STREAM audio stream} or an
-     *     {@link StreamType#AUDIO_LIVE_STREAM audio live stream};</li>
-     *     <li>the content is a {@link StreamType#LIVE_STREAM live stream} and the source type is a
-     *     {@link SourceType#LIVE_STREAM live source};</li>
-     *     <li>the content's source is {@link SourceType#VIDEO_WITH_SEPARATED_AUDIO a video stream
-     *     with a separated audio source} or has no audio-only streams available <b>and</b> is a
-     *     {@link StreamType#LIVE_STREAM live stream} or a
-     *     {@link StreamType#LIVE_STREAM live stream}.
-     *     </li>
-     * </ul>
-     * </p>
-     *
-     * @param sourceType         the {@link SourceType} of the stream
-     * @param streamInfo         the {@link StreamInfo} of the stream
-     * @param videoRendererIndex the video renderer index of the video source, if that's a video
-     *                           source (or {@link #RENDERER_UNAVAILABLE})
-     * @return whether the play queue manager needs to be reloaded
-     */
-    private boolean playQueueManagerReloadingNeeded(final SourceType sourceType,
-                                                    @NonNull final StreamInfo streamInfo,
-                                                    final int videoRendererIndex) {
-        final StreamType streamType = streamInfo.getStreamType();
-
-        if (videoRendererIndex == RENDERER_UNAVAILABLE && streamType != StreamType.AUDIO_STREAM
-                && streamType != StreamType.AUDIO_LIVE_STREAM) {
-            return true;
-        }
-
-        // The content is an audio stream, an audio live stream, or a live stream with a live
-        // source: it's not needed to reload the play queue manager because the stream source will
-        // be the same
-        if ((streamType == StreamType.AUDIO_STREAM || streamType == StreamType.AUDIO_LIVE_STREAM)
-                || (streamType == StreamType.LIVE_STREAM
-                && sourceType == SourceType.LIVE_STREAM)) {
-            return false;
-        }
-
-        // The content's source is a video with separated audio or a video with audio -> the video
-        // and its fetch may be disabled
-        // The content's source is a video with embedded audio and the content has no separated
-        // audio stream available: it's probably not needed to reload the play queue manager
-        // because the stream source will be probably the same as the current played
-        if (sourceType == SourceType.VIDEO_WITH_SEPARATED_AUDIO
-                || (sourceType == SourceType.VIDEO_WITH_AUDIO_OR_AUDIO_ONLY
-                    && isNullOrEmpty(streamInfo.getAudioStreams()))) {
-            // It's not needed to reload the play queue manager only if the content's stream type
-            // is a video stream or a live stream
-            return streamType != StreamType.VIDEO_STREAM && streamType != StreamType.LIVE_STREAM;
-        }
-
-        // Other cases: the play queue manager reload is needed
-        return true;
-    }
     //endregion
 
 
@@ -2177,33 +2045,6 @@ public final class Player {
     }
     //endregion
 
-    /**
-     * Get the video renderer index of the current playing stream.
-     *
-     * This method returns the video renderer index of the current
-     * {@link MappingTrackSelector.MappedTrackInfo} or {@link #RENDERER_UNAVAILABLE} if the current
-     * {@link MappingTrackSelector.MappedTrackInfo} is null or if there is no video renderer index.
-     *
-     * @return the video renderer index or {@link #RENDERER_UNAVAILABLE} if it cannot be get
-     */
-    private int getVideoRendererIndex() {
-        final MappingTrackSelector.MappedTrackInfo mappedTrackInfo = trackSelector
-                .getCurrentMappedTrackInfo();
-
-        if (mappedTrackInfo == null) {
-            return RENDERER_UNAVAILABLE;
-        }
-
-        // Check every renderer
-        return IntStream.range(0, mappedTrackInfo.getRendererCount())
-                // Check the renderer is a video renderer and has at least one track
-                .filter(i -> !mappedTrackInfo.getTrackGroups(i).isEmpty()
-                        && simpleExoPlayer.getRendererType(i) == C.TRACK_TYPE_VIDEO)
-                // Return the first index found (there is at most one renderer per renderer type)
-                .findFirst()
-                // No video renderer index with at least one track found: return unavailable index
-                .orElse(RENDERER_UNAVAILABLE);
-    }
 
     public void onBufferingFailed() {
         pause();
