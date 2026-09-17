@@ -28,7 +28,6 @@ import android.graphics.PorterDuffColorFilter;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +39,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.Insets;
-import androidx.core.view.GestureDetectorCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentManager;
@@ -76,9 +74,7 @@ import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.PlayerService.PlayerType;
-import org.schabi.newpipe.player.event.DisplayPortion;
 import org.schabi.newpipe.player.event.PlayerEventListener;
-import org.schabi.newpipe.player.event.PlayerGestureListener;
 import org.schabi.newpipe.player.event.PlayerServiceEventListener;
 import org.schabi.newpipe.player.helper.AudioReactor;
 import org.schabi.newpipe.player.helper.CustomRenderersFactory;
@@ -101,7 +97,6 @@ import org.schabi.newpipe.util.*;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 import org.schabi.newpipe.views.ExpandableSurfaceView;
-import org.schabi.newpipe.views.player.PlayerFastSeekOverlay;
 import android.widget.TextView;
 
 import java.util.*;
@@ -185,6 +180,7 @@ public final class Player implements
     @NonNull private final PlayerListeners listeners;
     @NonNull private final PlayerPlaybackStateController playbackStateController;
     @NonNull private final PlayerQueueController queueController;
+    @NonNull private final PlayerGestureController gestureController;
 
     public final PlayerServiceInterface service; //TODO try to remove and replace everything with context
 
@@ -205,8 +201,6 @@ public final class Player implements
     private boolean isFullscreen = false;
     private boolean isVerticalVideo = false;
     private long startupTraceId;
-
-    private boolean isFullscreenGestureEnabled = true;
 
     private List<VideoStream> availableStreams;
     private int selectedStreamIndex;
@@ -249,11 +243,8 @@ public final class Player implements
     // Gestures
     //////////////////////////////////////////////////////////////////////////*/
 
-    private static final float MAX_GESTURE_LENGTH = 0.75f;
-
-    private int maxGestureLength; // scaled
-    private GestureDetectorCompat gestureDetector;
-    private PlayerGestureListener playerGestureListener;
+    // The gesture detector, the gesture listener, the swipe overlay state and the pinch
+    // zoom state live in PlayerGestureController.
 
     /*//////////////////////////////////////////////////////////////////////////
     // Listeners and disposables
@@ -289,12 +280,6 @@ public final class Player implements
     //////////////////////////////////////////////////////////////////////////*/
 
     @NonNull private final BulletCommentsController bulletCommentsController;
-
-    /*//////////////////////////////////////////////////////////////////////////
-    // Gesture
-    //////////////////////////////////////////////////////////////////////////*/
-    private boolean longPressSpeedingEnabled = false;
-    public float longPressSpeedingFactor = 1.0f;
 
     private PlayerDataSource dataSource;
 
@@ -343,9 +328,7 @@ public final class Player implements
         tracksController = new PlayerTracksController(this);
 
         popupWindowController = new PopupWindowController(this);
-        longPressSpeedingFactor = Float.parseFloat(prefs.getString(context.getString(R.string.speeding_playback_key), "3"));
-
-        isFullscreenGestureEnabled = PlayerHelper.isFullscreenGestureEnabled(context);
+        gestureController = new PlayerGestureController(this);
     }
 
     //endregion
@@ -364,7 +347,7 @@ public final class Player implements
         }
         initListeners();
 
-        setupPlayerSeekOverlay();
+        gestureController.setupSeekOverlay();
     }
 
     private void initViews(@NonNull final PlayerBinding playerBinding) {
@@ -445,9 +428,7 @@ public final class Player implements
         binding.resizeTextView.setOnClickListener(this);
         binding.playbackLiveSync.setOnClickListener(this);
 
-        playerGestureListener = new PlayerGestureListener(this, service);
-        gestureDetector = new GestureDetectorCompat(context, playerGestureListener);
-        binding.getRoot().setOnTouchListener(playerGestureListener);
+        gestureController.setup();
 
         binding.queueButton.setOnClickListener(v -> queueController.onQueueClicked());
         binding.segmentsButton.setOnClickListener(v -> queueController.onSegmentsClicked());
@@ -478,8 +459,6 @@ public final class Player implements
         binding.sleepTimer.setOnLongClickListener(this);
         binding.skipButton.setOnClickListener(this);
         binding.unskipButton.setOnClickListener(this);
-
-        binding.getRoot().addOnLayoutChangeListener(this::onLayoutChange);
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.itemsListPanel, (view, windowInsets) -> {
             final Insets cutout = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout());
@@ -522,66 +501,6 @@ public final class Player implements
                 });
     }
 
-    /**
-     * Initializes the Fast-For/Backward overlay.
-     */
-    private void setupPlayerSeekOverlay() {
-        binding.fastSeekOverlay
-                .seekSecondsSupplier(() -> retrieveSeekDurationFromPreferences(this) / 1000)
-                .performListener(new PlayerFastSeekOverlay.PerformListener() {
-
-                    @Override
-                    public void onDoubleTap() {
-                        animate(binding.fastSeekOverlay, true, SEEK_OVERLAY_DURATION);
-                    }
-
-                    @Override
-                    public void onDoubleTapEnd() {
-                        animate(binding.fastSeekOverlay, false, SEEK_OVERLAY_DURATION);
-                    }
-
-                    @NonNull
-                    @Override
-                    public FastSeekDirection getFastSeekDirection(
-                            @NonNull final DisplayPortion portion
-                    ) {
-                        if (exoPlayerIsNull()) {
-                            // Abort seeking
-                            playerGestureListener.endMultiDoubleTap();
-                            return FastSeekDirection.NONE;
-                        }
-                        if (portion == DisplayPortion.LEFT) {
-                            // Check if it's possible to rewind
-                            // Small puffer to eliminate infinite rewind seeking
-                            if (simpleExoPlayer.getCurrentPosition() < 500L) {
-                                return FastSeekDirection.NONE;
-                            }
-                            return FastSeekDirection.BACKWARD;
-                        } else if (portion == DisplayPortion.RIGHT) {
-                            // Check if it's possible to fast-forward
-                            if (getCurrentState().isCompleted()
-                                    || simpleExoPlayer.getCurrentPosition()
-                                    >= simpleExoPlayer.getDuration()) {
-                                return FastSeekDirection.NONE;
-                            }
-                            return FastSeekDirection.FORWARD;
-                        }
-                        /* portion == DisplayPortion.MIDDLE */
-                        return FastSeekDirection.NONE;
-                    }
-
-                    @Override
-                    public void seek(final boolean forward) {
-                        playerGestureListener.keepInDoubleTapMode();
-                        if (forward) {
-                            fastForward();
-                        } else {
-                            fastRewind();
-                        }
-                    }
-                });
-        playerGestureListener.doubleTapControls(binding.fastSeekOverlay);
-    }
 
     //endregion
 
@@ -1301,7 +1220,7 @@ public final class Player implements
         binding.segmentsButton.setAlpha(showSegment ? 1.0f : 0.0f);
     }
 
-    private void showSystemUIPartially() {
+    void showSystemUIPartially() {
         final AppCompatActivity activity = getParentActivity();
         if (isFullscreen && activity != null) {
             activity.getWindow().setStatusBarColor(Color.TRANSPARENT);
@@ -1992,7 +1911,7 @@ public final class Player implements
         }
 
         // Zoom belongs to the current video, matching the transient behavior of the official app.
-        resetPinchZoom();
+        gestureController.resetPinchZoom();
         menuController.resetDisplayModeForNewVideo();
 
         thumbnailController.initThumbnail(info.getThumbnailUrl());
@@ -2383,51 +2302,7 @@ public final class Player implements
     }
 
     public boolean onKeyDown(final int keyCode) {
-        switch (keyCode) {
-            default:
-                break;
-            case KeyEvent.KEYCODE_SPACE:
-                if (isFullscreen) {
-                    playPause();
-                    if (isPlaying()) {
-                        hideControls(0, 0);
-                    }
-                    return true;
-                }
-                break;
-            case KeyEvent.KEYCODE_BACK:
-                if (DeviceUtils.isTv(context) && isControlsVisible()) {
-                    hideControls(0, 0);
-                    return true;
-                }
-                break;
-            case KeyEvent.KEYCODE_DPAD_UP:
-            case KeyEvent.KEYCODE_DPAD_LEFT:
-            case KeyEvent.KEYCODE_DPAD_DOWN:
-            case KeyEvent.KEYCODE_DPAD_RIGHT:
-            case KeyEvent.KEYCODE_DPAD_CENTER:
-                if ((binding.getRoot().hasFocus() && !binding.playbackControlRoot.hasFocus())
-                        || isQueueVisible()) {
-                    // do not interfere with focus in playlist and play queue etc.
-                    return false;
-                }
-
-                if (getCurrentState().isBlocked()) {
-                    return true;
-                }
-
-                if (isControlsVisible()) {
-                    hideControls(DEFAULT_CONTROLS_DURATION, DPAD_CONTROLS_HIDE_TIME);
-                } else {
-                    binding.playPauseButton.requestFocus();
-                    showControlsThenHide();
-                    showSystemUIPartially();
-                    return true;
-                }
-                break;
-        }
-
-        return false;
+        return gestureController.onKeyDown(keyCode);
     }
 
     private void onMoreOptionsClicked() {
@@ -2517,7 +2392,7 @@ public final class Player implements
 
         isFullscreen = fullscreen;
         // Pinch zoom is fullscreen-only and never survives either direction of the transition.
-        resetPinchZoom();
+        gestureController.resetPinchZoom();
         if (!isFullscreen) {
             // Apply window insets because Android will not do it when orientation changes
             // from landscape to portrait (open vertical video to reproduce)
@@ -2555,46 +2430,6 @@ public final class Player implements
         menuController.setResizeMode(resizeMode);
     }
 
-    public boolean isPinchToZoomEnabled() {
-        return isFullscreen && PlayerHelper.isPinchToZoomEnabled(context);
-    }
-
-    void resetPinchZoom() {
-        binding.surfaceView.resetPinchScale();
-        binding.pinchZoomIndicator.animate().cancel();
-        binding.pinchZoomIndicator.setVisibility(View.GONE);
-    }
-
-    public void onPinchZoomStart(final float focusX, final float focusY) {
-        menuController.onPinchZoomStart();
-        binding.surfaceView.beginPinchGesture(
-                focusX - binding.surfaceView.getLeft(),
-                focusY - binding.surfaceView.getTop());
-        binding.pinchZoomIndicator.animate().cancel();
-        binding.pinchZoomIndicator.setAlpha(1.0f);
-        binding.pinchZoomIndicator.setText(String.format(Locale.US, "%.1f×",
-                binding.surfaceView.getPinchScale()));
-        binding.pinchZoomIndicator.setVisibility(View.VISIBLE);
-    }
-
-    public void onPinchZoom(final float scaleFactor, final float focusX, final float focusY) {
-        if (!Float.isFinite(scaleFactor)) {
-            return;
-        }
-        binding.surfaceView.setPinchScale(
-                binding.surfaceView.getPinchScale() * scaleFactor,
-                focusX - binding.surfaceView.getLeft(),
-                focusY - binding.surfaceView.getTop());
-        binding.pinchZoomIndicator.setText(String.format(Locale.US, "%.1f×",
-                binding.surfaceView.getPinchScale()));
-    }
-
-    public void onPinchZoomEnd() {
-        binding.pinchZoomIndicator.animate().cancel();
-        binding.pinchZoomIndicator.animate().alpha(0.0f).setStartDelay(250L).setDuration(180L)
-                .withEndAction(() -> binding.pinchZoomIndicator.setVisibility(View.GONE)).start();
-    }
-
     void onVideoSizeChanged(@NonNull final VideoSize videoSize) {
         if (DEBUG) {
             Log.d(TAG, "onVideoSizeChanged() called with: "
@@ -2622,38 +2457,6 @@ public final class Player implements
     // Gestures
     //////////////////////////////////////////////////////////////////////////*/
     //region Gestures
-
-    private void onLayoutChange(final View view, final int l, final int t, final int r, final int b,
-                                final int ol, final int ot, final int or, final int ob) {
-        if (l != ol || t != ot || r != or || b != ob) {
-            // Use smaller value to be consistent between screen orientations
-            // (and to make usage easier)
-            final int width = r - l;
-            final int height = b - t;
-            final int min = Math.min(width, height);
-            maxGestureLength = (int) (min * MAX_GESTURE_LENGTH);
-
-            if (DEBUG) {
-                Log.d(TAG, "maxGestureLength = " + maxGestureLength);
-            }
-
-            binding.volumeProgressBar.setMax(maxGestureLength);
-            binding.brightnessProgressBar.setMax(maxGestureLength);
-
-            setInitialGestureValues();
-            binding.itemsListPanel.getLayoutParams().height
-                    = height - binding.itemsListPanel.getTop();
-        }
-    }
-
-    private void setInitialGestureValues() {
-        if (audioReactor != null) {
-            final float currentVolumeNormalized =
-                    (float) audioReactor.getVolume() / audioReactor.getMaxVolume();
-            binding.volumeProgressBar.setProgress(
-                    (int) (binding.volumeProgressBar.getMax() * currentVolumeNormalized));
-        }
-    }
 
     public boolean isInsideClosingRadius(@NonNull final MotionEvent popupMotionEvent) {
         return popupWindowController.isInsideClosingRadius(popupMotionEvent);
@@ -2950,10 +2753,6 @@ public final class Player implements
         return audioReactor;
     }
 
-    public GestureDetectorCompat getGestureDetector() {
-        return gestureDetector;
-    }
-
     public boolean isFullscreen() {
         return isFullscreen;
     }
@@ -2971,44 +2770,12 @@ public final class Player implements
         return menuController.isSomePopupMenuVisible();
     }
 
-    public boolean isFullscreenGestureEnabled() {
-        return isFullscreenGestureEnabled;
-    }
-
     public ImageButton getPlayPauseButton() {
         return binding.playPauseButton;
     }
 
     public View getClosingOverlayView() {
         return binding.closingOverlay;
-    }
-
-    public ProgressBar getVolumeProgressBar() {
-        return binding.volumeProgressBar;
-    }
-
-    public ProgressBar getBrightnessProgressBar() {
-        return binding.brightnessProgressBar;
-    }
-
-    public int getMaxGestureLength() {
-        return maxGestureLength;
-    }
-
-    public ImageView getVolumeImageView() {
-        return binding.volumeImageView;
-    }
-
-    public RelativeLayout getVolumeRelativeLayout() {
-        return binding.volumeRelativeLayout;
-    }
-
-    public ImageView getBrightnessImageView() {
-        return binding.brightnessImageView;
-    }
-
-    public RelativeLayout getBrightnessRelativeLayout() {
-        return binding.brightnessRelativeLayout;
     }
 
     public FloatingActionButton getCloseOverlayButton() {
@@ -3021,18 +2788,6 @@ public final class Player implements
 
     public TextView getCurrentDisplaySeek() {
         return binding.currentDisplaySeek;
-    }
-
-    public TextView getSwipeSeekDisplay() {
-        return binding.swipeSeekDisplay;
-    }
-
-    public TextView getSwipeSpeedDisplay() {
-        return binding.swipeSpeedDisplay;
-    }
-
-    public PlayerFastSeekOverlay getFastSeekOverlay() {
-        return binding.fastSeekOverlay;
     }
 
     @Nullable
@@ -3089,6 +2844,11 @@ public final class Player implements
     }
 
     @NonNull
+    public PlayerGestureController getGestureController() {
+        return gestureController;
+    }
+
+    @NonNull
     SourceResolver getSourceResolver() {
         return sourceResolver;
     }
@@ -3106,10 +2866,6 @@ public final class Player implements
     @NonNull
     BulletCommentsController getBulletCommentsController() {
         return bulletCommentsController;
-    }
-
-    PlayerGestureListener getPlayerGestureListener() {
-        return playerGestureListener;
     }
 
     long getStartupTraceId() {
@@ -3207,13 +2963,6 @@ public final class Player implements
                 .findFirst()
                 // No video renderer index with at least one track found: return unavailable index
                 .orElse(RENDERER_UNAVAILABLE);
-    }
-    public void setLongPressSpeedingEnabled(boolean enabled) {
-        longPressSpeedingEnabled = enabled;
-    }
-
-    public boolean getLongPressSpeedingEnabled() {
-        return longPressSpeedingEnabled;
     }
 
     public void onBufferingFailed() {

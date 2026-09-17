@@ -295,7 +295,7 @@ class PlayerPlaybackStateController(private val player: Player) {
 
         // Don't let UI elements popup during double tap seeking. This state is entered sometimes
         // during seeking/loading. This if-else check ensures that the controls aren't popping up.
-        if (!player.playerGestureListener.isDoubleTapping) {
+        if (!player.gestureController.isDoubleTapping) {
             player.showControls(400L)
             player.binding.loadingPanel.visibility = View.GONE
 

@@ -515,7 +515,7 @@ class PlayerMenuController(
 
     private fun onResizeModeSelected(resizeMode: Int) {
         PlayerHelper.setPinchToZoomEnabled(player.context, false)
-        player.resetPinchZoom()
+        player.gestureController.resetPinchZoom()
         // a resize mode supersedes any forced aspect ratio, which would otherwise have no effect
         forcedAspectRatio = 0.0f
         if (videoNaturalAspectRatio > 0) {
@@ -527,7 +527,7 @@ class PlayerMenuController(
 
     private fun applyForcedAspectRatio(aspectRatio: Float) {
         PlayerHelper.setPinchToZoomEnabled(player.context, false)
-        player.resetPinchZoom()
+        player.gestureController.resetPinchZoom()
         forcedAspectRatio = aspectRatio
         // a forced aspect ratio is only meaningful with Fit; this resize mode change is per-video
         // and is intentionally not persisted, so the saved resize mode is restored on the next video
@@ -550,7 +550,7 @@ class PlayerMenuController(
             player.binding.surfaceView.setAspectRatio(videoNaturalAspectRatio)
         }
         setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT)
-        player.resetPinchZoom()
+        player.gestureController.resetPinchZoom()
         updateDisplayModeButtonText()
         Toast.makeText(player.context, R.string.pinch_to_zoom_selected, Toast.LENGTH_SHORT).show()
     }
