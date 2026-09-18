@@ -63,6 +63,11 @@ class PlayerUiModeController(private val player: Player) {
             player.hideControls(0L, 0L)
         }
         player.listeners.onFullscreenStateChanged(isFullscreen)
+        // The detail fragment moves the layout to another parent from that callback and the
+        // surface is recreated around the rotation, which drops the rendered subtitles. The
+        // first frame of the new surface redraws them where it exists; this covers the devices
+        // where the surface survives the transition (#2944).
+        player.binding.subtitleView.post { player.layoutController.reapplyCues() }
 
         val binding = player.binding
         if (isFullscreen) {

@@ -35,6 +35,9 @@ import org.schabi.newpipe.util.external_communication.KoreUtils
  */
 class PlayerLayoutController(private val player: Player) {
 
+    /** The cues ExoPlayer last reported; see [reapplyCues] for why they are kept. */
+    private var lastCueGroup: CueGroup? = null
+
     /**
      * The constant look of the player views: the seek bar and the loading spinner tints, the
      * marquee of the title rows and the non-scrolling queue list.
@@ -320,9 +323,24 @@ class PlayerLayoutController(private val player: Player) {
     fun onRenderedFirstFrame() {
         //TODO check if this causes black screen when switching to fullscreen
         player.binding.surfaceForeground.animate(false, Player.DEFAULT_CONTROLS_DURATION.toLong())
+        reapplyCues()
     }
 
     fun onCues(cueGroup: CueGroup) {
+        lastCueGroup = cueGroup
         player.binding.subtitleView.setCues(cueGroup.cues)
+    }
+
+    /**
+     * Hands the current cues back to the subtitle view so that it draws them again.
+     *
+     * Entering or leaving fullscreen moves the player layout to another parent and gives the
+     * video a new surface, and the cue that is on screen at that moment does not survive it.
+     * The text renderer only emits a cue list when its content changes, so without this the
+     * subtitles stay missing until the next line or until an unrelated tap redraws the view
+     * (#2944).
+     */
+    fun reapplyCues() {
+        lastCueGroup?.let { player.binding.subtitleView.setCues(it.cues) }
     }
 }
