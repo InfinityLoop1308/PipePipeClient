@@ -49,7 +49,7 @@ import org.schabi.newpipe.util.ThemeHelper;
 
 import java.util.List;
 
-import static org.schabi.newpipe.player.PlayerService.BIND_PLAYER_HOLDER_ACTION;
+import static org.schabi.newpipe.player.PlayerIntentConstants.BIND_PLAYER_HOLDER_ACTION;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
 
@@ -146,7 +146,7 @@ public final class PlayerServiceForAuto extends MediaBrowserServiceCompat implem
         }
 
         if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())
-                || intent.getStringExtra(Player.PLAY_QUEUE_KEY) != null) {
+                || intent.getStringExtra(PlayerIntentConstants.PLAY_QUEUE_KEY) != null) {
             NotificationUtil.getInstance().createNotificationAndStartForeground(player, this);
         }
 
@@ -212,7 +212,7 @@ public final class PlayerServiceForAuto extends MediaBrowserServiceCompat implem
         if (player != null) {
             // Exit from fullscreen when user closes the player via notification
             if (player.isFullscreen()) {
-                PlayerUiModeHelper.setFullscreen(player, false);
+                player.changeFullscreen(false);
             }
             removeViewFromParent();
 

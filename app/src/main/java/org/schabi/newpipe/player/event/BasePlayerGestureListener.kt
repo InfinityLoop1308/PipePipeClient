@@ -8,6 +8,8 @@ import android.view.*
 import org.schabi.newpipe.ktx.animate
 import org.schabi.newpipe.player.PlayerService
 import org.schabi.newpipe.player.Player
+import org.schabi.newpipe.player.PlayerGestureController
+import org.schabi.newpipe.player.PlayerPlaybackState
 import org.schabi.newpipe.player.helper.PlayerHelper
 import org.schabi.newpipe.player.helper.PlayerHelper.savePopupPositionAndSizeToPrefs
 import kotlin.math.abs
@@ -28,24 +30,28 @@ abstract class BasePlayerGestureListener(
     protected val service: Service
 ) : GestureDetector.SimpleOnGestureListener(), View.OnTouchListener {
 
+    /** Owns the gesture detector, the swipe overlays and the pinch-zoom state. */
+    @JvmField
+    protected val gestureController: PlayerGestureController = player.gestureController
+
     private val scaleGestureDetector = ScaleGestureDetector(
         service,
         object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
             override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
-                if (!player.isPinchToZoomEnabled || player.popupPlayerSelected()) return false
+                if (!gestureController.isPinchToZoomEnabled || player.popupPlayerSelected()) return false
                 isPinchingInMain = true
                 suppressMainGestureUntilUp = true
-                player.onPinchZoomStart(detector.focusX, detector.focusY)
+                gestureController.onPinchZoomStart(detector.focusX, detector.focusY)
                 return true
             }
 
             override fun onScale(detector: ScaleGestureDetector): Boolean {
-                player.onPinchZoom(detector.scaleFactor, detector.focusX, detector.focusY)
+                gestureController.onPinchZoom(detector.scaleFactor, detector.focusX, detector.focusY)
                 return true
             }
 
             override fun onScaleEnd(detector: ScaleGestureDetector) {
-                player.onPinchZoomEnd()
+                gestureController.onPinchZoomEnd()
                 isPinchingInMain = false
             }
         }
@@ -116,25 +122,25 @@ abstract class BasePlayerGestureListener(
     private var mainStreamDownY = 0f
 
     private fun onTouchInMain(v: View, event: MotionEvent): Boolean {
-        if (player.isPinchToZoomEnabled &&
+        if (gestureController.isPinchToZoomEnabled &&
             event.actionMasked == MotionEvent.ACTION_POINTER_DOWN
         ) {
             // GestureDetector does not receive multi-pointer events below, so explicitly cancel
             // its pending long-press callback before it can enable speed-up during a pinch.
             val cancelEvent = MotionEvent.obtain(event)
             cancelEvent.action = MotionEvent.ACTION_CANCEL
-            player.gestureDetector.onTouchEvent(cancelEvent)
+            gestureController.gestureDetector.onTouchEvent(cancelEvent)
             cancelEvent.recycle()
-            if (player.longPressSpeedingEnabled) {
-                player.playbackSpeed /= player.longPressSpeedingFactor
-                player.longPressSpeedingEnabled = false
+            if (gestureController.longPressSpeedingEnabled) {
+                player.playbackSpeed /= gestureController.longPressSpeedingFactor
+                gestureController.longPressSpeedingEnabled = false
             }
         }
-        if (player.isPinchToZoomEnabled) {
+        if (gestureController.isPinchToZoomEnabled) {
             scaleGestureDetector.onTouchEvent(event)
         }
         if (!isPinchingInMain && !suppressMainGestureUntilUp && event.pointerCount == 1) {
-            player.gestureDetector.onTouchEvent(event)
+            gestureController.gestureDetector.onTouchEvent(event)
         }
 
         when (event.action) {
@@ -149,7 +155,7 @@ abstract class BasePlayerGestureListener(
                 // we ever get a chance to disallow it - which made the swipe-up-fullscreen
                 // gesture silently fail ("no reaction") or even turn into the minimize gesture.
                 mainStreamClaimed =
-                    player.isFullscreen || player.isFullscreenGestureEnabled
+                    player.isFullscreen || gestureController.isFullscreenGestureEnabled
                 mainStreamDownY = event.y
                 v.parent.requestDisallowInterceptTouchEvent(mainStreamClaimed)
             }
@@ -178,7 +184,7 @@ abstract class BasePlayerGestureListener(
                 mainStreamClaimed = false
 
                 if (isPinchingInMain) {
-                    player.onPinchZoomEnd()
+                    gestureController.onPinchZoomEnd()
                     isPinchingInMain = false
                     suppressMainGestureUntilUp = false
                     return true
@@ -189,9 +195,9 @@ abstract class BasePlayerGestureListener(
                 if (isMovingInMain) {
                     isMovingInMain = false
                     onScrollEnd(PlayerService.PlayerType.VIDEO, event)
-                } else if (player.longPressSpeedingEnabled) {
-                    player.playbackSpeed /= player.longPressSpeedingFactor
-                    player.longPressSpeedingEnabled = false
+                } else if (gestureController.longPressSpeedingEnabled) {
+                    player.playbackSpeed /= gestureController.longPressSpeedingFactor
+                    gestureController.longPressSpeedingEnabled = false
                 }
             }
         }
@@ -200,7 +206,7 @@ abstract class BasePlayerGestureListener(
     }
 
     private fun onTouchInPopup(v: View, event: MotionEvent): Boolean {
-        player.gestureDetector.onTouchEvent(event)
+        gestureController.gestureDetector.onTouchEvent(event)
         if (event.pointerCount == 2 && !isMovingInPopup && !isResizing) {
             if (DEBUG) {
                 Log.d(TAG, "onTouch() 2 finger pointer detected, enabling resizing.")
@@ -354,7 +360,7 @@ abstract class BasePlayerGestureListener(
             return true
         } else {
             super.onSingleTapConfirmed(e)
-            if (player.currentState == Player.STATE_BLOCKED)
+            if (player.currentState == PlayerPlaybackState.BLOCKED)
                 return true
 
             onSingleTap(PlayerService.PlayerType.VIDEO)
@@ -368,8 +374,8 @@ abstract class BasePlayerGestureListener(
             player.checkPopupPositionBounds()
             player.changePopupSize(player.screenWidth.toInt())
         } else {
-            player.longPressSpeedingEnabled = true
-            player.playbackSpeed *= player.longPressSpeedingFactor
+            gestureController.longPressSpeedingEnabled = true
+            player.playbackSpeed *= gestureController.longPressSpeedingFactor
         }
     }
 
@@ -429,7 +435,7 @@ abstract class BasePlayerGestureListener(
         val isHorizontal = abs(distanceX) > abs(distanceY)
         // require a mostly vertical swipe so horizontal seeking is not hijacked
         if (!isMovingInMain && !isHorizontal && insideThreshold ||
-            player.currentState == Player.STATE_COMPLETED
+            player.currentState == PlayerPlaybackState.COMPLETED
         ) {
             return false
         }

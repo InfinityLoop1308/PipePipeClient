@@ -44,8 +44,7 @@ import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.player.helper.NonUriHlsPlaylistParserFactory;
 import org.schabi.newpipe.player.helper.PlayerDataSource;
-import org.schabi.newpipe.player.mediaitem.MediaItemTag;
-import org.schabi.newpipe.player.mediaitem.StreamInfoTag;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.util.StreamTypeUtil;
 import org.schabi.newpipe.App;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
@@ -78,7 +77,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             return null;
         }
 
-        final StreamInfoTag tag = StreamInfoTag.of(info);
+        final PlayerMediaItem tag = PlayerMediaItem.forStreamInfo(info);
         // Prefer DASH over HLS because of an exoPlayer bug that causes the background player to
         // also fetch the video stream even if it is supposed to just fetch the audio stream.
         if (!info.getDashMpdUrl().isEmpty()) {
@@ -96,7 +95,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
     static MediaSource buildLiveMediaSource(@NonNull final PlayerDataSource dataSource,
                                             @NonNull final String sourceUrl,
                                             @C.ContentType final int type,
-                                            @NonNull final MediaItemTag metadata) {
+                                            @NonNull final PlayerMediaItem metadata) {
         final MediaSource.Factory factory;
         if(sourceUrl.contains("live.nicovideo.jp/watch")){
             factory = dataSource.getNicoLiveHlsMediaSourceFactory(sourceUrl);
@@ -147,7 +146,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                                         @NonNull final Stream stream,
                                         @NonNull final StreamInfo streamInfo,
                                         @NonNull final String cacheKey,
-                                        @NonNull final MediaItemTag metadata)
+                                        @NonNull final PlayerMediaItem metadata)
             throws IOException {
         return buildMediaSource(dataSource, stream, streamInfo, cacheKey, metadata, 0);
     }
@@ -157,7 +156,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                                         @NonNull final Stream stream,
                                         @NonNull final StreamInfo streamInfo,
                                         @NonNull final String cacheKey,
-                                        @NonNull final MediaItemTag metadata,
+                                        @NonNull final PlayerMediaItem metadata,
                                         final long initialPositionMs)
             throws IOException {
         StreamingService service = streamInfo.getService();
@@ -191,7 +190,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             @NonNull final PlayerDataSource dataSource,
             @NonNull final T stream,
             @NonNull final String cacheKey,
-            @NonNull final MediaItemTag metadata) throws IOException {
+            @NonNull final PlayerMediaItem metadata) throws IOException {
         final String url = stream.getContent();
 
         if (isNullOrEmpty(url)) {
@@ -213,7 +212,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             @NonNull final PlayerDataSource dataSource,
             @NonNull final T stream,
             @NonNull final String cacheKey,
-            @NonNull final MediaItemTag metadata) throws IOException {
+            @NonNull final PlayerMediaItem metadata) throws IOException {
         final boolean isUrlStream = stream.isUrl();
         if (isUrlStream && isNullOrEmpty(stream.getContent())) {
             throw new IOException("Try to generate a DASH media source from an empty string or "
@@ -268,7 +267,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             @NonNull final PlayerDataSource dataSource,
             @NonNull final T stream,
             @NonNull final String cacheKey,
-            @NonNull final MediaItemTag metadata) throws IOException {
+            @NonNull final PlayerMediaItem metadata) throws IOException {
         final boolean isUrlStream = stream.isUrl();
         if (isUrlStream && isNullOrEmpty(stream.getContent())) {
             throw new IOException("Try to generate an HLS media source from an empty string or "
@@ -314,7 +313,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             @NonNull final PlayerDataSource dataSource,
             @NonNull final T stream,
             @NonNull final String cacheKey,
-            @NonNull final MediaItemTag metadata) throws IOException {
+            @NonNull final PlayerMediaItem metadata) throws IOException {
         final boolean isUrlStream = stream.isUrl();
         if (isUrlStream && isNullOrEmpty(stream.getContent())) {
             throw new IOException("Try to generate an SmoothStreaming media source from an empty "
@@ -361,7 +360,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             final StreamInfo streamInfo,
             final PlayerDataSource dataSource,
             final String cacheKey,
-            final MediaItemTag metadata,
+            final PlayerMediaItem metadata,
             final long initialPositionMs) throws IOException {
         if (!(stream instanceof AudioStream || stream instanceof VideoStream)) {
             throw new IOException("Try to generate a DASH manifest of a YouTube "
@@ -408,7 +407,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             @NonNull final T stream,
             @NonNull final StreamInfo streamInfo,
             @NonNull final String cacheKey,
-            @NonNull final MediaItemTag metadata,
+            @NonNull final PlayerMediaItem metadata,
             final long initialPositionMs) throws IOException {
         final DeliveryMethod deliveryMethod = stream.getDeliveryMethod();
         switch (deliveryMethod) {
@@ -478,7 +477,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                                                     @NonNull final Stream stream,
                                                     @NonNull final StreamInfo streamInfo,
                                                     @NonNull final String cacheKey,
-                                                    @NonNull final MediaItemTag metadata,
+                                                    @NonNull final PlayerMediaItem metadata,
                                                     final long initialPositionMs)
             throws IOException {
         final String videoId = streamInfo.getId();
@@ -513,7 +512,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             @NonNull final DashManifest dashManifest,
             @NonNull final T stream,
             @NonNull final String cacheKey,
-            @NonNull final MediaItemTag metadata) {
+            @NonNull final PlayerMediaItem metadata) {
         return dataSource.getYoutubeDashMediaSourceFactory().createMediaSource(dashManifest,
                 new MediaItem.Builder()
                         .setTag(metadata)
@@ -527,7 +526,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             @NonNull final PlayerDataSource dataSource,
             @NonNull final T stream,
             @NonNull final String cacheKey,
-            @NonNull final MediaItemTag metadata) {
+            @NonNull final PlayerMediaItem metadata) {
         return dataSource.getYoutubeProgressiveMediaSourceFactory()
                 .createMediaSource(new MediaItem.Builder()
                         .setTag(metadata)
@@ -540,7 +539,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             final StreamInfo streamInfo,
             final PlayerDataSource dataSource,
             final String cacheKey,
-            final MediaItemTag metadata) throws IOException{
+            final PlayerMediaItem metadata) throws IOException{
         String sourceUrl = stream.getContent();
         MediaSource.Factory factory;
         String additionalParam = URLDecoder.decode(sourceUrl.split("cookie=")[1]);
@@ -563,7 +562,7 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
             final StreamInfo streamInfo,
             final PlayerDataSource dataSource,
             final String cacheKey,
-            final MediaItemTag metadata) throws IOException{
+            final PlayerMediaItem metadata) throws IOException{
         final String url = stream.getContent();
         final String manifest = createBiliBiliDashManifest(stream, streamInfo);
         if (manifest != null) {

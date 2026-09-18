@@ -8,15 +8,18 @@ import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
-import com.google.android.exoplayer2.PlaybackException;
-import com.google.android.exoplayer2.PlaybackParameters;
 
 import org.schabi.newpipe.App;
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.player.PlayerBinderInterface;
+import org.schabi.newpipe.player.PlayerError;
+import org.schabi.newpipe.player.PlayerIntentConstants;
 import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.Player;
+import org.schabi.newpipe.player.PlayerPlaybackParameters;
+import org.schabi.newpipe.player.PlayerPlaybackState;
+import org.schabi.newpipe.player.RepeatMode;
 import org.schabi.newpipe.player.event.PlayerServiceEventListener;
 import org.schabi.newpipe.player.event.PlayerServiceExtendedEventListener;
 import org.schabi.newpipe.player.mediasession.PlayerServiceInterface;
@@ -183,7 +186,7 @@ public final class PlayerHolder {
         }
 
         final Intent serviceIntent = new Intent(context, DeviceUtils.getPlayerServiceClass());
-        serviceIntent.setAction(PlayerService.BIND_PLAYER_HOLDER_ACTION);
+        serviceIntent.setAction(PlayerIntentConstants.BIND_PLAYER_HOLDER_ACTION);
         try {
             bound = context.bindService(serviceIntent, serviceConnection,
                     Context.BIND_AUTO_CREATE);
@@ -248,7 +251,7 @@ public final class PlayerHolder {
                 }
 
                 @Override
-                public void onPlayerError(final PlaybackException error,
+                public void onPlayerError(final PlayerError error,
                                           final boolean isCatchableException) {
                     if (listener != null) {
                         listener.onPlayerError(error, isCatchableException);
@@ -270,10 +273,10 @@ public final class PlayerHolder {
                 }
 
                 @Override
-                public void onPlaybackUpdate(final int state,
-                                             final int repeatMode,
+                public void onPlaybackUpdate(final PlayerPlaybackState state,
+                                             final RepeatMode repeatMode,
                                              final boolean shuffled,
-                                             final PlaybackParameters parameters) {
+                                             final PlayerPlaybackParameters parameters) {
                     if (listener != null) {
                         listener.onPlaybackUpdate(state, repeatMode, shuffled, parameters);
                     }

@@ -27,8 +27,6 @@ import org.schabi.newpipe.util.NavigationHelper;
 import java.util.List;
 
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_ONE;
 import static org.schabi.newpipe.player.PlayerService.ACTION_CLOSE;
 import static org.schabi.newpipe.player.PlayerService.ACTION_FAST_FORWARD;
 import static org.schabi.newpipe.player.PlayerService.ACTION_FAST_REWIND;
@@ -300,9 +298,7 @@ public final class NotificationUtil {
                 }
 
             case NotificationConstants.PLAY_PAUSE_BUFFERING:
-                if (player.getCurrentState() == Player.STATE_PREFLIGHT
-                        || player.getCurrentState() == Player.STATE_BLOCKED
-                        || player.getCurrentState() == Player.STATE_BUFFERING) {
+                if (player.getCurrentState().isLoading()) {
                     // null intent -> show hourglass icon that does nothing when clicked
                     return new NotificationCompat.Action(R.drawable.ic_hourglass_top,
                             player.getContext().getApplicationContext().getString(R.string.notification_action_buffering),
@@ -310,13 +306,11 @@ public final class NotificationUtil {
                 }
 
             case NotificationConstants.PLAY_PAUSE:
-                if (player.getCurrentState() == Player.STATE_COMPLETED) {
+                if (player.getCurrentState().isCompleted()) {
                     return getAction(player, R.drawable.ic_replay,
                             R.string.exo_controls_pause_description, ACTION_PLAY_PAUSE);
                 } else if (player.isPlaying()
-                        || player.getCurrentState() == Player.STATE_PREFLIGHT
-                        || player.getCurrentState() == Player.STATE_BLOCKED
-                        || player.getCurrentState() == Player.STATE_BUFFERING) {
+                        || player.getCurrentState().isLoading()) {
                     return getAction(player, R.drawable.exo_notification_pause,
                             R.string.exo_controls_pause_description, ACTION_PLAY_PAUSE);
                 } else {
@@ -325,13 +319,13 @@ public final class NotificationUtil {
                 }
 
             case NotificationConstants.REPEAT:
-                if (player.getRepeatMode() == REPEAT_MODE_ALL) {
+                if (player.getRepeatMode() == RepeatMode.ALL) {
                     return getAction(player, R.drawable.exo_media_action_repeat_all,
                             R.string.exo_controls_repeat_all_description, ACTION_REPEAT);
-                } else if (player.getRepeatMode() == REPEAT_MODE_ONE) {
+                } else if (player.getRepeatMode() == RepeatMode.ONE) {
                     return getAction(player, R.drawable.exo_media_action_repeat_one,
                             R.string.exo_controls_repeat_one_description, ACTION_REPEAT);
-                } else /* player.getRepeatMode() == REPEAT_MODE_OFF */ {
+                } else /* player.getRepeatMode() == RepeatMode.OFF */ {
                     return getAction(player, R.drawable.exo_media_action_repeat_off,
                             R.string.exo_controls_repeat_off_description, ACTION_REPEAT);
                 }
@@ -395,10 +389,11 @@ public final class NotificationUtil {
         final boolean scaleImageToSquareAspectRatio = player.getPrefs().getBoolean(
                 player.getContext().getApplicationContext().getString(R.string.scale_to_square_image_in_notifications_key),
                 false);
-        if (scaleImageToSquareAspectRatio) {
-            builder.setLargeIcon(getBitmapWithSquareAspectRatio(player.getThumbnail()));
+        final Bitmap thumbnail = player.getThumbnail();
+        if (scaleImageToSquareAspectRatio && thumbnail != null) {
+            builder.setLargeIcon(getBitmapWithSquareAspectRatio(thumbnail));
         } else {
-            builder.setLargeIcon(player.getThumbnail());
+            builder.setLargeIcon(thumbnail);
         }
     }
 

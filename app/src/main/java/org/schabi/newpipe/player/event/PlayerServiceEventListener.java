@@ -1,13 +1,13 @@
 package org.schabi.newpipe.player.event;
 
-import com.google.android.exoplayer2.PlaybackException;
+import org.schabi.newpipe.player.PlayerError;
 
 public interface PlayerServiceEventListener extends PlayerEventListener {
     void onFullscreenStateChanged(boolean fullscreen);
 
     void onMoreOptionsLongClicked();
 
-    void onPlayerError(PlaybackException error, boolean isCatchableException);
+    void onPlayerError(PlayerError error, boolean isCatchableException);
 
     void hideSystemUiIfNeeded();
 }

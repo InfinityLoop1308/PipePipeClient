@@ -89,9 +89,6 @@ public class PlayerService extends Service implements PlayerServiceInterface {
     public static final String ACTION_RECREATE_NOTIFICATION
             = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_RECREATE_NOTIFICATION";
 
-    public static final String SHOULD_START_FOREGROUND_EXTRA = "should_start_foreground_extra";
-    public static final String BIND_PLAYER_HOLDER_ACTION = "bind_player_holder_action";
-
     @Override
     public Service getInstance() {
         return this;
@@ -138,7 +135,7 @@ public class PlayerService extends Service implements PlayerServiceInterface {
 
         player.handleIntent(intent);
         if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())
-                || intent.getStringExtra(Player.PLAY_QUEUE_KEY) != null) {
+                || intent.getStringExtra(PlayerIntentConstants.PLAY_QUEUE_KEY) != null) {
             NotificationUtil.getInstance().createNotificationAndStartForeground(player, this);
         }
         if (player.getMediaSessionManager() != null) {
@@ -196,7 +193,7 @@ public class PlayerService extends Service implements PlayerServiceInterface {
         if (player != null) {
             // Exit from fullscreen when user closes the player via notification
             if (player.isFullscreen()) {
-                PlayerUiModeHelper.setFullscreen(player, false);
+                player.changeFullscreen(false);
             }
             removeViewFromParent();
 

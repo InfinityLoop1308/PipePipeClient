@@ -1,12 +1,9 @@
 package org.schabi.newpipe.player.helper;
 
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_ONE;
 import static org.schabi.newpipe.extractor.stream.AudioStream.UNKNOWN_BITRATE;
 import static org.schabi.newpipe.extractor.stream.VideoStream.RESOLUTION_UNKNOWN;
 import static org.schabi.newpipe.player.Player.IDLE_WINDOW_FLAGS;
-import static org.schabi.newpipe.player.Player.PLAYER_TYPE;
+import static org.schabi.newpipe.player.PlayerIntentConstants.PLAYER_TYPE;
 import static org.schabi.newpipe.player.helper.PlayerHelper.AutoplayType.AUTOPLAY_TYPE_ALWAYS;
 import static org.schabi.newpipe.player.helper.PlayerHelper.AutoplayType.AUTOPLAY_TYPE_NEVER;
 import static org.schabi.newpipe.player.helper.PlayerHelper.AutoplayType.AUTOPLAY_TYPE_WIFI;
@@ -33,8 +30,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.exoplayer2.PlaybackParameters;
-import com.google.android.exoplayer2.Player.RepeatMode;
 import com.google.android.exoplayer2.SeekParameters;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
@@ -56,8 +51,10 @@ import org.schabi.newpipe.extractor.stream.VideoStream;
 import org.schabi.newpipe.extractor.utils.Utils;
 import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.Player;
+import org.schabi.newpipe.player.PlayerPlaybackParameters;
+import org.schabi.newpipe.player.RepeatMode;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
-import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.ListHelper;
@@ -265,10 +262,10 @@ public final class PlayerHelper {
      */
     @Nullable
     public static PlayQueue autoQueueOf(@NonNull final StreamInfo info,
-                                        @NonNull final List<PlayQueueItem> existingItems,
+                                        @NonNull final List<PlayerMediaItem> existingItems,
                                         boolean dontAutoQueueLong) {
         final Set<String> urls = new HashSet<>(existingItems.size());
-        for (final PlayQueueItem item : existingItems) {
+        for (final PlayerMediaItem item : existingItems) {
             urls.add(item.getUrl());
         }
 
@@ -540,9 +537,9 @@ public final class PlayerHelper {
 
     public static SinglePlayQueue getAutoQueuedSinglePlayQueue(
             final StreamInfoItem streamInfoItem) {
-        final SinglePlayQueue singlePlayQueue = new SinglePlayQueue(streamInfoItem);
-        Objects.requireNonNull(singlePlayQueue.getItem()).setAutoQueued(true);
-        return singlePlayQueue;
+        // The queue marks the entry as auto-enqueued when it is appended, see
+        // PlayQueue#appendAutoQueued.
+        return new SinglePlayQueue(streamInfoItem);
     }
 
 
@@ -563,16 +560,15 @@ public final class PlayerHelper {
                 player.getContext().getString(R.string.enable_playback_resume_key), true);
     }
 
-    @RepeatMode
-    public static int nextRepeatMode(@RepeatMode final int repeatMode) {
+    public static RepeatMode nextRepeatMode(final RepeatMode repeatMode) {
         switch (repeatMode) {
-            case REPEAT_MODE_OFF:
-                return REPEAT_MODE_ONE;
-            case REPEAT_MODE_ONE:
-                return REPEAT_MODE_ALL;
-            case REPEAT_MODE_ALL:
+            case OFF:
+                return RepeatMode.ONE;
+            case ONE:
+                return RepeatMode.ALL;
+            case ALL:
             default:
-                return REPEAT_MODE_OFF;
+                return RepeatMode.OFF;
         }
     }
 
@@ -637,12 +633,12 @@ public final class PlayerHelper {
                 player.getContext().getString(R.string.last_resize_mode), resizeMode).apply();
     }
 
-    public static PlaybackParameters retrievePlaybackParametersFromPrefs(final Player player) {
+    public static PlayerPlaybackParameters retrievePlaybackParametersFromPrefs(final Player player) {
         final float speed = player.getPrefs().getFloat(player.getContext().getString(
                 R.string.playback_speed_key), player.getPlaybackSpeed());
         final float pitch = player.getPrefs().getFloat(player.getContext().getString(
                 R.string.playback_pitch_key), player.getPlaybackPitch());
-        return new PlaybackParameters(speed, pitch);
+        return new PlayerPlaybackParameters(speed, pitch);
     }
 
     public static void savePlaybackParametersToPrefs(final Player player,
