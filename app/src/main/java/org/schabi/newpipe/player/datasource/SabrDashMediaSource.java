@@ -53,9 +53,14 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
     private final Context context;
     private final SabrSourceSpec spec;
     private final YoutubeSabrSession session;
+    private final DashManifest manifest;
+    private final DataSource.Factory segmentDataSourceFactory;
     @Nullable private SabrMediaBridge bridge;
     private final long durationUs;
-    private final DashMediaSource childSource;
+    @Nullable private volatile YoutubeSabrFormatTimeline manifestAudioTimeline;
+    @Nullable private volatile YoutubeSabrFormatTimeline manifestVideoTimeline;
+    @Nullable private DashMediaSource childSource;
+
     public SabrDashMediaSource(@NonNull final Context context,
                                @NonNull final MediaItem mediaItem,
                                @NonNull final SabrSourceSpec spec,
@@ -69,36 +74,28 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
         } catch (final ExtractionException e) {
             throw new IOException("Could not create SABR session for " + spec.getVideoId(), e);
         }
-        try {
-            final long durationMs = spec.getDurationMs();
-            this.durationUs = durationMs > 0 ? durationMs * 1000L : C.TIME_UNSET;
-            final SabrMediaBridge preparationBridge = getOrCreateBridge();
-            if (!preparationBridge.hasTimelines()) {
-                try {
-                    preparationBridge.prepareTimelines(initialPositionMs);
-                } catch (final ExtractionException error) {
-                    throw new IOException("Could not prepare SABR fragments", error);
-                }
-                if (!preparationBridge.hasTimelines()) {
-                    throw new IOException("SABR fragments did not provide initialization");
-                }
+        final long durationMs = spec.getDurationMs();
+        this.durationUs = durationMs > 0 ? durationMs * 1000L : C.TIME_UNSET;
+        final SabrMediaBridge preparationBridge = getOrCreateBridge();
+        if (!preparationBridge.hasTimelines()) {
+            try {
+                preparationBridge.prepareTimelines(initialPositionMs);
+            } catch (final ExtractionException error) {
+                throw new IOException("Could not prepare SABR fragments", error);
             }
-            final DataSource.Factory sabrDataSourceFactory =
-                    playerDataSource.getCacheDataSourceFactory(
-                            this::createDataSource, this::buildCacheKey);
-            final DashManifest manifest = buildManifest(spec, durationMs, preparationBridge);
-            this.childSource = new DashMediaSource.Factory(
-                    new DefaultDashChunkSource.Factory(sabrDataSourceFactory),
-                    /* manifestDataSourceFactory= */ null)
-                    .setLoadErrorHandlingPolicy(new SabrLoadErrorHandlingPolicy())
-                    .createMediaSource(manifest, mediaItem);
-            Log.d(TAG, "create source video=" + spec.getVideoId()
-                    + " videoItag=" + spec.getBootstrapVideoFormat().getItag()
-                    + " bootstrapAudioItag=" + spec.getBootstrapAudioFormat().getItag()
-                    + " initialPositionMs=" + initialPositionMs);
-        } catch (final IOException | RuntimeException | Error e) {
-            throw e;
+            if (!preparationBridge.hasTimelines()) {
+                throw new IOException("SABR fragments did not provide initialization");
+            }
         }
+        segmentDataSourceFactory = playerDataSource.getCacheDataSourceFactory(
+                this::createDataSource, this::buildCacheKey);
+        this.manifest = buildManifest(spec, durationMs, preparationBridge);
+        manifestAudioTimeline = preparationBridge.getAudioTimeline();
+        manifestVideoTimeline = preparationBridge.getVideoTimeline();
+        Log.d(TAG, "create source video=" + spec.getVideoId()
+                + " videoItag=" + spec.getBootstrapVideoFormat().getItag()
+                + " bootstrapAudioItag=" + spec.getBootstrapAudioFormat().getItag()
+                + " initialPositionMs=" + initialPositionMs);
     }
 
     @NonNull
@@ -115,7 +112,16 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
     protected void prepareSourceInternal(@Nullable final TransferListener mediaTransferListener) {
         getOrCreateBridge();
         super.prepareSourceInternal(mediaTransferListener);
-        prepareChildSource(0, childSource);
+        // The child is owned by the preparation: ExoPlayer releases it in
+        // CompositeMediaSource#releaseSourceInternal, so every preparation gets a fresh one that
+        // describes the same manifest.
+        final DashMediaSource child = new DashMediaSource.Factory(
+                new DefaultDashChunkSource.Factory(segmentDataSourceFactory),
+                /* manifestDataSourceFactory= */ null)
+                .setLoadErrorHandlingPolicy(new SabrLoadErrorHandlingPolicy())
+                .createMediaSource(manifest, mediaItem);
+        childSource = child;
+        prepareChildSource(0, child);
     }
 
     @Override
@@ -128,7 +134,8 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
     @Override
     public MediaPeriod createPeriod(final MediaPeriodId id, final Allocator allocator,
                                     final long startPositionUs) {
-        final MediaPeriod child = childSource.createPeriod(id, allocator, startPositionUs);
+        final MediaPeriod child = requireChildSource().createPeriod(id, allocator,
+                startPositionUs);
         final SabrDashMediaPeriod period = new SabrDashMediaPeriod(child);
         Log.d(TAG, "createPeriod video=" + spec.getVideoId()
                 + " startUs=" + startPositionUs);
@@ -140,18 +147,34 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
         Log.d(TAG, "releasePeriod video=" + spec.getVideoId());
         final SabrDashMediaPeriod period = (SabrDashMediaPeriod) mediaPeriod;
         period.release();
-        childSource.releasePeriod(period.child);
+        final DashMediaSource child = childSource;
+        if (child != null) {
+            child.releasePeriod(period.child);
+        }
     }
 
     @Override
     protected void releaseSourceInternal() {
         Log.d(TAG, "release source video=" + spec.getVideoId());
+        // Has to run first: it releases the child source and forgets the child id, without it a
+        // re-preparation of this source rejects its own child as a duplicate.
+        super.releaseSourceInternal();
         final SabrMediaBridge bridgeToStop;
         synchronized (this) {
             bridgeToStop = bridge;
             bridge = null;
+            childSource = null;
         }
         if (bridgeToStop != null) bridgeToStop.stop();
+    }
+
+    @NonNull
+    private DashMediaSource requireChildSource() {
+        final DashMediaSource child = childSource;
+        if (child == null) {
+            throw new IllegalStateException("SABR source is not prepared: " + spec.getVideoId());
+        }
+        return child;
     }
 
     @NonNull
@@ -164,6 +187,9 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
         if (bridge == null) {
             bridge = new SabrMediaBridge(context, session, spec);
             bridge.seedSegments(spec.takeBootstrapMediaSegments());
+            // The manifest describes the timeline it was generated from, so a bridge created for a
+            // re-preparation must serve that timeline instead of waiting for a new one.
+            bridge.restoreTimelines(manifestAudioTimeline, manifestVideoTimeline);
         }
         return bridge;
     }

@@ -81,6 +81,33 @@ final class SabrMediaBridge {
         return audioTimeline != null && videoTimeline != null;
     }
 
+    @Nullable
+    YoutubeSabrFormatTimeline getAudioTimeline() {
+        return audioTimeline;
+    }
+
+    @Nullable
+    YoutubeSabrFormatTimeline getVideoTimeline() {
+        return videoTimeline;
+    }
+
+    /**
+     * Hands the timelines of a previous preparation to a freshly created bridge.
+     *
+     * <p>The generated DASH manifest describes exactly the segment timeline the manifest was built
+     * from, so a source that is prepared again has to serve that same timeline instead of asking
+     * for a new preparation response.
+     */
+    void restoreTimelines(@Nullable final YoutubeSabrFormatTimeline audio,
+                          @Nullable final YoutubeSabrFormatTimeline video) {
+        if (audioTimeline == null) {
+            audioTimeline = audio;
+        }
+        if (videoTimeline == null) {
+            videoTimeline = video;
+        }
+    }
+
     /** Prepares timelines while retaining media returned around the initial position. */
     void prepareTimelines(final long initialPositionMs) throws IOException, ExtractionException {
         final List<YoutubeSabrInfo.Format> formats = new ArrayList<>(2);
