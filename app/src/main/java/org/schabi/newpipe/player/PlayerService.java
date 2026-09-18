@@ -141,7 +141,9 @@ public class PlayerService extends Service implements PlayerServiceInterface {
         }
         // null check
         if (player == null) {
-            player = new Player(this);
+            // recreate the player together with its view binding, otherwise the player
+            // would crash on the first UI field access (e.g. in handleIntent())
+            createView();
         }
 
         player.handleIntent(intent);
