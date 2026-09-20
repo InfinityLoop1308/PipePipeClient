@@ -199,13 +199,33 @@ public final class DownloaderImpl extends Downloader {
      */
     public long getContentLength(final String url) throws IOException {
         try {
-            final Response response = head(url, BilibiliService.isBiliBiliDownloadUrl(url)?BilibiliService.getUserAgentHeaders(WWW_REFERER):null);
+            final boolean isBilibili = BilibiliService.isBiliBiliDownloadUrl(url);
+            final Map<String, List<String>> bilibiliHeaders = isBilibili ? BilibiliService.getUserAgentHeaders(WWW_REFERER) : null;
+            final Response response = head(url, bilibiliHeaders);
+            if (isBilibili && response.responseCode() >= 400) {
+                // some Bilibili edge nodes do not implement HEAD,
+                // fall back to a single byte range GET probe
+                return getContentLengthViaRangeProbe(url, bilibiliHeaders);
+            }
             return Long.parseLong(response.getHeader("Content-Length"));
         } catch (final NumberFormatException e) {
             throw new IOException("Invalid content length", e);
         } catch (final ReCaptchaException e) {
             throw new IOException(e);
         }
+    }
+
+    private long getContentLengthViaRangeProbe(final String url,
+                                               @Nullable final Map<String, List<String>> headers)
+            throws IOException, ReCaptchaException {
+        final Map<String, List<String>> probeHeaders = new LinkedHashMap<>(headers);
+        probeHeaders.put("Range", Collections.singletonList("bytes=0-0"));
+        final Response response = get(url, probeHeaders);
+        final String contentRange = response.getHeader("Content-Range");
+        if (response.responseCode() == 206 && contentRange != null && contentRange.contains("/")) {
+            return Long.parseLong(contentRange.substring(contentRange.lastIndexOf('/') + 1).trim());
+        }
+        return Long.parseLong(response.getHeader("Content-Length"));
     }
 
     @Override
