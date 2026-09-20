@@ -1068,4 +1068,9 @@
 <string name="rotation_controls_fullscreen_title">Cambiar automáticamente a pantalla completa al girar</string>
 <string name="rotation_controls_fullscreen_summary">Cuando la rotación automática del sistema está activada, al girar a horizontal se entra en pantalla completa y al girar a vertical se sale de la pantalla completa</string>
 <string name="niconico_login_summary">Los tokens solo se usarán cuando sea necesario. La página de inicio de sesión podría no funcionar en dispositivos antiguos con un WebView desactualizado.</string>
+<string name="minimize_gesture_control_title">Deslizar hacia abajo para minimizar</string>
+<string name="minimize_gesture_control_summary">Desliza hacia abajo en el reproductor para contraerlo en el minirreproductor — %s</string>
+<string name="minimize_gesture_none_description">Desactivado</string>
+<string name="minimize_gesture_non_fullscreen_description">Solo fuera de pantalla completa</string>
+<string name="minimize_gesture_fullscreen_description">Dentro y fuera de pantalla completa (desactiva los gestos de deslizamiento para pantalla completa y velocidad de reproducción)</string>
 </resources>

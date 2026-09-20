@@ -1012,4 +1012,9 @@
 <string name="rotation_controls_fullscreen_title">Bei Drehung automatisch den Vollbildmodus umschalten</string>
 <string name="rotation_controls_fullscreen_summary">Wenn die automatische Bildschirmdrehung des Systems aktiviert ist, wird bei einer Drehung ins Querformat der Vollbildmodus aktiviert und bei einer Drehung ins Hochformat beendet</string>
 <string name="niconico_login_summary">Tokens werden nur bei Bedarf verwendet. Die Anmeldeseite funktioniert möglicherweise nicht auf älteren Geräten mit einer veralteten WebView.</string>
+<string name="minimize_gesture_control_title">Zum Minimieren nach unten wischen</string>
+<string name="minimize_gesture_control_summary">Auf dem Player nach unten wischen, um ihn zum Miniplayer zu verkleinern — %s</string>
+<string name="minimize_gesture_none_description">Deaktiviert</string>
+<string name="minimize_gesture_non_fullscreen_description">Nur außerhalb des Vollbildmodus</string>
+<string name="minimize_gesture_fullscreen_description">Im und außerhalb des Vollbildmodus (deaktiviert die Wischgesten für Vollbild und Wiedergabegeschwindigkeit)</string>
 </resources>

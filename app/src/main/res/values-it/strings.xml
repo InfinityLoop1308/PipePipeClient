@@ -1006,4 +1006,9 @@
 <string name="rotation_controls_fullscreen_title">Passa automaticamente a schermo intero alla rotazione</string>
 <string name="rotation_controls_fullscreen_summary">Quando la rotazione automatica del sistema è attivata, ruotando in orizzontale si entra a schermo intero e ruotando in verticale si esce dallo schermo intero</string>
 <string name="niconico_login_summary">I token verranno utilizzati solo quando necessario. La pagina di accesso potrebbe non funzionare su dispositivi meno recenti con una WebView obsoleta.</string>
+<string name="minimize_gesture_control_title">Scorri verso il basso per ridurre a icona</string>
+<string name="minimize_gesture_control_summary">Scorri verso il basso sul lettore per ridurlo a mini player — %s</string>
+<string name="minimize_gesture_none_description">Disattivato</string>
+<string name="minimize_gesture_non_fullscreen_description">Solo fuori dallo schermo intero</string>
+<string name="minimize_gesture_fullscreen_description">Dentro e fuori dallo schermo intero (disattiva i gesti di scorrimento per lo schermo intero e la velocità di riproduzione)</string>
 </resources>
