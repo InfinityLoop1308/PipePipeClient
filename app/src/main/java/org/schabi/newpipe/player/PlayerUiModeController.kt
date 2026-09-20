@@ -112,6 +112,16 @@ class PlayerUiModeController(private val player: Player) {
             return
         }
 
+        val activity = player.parentActivity
+        if (activity != null && DeviceUtils.isInMultiWindow(activity)) {
+            // An orientation request in split-screen makes the OEM window manager treat the app
+            // as non-resizable: the pane is pinned to half of the screen and the divider can no
+            // longer be dragged. Never lock the orientation here, and drop a lock that was
+            // requested before the window entered multi-window (#2925).
+            setOrientation(activity, ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+            return
+        }
+
         // Let system auto-rotation drive fullscreen without locking the video orientation.
         val requestedOrientation = when {
             PlayerHelper.shouldRotationControlFullscreen(player.context) ->
