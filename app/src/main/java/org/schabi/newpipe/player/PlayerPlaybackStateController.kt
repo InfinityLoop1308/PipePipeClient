@@ -77,6 +77,9 @@ class PlayerPlaybackStateController(private val player: Player) {
                 if (!player.isPrepared) {
                     player.isPrepared = true
                     onPrepared(playWhenReady)
+                    // The item can be shown from here on, so a fullscreen request that was made
+                    // while it was still being resolved is honored now (#2928).
+                    player.uiModeController.applyPendingFullscreen()
                 }
                 changeState(
                     if (playWhenReady) {

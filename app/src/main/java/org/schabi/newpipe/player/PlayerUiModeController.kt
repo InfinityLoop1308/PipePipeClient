@@ -32,9 +32,9 @@ class PlayerUiModeController(private val player: Player) {
 
     /**
      * Whether a fullscreen request is waiting for a player that could not honor it yet. The
-     * service is not necessarily up and running, and the player is not necessarily the main video
-     * player, at the moment the request is made, so the request is kept here and applied by
-     * [applyPendingFullscreen] once the playback has been set up.
+     * service is not necessarily up and running, and the player is not necessarily attachable to
+     * an activity, at the moment the request is made, so the request is kept here and applied by
+     * [applyPendingFullscreen] once the playback is actually running.
      */
     private var pendingFullscreen = false
 
@@ -56,8 +56,12 @@ class PlayerUiModeController(private val player: Player) {
 
     /**
      * Honor the fullscreen request that [changeFullscreen] could not honor when it was made. This
-     * is what makes "start main player in fullscreen" work on a player that was still being set
-     * up, which is the case for every playback started straight from the detail page (#2928).
+     * is what makes "start main player in fullscreen" work for a playback that started while the
+     * player was still being set up, which is the case on every cold start (#2928).
+     *
+     * It is called once the playback is running, never while it is starting: entering fullscreen
+     * can rotate the screen, and rotating in the middle of a start recreates the detail fragment
+     * while the stream is still being resolved, which tears the playback down.
      */
     fun applyPendingFullscreen() {
         if (!pendingFullscreen) {
@@ -68,8 +72,8 @@ class PlayerUiModeController(private val player: Player) {
             pendingFullscreen = false
             return
         }
-        // Keep the request while the player is still being set up, it is asked again from every
-        // point a playback can become ready: the setup of an intent and of a deferred init.
+        // Keep the request while the player cannot show it: it is asked again when the playback
+        // starts and every time a fragment that can react to it binds to the player.
         if (!canEnterFullscreen()) {
             return
         }
@@ -134,6 +138,10 @@ class PlayerUiModeController(private val player: Player) {
             // attached to an activity it neither hides the related items of the tablet layout nor
             // moves the player, which leaves the screen split between the two.
             && player.parentActivity != null
+            // Entering fullscreen can rotate the screen, and rotating while the current item is
+            // still being resolved recreates the detail fragment in the middle of the start and
+            // tears the playback down: the request has to wait for the item to be prepared.
+            && player.isPrepared
 
     /**
      * This will be called when the device orientation changed on its own. The transition follows

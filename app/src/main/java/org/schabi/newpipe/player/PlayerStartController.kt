@@ -177,9 +177,6 @@ class PlayerStartController(private val player: Player) {
             player.binding.root.visibility = View.VISIBLE
             player.initVideoPlayer()
             player.closeItemsList()
-            // The video player can be shown now, so a fullscreen request that was made while the
-            // service was still setting this playback up can be honored (#2928).
-            player.uiModeController.applyPendingFullscreen()
             // Android TV: without it focus will frame the whole player
             player.binding.playPauseButton.requestFocus()
 
@@ -226,8 +223,5 @@ class PlayerStartController(private val player: Player) {
         player.setPlaybackParameters(playbackSpeed, playbackPitch, playbackSkipSilence)
 
         player.notifyQueueUpdateToListeners()
-        // Playback init can be deferred until a saved position is known, and a fullscreen request
-        // waits for this player to be ready (#2928).
-        player.uiModeController.applyPendingFullscreen()
     }
 }

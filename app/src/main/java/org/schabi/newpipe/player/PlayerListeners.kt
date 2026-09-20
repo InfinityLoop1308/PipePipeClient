@@ -35,6 +35,9 @@ class PlayerListeners(private val player: Player) {
         notifyMetadataUpdateToListeners()
         notifyPlaybackUpdateToListeners()
         player.triggerProgressUpdate()
+        // The fragment can react to a fullscreen again from here on, so a request that was made
+        // while it could not is honored now, if the player is already set up (#2928).
+        player.uiModeController.applyPendingFullscreen()
     }
 
     fun removeFragmentListener(listener: PlayerServiceEventListener) {
