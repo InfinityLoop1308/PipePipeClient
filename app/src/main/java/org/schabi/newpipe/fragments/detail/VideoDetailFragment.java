@@ -1393,10 +1393,11 @@ public final class VideoDetailFragment
             // STATE_COLLAPSED. This can be solved by manually setting the state that will be
             // restored (i.e. bottomSheetState) to STATE_EXPANDED.
             bottomSheetState = BottomSheetBehavior.STATE_EXPANDED;
+            // Without a connected player there is nothing to ask here, but onServiceConnected()
+            // issues the very same request as soon as the service started for this playback
+            // connects, and the player keeps a request it cannot honor until it is set up.
             if (isPlayerAvailable()) {
                 player.changeFullscreen(true);
-            } else {
-                // TODO: preserve the fullscreen request until the Player service is connected.
             }
         }
 
