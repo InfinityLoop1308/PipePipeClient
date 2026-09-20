@@ -2515,16 +2515,24 @@ public final class VideoDetailFragment
      * page into the mini player) must never start: a vertical swipe in fullscreen belongs to the
      * player's own gesture handling (exit fullscreen / volume / brightness).
      *
+     * <p>The one exception is the swipe-down-to-minimize gesture, which is exactly that sheet
+     * drag and is offered as an alternative to swiping down to exit fullscreen (the two are
+     * mutually exclusive in the gesture settings).
+     *
      * <p>Material's {@link BottomSheetBehavior#setDraggable(boolean)} makes
      * {@code onInterceptTouchEvent} bail out on the very first check, so the sheet can no longer
      * steal the touch stream from the player (not even via the initial-move race or the two-finger
      * branch in {@link org.schabi.newpipe.player.event.CustomBottomSheetBehavior}).
      */
     private void updateBottomSheetDraggableForFullscreen() {
-        if (bottomSheetBehavior == null) {
+        if (bottomSheetBehavior == null || activity == null) {
             return;
         }
-        bottomSheetBehavior.setDraggable(!(isPlayerAvailable() && player.isFullscreen()));
+        final boolean inFullscreen = isPlayerAvailable() && player.isFullscreen();
+        final boolean minimizeBySheet = inFullscreen
+                && PlayerHelper.getMinimizeGestureMode(requireContext())
+                == PlayerHelper.MinimizeGestureMode.MINIMIZE_GESTURE_FULLSCREEN_AND_NON_FULLSCREEN;
+        bottomSheetBehavior.setDraggable(!inFullscreen || minimizeBySheet);
     }
 
     private void setupBottomPlayer() {

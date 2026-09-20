@@ -157,6 +157,8 @@ public class PlayerGestureListener
                     // Exit fullscreen: a downward drag started in the middle third, judged the
                     // same way as the side gestures (selection by start position, sticky once
                     // engaged), so a little drift cannot be hijacked by the seek gesture.
+                    // When swipe-down-to-minimize owns fullscreen instead, this switch is off
+                    // and the drag is handed to the bottom sheet before it reaches here.
                     if (movedDown && portion == DisplayPortion.MIDDLE) {
                         isPendingScreenRotation = true;
                         isFullscreenRotationGesture = true;

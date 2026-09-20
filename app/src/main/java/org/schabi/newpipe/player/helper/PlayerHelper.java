@@ -7,6 +7,9 @@ import static org.schabi.newpipe.player.PlayerIntentConstants.PLAYER_TYPE;
 import static org.schabi.newpipe.player.helper.PlayerHelper.AutoplayType.AUTOPLAY_TYPE_ALWAYS;
 import static org.schabi.newpipe.player.helper.PlayerHelper.AutoplayType.AUTOPLAY_TYPE_NEVER;
 import static org.schabi.newpipe.player.helper.PlayerHelper.AutoplayType.AUTOPLAY_TYPE_WIFI;
+import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeGestureMode.MINIMIZE_GESTURE_FULLSCREEN_AND_NON_FULLSCREEN;
+import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeGestureMode.MINIMIZE_GESTURE_NONE;
+import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeGestureMode.MINIMIZE_GESTURE_NON_FULLSCREEN;
 import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_BACKGROUND;
 import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_NONE;
 import static org.schabi.newpipe.player.helper.PlayerHelper.MinimizeMode.MINIMIZE_ON_EXIT_MODE_POPUP;
@@ -109,6 +112,16 @@ public final class PlayerHelper {
         int MINIMIZE_ON_EXIT_MODE_NONE = 0;
         int MINIMIZE_ON_EXIT_MODE_BACKGROUND = 1;
         int MINIMIZE_ON_EXIT_MODE_POPUP = 2;
+    }
+
+    /** Where the swipe-down-to-minimize gesture is active. */
+    @Retention(SOURCE)
+    @IntDef({MINIMIZE_GESTURE_NONE, MINIMIZE_GESTURE_NON_FULLSCREEN,
+            MINIMIZE_GESTURE_FULLSCREEN_AND_NON_FULLSCREEN})
+    public @interface MinimizeGestureMode {
+        int MINIMIZE_GESTURE_NONE = 0;
+        int MINIMIZE_GESTURE_NON_FULLSCREEN = 1;
+        int MINIMIZE_GESTURE_FULLSCREEN_AND_NON_FULLSCREEN = 2;
     }
 
     private PlayerHelper() {
@@ -346,6 +359,25 @@ public final class PlayerHelper {
     public static boolean isPlaybackSpeedGestureEnabled(@NonNull final Context context) {
         return getPreferences(context)
                 .getBoolean(context.getString(R.string.playback_speed_gesture_control_key), false);
+    }
+
+    /**
+     * Which screens the swipe-down-to-minimize gesture is active on. In fullscreen it takes the
+     * place of the swipe-down-to-exit-fullscreen gesture, which is why the settings keep the two
+     * mutually exclusive.
+     */
+    @MinimizeGestureMode
+    public static int getMinimizeGestureMode(@NonNull final Context context) {
+        final String mode = getPreferences(context)
+                .getString(context.getString(R.string.minimize_gesture_control_key),
+                        context.getString(R.string.minimize_gesture_non_fullscreen_key));
+        if (mode.equals(context.getString(R.string.minimize_gesture_none_key))) {
+            return MINIMIZE_GESTURE_NONE;
+        } else if (mode.equals(context.getString(R.string.minimize_gesture_fullscreen_key))) {
+            return MINIMIZE_GESTURE_FULLSCREEN_AND_NON_FULLSCREEN;
+        } else {
+            return MINIMIZE_GESTURE_NON_FULLSCREEN; // default
+        }
     }
 
     public static boolean isStartMainPlayerFullscreenEnabled(@NonNull final Context context) {

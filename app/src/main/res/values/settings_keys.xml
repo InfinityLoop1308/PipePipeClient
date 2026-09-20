@@ -1796,4 +1796,19 @@
     <string name="clear_subscriptions_key">clear_subscriptions</string>
     <string name="rotate_fullscreen_to_video_orientation_key">rotate_fullscreen_to_video_orientation</string>
     <string name="rotation_controls_fullscreen_key" translatable="false">rotation_controls_fullscreen</string>
+    <string name="minimize_gesture_control_key">minimize_gesture_control</string>
+    <string name="minimize_gesture_control_value">@string/minimize_gesture_non_fullscreen_key</string>
+    <string name="minimize_gesture_none_key">minimize_gesture_none</string>
+    <string name="minimize_gesture_non_fullscreen_key">minimize_gesture_non_fullscreen</string>
+    <string name="minimize_gesture_fullscreen_key">minimize_gesture_fullscreen</string>
+    <string-array name="minimize_gesture_action_key">
+        <item>@string/minimize_gesture_none_key</item>
+        <item>@string/minimize_gesture_non_fullscreen_key</item>
+        <item>@string/minimize_gesture_fullscreen_key</item>
+    </string-array>
+    <string-array name="minimize_gesture_action_description">
+        <item>@string/minimize_gesture_none_description</item>
+        <item>@string/minimize_gesture_non_fullscreen_description</item>
+        <item>@string/minimize_gesture_fullscreen_description</item>
+    </string-array>
 </resources>
