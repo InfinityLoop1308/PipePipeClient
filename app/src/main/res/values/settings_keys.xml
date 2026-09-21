@@ -1668,12 +1668,14 @@
         <item>@string/recommended_videos</item>
         <item>@string/related_items_tab_description</item>
         <item>@string/channel_videos</item>
+        <item>@string/playlists</item>
     </string-array>
     <string-array name="filter_type_values">
         <item>search_result</item>
         <item>recommendations</item>
         <item>related_item</item>
         <item>channels</item>
+        <item>playlists</item>
     </string-array>
     <string-array name="local_playlist_swipe_action_entries">
         <item>@string/delete</item>
