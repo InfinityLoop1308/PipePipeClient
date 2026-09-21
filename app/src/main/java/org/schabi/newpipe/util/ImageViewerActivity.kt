@@ -91,6 +91,7 @@ class ImageViewerActivity : AppCompatActivity() {
         setupViewPager()
         setupWindowsInsets()
         setupButtons()
+        setupTvFocus()
 
         // Initial load
         binding.viewPager.setCurrentItem(current, false)
@@ -194,6 +195,37 @@ class ImageViewerActivity : AppCompatActivity() {
         binding.buttonShare.setOnClickListener { ShareUtils.shareText(it.context, urls[current], urls[current]) }
         binding.buttonOpenInBrowser.setOnClickListener { ShareUtils.openUrlInBrowser(it.context, urls[current]) }
         binding.buttonDownload.setOnClickListener { downloadAndSaveCurrent() }
+    }
+
+    /**
+     * Makes the overlay buttons reachable with a D-pad.
+     *
+     * The pager is a full-screen focusable ViewGroup and the buttons are geometrically
+     * located inside its bounds, so [android.view.FocusFinder] never considers them as a
+     * candidate in any direction and focus stays trapped on the pager. Explicit next-focus
+     * links are used to get to the buttons, while left/right on the pager still pages
+     * between the images.
+     */
+    private fun setupTvFocus() {
+        val pagerRecycler = binding.viewPager.getChildAt(0) as? RecyclerView ?: return
+        pagerRecycler.nextFocusUpId = R.id.button_close
+        pagerRecycler.nextFocusDownId = R.id.button_share
+
+        binding.buttonClose.nextFocusUpId = pagerRecycler.id
+        binding.buttonClose.nextFocusDownId = R.id.button_share
+
+        binding.buttonShare.nextFocusUpId = R.id.button_close
+        binding.buttonShare.nextFocusRightId = R.id.button_open_in_browser
+
+        binding.buttonOpenInBrowser.nextFocusUpId = R.id.button_close
+        binding.buttonOpenInBrowser.nextFocusLeftId = R.id.button_share
+        binding.buttonOpenInBrowser.nextFocusRightId = R.id.button_download
+
+        binding.buttonDownload.nextFocusUpId = R.id.button_close
+        binding.buttonDownload.nextFocusLeftId = R.id.button_open_in_browser
+
+        binding.countIndicator.nextFocusUpId = pagerRecycler.id
+        binding.countIndicator.nextFocusRightId = R.id.button_share
     }
 
     private fun setupViewPager() {
