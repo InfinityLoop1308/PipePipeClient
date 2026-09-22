@@ -337,6 +337,7 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
         }
 
         streamCount = result.getStreamCount();
+        playlistOverallDurationSeconds = 0;
         setStreamCountAndOverallDuration(result.getRelatedItems(), !result.hasNextPage());
 
         isInfinitePlayList = result.getStreamCount() == ITEM_COUNT_INFINITE;
