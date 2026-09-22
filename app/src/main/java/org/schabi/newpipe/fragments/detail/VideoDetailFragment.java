@@ -1863,7 +1863,7 @@ public final class VideoDetailFragment
             binding.detailThumbsDisabledView.setVisibility(View.VISIBLE);
         } else {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-            boolean showDislikeCount = prefs.getBoolean(activity.getString(R.string.show_dislike_key), true);
+            boolean showDislikeCount = prefs.getBoolean(activity.getString(R.string.show_dislike_key), false);
             if (info.getDislikeCount() >= 0 && showDislikeCount) {
                 binding.detailThumbsDownCountView.setText(Localization
                         .shortCount(activity, info.getDislikeCount()));
