@@ -161,10 +161,10 @@ public class HistoryRecordManager {
     }
 
     public Completable deleteStreamHistoryAndState(final long streamId) {
-        return Completable.fromAction(() -> {
+        return Completable.fromAction(() -> database.runInTransaction(() -> {
             streamStateTable.deleteState(streamId);
             streamHistoryTable.deleteStreamHistory(streamId);
-        }).subscribeOn(Schedulers.io());
+        })).subscribeOn(Schedulers.io());
     }
 
     public Single<Integer> deleteWholeStreamHistory() {
@@ -186,7 +186,14 @@ public class HistoryRecordManager {
     }
 
     public Flowable<List<StreamStatisticsEntry>> getStreamStatistics() {
-        return streamHistoryTable.getStatistics().subscribeOn(Schedulers.io());
+        return streamHistoryTable.getStatistics()
+                .subscribeOn(Schedulers.io())
+                // A history deletion invalidates this flow while the previous emission of the
+                // whole-history query may still be stepping its cursor. On large histories this
+                // intermittently fails with "Couldn't read row ... from CursorWindow" (#2734).
+                // The failure is transient, so resubscribe once before surfacing an error.
+                .onErrorResumeNext(throwable -> streamHistoryTable.getStatistics()
+                        .subscribeOn(Schedulers.io()));
     }
 
     public Single<List<Long>> insertStreamHistory(final Collection<StreamHistoryEntry> entries) {
