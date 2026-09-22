@@ -1071,4 +1071,5 @@
 <string name="minimize_gesture_none_description">停用</string>
 <string name="minimize_gesture_non_fullscreen_description">僅限非全螢幕狀態</string>
 <string name="minimize_gesture_fullscreen_description">全螢幕與非全螢幕狀態 (將停用全螢幕與播放速度滑動手勢)</string>
+<string name="delete_filter_confirm">您要從篩選清單中刪除 \"%s\" 嗎？</string>
 </resources>

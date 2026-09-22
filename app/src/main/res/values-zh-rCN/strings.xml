@@ -1081,4 +1081,5 @@
 <string name="minimize_gesture_none_description">已禁用</string>
 <string name="minimize_gesture_non_fullscreen_description">仅限非全屏状态</string>
 <string name="minimize_gesture_fullscreen_description">全屏和非全屏状态（禁用全屏和播放速度滑动手势）</string>
+<string name="delete_filter_confirm">您想从过滤列表中删除 \"%s\" 吗？</string>
 </resources>

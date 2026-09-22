@@ -1073,4 +1073,5 @@
 <string name="minimize_gesture_none_description">Desactivado</string>
 <string name="minimize_gesture_non_fullscreen_description">Solo fuera de pantalla completa</string>
 <string name="minimize_gesture_fullscreen_description">Dentro y fuera de pantalla completa (desactiva los gestos de deslizamiento para pantalla completa y velocidad de reproducción)</string>
+<string name="delete_filter_confirm">¿Desea eliminar \"%s\" de la lista de filtros?</string>
 </resources>

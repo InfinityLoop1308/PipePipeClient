@@ -1034,4 +1034,5 @@ Voulez-vous continuer?</string>
 <string name="minimize_gesture_none_description">Désactivé</string>
 <string name="minimize_gesture_non_fullscreen_description">Uniquement hors plein écran</string>
 <string name="minimize_gesture_fullscreen_description">En plein écran et en dehors (désactive les gestes de balayage du plein écran et de la vitesse de lecture)</string>
+<string name="delete_filter_confirm">Voulez-vous supprimer \"%s\" de la liste des filtres ?</string>
 </resources>
