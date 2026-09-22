@@ -133,6 +133,7 @@ public final class Player {
     @NonNull private final PlayerErrorHandler playerErrorHandler;
     @NonNull private final RepeatShuffleController repeatShuffleController;
     @NonNull private final PlayerTracksController tracksController;
+    @NonNull private final LiveQualityController liveQualityController;
     @NonNull private final PlayerProgressController progressController;
     @NonNull private final PlayerThumbnailController thumbnailController;
     @NonNull private final PlayerSurfaceController surfaceController;
@@ -283,6 +284,7 @@ public final class Player {
         playerErrorHandler = new PlayerErrorHandler(this);
         repeatShuffleController = new RepeatShuffleController(this);
         tracksController = new PlayerTracksController(this);
+        liveQualityController = new LiveQualityController(this);
 
         popupWindowController = new PopupWindowController(this);
         gestureController = new PlayerGestureController(this);
@@ -879,6 +881,7 @@ public final class Player {
         autoQueueController.cancelEnqueueTimer();
         tracksController.onTextTracksChanged(tracks);
         tracksController.onAudioTracksChanged();
+        liveQualityController.onTracksChanged(tracks);
     }
 
     void onPlaybackParametersChanged(
@@ -1521,6 +1524,11 @@ public final class Player {
     @NonNull
     PlayerMenuController getMenuController() {
         return menuController;
+    }
+
+    @NonNull
+    LiveQualityController getLiveQualityController() {
+        return liveQualityController;
     }
 
     @NonNull

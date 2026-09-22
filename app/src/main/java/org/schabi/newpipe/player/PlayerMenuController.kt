@@ -46,6 +46,7 @@ class PlayerMenuController(
         const val POPUP_MENU_ID_AUDIO_TRACK = 99
         const val POPUP_MENU_ID_DISPLAY_MODE = 109
         const val POPUP_MENU_ID_ASPECT_RATIO = 119
+        const val POPUP_MENU_ID_LIVE_QUALITY = 129
 
         const val RENDERER_UNAVAILABLE = -1
 
@@ -104,6 +105,11 @@ class PlayerMenuController(
             Log.d(TAG, "onQualitySelectorClicked() called")
         }
 
+        // the live menu is rebuilt on open: its entries come from the tracks the manifest
+        // exposed, which may have changed since the last time the menu was built
+        if (player.liveQualityController.isLivePlayback) {
+            buildQualityMenu()
+        }
         qualityPopupMenu.show()
         isSomePopupMenuVisible = true
 
@@ -171,6 +177,13 @@ class PlayerMenuController(
 
     fun buildQualityMenu() {
         qualityPopupMenu.menu.removeGroup(POPUP_MENU_ID_QUALITY)
+        qualityPopupMenu.menu.removeGroup(POPUP_MENU_ID_LIVE_QUALITY)
+
+        val liveController = player.liveQualityController
+        if (liveController.isLivePlayback) {
+            buildLiveQualityMenu(liveController)
+            return
+        }
 
         val availableStreams = quality?.sortedVideoStreams ?: return
         for (i in availableStreams.indices) {
@@ -185,6 +198,25 @@ class PlayerMenuController(
             player.binding.qualityTextView.text = it.resolution
         }
         qualityPopupMenu.setOnMenuItemClickListener(this)
+        qualityPopupMenu.setOnDismissListener(this)
+    }
+
+    /**
+     * Builds the quality menu of a live stream from the variants the player has discovered in
+     * the manifest. Item 0 is "Adaptive" (no track override), items 1.. are [LiveQualityController.options].
+     */
+    private fun buildLiveQualityMenu(liveController: LiveQualityController) {
+        val menu = qualityPopupMenu.menu
+        for (i in 0..liveController.options.size) {
+            val label = liveController.labelFor(i) ?: continue
+            val item = menu.add(POPUP_MENU_ID_LIVE_QUALITY, i, i, label)
+            item.setOnMenuItemClickListener {
+                if (i != liveController.currentMenuIndex) {
+                    liveController.select(i)
+                }
+                true
+            }
+        }
         qualityPopupMenu.setOnDismissListener(this)
     }
 
