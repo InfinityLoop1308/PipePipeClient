@@ -165,6 +165,9 @@ class PlayerPlaybackStateController(private val player: Player) {
                 player.autoQueueController.cancelEnqueueTimer()
                 onPaused()
                 player.bulletCommentsController.pause()
+                // A live stream has no paused position worth keeping: release the source so the
+                // manifest refresh, the segment downloads and the live chat connections stop.
+                player.enterLiveIdle()
             }
 
             PlayerPlaybackState.PAUSED_SEEK -> {

@@ -157,6 +157,13 @@ public class MovieBulletCommentsPlayer {
         }
     }
 
+    /** Reconnects the live extraction connection after {@link #disconnect()}. */
+    public void reconnect(){
+        if(extractor!= null && extractor.isLive()){
+            extractor.reconnect();
+        }
+    }
+
     /**
      * Draw all comments after max(movieDuration - INTERVAL, lastPosition).
      *

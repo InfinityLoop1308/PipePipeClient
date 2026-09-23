@@ -102,6 +102,9 @@ class BulletCommentsController(private val player: Player) {
         if (bulletCommentsPlayer == null || drawCommentsObservable != null || !isVisible) {
             return
         }
+        // Reconnect the live extractor in case the connection was dropped while the player was
+        // idle (see disconnect()). This is a no-op while the connection is still alive.
+        bulletCommentsPlayer.reconnect()
         bulletCommentsPlayer.start(currentPositionDuration())
         drawCommentsObservable = Observable.interval(
             bulletCommentsPlayer.INTERVAL.toMillis(),
@@ -134,6 +137,16 @@ class BulletCommentsController(private val player: Player) {
         disposeDrawComments()
         bulletCommentsPlayer.pause()
         Log.d(TAG, "BulletCommentsView paused.")
+    }
+
+    /**
+     * Stops the live bullet-comments extraction connection while the player is idle.
+     *
+     * [start] reconnects it, so a paused live stream no longer keeps the live chat WebSocket or
+     * the periodic poll running.
+     */
+    fun disconnect() {
+        bcPlayer?.disconnect()
     }
 
     /** Draws the remaining comments up to the end of the stream and then clears them. */
