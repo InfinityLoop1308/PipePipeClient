@@ -190,7 +190,7 @@ class PlayerMenuController(
             val videoStream = availableStreams[i]
             qualityPopupMenu.menu.add(
                 POPUP_MENU_ID_QUALITY, i, Menu.NONE,
-                videoStream.codec.uppercase(Locale.getDefault()).split("\\.")[0]
+                videoStream.codec.uppercase(Locale.getDefault()).split(Regex("\\."))[0]
                     + " " + videoStream.resolution
             )
         }
