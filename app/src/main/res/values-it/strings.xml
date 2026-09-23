@@ -1011,4 +1011,5 @@
 <string name="minimize_gesture_none_description">Disattivato</string>
 <string name="minimize_gesture_non_fullscreen_description">Solo fuori dallo schermo intero</string>
 <string name="minimize_gesture_fullscreen_description">Dentro e fuori dallo schermo intero (disattiva i gesti di scorrimento per lo schermo intero e la velocità di riproduzione)</string>
+<string name="delete_filter_confirm">Vuoi eliminare \"%s\" dall\'elenco dei filtri?</string>
 </resources>

@@ -1017,4 +1017,5 @@
 <string name="minimize_gesture_none_description">Deaktiviert</string>
 <string name="minimize_gesture_non_fullscreen_description">Nur außerhalb des Vollbildmodus</string>
 <string name="minimize_gesture_fullscreen_description">Im und außerhalb des Vollbildmodus (deaktiviert die Wischgesten für Vollbild und Wiedergabegeschwindigkeit)</string>
+<string name="delete_filter_confirm">Möchten Sie \"%s\" aus der Filterliste löschen?</string>
 </resources>

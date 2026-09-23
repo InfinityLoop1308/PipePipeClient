@@ -1126,4 +1126,5 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="minimize_gesture_none_description">Đã tắt</string>
 <string name="minimize_gesture_non_fullscreen_description">Chỉ bên ngoài chế độ toàn màn hình</string>
 <string name="minimize_gesture_fullscreen_description">Trong và ngoài chế độ toàn màn hình (tắt cử chỉ vuốt toàn màn hình và tốc độ phát)</string>
+<string name="delete_filter_confirm">Bạn có muốn xóa \"%s\" khỏi danh sách bộ lọc không?</string>
 </resources>

@@ -39,12 +39,20 @@ import java.util.concurrent.TimeUnit
 
 class ErrorPanelHelper(
     private val fragment: Fragment,
-    rootView: View,
+    private val rootView: View,
     onRetry: Runnable
 ) {
     private val context: Context = rootView.context!!
 
     private val errorPanelRoot: View = rootView.findViewById(R.id.error_panel)
+
+    // The error panel is overlaid on top of the item list. As the list usually fills the
+    // whole fragment, the panel's buttons are geometrically inside its bounds, so the
+    // FocusFinder never considers them as candidates while the list can take focus. On a
+    // TV this traps the D-pad on the (possibly empty) list and the buttons can never be
+    // reached. The list is therefore made non-focusable while the panel is shown.
+    private val itemsList: View? = rootView.findViewById(R.id.items_list)
+    private val listWasFocusable: Boolean = itemsList?.isFocusable ?: false
 
     // the only element that is visible by default
     private val errorTextView: TextView =
@@ -160,11 +168,30 @@ class ErrorPanelHelper(
     }
 
     private fun setRootVisible() {
+        val button = firstVisibleErrorButton()
+        if (button != null) {
+            // The list is geometrically covering the panel's buttons, so it has to give up
+            // focus while the panel is shown, otherwise a D-pad can never reach them.
+            itemsList?.isFocusable = false
+        }
         errorPanelRoot.animate(true, 300)
+
+        // Only the fragment which is currently shown (resumed) is allowed to take focus:
+        // with an offscreen tab of the main pager the focus must stay where it is.
+        if (fragment.isResumed) {
+            button?.requestFocus()
+        }
+    }
+
+    private fun firstVisibleErrorButton(): Button? = when {
+        errorActionButton.isVisible -> errorActionButton
+        errorRetryButton.isVisible -> errorRetryButton
+        else -> null
     }
 
     fun hide() {
         errorActionButton.setOnClickListener(null)
+        itemsList?.isFocusable = listWasFocusable
         errorPanelRoot.animate(false, 150)
     }
 
@@ -175,6 +202,7 @@ class ErrorPanelHelper(
     fun dispose() {
         errorActionButton.setOnClickListener(null)
         errorRetryButton.setOnClickListener(null)
+        itemsList?.isFocusable = listWasFocusable
         errorDisposable?.dispose()
     }
 

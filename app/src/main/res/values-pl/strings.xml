@@ -1097,4 +1097,5 @@
 <string name="minimize_gesture_none_description">Wyłączone</string>
 <string name="minimize_gesture_non_fullscreen_description">Tylko poza pełnym ekranem</string>
 <string name="minimize_gesture_fullscreen_description">W pełnym ekranie i poza nim (wyłącza gesty przesuwania dla pełnego ekranu i szybkości odtwarzania)</string>
+<string name="delete_filter_confirm">Czy chcesz usunąć \"%s\" z listy filtrów?</string>
 </resources>
