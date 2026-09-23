@@ -34,6 +34,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 import java.util.Map;
 import java.util.Random;
 
@@ -342,31 +343,38 @@ public class Utility {
     }
 
     public static void removeTempFileOfDownloadedVideo(StoredFileHelper storedFileHelper) {
-        if(storedFileHelper.docTree == null) {
-            // ioTree instead
+        final String name = storedFileHelper.getName();
+        if (name == null) {
+            return;
+        }
+        // leftovers of the bilibili muxer: "<base>.tmp" (audio) and "<base>.tmp.mp4"
+        // (mux output); a storage provider may have deduplicated a name to " (N)"
+        final Pattern tempName = Pattern.compile(Pattern.quote(name.replace(".mp4", ""))
+                + "\\.tmp(\\.mp4)?( \\(\\d+\\))?");
+        if (storedFileHelper.docTree == null) {
             try {
-                File ioTree = storedFileHelper.ioFile;
-                for (final File file : ioTree.listFiles()) {
-                    if (file.getName().equals(storedFileHelper.getName().replace(".mp4", ".tmp.mp4"))
-                            || file.getName().equals(storedFileHelper.getName().replace(".mp4", ".tmp"))) {
-                        file.delete();
+                // NOTE: ioFile is the file itself, its parent is the searched directory
+                final File[] files = storedFileHelper.ioFile.getParentFile().listFiles();
+                if (files != null) {
+                    for (final File file : files) {
+                        if (tempName.matcher(file.getName()).matches()) {
+                            //noinspection ResultOfMethodCallIgnored
+                            file.delete();
+                        }
                     }
                 }
-                return;
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            return;
         }
-        try{
-            DocumentFile docTree = storedFileHelper.docTree;
-            DocumentFile[] docFiles = docTree.listFiles();
-            for (DocumentFile docFile : docFiles) {
-                if (docFile.getName().equals(storedFileHelper.getName().replace(".mp4", ".tmp.mp4"))
-                        || docFile.getName().equals(storedFileHelper.getName().replace(".mp4", ".tmp"))) {
+        try {
+            for (DocumentFile docFile : storedFileHelper.docTree.listFiles()) {
+                if (docFile.getName() != null && tempName.matcher(docFile.getName()).matches()) {
                     docFile.delete();
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

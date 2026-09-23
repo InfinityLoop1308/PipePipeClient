@@ -89,9 +89,6 @@ public class PlayerService extends Service implements PlayerServiceInterface {
     public static final String ACTION_RECREATE_NOTIFICATION
             = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_RECREATE_NOTIFICATION";
 
-    public static final String SHOULD_START_FOREGROUND_EXTRA = "should_start_foreground_extra";
-    public static final String BIND_PLAYER_HOLDER_ACTION = "bind_player_holder_action";
-
     @Override
     public Service getInstance() {
         return this;
@@ -126,6 +123,17 @@ public class PlayerService extends Service implements PlayerServiceInterface {
             Log.d(TAG, "onStartCommand() called with: intent = [" + intent
                     + "], flags = [" + flags + "], startId = [" + startId + "]");
         }
+        if (intent == null) {
+            // The system restarted the service with a null intent, which happens when the process
+            // was killed while a start was still pending. The pending start might have been
+            // issued with startForegroundService(), so a foreground notification must be posted
+            // to avoid ForegroundServiceDidNotStartInTimeException; then the service is stopped,
+            // since there is nothing to play.
+            Log.w(TAG, "onStartCommand() got a null intent, closing the service");
+            NotificationUtil.getInstance().startForegroundWithDummyNotification(this);
+            stopService();
+            return START_NOT_STICKY;
+        }
         if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())
                 && player.getPlayQueue() == null) {
             // Player is not working, no need to process media button's action
@@ -133,12 +141,14 @@ public class PlayerService extends Service implements PlayerServiceInterface {
         }
         // null check
         if (player == null) {
-            player = new Player(this);
+            // recreate the player together with its view binding, otherwise the player
+            // would crash on the first UI field access (e.g. in handleIntent())
+            createView();
         }
 
         player.handleIntent(intent);
         if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())
-                || intent.getStringExtra(Player.PLAY_QUEUE_KEY) != null) {
+                || intent.getStringExtra(PlayerIntentConstants.PLAY_QUEUE_KEY) != null) {
             NotificationUtil.getInstance().createNotificationAndStartForeground(player, this);
         }
         if (player.getMediaSessionManager() != null) {
@@ -196,7 +206,7 @@ public class PlayerService extends Service implements PlayerServiceInterface {
         if (player != null) {
             // Exit from fullscreen when user closes the player via notification
             if (player.isFullscreen()) {
-                PlayerUiModeHelper.setFullscreen(player, false);
+                player.changeFullscreen(false);
             }
             removeViewFromParent();
 

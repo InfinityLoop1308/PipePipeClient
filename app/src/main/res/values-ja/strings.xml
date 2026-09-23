@@ -1035,4 +1035,10 @@
 <string name="rotation_controls_fullscreen_title">回転時に全画面表示を自動的に切り替える</string>
 <string name="rotation_controls_fullscreen_summary">システムの自動回転がオンの場合、横向きに回転すると全画面表示になり、縦向きに回転すると全画面表示を終了します</string>
 <string name="niconico_login_summary">トークンは必要な場合にのみ使用されます。古いWebViewを搭載した古い端末では、ログインページが正しく動作しない場合があります。</string>
+<string name="minimize_gesture_control_title">下にスワイプして最小化</string>
+<string name="minimize_gesture_control_summary">プレーヤー上で下にスワイプしてミニプレーヤーに縮小します — %s</string>
+<string name="minimize_gesture_none_description">無効</string>
+<string name="minimize_gesture_non_fullscreen_description">フルスクリーン表示外のみ</string>
+<string name="minimize_gesture_fullscreen_description">フルスクリーン表示の内外 (フルスクリーンおよび再生速度のスワイプジェスチャーを無効にします)</string>
+<string name="delete_filter_confirm">フィルターリストから \"%s\" を削除しますか？</string>
 </resources>

@@ -368,7 +368,9 @@ public class DownloadMissionRecover extends Thread {
             mConn = mMission.openConnection(mMission.urls[mMission.current], true, -1, -1);
             mMission.establishConnection(mID, mConn);
 
-            if (mConn.getResponseCode() == 200) return true;
+            // 206: bilibili urls probe reachability with a range GET instead of HEAD
+            int code = mConn.getResponseCode();
+            if (code == 200 || code == 206) return true;
         } catch (Exception e) {
             // nothing to do
         } finally {

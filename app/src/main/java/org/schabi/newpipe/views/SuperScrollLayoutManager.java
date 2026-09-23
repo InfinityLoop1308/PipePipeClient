@@ -116,6 +116,24 @@ public final class SuperScrollLayoutManager extends LinearLayoutManager {
                     continue;
                 }
 
+                if (candidate == 0) {
+                    // Same item as the focused View. Its children all have distance 0, so a
+                    // sibling would always beat any view in an adjacent item. That traps focus
+                    // inside items with more than one focusable child (e.g. the "view pictures"
+                    // and "replies" buttons of a comment): up/down would just cycle between
+                    // them forever. Only accept a sibling that is really located in the
+                    // requested direction; entering the children from the item itself is only
+                    // meaningful in the forward/list direction.
+                    if (focused == focusedItem) {
+                        if (listDirection < 0) {
+                            continue;
+                        }
+                    } else if (!isInRequestedDirection(focusedItem, focused, view,
+                            direction, listDirection)) {
+                        continue;
+                    }
+                }
+
                 if (candidate < distance) {
                     distance = candidate;
                     preferred = view;
@@ -126,6 +144,39 @@ public final class SuperScrollLayoutManager extends LinearLayoutManager {
         }
 
         return preferred;
+    }
+
+    private boolean isInRequestedDirection(final View item, final View focused,
+                                           final View candidate, final int direction,
+                                           final int listDirection) {
+        final Rect focusedRect = new Rect();
+        final Rect candidateRect = new Rect();
+        focused.getDrawingRect(focusedRect);
+        candidate.getDrawingRect(candidateRect);
+        if (item instanceof ViewGroup) {
+            ((ViewGroup) item).offsetDescendantRectToMyCoords(focused, focusedRect);
+            ((ViewGroup) item).offsetDescendantRectToMyCoords(candidate, candidateRect);
+        }
+
+        switch (direction) {
+            case View.FOCUS_UP:
+                return candidateRect.bottom <= focusedRect.top;
+            case View.FOCUS_DOWN:
+                return candidateRect.top >= focusedRect.bottom;
+            case View.FOCUS_LEFT:
+                return candidateRect.right <= focusedRect.left;
+            case View.FOCUS_RIGHT:
+                return candidateRect.left >= focusedRect.right;
+            default:
+                if (getOrientation() == RecyclerView.HORIZONTAL) {
+                    return listDirection > 0
+                            ? candidateRect.left >= focusedRect.right
+                            : candidateRect.right <= focusedRect.left;
+                }
+                return listDirection > 0
+                        ? candidateRect.top >= focusedRect.bottom
+                        : candidateRect.bottom <= focusedRect.top;
+        }
     }
 
     private int getAbsoluteDirection(final int direction) {

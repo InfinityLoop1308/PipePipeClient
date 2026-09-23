@@ -5,7 +5,6 @@ import static org.schabi.newpipe.ktx.AnimationType.SCALE_AND_ALPHA;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.player.Player.DEFAULT_CONTROLS_DURATION;
 import static org.schabi.newpipe.player.Player.DEFAULT_CONTROLS_HIDE_TIME;
-import static org.schabi.newpipe.player.Player.STATE_PLAYING;
 
 import java.util.Locale;
 
@@ -24,7 +23,6 @@ import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.Player;
-import org.schabi.newpipe.player.PlayerUiModeHelper;
 import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.mediasession.PlayerServiceInterface;
 
@@ -103,7 +101,7 @@ public class PlayerGestureListener
         // -- Controls are not visible --
 
         // When player is completed show controls and don't hide them later
-        if (player.getCurrentState() == Player.STATE_COMPLETED) {
+        if (player.getCurrentState().isCompleted()) {
             player.showControls(0);
         } else {
             player.showControlsThenHide();
@@ -159,6 +157,8 @@ public class PlayerGestureListener
                     // Exit fullscreen: a downward drag started in the middle third, judged the
                     // same way as the side gestures (selection by start position, sticky once
                     // engaged), so a little drift cannot be hijacked by the seek gesture.
+                    // When swipe-down-to-minimize owns fullscreen instead, this switch is off
+                    // and the drag is handed to the bottom sheet before it reaches here.
                     if (movedDown && portion == DisplayPortion.MIDDLE) {
                         isPendingScreenRotation = true;
                         isFullscreenRotationGesture = true;
@@ -235,16 +235,16 @@ public class PlayerGestureListener
             isChangingVolume = true;
         }
         // If we just started sliding, change the progress bar to match the system volume
-        if (player.getVolumeRelativeLayout().getVisibility() != View.VISIBLE) {
+        if (gestureController.getVolumeRelativeLayout().getVisibility() != View.VISIBLE) {
             final float volumePercent = player
                     .getAudioReactor().getVolume() / (float) maxVolume;
-            player.getVolumeProgressBar().setProgress(
-                    (int) (volumePercent * player.getMaxGestureLength()));
+            gestureController.getVolumeProgressBar().setProgress(
+                    (int) (volumePercent * gestureController.getMaxGestureLength()));
         }
 
-        player.getVolumeProgressBar().incrementProgressBy((int) distanceY);
-        final float currentProgressPercent = (float) player
-                .getVolumeProgressBar().getProgress() / player.getMaxGestureLength();
+        gestureController.getVolumeProgressBar().incrementProgressBy((int) distanceY);
+        final float currentProgressPercent = (float) gestureController
+                .getVolumeProgressBar().getProgress() / gestureController.getMaxGestureLength();
         final int currentVolume = (int) (maxVolume * currentProgressPercent);
         player.getAudioReactor().setVolume(currentVolume);
 
@@ -252,7 +252,7 @@ public class PlayerGestureListener
             Log.d(TAG, "onScroll().volumeControl, currentVolume = " + currentVolume);
         }
 
-        player.getVolumeImageView().setImageDrawable(
+        gestureController.getVolumeImageView().setImageDrawable(
                 AppCompatResources.getDrawable(service, currentProgressPercent <= 0
                         ? R.drawable.ic_volume_off
                         : currentProgressPercent < 0.25 ? R.drawable.ic_volume_mute
@@ -260,11 +260,11 @@ public class PlayerGestureListener
                         : R.drawable.ic_volume_up)
         );
 
-        if (player.getVolumeRelativeLayout().getVisibility() != View.VISIBLE) {
-            animate(player.getVolumeRelativeLayout(), true, 200, SCALE_AND_ALPHA);
+        if (gestureController.getVolumeRelativeLayout().getVisibility() != View.VISIBLE) {
+            animate(gestureController.getVolumeRelativeLayout(), true, 200, SCALE_AND_ALPHA);
         }
-        if (player.getBrightnessRelativeLayout().getVisibility() == View.VISIBLE) {
-            player.getBrightnessRelativeLayout().setVisibility(View.GONE);
+        if (gestureController.getBrightnessRelativeLayout().getVisibility() == View.VISIBLE) {
+            gestureController.getBrightnessRelativeLayout().setVisibility(View.GONE);
         }
     }
 
@@ -280,7 +280,7 @@ public class PlayerGestureListener
 
         final Window window = parent.getWindow();
         final WindowManager.LayoutParams layoutParams = window.getAttributes();
-        final ProgressBar bar = player.getBrightnessProgressBar();
+        final ProgressBar bar = gestureController.getBrightnessProgressBar();
         final float oldBrightness = layoutParams.screenBrightness;
         bar.setProgress((int) (bar.getMax() * Math.max(0, Math.min(1, oldBrightness))));
         bar.incrementProgressBy((int) distanceY);
@@ -297,7 +297,7 @@ public class PlayerGestureListener
                     + "currentBrightness = " + currentProgressPercent);
         }
 
-        player.getBrightnessImageView().setImageDrawable(
+        gestureController.getBrightnessImageView().setImageDrawable(
                 AppCompatResources.getDrawable(service,
                         currentProgressPercent < 0.25
                                 ? R.drawable.ic_brightness_low
@@ -306,11 +306,11 @@ public class PlayerGestureListener
                                 : R.drawable.ic_brightness_high)
         );
 
-        if (player.getBrightnessRelativeLayout().getVisibility() != View.VISIBLE) {
-            animate(player.getBrightnessRelativeLayout(), true, 200, SCALE_AND_ALPHA);
+        if (gestureController.getBrightnessRelativeLayout().getVisibility() != View.VISIBLE) {
+            animate(gestureController.getBrightnessRelativeLayout(), true, 200, SCALE_AND_ALPHA);
         }
-        if (player.getVolumeRelativeLayout().getVisibility() == View.VISIBLE) {
-            player.getVolumeRelativeLayout().setVisibility(View.GONE);
+        if (gestureController.getVolumeRelativeLayout().getVisibility() == View.VISIBLE) {
+            gestureController.getVolumeRelativeLayout().setVisibility(View.GONE);
         }
     }
 
@@ -319,13 +319,13 @@ public class PlayerGestureListener
             isChangingSpeed = true;
             accumulatedSpeedScroll = 0f;
             speedGestureStartSpeed = player.getPlaybackSpeed();
-            animate(player.getSwipeSpeedDisplay(), true, DEFAULT_CONTROLS_DURATION, SCALE_AND_ALPHA);
-            if (player.getVolumeRelativeLayout().getVisibility() == View.VISIBLE) {
-                animate(player.getVolumeRelativeLayout(), false, 200, SCALE_AND_ALPHA);
+            animate(gestureController.getSwipeSpeedDisplay(), true, DEFAULT_CONTROLS_DURATION, SCALE_AND_ALPHA);
+            if (gestureController.getVolumeRelativeLayout().getVisibility() == View.VISIBLE) {
+                animate(gestureController.getVolumeRelativeLayout(), false, 200, SCALE_AND_ALPHA);
                 isChangingVolume = false;
             }
-            if (player.getBrightnessRelativeLayout().getVisibility() == View.VISIBLE) {
-                animate(player.getBrightnessRelativeLayout(), false, 200, SCALE_AND_ALPHA);
+            if (gestureController.getBrightnessRelativeLayout().getVisibility() == View.VISIBLE) {
+                animate(gestureController.getBrightnessRelativeLayout(), false, 200, SCALE_AND_ALPHA);
                 isChangingBrightness = false;
             }
         }
@@ -336,7 +336,7 @@ public class PlayerGestureListener
         final float speed = Math.max(SPEED_MIN, Math.min(SPEED_MAX,
                 Math.round(rawSpeed * 10) / 10.0f));
         player.setPlaybackSpeed(speed);
-        player.getSwipeSpeedDisplay().setText(String.format(Locale.getDefault(), "%.1fx", speed));
+        gestureController.getSwipeSpeedDisplay().setText(String.format(Locale.getDefault(), "%.1fx", speed));
     }
 
     private void onScrollMainSeek(final float distanceX) {
@@ -347,13 +347,13 @@ public class PlayerGestureListener
             accumulatedSeek = 0f;
             swipeSeekStartPosition = player.getCurrentPosition();
             swipeSeekTargetPosition = swipeSeekStartPosition;
-            animate(player.getSwipeSeekDisplay(), true, DEFAULT_CONTROLS_DURATION, SCALE_AND_ALPHA);
-            if (player.getVolumeRelativeLayout().getVisibility() == View.VISIBLE) {
-                animate(player.getVolumeRelativeLayout(), false, 200, SCALE_AND_ALPHA);
+            animate(gestureController.getSwipeSeekDisplay(), true, DEFAULT_CONTROLS_DURATION, SCALE_AND_ALPHA);
+            if (gestureController.getVolumeRelativeLayout().getVisibility() == View.VISIBLE) {
+                animate(gestureController.getVolumeRelativeLayout(), false, 200, SCALE_AND_ALPHA);
                 isChangingVolume = false;
             }
-            if (player.getBrightnessRelativeLayout().getVisibility() == View.VISIBLE) {
-                animate(player.getBrightnessRelativeLayout(), false, 200, SCALE_AND_ALPHA);
+            if (gestureController.getBrightnessRelativeLayout().getVisibility() == View.VISIBLE) {
+                animate(gestureController.getBrightnessRelativeLayout(), false, 200, SCALE_AND_ALPHA);
                 isChangingBrightness = false;
             }
         }
@@ -378,7 +378,7 @@ public class PlayerGestureListener
         String deltaStr = (delta >= 0 ? "+" : "-")
                 + PlayerHelper.getTimeString((int) Math.abs(delta));
         String posStr = PlayerHelper.getTimeString((int) swipeSeekTargetPosition);
-        player.getSwipeSeekDisplay().setText(deltaStr + " (" + posStr + ")");
+        gestureController.getSwipeSeekDisplay().setText(deltaStr + " (" + posStr + ")");
     }
 
     @Override
@@ -389,14 +389,14 @@ public class PlayerGestureListener
                     + player.getPlayerType() + "]");
         }
 
-        if (player.isControlsVisible() && player.getCurrentState() == STATE_PLAYING) {
+        if (player.isControlsVisible() && player.getCurrentState().isPlaying()) {
             player.hideControls(DEFAULT_CONTROLS_DURATION, DEFAULT_CONTROLS_HIDE_TIME);
         }
 
         if (playerType == PlayerService.PlayerType.VIDEO) {
             // Handle pending screen rotation gesture
             if (isPendingScreenRotation && isFullscreenRotationGesture) {
-                PlayerUiModeHelper.setFullscreen(player, !player.isFullscreen());
+                player.changeFullscreen(!player.isFullscreen());
                 isPendingScreenRotation = false;
                 isFullscreenRotationGesture = false;
                 return; // Exit early to avoid other cleanup actions
@@ -405,20 +405,20 @@ public class PlayerGestureListener
             if (isSwipeSeeking) {
                 // apply the buffered target only when the gesture ends to keep playback smooth
                 player.seekTo(swipeSeekTargetPosition);
-                animate(player.getSwipeSeekDisplay(), false, 200, SCALE_AND_ALPHA);
+                animate(gestureController.getSwipeSeekDisplay(), false, 200, SCALE_AND_ALPHA);
                 isSwipeSeeking = false;
             }
             if (isChangingSpeed) {
-                animate(player.getSwipeSpeedDisplay(), false, 200, SCALE_AND_ALPHA, 200);
+                animate(gestureController.getSwipeSpeedDisplay(), false, 200, SCALE_AND_ALPHA, 200);
                 isChangingSpeed = false;
             }
-            if (player.getVolumeRelativeLayout().getVisibility() == View.VISIBLE) {
-                animate(player.getVolumeRelativeLayout(), false, 200, SCALE_AND_ALPHA,
+            if (gestureController.getVolumeRelativeLayout().getVisibility() == View.VISIBLE) {
+                animate(gestureController.getVolumeRelativeLayout(), false, 200, SCALE_AND_ALPHA,
                         200);
                 isChangingVolume = false;
             }
-            if (player.getBrightnessRelativeLayout().getVisibility() == View.VISIBLE) {
-                animate(player.getBrightnessRelativeLayout(), false, 200, SCALE_AND_ALPHA,
+            if (gestureController.getBrightnessRelativeLayout().getVisibility() == View.VISIBLE) {
+                animate(gestureController.getBrightnessRelativeLayout(), false, 200, SCALE_AND_ALPHA,
                         200);
                 isChangingBrightness = false;
             }
@@ -440,11 +440,11 @@ public class PlayerGestureListener
         player.getLoadingPanel().setVisibility(View.GONE);
 
         player.hideControls(0, 0);
-        animate(player.getFastSeekOverlay(), false, 0);
-        animate(player.getSwipeSeekDisplay(), false, 0, ALPHA, 0);
-        animate(player.getSwipeSpeedDisplay(), false, 0, ALPHA, 0);
-        animate(player.getVolumeRelativeLayout(), false, 0, ALPHA, 0);
-        animate(player.getBrightnessRelativeLayout(), false, 0, ALPHA, 0);
+        animate(gestureController.getFastSeekOverlay(), false, 0);
+        animate(gestureController.getSwipeSeekDisplay(), false, 0, ALPHA, 0);
+        animate(gestureController.getSwipeSpeedDisplay(), false, 0, ALPHA, 0);
+        animate(gestureController.getVolumeRelativeLayout(), false, 0, ALPHA, 0);
+        animate(gestureController.getBrightnessRelativeLayout(), false, 0, ALPHA, 0);
         isChangingVolume = false;
         isChangingBrightness = false;
         isChangingSpeed = false;

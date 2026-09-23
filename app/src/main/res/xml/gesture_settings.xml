@@ -26,6 +26,16 @@
             app:singleLineTitle="false"
             app:iconSpaceReserved="false" />
 
+    <ListPreference
+            android:defaultValue="@string/minimize_gesture_control_value"
+            android:entries="@array/minimize_gesture_action_description"
+            android:entryValues="@array/minimize_gesture_action_key"
+            android:key="@string/minimize_gesture_control_key"
+            android:summary="@string/minimize_gesture_control_summary"
+            android:title="@string/minimize_gesture_control_title"
+            app:singleLineTitle="false"
+            app:iconSpaceReserved="false" />
+
     <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="@string/playback_speed_gesture_control_key"

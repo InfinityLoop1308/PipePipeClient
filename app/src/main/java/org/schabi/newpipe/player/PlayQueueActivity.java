@@ -22,17 +22,15 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.exoplayer2.PlaybackParameters;
-
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.ActivityPlayerQueueControlBinding;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.fragments.OnScrollBelowItemsListener;
 import org.schabi.newpipe.player.event.PlayerEventListener;
 import org.schabi.newpipe.player.helper.PlaybackParameterDialog;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.PlayQueueAdapter;
-import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemBuilder;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemHolder;
 import org.schabi.newpipe.player.playqueue.PlayQueueItemTouchCallback;
@@ -166,7 +164,7 @@ public final class PlayQueueActivity extends AppCompatActivity
 
     private void bind() {
         final Intent bindIntent = new Intent(this, DeviceUtils.getPlayerServiceClass());
-        bindIntent.setAction(PlayerService.BIND_PLAYER_HOLDER_ACTION);
+        bindIntent.setAction(PlayerIntentConstants.BIND_PLAYER_HOLDER_ACTION);
         final boolean success = bindService(bindIntent, serviceConnection, BIND_AUTO_CREATE);
         if (!success) {
             unbindService(serviceConnection);
@@ -313,14 +311,14 @@ public final class PlayQueueActivity extends AppCompatActivity
     private PlayQueueItemBuilder.OnSelectedListener getOnSelectedListener() {
         return new PlayQueueItemBuilder.OnSelectedListener() {
             @Override
-            public void selected(final PlayQueueItem item, final View view) {
+            public void selected(final PlayerMediaItem item, final View view) {
                 if (player != null) {
                     player.selectQueueItem(item);
                 }
             }
 
             @Override
-            public void held(final PlayQueueItem item, final View view) {
+            public void held(final PlayerMediaItem item, final View view) {
                 if (player != null && player.getPlayQueue().indexOf(item) != -1) {
                     openPopupMenu(player.getPlayQueue(), item, view, false,
                             getSupportFragmentManager(), PlayQueueActivity.this);
@@ -449,8 +447,9 @@ public final class PlayQueueActivity extends AppCompatActivity
     }
 
     @Override
-    public void onPlaybackUpdate(final int state, final int repeatMode, final boolean shuffled,
-                                 final PlaybackParameters parameters) {
+    public void onPlaybackUpdate(final PlayerPlaybackState state, final RepeatMode repeatMode,
+                                 final boolean shuffled,
+                                 final PlayerPlaybackParameters parameters) {
         onStateChanged(state);
         onPlayModeChanged(repeatMode, shuffled);
         onPlaybackParameterChanged(parameters);
@@ -519,17 +518,17 @@ public final class PlayQueueActivity extends AppCompatActivity
     // Binding Service Helper
     ////////////////////////////////////////////////////////////////////////////
 
-    private void onStateChanged(final int state) {
+    private void onStateChanged(final PlayerPlaybackState state) {
         switch (state) {
-            case Player.STATE_PAUSED:
+            case PAUSED:
                 queueControlBinding.controlPlayPause
                         .setImageResource(R.drawable.ic_play_arrow);
                 break;
-            case Player.STATE_PLAYING:
+            case PLAYING:
                 queueControlBinding.controlPlayPause
                         .setImageResource(R.drawable.ic_pause);
                 break;
-            case Player.STATE_COMPLETED:
+            case COMPLETED:
                 queueControlBinding.controlPlayPause
                         .setImageResource(R.drawable.ic_replay);
                 break;
@@ -538,9 +537,9 @@ public final class PlayQueueActivity extends AppCompatActivity
         }
 
         switch (state) {
-            case Player.STATE_PAUSED:
-            case Player.STATE_PLAYING:
-            case Player.STATE_COMPLETED:
+            case PAUSED:
+            case PLAYING:
+            case COMPLETED:
                 queueControlBinding.controlPlayPause.setClickable(true);
                 queueControlBinding.controlPlayPause.setVisibility(View.VISIBLE);
                 queueControlBinding.controlProgressBar.setVisibility(View.GONE);
@@ -553,17 +552,17 @@ public final class PlayQueueActivity extends AppCompatActivity
         }
     }
 
-    private void onPlayModeChanged(final int repeatMode, final boolean shuffled) {
+    private void onPlayModeChanged(final RepeatMode repeatMode, final boolean shuffled) {
         switch (repeatMode) {
-            case com.google.android.exoplayer2.Player.REPEAT_MODE_OFF:
+            case OFF:
                 queueControlBinding.controlRepeat
                         .setImageResource(R.drawable.exo_controls_repeat_off);
                 break;
-            case com.google.android.exoplayer2.Player.REPEAT_MODE_ONE:
+            case ONE:
                 queueControlBinding.controlRepeat
                         .setImageResource(R.drawable.exo_controls_repeat_one);
                 break;
-            case com.google.android.exoplayer2.Player.REPEAT_MODE_ALL:
+            case ALL:
                 queueControlBinding.controlRepeat
                         .setImageResource(R.drawable.exo_controls_repeat_all);
                 break;
@@ -573,7 +572,7 @@ public final class PlayQueueActivity extends AppCompatActivity
         queueControlBinding.controlShuffle.setImageAlpha(shuffleAlpha);
     }
 
-    private void onPlaybackParameterChanged(@Nullable final PlaybackParameters parameters) {
+    private void onPlaybackParameterChanged(@Nullable final PlayerPlaybackParameters parameters) {
         if (parameters != null) {
             if (menu != null && player != null) {
                 final MenuItem item = menu.findItem(R.id.action_playback_speed);

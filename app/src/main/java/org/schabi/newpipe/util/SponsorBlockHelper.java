@@ -3,11 +3,15 @@ package org.schabi.newpipe.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
+import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockAction;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockCategory;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockSegment;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
@@ -18,6 +22,10 @@ import org.schabi.newpipe.views.SeekBarMarker;
 import java.security.SecureRandom;
 
 public final class SponsorBlockHelper {
+
+    private static final boolean DEBUG = MainActivity.DEBUG;
+
+    public static final int UNSKIP_WINDOW_MILLIS = 5000; // 5 seconds
 
     private static final String USER_ID_ALPHABET =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -199,5 +207,175 @@ public final class SponsorBlockHelper {
             default:
                 throw new IllegalArgumentException("Unknown category: " + category);
         }
+    }
+
+    public static void setSponsorBlockMode(final Context context, final SponsorBlockMode mode) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit()
+                .putBoolean(context.getString(R.string.sponsor_block_enable_key),
+                        mode == SponsorBlockMode.ENABLED)
+                .apply();
+    }
+
+    /**
+     * Find the first skippable segment which contains the given progress.
+     *
+     * @param sponsorBlockSegments the segments of the current stream, may be null
+     * @param progress             the current playback position in milliseconds
+     * @return the matching segment or null if there is none
+     */
+    @Nullable
+    public static SponsorBlockSegment getSkippableSponsorBlockSegment(
+            @Nullable final SponsorBlockSegment[] sponsorBlockSegments,
+            final int progress) {
+        if (sponsorBlockSegments == null) {
+            return null;
+        }
+
+        for (final SponsorBlockSegment sponsorBlockSegment : sponsorBlockSegments) {
+            if (sponsorBlockSegment.action != SponsorBlockAction.SKIP) {
+                continue;
+            }
+
+            if (progress < sponsorBlockSegment.startTime) {
+                continue;
+            }
+
+            if (progress > sponsorBlockSegment.endTime) {
+                continue;
+            }
+
+            return sponsorBlockSegment;
+        }
+
+        return null;
+    }
+
+    /**
+     * @return whether the given progress is strictly inside the given segment
+     */
+    public static boolean isInSegment(@NonNull final SponsorBlockSegment segment,
+                                      final int progress) {
+        return progress < segment.endTime && progress > segment.startTime;
+    }
+
+    /**
+     * @return whether the given progress is in the un-skip window of the given segment
+     */
+    public static boolean isInUnskipWindow(@NonNull final SponsorBlockSegment segment,
+                                           final int progress) {
+        return progress > segment.startTime
+                && progress < segment.endTime + UNSKIP_WINDOW_MILLIS;
+    }
+
+    /**
+     * Compute the position to seek to in order to skip the given segment.
+     *
+     * @param segment  the segment to skip
+     * @param isRewind whether this is a rewind (i.e. seek to the start of the segment)
+     * @return the target position in milliseconds, never negative
+     */
+    public static int calculateSkipTarget(@NonNull final SponsorBlockSegment segment,
+                                          final boolean isRewind) {
+        int skipTarget = isRewind
+                ? (int) Math.ceil(segment.startTime) - 1
+                : (int) Math.ceil(segment.endTime);
+
+        if (skipTarget < 0) {
+            skipTarget = 0;
+        }
+
+        return skipTarget;
+    }
+
+    /**
+     * @return whether the automatic skip should be performed for the given secondary mode
+     */
+    public static boolean shouldSkipForMode(final SponsorBlockSecondaryMode secondaryMode,
+                                            final boolean bypassSecondaryMode) {
+        return secondaryMode != SponsorBlockSecondaryMode.DISABLED
+                && secondaryMode != SponsorBlockSecondaryMode.HIGHLIGHT
+                && (secondaryMode != SponsorBlockSecondaryMode.MANUAL || bypassSecondaryMode);
+    }
+
+    public static SponsorBlockSecondaryMode getSecondaryMode(final Context context,
+                                                             final SponsorBlockSegment segment) {
+        if (segment == null) {
+            return SponsorBlockSecondaryMode.DISABLED;
+        }
+
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        // get pref
+        final String defaultValue = context.getString(
+                R.string.sponsor_block_skip_mode_automatic_value);
+        final String key;
+        switch (segment.category) {
+            case SPONSOR:
+                key = prefs.getString(
+                        context.getString(R.string.sponsor_block_category_sponsor_mode_key),
+                        defaultValue);
+                break;
+            case INTRO:
+                key = prefs.getString(
+                        context.getString(R.string.sponsor_block_category_intro_mode_key),
+                        defaultValue);
+                break;
+            case OUTRO:
+                key = prefs.getString(
+                        context.getString(R.string.sponsor_block_category_outro_mode_key),
+                        defaultValue);
+                break;
+            case INTERACTION:
+                key = prefs.getString(
+                        context.getString(R.string.sponsor_block_category_interaction_mode_key),
+                        defaultValue);
+                break;
+            case HIGHLIGHT:
+                key = context.getString(R.string.sponsor_block_skip_mode_highlight_value);
+                break;
+            case SELF_PROMO:
+                key = prefs.getString(
+                        context.getString(R.string.sponsor_block_category_self_promo_mode_key),
+                        defaultValue);
+                break;
+            case NON_MUSIC:
+                key = prefs.getString(
+                        context.getString(R.string.sponsor_block_category_non_music_mode_key),
+                        defaultValue);
+                break;
+            case PREVIEW:
+                key = prefs.getString(
+                        context.getString(R.string.sponsor_block_category_preview_mode_key),
+                        defaultValue);
+                break;
+            case FILLER:
+                key = prefs.getString(
+                        context.getString(R.string.sponsor_block_category_filler_mode_key),
+                        defaultValue);
+                break;
+            default:
+                key = "";
+                break;
+        }
+
+        // map pref to enum
+        final SponsorBlockSecondaryMode pref;
+        if (key.equals(context.getString(R.string.sponsor_block_skip_mode_automatic_value))) {
+            pref = SponsorBlockSecondaryMode.ENABLED;
+        } else if (key.equals(context.getString(R.string.sponsor_block_skip_mode_manual_value))) {
+            pref = SponsorBlockSecondaryMode.MANUAL;
+        } else if (key.equals(context.getString(
+                R.string.sponsor_block_skip_mode_highlight_value))) {
+            pref = SponsorBlockSecondaryMode.HIGHLIGHT;
+        } else {
+            pref = SponsorBlockSecondaryMode.DISABLED;
+        }
+        if (DEBUG) {
+            Log.d("SPONSOR_BLOCK", "Sponsor segment secondary mode: category = ["
+                    + segment.category + "], preference = [" + pref + "]");
+        }
+
+        return pref;
     }
 }

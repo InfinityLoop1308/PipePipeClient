@@ -45,7 +45,8 @@ import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.local.feed.FeedViewModel;
-import org.schabi.newpipe.player.playqueue.PlayQueueItem;
+import org.schabi.newpipe.player.mediaitem.ExtractorStreamInfoResolver;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.util.ExtractorHelper;
 
 import java.time.OffsetDateTime;
@@ -160,10 +161,10 @@ public class HistoryRecordManager {
     }
 
     public Completable deleteStreamHistoryAndState(final long streamId) {
-        return Completable.fromAction(() -> {
+        return Completable.fromAction(() -> database.runInTransaction(() -> {
             streamStateTable.deleteState(streamId);
             streamHistoryTable.deleteStreamHistory(streamId);
-        }).subscribeOn(Schedulers.io());
+        })).subscribeOn(Schedulers.io());
     }
 
     public Single<Integer> deleteWholeStreamHistory() {
@@ -185,7 +186,14 @@ public class HistoryRecordManager {
     }
 
     public Flowable<List<StreamStatisticsEntry>> getStreamStatistics() {
-        return streamHistoryTable.getStatistics().subscribeOn(Schedulers.io());
+        return streamHistoryTable.getStatistics()
+                .subscribeOn(Schedulers.io())
+                // A history deletion invalidates this flow while the previous emission of the
+                // whole-history query may still be stepping its cursor. On large histories this
+                // intermittently fails with "Couldn't read row ... from CursorWindow" (#2734).
+                // The failure is transient, so resubscribe once before surfacing an error.
+                .onErrorResumeNext(throwable -> streamHistoryTable.getStatistics()
+                        .subscribeOn(Schedulers.io()));
     }
 
     public Single<List<Long>> insertStreamHistory(final Collection<StreamHistoryEntry> entries) {
@@ -267,8 +275,8 @@ public class HistoryRecordManager {
         }).subscribeOn(Schedulers.io());
     }
 
-    public Maybe<StreamStateEntity> loadStreamState(final PlayQueueItem queueItem) {
-        return queueItem.getStream()
+    public Maybe<StreamStateEntity> loadStreamState(final PlayerMediaItem queueItem) {
+        return ExtractorStreamInfoResolver.INSTANCE.streamOf(queueItem)
                 .map(info -> streamTable.upsert(new StreamEntity(info)))
                 .flatMapPublisher(streamStateTable::getState)
                 .firstElement()

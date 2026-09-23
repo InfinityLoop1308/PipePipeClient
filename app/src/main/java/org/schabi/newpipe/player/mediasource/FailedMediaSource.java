@@ -12,8 +12,8 @@ import com.google.android.exoplayer2.source.SinglePeriodTimeline;
 import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.upstream.TransferListener;
 
-import org.schabi.newpipe.player.mediaitem.ExceptionTag;
-import org.schabi.newpipe.player.playqueue.PlayQueueItem;
+import org.schabi.newpipe.player.mediaitem.ExoMediaItems;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -35,7 +35,7 @@ public class FailedMediaSource extends BaseMediaSource implements ManagedMediaSo
     public static final MediaPeriod SILENT_MEDIA = makeSilentMediaPeriod(SILENCE_DURATION_US);
 
     private final String TAG = "FailedMediaSource@" + Integer.toHexString(hashCode());
-    private final PlayQueueItem playQueueItem;
+    private final PlayerMediaItem playQueueItem;
     private final Exception error;
     private final long retryTimestamp;
     private final MediaItem mediaItem;
@@ -50,31 +50,29 @@ public class FailedMediaSource extends BaseMediaSource implements ManagedMediaSo
      * @param error          exception that was the reason to fail
      * @param retryTimestamp epoch timestamp when this MediaSource can be refreshed
      */
-    public FailedMediaSource(@NonNull final PlayQueueItem playQueueItem,
+    public FailedMediaSource(@NonNull final PlayerMediaItem playQueueItem,
                              @NonNull final Exception error,
                              final long retryTimestamp) {
         this.playQueueItem = playQueueItem;
         this.error = error;
         this.retryTimestamp = retryTimestamp;
-        this.mediaItem = ExceptionTag
-                .of(playQueueItem, Collections.singletonList(error))
-                .withExtras(this)
-                .asMediaItem();
+        this.mediaItem = ExoMediaItems.asExoMediaItem(
+                playQueueItem.withErrors(Collections.singletonList(error)));
     }
 
-    public static FailedMediaSource of(@NonNull final PlayQueueItem playQueueItem,
+    public static FailedMediaSource of(@NonNull final PlayerMediaItem playQueueItem,
                                        @NonNull final FailedMediaSourceException error) {
         return new FailedMediaSource(playQueueItem, error, Long.MAX_VALUE);
     }
 
-    public static FailedMediaSource of(@NonNull final PlayQueueItem playQueueItem,
+    public static FailedMediaSource of(@NonNull final PlayerMediaItem playQueueItem,
                                        @NonNull final Exception error,
                                        final long retryWaitMillis) {
         return new FailedMediaSource(playQueueItem, error,
                 System.currentTimeMillis() + retryWaitMillis);
     }
 
-    public PlayQueueItem getStream() {
+    public PlayerMediaItem getStream() {
         return playQueueItem;
     }
 
@@ -160,14 +158,14 @@ public class FailedMediaSource extends BaseMediaSource implements ManagedMediaSo
     }
 
     @Override
-    public boolean shouldBeReplacedWith(@NonNull final PlayQueueItem newIdentity,
+    public boolean shouldBeReplacedWith(@NonNull final PlayerMediaItem newIdentity,
                                         final boolean isInterruptable) {
-        return newIdentity != playQueueItem || canRetry();
+        return !newIdentity.getUuid().equals(playQueueItem.getUuid()) || canRetry();
     }
 
     @Override
-    public boolean isStreamEqual(@NonNull final PlayQueueItem stream) {
-        return playQueueItem == stream;
+    public boolean isStreamEqual(@NonNull final PlayerMediaItem stream) {
+        return playQueueItem.getUuid().equals(stream.getUuid());
     }
 
     public static class FailedMediaSourceException extends Exception {

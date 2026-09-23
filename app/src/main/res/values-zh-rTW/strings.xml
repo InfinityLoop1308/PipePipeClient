@@ -1066,4 +1066,10 @@
 <string name="rotation_controls_fullscreen_title">旋轉時自動切換全螢幕</string>
 <string name="rotation_controls_fullscreen_summary">系統自動旋轉開啟時，旋轉到橫向會進入全螢幕，旋轉到直向會退出全螢幕</string>
 <string name="niconico_login_summary">Token 只會在必要時使用。登入頁面可能無法在 WebView 版本過舊的舊型裝置上正常運作。</string>
+<string name="minimize_gesture_control_title">向下滑動以最小化</string>
+<string name="minimize_gesture_control_summary">在播放器上向下滑動即可將其縮小為迷你播放器 — %s</string>
+<string name="minimize_gesture_none_description">停用</string>
+<string name="minimize_gesture_non_fullscreen_description">僅限非全螢幕狀態</string>
+<string name="minimize_gesture_fullscreen_description">全螢幕與非全螢幕狀態 (將停用全螢幕與播放速度滑動手勢)</string>
+<string name="delete_filter_confirm">您要從篩選清單中刪除 \"%s\" 嗎？</string>
 </resources>

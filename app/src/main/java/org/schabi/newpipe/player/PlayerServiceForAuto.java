@@ -49,7 +49,7 @@ import org.schabi.newpipe.util.ThemeHelper;
 
 import java.util.List;
 
-import static org.schabi.newpipe.player.PlayerService.BIND_PLAYER_HOLDER_ACTION;
+import static org.schabi.newpipe.player.PlayerIntentConstants.BIND_PLAYER_HOLDER_ACTION;
 import static org.schabi.newpipe.util.Localization.assureCorrectAppLanguage;
 
 
@@ -132,6 +132,17 @@ public final class PlayerServiceForAuto extends MediaBrowserServiceCompat implem
             Log.d(TAG, "onStartCommand() called with: intent = [" + intent
                     + "], flags = [" + flags + "], startId = [" + startId + "]");
         }
+        if (intent == null) {
+            // The system restarted the service with a null intent, which happens when the process
+            // was killed while a start was still pending. The pending start might have been
+            // issued with startForegroundService(), so a foreground notification must be posted
+            // to avoid ForegroundServiceDidNotStartInTimeException; then the service is stopped,
+            // since there is nothing to play.
+            Log.w(TAG, "onStartCommand() got a null intent, closing the service");
+            NotificationUtil.getInstance().startForegroundWithDummyNotification(this);
+            stopService();
+            return START_NOT_STICKY;
+        }
         if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())
                 && player.getPlayQueue() == null) {
             // Player is not working, no need to process media button's action
@@ -146,7 +157,7 @@ public final class PlayerServiceForAuto extends MediaBrowserServiceCompat implem
         }
 
         if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())
-                || intent.getStringExtra(Player.PLAY_QUEUE_KEY) != null) {
+                || intent.getStringExtra(PlayerIntentConstants.PLAY_QUEUE_KEY) != null) {
             NotificationUtil.getInstance().createNotificationAndStartForeground(player, this);
         }
 
@@ -212,7 +223,7 @@ public final class PlayerServiceForAuto extends MediaBrowserServiceCompat implem
         if (player != null) {
             // Exit from fullscreen when user closes the player via notification
             if (player.isFullscreen()) {
-                PlayerUiModeHelper.setFullscreen(player, false);
+                player.changeFullscreen(false);
             }
             removeViewFromParent();
 

@@ -8,7 +8,10 @@ import android.view.*
 import org.schabi.newpipe.ktx.animate
 import org.schabi.newpipe.player.PlayerService
 import org.schabi.newpipe.player.Player
+import org.schabi.newpipe.player.PlayerGestureController
+import org.schabi.newpipe.player.PlayerPlaybackState
 import org.schabi.newpipe.player.helper.PlayerHelper
+import org.schabi.newpipe.player.helper.PlayerHelper.MinimizeGestureMode
 import org.schabi.newpipe.player.helper.PlayerHelper.savePopupPositionAndSizeToPrefs
 import kotlin.math.abs
 import kotlin.math.hypot
@@ -28,24 +31,28 @@ abstract class BasePlayerGestureListener(
     protected val service: Service
 ) : GestureDetector.SimpleOnGestureListener(), View.OnTouchListener {
 
+    /** Owns the gesture detector, the swipe overlays and the pinch-zoom state. */
+    @JvmField
+    protected val gestureController: PlayerGestureController = player.gestureController
+
     private val scaleGestureDetector = ScaleGestureDetector(
         service,
         object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
             override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
-                if (!player.isPinchToZoomEnabled || player.popupPlayerSelected()) return false
+                if (!gestureController.isPinchToZoomEnabled || player.popupPlayerSelected()) return false
                 isPinchingInMain = true
                 suppressMainGestureUntilUp = true
-                player.onPinchZoomStart(detector.focusX, detector.focusY)
+                gestureController.onPinchZoomStart(detector.focusX, detector.focusY)
                 return true
             }
 
             override fun onScale(detector: ScaleGestureDetector): Boolean {
-                player.onPinchZoom(detector.scaleFactor, detector.focusX, detector.focusY)
+                gestureController.onPinchZoom(detector.scaleFactor, detector.focusX, detector.focusY)
                 return true
             }
 
             override fun onScaleEnd(detector: ScaleGestureDetector) {
-                player.onPinchZoomEnd()
+                gestureController.onPinchZoomEnd()
                 isPinchingInMain = false
             }
         }
@@ -112,29 +119,35 @@ abstract class BasePlayerGestureListener(
 
     /** True while the current main-player touch stream is claimed by the player itself. */
     private var mainStreamClaimed = false
-    /** Y of the ACTION_DOWN, used to hand the stream back to the bottom sheet on real down-drags. */
+    /** Whether the current gesture may be handed back to the sheet as the page-minimize drag. */
+    private var mainStreamMinimizeAllowed = false
+    /** Whether that down-drag minimizes while in fullscreen as well. */
+    private var mainStreamMinimizeInFullscreen = false
+    /** Where the ACTION_DOWN landed, used to hand the stream back to the bottom sheet. */
+    private var mainStreamDownX = 0f
     private var mainStreamDownY = 0f
+    private var mainStreamDownPortion = DisplayPortion.MIDDLE
 
     private fun onTouchInMain(v: View, event: MotionEvent): Boolean {
-        if (player.isPinchToZoomEnabled &&
+        if (gestureController.isPinchToZoomEnabled &&
             event.actionMasked == MotionEvent.ACTION_POINTER_DOWN
         ) {
             // GestureDetector does not receive multi-pointer events below, so explicitly cancel
             // its pending long-press callback before it can enable speed-up during a pinch.
             val cancelEvent = MotionEvent.obtain(event)
             cancelEvent.action = MotionEvent.ACTION_CANCEL
-            player.gestureDetector.onTouchEvent(cancelEvent)
+            gestureController.gestureDetector.onTouchEvent(cancelEvent)
             cancelEvent.recycle()
-            if (player.longPressSpeedingEnabled) {
-                player.playbackSpeed /= player.longPressSpeedingFactor
-                player.longPressSpeedingEnabled = false
+            if (gestureController.longPressSpeedingEnabled) {
+                player.playbackSpeed /= gestureController.longPressSpeedingFactor
+                gestureController.longPressSpeedingEnabled = false
             }
         }
-        if (player.isPinchToZoomEnabled) {
+        if (gestureController.isPinchToZoomEnabled) {
             scaleGestureDetector.onTouchEvent(event)
         }
         if (!isPinchingInMain && !suppressMainGestureUntilUp && event.pointerCount == 1) {
-            player.gestureDetector.onTouchEvent(event)
+            gestureController.gestureDetector.onTouchEvent(event)
         }
 
         when (event.action) {
@@ -148,24 +161,42 @@ abstract class BasePlayerGestureListener(
                 // move already exceeds the sheet's touch slop is intercepted by the sheet before
                 // we ever get a chance to disallow it - which made the swipe-up-fullscreen
                 // gesture silently fail ("no reaction") or even turn into the minimize gesture.
-                mainStreamClaimed =
-                    player.isFullscreen || player.isFullscreenGestureEnabled
+                // Swipe-down-to-minimize fully disabled also needs the claim, otherwise the
+                // sheet would keep collapsing the page on a down-drag over the player.
+                val minimizeGestureMode = PlayerHelper.getMinimizeGestureMode(player.context)
+                mainStreamMinimizeAllowed = minimizeGestureMode != MinimizeGestureMode.MINIMIZE_GESTURE_NONE
+                mainStreamMinimizeInFullscreen =
+                    minimizeGestureMode == MinimizeGestureMode.MINIMIZE_GESTURE_FULLSCREEN_AND_NON_FULLSCREEN
+                mainStreamClaimed = player.isFullscreen
+                    || gestureController.isFullscreenGestureEnabled
+                    || minimizeGestureMode != MinimizeGestureMode.MINIMIZE_GESTURE_NON_FULLSCREEN
+                mainStreamDownX = event.x
                 mainStreamDownY = event.y
+                mainStreamDownPortion = getDisplayPortion(event)
                 v.parent.requestDisallowInterceptTouchEvent(mainStreamClaimed)
             }
             MotionEvent.ACTION_MOVE -> {
                 if (isPinchingInMain) return true
                 velocityTracker?.addMovement(event)
 
-                // While not fullscreen, hand the stream back to the bottom sheet as soon as the
-                // drag is decisively downward: that is the page-minimize gesture, which the sheet
-                // is allowed to take over. Handing it back is what keeps swipe-down-to-minimize
-                // working even though we claimed the touch on DOWN. Everything else (upwards or
-                // short flicks) stays with the player.
-                if (mainStreamClaimed && !player.isFullscreen) {
-                    val relinquish = event.pointerCount > 1
-                        || event.y - mainStreamDownY >= RELINQUISH_DOWN_TRAVEL_PX
-                    if (relinquish) {
+                // Hand the stream back to the bottom sheet as soon as the drag is decisively
+                // downward: that is the page-minimize gesture, which the sheet is allowed to take
+                // over. Handing it back is what keeps swipe-down-to-minimize working even though
+                // we claimed the touch on DOWN. Everything else (upwards or short flicks) stays
+                // with the player. In fullscreen, where the same finger could be driving volume,
+                // brightness or seeking, only the middle third is offered to the sheet and only
+                // when minimizing there is what the user asked for.
+                if (mainStreamClaimed && mainStreamMinimizeAllowed) {
+                    val travelDown = event.y - mainStreamDownY
+                    val belongsToSheet = if (player.isFullscreen) {
+                        mainStreamMinimizeInFullscreen
+                            && mainStreamDownPortion == DisplayPortion.MIDDLE
+                            && travelDown >= RELINQUISH_DOWN_TRAVEL_PX
+                            && travelDown > abs(event.x - mainStreamDownX)
+                    } else {
+                        event.pointerCount > 1 || travelDown >= RELINQUISH_DOWN_TRAVEL_PX
+                    }
+                    if (belongsToSheet) {
                         mainStreamClaimed = false
                         v.parent.requestDisallowInterceptTouchEvent(false)
                     }
@@ -176,9 +207,11 @@ abstract class BasePlayerGestureListener(
                 velocityTracker?.recycle()
                 velocityTracker = null
                 mainStreamClaimed = false
+                mainStreamMinimizeAllowed = false
+                mainStreamMinimizeInFullscreen = false
 
                 if (isPinchingInMain) {
-                    player.onPinchZoomEnd()
+                    gestureController.onPinchZoomEnd()
                     isPinchingInMain = false
                     suppressMainGestureUntilUp = false
                     return true
@@ -189,9 +222,9 @@ abstract class BasePlayerGestureListener(
                 if (isMovingInMain) {
                     isMovingInMain = false
                     onScrollEnd(PlayerService.PlayerType.VIDEO, event)
-                } else if (player.longPressSpeedingEnabled) {
-                    player.playbackSpeed /= player.longPressSpeedingFactor
-                    player.longPressSpeedingEnabled = false
+                } else if (gestureController.longPressSpeedingEnabled) {
+                    player.playbackSpeed /= gestureController.longPressSpeedingFactor
+                    gestureController.longPressSpeedingEnabled = false
                 }
             }
         }
@@ -200,7 +233,7 @@ abstract class BasePlayerGestureListener(
     }
 
     private fun onTouchInPopup(v: View, event: MotionEvent): Boolean {
-        player.gestureDetector.onTouchEvent(event)
+        gestureController.gestureDetector.onTouchEvent(event)
         if (event.pointerCount == 2 && !isMovingInPopup && !isResizing) {
             if (DEBUG) {
                 Log.d(TAG, "onTouch() 2 finger pointer detected, enabling resizing.")
@@ -354,7 +387,7 @@ abstract class BasePlayerGestureListener(
             return true
         } else {
             super.onSingleTapConfirmed(e)
-            if (player.currentState == Player.STATE_BLOCKED)
+            if (player.currentState == PlayerPlaybackState.BLOCKED)
                 return true
 
             onSingleTap(PlayerService.PlayerType.VIDEO)
@@ -368,8 +401,8 @@ abstract class BasePlayerGestureListener(
             player.checkPopupPositionBounds()
             player.changePopupSize(player.screenWidth.toInt())
         } else {
-            player.longPressSpeedingEnabled = true
-            player.playbackSpeed *= player.longPressSpeedingFactor
+            gestureController.longPressSpeedingEnabled = true
+            player.playbackSpeed *= gestureController.longPressSpeedingFactor
         }
     }
 
@@ -429,7 +462,7 @@ abstract class BasePlayerGestureListener(
         val isHorizontal = abs(distanceX) > abs(distanceY)
         // require a mostly vertical swipe so horizontal seeking is not hijacked
         if (!isMovingInMain && !isHorizontal && insideThreshold ||
-            player.currentState == Player.STATE_COMPLETED
+            player.currentState == PlayerPlaybackState.COMPLETED
         ) {
             return false
         }

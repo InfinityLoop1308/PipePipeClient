@@ -20,22 +20,29 @@ public class GestureSettingsFragment extends BasePreferenceFragment {
                                     @Nullable final String rootKey) {
         addPreferencesFromResourceRegistry();
         updateSeekOptions();
-        setupSpeedGestureMutualExclusion();
+        setupVerticalSwipeGestureMutualExclusion();
     }
 
-    private void setupSpeedGestureMutualExclusion() {
+    /**
+     * Exiting fullscreen, playback speed and minimizing all want the vertical swipe in the middle
+     * of the player while in fullscreen, so only one of them can own it.
+     */
+    private void setupVerticalSwipeGestureMutualExclusion() {
         final SwitchPreferenceCompat fullscreenPref = findPreference(
                 getString(R.string.fullscreen_gesture_control_key));
         final SwitchPreferenceCompat speedPref = findPreference(
                 getString(R.string.playback_speed_gesture_control_key));
+        final ListPreference minimizePref = findPreference(
+                getString(R.string.minimize_gesture_control_key));
 
-        if (fullscreenPref == null || speedPref == null) {
+        if (fullscreenPref == null || speedPref == null || minimizePref == null) {
             return;
         }
 
         fullscreenPref.setOnPreferenceChangeListener((pref, newValue) -> {
             if (Boolean.TRUE.equals(newValue)) {
                 speedPref.setChecked(false);
+                releaseFullscreenMinimizeMode(minimizePref);
             }
             return true;
         });
@@ -43,9 +50,28 @@ public class GestureSettingsFragment extends BasePreferenceFragment {
         speedPref.setOnPreferenceChangeListener((pref, newValue) -> {
             if (Boolean.TRUE.equals(newValue)) {
                 fullscreenPref.setChecked(false);
+                releaseFullscreenMinimizeMode(minimizePref);
             }
             return true;
         });
+
+        minimizePref.setOnPreferenceChangeListener((pref, newValue) -> {
+            if (getString(R.string.minimize_gesture_fullscreen_key).equals(newValue)) {
+                fullscreenPref.setChecked(false);
+                speedPref.setChecked(false);
+            }
+            return true;
+        });
+    }
+
+    /**
+     * Minimizing outside the fullscreen player does not collide with the other vertical gestures,
+     * so enabling one of them only drops the minimize mode back to that.
+     */
+    private void releaseFullscreenMinimizeMode(final ListPreference minimizePref) {
+        if (getString(R.string.minimize_gesture_fullscreen_key).equals(minimizePref.getValue())) {
+            minimizePref.setValue(getString(R.string.minimize_gesture_non_fullscreen_key));
+        }
     }
 
     private void updateSeekOptions() {

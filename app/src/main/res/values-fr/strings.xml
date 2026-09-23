@@ -1029,4 +1029,10 @@ Voulez-vous continuer?</string>
 <string name="rotation_controls_fullscreen_title">Basculer automatiquement en plein écran lors de la rotation</string>
 <string name="rotation_controls_fullscreen_summary">Lorsque la rotation automatique du système est activée, la rotation en mode paysage active le plein écran et la rotation en mode portrait quitte le plein écran</string>
 <string name="niconico_login_summary">Les jetons ne seront utilisés que lorsque cela est nécessaire. La page de connexion peut ne pas fonctionner sur les anciens appareils avec un WebView obsolète.</string>
+<string name="minimize_gesture_control_title">Balayer vers le bas pour réduire</string>
+<string name="minimize_gesture_control_summary">Balayer vers le bas sur le lecteur pour le réduire en mini-lecteur — %s</string>
+<string name="minimize_gesture_none_description">Désactivé</string>
+<string name="minimize_gesture_non_fullscreen_description">Uniquement hors plein écran</string>
+<string name="minimize_gesture_fullscreen_description">En plein écran et en dehors (désactive les gestes de balayage du plein écran et de la vitesse de lecture)</string>
+<string name="delete_filter_confirm">Voulez-vous supprimer \"%s\" de la liste des filtres ?</string>
 </resources>

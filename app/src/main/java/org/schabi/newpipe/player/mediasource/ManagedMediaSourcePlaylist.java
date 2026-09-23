@@ -8,11 +8,26 @@ import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.ShuffleOrder;
 
-import org.schabi.newpipe.player.mediaitem.MediaItemTag;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Playlist wrapper that keeps a parallel table of the {@link ManagedMediaSource}s it owns.
+ *
+ * <p>ExoPlayer's {@link ConcatenatingMediaSource} wraps every added source in a
+ * {@code MaskingMediaSource}, so the original source cannot be recovered from it. Instead of
+ * smuggling the source into the {@link com.google.android.exoplayer2.MediaItem} metadata
+ * (which created a {@code MediaSource → MediaItem → MediaSource} cycle), this class owns the
+ * mapping itself and keeps it in sync with every mutation.</p>
+ */
 public class ManagedMediaSourcePlaylist {
     @NonNull
     private final ConcatenatingMediaSource internalSource;
+    /**
+     * Parallel, index-aligned view of the sources added to {@link #internalSource}.
+     */
+    @NonNull
+    private final List<ManagedMediaSource> managedSources = new ArrayList<>();
 
     public ManagedMediaSourcePlaylist() {
         internalSource = new ConcatenatingMediaSource(/*isPlaylistAtomic=*/false,
@@ -35,15 +50,12 @@ public class ManagedMediaSourcePlaylist {
      * @return the {@link ManagedMediaSource} at the given index of the playlist
      */
     @Nullable
-    public ManagedMediaSource get(final int index) {
-        if (index < 0 || index >= size()) {
+    public synchronized ManagedMediaSource get(final int index) {
+        if (index < 0 || index >= managedSources.size()) {
             return null;
         }
 
-        return MediaItemTag
-                .from(internalSource.getMediaSource(index).getMediaItem())
-                .flatMap(tag -> tag.getMaybeExtras(ManagedMediaSource.class))
-                .orElse(null);
+        return managedSources.get(index);
     }
 
     @NonNull
@@ -73,6 +85,7 @@ public class ManagedMediaSourcePlaylist {
      */
     public synchronized void append(@NonNull final ManagedMediaSource source) {
         internalSource.addMediaSource(source);
+        managedSources.add(source);
     }
 
     /**
@@ -83,11 +96,12 @@ public class ManagedMediaSourcePlaylist {
      * @param index of {@link ManagedMediaSource} to be removed
      */
     public synchronized void remove(final int index) {
-        if (index < 0 || index > internalSource.getSize()) {
+        if (index < 0 || index >= managedSources.size()) {
             return;
         }
 
         internalSource.removeMediaSource(index);
+        managedSources.remove(index);
     }
 
     /**
@@ -103,11 +117,13 @@ public class ManagedMediaSourcePlaylist {
         if (source < 0 || target < 0) {
             return;
         }
-        if (source >= internalSource.getSize() || target >= internalSource.getSize()) {
+        if (source >= managedSources.size() || target >= managedSources.size()) {
             return;
         }
 
         internalSource.moveMediaSource(source, target);
+        final ManagedMediaSource moved = managedSources.remove(source);
+        managedSources.add(target, moved);
     }
 
     /**
@@ -157,7 +173,7 @@ public class ManagedMediaSourcePlaylist {
     public synchronized void update(final int index, @NonNull final ManagedMediaSource source,
                                     @Nullable final Handler handler,
                                     @Nullable final Runnable finalizingAction) {
-        if (index < 0 || index >= internalSource.getSize()) {
+        if (index < 0 || index >= managedSources.size()) {
             return;
         }
 
@@ -174,5 +190,8 @@ public class ManagedMediaSourcePlaylist {
         // Because of the above race condition, it is thus only safe to synchronize the player
         // in the finalizing action AFTER the removal is complete and the timeline has changed.
         internalSource.removeMediaSource(index, handler, finalizingAction);
+
+        // Net effect of the add + remove above is a single replacement at the same index.
+        managedSources.set(index, source);
     }
 }

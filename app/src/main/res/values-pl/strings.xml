@@ -1092,4 +1092,10 @@
 <string name="rotation_controls_fullscreen_title">Automatycznie przełączaj tryb pełnoekranowy przy obrocie</string>
 <string name="rotation_controls_fullscreen_summary">Gdy systemowe automatyczne obracanie jest włączone, obrót do orientacji poziomej włącza tryb pełnoekranowy, a obrót do orientacji pionowej z niego wychodzi</string>
 <string name="niconico_login_summary">Tokeny będą używane tylko w razie potrzeby. Strona logowania może nie działać na starszych urządzeniach z przestarzałym WebView.</string>
+<string name="minimize_gesture_control_title">Przesuń w dół, aby zminimalizować</string>
+<string name="minimize_gesture_control_summary">Przesuń w dół na odtwarzaczu, aby zwinąć go do miniodtwarzacza — %s</string>
+<string name="minimize_gesture_none_description">Wyłączone</string>
+<string name="minimize_gesture_non_fullscreen_description">Tylko poza pełnym ekranem</string>
+<string name="minimize_gesture_fullscreen_description">W pełnym ekranie i poza nim (wyłącza gesty przesuwania dla pełnego ekranu i szybkości odtwarzania)</string>
+<string name="delete_filter_confirm">Czy chcesz usunąć \"%s\" z listy filtrów?</string>
 </resources>

@@ -1112,4 +1112,10 @@
 <string name="rotation_controls_fullscreen_title">Automatically switch fullscreen on rotation</string>
 <string name="rotation_controls_fullscreen_summary">When system auto-rotate is enabled, rotating to landscape enters fullscreen and rotating to portrait exits fullscreen</string>
 <string name="niconico_login_summary">Tokens will only be used when necessary. The login page may not work on older devices with an outdated WebView.</string>
+<string name="minimize_gesture_control_title">Swipe down to minimize</string>
+<string name="minimize_gesture_control_summary">Swipe down on the player to collapse it into the mini player — %s</string>
+<string name="minimize_gesture_none_description">Disabled</string>
+<string name="minimize_gesture_non_fullscreen_description">Outside fullscreen only</string>
+<string name="minimize_gesture_fullscreen_description">In and outside fullscreen (disables the fullscreen and playback speed swipe gestures)</string>
+<string name="delete_filter_confirm">Do you want to delete \"%s\" from the filter list?</string>
 </resources>

@@ -46,8 +46,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.exoplayer2.PlaybackException;
-import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.tabs.TabLayout;
@@ -87,15 +85,20 @@ import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.PlayerService.PlayerType;
 import org.schabi.newpipe.player.Player;
+import org.schabi.newpipe.player.PlayerError;
+import org.schabi.newpipe.player.VideoDetailPlayerCrasher;
+import org.schabi.newpipe.player.PlayerPlaybackState;
+import org.schabi.newpipe.player.PlayerPlaybackParameters;
+import org.schabi.newpipe.player.RepeatMode;
 import org.schabi.newpipe.player.PlaybackStartupTrace;
-import org.schabi.newpipe.player.PlayerUiModeHelper;
+import org.schabi.newpipe.player.PlayerUiModeController;
 import org.schabi.newpipe.player.event.OnKeyDownListener;
 import org.schabi.newpipe.player.event.PlayerServiceExtendedEventListener;
 import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.helper.PlayerHolder;
 import org.schabi.newpipe.player.mediasession.PlayerServiceInterface;
+import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
-import org.schabi.newpipe.player.playqueue.PlayQueueItem;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
 import org.schabi.newpipe.sleep.SleepTimerService;
 import org.schabi.newpipe.util.*;
@@ -118,7 +121,7 @@ import static org.schabi.newpipe.extractor.services.bilibili.utils.isFirstP;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.ktx.ViewUtils.animateRotation;
 import static org.schabi.newpipe.player.helper.PlayerHelper.globalScreenOrientationLocked;
-import static org.schabi.newpipe.player.playqueue.PlayQueueItem.RECOVERY_UNSET;
+import static org.schabi.newpipe.player.playqueue.PlayQueue.RECOVERY_UNSET;
 import static org.schabi.newpipe.util.ExtractorHelper.showMetaInfoInTextView;
 
 public final class VideoDetailFragment
@@ -325,7 +328,7 @@ public final class VideoDetailFragment
             @Override
             public void onChange(final boolean selfChange) {
                 if (activity != null && !globalScreenOrientationLocked(activity)) {
-                    PlayerUiModeHelper.setOrientation(activity, player,
+                    PlayerUiModeController.setOrientation(activity,
                             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
                 }
             }
@@ -893,7 +896,7 @@ public final class VideoDetailFragment
             if (!DeviceUtils.isTablet(activity)) {
                 player.pause();
             }
-            PlayerUiModeHelper.setFullscreen(player, false);
+            player.changeFullscreen(false);
             setAutoPlay(false);
             return true;
         }
@@ -908,7 +911,7 @@ public final class VideoDetailFragment
 
         // That means that we are on the start of the stack,
         if (stack.size() <= 1) {
-            PlayerUiModeHelper.setOrientation(activity, player,
+            PlayerUiModeController.setOrientation(activity,
                     ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             return false; // let MainActivity handle the onBack (e.g. to minimize the mini player)
         }
@@ -949,7 +952,7 @@ public final class VideoDetailFragment
             return;
         }
 
-        final PlayQueueItem playQueueItem = item.getPlayQueue().getItem();
+        final PlayerMediaItem playQueueItem = item.getPlayQueue().getItem();
         // Update title, url, uploader from the last item in the stack (it's current now)
         final boolean isPlayerStopped = !isPlayerAvailable() || player.isStopped();
         if (playQueueItem != null && isPlayerStopped) {
@@ -1332,7 +1335,7 @@ public final class VideoDetailFragment
         final boolean useExternalAudioPlayer = false;
 
         if (isPlayerAvailable()) {
-            PlayerUiModeHelper.setFullscreen(player, false);
+            player.changeFullscreen(false);
         }
 
         if (isPlayerAvailable()) {
@@ -1364,7 +1367,7 @@ public final class VideoDetailFragment
         }
 
         if (isPlayerAvailable()) {
-            PlayerUiModeHelper.setFullscreen(player, false);
+            player.changeFullscreen(false);
         }
 
         final PlayQueue queue = setupPlayQueueForIntent(append);
@@ -1390,10 +1393,11 @@ public final class VideoDetailFragment
             // STATE_COLLAPSED. This can be solved by manually setting the state that will be
             // restored (i.e. bottomSheetState) to STATE_EXPANDED.
             bottomSheetState = BottomSheetBehavior.STATE_EXPANDED;
+            // Without a connected player there is nothing to ask here, but onServiceConnected()
+            // issues the very same request as soon as the service started for this playback
+            // connects, and the player keeps a request it cannot honor until it is set up.
             if (isPlayerAvailable()) {
-                PlayerUiModeHelper.setFullscreen(player, true);
-            } else {
-                // TODO: preserve the fullscreen request until the Player service is connected.
+                player.changeFullscreen(true);
             }
         }
 
@@ -1740,7 +1744,7 @@ public final class VideoDetailFragment
                         if (player != null) {
                             moveFocusToMainFragment(false);
                             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                            PlayerUiModeHelper.setFullscreen(player, true);
+                            player.changeFullscreen(true);
                         }
                         break;
                 }
@@ -1859,7 +1863,7 @@ public final class VideoDetailFragment
             binding.detailThumbsDisabledView.setVisibility(View.VISIBLE);
         } else {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-            boolean showDislikeCount = prefs.getBoolean(activity.getString(R.string.show_dislike_key), true);
+            boolean showDislikeCount = prefs.getBoolean(activity.getString(R.string.show_dislike_key), false);
             if (info.getDislikeCount() >= 0 && showDislikeCount) {
                 binding.detailThumbsDownCountView.setText(Localization
                         .shortCount(activity, info.getDislikeCount()));
@@ -2017,7 +2021,7 @@ public final class VideoDetailFragment
                 && prefs.getBoolean(activity.getString(R.string.enable_playback_resume_key), true);
         if (!playbackResumeEnabled) {
             if (playQueue == null || playQueue.getStreams().isEmpty()
-                    || playQueue.getItem().getRecoveryPosition() == RECOVERY_UNSET) {
+                    || playQueue.getRecoveryPosition(playQueue.getIndex()) == RECOVERY_UNSET) {
                 binding.positionView.setVisibility(View.INVISIBLE);
                 binding.detailPositionView.setVisibility(View.GONE);
                 // TODO: Remove this check when separation of concerns is done.
@@ -2028,7 +2032,7 @@ public final class VideoDetailFragment
                 }
             } else {
                 // Show saved position from backStack if user allows it
-                showPlaybackProgress(playQueue.getItem().getRecoveryPosition(),
+                showPlaybackProgress(playQueue.getRecoveryPosition(playQueue.getIndex()),
                         playQueue.getItem().getDuration() * 1000);
                 animate(binding.positionView, true, 500);
                 animate(binding.detailPositionView, true, 500);
@@ -2099,7 +2103,7 @@ public final class VideoDetailFragment
         // a history of played items
         @Nullable final StackItem stackPeek = stack.peek();
         if (stackPeek != null && !stackPeek.getPlayQueue().equals(queue)) {
-            @Nullable final PlayQueueItem playQueueItem = queue.getItem();
+            @Nullable final PlayerMediaItem playQueueItem = queue.getItem();
             if (playQueueItem != null) {
                 stack.push(new StackItem(playQueueItem.getServiceId(), playQueueItem.getUrl(),
                         playQueueItem.getTitle(), queue));
@@ -2118,14 +2122,14 @@ public final class VideoDetailFragment
     }
 
     @Override
-    public void onPlaybackUpdate(final int state,
-                                 final int repeatMode,
+    public void onPlaybackUpdate(final PlayerPlaybackState state,
+                                 final RepeatMode repeatMode,
                                  final boolean shuffled,
-                                 final PlaybackParameters parameters) {
+                                 final PlayerPlaybackParameters parameters) {
         setOverlayPlayPauseImage(player != null && player.isPlaying());
 
         switch (state) {
-            case Player.STATE_PLAYING:
+            case PLAYING:
                 if (binding.positionView.getAlpha() != 1.0f
                         && player.getPlayQueue() != null
                         && player.getPlayQueue().getItem() != null
@@ -2200,11 +2204,11 @@ public final class VideoDetailFragment
     }
 
     @Override
-    public void onPlayerError(final PlaybackException error, final boolean isCatchableException) {
+    public void onPlayerError(final PlayerError error, final boolean isCatchableException) {
         if (!isCatchableException) {
             // Properly exit from fullscreen
             if (isPlayerAvailable()) {
-                PlayerUiModeHelper.setFullscreen(player, false);
+                player.changeFullscreen(false);
             }
             hideMainPlayerOnLoadingNewStream();
         }
@@ -2512,16 +2516,24 @@ public final class VideoDetailFragment
      * page into the mini player) must never start: a vertical swipe in fullscreen belongs to the
      * player's own gesture handling (exit fullscreen / volume / brightness).
      *
+     * <p>The one exception is the swipe-down-to-minimize gesture, which is exactly that sheet
+     * drag and is offered as an alternative to swiping down to exit fullscreen (the two are
+     * mutually exclusive in the gesture settings).
+     *
      * <p>Material's {@link BottomSheetBehavior#setDraggable(boolean)} makes
      * {@code onInterceptTouchEvent} bail out on the very first check, so the sheet can no longer
      * steal the touch stream from the player (not even via the initial-move race or the two-finger
      * branch in {@link org.schabi.newpipe.player.event.CustomBottomSheetBehavior}).
      */
     private void updateBottomSheetDraggableForFullscreen() {
-        if (bottomSheetBehavior == null) {
+        if (bottomSheetBehavior == null || activity == null) {
             return;
         }
-        bottomSheetBehavior.setDraggable(!(isPlayerAvailable() && player.isFullscreen()));
+        final boolean inFullscreen = isPlayerAvailable() && player.isFullscreen();
+        final boolean minimizeBySheet = inFullscreen
+                && PlayerHelper.getMinimizeGestureMode(requireContext())
+                == PlayerHelper.MinimizeGestureMode.MINIMIZE_GESTURE_FULLSCREEN_AND_NON_FULLSCREEN;
+        bottomSheetBehavior.setDraggable(!inFullscreen || minimizeBySheet);
     }
 
     private void setupBottomPlayer() {
