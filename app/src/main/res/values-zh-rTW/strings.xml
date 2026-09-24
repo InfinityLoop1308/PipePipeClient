@@ -803,7 +803,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在背景播放時自動隨機播放您的本地播放列表</string>
-<string name="update_log">### 新功能\n\n- 最佳化全螢幕與螢幕旋轉邏輯，並新增相關設定選項\n- 恢復支援觀看與搜尋直播 (NicoNico)\n- 現在點擊影片標題列的任何位置即可展開/收起標題詳細資訊\n\n### 問題修正\n\n- 修正全螢幕滑動手勢不穩定且可能意外將影片縮小的問題\n- 修正搜尋歷史紀錄隨機無法儲存或未移至頂部的問題\n- 修正留言中的粗體/斜體/刪除線樣式未正確套用的問題\n- 修正特定電視在啟動時崩潰的問題。\n- 修正重新整理沒有影片的頻道訂閱時發生的錯誤 (YouTube)\n- 修正登入時出現空白畫面的問題 (NicoNico)\n- 修正影片無法播放的問題 (BiliBili)\n- 修正 SponsorBlock 無法正常運作的問題 (BiliBili)</string>
+<string name="update_log">### 新功能\n\n- 大幅優化電視控制\n- 新增支援直播畫質選擇\n- 「向下滑動以最小化」手勢現在可在設定中進行配置\n- 優化內容過濾器的刪除互動\n- 新增支援推薦/熱門直播 (NicoNico)\n- 新增支援頻道的直播分頁 (NicoNico)\n\n### 錯誤修復\n\n- 修復「以全螢幕啟動」設定無效的問題\n- 修復無法使用分割畫面模式的問題\n- 修復進入全螢幕模式時字幕會消失的問題\n- 修復內容封鎖未套用於公開播放清單的問題\n- 修復直播暫停時仍持續擷取資料的問題\n- 修復使用 SABR 協定中斷的影片無法恢復播放的問題\n- 修復在特定條件下開始播放時可能發生的崩潰問題\n- 修復在某些情況下播放清單總時長會無限增加的問題\n- 修復在特定條件下刪除觀看紀錄所引起的崩潰問題\n- 修復全新安裝時不喜歡計數器未預設停用的問題\n- 修復在特定條件下發生的下載失敗問題 (Bilibili)\n- 修復推薦直播顯示為空的問題 (Bilibili)</string>
 <string name="speeding_playback_title">按住以加速播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這項計畫</string>
