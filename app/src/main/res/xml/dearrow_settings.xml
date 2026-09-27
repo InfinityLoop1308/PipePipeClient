@@ -44,6 +44,22 @@
             android:summary="@string/dearrow_random_frame_summary"
             android:title="@string/dearrow_random_frame_title"/>
 
+        <!-- Live is its own switch, and OFF by default, because it is the one path whose cost
+             is not comparable to the others. A normal video's frame is one small image fetch
+             from the thumbnail host; a broadcast has no stored frame at all, so the only way
+             to get one is to resolve the stream and briefly open it. That is a player request
+             plus a media decode for every live row scrolled past, and it should be something
+             the user opts into knowingly rather than something that rides along with the
+             general thumbnail setting. Depends on the frame fallback, not just on DeArrow:
+             it is a narrower case of the same behaviour. -->
+        <SwitchPreference
+            app:iconSpaceReserved="false"
+            android:dependency="@string/dearrow_random_frame_key"
+            android:defaultValue="false"
+            android:key="@string/dearrow_live_frame_key"
+            android:summary="@string/dearrow_live_frame_summary"
+            android:title="@string/dearrow_live_frame_title"/>
+
         <SwitchPreference
             app:iconSpaceReserved="false"
             android:dependency="@string/dearrow_enable_key"

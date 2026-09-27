@@ -18,6 +18,7 @@ import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.util.PicassoHelper;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.disposables.Disposable;
 
 /**
@@ -252,21 +253,6 @@ public final class DeArrowBinder {
                 || !config.shouldUseRandomFrameFallback()) {
             return;
         }
-        // A live stream has no duration to seek into, so the seeded-frame path cannot work.
-        // The thumbnail server can render the current moment of a broadcast though, which
-        // is what the extension does for live, so hand it straight to the image loader.
-        // Live streams take their own path: there is no duration to seed a timestamp from,
-        // so the frame has to come from the current moment of the broadcast instead. The
-        // thumbnail server can produce that (generateNow=true), but answers HTTP 204 for
-        // broadcasts it cannot handle — and a 204 handed to Picasso paints an EMPTY GREY
-        // BOX, which is worse than the broadcaster's own image. So the response is checked
-        // for an actual image before it reaches the view, and anything else leaves the row
-        // untouched.
-        if (live) {
-            renderLiveFrame(videoId, serviceId, url, titleView, thumbnailView, config);
-            return;
-        }
-
         // Either path may already have produced this frame; a cached one is painted with no
         // asynchronous hop so a row scrolling back into view never flips a second time.
         final Bitmap alreadyRendered = cachedFrame(videoId);
@@ -275,15 +261,27 @@ public final class DeArrowBinder {
             return;
         }
 
-        // The fast path first. YouTube already stores three extracted frames per upload, so
-        // for almost every video this is one small image fetch and nothing else — see
-        // DeArrowAutoThumbnail for why that is worth preferring over an exactly-seeded frame.
-        // switchIfEmpty hands the video to the slow renderer only when there is no stored
-        // frame to be had, which in practice means a brand-new upload.
+        // THE CHEAP PATH RUNS FOR EVERY ROW, including ones the extractor calls live.
+        //
+        // That is deliberate and it is what makes finished broadcasts work. A stream that
+        // ended is still typed LIVE_STREAM — it keeps its LIVE badge in the results list —
+        // but it has been processed like any other upload, so it does have stored frames.
+        // Branching on the stream type before trying them meant every archived stream was
+        // sent down the expensive path and then, once that path became opt-in, skipped
+        // entirely: rows that could have been replaced for one 7 KB fetch showed clickbait
+        // instead (2026-09-27).
+        //
+        // Asking for the frames is also a more reliable test of "is this actually live"
+        // than the type is: a broadcast in progress has no stored frames and answers 404.
         final Disposable disposable = DeArrowAutoThumbnail.getInstance()
                 .fetch(videoId)
-                .switchIfEmpty(DeArrowFrameRenderer.getInstance()
-                        .render(serviceId, url, videoId, duration))
+                // Nothing stored means a genuine broadcast, or an upload too fresh to have
+                // been processed. Only the first of those needs the expensive path, and
+                // only if the user asked for it.
+                .switchIfEmpty(live
+                        ? liveFallback(videoId, serviceId, url, config)
+                        : DeArrowFrameRenderer.getInstance()
+                                .render(serviceId, url, videoId, duration))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(frame -> {
                     if (videoId.equals(titleView.getTag(R.id.dearrow_video_id))) {
@@ -313,66 +311,35 @@ public final class DeArrowBinder {
     }
 
     /**
-     * Shows the current frame of a live broadcast.
+     * The expensive live path, as a Maybe the cheap path can fall through to.
      *
-     * @param videoId       the broadcast
-     * @param serviceId     its service
-     * @param url           its page URL, which the renderer resolves a playable stream from
-     * @param titleView     the row's title view, which carries the recycle guard
-     * @param thumbnailView the view to write into
-     * @param config        the user's settings
+     * <p>Returns an empty Maybe — doing nothing at all — unless the user has turned live
+     * frames on. Every other thumbnail source here costs one small image fetch; this one
+     * resolves the stream and briefly opens it, so it is its own switch and off by default.
+     * See {@link DeArrowConfig#shouldUseLiveFrames()}.</p>
+     *
+     * @param videoId   the broadcast
+     * @param serviceId its service
+     * @param url       its page URL, which the renderer resolves a playable stream from
+     * @param config    the user's settings
+     * @return a Maybe emitting at most one frame; never errors
      */
-    private static void renderLiveFrame(@NonNull final String videoId,
-                                        final int serviceId,
-                                        @Nullable final String url,
-                                        @NonNull final TextView titleView,
-                                        @Nullable final ImageView thumbnailView,
-                                        @NonNull final DeArrowConfig config) {
-        if (thumbnailView == null
-                || !config.shouldReplaceThumbnails()
-                || !config.shouldUseRandomFrameFallback()) {
-            return;
+    @NonNull
+    private static Maybe<Bitmap> liveFallback(@NonNull final String videoId,
+                                              final int serviceId,
+                                              @NonNull final String url,
+                                              @NonNull final DeArrowConfig config) {
+        if (!config.shouldUseLiveFrames()) {
+            return Maybe.empty();
         }
-        if (url == null) {
-            return;
-        }
-        final Bitmap cached = cachedLiveFrame(videoId);
-        if (cached != null) {
-            thumbnailView.setImageBitmap(cached);
-            return;
-        }
-        // A broadcast has to be decoded to get a frame out of it — every cheaper source
-        // either does not exist for live or is the broadcaster's own thumbnail wearing a
-        // different filename. See DeArrowFrameRenderer#renderLive.
-        final Disposable disposable = DeArrowFrameRenderer.getInstance()
+        // The thumbnail server is tried last and almost never answers — it has returned HTTP
+        // 204 for every live broadcast tried across three days — but it costs one request and
+        // is the only source that could serve a community-curated live frame.
+        return DeArrowFrameRenderer.getInstance()
                 .renderLive(serviceId, url, videoId)
-                .switchIfEmpty(DeArrowLiveFrame.getInstance().fetch(videoId, config))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(frame -> {
-                    if (videoId.equals(titleView.getTag(R.id.dearrow_video_id))) {
-                        thumbnailView.setImageBitmap(frame);
-                    }
-                }, error -> {
-                    // Neither fetch is documented to error; this arm only keeps a future
-                    // change to one of them from crashing the app off a background thread.
-                }, () -> {
-                    // No frame available for this broadcast — the row keeps the
-                    // broadcaster's own thumbnail, which is the correct fallback.
-                });
-        titleView.setTag(R.id.dearrow_frame_disposable, disposable);
+                .switchIfEmpty(DeArrowLiveFrame.getInstance().fetch(videoId, config));
     }
 
-    /**
-     * A current frame either live source has already fetched for this broadcast.
-     *
-     * @param videoId the broadcast
-     * @return the frame, or null if neither source has a fresh one
-     */
-    @Nullable
-    private static Bitmap cachedLiveFrame(@NonNull final String videoId) {
-        final Bitmap stored = DeArrowFrameRenderer.getInstance().getCached(videoId);
-        return stored != null ? stored : DeArrowLiveFrame.getInstance().getCached(videoId);
-    }
 
     /** Cancels any lookup still running for a row that is being rebound. */
     private static void clearPending(@NonNull final TextView titleView) {

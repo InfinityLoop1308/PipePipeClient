@@ -37,6 +37,10 @@ public final class DeArrowSettings {
                 prefs.getBoolean(context.getString(R.string.dearrow_replace_titles_key), true),
                 prefs.getBoolean(context.getString(R.string.dearrow_replace_thumbnails_key), true),
                 prefs.getBoolean(context.getString(R.string.dearrow_random_frame_key), true),
+                // Defaults false, unlike every other switch here: a live frame costs a player
+                // request and a media decode per row, where an upload's costs one small image
+                // fetch. See DeArrowConfig#shouldUseLiveFrames.
+                prefs.getBoolean(context.getString(R.string.dearrow_live_frame_key), false),
                 prefs.getBoolean(context.getString(R.string.dearrow_auto_format_key), true),
                 prefs.getString(context.getString(R.string.dearrow_api_url_key),
                         DeArrowConfig.DEFAULT_API_URL),

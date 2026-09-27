@@ -477,6 +477,7 @@
     <string name="dearrow_replace_titles_key" translatable="false">dearrow_replace_titles</string>
     <string name="dearrow_replace_thumbnails_key" translatable="false">dearrow_replace_thumbnails</string>
     <string name="dearrow_random_frame_key" translatable="false">dearrow_random_frame</string>
+    <string name="dearrow_live_frame_key" translatable="false">dearrow_live_frame</string>
     <string name="dearrow_auto_format_key" translatable="false">dearrow_auto_format</string>
     <string name="dearrow_api_url_key" translatable="false">dearrow_api_url</string>
     <string name="dearrow_thumbnail_api_url_key" translatable="false">dearrow_thumbnail_api_url</string>
