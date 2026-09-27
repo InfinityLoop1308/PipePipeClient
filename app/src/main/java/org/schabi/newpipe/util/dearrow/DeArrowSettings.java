@@ -12,8 +12,13 @@ import org.schabi.newpipe.R;
  * Reads the user's DeArrow preferences into a {@link DeArrowConfig}.
  *
  * <p>This is the only place that touches {@code SharedPreferences}, which is what lets the rest of
- * the feature be plain testable Java. Settings are read on every lookup rather than cached, so
- * toggling one takes effect immediately without an app restart.</p>
+ * the feature be plain testable Java.</p>
+ *
+ * <p>The result is <b>cached</b>, because {@link #read} is called on every row bind on the main
+ * thread and reading it fresh costs nine resource lookups and eight preference reads each time.
+ * A preference listener drops the cache — along with the branding cache, whose entries have the
+ * title and thumbnail switches baked into them at parse time — so toggling a setting still takes
+ * effect on the next bind with no app restart.</p>
  */
 public final class DeArrowSettings {
 
@@ -62,6 +67,16 @@ public final class DeArrowSettings {
         listener = (p, key) -> {
             if (key != null && key.startsWith("dearrow_")) {
                 cached = null;
+                // The branding cache has to go too, not just the settings snapshot.
+                //
+                // DeArrowParser bakes the title/thumbnail switches into each DeArrowBranding
+                // as it parses, so an entry cached while "replace titles" was on carries a
+                // title regardless of what the setting says now. Without this, turning that
+                // switch off leaves every already-seen video — up to five thousand of them —
+                // still showing its DeArrow title until the app restarts, which reads as the
+                // setting being ignored.
+                DeArrowCache.getInstance().clear();
+                DeArrowFrameCache.clearAll();
             }
         };
         PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext())

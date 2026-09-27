@@ -3,7 +3,6 @@ package org.schabi.newpipe.util.dearrow;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.util.Log;
-import android.util.LruCache;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -67,12 +66,6 @@ public final class DeArrowFrameRenderer {
      */
     @VisibleForTesting
     static final int MAX_CONCURRENT_RENDERS = 6;
-
-    /**
-     * How many rendered frames to keep. Each is a scaled-down bitmap, so this is a few MB
-     * rather than a few hundred.
-     */
-    private static final int MAX_CACHED_FRAMES = 60;
 
     /**
      * How many formats to try before giving up on a video. Three covers the case that

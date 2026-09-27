@@ -3,7 +3,6 @@ package org.schabi.newpipe.util.dearrow;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
-import android.util.LruCache;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -73,8 +72,6 @@ public final class DeArrowAutoThumbnail {
     /** How many automatically-extracted frames YouTube stores per upload: hq1, hq2, hq3. */
     @VisibleForTesting
     static final int AUTO_FRAME_COUNT = 3;
-
-    private static final int MAX_CACHED_FRAMES = 120;
 
     /** Smaller than a real JPEG could be; guards against a truncated or error body. */
     @VisibleForTesting
@@ -195,7 +192,6 @@ public final class DeArrowAutoThumbnail {
 
     /**
      * @param videoId the video
-     * @param live    whether this is a broadcast in progress rather than an upload
      * @return the decoded, de-letterboxed frame, or null if there is nothing usable
      */
     @Nullable
