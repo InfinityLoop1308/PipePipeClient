@@ -101,7 +101,7 @@ public final class DeArrowAutoThumbnail {
 
     private static DeArrowAutoThumbnail instance;
 
-    private final LruCache<String, Bitmap> frames = new LruCache<>(MAX_CACHED_FRAMES);
+    private final DeArrowFrameCache frames = DeArrowFrameCache.sharingHeap(3);
     private final Map<String, Maybe<Bitmap>> inFlight = new ConcurrentHashMap<>();
 
     private DeArrowAutoThumbnail() {
@@ -169,7 +169,6 @@ public final class DeArrowAutoThumbnail {
      * 404 specifically as "try the slow renderer instead".</p>
      *
      * @param videoId the video
-     * @param live    whether this is a broadcast in progress rather than an upload
      * @return a Maybe emitting at most one bitmap, on the IO scheduler
      */
     @NonNull
@@ -177,6 +176,11 @@ public final class DeArrowAutoThumbnail {
         final Bitmap cached = getCached(videoId);
         if (cached != null) {
             return Maybe.just(cached);
+        }
+        if (frames.isKnownMiss(videoId)) {
+            // Asked recently, nothing there. Retrying on every rebind turns one scroll up
+            // and down into a request per row per pass.
+            return Maybe.empty();
         }
         // Two rows showing the same video — which the subscription feed does produce — share
         // one request instead of racing; the entry is dropped once it settles so a later bind
@@ -201,14 +205,19 @@ public final class DeArrowAutoThumbnail {
             if (response.responseCode() != 200) {
                 // 404 here means the upload is too fresh to have been processed, or that a
                 // row reported the wrong stream type — the caller falls back accordingly.
+                // Remembered, so scrolling past the same row repeatedly does not re-ask for
+                // an image that is not coming.
+                frames.recordMiss(videoId);
                 return null;
             }
             final byte[] body = response.rawResponseBody();
             if (body == null || body.length < MIN_IMAGE_BYTES) {
+                frames.recordMiss(videoId);
                 return null;
             }
             final Bitmap decoded = BitmapFactory.decodeByteArray(body, 0, body.length);
             if (decoded == null) {
+                frames.recordMiss(videoId);
                 return null;
             }
             final Bitmap frame = stripLetterbox(decoded);
@@ -217,6 +226,7 @@ public final class DeArrowAutoThumbnail {
         } catch (final Exception | OutOfMemoryError e) {
             // Swallowed on purpose: no frame means the uploader's thumbnail stays, which is
             // the correct fallback. A cosmetic feature must never break browsing.
+            frames.recordMiss(videoId);
             Log.d(TAG, "no stored frame for " + videoId, e);
             return null;
         }
@@ -253,9 +263,12 @@ public final class DeArrowAutoThumbnail {
         if (top == 0 && cropped == height) {
             return source;
         }
-        if (cropped < height / 2) {
-            // Something is wrong with the detection — a nearly-all-black frame, most likely.
-            // Showing it whole is worse than showing a sliver of it.
+        // A frame that is dark at BOTH edges is a night scene or a fade, not a letterboxed
+        // one — cropping it would cut picture rather than padding. The test has to be "did
+        // we hit the cap at both ends", because a test against height/2 can never fire:
+        // MAX_CROP_FRACTION caps each edge at 20%, so `cropped` is always at least 60% of
+        // the height and the comparison is dead code (2026-09-27).
+        if (top >= limit && height - 1 - bottom >= limit) {
             return source;
         }
         return Bitmap.createBitmap(source, 0, top, width, cropped);

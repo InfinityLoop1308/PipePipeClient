@@ -188,7 +188,7 @@ public final class DeArrowBinder {
                     .subscribe(image -> {
                         if (videoId == null
                                 || videoId.equals(titleView.getTag(R.id.dearrow_video_id))) {
-                            thumbnailView.setImageBitmap(image);
+                            paint(thumbnailView, image);
                         }
                     }, error -> {
                         // fetch() is documented never to error; this arm only keeps a future
@@ -257,7 +257,7 @@ public final class DeArrowBinder {
         // asynchronous hop so a row scrolling back into view never flips a second time.
         final Bitmap alreadyRendered = cachedFrame(videoId);
         if (alreadyRendered != null) {
-            thumbnailView.setImageBitmap(alreadyRendered);
+            paint(thumbnailView, alreadyRendered);
             return;
         }
 
@@ -278,14 +278,39 @@ public final class DeArrowBinder {
                 // Nothing stored means a genuine broadcast, or an upload too fresh to have
                 // been processed. Only the first of those needs the expensive path, and
                 // only if the user asked for it.
-                .switchIfEmpty(live
-                        ? liveFallback(videoId, serviceId, url, config)
-                        : DeArrowFrameRenderer.getInstance()
-                                .render(serviceId, url, videoId, duration))
+                //
+                // Maybe.defer is load-bearing, not tidiness. switchIfEmpty takes a VALUE, so
+                // without it the expensive chain is built on every single bind even when the
+                // cheap path is about to succeed — and building it is not free: render() and
+                // renderLive() register themselves in an inFlight map as a side effect of
+                // being constructed. A chain that is never subscribed never runs its
+                // doFinally, so that entry is never removed. Browsing a few thousand feed
+                // items left a few thousand cold Rx chains pinned in an unbounded map that
+                // nothing ever pruned.
+                .switchIfEmpty(Maybe.defer(() -> {
+                    // BOTH branches below decode video, and both are behind the same opt-in.
+                    //
+                    // Gating only the live one was a real hole: a non-live row whose stored
+                    // frames 404 is an upload too fresh to have been processed — which is
+                    // exactly what a subscription feed is made of — and it fell through to
+                    // the renderer with nothing but the default-ON frame-fallback switch in
+                    // front of it. Enabling DeArrow with defaults and opening the feed then
+                    // cost a full extraction plus partial video download per fresh upload,
+                    // while the setting that was supposed to prevent that only covered live
+                    // (2026-09-27). With this, the default really is "one small image fetch,
+                    // never more".
+                    if (!config.shouldUseLiveFrames()) {
+                        return Maybe.empty();
+                    }
+                    return live
+                            ? liveFallback(videoId, serviceId, url, config)
+                            : DeArrowFrameRenderer.getInstance()
+                                    .render(serviceId, url, videoId, duration);
+                }))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(frame -> {
                     if (videoId.equals(titleView.getTag(R.id.dearrow_video_id))) {
-                        thumbnailView.setImageBitmap(frame);
+                        paint(thumbnailView, frame);
                     }
                     // Otherwise the holder was recycled onto a different video while the
                     // frame was arriving, and writing it would corrupt the wrong row.
@@ -337,9 +362,31 @@ public final class DeArrowBinder {
         // is the only source that could serve a community-curated live frame.
         return DeArrowFrameRenderer.getInstance()
                 .renderLive(serviceId, url, videoId)
-                .switchIfEmpty(DeArrowLiveFrame.getInstance().fetch(videoId, config));
+                .switchIfEmpty(Maybe.defer(
+                        () -> DeArrowLiveFrame.getInstance().fetch(videoId, config)));
     }
 
+
+    /**
+     * Writes a frame into a row, and makes it stick.
+     *
+     * <p><b>Cancelling the pending image request is the whole point.</b> Every call site
+     * binds the uploader's thumbnail with the image loader first and then asks DeArrow for a
+     * replacement — correct, because the row must never be blank. But writing a bitmap
+     * directly does not cancel that load, so when the replacement is available immediately
+     * (already cached) and the uploader's image is not (loader cache miss), the row shows the
+     * honest frame and then visibly flips <em>back</em> to the clickbait a moment later, as
+     * the original finishes and paints over it. The two caches evict independently, so this
+     * happens on exactly the long feeds where it is most noticeable.</p>
+     *
+     * @param thumbnailView the row's thumbnail view
+     * @param frame         the frame to show
+     */
+    private static void paint(@NonNull final ImageView thumbnailView,
+                              @NonNull final Bitmap frame) {
+        PicassoHelper.cancelRequest(thumbnailView);
+        thumbnailView.setImageBitmap(frame);
+    }
 
     /** Cancels any lookup still running for a row that is being rebound. */
     private static void clearPending(@NonNull final TextView titleView) {

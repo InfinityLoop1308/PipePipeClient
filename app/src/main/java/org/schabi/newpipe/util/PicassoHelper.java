@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import android.util.Log;
+import android.widget.ImageView;
 import com.squareup.picasso.Cache;
 import com.squareup.picasso.LruCache;
 import com.squareup.picasso.OkHttp3Downloader;
@@ -123,6 +124,19 @@ public final class PicassoHelper {
 
     public static void cancelTag(final Object tag) {
         picassoInstance.cancelTag(tag);
+    }
+
+    /**
+     * Stops any load still running for this view.
+     *
+     * <p>Needed by anything that writes a bitmap into an ImageView directly while a Picasso
+     * load for the same view may still be in flight — otherwise the load finishes later and
+     * paints straight over it.</p>
+     *
+     * @param view the view whose pending request should be abandoned
+     */
+    public static void cancelRequest(final ImageView view) {
+        picassoInstance.cancelRequest(view);
     }
 
     public static void setIndicatorsEnabled(final boolean enabled) {

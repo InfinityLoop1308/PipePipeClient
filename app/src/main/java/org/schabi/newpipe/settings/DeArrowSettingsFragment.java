@@ -10,6 +10,7 @@ import androidx.preference.Preference;
 
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.util.dearrow.DeArrowCache;
+import org.schabi.newpipe.util.dearrow.DeArrowFrameCache;
 
 /**
  * Settings for DeArrow, the crowdsourced replacement for clickbait titles and thumbnails.
@@ -37,7 +38,12 @@ public class DeArrowSettingsFragment extends BasePreferenceFragment {
                 findPreference(getString(R.string.dearrow_clear_cache_key));
         if (clearCachePreference != null) {
             clearCachePreference.setOnPreferenceClickListener(p -> {
+                // Both, not just the titles. The preference says it forgets every downloaded
+                // title AND thumbnail, and clearing only the title map left the stale
+                // thumbnail the user was trying to get rid of exactly where it was — while
+                // also being the only way to hand back the memory the frames occupy.
                 DeArrowCache.getInstance().clear();
+                DeArrowFrameCache.clearAll();
                 Toast.makeText(getContext(), R.string.dearrow_cache_cleared_toast,
                         Toast.LENGTH_SHORT).show();
                 return true;

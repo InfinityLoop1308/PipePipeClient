@@ -3,7 +3,6 @@ package org.schabi.newpipe.util.dearrow;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
-import android.util.LruCache;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,30 +43,13 @@ public final class DeArrowLiveFrame {
 
     private static final String TAG = "DeArrowLiveFrame";
 
-    /** Live frames go stale as the broadcast continues. */
-    @VisibleForTesting
-    static final long CACHE_TTL_MS = 5 * 60 * 1000L;
-
-    private static final int MAX_CACHED_FRAMES = 40;
-
     /** Smaller than a real image could plausibly be; guards against a truncated body. */
     @VisibleForTesting
     static final int MIN_IMAGE_BYTES = 512;
 
     private static DeArrowLiveFrame instance;
 
-    private final LruCache<String, Entry> frames = new LruCache<>(MAX_CACHED_FRAMES);
     private final Map<String, Maybe<Bitmap>> inFlight = new ConcurrentHashMap<>();
-
-    private static final class Entry {
-        private final Bitmap bitmap;
-        private final long fetchedAt;
-
-        Entry(final Bitmap bitmap, final long fetchedAt) {
-            this.bitmap = bitmap;
-            this.fetchedAt = fetchedAt;
-        }
-    }
 
     private DeArrowLiveFrame() {
     }
@@ -78,22 +60,21 @@ public final class DeArrowLiveFrame {
         }
         return instance;
     }
-
     /**
+     * Deliberately NOT cached.
+     *
+     * <p>This used to hold forty decoded bitmaps — counted in entries, so roughly 37 MB —
+     * for a path that has never once returned an image: the thumbnail server answers HTTP
+     * 204 for every live broadcast tried, on three separate days. Caching nothing is the
+     * honest size for a cache with no contents, and the in-flight map below already stops
+     * two rows for the same broadcast from asking twice.</p>
+     *
      * @param videoId the broadcast
-     * @return a frame fetched recently enough to still be worth showing, or null
+     * @return always null; kept so callers need no special case
      */
     @Nullable
     public Bitmap getCached(@NonNull final String videoId) {
-        final Entry entry = frames.get(videoId);
-        if (entry == null) {
-            return null;
-        }
-        if (System.currentTimeMillis() - entry.fetchedAt > CACHE_TTL_MS) {
-            frames.remove(videoId);
-            return null;
-        }
-        return entry.bitmap;
+        return null;
     }
 
     /**
@@ -147,7 +128,7 @@ public final class DeArrowLiveFrame {
             if (frame == null) {
                 return null;
             }
-            frames.put(videoId, new Entry(frame, System.currentTimeMillis()));
+
             return frame;
         } catch (final Exception | OutOfMemoryError e) {
             // Swallowed on purpose: no frame means the broadcaster's own thumbnail stays,

@@ -28,6 +28,7 @@ import org.schabi.newpipe.extractor.services.youtube.YoutubeApiDecoder;
 import org.schabi.newpipe.ktx.ExceptionUtils;
 import org.schabi.newpipe.settings.NewPipeSettings;
 import org.schabi.newpipe.util.*;
+import org.schabi.newpipe.util.dearrow.DeArrowFrameCache;
 import org.schabi.newpipe.youtube.LocalDomPoTokenProvider;
 
 import java.io.IOException;
@@ -149,6 +150,9 @@ public class App extends MultiDexApplication {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         reconcileYoutubePlayerClient(this);
         PicassoHelper.init(this);
+        // Lets the system reclaim DeArrow's decoded frames under pressure. Without it they
+        // are process-lifetime, and the only way to get the memory back is to kill the app.
+        DeArrowFrameCache.registerTrimCallback(this);
         PicassoHelper.setShouldLoadImages(
                 prefs.getBoolean(getString(R.string.download_thumbnail_key), true));
         PicassoHelper.setIndicatorsEnabled(DEBUG

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -87,8 +88,17 @@ public final class DeArrowFrameRenderer {
 
     private static DeArrowFrameRenderer instance;
 
-    private final LruCache<String, Bitmap> frames = new LruCache<>(MAX_CACHED_FRAMES);
+    private final DeArrowFrameCache frames = DeArrowFrameCache.sharingHeap(3);
     private final Map<String, Maybe<Bitmap>> inFlight = new ConcurrentHashMap<>();
+    /**
+     * How long a render may wait for a slot before giving up.
+     *
+     * <p>Long enough that a busy screen still fills, short enough that a fast scroll does
+     * not leave a queue of parked threads behind it.</p>
+     */
+    @VisibleForTesting
+    static final long QUEUE_WAIT_SECONDS = 20;
+
     private final Semaphore renderSlots = new Semaphore(MAX_CONCURRENT_RENDERS, true);
 
     private DeArrowFrameRenderer() {
@@ -210,8 +220,16 @@ public final class DeArrowFrameRenderer {
         }
         boolean acquired = false;
         try {
-            renderSlots.acquire();
-            acquired = true;
+            // Bounded wait, not an open-ended one. This runs on a Schedulers.io thread, and
+            // io is an UNBOUNDED cached pool: scrolling sixty fresh uploads spawned sixty
+            // threads with most of them parked on a fair semaphore, doing nothing but
+            // holding a stream URL alive. Past the timeout the right answer is to give up
+            // and leave the uploader thumbnail, which is a no-op the user never sees.
+            acquired = renderSlots.tryAcquire(QUEUE_WAIT_SECONDS, TimeUnit.SECONDS);
+            if (!acquired) {
+                Log.d(TAG, "gave up waiting for a render slot for " + videoId);
+                return null;
+            }
             for (final String streamUrl : urls) {
                 // Time 0 with OPTION_CLOSEST_SYNC on a live playlist gives the first frame of
                 // the segment currently being served, which is the live edge — there is no
@@ -313,11 +331,17 @@ public final class DeArrowFrameRenderer {
 
         boolean acquired = false;
         try {
-            // Queue rather than drop. Returning immediately when busy meant a screen of
-            // results rendered at most two frames and every other row silently kept its
-            // clickbait image. This is already an IO thread, so waiting here is free.
-            renderSlots.acquire();
-            acquired = true;
+            // Queue rather than drop — returning immediately when busy meant a screen of
+            // results rendered at most two frames — but queue for a BOUNDED time. This
+            // runs on a Schedulers.io thread and io is an unbounded cached pool, so an
+            // open-ended wait turns a fast scroll into dozens of threads parked on a fair
+            // semaphore, each holding a resolved stream URL alive. Past the timeout the
+            // right answer is to leave the uploader's thumbnail, which nobody notices.
+            acquired = renderSlots.tryAcquire(QUEUE_WAIT_SECONDS, TimeUnit.SECONDS);
+            if (!acquired) {
+                Log.d(TAG, "gave up waiting for a render slot for " + videoId);
+                return null;
+            }
 
             for (final String streamUrl : urls) {
                 final Bitmap frame = grabFrame(streamUrl, seconds);

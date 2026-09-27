@@ -17,6 +17,21 @@ import org.schabi.newpipe.R;
  */
 public final class DeArrowSettings {
 
+    /**
+     * The last read settings, and the listener that invalidates them.
+     *
+     * <p><b>Cached because this is called on every row bind, on the main thread.</b> Reading
+     * it fresh each time is nine {@code getString} resource lookups, eight
+     * {@code SharedPreferences} reads and an allocation, inside {@code onBindViewHolder}
+     * during a fling — paid on every row of every list whether or not anything changed.</p>
+     *
+     * <p>Kept correct rather than merely fast: a preference listener clears it, so a toggle
+     * still takes effect on the next bind with no app restart, which is the behaviour the
+     * per-read version existed to provide.</p>
+     */
+    private static volatile DeArrowConfig cached;
+    private static SharedPreferences.OnSharedPreferenceChangeListener listener;
+
     private DeArrowSettings() {
     }
 
@@ -26,6 +41,40 @@ public final class DeArrowSettings {
      */
     @NonNull
     public static DeArrowConfig read(@NonNull final Context context) {
+        final DeArrowConfig snapshot = cached;
+        if (snapshot != null) {
+            return snapshot;
+        }
+        final DeArrowConfig fresh = readUncached(context);
+        cached = fresh;
+        return fresh;
+    }
+
+    /**
+     * Registers the invalidation listener. Idempotent.
+     *
+     * @param context any context
+     */
+    private static synchronized void watch(@NonNull final Context context) {
+        if (listener != null) {
+            return;
+        }
+        listener = (p, key) -> {
+            if (key != null && key.startsWith("dearrow_")) {
+                cached = null;
+            }
+        };
+        PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext())
+                .registerOnSharedPreferenceChangeListener(listener);
+    }
+
+    /**
+     * @param context any context
+     * @return the settings, read from disk
+     */
+    @NonNull
+    private static DeArrowConfig readUncached(@NonNull final Context context) {
+        watch(context);
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         final boolean enabled = prefs.getBoolean(
                 context.getString(R.string.dearrow_enable_key), false);

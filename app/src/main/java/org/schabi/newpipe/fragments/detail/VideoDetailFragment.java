@@ -1828,14 +1828,6 @@ public final class VideoDetailFragment
         animate(binding.detailThumbnailPlayButton, true, 200);
         binding.detailVideoTitleView.setText(title);
 
-        // Swap in DeArrow's honest title and thumbnail, if the user opted in. Must stay AFTER the
-        // original bind above: the replacement is applied on top of a fully-populated page, never
-        // in place of populating it, so a slow or failed lookup leaves the page correct.
-        DeArrowBinder.apply(info.getServiceId(), info.getUrl(), info.getDuration(),
-                info.getStreamType() == StreamType.LIVE_STREAM
-                        || info.getStreamType() == StreamType.AUDIO_LIVE_STREAM,
-                binding.detailVideoTitleView, binding.detailThumbnailImageView);
-
         binding.detailSubChannelThumbnailView.setVisibility(View.GONE);
 
         if (!isEmpty(info.getSubChannelName())) {
@@ -1928,6 +1920,20 @@ public final class VideoDetailFragment
                 .getDefaultResolutionIndex(activity, sortedVideoStreams);
         updateProgressInfo(info);
         initThumbnailViews(info);
+
+        // Swap in DeArrow's honest title and thumbnail, if the user opted in.
+        //
+        // This MUST come after initThumbnailViews, which is what loads the uploader's
+        // thumbnail into detailThumbnailImageView. Running it earlier looked correct —
+        // the title is bound further up — but the thumbnail is bound here, so the image
+        // loader painted the placeholder and then the clickbait image straight over the
+        // replacement. The feature then only worked when the DeArrow fetch happened to
+        // finish after the loader did, i.e. by race, and never at all when the frame was
+        // already cached from the feed (2026-09-27).
+        DeArrowBinder.apply(info.getServiceId(), info.getUrl(), info.getDuration(),
+                info.getStreamType() == StreamType.LIVE_STREAM
+                        || info.getStreamType() == StreamType.AUDIO_LIVE_STREAM,
+                binding.detailVideoTitleView, binding.detailThumbnailImageView);
         showMetaInfoInTextView(info.getMetaInfo(), binding.detailMetaInfoTextView,
                 binding.detailMetaInfoSeparator, disposables);
 
