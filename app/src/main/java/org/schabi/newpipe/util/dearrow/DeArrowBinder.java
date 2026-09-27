@@ -175,13 +175,28 @@ public final class DeArrowBinder {
             titleView.setText(branding.getTitle());
         }
         if (branding.getThumbnailUrl() != null && thumbnailView != null) {
-            final Context context = thumbnailView.getContext();
-            // The uploader's thumbnail stays on screen as the placeholder while this loads, so a
-            // slow or failed DeArrow render never shows the user an empty box.
-            PicassoHelper.loadScaledDownThumbnail(context, branding.getThumbnailUrl())
-                    .placeholder(thumbnailView.getDrawable())
-                    .noFade()
-                    .into(thumbnailView);
+            final String videoId = (String) titleView.getTag(R.id.dearrow_video_id);
+            // NOT handed to the image loader directly. That URL points at the DeArrow
+            // thumbnail server, which answers HTTP 204 for any frame it does not already
+            // hold — and an image loader treats a 204 as a successful empty response, so it
+            // paints its placeholder over a row that had a perfectly good thumbnail
+            // (reported on a real device, 2026-09-27). DeArrowImageFetch only ever returns
+            // bytes that really decoded; anything else leaves the row alone.
+            final Disposable disposable = DeArrowImageFetch.fetch(branding.getThumbnailUrl())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(image -> {
+                        if (videoId == null
+                                || videoId.equals(titleView.getTag(R.id.dearrow_video_id))) {
+                            thumbnailView.setImageBitmap(image);
+                        }
+                    }, error -> {
+                        // fetch() is documented never to error; this arm only keeps a future
+                        // change to it from crashing the app off a background thread.
+                    }, () -> {
+                        // Nothing usable at that URL — the uploader's thumbnail stays, and
+                        // the frame fallback still runs, so the row is not left as-is.
+                    });
+            titleView.setTag(R.id.dearrow_thumbnail_disposable, disposable);
         }
     }
 
@@ -363,6 +378,7 @@ public final class DeArrowBinder {
     private static void clearPending(@NonNull final TextView titleView) {
         dispose(titleView, R.id.dearrow_disposable);
         dispose(titleView, R.id.dearrow_frame_disposable);
+        dispose(titleView, R.id.dearrow_thumbnail_disposable);
     }
 
     private static void dispose(@NonNull final TextView titleView, final int tagId) {

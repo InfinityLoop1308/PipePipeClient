@@ -5,4 +5,5 @@
     <item name="dearrow_video_id" type="id" />
     <item name="dearrow_disposable" type="id" />
     <item name="dearrow_frame_disposable" type="id" />
+    <item name="dearrow_thumbnail_disposable" type="id" />
 </resources>

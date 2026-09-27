@@ -162,12 +162,24 @@ public class DeArrowParserTest {
     }
 
     @Test
-    public void randomTimeIsUsedOnlyWhenTheFallbackIsEnabled() throws Exception {
+    public void randomTimeNeverBecomesAThumbnailUrl() throws Exception {
+        // Regression test for a bug that made the screen worse than doing nothing.
+        //
+        // This used to synthesise a thumbnail-server URL from `randomTime` for every video
+        // with a bucket entry, and hand it to the image loader. That server only serves
+        // frames it already holds and answers HTTP 204 for the rest — which an image loader
+        // reads as a successful empty response, so it paints its placeholder: a grey box
+        // with a play arrow, over a row that had a perfectly good thumbnail. Reported on a
+        // real device, 2026-09-27, and sporadic-looking because it only hit videos DeArrow
+        // knows about.
+        //
+        // The seeded frame is produced locally now (DeArrowAutoThumbnail), so a URL here is
+        // only ever a genuine community submission. "Me at the zoo" has none.
         final String raw = fixture("jNQXAC9IVRw_single.json");
         assertNull("random frame off must not invent a thumbnail",
                 DeArrowParser.parseSingle(raw, ZOO_ID, config(true, true, false, false))
                         .getThumbnailUrl());
-        assertNotNull("random frame on must fall back to randomTime",
+        assertNull("random frame on must STILL not invent a server URL",
                 DeArrowParser.parseSingle(raw, ZOO_ID, config(true, true, true, false))
                         .getThumbnailUrl());
     }

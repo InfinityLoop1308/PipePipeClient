@@ -190,10 +190,19 @@ public final class DeArrowParser {
                 && best.get("timestamp") instanceof Number) {
             timestamp = best.getDouble("timestamp");
         }
-        if (timestamp == null && config.shouldUseRandomFrameFallback()
-                && branding.has("randomTime")) {
-            timestamp = branding.getDouble("randomTime");
-        }
+        // NOTE: there is deliberately no `randomTime` fallback here any more.
+        //
+        // It used to synthesise a thumbnail-server URL for every video that had a bucket
+        // entry at all, and hand it to the image loader. The server only serves frames it
+        // already holds, so for most videos it answers HTTP 204 — and an image loader given
+        // a 204 paints its placeholder, which is a GREY BOX WITH A PLAY ARROW, over a row
+        // that had a perfectly good thumbnail a moment earlier (reported on a real device,
+        // 2026-09-27). The feature actively made the screen worse, and only for videos
+        // DeArrow knows about, which is why it looked sporadic.
+        //
+        // A frame at the seeded timestamp is now produced locally and instantly by
+        // DeArrowAutoThumbnail, so nothing is lost by refusing to guess a server URL. What
+        // remains here is only a genuine community submission.
         if (timestamp == null) {
             return null;
         }
