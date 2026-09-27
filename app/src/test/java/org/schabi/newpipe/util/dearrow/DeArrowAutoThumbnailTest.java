@@ -1,6 +1,7 @@
 package org.schabi.newpipe.util.dearrow;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -24,7 +25,7 @@ public class DeArrowAutoThumbnailTest {
 
     @Test
     public void anUploadAsksForOneOfTheThreeStoredFrames() {
-        final String url = DeArrowAutoThumbnail.urlFor(UPLOAD, false);
+        final String url = DeArrowAutoThumbnail.urlFor(UPLOAD);
         assertTrue(url, url.startsWith("https://i.ytimg.com/vi/" + UPLOAD + "/hq"));
         assertTrue(url, url.endsWith(".jpg"));
         final int index = DeArrowAutoThumbnail.frameIndexFor(UPLOAD);
@@ -32,20 +33,22 @@ public class DeArrowAutoThumbnailTest {
     }
 
     @Test
-    public void aBroadcastAsksForTheCurrentMomentInstead() {
-        // hq1..hq3 are written when an upload is processed and 404 for a stream still running;
-        // hq720_live is the only frame a live broadcast has.
-        assertEquals("https://i.ytimg.com/vi/" + UPLOAD + "/hq720_live.jpg",
-                DeArrowAutoThumbnail.urlFor(UPLOAD, true));
-    }
-
-    @Test
-    public void aBroadcastUrlDoesNotDependOnTheSeed() {
-        // There is only one live frame, so the seeded index must not leak into its name —
-        // a "hq2_live.jpg" would 404 on every broadcast.
-        assertEquals(DeArrowAutoThumbnail.urlFor(UPLOAD, true),
-                DeArrowAutoThumbnail.urlFor("jNQXAC9IVRw", true)
-                        .replace("jNQXAC9IVRw", UPLOAD));
+    public void neverAsksForALiveVariant() {
+        // This is a regression test for a wrong answer that looked right for two days.
+        //
+        // YouTube serves hq720_live.jpg for a broadcast, and it is tempting: present on every
+        // live stream, 1280x720, natively 16:9. It is NOT a frame — it is the broadcaster's own
+        // thumbnail at 720p, so a row using it has its clickbait replaced with the same
+        // clickbait. Measuring it against hqdefault.jpg reads 0.28-0.40 RMSE and looks like a
+        // real difference, but that is the letterboxing: hqdefault is boxed into 4:3 and
+        // hq720_live is not. Same picture.
+        //
+        // Live frames come from DeArrowFrameRenderer#renderLive, which decodes the broadcast.
+        for (final String videoId : new String[]{UPLOAD, "jNQXAC9IVRw", "SZ97C64_N-A"}) {
+            final String url = DeArrowAutoThumbnail.urlFor(videoId);
+            assertFalse(url + " asks for a _live variant, which is the uploader's own artwork",
+                    url.contains("_live"));
+        }
     }
 
     @Test

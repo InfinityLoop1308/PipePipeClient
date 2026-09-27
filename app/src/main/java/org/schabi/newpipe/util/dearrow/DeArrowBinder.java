@@ -248,7 +248,7 @@ public final class DeArrowBinder {
         // for an actual image before it reaches the view, and anything else leaves the row
         // untouched.
         if (live) {
-            renderLiveFrame(videoId, titleView, thumbnailView, config);
+            renderLiveFrame(videoId, serviceId, url, titleView, thumbnailView, config);
             return;
         }
 
@@ -266,7 +266,7 @@ public final class DeArrowBinder {
         // switchIfEmpty hands the video to the slow renderer only when there is no stored
         // frame to be had, which in practice means a brand-new upload.
         final Disposable disposable = DeArrowAutoThumbnail.getInstance()
-                .fetch(videoId, false)
+                .fetch(videoId)
                 .switchIfEmpty(DeArrowFrameRenderer.getInstance()
                         .render(serviceId, url, videoId, duration))
                 .observeOn(AndroidSchedulers.mainThread())
@@ -301,11 +301,15 @@ public final class DeArrowBinder {
      * Shows the current frame of a live broadcast.
      *
      * @param videoId       the broadcast
+     * @param serviceId     its service
+     * @param url           its page URL, which the renderer resolves a playable stream from
      * @param titleView     the row's title view, which carries the recycle guard
      * @param thumbnailView the view to write into
      * @param config        the user's settings
      */
     private static void renderLiveFrame(@NonNull final String videoId,
+                                        final int serviceId,
+                                        @Nullable final String url,
                                         @NonNull final TextView titleView,
                                         @Nullable final ImageView thumbnailView,
                                         @NonNull final DeArrowConfig config) {
@@ -314,16 +318,19 @@ public final class DeArrowBinder {
                 || !config.shouldUseRandomFrameFallback()) {
             return;
         }
+        if (url == null) {
+            return;
+        }
         final Bitmap cached = cachedLiveFrame(videoId);
         if (cached != null) {
             thumbnailView.setImageBitmap(cached);
             return;
         }
-        // YouTube publishes the current moment of a broadcast as a plain image, which is one
-        // fast GET and always there; the DeArrow thumbnail server is asked only if that is
-        // somehow missing, because in practice it answers 204 for every live stream tried.
-        final Disposable disposable = DeArrowAutoThumbnail.getInstance()
-                .fetch(videoId, true)
+        // A broadcast has to be decoded to get a frame out of it — every cheaper source
+        // either does not exist for live or is the broadcaster's own thumbnail wearing a
+        // different filename. See DeArrowFrameRenderer#renderLive.
+        final Disposable disposable = DeArrowFrameRenderer.getInstance()
+                .renderLive(serviceId, url, videoId)
                 .switchIfEmpty(DeArrowLiveFrame.getInstance().fetch(videoId, config))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(frame -> {
@@ -348,7 +355,7 @@ public final class DeArrowBinder {
      */
     @Nullable
     private static Bitmap cachedLiveFrame(@NonNull final String videoId) {
-        final Bitmap stored = DeArrowAutoThumbnail.getInstance().getCached(videoId);
+        final Bitmap stored = DeArrowFrameRenderer.getInstance().getCached(videoId);
         return stored != null ? stored : DeArrowLiveFrame.getInstance().getCached(videoId);
     }
 

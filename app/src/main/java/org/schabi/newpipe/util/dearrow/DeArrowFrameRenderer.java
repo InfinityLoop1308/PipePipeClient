@@ -153,6 +153,124 @@ public final class DeArrowFrameRenderer {
     }
 
     /**
+     * Grabs the current frame of a live broadcast.
+     *
+     * <p><b>Why a broadcast needs its own path, and why it costs what it costs.</b> Everything
+     * cheap has been tried and does not work. The stored frames an upload has
+     * ({@link DeArrowAutoThumbnail}) are never written for a stream in progress. The
+     * {@code hq720_live.jpg} that broadcasts do have looks like the answer and is not — it is
+     * the broadcaster's own thumbnail at 720p, so using it replaces the clickbait with itself.
+     * The storyboard sprite sheets uploads carry are absent on a broadcast. And
+     * {@code dearrow-thumb.ajay.app} answered HTTP 204 for every live stream tried, on three
+     * separate days. That leaves decoding the broadcast, which is what this does.</p>
+     *
+     * <p>There is no timestamp to seek to — a broadcast has no fixed length and the seeded
+     * generator has nothing to work with — so the frame taken is simply wherever the stream
+     * currently is. That is the right answer anyway: "what is happening right now" is what a
+     * viewer wants from a live thumbnail, and it is what the DeArrow extension asks the
+     * thumbnail server for.</p>
+     *
+     * @param serviceId the service the stream belongs to
+     * @param url       the stream page URL
+     * @param videoId   the video id, used as the cache key
+     * @return a Maybe that emits at most one bitmap, on the IO scheduler; never errors
+     */
+    @NonNull
+    public Maybe<Bitmap> renderLive(final int serviceId,
+                                    @NonNull final String url,
+                                    @NonNull final String videoId) {
+        final Bitmap cached = frames.get(videoId);
+        if (cached != null) {
+            return Maybe.just(cached);
+        }
+        return inFlight.computeIfAbsent(videoId, id -> ExtractorHelper
+                .getStreamInfo(serviceId, url, false)
+                .flatMapMaybe(info -> Maybe.fromCallable(() -> renderLiveBlocking(info, id)))
+                .doFinally(() -> inFlight.remove(id))
+                .doOnError(e -> Log.d(TAG, "could not resolve a broadcast for " + id, e))
+                .onErrorComplete()
+                .subscribeOn(Schedulers.io())
+                .cache());
+    }
+
+    /**
+     * Opens a broadcast and takes whatever frame it is showing. Blocking; expects an IO thread.
+     *
+     * @param info    the resolved stream
+     * @param videoId the video, used as the cache key
+     * @return the frame, or null if the broadcast would not open
+     */
+    @Nullable
+    private Bitmap renderLiveBlocking(@NonNull final StreamInfo info,
+                                      @NonNull final String videoId) {
+        final List<String> urls = liveUrlsSmallestFirst(info);
+        if (urls.isEmpty()) {
+            Log.d(TAG, "no live stream URL for " + videoId);
+            return null;
+        }
+        boolean acquired = false;
+        try {
+            renderSlots.acquire();
+            acquired = true;
+            for (final String streamUrl : urls) {
+                // Time 0 with OPTION_CLOSEST_SYNC on a live playlist gives the first frame of
+                // the segment currently being served, which is the live edge — there is no
+                // earlier position to land on, because a live playlist only holds a short
+                // trailing window.
+                final Bitmap frame = grabFrame(streamUrl, 0);
+                if (frame == null) {
+                    continue;
+                }
+                final Bitmap scaled =
+                        Bitmap.createScaledBitmap(frame, TARGET_WIDTH, TARGET_HEIGHT, true);
+                if (scaled != frame) {
+                    frame.recycle();
+                }
+                frames.put(videoId, scaled);
+                return scaled;
+            }
+            Log.d(TAG, "no broadcast stream would open for " + videoId);
+            return null;
+        } catch (final InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return null;
+        } finally {
+            if (acquired) {
+                renderSlots.release();
+            }
+        }
+    }
+
+    /**
+     * The URLs worth trying for a broadcast, cheapest first.
+     *
+     * <p>A low rendition is preferred deliberately and costs nothing visually: the result is
+     * scaled to {@link #TARGET_WIDTH}×{@link #TARGET_HEIGHT} for a list row regardless, and a
+     * 240p variant opens in a fraction of the time a 1080p one does. The master playlist is the
+     * last resort, because opening it makes the player pick a rendition itself, usually a large
+     * one.</p>
+     *
+     * @param info the resolved stream
+     * @return the candidate URLs
+     */
+    @NonNull
+    private static List<String> liveUrlsSmallestFirst(@NonNull final StreamInfo info) {
+        final List<VideoStream> candidates = new ArrayList<>();
+        if (info.getVideoStreams() != null) {
+            candidates.addAll(info.getVideoStreams());
+        }
+        if (info.getVideoOnlyStreams() != null) {
+            candidates.addAll(info.getVideoOnlyStreams());
+        }
+        final List<String> urls = videoUrlsSmallestFirst(candidates);
+        final String master = info.getHlsUrl();
+        if (master != null && !master.isEmpty() && !urls.contains(master)) {
+            urls.add(master);
+        }
+        return urls;
+    }
+
+    /**
      * Does the actual frame grab. Blocking, and expects to be on an IO thread.
      *
      * @param info    the resolved stream, for its URLs and type

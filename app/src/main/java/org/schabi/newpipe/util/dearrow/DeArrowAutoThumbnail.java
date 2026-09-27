@@ -42,14 +42,26 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
  * frames fetched instantly beat one perfect frame that arrives after the user has moved on.
  * The renderer is kept as the fallback for the videos this cannot serve.</p>
  *
- * <p><b>Live broadcasts get the same treatment from a different file.</b> {@code hq1}–{@code hq3}
- * are produced when an upload is processed and 404 for a stream that is still going. A live
- * broadcast instead has a single {@code hq720_live.jpg}, 1280×720 and natively 16:9, holding
- * the current moment of the stream and refreshed as it runs — which is exactly the frame the
- * DeArrow extension asks the thumbnail server to generate. Going straight to the image host is
- * both faster and far more reliable: {@code dearrow-thumb.ajay.app} answered HTTP 204 for every
- * live broadcast tried, on two separate days (2026-09-23, 2026-09-25), so
- * {@link DeArrowLiveFrame} is kept only as a second chance.</p>
+ * <p><b>This does not work for live broadcasts, and there is a trap in finding that out.</b>
+ * {@code hq1}–{@code hq3} are written when an upload is processed and 404 for a stream that is
+ * still running. YouTube does serve a {@code hq720_live.jpg} for a broadcast, and it is
+ * tempting — 1280×720, natively 16:9, present on every live stream tried. <b>It is not a
+ * frame.</b> It is the broadcaster's own thumbnail at 720p: for a stream with clickbait
+ * artwork, {@code hq720_live.jpg} is that same artwork, so using it replaces the thumbnail
+ * with itself.
+ *
+ * <p>Measuring RMSE against {@code hqdefault.jpg} does <em>not</em> catch this. That comparison
+ * reads 0.28–0.40 for a live stream and looks exactly like a real difference — but it is the
+ * letterboxing, since {@code hqdefault} is boxed into 4:3 and {@code hq720_live} is not. The
+ * two images are the same picture. What exposed it was looking at them (2026-09-27); what
+ * should have raised the alarm earlier was a live stream whose {@code hq720_live} matched its
+ * {@code maxresdefault} at <em>exactly</em> RMSE 0, which is what happens when a broadcaster
+ * sets no custom thumbnail and YouTube fills both slots from the same source.
+ *
+ * <p>Live has no cheap frame source at all: the storyboard sprite sheets that uploads carry are
+ * absent on a broadcast, and {@code dearrow-thumb.ajay.app} answered HTTP 204 for every live
+ * stream tried on three separate days. The only thing that yields a real frame is decoding the
+ * broadcast itself at the live edge, which is {@link DeArrowFrameRenderer#renderLive}.</p>
  */
 public final class DeArrowAutoThumbnail {
 
@@ -61,22 +73,6 @@ public final class DeArrowAutoThumbnail {
     /** How many automatically-extracted frames YouTube stores per upload: hq1, hq2, hq3. */
     @VisibleForTesting
     static final int AUTO_FRAME_COUNT = 3;
-
-    /**
-     * The one auto-extracted frame a live broadcast has: the current moment, 1280×720, and
-     * already 16:9 so it needs no letterbox removal.
-     */
-    @VisibleForTesting
-    static final String LIVE_FRAME = "hq720_live";
-
-    /**
-     * How long a live frame stays fresh.
-     *
-     * <p>Unlike an upload's frame, this one legitimately changes as the broadcast moves on, so
-     * it is cached only long enough that scrolling does not re-fetch it.</p>
-     */
-    @VisibleForTesting
-    static final long LIVE_CACHE_TTL_MS = 5 * 60 * 1000L;
 
     private static final int MAX_CACHED_FRAMES = 120;
 
@@ -105,25 +101,8 @@ public final class DeArrowAutoThumbnail {
 
     private static DeArrowAutoThumbnail instance;
 
-    private final LruCache<String, Entry> frames = new LruCache<>(MAX_CACHED_FRAMES);
+    private final LruCache<String, Bitmap> frames = new LruCache<>(MAX_CACHED_FRAMES);
     private final Map<String, Maybe<Bitmap>> inFlight = new ConcurrentHashMap<>();
-
-    /** A frame plus when it arrived, because a live frame expires and an upload's does not. */
-    private static final class Entry {
-        private final Bitmap bitmap;
-        private final long fetchedAt;
-        private final boolean live;
-
-        Entry(final Bitmap bitmap, final long fetchedAt, final boolean live) {
-            this.bitmap = bitmap;
-            this.fetchedAt = fetchedAt;
-            this.live = live;
-        }
-
-        boolean isStale() {
-            return live && System.currentTimeMillis() - fetchedAt > LIVE_CACHE_TTL_MS;
-        }
-    }
 
     private DeArrowAutoThumbnail() {
     }
@@ -158,15 +137,11 @@ public final class DeArrowAutoThumbnail {
 
     /**
      * @param videoId the video
-     * @param live    whether this is a broadcast in progress rather than an upload
      * @return the URL of the stored frame chosen for this video
      */
     @VisibleForTesting
     @NonNull
-    static String urlFor(@NonNull final String videoId, final boolean live) {
-        if (live) {
-            return String.format(Locale.US, "%s%s/%s.jpg", THUMBNAIL_HOST, videoId, LIVE_FRAME);
-        }
+    static String urlFor(@NonNull final String videoId) {
         return String.format(Locale.US, "%s%s/hq%d.jpg",
                 THUMBNAIL_HOST, videoId, frameIndexFor(videoId));
     }
@@ -182,15 +157,7 @@ public final class DeArrowAutoThumbnail {
      */
     @Nullable
     public Bitmap getCached(@NonNull final String videoId) {
-        final Entry entry = frames.get(videoId);
-        if (entry == null) {
-            return null;
-        }
-        if (entry.isStale()) {
-            frames.remove(videoId);
-            return null;
-        }
-        return entry.bitmap;
+        return frames.get(videoId);
     }
 
     /**
@@ -206,7 +173,7 @@ public final class DeArrowAutoThumbnail {
      * @return a Maybe emitting at most one bitmap, on the IO scheduler
      */
     @NonNull
-    public Maybe<Bitmap> fetch(@NonNull final String videoId, final boolean live) {
+    public Maybe<Bitmap> fetch(@NonNull final String videoId) {
         final Bitmap cached = getCached(videoId);
         if (cached != null) {
             return Maybe.just(cached);
@@ -215,7 +182,7 @@ public final class DeArrowAutoThumbnail {
         // one request instead of racing; the entry is dropped once it settles so a later bind
         // can retry after a transient failure.
         return inFlight.computeIfAbsent(videoId, id -> Maybe
-                .fromCallable(() -> fetchBlocking(id, live))
+                .fromCallable(() -> fetchBlocking(id))
                 .doFinally(() -> inFlight.remove(id))
                 .onErrorComplete()
                 .subscribeOn(Schedulers.io())
@@ -228,9 +195,9 @@ public final class DeArrowAutoThumbnail {
      * @return the decoded, de-letterboxed frame, or null if there is nothing usable
      */
     @Nullable
-    private Bitmap fetchBlocking(@NonNull final String videoId, final boolean live) {
+    private Bitmap fetchBlocking(@NonNull final String videoId) {
         try {
-            final Response response = NewPipe.getDownloader().get(urlFor(videoId, live));
+            final Response response = NewPipe.getDownloader().get(urlFor(videoId));
             if (response.responseCode() != 200) {
                 // 404 here means the upload is too fresh to have been processed, or that a
                 // row reported the wrong stream type — the caller falls back accordingly.
@@ -244,9 +211,8 @@ public final class DeArrowAutoThumbnail {
             if (decoded == null) {
                 return null;
             }
-            // The live frame is already 16:9; only the 4:3-boxed upload frames need cropping.
-            final Bitmap frame = live ? decoded : stripLetterbox(decoded);
-            frames.put(videoId, new Entry(frame, System.currentTimeMillis(), live));
+            final Bitmap frame = stripLetterbox(decoded);
+            frames.put(videoId, frame);
             return frame;
         } catch (final Exception | OutOfMemoryError e) {
             // Swallowed on purpose: no frame means the uploader's thumbnail stays, which is
