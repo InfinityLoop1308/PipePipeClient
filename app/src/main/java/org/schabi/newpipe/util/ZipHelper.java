@@ -105,9 +105,10 @@ public final class ZipHelper {
     }
 
     public static boolean isValidZipFile(final StoredFileHelper file) {
-        try (ZipInputStream ignored = new ZipInputStream(new BufferedInputStream(
+        try (ZipInputStream inZip = new ZipInputStream(new BufferedInputStream(
                 new SharpInputStream(file.getStream())))) {
-            return true;
+            // constructing the stream accepts any content, the first entry must be read
+            return inZip.getNextEntry() != null;
         } catch (final IOException ioe) {
             return false;
         }
