@@ -33,6 +33,14 @@ class PlayerTransportController(private val player: Player) {
 
         audioReactor.requestAudioFocus()
 
+        if (player.isLiveIdle()) {
+            // The live source was released while paused: rebuild it and jump to the live edge
+            // instead of resuming from the position the stream was paused at.
+            player.exitLiveIdle()
+            player.simpleExoPlayer.play()
+            return
+        }
+
         val item = playQueue.getItem()
         if (player.currentState.isCompleted && item != null
             && playQueue.getRecoveryPosition(item) / 1000 >= item.duration - 5

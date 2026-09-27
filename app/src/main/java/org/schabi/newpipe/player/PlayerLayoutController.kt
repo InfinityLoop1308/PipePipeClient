@@ -276,6 +276,18 @@ class PlayerLayoutController(private val player: Player) {
                 binding.surfaceView.visibility = View.VISIBLE
                 binding.endScreen.visibility = View.GONE
                 binding.playbackLiveSync.visibility = View.VISIBLE
+                val quality = player.currentMetadata?.maybeQuality?.orElse(null)
+                if (quality != null && quality.sortedVideoStreams.size > 1) {
+                    // a live stream played per-stream (e.g. a BiliBili round-play room) offers
+                    // its qualities through the regular video-on-demand selection pipeline
+                    player.menuController.buildQualityMenu()
+                    binding.qualityTextView.visibility = View.VISIBLE
+                } else {
+                    // an adaptive-manifest live stream (YouTube/Niconico): the variants only
+                    // exist once ExoPlayer has parsed the manifest, so the resolution button is
+                    // owned by the live quality controller
+                    player.liveQualityController.onItemLoaded()
+                }
             }
 
             StreamType.VIDEO_STREAM, StreamType.POST_LIVE_STREAM -> {

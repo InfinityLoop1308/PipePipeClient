@@ -9,6 +9,7 @@ import android.os.Build
 import android.util.Log
 import android.view.WindowManager
 import org.schabi.newpipe.fragments.detail.VideoDetailFragment
+import org.schabi.newpipe.util.DeviceUtils
 import org.schabi.newpipe.util.Localization.assureCorrectAppLanguage
 
 /**
@@ -117,7 +118,8 @@ class PlayerBroadcastReceiver(private val player: Player) {
                     player.checkPopupPositionBounds()
                 }
                 val landscape = player.service.isLandscape
-                if (wasLandscape != landscape) {
+                val inMultiWindow = player.parentActivity?.let(DeviceUtils::isInMultiWindow) == true
+                if (wasLandscape != landscape || inMultiWindow) {
                     wasLandscape = landscape
                     if (player.listeners.isFragmentVisible) {
                         player.uiModeController.onOrientationChanged(landscape)

@@ -262,6 +262,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
     override fun initListeners() {
         super.initListeners()
         feedBinding.refreshRootView.setOnClickListener { reloadContent() }
+        feedBinding.refreshIcon.setOnClickListener { reloadContent() }
         feedBinding.refreshSubtitleText.setOnLongClickListener {
             showNotLoadedSubscriptions()
             true

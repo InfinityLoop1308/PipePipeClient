@@ -144,16 +144,36 @@ class PlayerUiModeController(private val player: Player) {
             && player.isPrepared
 
     /**
-     * This will be called when the device orientation changed on its own. The transition follows
+     * This will be called when the screen orientation changed on its own. The transition follows
      * the screen, so it must not request another orientation.
+     *
+     * A split-screen pane reports the shape the divider gives it through the very same orientation
+     * change. A pane dragged wider than it is tall becomes landscape-shaped, and the video then
+     * fills it in fullscreen instead of squeezing the inline layout: this is the pre-rotation-
+     * refactor behavior the pane resize relies on (#2925). It runs regardless of the auto-rotate
+     * and rotation-controlled-fullscreen settings, because the pane shape is not the device being
+     * turned. It never pins the pane: this path only calls [setFullscreen], which requests no
+     * orientation, and [applyVideoOrientation] drops any lock while in multi-window.
      */
     fun onOrientationChanged(landscape: Boolean) {
         val activity = player.parentActivity ?: return
-        if (!player.videoPlayerSelected()
-            || DeviceUtils.isTv(player.context)
-            || DeviceUtils.isInMultiWindow(activity)
-            || !PlayerHelper.shouldRotationControlFullscreen(player.context)
-        ) {
+        if (!player.videoPlayerSelected() || DeviceUtils.isTv(player.context)) {
+            return
+        }
+        if (DeviceUtils.isInMultiWindow(activity)) {
+            // The tablet layout keeps fullscreen independent of the orientation, so leave it alone.
+            if (!DeviceUtils.isTablet(player.context)) {
+                // Follow the pane shape, keeping a vertical video in its portrait fullscreen.
+                if (landscape || !isVerticalVideo) {
+                    setFullscreen(landscape)
+                }
+            }
+            // A configuration change can enter multi-window without going through the fullscreen
+            // transition. Clear a stale video orientation lock in that case as well.
+            applyVideoOrientation()
+            return
+        }
+        if (!PlayerHelper.shouldRotationControlFullscreen(player.context)) {
             return
         }
         setFullscreen(landscape)
@@ -164,9 +184,7 @@ class PlayerUiModeController(private val player: Player) {
      * other way round.
      */
     fun applyVideoOrientation() {
-        if (!PlayerHelper.shouldRotateFullscreenToVideoOrientation(player.context)
-            || DeviceUtils.isTv(player.context)
-        ) {
+        if (DeviceUtils.isTv(player.context)) {
             return
         }
 
@@ -177,6 +195,10 @@ class PlayerUiModeController(private val player: Player) {
             // longer be dragged. Never lock the orientation here, and drop a lock that was
             // requested before the window entered multi-window (#2925).
             setOrientation(activity, ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+            return
+        }
+
+        if (!PlayerHelper.shouldRotateFullscreenToVideoOrientation(player.context)) {
             return
         }
 

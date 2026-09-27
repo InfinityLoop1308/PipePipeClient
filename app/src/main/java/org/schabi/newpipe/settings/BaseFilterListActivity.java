@@ -197,6 +197,20 @@ public abstract class BaseFilterListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             holder.textView.setText(items.get(position));
+            // Allow deleting via d-pad (OK button / long press) where swipe is impossible
+            holder.itemView.setOnClickListener(v -> {
+                int pos = holder.getAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION) {
+                    confirmDeleteFilterItem(items.get(pos));
+                }
+            });
+            holder.itemView.setOnLongClickListener(v -> {
+                int pos = holder.getAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION) {
+                    confirmDeleteFilterItem(items.get(pos));
+                }
+                return true;
+            });
         }
 
         @Override
@@ -239,17 +253,31 @@ public abstract class BaseFilterListActivity extends AppCompatActivity {
         @Override
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             int position = viewHolder.getAdapterPosition();
-            String itemToRemove = filteredItems.get(position);
-
-            // Remove from filtered list
-            filteredItems.remove(position);
-            adapter.notifyItemRemoved(position);
-
-            // Also remove from main list
-            filterItems.remove(itemToRemove);
-
-            adapter.updateEmptyViewVisibility();
-            saveFilterItems();
+            deleteFilterItem(filteredItems.get(position));
         }
+    }
+
+    private void confirmDeleteFilterItem(String item) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.delete)
+                .setMessage(getString(R.string.delete_filter_confirm, item))
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> deleteFilterItem(item))
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private void deleteFilterItem(String item) {
+        int filteredPosition = filteredItems.indexOf(item);
+        if (filteredPosition != -1) {
+            // Remove from filtered list
+            filteredItems.remove(filteredPosition);
+            adapter.notifyItemRemoved(filteredPosition);
+        }
+
+        // Also remove from main list
+        filterItems.remove(item);
+
+        adapter.updateEmptyViewVisibility();
+        saveFilterItems();
     }
 }

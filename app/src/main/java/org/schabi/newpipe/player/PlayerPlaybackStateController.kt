@@ -165,6 +165,9 @@ class PlayerPlaybackStateController(private val player: Player) {
                 player.autoQueueController.cancelEnqueueTimer()
                 onPaused()
                 player.bulletCommentsController.pause()
+                // A live stream has no paused position worth keeping: release the source so the
+                // manifest refresh, the segment downloads and the live chat connections stop.
+                player.enterLiveIdle()
             }
 
             PlayerPlaybackState.PAUSED_SEEK -> {
@@ -262,7 +265,11 @@ class PlayerPlaybackStateController(private val player: Player) {
         ) {
             player.binding.playPauseButton.setImageResource(R.drawable.ic_pause)
             animatePlayButtons(true, 200)
-            if (!player.isQueueVisible) {
+            // Only when the player owns the screen: on Android TV an embedded player
+            // (bottom sheet / sticky player) must not steal the D-pad focus from the
+            // page content, e.g. when returning from another activity
+            if (!player.isQueueVisible
+                    && (player.isFullscreen || player.popupPlayerSelected())) {
                 player.binding.playPauseButton.requestFocus()
             }
         }
@@ -307,7 +314,10 @@ class PlayerPlaybackStateController(private val player: Player) {
             ) {
                 player.binding.playPauseButton.setImageResource(R.drawable.ic_play_arrow)
                 animatePlayButtons(true, 200)
-                if (!player.isQueueVisible) {
+                // Same as in onPlaying(): an embedded player must not steal focus from
+                // the detail page content, e.g. the comments list
+                if (!player.isQueueVisible
+                        && (player.isFullscreen || player.popupPlayerSelected())) {
                     player.binding.playPauseButton.requestFocus()
                 }
             }

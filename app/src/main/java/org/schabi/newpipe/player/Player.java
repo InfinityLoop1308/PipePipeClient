@@ -133,6 +133,7 @@ public final class Player {
     @NonNull private final PlayerErrorHandler playerErrorHandler;
     @NonNull private final RepeatShuffleController repeatShuffleController;
     @NonNull private final PlayerTracksController tracksController;
+    @NonNull private final LiveQualityController liveQualityController;
     @NonNull private final PlayerProgressController progressController;
     @NonNull private final PlayerThumbnailController thumbnailController;
     @NonNull private final PlayerSurfaceController surfaceController;
@@ -169,6 +170,8 @@ public final class Player {
     // minimized to background but will resume automatically to the original player type
     private boolean isAudioOnly = false;
     private boolean isPrepared = false;
+    // Whether the source of a live stream was released because it is not actually playing.
+    private boolean liveIdle = false;
     private long startupTraceId;
 
     // Whether the player is fullscreen and whether the video is vertical live in
@@ -283,6 +286,7 @@ public final class Player {
         playerErrorHandler = new PlayerErrorHandler(this);
         repeatShuffleController = new RepeatShuffleController(this);
         tracksController = new PlayerTracksController(this);
+        liveQualityController = new LiveQualityController(this);
 
         popupWindowController = new PopupWindowController(this);
         gestureController = new PlayerGestureController(this);
@@ -412,6 +416,7 @@ public final class Player {
             Log.d(TAG, "destroyPlayer() called");
         }
 
+        liveIdle = false;
         stopSabrBackoffCountdown();
         surfaceController.cleanupVideoSurface();
 
@@ -500,6 +505,68 @@ public final class Player {
         if (playQueue != null) {
             playQueueManager = new MediaSourceManager(context, playbackListenerAdapter, playQueue);
         }
+    }
+
+    /**
+     * Whether the source of a live stream was released because it is not actually playing.
+     *
+     * <p>A live stream is stateless: while it is paused there is no position worth preserving, so
+     * {@link #enterLiveIdle()} releases the ExoPlayer source (which stops the manifest / playlist
+     * refresh and the segment downloads) and disconnects the live-only connections. The source is
+     * rebuilt by {@link #exitLiveIdle()} on the next play request.</p>
+     */
+    boolean isLiveIdle() {
+        return liveIdle;
+    }
+
+    /**
+     * Stops a live stream that is not actually playing.
+     *
+     * <p>VOD playback is deliberately not affected: there, keeping the source prepared is what
+     * makes resuming instant, so buffering while paused is desirable.</p>
+     */
+    void enterLiveIdle() {
+        if (liveIdle || exoPlayerIsNull() || !isCurrentStreamLive()) {
+            return;
+        }
+
+        liveIdle = true;
+        // A live stream resumes at the live edge, not at the position it happened to be paused at.
+        if (playQueue != null) {
+            playQueue.unsetRecovery(playQueue.getIndex());
+        }
+        // The live chat extractor owns its own connection/poll and is not driven by ExoPlayer.
+        bulletCommentsController.disconnect();
+        dataSource.disconnectWebSocketClients();
+        // Releasing the source is what actually stops the manifest / playlist refresh and the
+        // segment downloads ExoPlayer would otherwise keep doing for a prepared live source.
+        simpleExoPlayer.stop();
+        if (playQueueManager != null) {
+            playQueueManager.dispose();
+            playQueueManager = null;
+        }
+    }
+
+    /**
+     * Rebuilds the source that {@link #enterLiveIdle()} released. Playback only starts once the
+     * caller asks the player to play.
+     */
+    void exitLiveIdle() {
+        if (!liveIdle || exoPlayerIsNull()) {
+            return;
+        }
+
+        liveIdle = false;
+        reloadPlayQueueManager();
+    }
+
+    private boolean isCurrentStreamLive() {
+        final PlayerMediaItem item = getCurrentItem();
+        if (item != null && StreamTypeUtil.isLiveStream(item.getStreamType())) {
+            return true;
+        }
+        final StreamInfo info = getCurrentStreamInfo().orElse(null);
+        return info != null && StreamTypeUtil.isLiveStream(info.getStreamType());
     }
 
     void onPlaybackShutdown() {
@@ -879,6 +946,7 @@ public final class Player {
         autoQueueController.cancelEnqueueTimer();
         tracksController.onTextTracksChanged(tracks);
         tracksController.onAudioTracksChanged();
+        liveQualityController.onTracksChanged(tracks);
     }
 
     void onPlaybackParametersChanged(
@@ -1521,6 +1589,11 @@ public final class Player {
     @NonNull
     PlayerMenuController getMenuController() {
         return menuController;
+    }
+
+    @NonNull
+    LiveQualityController getLiveQualityController() {
+        return liveQualityController;
     }
 
     @NonNull

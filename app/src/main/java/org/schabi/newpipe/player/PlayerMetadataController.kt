@@ -109,6 +109,8 @@ class PlayerMetadataController(private val player: Player) {
         // Zoom belongs to the current video, matching the transient behavior of the official app.
         player.gestureController.resetPinchZoom()
         player.menuController.resetDisplayModeForNewVideo()
+        // So does a live resolution override: the tracks of the next item are unrelated.
+        player.liveQualityController.resetForNewVideo()
 
         player.thumbnailController.initThumbnail(info.thumbnailUrl)
         player.historyController.registerStreamViewed()

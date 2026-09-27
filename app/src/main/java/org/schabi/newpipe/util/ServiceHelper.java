@@ -349,7 +349,7 @@ public final class ServiceHelper {
         SponsorBlockApiSettings sponsorBlockApiSettings = buildSponsorBlockApiSettings(context);
         int loadingTimeoutInt = Integer.parseInt(sharedPreferences.getString("loading_timeout_key", "10"));
         boolean fetchFullPlaylist = sharedPreferences.getBoolean(context.getString(R.string.fetch_full_playlist_key), false);
-        boolean fetchDislike = sharedPreferences.getBoolean(context.getString(R.string.show_dislike_key), true);
+        boolean fetchDislike = sharedPreferences.getBoolean(context.getString(R.string.show_dislike_key), false);
         Set<String> blockingFields = sharedPreferences.getStringSet(context.getString(R.string.filter_type_key), new HashSet<>());
         
         for (final StreamingService s : ServiceList.all()) {
