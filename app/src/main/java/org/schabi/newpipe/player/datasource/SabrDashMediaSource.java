@@ -45,6 +45,7 @@ import java.util.Collections;
 
 public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
     private static final String TAG = "SabrDashMediaSource";
+    private static final int MAX_EXACT_SEGMENT_COUNT = 50_000;
     private static final long SEEK_FORWARD_SYNC_TOLERANCE_US = 2_000_000L;
     private static final long START_POSITION_FORWARD_SNAP_US = 500_000L;
     private static final long END_SEEK_BACKOFF_US = 1_000L;
@@ -310,7 +311,7 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
     private static String segmentTemplate(final YoutubeSabrInfo.Format format,
                                           final YoutubeSabrFormatTimeline timeline) {
         final long endSegment = timeline.getEndSequence();
-        if (endSegment <= 0 || endSegment > 10_000) {
+        if (endSegment <= 0 || endSegment > MAX_EXACT_SEGMENT_COUNT) {
             throw new IllegalStateException("Invalid exact SABR segment count: itag="
                     + format.getItag() + ", count=" + endSegment);
         }
