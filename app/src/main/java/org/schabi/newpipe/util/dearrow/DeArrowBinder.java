@@ -12,8 +12,6 @@ import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
-import org.schabi.newpipe.extractor.stream.StreamInfoItem;
-import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.util.PicassoHelper;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -21,24 +19,44 @@ import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.disposables.Disposable;
 
 /**
- * Applies DeArrow branding to an already-bound list row.
+ * Applies DeArrow branding to a list row.
  *
  * <p>This is the class that answers the long-standing objection to DeArrow on Android — that
- * swapping titles and thumbnails after the fact cannot be done seamlessly. It can, provided three
- * rules are never broken, and they are enforced here rather than left to each call site:</p>
+ * swapping titles and thumbnails after the fact cannot be done seamlessly. It can, provided
+ * these rules are never broken, and they are enforced here rather than left to each call
+ * site:</p>
  *
  * <ol>
- *   <li><b>The original is bound first, synchronously, always.</b> {@link #apply} is called
- *       <em>after</em> the row has already been populated with the uploader's title and
- *       thumbnail. A DeArrow lookup can therefore never delay a bind or leave a row blank.</li>
+ *   <li><b>The original TITLE is bound first, synchronously, always.</b> {@link #bind} is
+ *       called <em>after</em> the row has already been populated with the uploader's title, so
+ *       a DeArrow lookup can never delay a bind or leave a row's text blank.</li>
+ *   <li><b>The original THUMBNAIL is this class's decision, not the call site's.</b> See
+ *       below — this is the one place the original design was wrong in practice.</li>
  *   <li><b>A replacement is applied only if the row is still showing the same video.</b>
  *       RecyclerView reuses holders aggressively; the video id is stored on the view and
  *       re-checked on the main thread before anything is written, so a slow response for a
  *       scrolled-away row is discarded instead of corrupting the row that replaced it.</li>
- *   <li><b>A cached result is applied synchronously, with no asynchronous step at all.</b> After
- *       the first pass over a list, scrolling back and forth shows honest titles immediately —
- *       the visible flip only ever happens once per video, on the very first fetch.</li>
+ *   <li><b>A cached result is applied synchronously, with no asynchronous step at all.</b>
+ *       After the first pass over a list, scrolling back and forth shows honest titles
+ *       immediately — the visible flip only ever happens once per video.</li>
+ *   <li><b>An excluded video or channel is left completely alone</b> — no lookup, no frame,
+ *       no request. See {@link DeArrowExclusions}.</li>
  * </ol>
+ *
+ * <h2>Why the thumbnail load moved in here</h2>
+ *
+ * <p>Originally every call site loaded the uploader's thumbnail itself and then asked this
+ * class for a replacement, so a row was never blank. That is correct and it reads badly: on a
+ * first pass through a list, every row shows the clickbait image, and then flips. The user
+ * sees precisely the thing the feature exists to hide, on every row, every time.</p>
+ *
+ * <p>So the call sites now hand over the uploader's URL instead of loading it, and this class
+ * loads <em>one</em> image per row — the right one. When DeArrow turns out to have nothing
+ * (a broadcast in progress, an upload too fresh to have been processed) the uploader's image
+ * is loaded at that point, which costs a placeholder for the length of one 7 KB fetch. That
+ * miss is remembered by {@link DeArrowFrameCache}, so it is paid once per video rather than on
+ * every rebind. A user who prefers the old behaviour turns
+ * {@link DeArrowConfig#shouldSkipOriginalThumbnail()} off.</p>
  *
  * <p>A failure at any point is a no-op: the row keeps what YouTube gave it.</p>
  */
@@ -48,94 +66,107 @@ public final class DeArrowBinder {
     }
 
     /**
-     * Replaces the title and thumbnail of a row with DeArrow's, if the user has opted in and
-     * DeArrow has anything to say about this video.
+     * Binds a row's title and thumbnail, replacing either with DeArrow's where it can.
      *
-     * @param infoItem     the item the row was just bound to; ignored unless it is a YouTube
-     *                     stream, since DeArrow only covers YouTube
-     * @param titleView    the row's title view, already showing the uploader's title
-     * @param thumbnailView the row's thumbnail view, already loading the uploader's thumbnail;
-     *                      may be null for rows that show no image
+     * @param row           what the row is showing; build it with {@link DeArrowRow#of} or
+     *                      {@link DeArrowRow#ofStored}
+     * @param titleView     the row's title view, already showing the uploader's title
+     * @param thumbnailView the row's thumbnail view, or null for rows that show no image
      */
-    public static void apply(@Nullable final InfoItem infoItem,
-                             @NonNull final TextView titleView,
-                             @Nullable final ImageView thumbnailView) {
-        final StreamInfoItem item = infoItem instanceof StreamInfoItem
-                ? (StreamInfoItem) infoItem
-                : null;
-        // Whether a row is live comes from its stream TYPE, never its duration. Duration
-        // is -1 on every row of a YouTube search result — the extractor does not populate
-        // it there — so treating "no duration" as "live" sent every single video down the
-        // live path and stopped frame rendering completely (2026-09-25).
-        final boolean live = item != null
-                && (item.getStreamType() == StreamType.LIVE_STREAM
-                    || item.getStreamType() == StreamType.AUDIO_LIVE_STREAM);
-        applyToVideo(videoIdOf(infoItem),
-                item == null ? -1 : item.getServiceId(),
-                item == null ? null : item.getUrl(),
-                item == null ? 0 : item.getDuration(),
-                live, titleView, thumbnailView);
+    public static void bind(@NonNull final DeArrowRow row,
+                            @NonNull final TextView titleView,
+                            @Nullable final ImageView thumbnailView) {
+        clearPending(titleView);
+
+        final DeArrowConfig config = DeArrowSettings.read(titleView.getContext());
+        final boolean active = row.videoId != null
+                && config.isEnabled()
+                && !DeArrowExclusions.getInstance(titleView.getContext())
+                        .isExcluded(row.videoId, row.uploaderUrl, row.uploaderName);
+
+        if (!active) {
+            titleView.setTag(R.id.dearrow_video_id, null);
+            loadOriginalThumbnail(row, titleView, thumbnailView);
+            return;
+        }
+
+        // Rule 3: remember which video this row is showing, so a late response can be discarded.
+        titleView.setTag(R.id.dearrow_video_id, row.videoId);
+        bindThumbnail(row, titleView, thumbnailView, config);
+        bindTitle(row, titleView, thumbnailView, config);
     }
 
     /**
-     * The same, for rows built from a stored stream rather than an extractor item — the
-     * subscription feed and the watch history, which hold a {@code StreamEntity} instead.
+     * Decides which image the row loads, and loads it.
      *
-     * @param serviceId     the service the stream came from; anything but YouTube is ignored
-     * @param url           the stream URL the video id is read out of
-     * @param duration      the video's length in seconds, needed to pick a frame to render
-     *                      when nobody has submitted a thumbnail; 0 disables that fallback
-     * @param live          whether this is a live broadcast. Passed explicitly because a
-     *                      duration of 0 or -1 does NOT mean live — YouTube search results
-     *                      report -1 for every row, live or not.
-     * @param titleView     the row's title view, already showing the stored title
-     * @param thumbnailView the row's thumbnail view, or null
+     * <p>Four outcomes, in order of preference: a DeArrow frame we already hold, painted with
+     * no asynchronous hop at all; a frame we are about to fetch, with nothing loaded in the
+     * meantime; the uploader's image, when the user has asked to keep the old behaviour or
+     * thumbnails are not being replaced; and the uploader's image again, later, if the frame
+     * never arrives.</p>
      */
-    public static void apply(final int serviceId,
-                             @Nullable final String url,
-                             final long duration,
-                             final boolean live,
-                             @NonNull final TextView titleView,
-                             @Nullable final ImageView thumbnailView) {
-        applyToVideo(serviceId == ServiceList.YouTube.getServiceId()
-                ? DeArrowVideoId.fromUrl(url)
-                : null, serviceId, url, duration, live, titleView, thumbnailView);
+    private static void bindThumbnail(@NonNull final DeArrowRow row,
+                                      @NonNull final TextView titleView,
+                                      @Nullable final ImageView thumbnailView,
+                                      @NonNull final DeArrowConfig config) {
+        titleView.setTag(R.id.dearrow_original_pending, Boolean.FALSE);
+        if (thumbnailView == null || row.videoId == null) {
+            return;
+        }
+        if (!config.shouldReplaceThumbnails()) {
+            loadOriginalThumbnail(row, titleView, thumbnailView);
+            return;
+        }
+
+        final Bitmap alreadyRendered = cachedFrame(row.videoId);
+        if (alreadyRendered != null) {
+            paint(thumbnailView, alreadyRendered);
+            return;
+        }
+
+        // Nothing cached. Either the row holds the placeholder and waits for the real image,
+        // or it falls back to the old load-then-flip behaviour — never both, because loading
+        // the original here is exactly what produces the flip.
+        //
+        // A video already known to have no stored frame does not qualify: holding an empty
+        // row for a fetch that is going to 404 again is strictly worse than showing the
+        // uploader's image immediately.
+        //
+        // A row with no original URL is one whose caller loads the image itself — the video
+        // detail page. Blanking that to a placeholder would be a one-way trip, because there
+        // is nothing here to restore it with if the frame never arrives.
+        final boolean canProduceFrame = config.shouldUseRandomFrameFallback()
+                && !DeArrowAutoThumbnail.getInstance().isKnownMiss(row.videoId);
+        if (config.shouldSkipOriginalThumbnail() && canProduceFrame
+                && row.originalThumbnailUrl != null) {
+            // Held deliberately: the placeholder, not the clickbait, until the frame lands.
+            PicassoHelper.cancelRequest(thumbnailView);
+            thumbnailView.setImageResource(R.drawable.dummy_thumbnail);
+            titleView.setTag(R.id.dearrow_original_pending, Boolean.TRUE);
+        } else {
+            loadOriginalThumbnail(row, titleView, thumbnailView);
+        }
+        renderFallbackFrame(row, titleView, thumbnailView, config);
     }
 
-    private static void applyToVideo(@Nullable final String videoId,
-                                     final int serviceId,
-                                     @Nullable final String url,
-                                     final long duration,
-                                     final boolean live,
-                                     @NonNull final TextView titleView,
-                                     @Nullable final ImageView thumbnailView) {
+    /** Looks up the honest title, and the community thumbnail if there is one. */
+    private static void bindTitle(@NonNull final DeArrowRow row,
+                                  @NonNull final TextView titleView,
+                                  @Nullable final ImageView thumbnailView,
+                                  @NonNull final DeArrowConfig config) {
+        final String videoId = row.videoId;
         if (videoId == null) {
-            clearPending(titleView);
-            return;
-        }
-        final DeArrowConfig config = DeArrowSettings.read(titleView.getContext());
-        if (!config.isEnabled()) {
-            clearPending(titleView);
             return;
         }
 
-        // Rule 2: remember which video this row is showing, so a late response can be discarded.
-        titleView.setTag(R.id.dearrow_video_id, videoId);
-
-        // Rule 3: a result we already have is applied with no asynchronous hop, so a row that
+        // Rule 4: a result we already have is applied with no asynchronous hop, so a row that
         // scrolls back into view never visibly flips a second time.
         final DeArrowBranding cached = DeArrowCache.getInstance().getCached(videoId);
         if (!cached.isEmpty()) {
-            clearPending(titleView);
-            write(cached, titleView, thumbnailView);
-            if (cached.getThumbnailUrl() == null) {
-                renderFallbackFrame(videoId, serviceId, url, duration, live, titleView,
-                        thumbnailView, config);
-            }
+            write(cached, row, titleView, thumbnailView);
             return;
         }
 
-        clearPending(titleView);
         final Disposable disposable = DeArrowCache.getInstance()
                 .lookup(videoId, config)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -144,16 +175,7 @@ public final class DeArrowBinder {
                         // The holder was recycled onto a different video while we were waiting.
                         return;
                     }
-                    if (!branding.isEmpty()) {
-                        write(branding, titleView, thumbnailView);
-                    }
-                    // Most videos have no submission at all, which is exactly when the
-                    // uploader's thumbnail is least trustworthy. Fall back to a frame from
-                    // the video itself, as the browser extension does by default.
-                    if (branding.getThumbnailUrl() == null) {
-                        renderFallbackFrame(videoId, serviceId, url, duration, live, titleView,
-                                thumbnailView, config);
-                    }
+                    write(branding, row, titleView, thumbnailView);
                 }, error -> {
                     // lookup() is documented never to error; this arm exists so that a future
                     // change to it cannot crash the app from a background thread.
@@ -162,42 +184,46 @@ public final class DeArrowBinder {
     }
 
     /**
-     * Writes the replacement into the views.
+     * Writes a branding result into the views.
      *
-     * @param branding      what to show; null fields mean "leave this view alone"
+     * @param branding      what to show; null fields mean "this source had nothing"
+     * @param row           the row being bound
      * @param titleView     the row's title view
      * @param thumbnailView the row's thumbnail view, or null
      */
     private static void write(@NonNull final DeArrowBranding branding,
+                              @NonNull final DeArrowRow row,
                               @NonNull final TextView titleView,
                               @Nullable final ImageView thumbnailView) {
         if (branding.getTitle() != null) {
             titleView.setText(branding.getTitle());
         }
-        if (branding.getThumbnailUrl() != null && thumbnailView != null) {
-            final String videoId = (String) titleView.getTag(R.id.dearrow_video_id);
-            // NOT handed to the image loader directly. That URL points at the DeArrow
-            // thumbnail server, which answers HTTP 204 for any frame it does not already
-            // hold — and an image loader treats a 204 as a successful empty response, so it
-            // paints its placeholder over a row that had a perfectly good thumbnail
-            // (reported on a real device, 2026-09-27). DeArrowImageFetch only ever returns
-            // bytes that really decoded; anything else leaves the row alone.
-            final Disposable disposable = DeArrowImageFetch.fetch(branding.getThumbnailUrl())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(image -> {
-                        if (videoId == null
-                                || videoId.equals(titleView.getTag(R.id.dearrow_video_id))) {
-                            paint(thumbnailView, image);
-                        }
-                    }, error -> {
-                        // fetch() is documented never to error; this arm only keeps a future
-                        // change to it from crashing the app off a background thread.
-                    }, () -> {
-                        // Nothing usable at that URL — the uploader's thumbnail stays, and
-                        // the frame fallback still runs, so the row is not left as-is.
-                    });
-            titleView.setTag(R.id.dearrow_thumbnail_disposable, disposable);
+        if (branding.getThumbnailUrl() == null || thumbnailView == null) {
+            return;
         }
+        final String videoId = row.videoId;
+        // NOT handed to the image loader directly. That URL points at the DeArrow thumbnail
+        // server, which answers HTTP 204 for any frame it does not already hold — and an
+        // image loader treats a 204 as a successful empty response, so it paints its
+        // placeholder over a row that had a perfectly good thumbnail (reported on a real
+        // device, 2026-09-27). DeArrowImageFetch only ever returns bytes that really decoded.
+        final Disposable disposable = DeArrowImageFetch.fetch(branding.getThumbnailUrl())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(image -> {
+                    if (videoId == null
+                            || videoId.equals(titleView.getTag(R.id.dearrow_video_id))) {
+                        paint(thumbnailView, image);
+                    }
+                }, error -> {
+                    // fetch() is documented never to error; this arm only keeps a future
+                    // change to it from crashing the app off a background thread.
+                }, () -> {
+                    // Nothing usable at that URL — and nothing to do about it here, because
+                    // bindThumbnail has already started the frame path for this row. Its
+                    // terminal arm is what loads the uploader's image if that comes up empty
+                    // too, so the row cannot be left holding the placeholder.
+                });
+        titleView.setTag(R.id.dearrow_thumbnail_disposable, disposable);
     }
 
     /**
@@ -230,26 +256,18 @@ public final class DeArrowBinder {
      * <p>This is the case that covers most of YouTube. The branding API returns nothing at
      * all for an unsubmitted video, and the thumbnail server will not render one on demand,
      * so the frame has to be produced here — see {@link DeArrowFrameRenderer}.</p>
-     *
-     * @param videoId       the video
-     * @param serviceId     its service
-     * @param url           its page URL, which the renderer resolves a stream from
-     * @param duration      its length in seconds
-     * @param titleView     the row's title view, which carries the recycle guard
-     * @param thumbnailView the view to write into; nothing happens if it is null
-     * @param config        the user's settings; the fallback is skipped unless it is on
      */
-    private static void renderFallbackFrame(@NonNull final String videoId,
-                                            final int serviceId,
-                                            @Nullable final String url,
-                                            final long duration,
-                                            final boolean live,
+    private static void renderFallbackFrame(@NonNull final DeArrowRow row,
                                             @NonNull final TextView titleView,
                                             @Nullable final ImageView thumbnailView,
                                             @NonNull final DeArrowConfig config) {
-        if (thumbnailView == null || url == null
+        final String videoId = row.videoId;
+        if (thumbnailView == null || videoId == null || row.url == null
                 || !config.shouldReplaceThumbnails()
                 || !config.shouldUseRandomFrameFallback()) {
+            if (originalStillOwed(titleView)) {
+                loadOriginalThumbnail(row, titleView, thumbnailView);
+            }
             return;
         }
         // Either path may already have produced this frame; a cached one is painted with no
@@ -301,14 +319,14 @@ public final class DeArrowBinder {
                     if (!config.shouldUseLiveFrames()) {
                         return Maybe.empty();
                     }
-                    return live
-                            ? liveFallback(videoId, serviceId, url, config)
+                    return row.live
+                            ? liveFallback(row, config)
                             : DeArrowFrameRenderer.getInstance()
-                                    .render(serviceId, url, videoId, duration);
+                                    .render(row.serviceId, row.url, videoId, row.duration);
                 }))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(frame -> {
-                    if (videoId.equals(titleView.getTag(R.id.dearrow_video_id))) {
+                    if (bindingStillCurrent(row, titleView)) {
                         paint(thumbnailView, frame);
                     }
                     // Otherwise the holder was recycled onto a different video while the
@@ -316,10 +334,56 @@ public final class DeArrowBinder {
                 }, error -> {
                     // Neither source is documented to error; this arm only keeps a future
                     // change to one of them from crashing the app off a background thread.
+                    if (bindingStillCurrent(row, titleView) && originalStillOwed(titleView)) {
+                        loadOriginalThumbnail(row, titleView, thumbnailView);
+                    }
                 }, () -> {
-                    // Completed with no frame: the uploader's thumbnail stays, as intended.
+                    // No frame for this video. If the original was never loaded, this is the
+                    // moment it has to be — the row is still showing a placeholder.
+                    if (bindingStillCurrent(row, titleView) && originalStillOwed(titleView)) {
+                        loadOriginalThumbnail(row, titleView, thumbnailView);
+                    }
                 });
         titleView.setTag(R.id.dearrow_frame_disposable, disposable);
+    }
+
+    /**
+     * @param row       the row a pending result belongs to
+     * @param titleView the view carrying the recycle guard
+     * @return whether that view is still showing this row's video
+     */
+    private static boolean bindingStillCurrent(@NonNull final DeArrowRow row,
+                                               @NonNull final TextView titleView) {
+        return row.videoId != null
+                && row.videoId.equals(titleView.getTag(R.id.dearrow_video_id));
+    }
+
+    /**
+     * Loads the uploader's own thumbnail.
+     *
+     * <p>A null {@code originalThumbnailUrl} means the call site loaded the image itself and
+     * this class must not touch it — the video detail page, whose thumbnail is not a list
+     * row. Everywhere else this is the fallback, and it is deliberately the only place the
+     * uploader's image is ever requested.</p>
+     */
+    private static void loadOriginalThumbnail(@NonNull final DeArrowRow row,
+                                              @NonNull final TextView titleView,
+                                              @Nullable final ImageView thumbnailView) {
+        titleView.setTag(R.id.dearrow_original_pending, Boolean.FALSE);
+        if (thumbnailView == null || row.originalThumbnailUrl == null) {
+            return;
+        }
+        PicassoHelper.loadScaledDownThumbnail(thumbnailView.getContext(),
+                row.originalThumbnailUrl).into(thumbnailView);
+    }
+
+    /**
+     * @param titleView the view carrying the recycle guard
+     * @return whether this row is still holding the placeholder waiting for a DeArrow image,
+     *         and therefore still owes itself the uploader's one if nothing arrives
+     */
+    private static boolean originalStillOwed(@NonNull final TextView titleView) {
+        return Boolean.TRUE.equals(titleView.getTag(R.id.dearrow_original_pending));
     }
 
     /**
@@ -342,25 +406,22 @@ public final class DeArrowBinder {
      * resolves the stream and briefly opens it, so it is its own switch and off by default.
      * See {@link DeArrowConfig#shouldUseLiveFrames()}.</p>
      *
-     * @param videoId   the broadcast
-     * @param serviceId its service
-     * @param url       its page URL, which the renderer resolves a playable stream from
-     * @param config    the user's settings
+     * @param row    the broadcast's row
+     * @param config the user's settings
      * @return a Maybe emitting at most one frame; never errors
      */
     @NonNull
-    private static Maybe<Bitmap> liveFallback(@NonNull final String videoId,
-                                              final int serviceId,
-                                              @NonNull final String url,
+    private static Maybe<Bitmap> liveFallback(@NonNull final DeArrowRow row,
                                               @NonNull final DeArrowConfig config) {
-        if (!config.shouldUseLiveFrames()) {
+        if (!config.shouldUseLiveFrames() || row.url == null || row.videoId == null) {
             return Maybe.empty();
         }
+        final String videoId = row.videoId;
         // The thumbnail server is tried last and almost never answers — it has returned HTTP
         // 204 for every live broadcast tried across three days — but it costs one request and
         // is the only source that could serve a community-curated live frame.
         return DeArrowFrameRenderer.getInstance()
-                .renderLive(serviceId, url, videoId)
+                .renderLive(row.serviceId, row.url, videoId)
                 .switchIfEmpty(Maybe.defer(
                         () -> DeArrowLiveFrame.getInstance().fetch(videoId, config)));
     }
@@ -369,14 +430,11 @@ public final class DeArrowBinder {
     /**
      * Writes a frame into a row, and makes it stick.
      *
-     * <p><b>Cancelling the pending image request is the whole point.</b> Every call site
-     * binds the uploader's thumbnail with the image loader first and then asks DeArrow for a
-     * replacement — correct, because the row must never be blank. But writing a bitmap
-     * directly does not cancel that load, so when the replacement is available immediately
-     * (already cached) and the uploader's image is not (loader cache miss), the row shows the
-     * honest frame and then visibly flips <em>back</em> to the clickbait a moment later, as
-     * the original finishes and paints over it. The two caches evict independently, so this
-     * happens on exactly the long feeds where it is most noticeable.</p>
+     * <p><b>Cancelling the pending image request is the whole point.</b> A row may still have
+     * an image load in flight — from a previous bind of the recycled holder, or from the
+     * fallback path — and writing a bitmap directly does not cancel it, so the row would show
+     * the honest frame and then visibly flip <em>back</em> as the other load finished and
+     * painted over it.</p>
      *
      * @param thumbnailView the row's thumbnail view
      * @param frame         the frame to show
@@ -403,21 +461,36 @@ public final class DeArrowBinder {
     }
 
     /**
-     * Extracts the YouTube video id a row is showing.
+     * The pre-{@link DeArrowRow} entry point, for call sites that load the thumbnail
+     * themselves.
      *
-     * @param infoItem the bound item
-     * @return the 11-character video id, or null if this is not a YouTube stream (DeArrow has no
-     *         data for Bilibili, NicoNico, SoundCloud or any of the other supported services)
+     * @param infoItem      the bound item
+     * @param titleView     the row's title view
+     * @param thumbnailView the row's thumbnail view, or null
      */
-    @Nullable
-    private static String videoIdOf(@Nullable final InfoItem infoItem) {
-        if (!(infoItem instanceof StreamInfoItem)) {
-            return null;
-        }
-        final StreamInfoItem item = (StreamInfoItem) infoItem;
-        if (item.getServiceId() != ServiceList.YouTube.getServiceId()) {
-            return null;
-        }
-        return DeArrowVideoId.fromUrl(item.getUrl());
+    public static void apply(@Nullable final InfoItem infoItem,
+                             @NonNull final TextView titleView,
+                             @Nullable final ImageView thumbnailView) {
+        bind(DeArrowRow.of(infoItem, null), titleView, thumbnailView);
+    }
+
+    /**
+     * The same, for rows built from a stored stream rather than an extractor item.
+     *
+     * @param serviceId     the service the stream came from
+     * @param url           the stream URL the video id is read out of
+     * @param duration      the video's length in seconds
+     * @param live          whether this is a live broadcast; see {@link DeArrowRow#live}
+     * @param titleView     the row's title view
+     * @param thumbnailView the row's thumbnail view, or null
+     */
+    public static void apply(final int serviceId,
+                             @Nullable final String url,
+                             final long duration,
+                             final boolean live,
+                             @NonNull final TextView titleView,
+                             @Nullable final ImageView thumbnailView) {
+        bind(DeArrowRow.ofStored(serviceId, url, duration, live, null, null, null),
+                titleView, thumbnailView);
     }
 }

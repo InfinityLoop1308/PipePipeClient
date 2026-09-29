@@ -158,6 +158,20 @@ public final class DeArrowAutoThumbnail {
     }
 
     /**
+     * Whether this video has already been asked for and had nothing.
+     *
+     * <p>Read before a row decides to hold the placeholder and wait: keeping a row empty for
+     * a fetch that is going to 404 again is strictly worse than showing the uploader's image
+     * straight away. See {@link DeArrowBinder}.</p>
+     *
+     * @param videoId the video
+     * @return true if a recent fetch found no stored frame
+     */
+    public boolean isKnownMiss(@NonNull final String videoId) {
+        return frames.isKnownMiss(videoId);
+    }
+
+    /**
      * Fetches the stored frame for a video.
      *
      * <p>Completes empty rather than erroring for anything that is not a usable image — a 404

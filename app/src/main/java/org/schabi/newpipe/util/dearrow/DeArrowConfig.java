@@ -23,6 +23,7 @@ public final class DeArrowConfig {
     private final boolean replaceThumbnails;
     private final boolean useRandomFrameFallback;
     private final boolean useLiveFrames;
+    private final boolean skipOriginalThumbnail;
     private final boolean autoFormatTitles;
     @NonNull
     private final String apiUrl;
@@ -65,11 +66,26 @@ public final class DeArrowConfig {
                          final boolean autoFormatTitles,
                          @NonNull final String apiUrl,
                          @NonNull final String thumbnailApiUrl) {
+        this(enabled, replaceTitles, replaceThumbnails, useRandomFrameFallback, useLiveFrames,
+                true, autoFormatTitles, apiUrl, thumbnailApiUrl);
+    }
+
+    @SuppressWarnings("checkstyle:ParameterNumber")
+    public DeArrowConfig(final boolean enabled,
+                         final boolean replaceTitles,
+                         final boolean replaceThumbnails,
+                         final boolean useRandomFrameFallback,
+                         final boolean useLiveFrames,
+                         final boolean skipOriginalThumbnail,
+                         final boolean autoFormatTitles,
+                         @NonNull final String apiUrl,
+                         @NonNull final String thumbnailApiUrl) {
         this.enabled = enabled;
         this.replaceTitles = replaceTitles;
         this.replaceThumbnails = replaceThumbnails;
         this.useRandomFrameFallback = useRandomFrameFallback;
         this.useLiveFrames = useLiveFrames;
+        this.skipOriginalThumbnail = skipOriginalThumbnail;
         this.autoFormatTitles = autoFormatTitles;
         this.apiUrl = stripTrailingSlash(apiUrl);
         this.thumbnailApiUrl = stripTrailingSlash(thumbnailApiUrl);
@@ -123,6 +139,23 @@ public final class DeArrowConfig {
      */
     public boolean shouldUseLiveFrames() {
         return useLiveFrames;
+    }
+
+    /**
+     * @return true if a row whose thumbnail DeArrow is going to replace should never load the
+     *         uploader's image at all.
+     *
+     *         <p>The original design loaded it first and painted over it, so a row was never
+     *         blank. Correct, and visibly wrong to use: on a first pass through a list every
+     *         row shows the clickbait, then flips. Skipping the original means one image load
+     *         per row instead of two — the right one — at the cost of holding the grey
+     *         placeholder for as long as the frame fetch takes, and of a second load for the
+     *         minority of videos that turn out to have no frame at all (a broadcast in
+     *         progress, an upload too fresh to have been processed). That miss is remembered,
+     *         so it costs the double load once and not on every rebind.</p>
+     */
+    public boolean shouldSkipOriginalThumbnail() {
+        return skipOriginalThumbnail;
     }
 
     public boolean shouldAutoFormatTitles() {

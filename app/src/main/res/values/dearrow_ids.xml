@@ -6,4 +6,8 @@
     <item name="dearrow_disposable" type="id" />
     <item name="dearrow_frame_disposable" type="id" />
     <item name="dearrow_thumbnail_disposable" type="id" />
+    <!-- True while a row is deliberately holding the placeholder instead of the uploader's
+         thumbnail, so whichever DeArrow source finishes last knows it still owes the row an
+         image if it has nothing of its own. -->
+    <item name="dearrow_original_pending" type="id" />
 </resources>

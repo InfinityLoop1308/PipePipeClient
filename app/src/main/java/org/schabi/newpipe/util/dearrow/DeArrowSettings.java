@@ -105,6 +105,11 @@ public final class DeArrowSettings {
                 // request and a media decode per row, where an upload's costs one small image
                 // fetch. See DeArrowConfig#shouldUseLiveFrames.
                 prefs.getBoolean(context.getString(R.string.dearrow_live_frame_key), false),
+                // On by default: loading the uploader's thumbnail first and painting over it
+                // is what produces the visible flip on a first pass through a list, and the
+                // whole point of the feature is not to show the clickbait.
+                prefs.getBoolean(
+                        context.getString(R.string.dearrow_skip_original_thumbnail_key), true),
                 prefs.getBoolean(context.getString(R.string.dearrow_auto_format_key), true),
                 prefs.getString(context.getString(R.string.dearrow_api_url_key),
                         DeArrowConfig.DEFAULT_API_URL),

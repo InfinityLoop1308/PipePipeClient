@@ -17,8 +17,8 @@ import org.schabi.newpipe.local.LocalItemBuilder;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.extractor.stream.StreamType;
-import org.schabi.newpipe.util.PicassoHelper;
 import org.schabi.newpipe.util.dearrow.DeArrowBinder;
+import org.schabi.newpipe.util.dearrow.DeArrowRow;
 import org.schabi.newpipe.views.AnimatedProgressBar;
 
 import java.time.format.DateTimeFormatter;
@@ -115,15 +115,18 @@ public class LocalStatisticStreamItemHolder extends LocalItemHolder {
             itemAdditionalDetails.setText(getStreamInfoDetailLine(item, dateTimeFormatter));
         }
 
-        // Default thumbnail is shown on error, while loading and if the url is empty
-        PicassoHelper.loadScaledDownThumbnail(itemThumbnailView.getContext(), item.getStreamEntity().getThumbnailUrl())
-                .into(itemThumbnailView);
-
-        // See DeArrowBinder: applied on top of the row bound above, never in place of it.
-        DeArrowBinder.apply(item.getStreamEntity().getServiceId(), item.getStreamEntity().getUrl(),
+        // See DeArrowBinder: it owns the thumbnail load, so that a row loads the honest image
+        // once instead of the uploader's first and the honest one over the top of it. The
+        // default thumbnail is still what shows on error, while loading and for an empty URL.
+        DeArrowBinder.bind(DeArrowRow.ofStored(
+                item.getStreamEntity().getServiceId(),
+                item.getStreamEntity().getUrl(),
                 item.getStreamEntity().getDuration(),
                 item.getStreamEntity().getStreamType() == StreamType.LIVE_STREAM
                         || item.getStreamEntity().getStreamType() == StreamType.AUDIO_LIVE_STREAM,
+                item.getStreamEntity().getUploaderUrl(),
+                item.getStreamEntity().getUploader(),
+                item.getStreamEntity().getThumbnailUrl()),
                 itemVideoTitleView, itemThumbnailView);
 
         itemView.setOnClickListener(view -> {

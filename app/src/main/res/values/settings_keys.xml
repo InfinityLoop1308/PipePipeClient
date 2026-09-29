@@ -481,6 +481,13 @@
     <string name="dearrow_auto_format_key" translatable="false">dearrow_auto_format</string>
     <string name="dearrow_api_url_key" translatable="false">dearrow_api_url</string>
     <string name="dearrow_thumbnail_api_url_key" translatable="false">dearrow_thumbnail_api_url</string>
+    <string name="dearrow_skip_original_thumbnail_key" translatable="false">dearrow_skip_original_thumbnail</string>
+    <string name="dearrow_exclusions_key" translatable="false">dearrow_exclusions</string>
+    <!-- Both start with "dearrow_" on purpose: the preference listener in DeArrowSettings
+         drops the branding and frame caches for any key with that prefix, so excluding a
+         video immediately stops it showing the DeArrow title it was already cached with. -->
+    <string name="dearrow_excluded_videos_key" translatable="false">dearrow_excluded_videos</string>
+    <string name="dearrow_excluded_channels_key" translatable="false">dearrow_excluded_channels</string>
     <string name="dearrow_clear_cache_key" translatable="false">dearrow_clear_cache</string>
 
     <string name="sponsor_block_home_page_key" translatable="false">sponsor_block_home_page</string>

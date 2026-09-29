@@ -24,9 +24,11 @@ import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.InfoItem;
+import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.player.helper.PlayerHolder;
+import org.schabi.newpipe.util.dearrow.DeArrowSettings;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 
 import java.util.ArrayList;
@@ -353,6 +355,23 @@ public final class InfoItemDialog {
             addMarkAsWatchedEntryIfNeeded();
             addEntry(StreamDialogDefaultEntry.SHOW_CHANNEL_DETAILS);
             addEntry(StreamDialogDefaultEntry.ADD_TO_FILTER_LIST);
+            addDeArrowEntryIfNeeded();
+            return this;
+        }
+
+        /**
+         * Adds {@link StreamDialogDefaultEntry#DEARROW_EXCLUDE}, but only where it would do
+         * something: DeArrow has to be switched on, and the row has to be a YouTube video,
+         * since that is the only service it has data for. Showing it otherwise would add a
+         * row to every long-press menu in the app that does nothing when tapped.
+         *
+         * @return the current {@link Builder} instance
+         */
+        public Builder addDeArrowEntryIfNeeded() {
+            if (DeArrowSettings.read(context).isEnabled()
+                    && infoItem.getServiceId() == ServiceList.YouTube.getServiceId()) {
+                addEntry(StreamDialogDefaultEntry.DEARROW_EXCLUDE);
+            }
             return this;
         }
 

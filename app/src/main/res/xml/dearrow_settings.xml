@@ -60,6 +60,24 @@
             android:summary="@string/dearrow_live_frame_summary"
             android:title="@string/dearrow_live_frame_title"/>
 
+        <!-- Depends on thumbnail replacement rather than on DeArrow as a whole: with
+             thumbnails left alone there is no replacement to wait for, so the switch would
+             have nothing to do. -->
+        <SwitchPreference
+            app:iconSpaceReserved="false"
+            android:dependency="@string/dearrow_replace_thumbnails_key"
+            android:defaultValue="true"
+            android:key="@string/dearrow_skip_original_thumbnail_key"
+            android:summary="@string/dearrow_skip_original_thumbnail_summary"
+            android:title="@string/dearrow_skip_original_thumbnail_title"/>
+
+        <Preference
+            app:iconSpaceReserved="false"
+            android:dependency="@string/dearrow_enable_key"
+            android:key="@string/dearrow_exclusions_key"
+            android:summary="@string/dearrow_exclusions_summary_empty"
+            android:title="@string/dearrow_exclusions_title"/>
+
         <SwitchPreference
             app:iconSpaceReserved="false"
             android:dependency="@string/dearrow_enable_key"

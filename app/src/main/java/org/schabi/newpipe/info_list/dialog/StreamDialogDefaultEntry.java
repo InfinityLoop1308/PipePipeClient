@@ -23,6 +23,8 @@ import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.ServiceHelper;
+import org.schabi.newpipe.util.dearrow.DeArrowExclusions;
+import org.schabi.newpipe.util.dearrow.DeArrowVideoId;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
@@ -178,6 +180,49 @@ public enum StreamDialogDefaultEntry {
                 .show();
     }),
 
+
+    /**
+     * Turns DeArrow off for this video, or for its whole channel.
+     *
+     * <p>Both options in one dialog with their current state pre-ticked, rather than two
+     * menu rows whose labels would have to flip between "exclude" and "un-exclude": the
+     * long-press menu is already long, and a checkbox says "this is a state you are editing"
+     * where a verb says "this is a thing you are doing".</p>
+     */
+    DEARROW_EXCLUDE(R.string.dearrow_exclude_entry, (fragment, item) -> {
+        final Context context = fragment.requireContext();
+        final DeArrowExclusions exclusions = DeArrowExclusions.getInstance(context);
+        final String videoId = DeArrowVideoId.fromUrl(item.getUrl());
+        final String channelLabel = item.getUploaderName() == null
+                || item.getUploaderName().isEmpty()
+                ? context.getString(R.string.dearrow_exclude_channel_unnamed)
+                : context.getString(R.string.dearrow_exclude_channel, item.getUploaderName());
+
+        final CharSequence[] labels = {
+                context.getString(R.string.dearrow_exclude_video),
+                channelLabel,
+        };
+        final boolean[] checked = {
+                exclusions.isVideoExcluded(videoId),
+                exclusions.isChannelExcluded(item.getUploaderUrl(), item.getUploaderName()),
+        };
+
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.dearrow_exclude_dialog_title)
+                .setMultiChoiceItems(labels, checked.clone(), (d, which, isChecked) ->
+                        checked[which] = isChecked)
+                .setPositiveButton(android.R.string.ok, (d, which) -> {
+                    if (videoId != null) {
+                        exclusions.setVideoExcluded(videoId, item.getName(), checked[0]);
+                    }
+                    exclusions.setChannelExcluded(item.getUploaderUrl(), item.getUploaderName(),
+                            checked[1]);
+                    Toast.makeText(context, R.string.dearrow_exclude_saved, Toast.LENGTH_SHORT)
+                            .show();
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }),
 
     NAVIGATE_TO(R.string.navigate_to, (fragment, item) -> {
         throw new UnsupportedOperationException("This needs to be implemented manually "

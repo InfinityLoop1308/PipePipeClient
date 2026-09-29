@@ -18,8 +18,8 @@ import org.schabi.newpipe.local.history.HistoryRecordManager;
 import androidx.preference.PreferenceManager;
 
 import org.schabi.newpipe.util.Localization;
-import org.schabi.newpipe.util.PicassoHelper;
 import org.schabi.newpipe.util.dearrow.DeArrowBinder;
+import org.schabi.newpipe.util.dearrow.DeArrowRow;
 import org.schabi.newpipe.views.AnimatedProgressBar;
 
 import java.util.concurrent.TimeUnit;
@@ -118,13 +118,14 @@ public class StreamInfoItemHolder extends InfoItemHolder {
             itemProgressView.setVisibility(View.GONE);
         }
 
-        PicassoHelper.loadScaledDownThumbnail(itemThumbnailView.getContext(), item.getThumbnailUrl())
-                .into(itemThumbnailView);
-
-        // Swap in DeArrow's honest title and thumbnail, if the user opted in. Must stay AFTER
-        // the original bind above: the replacement is applied on top of a fully-populated row,
-        // never in place of populating it, so a slow or failed lookup leaves the row correct.
-        DeArrowBinder.apply(item, itemVideoTitleView, itemThumbnailView);
+        // The thumbnail load is DeArrow's to make, not this holder's. It gets the uploader's
+        // URL and loads exactly one image — the honest frame where there is one, the
+        // uploader's where there is not — instead of loading the clickbait first and flipping
+        // it a moment later. With DeArrow off it loads the uploader's image immediately, which
+        // is what this line used to do. Must stay AFTER the title is set above, so a slow or
+        // failed lookup still leaves a fully populated row.
+        DeArrowBinder.bind(DeArrowRow.of(item, item.getThumbnailUrl()),
+                itemVideoTitleView, itemThumbnailView);
 
         itemView.setOnClickListener(view -> {
             if (itemBuilder.getOnStreamSelectedListener() != null) {

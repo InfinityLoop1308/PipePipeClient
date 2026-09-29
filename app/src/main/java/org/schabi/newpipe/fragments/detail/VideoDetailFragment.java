@@ -104,6 +104,7 @@ import org.schabi.newpipe.sleep.SleepTimerService;
 import org.schabi.newpipe.util.*;
 import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.util.dearrow.DeArrowBinder;
+import org.schabi.newpipe.util.dearrow.DeArrowRow;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
@@ -1930,9 +1931,16 @@ public final class VideoDetailFragment
         // replacement. The feature then only worked when the DeArrow fetch happened to
         // finish after the loader did, i.e. by race, and never at all when the frame was
         // already cached from the feed (2026-09-27).
-        DeArrowBinder.apply(info.getServiceId(), info.getUrl(), info.getDuration(),
-                info.getStreamType() == StreamType.LIVE_STREAM
-                        || info.getStreamType() == StreamType.AUDIO_LIVE_STREAM,
+        //
+        // The original thumbnail URL is deliberately NOT handed over: this image is not a
+        // list row and initThumbnailViews has its own sizing and click handling, so the
+        // binder must leave the loading of it alone and only paint over the top. The
+        // uploader IS handed over, so that excluding a channel takes effect here too.
+        DeArrowBinder.bind(DeArrowRow.ofStored(info.getServiceId(), info.getUrl(),
+                        info.getDuration(),
+                        info.getStreamType() == StreamType.LIVE_STREAM
+                                || info.getStreamType() == StreamType.AUDIO_LIVE_STREAM,
+                        info.getUploaderUrl(), info.getUploaderName(), null),
                 binding.detailVideoTitleView, binding.detailThumbnailImageView);
         showMetaInfoInTextView(info.getMetaInfo(), binding.detailMetaInfoTextView,
                 binding.detailMetaInfoSeparator, disposables);

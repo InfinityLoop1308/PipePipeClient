@@ -16,8 +16,8 @@ import org.schabi.newpipe.info_list.InfoItemBuilder;
 import org.schabi.newpipe.ktx.ViewUtils;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.util.Localization;
-import org.schabi.newpipe.util.PicassoHelper;
 import org.schabi.newpipe.util.dearrow.DeArrowBinder;
+import org.schabi.newpipe.util.dearrow.DeArrowRow;
 import org.schabi.newpipe.views.AnimatedProgressBar;
 
 import java.util.concurrent.TimeUnit;
@@ -89,13 +89,11 @@ public class StreamMiniInfoItemHolder extends InfoItemHolder {
             itemProgressView.setVisibility(View.GONE);
         }
 
-        PicassoHelper.loadScaledDownThumbnail(itemThumbnailView.getContext(), item.getThumbnailUrl())
-                .into(itemThumbnailView);
-
-        // Swap in DeArrow's honest title and thumbnail, if the user opted in. Must stay AFTER
-        // the original bind above: the replacement is applied on top of a fully-populated row,
-        // never in place of populating it, so a slow or failed lookup leaves the row correct.
-        DeArrowBinder.apply(item, itemVideoTitleView, itemThumbnailView);
+        // The thumbnail load is DeArrow's to make — see StreamInfoItemHolder for why. Must
+        // stay AFTER the title is set above, so a slow or failed lookup still leaves a fully
+        // populated row.
+        DeArrowBinder.bind(DeArrowRow.of(item, item.getThumbnailUrl()),
+                itemVideoTitleView, itemThumbnailView);
 
         itemView.setOnClickListener(view -> {
             if (itemBuilder.getOnStreamSelectedListener() != null) {
