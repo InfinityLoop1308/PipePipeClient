@@ -24,7 +24,7 @@
         android:key="twitch_use_token_search"
         android:title="Use token for search"
         app:icon="@drawable/ic_search"
-        app:summary="Whether to use the provided token to fetch search results.\nNot using a token will only show the first 100 results." />
+        app:summary="Whether to use the provided token to fetch search results.\nNot using a token will only show the first ~30 results." />
     <SwitchPreference
         android:defaultValue="false"
         android:key="twitch_use_token_categories"
@@ -42,5 +42,5 @@
         android:key="twitch_use_token_vods"
         android:title="Use token for channel vods"
         app:icon="@drawable/ic_play_arrow"
-        app:summary="Whether to use the provided token to fetch the vods of a channel.\nNot using a token will only show the 100 latest vods." />
+        app:summary="Whether to use the provided token to fetch the vods of a channel.\nNot using a token will only show the ~30 latest vods." />
 </PreferenceScreen>
