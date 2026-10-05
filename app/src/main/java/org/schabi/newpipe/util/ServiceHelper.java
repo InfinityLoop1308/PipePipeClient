@@ -341,11 +341,26 @@ public final class ServiceHelper {
             final String tokens = sharedPreferences.getString(context.getString(
                     R.string.twitch_cookies_key), null);
             ServiceList.Twitch.setTokens(tokens);
-            ((TwitchService)ServiceList.Twitch).setShouldUseHelixForKiosk(sharedPreferences.getBoolean(context.getString(R.string.twitch_use_token_kiosk), false));
-            ((TwitchService)ServiceList.Twitch).setShouldUseHelixForCategories(sharedPreferences.getBoolean(context.getString(R.string.twitch_use_token_categories), false));
-            ((TwitchService)ServiceList.Twitch).setShouldUseHelixForVods(sharedPreferences.getBoolean(context.getString(R.string.twitch_use_token_vods), false));
-            ((TwitchService)ServiceList.Twitch).setShouldUseHelixForClips(sharedPreferences.getBoolean(context.getString(R.string.twitch_use_token_clips), false));
-            ((TwitchService)ServiceList.Twitch).setShouldUseHelixForSearch(sharedPreferences.getBoolean(context.getString(R.string.twitch_use_token_search), false));
+            ((TwitchService)ServiceList.Twitch).setShouldUseHelixForKiosk(
+                    sharedPreferences.getBoolean(context.getString(R.string.twitch_use_token_kiosk), false)
+                    && tokens != null
+            );
+            ((TwitchService)ServiceList.Twitch).setShouldUseHelixForCategories(
+                    sharedPreferences.getBoolean(context.getString(R.string.twitch_use_token_categories), false)
+                    && tokens != null
+            );
+            ((TwitchService)ServiceList.Twitch).setShouldUseHelixForVods(
+                    sharedPreferences.getBoolean(context.getString(R.string.twitch_use_token_vods), false)
+                    && tokens != null
+            );
+            ((TwitchService)ServiceList.Twitch).setShouldUseHelixForClips(
+                    sharedPreferences.getBoolean(context.getString(R.string.twitch_use_token_clips), false)
+                    && tokens != null
+            );
+            ((TwitchService)ServiceList.Twitch).setShouldUseHelixForSearch(
+                    sharedPreferences.getBoolean(context.getString(R.string.twitch_use_token_search), false)
+                    && tokens != null
+            );
         }
     }
 
