@@ -2,17 +2,17 @@ package org.schabi.newpipe.settings;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
-import androidx.compose.material.icons.sharp._1kKt;
 import androidx.preference.Preference;
 
-import org.schabi.newpipe.PanicResponderActivity;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.views.TwitchLoginWebViewActivity;
 
 // Webview token fetching is currently disabled since Twitch login refuses to work in a webview
 public class TwitchAccountSettingsFragment extends BaseAccountSettingsFragment {
 
+    private Preference tokenPreference;
     private Preference useTokenKioskPreference;
     private Preference useTokenSearchPreference;
     private Preference useTokenCategoriesPreference;
@@ -23,7 +23,7 @@ public class TwitchAccountSettingsFragment extends BaseAccountSettingsFragment {
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         super.onCreatePreferences(savedInstanceState, rootKey);
 
-        final var tokenPreference = findPreference(getString(R.string.twitch_cookies_key));
+        tokenPreference = findPreference(getString(R.string.twitch_cookies_key));
         useTokenKioskPreference = findPreference(getString(R.string.twitch_use_token_kiosk));
         useTokenSearchPreference = findPreference(getString(R.string.twitch_use_token_search));
         useTokenCategoriesPreference = findPreference(getString(R.string.twitch_use_token_categories));
@@ -45,6 +45,8 @@ public class TwitchAccountSettingsFragment extends BaseAccountSettingsFragment {
             performLogout();
             disableAllSettings();
             logout.setEnabled(false);
+            tokenPreference.setEnabled(true);
+            Toast.makeText(getContext(), "Token deleted", Toast.LENGTH_SHORT).show();
             return true;
         });
 
@@ -57,7 +59,8 @@ public class TwitchAccountSettingsFragment extends BaseAccountSettingsFragment {
                     .apply();
             enableAllSettings();
             logout.setEnabled(true);
-            return false;
+            tokenPreference.setEnabled(false);
+            return true;
         });
     }
 

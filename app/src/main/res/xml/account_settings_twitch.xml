@@ -18,7 +18,7 @@
         android:key="twitch_use_token_kiosk"
         android:title="Use token for kiosk"
         app:icon="@drawable/ic_explore"
-        app:summary="Whether to use the provided token to fetch data for the kiosk.\nNot using a token will only show the top 100 streams." />
+        app:summary="Whether to use the provided token to fetch data for the kiosk.\nNot using a token will only show the top 30 streams." />
     <SwitchPreference
         android:defaultValue="false"
         android:key="twitch_use_token_search"
