@@ -1449,6 +1449,9 @@
     <string name="twitch_cookies_key">twitch_cookies_key</string>
     <string name="twitch_use_token_kiosk">twitch_use_token_kiosk</string>
     <string name="twitch_use_token_categories">twitch_use_token_categories</string>
+    <string name="twitch_use_token_vods">twitch_use_token_vods</string>
+    <string name="twitch_use_token_clips">twitch_use_token_clips</string>
+    <string name="twitch_use_token_search">twitch_use_token_search</string>
     <string name="bullet_comments_font_key">bullet_comments_font_key</string>
     <string name="bullet_comments_opacity_key">bullet_comments_opacity_key</string>
     <string name="toggle_show_future_items_key">toggle_show_future_items_key</string>

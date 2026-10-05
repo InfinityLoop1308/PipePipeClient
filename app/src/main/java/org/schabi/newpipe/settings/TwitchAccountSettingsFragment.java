@@ -46,7 +46,5 @@ public class TwitchAccountSettingsFragment extends BaseAccountSettingsFragment {
     }
 
     @Override
-    protected void performLogout() {
-
-    }
+    protected void performLogout() {}
 }
