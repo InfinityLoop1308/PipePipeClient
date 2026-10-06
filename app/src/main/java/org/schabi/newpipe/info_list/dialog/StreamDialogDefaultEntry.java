@@ -24,6 +24,7 @@ import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.dearrow.DeArrowExclusions;
+import org.schabi.newpipe.util.dearrow.DeArrowRowRefresher;
 import org.schabi.newpipe.util.dearrow.DeArrowVideoId;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
@@ -217,6 +218,7 @@ public enum StreamDialogDefaultEntry {
                     }
                     exclusions.setChannelExcluded(item.getUploaderUrl(), item.getUploaderName(),
                             checked[1]);
+                    DeArrowRowRefresher.rebindVisibleRows(fragment.getView());
                     Toast.makeText(context, R.string.dearrow_exclude_saved, Toast.LENGTH_SHORT)
                             .show();
                 })

@@ -19,6 +19,7 @@ import org.schabi.newpipe.info_list.ItemViewMode;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.local.holder.*;
 import org.schabi.newpipe.util.*;
+import org.schabi.newpipe.util.dearrow.DeArrowRowRefresher;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -419,7 +420,8 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position,
                                  @NonNull final List<Object> payloads) {
-        if (!payloads.isEmpty() && holder instanceof LocalItemHolder) {
+        if (!payloads.isEmpty() && holder instanceof LocalItemHolder
+                && !payloads.contains(DeArrowRowRefresher.REBIND)) {
             for (final Object payload : payloads) {
                 if (payload instanceof StreamStateEntity) {
                     ((LocalItemHolder) holder).updateState(localItems
