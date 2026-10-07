@@ -48,6 +48,9 @@ public final class DownloaderImpl extends Downloader {
     public static final String YOUTUBE_RESTRICTED_MODE_COOKIE = "PREF=f2=8000000";
     public static final String YOUTUBE_DOMAIN = "youtube.com";
 
+    private static final int MAX_DNS_RETRIES = 2;
+    private static final long DNS_RETRY_DELAY_MS = 500L;
+
     private static DownloaderImpl instance;
     private final Map<String, String> mCookies;
     private final OkHttpClient client;
@@ -291,7 +294,7 @@ public final class DownloaderImpl extends Downloader {
             tmpClient = builder.build();
         }
 
-        int maxRetries = 2;
+        int maxRetries = MAX_DNS_RETRIES;
         int retryCount = 0;
 
         while (retryCount <= maxRetries && response == null) {
@@ -302,7 +305,7 @@ public final class DownloaderImpl extends Downloader {
                 if (retryCount <= maxRetries) {
                     System.err.println("DNS lookup failed. Retrying (attempt " + retryCount + ")...");
                     try {
-                        Thread.sleep(500); // Wait 0.5 second before retrying (optional)
+                        Thread.sleep(DNS_RETRY_DELAY_MS); // Wait before retrying (optional)
                     } catch (InterruptedException ie) {
                         Thread.currentThread().interrupt(); // Preserve interrupt status
                         break; // Exit retry loop if interrupted
@@ -420,7 +423,24 @@ public final class DownloaderImpl extends Downloader {
                 requestBuilder.header(pair.getKey(), values.get(0));
             }
         }
-        final okhttp3.Response response = requestClient.newCall(requestBuilder.build()).execute();
+        okhttp3.Response response = null;
+        int dnsRetryCount = 0;
+        while (response == null) {
+            try {
+                response = requestClient.newCall(requestBuilder.build()).execute();
+            } catch (final UnknownHostException e) {
+                dnsRetryCount++;
+                if (dnsRetryCount > MAX_DNS_RETRIES) {
+                    throw e;
+                }
+                try {
+                    Thread.sleep(DNS_RETRY_DELAY_MS);
+                } catch (final InterruptedException interrupted) {
+                    Thread.currentThread().interrupt();
+                    throw e;
+                }
+            }
+        }
         if (response.code() == 429) {
             response.close();
             throw new ReCaptchaException("reCaptcha Challenge requested", url);
