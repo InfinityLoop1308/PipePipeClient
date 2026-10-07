@@ -307,8 +307,8 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
         return trackId.split("[._-]", 2)[0];
     }
 
-    static String segmentTemplate(final YoutubeSabrInfo.Format format,
-                                  final YoutubeSabrFormatTimeline timeline) {
+    private static String segmentTemplate(final YoutubeSabrInfo.Format format,
+                                          final YoutubeSabrFormatTimeline timeline) {
         final long endSegment = timeline.getEndSequence();
         if (endSegment <= 0) {
             throw new IllegalStateException("Invalid exact SABR segment count: itag="
@@ -318,8 +318,7 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
                 .append("<SegmentTemplate timescale=\"1000\" startNumber=\"1\" ")
                 .append("initialization=\"init\" media=\"$Number$\">")
                 .append("<SegmentTimeline>");
-        for (int index = 0; index < endSegment; index++) {
-            final int sequence = index + 1;
+        for (int sequence = 1; sequence <= endSegment; sequence++) {
             final long startMs = timeline.getStartMs(sequence);
             final long endMs = timeline.getEndMs(sequence);
             final long durationMs = Math.max(1, endMs - startMs);
