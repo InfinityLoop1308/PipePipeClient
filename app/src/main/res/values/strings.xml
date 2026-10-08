@@ -1118,4 +1118,23 @@
 <string name="minimize_gesture_non_fullscreen_description">Outside fullscreen only</string>
 <string name="minimize_gesture_fullscreen_description">In and outside fullscreen (disables the fullscreen and playback speed swipe gestures)</string>
 <string name="delete_filter_confirm">Do you want to delete \"%s\" from the filter list?</string>
+<!-- DeArrow -->
+<string name="dearrow_home_page_title">View Website</string>
+<string name="dearrow_home_page_summary">View the official DeArrow website.</string>
+<string name="dearrow_enable_title">Enable DeArrow</string>
+<string name="dearrow_enable_summary">Replace clickbait titles and thumbnails with crowdsourced ones. YouTube only.</string>
+<string name="dearrow_replace_titles_title">Replace titles</string>
+<string name="dearrow_replace_titles_summary">Show the community\'s title instead of the uploader\'s.</string>
+<string name="dearrow_replace_thumbnails_title">Replace thumbnails</string>
+<string name="dearrow_replace_thumbnails_summary">Show a real frame from the video instead of the uploader\'s thumbnail.</string>
+<string name="dearrow_random_frame_title">Use a stored frame as a fallback</string>
+<string name="dearrow_random_frame_summary">When nobody has submitted a thumbnail, show a frame from the video itself instead of the uploader\'s thumbnail. A live broadcast or a brand-new upload is rendered by the DeArrow server. Costs one small image fetch.</string>
+<string name="dearrow_auto_format_title">Fix SHOUTING titles</string>
+<string name="dearrow_auto_format_summary">Convert titles written in all capitals to sentence case. Acronyms are left alone.</string>
+<string name="dearrow_clear_cache_title">Clear DeArrow cache</string>
+<string name="dearrow_clear_cache_summary">Forget every downloaded title and thumbnail and fetch them again.</string>
+<string name="dearrow_cache_cleared_toast">DeArrow cache cleared</string>
+<string name="dearrow_original_fallback_title">Keep the original thumbnail</string>
+<string name="dearrow_original_fallback_summary">When no replacement frame is available, show the uploader\'s thumbnail instead of leaving a placeholder.</string>
+<string name="dearrow_settings_summary">Crowdsourced titles and thumbnails for YouTube videos. Tap to enable and tune.</string>
 </resources>

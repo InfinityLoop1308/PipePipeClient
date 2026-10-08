@@ -1041,4 +1041,22 @@
 <string name="minimize_gesture_non_fullscreen_description">フルスクリーン表示外のみ</string>
 <string name="minimize_gesture_fullscreen_description">フルスクリーン表示の内外 (フルスクリーンおよび再生速度のスワイプジェスチャーを無効にします)</string>
 <string name="delete_filter_confirm">フィルターリストから \"%s\" を削除しますか？</string>
+<string name="dearrow_home_page_title">ウェブサイトを表示</string>
+<string name="dearrow_home_page_summary">公式のDeArrowウェブサイトを表示します。</string>
+<string name="dearrow_enable_title">DeArrowを有効にする</string>
+<string name="dearrow_enable_summary">クリックベイトのタイトルやサムネイルをクラウドソーシングされたものに置き換えます。YouTubeのみ。</string>
+<string name="dearrow_replace_titles_title">タイトルを置き換える</string>
+<string name="dearrow_replace_titles_summary">アップローダーのタイトルの代わりにコミュニティのタイトルを表示します。</string>
+<string name="dearrow_replace_thumbnails_title">サムネイルを置き換える</string>
+<string name="dearrow_replace_thumbnails_summary">アップローダーのサムネイルの代わりに動画の実際のフレームを表示します。</string>
+<string name="dearrow_random_frame_title">フォールバックとして保存されたフレームを使用する</string>
+<string name="dearrow_random_frame_summary">誰もサムネイルを送信していない場合、アップローダーのサムネイルの代わりに動画自体のフレームを表示します。ライブ配信や新規アップロードはDeArrowサーバーによってレンダリングされます。小さな画像の取得が1回発生します。</string>
+<string name="dearrow_auto_format_title">大文字ばかりのタイトルを修正する</string>
+<string name="dearrow_auto_format_summary">すべて大文字で書かれたタイトルを文の先頭のみ大文字（センテンスケース）に変換します。頭字語（アクロニム）はそのままになります。</string>
+<string name="dearrow_clear_cache_title">DeArrowのキャッシュを消去する</string>
+<string name="dearrow_clear_cache_summary">ダウンロードしたすべてのタイトルとサムネイルを破棄し、再度取得します。</string>
+<string name="dearrow_cache_cleared_toast">DeArrowのキャッシュを消去しました</string>
+<string name="dearrow_original_fallback_title">元のサムネイルを保持する</string>
+<string name="dearrow_original_fallback_summary">代替フレームが利用できない場合、プレースホルダーを残す代わりにアップローダーのサムネイルを表示します。</string>
+<string name="dearrow_settings_summary">YouTube動画のクラウドソース化されたタイトルとサムネイル。タップして有効化および調整します。</string>
 </resources>

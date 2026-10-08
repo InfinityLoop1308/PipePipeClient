@@ -102,6 +102,8 @@ import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
 import org.schabi.newpipe.sleep.SleepTimerService;
 import org.schabi.newpipe.util.*;
+import org.schabi.newpipe.util.dearrow.DeArrowBinder;
+import org.schabi.newpipe.util.dearrow.DeArrowRow;
 import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
@@ -999,8 +1001,12 @@ public final class VideoDetailFragment
             if (activity == null) {
                 return;
             }
-            // Data can already be drawn, don't spend time twice
-            if (info.getName().equals(binding.detailVideoTitleView.getText().toString())) {
+            // Data can already be drawn, don't spend time twice. The displayed title is not
+            // always info.getName(): DeArrow may have replaced it, and treating that as "not
+            // drawn yet" would redraw the whole page on every check.
+            final String shown = binding.detailVideoTitleView.getText().toString();
+            if (info.getName().equals(shown)
+                    || DeArrowBinder.isShowingTitle(activity, info, shown)) {
                 return;
             }
             prepareAndHandleInfo(info, scrollToTop);
@@ -1915,6 +1921,13 @@ public final class VideoDetailFragment
                 .getDefaultResolutionIndex(activity, sortedVideoStreams);
         updateProgressInfo(info);
         initThumbnailViews(info);
+
+        // Swap in DeArrow's honest title and thumbnail, if the user opted in. This must come
+        // after initThumbnailViews, which loads the uploader's thumbnail: the original URL is
+        // deliberately not handed over, so the binder only ever paints a replacement over the
+        // top and never blanks this view.
+        DeArrowBinder.bind(DeArrowRow.fromDetail(info.getServiceId(), info.getUrl()),
+                binding.detailVideoTitleView, binding.detailThumbnailImageView);
         showMetaInfoInTextView(info.getMetaInfo(), binding.detailMetaInfoTextView,
                 binding.detailMetaInfoSeparator, disposables);
 

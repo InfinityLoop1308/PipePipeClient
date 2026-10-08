@@ -1018,4 +1018,22 @@
 <string name="minimize_gesture_non_fullscreen_description">Nur außerhalb des Vollbildmodus</string>
 <string name="minimize_gesture_fullscreen_description">Im und außerhalb des Vollbildmodus (deaktiviert die Wischgesten für Vollbild und Wiedergabegeschwindigkeit)</string>
 <string name="delete_filter_confirm">Möchten Sie \"%s\" aus der Filterliste löschen?</string>
+<string name="dearrow_home_page_title">Website anzeigen</string>
+<string name="dearrow_home_page_summary">Die offizielle DeArrow-Website anzeigen.</string>
+<string name="dearrow_enable_title">DeArrow aktivieren</string>
+<string name="dearrow_enable_summary">Clickbait-Titel und -Thumbnails durch von der Community erstellte ersetzen. Nur YouTube.</string>
+<string name="dearrow_replace_titles_title">Titel ersetzen</string>
+<string name="dearrow_replace_titles_summary">Den Titel der Community anstelle des Titels des Uploaders anzeigen.</string>
+<string name="dearrow_replace_thumbnails_title">Thumbnails ersetzen</string>
+<string name="dearrow_replace_thumbnails_summary">Ein echtes Bild aus dem Video anstelle des Thumbnails des Uploaders anzeigen.</string>
+<string name="dearrow_random_frame_title">Ein gespeichertes Bild als Fallback verwenden</string>
+<string name="dearrow_random_frame_summary">Wenn niemand ein Thumbnail eingereicht hat, ein Bild aus dem Video selbst anstelle des Thumbnails des Uploaders anzeigen. Ein Livestream oder ein brandneuer Upload wird vom DeArrow-Server gerendert. Kostet einen kleinen Bildabruf.</string>
+<string name="dearrow_auto_format_title">SCHREIENDE Titel korrigieren</string>
+<string name="dearrow_auto_format_summary">Komplett in Großbuchstaben geschriebene Titel in normale Satzschreibweise umwandeln. Akronyme bleiben unverändert.</string>
+<string name="dearrow_clear_cache_title">DeArrow-Cache leeren</string>
+<string name="dearrow_clear_cache_summary">Alle heruntergeladenen Titel und Thumbnails vergessen und erneut abrufen.</string>
+<string name="dearrow_cache_cleared_toast">DeArrow-Cache geleert</string>
+<string name="dearrow_original_fallback_title">Original-Thumbnail behalten</string>
+<string name="dearrow_original_fallback_summary">Wenn kein Ersatzbild verfügbar ist, das Thumbnail des Uploaders anzeigen, anstatt einen Platzhalter zu hinterlassen.</string>
+<string name="dearrow_settings_summary">Crowdsourced-Titel und -Thumbnails für YouTube-Videos. Tippen zum Aktivieren und Anpassen.</string>
 </resources>

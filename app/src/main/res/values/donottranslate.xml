@@ -33,4 +33,6 @@
     <string name="settings_category_sponsor_block_title">SponsorBlock</string>
     <string name="video_details_list_item">- %1$s: %2$s</string>
     <string name="share_playlist_content_details">%1$s\n%2$s</string>
+    <string name="dearrow">DeArrow</string>
+    <string name="dearrow_homepage_url">https://dearrow.ajay.app/</string>
 </resources>

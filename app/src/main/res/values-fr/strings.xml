@@ -1035,4 +1035,22 @@ Voulez-vous continuer?</string>
 <string name="minimize_gesture_non_fullscreen_description">Uniquement hors plein écran</string>
 <string name="minimize_gesture_fullscreen_description">En plein écran et en dehors (désactive les gestes de balayage du plein écran et de la vitesse de lecture)</string>
 <string name="delete_filter_confirm">Voulez-vous supprimer \"%s\" de la liste des filtres ?</string>
+<string name="dearrow_home_page_title">Voir le site web</string>
+<string name="dearrow_home_page_summary">Voir le site web officiel de DeArrow.</string>
+<string name="dearrow_enable_title">Activer DeArrow</string>
+<string name="dearrow_enable_summary">Remplacer les titres et miniatures pièges à clics par ceux de la communauté. YouTube uniquement.</string>
+<string name="dearrow_replace_titles_title">Remplacer les titres</string>
+<string name="dearrow_replace_titles_summary">Afficher le titre de la communauté au lieu de celui de l\'auteur.</string>
+<string name="dearrow_replace_thumbnails_title">Remplacer les miniatures</string>
+<string name="dearrow_replace_thumbnails_summary">Afficher une vraie image de la vidéo au lieu de la miniature de l\'auteur.</string>
+<string name="dearrow_random_frame_title">Utiliser une image stockée comme solution de repli</string>
+<string name="dearrow_random_frame_summary">Quand personne n\'a soumis de miniature, afficher une image de la vidéo elle-même au lieu de la miniature de l\'auteur. Une diffusion en direct ou une toute nouvelle vidéo est rendue par le serveur DeArrow. Nécessite le téléchargement d\'une petite image.</string>
+<string name="dearrow_auto_format_title">Corriger les titres en MAJUSCULES</string>
+<string name="dearrow_auto_format_summary">Convertir les titres écrits entièrement en majuscules en casse de phrase. Les acronymes sont ignorés.</string>
+<string name="dearrow_clear_cache_title">Vider le cache de DeArrow</string>
+<string name="dearrow_clear_cache_summary">Oublier tous les titres et miniatures téléchargés et les récupérer à nouveau.</string>
+<string name="dearrow_cache_cleared_toast">Cache de DeArrow vidé</string>
+<string name="dearrow_original_fallback_title">Garder la miniature originale</string>
+<string name="dearrow_original_fallback_summary">Quand aucune image de remplacement n\'est disponible, afficher la miniature de l\'auteur au lieu de laisser un espace réservé.</string>
+<string name="dearrow_settings_summary">Titres et miniatures participatifs pour les vidéos YouTube. Appuyez pour activer et configurer.</string>
 </resources>
