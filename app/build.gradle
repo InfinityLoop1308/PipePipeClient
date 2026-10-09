@@ -187,6 +187,8 @@ dependencies {
 
 /** Kotlin **/
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2"
     implementation 'androidx.compose.animation:animation:1.11.3'
     implementation 'androidx.compose.foundation:foundation:1.11.3'
     implementation 'androidx.compose.material3:material3:1.4.0'

@@ -4,10 +4,10 @@ import android.content.Context
 import android.util.Base64
 import android.webkit.WebView
 import androidx.appcompat.app.AlertDialog
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.schabi.newpipe.R
 import org.schabi.newpipe.util.Localization
 import org.schabi.newpipe.util.ThemeHelper
@@ -87,16 +87,16 @@ object LicenseFragmentHelper {
         return context.getString(color).substring(3)
     }
 
-    fun showLicense(context: Context?, license: License): Disposable {
-        return showLicense(context, license) { alertDialog ->
+    fun showLicense(scope: CoroutineScope, context: Context?, license: License) {
+        showLicense(scope, context, license) { alertDialog ->
             alertDialog.setPositiveButton(R.string.ok) { dialog, _ ->
                 dialog.dismiss()
             }
         }
     }
 
-    fun showLicense(context: Context?, component: SoftwareComponent): Disposable {
-        return showLicense(context, component.license) { alertDialog ->
+    fun showLicense(scope: CoroutineScope, context: Context?, component: SoftwareComponent) {
+        showLicense(scope, context, component.license) { alertDialog ->
             alertDialog.setPositiveButton(R.string.dismiss) { dialog, _ ->
                 dialog.dismiss()
             }
@@ -107,31 +107,31 @@ object LicenseFragmentHelper {
     }
 
     private fun showLicense(
+        scope: CoroutineScope,
         context: Context?,
         license: License,
         block: (AlertDialog.Builder) -> Unit
-    ): Disposable {
-        return if (context == null) {
-            Disposable.empty()
-        } else {
-            Observable.fromCallable { getFormattedLicense(context, license) }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { formattedLicense ->
-                    val webViewData = Base64.encodeToString(
-                        formattedLicense.toByteArray(StandardCharsets.UTF_8), Base64.NO_PADDING
-                    )
-                    val webView = WebView(context)
-                    webView.loadData(webViewData, "text/html; charset=UTF-8", "base64")
+    ) {
+        if (context == null) {
+            return
+        }
+        scope.launch(Dispatchers.Main) {
+            val formattedLicense = withContext(Dispatchers.IO) {
+                getFormattedLicense(context, license)
+            }
+            val webViewData = Base64.encodeToString(
+                formattedLicense.toByteArray(StandardCharsets.UTF_8), Base64.NO_PADDING
+            )
+            val webView = WebView(context)
+            webView.loadData(webViewData, "text/html; charset=UTF-8", "base64")
 
-                    AlertDialog.Builder(context).apply {
-                        setTitle(license.name)
-                        setView(webView)
-                        Localization.assureCorrectAppLanguage(context)
-                        block(this)
-                        show()
-                    }
-                }
+            AlertDialog.Builder(context).apply {
+                setTitle(license.name)
+                setView(webView)
+                Localization.assureCorrectAppLanguage(context)
+                block(this)
+                show()
+            }
         }
     }
 }

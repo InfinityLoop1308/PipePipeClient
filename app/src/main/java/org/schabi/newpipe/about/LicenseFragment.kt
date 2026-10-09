@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import io.reactivex.rxjava3.disposables.CompositeDisposable
+import androidx.lifecycle.lifecycleScope
 import org.schabi.newpipe.R
 import org.schabi.newpipe.about.LicenseFragmentHelper.showLicense
 import org.schabi.newpipe.databinding.FragmentLicensesBinding
@@ -18,7 +18,6 @@ import org.schabi.newpipe.databinding.ItemSoftwareComponentBinding
 class LicenseFragment : Fragment() {
     private lateinit var softwareComponents: Array<SoftwareComponent>
     private var activeLicense: License? = null
-    private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,11 +25,6 @@ class LicenseFragment : Fragment() {
         activeLicense = savedInstanceState?.getSerializable(LICENSE_KEY) as? License
         // Sort components by name
         softwareComponents.sortBy { it.name }
-    }
-
-    override fun onDestroy() {
-        compositeDisposable.dispose()
-        super.onDestroy()
     }
 
     override fun onCreateView(
@@ -41,9 +35,7 @@ class LicenseFragment : Fragment() {
         val binding = FragmentLicensesBinding.inflate(inflater, container, false)
         binding.licensesAppReadLicense.setOnClickListener {
             activeLicense = StandardLicenses.GPL3
-            compositeDisposable.add(
-                showLicense(activity, StandardLicenses.GPL3)
-            )
+            showLicense(viewLifecycleOwner.lifecycleScope, activity, StandardLicenses.GPL3)
         }
         for (component in softwareComponents) {
             val componentBinding = ItemSoftwareComponentBinding
@@ -59,14 +51,14 @@ class LicenseFragment : Fragment() {
             root.tag = component
             root.setOnClickListener {
                 activeLicense = component.license
-                compositeDisposable.add(
-                    showLicense(activity, component)
-                )
+                showLicense(viewLifecycleOwner.lifecycleScope, activity, component)
             }
             binding.licensesSoftwareComponents.addView(root)
             registerForContextMenu(root)
         }
-        activeLicense?.let { compositeDisposable.add(showLicense(activity, it)) }
+        activeLicense?.let { license ->
+            showLicense(viewLifecycleOwner.lifecycleScope, activity, license)
+        }
         return binding.root
     }
 
