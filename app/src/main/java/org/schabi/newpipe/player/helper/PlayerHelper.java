@@ -562,6 +562,11 @@ public final class PlayerHelper {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
+    public static boolean getSeekInsteadOfSkip(@NonNull final Context context) {
+        return getPreferences(context)
+                .getBoolean(context.getString(R.string.seek_on_media_button_events_key), false);
+    }
+
     private static boolean isUsingInexactSeek(@NonNull final Context context) {
         return getPreferences(context)
                 .getBoolean(context.getString(R.string.use_inexact_seek_key), false);
