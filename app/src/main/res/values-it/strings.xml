@@ -1012,4 +1012,22 @@
 <string name="minimize_gesture_non_fullscreen_description">Solo fuori dallo schermo intero</string>
 <string name="minimize_gesture_fullscreen_description">Dentro e fuori dallo schermo intero (disattiva i gesti di scorrimento per lo schermo intero e la velocità di riproduzione)</string>
 <string name="delete_filter_confirm">Vuoi eliminare \"%s\" dall\'elenco dei filtri?</string>
+<string name="dearrow_home_page_title">Visita il sito web</string>
+<string name="dearrow_home_page_summary">Visita il sito web ufficiale di DeArrow.</string>
+<string name="dearrow_enable_title">Abilita DeArrow</string>
+<string name="dearrow_enable_summary">Sostituisci i titoli e le miniature clickbait con quelli forniti dalla community. Solo su YouTube.</string>
+<string name="dearrow_replace_titles_title">Sostituisci i titoli</string>
+<string name="dearrow_replace_titles_summary">Mostra il titolo della community invece di quello dell\'autore.</string>
+<string name="dearrow_replace_thumbnails_title">Sostituisci le miniature</string>
+<string name="dearrow_replace_thumbnails_summary">Mostra un fotogramma reale del video invece della miniatura dell\'autore.</string>
+<string name="dearrow_random_frame_title">Usa un fotogramma memorizzato come ripiego</string>
+<string name="dearrow_random_frame_summary">Quando nessuno ha inviato una miniatura, mostra un fotogramma del video stesso invece della miniatura dell\'autore. Una trasmissione in diretta o un nuovo caricamento viene elaborato dal server DeArrow. Richiede il caricamento di una piccola immagine.</string>
+<string name="dearrow_auto_format_title">Correggi i titoli in MAIUSCOLO</string>
+<string name="dearrow_auto_format_summary">Converti i titoli scritti interamente in maiuscolo in formato frase. Gli acronimi vengono lasciati inalterati.</string>
+<string name="dearrow_clear_cache_title">Svuota la cache di DeArrow</string>
+<string name="dearrow_clear_cache_summary">Dimentica tutti i titoli e le miniature scaricati e recuperali di nuovo.</string>
+<string name="dearrow_cache_cleared_toast">Cache di DeArrow svuotata</string>
+<string name="dearrow_original_fallback_title">Mantieni la miniatura originale</string>
+<string name="dearrow_original_fallback_summary">Quando non è disponibile un fotogramma sostitutivo, mostra la miniatura dell\'autore invece di lasciare un segnaposto.</string>
+<string name="dearrow_settings_summary">Titoli e miniature forniti dalla community per i video di YouTube. Tocca per abilitare e personalizzare.</string>
 </resources>

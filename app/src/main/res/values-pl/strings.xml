@@ -1098,4 +1098,22 @@
 <string name="minimize_gesture_non_fullscreen_description">Tylko poza pełnym ekranem</string>
 <string name="minimize_gesture_fullscreen_description">W pełnym ekranie i poza nim (wyłącza gesty przesuwania dla pełnego ekranu i szybkości odtwarzania)</string>
 <string name="delete_filter_confirm">Czy chcesz usunąć \"%s\" z listy filtrów?</string>
+<string name="dearrow_home_page_title">Odwiedź stronę internetową</string>
+<string name="dearrow_home_page_summary">Odwiedź oficjalną stronę DeArrow.</string>
+<string name="dearrow_enable_title">Włącz DeArrow</string>
+<string name="dearrow_enable_summary">Zastąp clickbaitowe tytuły i miniatury tymi stworzonymi przez społeczność. Tylko dla YouTube.</string>
+<string name="dearrow_replace_titles_title">Zastąp tytuły</string>
+<string name="dearrow_replace_titles_summary">Pokaż tytuł od społeczności zamiast tytułu przesyłającego.</string>
+<string name="dearrow_replace_thumbnails_title">Zastąp miniatury</string>
+<string name="dearrow_replace_thumbnails_summary">Pokaż prawdziwą klatkę z filmu zamiast miniatury przesyłającego.</string>
+<string name="dearrow_random_frame_title">Użyj zapisanej klatki jako rozwiązania awaryjnego</string>
+<string name="dearrow_random_frame_summary">Gdy nikt nie prześle miniatury, pokaż klatkę z samego filmu zamiast miniatury przesyłającego. Transmisja na żywo lub nowo przesłany film jest renderowany przez serwer DeArrow. Wymaga pobrania jednego małego obrazu.</string>
+<string name="dearrow_auto_format_title">Napraw KRZYCZĄCE tytuły</string>
+<string name="dearrow_auto_format_summary">Zamień tytuły napisane w całości wielkimi literami na format zdania. Skrótowce pozostają bez zmian.</string>
+<string name="dearrow_clear_cache_title">Wyczyść pamięć podręczną DeArrow</string>
+<string name="dearrow_clear_cache_summary">Usuń z pamięci wszystkie pobrane tytuły i miniatury i pobierz je ponownie.</string>
+<string name="dearrow_cache_cleared_toast">Pamięć podręczna DeArrow została wyczyszczona</string>
+<string name="dearrow_original_fallback_title">Zachowaj oryginalną miniaturę</string>
+<string name="dearrow_original_fallback_summary">Gdy nie ma dostępnej klatki zastępczej, pokaż miniaturę przesyłającego zamiast wyświetlać symbol zastępczy.</string>
+<string name="dearrow_settings_summary">Tworzone przez społeczność tytuły i miniatury dla filmów na YouTube. Dotknij, aby włączyć i dostosować.</string>
 </resources>

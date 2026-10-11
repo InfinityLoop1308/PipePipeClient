@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- View tag carrying the DeArrowBinder.Binding currently guarding a row, so a recycled row
+         can cancel the previous binder and a late result can be discarded. Declared as an id so
+         the tag key cannot collide with another feature's setTag(). -->
+    <item name="dearrow_binding" type="id" />
+</resources>

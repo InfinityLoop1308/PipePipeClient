@@ -1072,4 +1072,22 @@
 <string name="minimize_gesture_non_fullscreen_description">僅限非全螢幕狀態</string>
 <string name="minimize_gesture_fullscreen_description">全螢幕與非全螢幕狀態 (將停用全螢幕與播放速度滑動手勢)</string>
 <string name="delete_filter_confirm">您要從篩選清單中刪除 \"%s\" 嗎？</string>
+<string name="dearrow_home_page_title">查看網站</string>
+<string name="dearrow_home_page_summary">查看 DeArrow 官方網站。</string>
+<string name="dearrow_enable_title">啟用 DeArrow</string>
+<string name="dearrow_enable_summary">將標題黨標題與縮圖替換為社群提供的內容。僅限 YouTube。</string>
+<string name="dearrow_replace_titles_title">替換標題</string>
+<string name="dearrow_replace_titles_summary">顯示社群提供的標題，而非上傳者的標題。</string>
+<string name="dearrow_replace_thumbnails_title">替換縮圖</string>
+<string name="dearrow_replace_thumbnails_summary">顯示影片的真實畫面，而非上傳者的縮圖。</string>
+<string name="dearrow_random_frame_title">使用儲存的畫面作為備用</string>
+<string name="dearrow_random_frame_summary">當沒有人提交縮圖時，顯示影片本身的畫面，而非上傳者的縮圖。直播或全新上傳的影片將由 DeArrow 伺服器渲染。會消耗一次小型圖片擷取的流量。</string>
+<string name="dearrow_auto_format_title">修正全大寫標題</string>
+<string name="dearrow_auto_format_summary">將全大寫的標題轉換為句首大寫。縮寫將保持不變。</string>
+<string name="dearrow_clear_cache_title">清除 DeArrow 快取</string>
+<string name="dearrow_clear_cache_summary">清除所有已下載的標題與縮圖，並重新擷取。</string>
+<string name="dearrow_cache_cleared_toast">已清除 DeArrow 快取</string>
+<string name="dearrow_original_fallback_title">保留原始縮圖</string>
+<string name="dearrow_original_fallback_summary">當沒有可用的替換畫面時，顯示上傳者的縮圖，而非顯示佔位符。</string>
+<string name="dearrow_settings_summary">YouTube 影片的群眾外包標題與縮圖。點擊以啟用並調整。</string>
 </resources>

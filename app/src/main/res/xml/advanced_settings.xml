@@ -164,6 +164,13 @@
             android:title="@string/settings_category_behavior_title"
             app:singleLineTitle="false"
             app:iconSpaceReserved="false">
+        <PreferenceScreen
+                android:fragment="org.schabi.newpipe.settings.DeArrowSettingsFragment"
+                android:title="@string/dearrow"
+                android:summary="@string/dearrow_settings_summary"
+                app:singleLineTitle="false"
+                app:iconSpaceReserved="false" />
+
         <MultiSelectListPreference
                 android:key="@string/show_search_suggestions_key"
                 android:summary="@string/show_search_suggestions_summary"

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:title="@string/dearrow">
+
+    <Preference
+        app:iconSpaceReserved="false"
+        android:key="@string/dearrow_home_page_key"
+        android:summary="@string/dearrow_home_page_summary"
+        android:title="@string/dearrow_home_page_title"/>
+
+    <PreferenceCategory
+        android:layout="@layout/settings_category_header_layout"
+        android:title="@string/settings">
+
+        <SwitchPreference
+            app:iconSpaceReserved="false"
+            android:defaultValue="false"
+            android:key="@string/dearrow_enable_key"
+            android:summary="@string/dearrow_enable_summary"
+            android:title="@string/dearrow_enable_title"/>
+
+        <SwitchPreference
+            app:iconSpaceReserved="false"
+            android:dependency="@string/dearrow_enable_key"
+            android:defaultValue="true"
+            android:key="@string/dearrow_replace_titles_key"
+            android:summary="@string/dearrow_replace_titles_summary"
+            android:title="@string/dearrow_replace_titles_title"/>
+
+        <SwitchPreference
+            app:iconSpaceReserved="false"
+            android:dependency="@string/dearrow_enable_key"
+            android:defaultValue="true"
+            android:key="@string/dearrow_replace_thumbnails_key"
+            android:summary="@string/dearrow_replace_thumbnails_summary"
+            android:title="@string/dearrow_replace_thumbnails_title"/>
+
+        <SwitchPreference
+            app:iconSpaceReserved="false"
+            android:dependency="@string/dearrow_replace_thumbnails_key"
+            android:defaultValue="true"
+            android:key="@string/dearrow_random_frame_key"
+            android:summary="@string/dearrow_random_frame_summary"
+            android:title="@string/dearrow_random_frame_title"/>
+
+        <SwitchPreference
+            app:iconSpaceReserved="false"
+            android:dependency="@string/dearrow_replace_thumbnails_key"
+            android:defaultValue="true"
+            android:key="@string/dearrow_original_fallback_key"
+            android:summary="@string/dearrow_original_fallback_summary"
+            android:title="@string/dearrow_original_fallback_title"/>
+
+        <SwitchPreference
+            app:iconSpaceReserved="false"
+            android:dependency="@string/dearrow_enable_key"
+            android:defaultValue="true"
+            android:key="@string/dearrow_auto_format_key"
+            android:summary="@string/dearrow_auto_format_summary"
+            android:title="@string/dearrow_auto_format_title"/>
+
+        <Preference
+            app:iconSpaceReserved="false"
+            android:dependency="@string/dearrow_enable_key"
+            android:key="@string/dearrow_clear_cache_key"
+            android:summary="@string/dearrow_clear_cache_summary"
+            android:title="@string/dearrow_clear_cache_title"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

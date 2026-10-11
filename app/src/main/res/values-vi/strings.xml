@@ -1127,4 +1127,22 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="minimize_gesture_non_fullscreen_description">Chỉ bên ngoài chế độ toàn màn hình</string>
 <string name="minimize_gesture_fullscreen_description">Trong và ngoài chế độ toàn màn hình (tắt cử chỉ vuốt toàn màn hình và tốc độ phát)</string>
 <string name="delete_filter_confirm">Bạn có muốn xóa \"%s\" khỏi danh sách bộ lọc không?</string>
+<string name="dearrow_home_page_title">Xem trang web</string>
+<string name="dearrow_home_page_summary">Xem trang web chính thức của DeArrow.</string>
+<string name="dearrow_enable_title">Bật DeArrow</string>
+<string name="dearrow_enable_summary">Thay thế tiêu đề và hình thu nhỏ câu view bằng dữ liệu đóng góp từ cộng đồng. Chỉ dành cho YouTube.</string>
+<string name="dearrow_replace_titles_title">Thay thế tiêu đề</string>
+<string name="dearrow_replace_titles_summary">Hiển thị tiêu đề của cộng đồng thay vì của người tải lên.</string>
+<string name="dearrow_replace_thumbnails_title">Thay thế hình thu nhỏ</string>
+<string name="dearrow_replace_thumbnails_summary">Hiển thị một khung hình thực từ video thay vì hình thu nhỏ của người tải lên.</string>
+<string name="dearrow_random_frame_title">Sử dụng khung hình đã lưu làm dự phòng</string>
+<string name="dearrow_random_frame_summary">Khi không có ai gửi hình thu nhỏ, hãy hiển thị một khung hình từ chính video đó thay vì hình thu nhỏ của người tải lên. Một buổi phát sóng trực tiếp hoặc một video mới tải lên sẽ được máy chủ DeArrow kết xuất. Cần tải một hình ảnh nhỏ.</string>
+<string name="dearrow_auto_format_title">Sửa tiêu đề IN HOA</string>
+<string name="dearrow_auto_format_summary">Chuyển đổi các tiêu đề viết toàn bằng chữ in hoa thành chữ hoa đầu câu. Các từ viết tắt được giữ nguyên.</string>
+<string name="dearrow_clear_cache_title">Xóa bộ nhớ cache DeArrow</string>
+<string name="dearrow_clear_cache_summary">Xóa mọi tiêu đề và hình thu nhỏ đã tải xuống và tải lại chúng.</string>
+<string name="dearrow_cache_cleared_toast">Đã xóa bộ nhớ cache DeArrow</string>
+<string name="dearrow_original_fallback_title">Giữ hình thu nhỏ gốc</string>
+<string name="dearrow_original_fallback_summary">Khi không có khung hình thay thế nào, hãy hiển thị hình thu nhỏ của người tải lên thay vì để lại một ảnh giữ chỗ.</string>
+<string name="dearrow_settings_summary">Tiêu đề và hình thu nhỏ do cộng đồng đóng góp cho các video YouTube. Nhấn để bật và tinh chỉnh.</string>
 </resources>

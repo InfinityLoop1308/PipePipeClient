@@ -16,7 +16,8 @@ import org.schabi.newpipe.extractor.stream.StreamType.AUDIO_STREAM
 import org.schabi.newpipe.extractor.stream.StreamType.LIVE_STREAM
 import org.schabi.newpipe.extractor.stream.StreamType.VIDEO_STREAM
 import org.schabi.newpipe.util.Localization
-import org.schabi.newpipe.util.PicassoHelper
+import org.schabi.newpipe.util.dearrow.DeArrowBinder
+import org.schabi.newpipe.util.dearrow.DeArrowRow
 import org.schabi.newpipe.util.StreamTypeUtil
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
@@ -106,8 +107,12 @@ data class StreamItem(
             viewBinding.itemProgressView.visibility = View.GONE
         }
 
-        PicassoHelper.loadScaledDownThumbnail(viewBinding.root.context, stream.thumbnailUrl)
-            .into(viewBinding.itemThumbnailView)
+        DeArrowBinder.bind(
+            DeArrowRow.fromStored(
+                stream.serviceId, stream.url, stream.thumbnailUrl
+            ),
+            viewBinding.itemVideoTitleView, viewBinding.itemThumbnailView
+        )
 
         viewBinding.itemAdditionalDetails.text =
             getStreamInfoDetailLine(viewBinding.itemAdditionalDetails.context)
