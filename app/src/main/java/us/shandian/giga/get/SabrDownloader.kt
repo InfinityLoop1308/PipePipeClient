@@ -5,6 +5,7 @@ import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrRequest
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
 import org.schabi.newpipe.youtube.SabrAttestationRetryHandler
+import org.schabi.newpipe.youtube.SabrPlayerReloader
 import org.schabi.newpipe.youtube.SabrRequestCoordinator
 import java.io.File
 import java.io.FileOutputStream
@@ -59,6 +60,7 @@ internal class SabrDownloader(
         val poToken = info.poToken
             ?: throw SabrProtocolException("SABR info has no player PO token")
         session.setPoToken(poToken)
+        session.setInfoReloader(SabrPlayerReloader)
         val workDir = prepareWorkDirectory()
         val targets = SabrDownloadFormatResolver.buildTargets(info, recoveries, workDir)
         restoreTargets(targets)

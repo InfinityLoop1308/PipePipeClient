@@ -13,6 +13,7 @@ import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.DeliveryMethod;
 import org.schabi.newpipe.player.PlaybackStartupTrace;
 import org.schabi.newpipe.util.ListHelper;
+import org.schabi.newpipe.youtube.SabrPlayerReloader;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,6 +81,7 @@ public final class SabrSessionHelper {
                     + spec.getVideoId());
         }
         created.setPoToken(resolvedToken);
+        created.setInfoReloader(SabrPlayerReloader.INSTANCE);
         final SessionObserver observer = benchmarkSessionObserver;
         if (observer != null) {
             observer.onSessionCreated(created);
