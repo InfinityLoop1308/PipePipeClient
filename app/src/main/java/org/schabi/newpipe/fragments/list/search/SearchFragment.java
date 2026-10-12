@@ -1117,15 +1117,26 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         }
     }
 
+    /**
+     * Build the handler of the search tab of the channel being searched.
+     *
+     * <p>
+     * The channel's own base URL has to be carried over, not just its id: on services with more
+     * than one instance a channel page may well live on another host than the selected one, and
+     * rebuilding its URL from the id alone would point the search at the selected instance, where
+     * that id does not exist. Services with a single host are unaffected, their base URL is
+     * constant.
+     * </p>
+     */
     private ListLinkHandler getChannelSearchHandler() throws Exception {
         final StreamingService streamingService = NewPipe.getService(serviceId);
-        final String channelId = streamingService.getChannelLHFactory()
-                .fromUrl(channelUrl)
-                .getId();
+        final ListLinkHandler channelHandler = streamingService.getChannelLHFactory()
+                .fromUrl(channelUrl);
         final List<FilterItem> contentFilters = Collections.singletonList(
                 new FilterItem(Filter.ITEM_IDENTIFIER_UNKNOWN, ChannelTabs.SEARCH));
         final ListLinkHandler searchHandler = streamingService.getChannelTabLHFactory()
-                .fromQuery(channelId, contentFilters, null);
+                .fromQuery(channelHandler.getId(), contentFilters, null,
+                        channelHandler.getBaseUrl());
         final String searchUrl = searchHandler.getUrl()
                 + "?query=" + URLEncoder.encode(searchString, "UTF-8").replace("+", "%20");
         return new ListLinkHandler(searchUrl, searchUrl, searchHandler.getId(),
