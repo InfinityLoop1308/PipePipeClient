@@ -38,6 +38,7 @@
 
     <string name="seek_duration_key">seek_duration</string>
     <string name="seek_duration_default_value">10000</string>
+    <string name="seek_on_media_button_events_key">seek_on_media_button_events</string>
     <string-array name="seek_duration_description">
         <!--   They are overridden in VideoAudioSettingsFragment.java if the translation
         (seconds) exist. Otherwise this array is picked-->
