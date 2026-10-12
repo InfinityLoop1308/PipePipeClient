@@ -87,6 +87,7 @@ object DeArrowBinder {
 
         fun attach() {
             titleView.setTag(R.id.dearrow_binding, this)
+            ownsImage = thumbnailView != null && row.ownsThumbnail
             val config = DeArrowSettings.read(titleView.context)
             val active = config.enabled && row.videoId != null
                 && row.serviceId == ServiceList.YouTube.serviceId
@@ -95,7 +96,6 @@ object DeArrowBinder {
                 return
             }
 
-            ownsImage = thumbnailView != null && row.ownsThumbnail
             replaceImage = config.replaceThumbnails
             if (ownsImage) {
                 if (replaceImage) showPlaceholder() else loadOriginal()
@@ -175,6 +175,10 @@ object DeArrowBinder {
         }
 
         private fun loadOriginal() {
+            // A view this binder does not own is the caller's to load: on the video detail page
+            // the uploader's thumbnail is already being fetched, and writing here would cancel
+            // that load and replace it with a placeholder. Only an owned row may be written to.
+            if (!ownsImage) return
             val view = thumbnailView ?: return
             PicassoHelper.cancelRequest(view)
             val url = row.originalThumbnailUrl
