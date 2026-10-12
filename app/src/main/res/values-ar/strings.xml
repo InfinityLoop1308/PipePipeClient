@@ -918,7 +918,6 @@
     <string name="sponsor_promote">كن داعمًا</string>
     <string name="random_play_order_title">ترتيب عشوائي</string>
     <string name="random_play_order_summary">خلط قوائم التشغيل المحلية تلقائيًا عند التشغيل في الخلفية</string>
-    <string name="update_log">- تحسين تحميل معلومات فيديوهات يوتيوب وسرعة بدء التشغيل\n- إصلاح عدة مشاكل قد تسبب أخطاء تشغيل SABR في حالات معينة\n- إصلاح ظهور WebView بشكل خاطئ كغير متاح في بعض الحالات\n- إصلاح ظهور عناوين IP بشكل خاطئ كمحظورة من يوتيوب في بعض الحالات\n- تحسين ثبات التطبيق عمومًا</string>
     <string name="speeding_playback_title">اضغط مطولًا لتسريع التشغيل</string>
     <string name="donation_dialog_title">دعم المشروع</string>
     <string name="donation_dialog_message">شكرًا لاستخدامك PipePipe! إذا وجدته مفيدًا، فكّر في أن تصبح داعمًا على Ko-Fi. دعمك مهم بالنسبة لي ويساعدني في إضافة ميزات جديدة مثيرة. كل مساهمة تُحتسب! 😇</string>

@@ -913,7 +913,6 @@
 <string name="sponsor_promote">Destekçi ol</string>
 <string name="random_play_order_title">Rastgele Sıra</string>
 <string name="random_play_order_summary">Arka planda oynatırken yerel oynatma listelerinizi otomatik olarak karıştırın</string>
-<string name="update_log">### Hata Düzeltmeleri\n\n- Bazı videolar \"Sayfanın yeniden yüklenmesi gerekiyor\" hatasıyla yüklenemiyor (YouTube)\n- Videolar açılamıyor (NicoNico)</string>
 <string name="speeding_playback_title">Oynatmayı hızlandırmak için uzun basın</string>
 <string name="view_on_github">GitHub\'da görüntüle</string>
 <string name="donation_dialog_title">Projeyi Destekle</string>
