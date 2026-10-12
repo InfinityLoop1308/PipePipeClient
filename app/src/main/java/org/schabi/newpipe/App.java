@@ -6,7 +6,6 @@ import android.content.*;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -164,15 +163,9 @@ public class App extends MultiDexApplication {
     public static void reconcileYoutubePlayerClient(@NonNull final Context context) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         final String playerClientKey = context.getString(R.string.youtube_player_client_key);
-        final boolean loggedIn = !TextUtils.isEmpty(prefs.getString(
-                context.getString(R.string.youtube_cookies_key), null));
-        final String defaultClient = loggedIn ? "mweb" : "visionos";
-        final String selectedClient = prefs.getString(playerClientKey, defaultClient);
-        final boolean allowed = loggedIn
-                ? "mweb".equals(selectedClient)
-                : "mweb".equals(selectedClient)
-                        || "visionos".equals(selectedClient);
-        final String reconciledClient = allowed ? selectedClient : defaultClient;
+        final String selectedClient = prefs.getString(playerClientKey, "mweb");
+        final boolean allowed = "mweb".equals(selectedClient);
+        final String reconciledClient = allowed ? selectedClient : "mweb";
 
         if (!reconciledClient.equals(selectedClient)) {
             prefs.edit().putString(playerClientKey, reconciledClient).apply();

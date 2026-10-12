@@ -143,23 +143,9 @@ public class AdvancedSettingsFragment extends BasePreferenceFragment implements 
         if (preference == null) {
             return;
         }
-        final boolean loggedIn = !TextUtils.isEmpty(defaultPreferences.getString(
-                getString(R.string.youtube_cookies_key), null));
-        final String[] entries = getResources().getStringArray(
-                R.array.youtube_player_client_entries);
-        final String[] values = getResources().getStringArray(
-                R.array.youtube_player_client_values);
-        if (loggedIn) {
-            preference.setEntries(new CharSequence[]{entries[1]});
-            preference.setEntryValues(new CharSequence[]{values[1]});
-        } else {
-            preference.setEntries(new CharSequence[]{entries[0], entries[1]});
-            preference.setEntryValues(new CharSequence[]{values[0], values[1]});
-        }
         App.reconcileYoutubePlayerClient(requireContext());
         preference.setValue(defaultPreferences.getString(
-                getString(R.string.youtube_player_client_key),
-                loggedIn ? "mweb" : "visionos"));
+                getString(R.string.youtube_player_client_key), "mweb"));
     }
 
     @Override
