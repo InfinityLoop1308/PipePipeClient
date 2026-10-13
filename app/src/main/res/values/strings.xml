@@ -1145,4 +1145,12 @@
 <string name="sponsor_block_enter_end_time">Enter end time</string>
 <string name="sponsor_block_time_input_hint">[[h:]m:]s, e.g. 1:23:45.5</string>
 <string name="sponsor_block_invalid_time_toast">Invalid time</string>
+<string name="video_filtering">Video filtering</string>
+<string name="comment_filtering">Comment filtering</string>
+<string name="comment_filter_by_keyword_summary">Hide comments containing these keywords</string>
+<string name="filter_by_username_title">Filter by username</string>
+<string name="comment_filter_by_username_summary">Hide comments posted by these users</string>
+<string name="comment_filter_min_likes_title">Filter by like count</string>
+<string name="comment_filter_min_likes_summary">Only show comments that have at least this many likes. 0 disables this filter. Pinned comments are always shown</string>
+<string name="comment_filter_min_likes_current">Only show comments that have at least %d likes. Pinned comments are always shown</string>
 </resources>

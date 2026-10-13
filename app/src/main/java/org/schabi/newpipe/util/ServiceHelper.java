@@ -19,6 +19,7 @@ import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.services.peertube.PeertubeInstance;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockApiSettings;
 import org.schabi.newpipe.extractor.InfoItemsCollector.FilterConfig;
+import org.schabi.newpipe.extractor.comments.CommentsFilterConfig;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -345,7 +346,13 @@ public final class ServiceHelper {
             sharedPreferences.getBoolean(context.getString(R.string.filter_shorts_key), false),
             sharedPreferences.getBoolean(context.getString(R.string.filter_paid_contents_key), false)
         );
-        
+
+        final CommentsFilterConfig commentsFilterConfig = new CommentsFilterConfig(
+            new ArrayList<>(sharedPreferences.getStringSet(context.getString(R.string.comment_filter_by_keyword_key) + "_set", new HashSet<>())),
+            new ArrayList<>(sharedPreferences.getStringSet(context.getString(R.string.comment_filter_by_username_key) + "_set", new HashSet<>())),
+            getCommentFilterMinLikes(context)
+        );
+
         SponsorBlockApiSettings sponsorBlockApiSettings = buildSponsorBlockApiSettings(context);
         int loadingTimeoutInt = Integer.parseInt(sharedPreferences.getString("loading_timeout_key", "10"));
         boolean fetchFullPlaylist = sharedPreferences.getBoolean(context.getString(R.string.fetch_full_playlist_key), false);
@@ -355,11 +362,25 @@ public final class ServiceHelper {
         for (final StreamingService s : ServiceList.all()) {
             initService(context, s.getServiceId());
             s.setFilterConfig(filterConfig);
+            s.setCommentsFilterConfig(commentsFilterConfig);
             s.setFilterTypes(blockingFields);
             s.setSponsorBlockApiSettings(sponsorBlockApiSettings);
             s.setLoadingTimeout(loadingTimeoutInt);
             s.setFetchFullPlaylist(fetchFullPlaylist);
             s.setFetchDislike(fetchDislike);
+        }
+    }
+
+    /**
+     * @return the minimum like count a comment needs to be shown, 0 if disabled or invalid
+     */
+    public static int getCommentFilterMinLikes(final Context context) {
+        final String value = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(context.getString(R.string.comment_filter_min_likes_key), "0");
+        try {
+            return Math.max(0, Integer.parseInt(value.trim()));
+        } catch (final NumberFormatException | NullPointerException e) {
+            return 0;
         }
     }
 

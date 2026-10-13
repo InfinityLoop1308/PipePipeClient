@@ -1826,4 +1826,7 @@
     <string name="dearrow_auto_format_key" translatable="false">dearrow_auto_format</string>
     <string name="dearrow_clear_cache_key" translatable="false">dearrow_clear_cache</string>
     <string name="dearrow_original_fallback_key" translatable="false">dearrow_original_fallback</string>
+    <string name="comment_filter_by_keyword_key" translatable="false">comment_filter_by_keyword_key</string>
+    <string name="comment_filter_by_username_key" translatable="false">comment_filter_by_username_key</string>
+    <string name="comment_filter_min_likes_key" translatable="false">comment_filter_min_likes_key</string>
 </resources>

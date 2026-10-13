@@ -551,6 +551,14 @@
                 android:name=".settings.ChannelFilterListActivity"
                 android:label="@string/filter_by_channel_title"
                 android:parentActivityName=".settings.SettingsActivity" />
+        <activity
+                android:name=".settings.CommentKeywordFilterListActivity"
+                android:label="@string/filter_by_keyword_title"
+                android:parentActivityName=".settings.SettingsActivity" />
+        <activity
+                android:name=".settings.CommentUsernameFilterListActivity"
+                android:label="@string/filter_by_username_title"
+                android:parentActivityName=".settings.SettingsActivity" />
 
         <activity
                 android:name="org.schabi.newpipe.util.StreamFailureDetailActivity"
