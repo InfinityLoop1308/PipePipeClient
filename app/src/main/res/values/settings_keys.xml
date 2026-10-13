@@ -1775,9 +1775,11 @@
     <string name="export_data_to_newpipe_key">export_data_to_newpipe</string>
     <string name="youtube_player_client_key">youtube_player_client</string>
     <string-array name="youtube_player_client_entries">
+        <item>VisionOS</item>
         <item>MWEB (SABR)</item>
     </string-array>
     <string-array name="youtube_player_client_values">
+        <item>visionos</item>
         <item>mweb</item>
     </string-array>
     <string name="sabr_backoff_notification_channel_id">sabr_backoff</string>
