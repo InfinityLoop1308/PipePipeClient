@@ -109,6 +109,12 @@ abstract class BasePlayerGestureListener(
     // ///////////////////////////////////////////////////////////////////
 
     override fun onTouch(v: View, event: MotionEvent): Boolean {
+        if (player.isScreenLocked) {
+            if (event.actionMasked == MotionEvent.ACTION_UP) {
+                player.showUnlockButtonTemporarily()
+            }
+            return true
+        }
         return if (player.popupPlayerSelected()) {
             onTouchInPopup(v, event)
         } else {

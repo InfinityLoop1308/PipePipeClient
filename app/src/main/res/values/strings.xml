@@ -1139,4 +1139,6 @@
 <string name="dearrow_original_fallback_title">Keep the original thumbnail</string>
 <string name="dearrow_original_fallback_summary">When no replacement frame is available, show the uploader\'s thumbnail instead of leaving a placeholder.</string>
 <string name="dearrow_settings_summary">Crowdsourced titles and thumbnails for YouTube videos. Tap to enable and tune.</string>
+<string name="player_lock">Lock screen</string>
+<string name="player_unlock">Unlock screen</string>
 </resources>

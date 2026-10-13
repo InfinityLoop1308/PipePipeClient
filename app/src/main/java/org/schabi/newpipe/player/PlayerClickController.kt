@@ -73,6 +73,8 @@ class PlayerClickController(private val player: Player) :
         binding.share.setOnLongClickListener(this)
         binding.fullScreenButton.setOnClickListener(this)
         binding.screenRotationButton.setOnClickListener(this)
+        binding.lockButton.setOnClickListener(this)
+        binding.unlockButton.setOnClickListener(this)
         binding.switchCommentsVisibility.setOnClickListener(this)
         binding.playWithKodi.setOnClickListener(this)
         binding.openInBrowser.setOnClickListener(this)
@@ -128,6 +130,12 @@ class PlayerClickController(private val player: Player) :
             return
         } else if (v.id == binding.screenRotationButton.id) {
             player.changeFullscreen(!player.isFullscreen)
+        } else if (v.id == binding.lockButton.id) {
+            player.controlsVisibilityController.setLocked(true)
+            return
+        } else if (v.id == binding.unlockButton.id) {
+            player.controlsVisibilityController.setLocked(false)
+            return
         } else if (v.id == binding.switchMute.id) {
             onMuteUnmuteButtonClicked()
         } else if (v.id == binding.playerCloseButton.id) {

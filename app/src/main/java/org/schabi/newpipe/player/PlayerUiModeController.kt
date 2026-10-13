@@ -99,6 +99,7 @@ class PlayerUiModeController(private val player: Player) {
         // Pinch zoom is fullscreen-only and never survives either direction of the transition.
         player.gestureController.resetPinchZoom()
         if (!isFullscreen) {
+            player.controlsVisibilityController.setLocked(false)
             // Apply window insets because Android will not do it when orientation changes
             // from landscape to portrait (open vertical video to reproduce)
             player.binding.playbackControlRoot.setPadding(0, 0, 0, 0)
@@ -254,6 +255,9 @@ class PlayerUiModeController(private val player: Player) {
         val binding = player.binding
         binding.screenRotationButton.visibility =
             if (player.videoPlayerSelected()) View.VISIBLE else View.GONE
+        if (!player.videoPlayerSelected() || !isFullscreen) {
+            binding.lockButton.visibility = View.GONE
+        }
         binding.screenRotationButton.setImageDrawable(
             AppCompatResources.getDrawable(
                 player.context,
