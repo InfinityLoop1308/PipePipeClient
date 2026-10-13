@@ -216,6 +216,11 @@ public final class VideoDetailFragment
 
     @Nullable
     private StreamInfo currentInfo = null;
+    // URL of the stream the tabs were last successfully built for. TabAdapter silently ignores
+    // updates after onSaveInstanceState(), e.g. when the next queued video starts while the app is
+    // in background, so the tabs can be stale even though currentInfo and the title are not.
+    @Nullable
+    private String tabsBuiltForUrl = null;
     private Disposable currentWorker;
     @NonNull
     private final CompositeDisposable disposables = new CompositeDisposable();
@@ -401,7 +406,8 @@ public final class VideoDetailFragment
         // Only rebuild the tabs when the tab settings actually changed. Doing it on every resume
         // recreated the related-items (and description) fragments each time, so returning from the
         // share sheet / Home reloaded the related videos. A new video goes through handleResult().
-        if (currentInfo != null && tabSettingsChanged) {
+        if (currentInfo != null
+                && (tabSettingsChanged || !currentInfo.getUrl().equals(tabsBuiltForUrl))) {
             tabSettingsChanged = false;
             initTabs();
             updateTabs(currentInfo);
@@ -994,10 +1000,13 @@ public final class VideoDetailFragment
             }
             // Data can already be drawn, don't spend time twice. The displayed title is not
             // always info.getName(): DeArrow may have replaced it, and treating that as "not
-            // drawn yet" would redraw the whole page on every check.
+            // drawn yet" would redraw the whole page on every check. The title alone is not
+            // enough though: titles can repeat across videos, and the title may be updated while
+            // the tabs failed to, so the tabs must also belong to this stream.
             final String shown = binding.detailVideoTitleView.getText().toString();
-            if (info.getName().equals(shown)
-                    || DeArrowBinder.isShowingTitle(activity, info, shown)) {
+            if ((info.getName().equals(shown)
+                    || DeArrowBinder.isShowingTitle(activity, info, shown))
+                    && info.getUrl().equals(tabsBuiltForUrl)) {
                 return;
             }
             prepareAndHandleInfo(info, scrollToTop);
@@ -1083,6 +1092,7 @@ public final class VideoDetailFragment
     //////////////////////////////////////////////////////////////////////////*/
 
     private void initTabs() {
+        tabsBuiltForUrl = null;
         if (pageAdapter.getCount() != 0) {
             selectedTabTag = pageAdapter.getItemTitle(binding.viewPager.getCurrentItem());
         }
@@ -1166,6 +1176,8 @@ public final class VideoDetailFragment
     }
 
     private void updateTabs(@NonNull final StreamInfo info) {
+        // TabAdapter ignores every change once the state is saved; retry in onResume()
+        tabsBuiltForUrl = getChildFragmentManager().isStateSaved() ? null : info.getUrl();
         if (info.isRoundPlayStream() || (showRelatedItems && info.isSupportRelatedItems())) {
             try {
                 if (binding.relatedItemsLayout == null) { // phone
