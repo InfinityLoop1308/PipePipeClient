@@ -40,10 +40,6 @@ import java.util.concurrent.atomic.AtomicReference;
  * points on the caller side.</p>
  */
 public final class SharedWebViewRuntime {
-    public interface InitializationFailureCallback {
-        void onInitializationFailure(@NonNull Throwable throwable);
-    }
-
     public interface SabrLocalDomCallbacks {
         void onJsInitializationError(@NonNull String error);
 
@@ -80,8 +76,6 @@ public final class SharedWebViewRuntime {
     private InitializationAttempt activeInitializationAttempt;
     private long nextInitializationAttemptId;
     @Nullable
-    private InitializationFailureCallback initializationFailureCallback;
-    @Nullable
     private WebView webView;
     private volatile boolean ready;
 
@@ -109,27 +103,39 @@ public final class SharedWebViewRuntime {
     }
 
     public void warmUp() {
-        warmUp((InitializationFailureCallback) null);
-    }
-
-    public void warmUp(@Nullable final InitializationFailureCallback failureCallback) {
-        final Throwable existingFailure;
         synchronized (initLock) {
-            if (failureCallback != null) {
-                initializationFailureCallback = failureCallback;
-            }
             if (ready || initLatch != null) {
-                existingFailure = initError == null ? null : initError.get();
-                if (existingFailure == null) {
-                    return;
-                }
-            } else {
-                startInitializationLocked();
                 return;
             }
+            startInitializationLocked();
         }
-        if (failureCallback != null) {
-            failureCallback.onInitializationFailure(existingFailure);
+    }
+
+    /**
+     * Returns the failure that prevented the runtime from becoming ready, or {@code null} if the
+     * runtime is ready, still initializing or not started yet.
+     */
+    @Nullable
+    public Throwable getInitializationFailure() {
+        final AtomicReference<Throwable> error;
+        synchronized (initLock) {
+            error = initError;
+        }
+        return error == null ? null : error.get();
+    }
+
+    /**
+     * Clears a failed initialization so that {@link #warmUp()} or {@link #ensureReady(long,
+     * String)} can try again. Does nothing while the runtime is ready or still initializing.
+     */
+    public void resetFailedInitialization() {
+        synchronized (initLock) {
+            if (ready || initError == null || initError.get() == null) {
+                return;
+            }
+            initLatch = null;
+            initError = null;
+            activeInitializationAttempt = null;
         }
     }
 
@@ -267,7 +273,6 @@ public final class SharedWebViewRuntime {
             activeInitializationAttempt = null;
             error.set(exception);
             latch.countDown();
-            notifyInitializationFailure(exception);
         }
     }
 
@@ -411,7 +416,6 @@ public final class SharedWebViewRuntime {
         Log.e(TAG, "WebView runtime ready callback failed attempt=" + attempt.number
                 + " elapsedMs=" + attempt.elapsedMs(), throwable);
         attempt.latch.countDown();
-        notifyInitializationFailure(throwable);
     }
 
     private boolean isActiveInitializationAttempt(@NonNull final InitializationAttempt attempt) {
@@ -430,16 +434,6 @@ public final class SharedWebViewRuntime {
             view.destroy();
         } catch (final Throwable throwable) {
             Log.w(TAG, "Could not destroy failed WebView initialization attempt", throwable);
-        }
-    }
-
-    private void notifyInitializationFailure(@NonNull final Throwable throwable) {
-        final InitializationFailureCallback callback;
-        synchronized (initLock) {
-            callback = initializationFailureCallback;
-        }
-        if (callback != null) {
-            callback.onInitializationFailure(throwable);
         }
     }
 

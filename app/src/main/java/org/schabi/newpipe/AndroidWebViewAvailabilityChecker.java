@@ -1,60 +1,42 @@
 package org.schabi.newpipe;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.webkit.WebViewCompat;
 
 import org.schabi.newpipe.extractor.WebViewAvailabilityChecker;
 import org.schabi.newpipe.extractor.exceptions.WebViewUnavailableException;
 
 public final class AndroidWebViewAvailabilityChecker implements WebViewAvailabilityChecker {
+    private final Context appContext;
     private final SharedWebViewRuntime runtime;
-    @Nullable
-    private final PackageInfo packageInfo;
-    @Nullable
-    private volatile WebViewUnavailableException unavailableException;
 
     public AndroidWebViewAvailabilityChecker(@NonNull final Context context) {
-        final Context appContext = context.getApplicationContext();
+        appContext = context.getApplicationContext();
         runtime = SharedWebViewRuntime.get(appContext);
-
-        final PackageInfo currentPackageInfo = WebViewCompat.getCurrentWebViewPackage(appContext);
-        packageInfo = currentPackageInfo;
-        if (currentPackageInfo == null) {
-            unavailableException =
-                    new WebViewUnavailableException("No Android WebView provider is available");
-        }
     }
 
     public void warmUp() {
-        if (unavailableException == null) {
-            runtime.warmUp(this::onInitializationFailure);
+        if (WebViewCompat.getCurrentWebViewPackage(appContext) != null) {
+            runtime.warmUp();
         }
     }
 
     @Override
     public void checkWebViewAvailable() throws WebViewUnavailableException {
-        final WebViewUnavailableException exception = unavailableException;
-        if (exception != null) {
-            throw exception;
+        if (WebViewCompat.getCurrentWebViewPackage(appContext) == null) {
+            throw new WebViewUnavailableException(
+                    "No Android WebView provider is available", false, null);
+        }
+        final Throwable failure = runtime.getInitializationFailure();
+        if (failure != null) {
+            // The runtime may have failed a transient cold start. Allow the next attempt to
+            // initialize it again instead of failing YouTube for the rest of the process.
+            runtime.resetFailedInitialization();
+            runtime.warmUp();
+            throw new WebViewUnavailableException(
+                    "Android WebView runtime failed to become ready", failure);
         }
     }
-
-    private void onInitializationFailure(@NonNull final Throwable throwable) {
-        final PackageInfo info = packageInfo;
-        if (info == null) {
-            unavailableException = new WebViewUnavailableException(
-                    "Android WebView runtime failed to become ready",
-                    throwable);
-            return;
-        }
-        unavailableException = new WebViewUnavailableException(
-                "Android WebView runtime using provider " + info.packageName + " version "
-                        + info.versionName + " failed to become ready",
-                throwable);
-    }
-
 }
