@@ -112,6 +112,19 @@ public class TabAdapter extends FragmentPagerAdapter {
         notifyDataSetChanged();
     }
 
+    @NonNull
+    @Override
+    public Object instantiateItem(@NonNull final ViewGroup container, final int position) {
+        // FragmentPagerAdapter reuses a fragment already in the FragmentManager with the same tag
+        // (e.g. restored after process death) instead of calling getItem(). Keep our list in sync
+        // with what is actually attached, so getItem() never hands out a detached instance.
+        final Object item = super.instantiateItem(container, position);
+        if (position < mFragmentList.size() && mFragmentList.get(position) != item) {
+            mFragmentList.set(position, (Fragment) item);
+        }
+        return item;
+    }
+
     @Override
     public void destroyItem(@NonNull final ViewGroup container,
                             final int position,
