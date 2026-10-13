@@ -151,15 +151,17 @@ public enum StreamDialogDefaultEntry {
     ),
 
     ADD_TO_FILTER_LIST(R.string.add_to_filter_list, (fragment, item) -> {
+        final android.content.Context appContext = fragment.requireContext()
+                .getApplicationContext();
         // Create confirmation dialog
         new AlertDialog.Builder(fragment.requireContext())
                 .setMessage(fragment.getString(R.string.add_to_filter_list_confirm, item.getUploaderName()))
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                     // User confirmed - execute blocking logic
                     final SharedPreferences pref = PreferenceManager
-                            .getDefaultSharedPreferences(fragment.requireContext());
+                            .getDefaultSharedPreferences(appContext);
                     // Get the key from string resources
-                    String filterKey = fragment.requireContext().getString(R.string.filter_by_channel_key) + "_set";
+                    String filterKey = appContext.getString(R.string.filter_by_channel_key) + "_set";
                     // Retrieve current filter set or default to empty
                     Set<String> currentFilters = new HashSet<>(pref.getStringSet(filterKey, new HashSet<>()));
                     // Add the new channel to the set
@@ -168,9 +170,9 @@ public enum StreamDialogDefaultEntry {
                     pref.edit()
                             .putStringSet(filterKey, currentFilters)
                             .apply();
-                    ServiceHelper.initServices(fragment.requireContext());
+                    ServiceHelper.initServices(appContext);
                     Toast.makeText(
-                            fragment.requireContext(), R.string.recaptcha_done_button,
+                            appContext, R.string.recaptcha_done_button,
                             Toast.LENGTH_SHORT
                     ).show();
                 })
