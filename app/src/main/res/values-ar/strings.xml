@@ -1066,7 +1066,6 @@
     <string name="export_data_to_newpipe_summary">تصدير النسخة الاحتياطية بصيغة متوافقة مع NewPipe</string>
     <string name="settings_category_other_platforms_title">منصات أخرى</string>
     <string name="youtube_player_client_title">نقطة استخراج يوتيوب</string>
-    <string name="webview_unavailable_youtube_hint">WebView غير متاح. تأكد من أن إصدار WebView الخاص بك أعلى من 80.\n\nأندرويد 6 و10: حدّث WebView من Play Store.\nأندرويد 7 و8 و9: حدّث Chrome من Play Store.\nإصدارات أخرى: هذا لا يجب أن يحدث. يرجى تقديم تقرير على GitHub.</string>
     <string name="sabr_backoff_notification_channel_name">انتظار تشغيل يوتيوب</string>
     <string name="sabr_backoff_notification_channel_description">إشعارات عندما يتطلب يوتيوب انتظار طلب التشغيل</string>
     <string name="sabr_backoff_notification_title">في انتظار يوتيوب</string>

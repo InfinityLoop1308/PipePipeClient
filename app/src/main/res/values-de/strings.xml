@@ -976,7 +976,7 @@
 <string name="error_sabr_download_muxing">SABR-Medien konnten nicht gemuxt werden</string>
 <string name="error_sabr_download_storage">Der SABR-Download konnte nicht geschrieben werden</string>
 <string name="error_sabr_download_protocol">SABR-Protokollfehler</string>
-<string name="webview_unavailable_youtube_hint">WebView nicht verfügbar. Bitte stellen Sie sicher, dass Ihre WebView-Version höher als 80 ist.\n\nAndroid 6 und 10: Aktualisieren Sie Android WebView im Play Store.\nAndroid 7, 8, 9: Aktualisieren Sie Chrome im Play Store.\nAndere Versionen: Dies sollte nicht passieren. Bitte melden Sie es auf unserem GitHub.</string>
+<string name="webview_unavailable_youtube_hint">WebView-Fehler. Bitte versuchen Sie es erneut.\n\nWenn das Problem weiterhin besteht, melden Sie es bitte auf unserem GitHub.</string>
 <string name="sabr_backoff_notification_channel_name">YouTube-Wiedergabe wartet</string>
 <string name="sabr_backoff_notification_channel_description">Benachrichtigungen, wenn YouTube verlangt, dass eine Wiedergabeanfrage wartet</string>
 <string name="sabr_backoff_notification_title">Warten auf YouTube</string>

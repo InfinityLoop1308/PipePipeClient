@@ -1030,7 +1030,7 @@
 <string name="error_sabr_download_muxing">無法混流 SABR 媒體</string>
 <string name="error_sabr_download_storage">無法寫入 SABR 下載內容</string>
 <string name="error_sabr_download_protocol">SABR 通訊協定錯誤</string>
-<string name="webview_unavailable_youtube_hint">WebView 無法使用。請確認您的 WebView 版本高於 80。\n\nAndroid 6 與 10：請在 Play 商店更新 Android WebView。\nAndroid 7、8、9：請在 Play 商店更新 Chrome。\n其他版本：不應發生此情況。請至我們的 GitHub 回報。</string>
+<string name="webview_unavailable_youtube_hint">WebView 發生錯誤。請再試一次。\n\n若問題持續發生，請至我們的 GitHub 回報。</string>
 <string name="sabr_backoff_notification_channel_name">YouTube 播放等待</string>
 <string name="sabr_backoff_notification_channel_description">YouTube 強制播放請求等待時顯示通知</string>
 <string name="sabr_backoff_notification_title">正在等待 YouTube</string>

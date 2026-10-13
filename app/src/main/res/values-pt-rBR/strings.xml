@@ -1069,7 +1069,6 @@
     <string name="export_data_to_newpipe_summary">Exporta o backup em um formato compatível com o NewPipe</string>
     <string name="settings_category_other_platforms_title">Outras plataformas</string>
     <string name="youtube_player_client_title">Endpoint de extração do YouTube</string>
-    <string name="webview_unavailable_youtube_hint">WebView indisponível. Verifique se a versão do seu WebView é superior a 80.\n\nAndroid 6 e 10: atualize o Android WebView na Play Store.\nAndroid 7, 8, 9: atualize o Chrome na Play Store.\nOutras versões: isso não deveria acontecer. Reporte no nosso GitHub.</string>
     <string name="sabr_backoff_notification_channel_name">Espera na reprodução do YouTube</string>
     <string name="sabr_backoff_notification_channel_description">Notificações quando o YouTube exige que uma solicitação de reprodução aguarde</string>
     <string name="sabr_backoff_notification_title">Aguardando o YouTube</string>

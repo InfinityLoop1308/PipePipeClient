@@ -1128,7 +1128,6 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="export_data_to_newpipe_summary">Экспорт резервной копии в формате, совместимом с NewPipe</string>
     <string name="settings_category_other_platforms_title">Другие платформы</string>
     <string name="youtube_player_client_title">Метод извлечения данных YouTube</string>
-    <string name="webview_unavailable_youtube_hint">WebView недоступен. Убедитесь, что версия WebView выше 80.\n\nAndroid 6 и 10: обновите Android System WebView в Play Маркете.\nAndroid 7, 8 и 9: обновите Chrome в Play Маркете.\nДругие версии: этого не должно было произойти. Пожалуйста, сообщите об ошибке на GitHub.</string>
     <string name="sabr_backoff_notification_channel_name">Ожидание воспроизведения YouTube</string>
     <string name="sabr_backoff_notification_channel_description">Уведомления, когда YouTube требует ожидания запроса на воспроизведение</string>
     <string name="sabr_backoff_notification_title">Ожидание ответа YouTube</string>
