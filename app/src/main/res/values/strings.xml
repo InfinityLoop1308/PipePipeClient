@@ -1141,4 +1141,8 @@
 <string name="dearrow_settings_summary">Crowdsourced titles and thumbnails for YouTube videos. Tap to enable and tune.</string>
 <string name="player_lock">Lock screen</string>
 <string name="player_unlock">Unlock screen</string>
+<string name="sponsor_block_enter_start_time">Enter start time</string>
+<string name="sponsor_block_enter_end_time">Enter end time</string>
+<string name="sponsor_block_time_input_hint">[[h:]m:]s, e.g. 1:23:45.5</string>
+<string name="sponsor_block_invalid_time_toast">Invalid time</string>
 </resources>
