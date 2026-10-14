@@ -953,7 +953,7 @@
 <string name="settings_category_filter_title">Content Filter</string>
 <string name="filter_by_keyword_title">Blocked keywords</string>
 <string name="filter_by_channel_title">Blocked channels</string>
-<string name="filter_by_keyword_summary">Hide videos and other items whose title contains any of these keywords</string>
+<string name="filter_by_keyword_summary">Hide videos and other items whose title contains any of these keywords. Wrap an entry in slashes (/…/) to use a regular expression</string>
 <string name="filter_by_channel_summary">Hide videos, playlists and channels from these channels</string>
 <string name="search_result">Search results</string>
 <string name="filter_field_summary">Apply filters to</string>
@@ -1147,7 +1147,7 @@
 <string name="sponsor_block_invalid_time_toast">Invalid time</string>
 <string name="video_filtering">Video filtering</string>
 <string name="comment_filtering">Comment filtering</string>
-<string name="comment_filter_by_keyword_summary">Hide comments that contain any of these keywords</string>
+<string name="comment_filter_by_keyword_summary">Hide comments that contain any of these keywords. Wrap an entry in slashes (/…/) to use a regular expression</string>
 <string name="filter_by_username_title">Blocked usernames</string>
 <string name="comment_filter_by_username_summary">Hide comments posted by these users</string>
 <string name="comment_filter_min_likes_title">Minimum likes</string>
@@ -1157,4 +1157,6 @@
 <string name="filter_all_items_hidden">All loaded items were hidden by your filters (%d items)</string>
 <string name="filter_no_visible_items_yet">No visible items on the loaded pages. More pages are available</string>
 <string name="filter_continue_loading">Continue loading</string>
+<string name="filter_keyword_regex_hint">Keyword, or /regex/</string>
+<string name="filter_keyword_regex_invalid">Invalid regex: %s</string>
 </resources>
