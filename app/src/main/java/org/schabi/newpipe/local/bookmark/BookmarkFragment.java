@@ -35,6 +35,7 @@ import org.schabi.newpipe.database.playlist.model.PlaylistRemoteEntity;
 import org.schabi.newpipe.databinding.DialogEditTextBinding;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.UserAction;
+import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.local.BaseLocalListFragment;
 import org.schabi.newpipe.local.holder.LocalBookmarkPlaylistItemHolder;
 import org.schabi.newpipe.local.holder.RemoteBookmarkPlaylistItemHolder;
@@ -44,6 +45,7 @@ import org.schabi.newpipe.util.DebounceSavable;
 import org.schabi.newpipe.util.DebounceSaver;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.OnClickGesture;
+import org.schabi.newpipe.util.ToolbarFilterHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,7 +59,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 
 public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistLocalItem>, Void>
-        implements DebounceSavable {
+        implements DebounceSavable, BackPressable {
 
     private static final int MINIMUM_INITIAL_DRAG_VELOCITY = 12;
     protected Parcelable itemsListState;
@@ -72,6 +74,8 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
     private AtomicBoolean isLoadingComplete;
 
     private DebounceSaver debounceSaver;
+
+    private ToolbarFilterHelper filterHelper;
 
     // Map from (uid, local/remote item) to the saved display index in the database.
     private Map<Pair<Long, LocalItem.LocalItemType>, Long> displayIndexInDatabase;
@@ -234,6 +238,11 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
     public void onDestroyView() {
         super.onDestroyView();
 
+        if (filterHelper != null) {
+            filterHelper.close();
+            filterHelper = null;
+        }
+
         if (disposables != null) {
             disposables.clear();
         }
@@ -344,8 +353,31 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
         if (item.getItemId() == R.id.action_multi_select) {
             selection.enter();
             return true;
+        } else if (item.getItemId() == R.id.action_search_local) {
+            if (filterHelper == null) {
+                filterHelper = new ToolbarFilterHelper(activity, text -> {
+                    if (itemListAdapter != null) {
+                        itemListAdapter.filter(text);
+                    }
+                    return kotlin.Unit.INSTANCE;
+                });
+            }
+            filterHelper.open();
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (exitSelectionOnBack()) {
+            return true;
+        }
+        if (filterHelper != null && filterHelper.isActive()) {
+            filterHelper.close();
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -598,7 +630,7 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
                                   @NonNull final RecyclerView.ViewHolder target) {
 
                 // Allow swap LocalBookmarkPlaylistItemHolder and RemoteBookmarkPlaylistItemHolder.
-                if (itemListAdapter == null
+                if (itemListAdapter == null || itemListAdapter.isFilterEnabled
                         || source.getItemViewType() != target.getItemViewType()
                         && !(
                         (

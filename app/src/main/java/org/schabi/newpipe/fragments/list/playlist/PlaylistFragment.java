@@ -36,6 +36,7 @@ import org.schabi.newpipe.databinding.PlaylistHeaderBinding;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
+import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.ListExtractor;
 import org.schabi.newpipe.extractor.ServiceList;
@@ -52,6 +53,7 @@ import org.schabi.newpipe.player.playqueue.PlaylistPlayQueue;
 import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
+import org.schabi.newpipe.util.ToolbarFilterHelper;
 import org.schabi.newpipe.util.PicassoHelper;
 import org.schabi.newpipe.info_list.dialog.StreamDialogDefaultEntry;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
@@ -68,7 +70,8 @@ import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 
-public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, PlaylistInfo> {
+public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, PlaylistInfo>
+        implements BackPressable {
 
     private static final String PICASSO_PLAYLIST_TAG = "PICASSO_PLAYLIST_TAG";
 
@@ -87,6 +90,7 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
     private PlaylistControlBinding playlistControlBinding;
 
     private MenuItem playlistBookmarkButton;
+    private ToolbarFilterHelper filterHelper;
     private boolean isInfinitePlayList;
 
     private long streamCount;
@@ -180,7 +184,20 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
     }
 
     @Override
+    public boolean onBackPressed() {
+        if (filterHelper != null && filterHelper.isActive()) {
+            filterHelper.close();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public void onDestroyView() {
+        if (filterHelper != null) {
+            filterHelper.close();
+            filterHelper = null;
+        }
         headerBinding = null;
         playlistControlBinding = null;
 
@@ -231,6 +248,16 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
     public boolean onOptionsItemSelected(final MenuItem item) {
         if (item.getItemId() == R.id.action_settings) {
             NavigationHelper.openSettings(requireContext());
+        } else if (item.getItemId() == R.id.action_search_local) {
+            if (filterHelper == null) {
+                filterHelper = new ToolbarFilterHelper(activity, text -> {
+                    if (infoListAdapter != null) {
+                        infoListAdapter.filter(text);
+                    }
+                    return kotlin.Unit.INSTANCE;
+                });
+            }
+            filterHelper.open();
         } else if (item.getItemId() == R.id.menu_item_openInBrowser) {
             ShareUtils.openUrlInBrowser(requireContext(), url);
         } else if (item.getItemId() == R.id.menu_item_share) {

@@ -131,9 +131,6 @@ public class StatisticsPlaylistFragment
                                     @NonNull final MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_history, menu);
-        if (useAsFrontPage) {
-            menu.findItem(R.id.action_search_local).setIcon(R.drawable.ic_history_search);
-        }
     }
 
     ///////////////////////////////////////////////////////////////////////////

@@ -15,6 +15,8 @@ import org.schabi.newpipe.database.LocalItem;
 import org.schabi.newpipe.database.playlist.PlaylistStreamEntry;
 import org.schabi.newpipe.database.stream.StreamStatisticsEntry;
 import org.schabi.newpipe.database.stream.model.StreamStateEntity;
+import org.schabi.newpipe.database.playlist.PlaylistMetadataEntry;
+import org.schabi.newpipe.database.playlist.model.PlaylistRemoteEntity;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.info_list.ItemViewMode;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
@@ -535,6 +537,15 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
                     if (((PlaylistStreamEntry)item).getStreamEntity().getTitle().toLowerCase().contains(text.toLowerCase())) {
                         filteredItems.add(item);
                     } else if (((PlaylistStreamEntry)item).getStreamEntity().getUploader().toLowerCase().contains(text.toLowerCase())) {
+                        filteredItems.add(item);
+                    }
+                } else if (item instanceof PlaylistMetadataEntry) {
+                    if (((PlaylistMetadataEntry) item).name.toLowerCase().contains(text.toLowerCase())) {
+                        filteredItems.add(item);
+                    }
+                } else if (item instanceof PlaylistRemoteEntity) {
+                    final String name = ((PlaylistRemoteEntity) item).getName();
+                    if (name != null && name.toLowerCase().contains(text.toLowerCase())) {
                         filteredItems.add(item);
                     }
                 } else if(item instanceof StreamStatisticsEntry) {

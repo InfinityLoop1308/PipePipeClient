@@ -4,6 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <item
+        android:id="@+id/action_search_local"
+        android:icon="@drawable/ic_filter_alt"
+        android:orderInCategory="0"
+        android:title="@string/search"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/menu_item_share"
         android:icon="@drawable/ic_share"
         android:title="@string/share"
