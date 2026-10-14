@@ -1,5 +1,6 @@
 package org.schabi.newpipe.fragments.list;
 
+import org.schabi.newpipe.extractor.utils.ServiceScopedId;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.ktx.ViewUtils.animateHideRecyclerViewAllowingScrolling;
 import static org.schabi.newpipe.util.ThemeHelper.getGridSpanCountStreams;
@@ -334,7 +335,8 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
             @Override
             public void selected(final ChannelInfoItem selectedItem) {
                 try {
-                    if (isChannelBlocked(selectedItem.getName())) {
+                    if (isChannelBlocked(selectedItem.getName(), selectedItem.getServiceId(),
+                            selectedItem.getUploaderId())) {
                         Toast.makeText(requireContext(),
                                 R.string.channel_is_blocked,
                                 Toast.LENGTH_SHORT).show();
@@ -356,7 +358,8 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
             @Override
             public void selected(final PlaylistInfoItem selectedItem) {
                 try {
-                    if (isChannelBlocked(selectedItem.getUploaderName())) {
+                    if (isChannelBlocked(selectedItem.getUploaderName(),
+                            selectedItem.getServiceId(), selectedItem.getUploaderId())) {
                         Toast.makeText(requireContext(),
                                 R.string.channel_is_blocked,
                                 Toast.LENGTH_SHORT).show();
@@ -619,17 +622,25 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     /**
      * Check if a channel name is in the user's block list.
      * @param channelName the channel name to check
+     * @param serviceId the service the channel belongs to
+     * @param channelId the channel id to check, may be null
      * @return true if the channel is blocked
      */
-    protected boolean isChannelBlocked(@Nullable final String channelName) {
+    protected boolean isChannelBlocked(@Nullable final String channelName,
+                                       final int serviceId,
+                                       @Nullable final String channelId) {
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(requireContext());
+        final String channelKey = ServiceScopedId.of(serviceId, channelId);
+        if (channelKey != null
+                && prefs.getStringSet(getString(R.string.filter_by_channel_id_key) + "_set",
+                new HashSet<>()).contains(channelKey)) {
+            return true;
+        }
         if (channelName == null || channelName.isEmpty()) {
             return false;
         }
-        final SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(requireContext());
-        final Set<String> blockedChannels = prefs.getStringSet(
-                getString(R.string.filter_by_channel_key) + "_set",
-                new HashSet<>());
-        return blockedChannels.contains(channelName);
+        return prefs.getStringSet(getString(R.string.filter_by_channel_key) + "_set",
+                new HashSet<>()).contains(channelName);
     }
 }

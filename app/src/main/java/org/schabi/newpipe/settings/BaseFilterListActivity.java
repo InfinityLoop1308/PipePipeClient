@@ -43,6 +43,19 @@ public abstract class BaseFilterListActivity extends AppCompatActivity {
     protected abstract String getAddDialogTitle();
     protected abstract String getActivityTitle();
 
+    /**
+     * Validates and canonicalizes a new entry.
+     * @return the entry to store, or null if invalid (the dialog then stays open)
+     */
+    protected String normalizeEntry(final String input) {
+        return input;
+    }
+
+    /** Error text shown when {@link #normalizeEntry} rejects an entry. */
+    protected String getInvalidEntryMessage() {
+        return null;
+    }
+
     /** Whether entries wrapped in slashes ({@code /pattern/}) are treated as regex. */
     protected boolean supportsRegex() {
         return false;
@@ -167,6 +180,14 @@ public abstract class BaseFilterListActivity extends AppCompatActivity {
         dialog.setOnShowListener(d -> dialog.getButton(AlertDialog.BUTTON_POSITIVE)
                 .setOnClickListener(v -> {
             String newFilter = input.getText().toString().trim();
+            if (!newFilter.isEmpty()) {
+                final String normalized = normalizeEntry(newFilter);
+                if (normalized == null) {
+                    input.setError(getInvalidEntryMessage());
+                    return;
+                }
+                newFilter = normalized;
+            }
             if (supportsRegex() && KeywordMatcher.isRegex(newFilter)) {
                 try {
                     KeywordMatcher.compile(newFilter);

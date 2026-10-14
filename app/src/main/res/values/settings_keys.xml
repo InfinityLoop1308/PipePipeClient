@@ -1829,4 +1829,6 @@
     <string name="comment_filter_by_keyword_key" translatable="false">comment_filter_by_keyword_key</string>
     <string name="comment_filter_by_username_key" translatable="false">comment_filter_by_username_key</string>
     <string name="comment_filter_min_likes_key" translatable="false">comment_filter_min_likes_key</string>
+    <string name="filter_by_channel_id_key" translatable="false">filter_by_channel_id_key</string>
+    <string name="comment_filter_by_user_id_key" translatable="false">comment_filter_by_user_id_key</string>
 </resources>

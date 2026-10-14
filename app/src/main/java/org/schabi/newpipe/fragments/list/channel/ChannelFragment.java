@@ -1,5 +1,6 @@
 package org.schabi.newpipe.fragments.list.channel;
 
+import org.schabi.newpipe.extractor.utils.ServiceScopedId;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -432,7 +433,10 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
             final Set<String> blockedChannels = prefs.getStringSet(
                     getString(R.string.filter_by_channel_key) + "_set",
                     new HashSet<>());
-            if (blockedChannels.contains(channelName)) {
+            final String channelKey = ServiceScopedId.of(result.getServiceId(), result.getId());
+            if (blockedChannels.contains(channelName) || (channelKey != null
+                    && prefs.getStringSet(getString(R.string.filter_by_channel_id_key) + "_set",
+                    new HashSet<>()).contains(channelKey))) {
                 Toast.makeText(requireContext(),
                         R.string.channel_is_blocked,
                         Toast.LENGTH_SHORT).show();

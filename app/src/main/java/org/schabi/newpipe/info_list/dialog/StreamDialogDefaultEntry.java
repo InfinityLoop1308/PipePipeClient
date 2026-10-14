@@ -1,5 +1,6 @@
 package org.schabi.newpipe.info_list.dialog;
 
+import org.schabi.newpipe.extractor.utils.ServiceScopedId;
 import static org.schabi.newpipe.util.NavigationHelper.openChannelFragment;
 import static org.schabi.newpipe.util.SparseItemUtil.fetchItemInfoIfSparse;
 import static org.schabi.newpipe.util.SparseItemUtil.fetchStreamInfoAndSaveToDatabase;
@@ -161,11 +162,16 @@ public enum StreamDialogDefaultEntry {
                     final SharedPreferences pref = PreferenceManager
                             .getDefaultSharedPreferences(appContext);
                     // Get the key from string resources
-                    String filterKey = appContext.getString(R.string.filter_by_channel_key) + "_set";
+                    final String channelId = ServiceScopedId.of(item.getServiceId(),
+                            item.getUploaderId());
+                    final boolean byId = channelId != null;
+                    String filterKey = appContext.getString(byId
+                            ? R.string.filter_by_channel_id_key
+                            : R.string.filter_by_channel_key) + "_set";
                     // Retrieve current filter set or default to empty
                     Set<String> currentFilters = new HashSet<>(pref.getStringSet(filterKey, new HashSet<>()));
                     // Add the new channel to the set
-                    currentFilters.add(item.getUploaderName());
+                    currentFilters.add(byId ? channelId : item.getUploaderName());
                     // Save the updated set back to SharedPreferences
                     pref.edit()
                             .putStringSet(filterKey, currentFilters)

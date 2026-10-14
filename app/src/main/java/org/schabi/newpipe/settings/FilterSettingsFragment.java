@@ -62,6 +62,20 @@ public class FilterSettingsFragment extends BasePreferenceFragment {
             return true;
         });
 
+        findPreference(getString(R.string.filter_by_channel_id_key))
+                .setOnPreferenceClickListener(preference -> {
+                    startActivity(new Intent(getActivity(),
+                            ChannelIdFilterListActivity.class));
+                    return true;
+                });
+
+        findPreference(getString(R.string.comment_filter_by_user_id_key))
+                .setOnPreferenceClickListener(preference -> {
+                    startActivity(new Intent(getActivity(),
+                            CommentUserIdFilterListActivity.class));
+                    return true;
+                });
+
         findPreference(getString(R.string.comment_filter_by_keyword_key))
                 .setOnPreferenceClickListener(preference -> {
                     startActivity(new Intent(getActivity(),

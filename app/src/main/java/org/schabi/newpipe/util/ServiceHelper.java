@@ -343,6 +343,7 @@ public final class ServiceHelper {
         FilterConfig filterConfig = new FilterConfig(
             new ArrayList<>(sharedPreferences.getStringSet(context.getString(R.string.filter_by_keyword_key) + "_set", new HashSet<>())),
             new ArrayList<>(sharedPreferences.getStringSet(context.getString(R.string.filter_by_channel_key) + "_set", new HashSet<>())),
+            new ArrayList<>(sharedPreferences.getStringSet(context.getString(R.string.filter_by_channel_id_key) + "_set", new HashSet<>())),
             sharedPreferences.getBoolean(context.getString(R.string.filter_shorts_key), false),
             sharedPreferences.getBoolean(context.getString(R.string.filter_paid_contents_key), false)
         );
@@ -350,6 +351,7 @@ public final class ServiceHelper {
         final CommentsFilterConfig commentsFilterConfig = new CommentsFilterConfig(
             new ArrayList<>(sharedPreferences.getStringSet(context.getString(R.string.comment_filter_by_keyword_key) + "_set", new HashSet<>())),
             new ArrayList<>(sharedPreferences.getStringSet(context.getString(R.string.comment_filter_by_username_key) + "_set", new HashSet<>())),
+            new ArrayList<>(sharedPreferences.getStringSet(context.getString(R.string.comment_filter_by_user_id_key) + "_set", new HashSet<>())),
             getCommentFilterMinLikes(context)
         );
 
