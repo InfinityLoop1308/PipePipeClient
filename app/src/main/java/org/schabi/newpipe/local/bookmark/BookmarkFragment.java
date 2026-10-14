@@ -9,6 +9,9 @@ import android.text.InputType;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -135,6 +138,9 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
         itemListAdapter.setSelectedListener(new OnClickGesture<LocalItem>() {
             @Override
             public void selected(final LocalItem selectedItem) {
+                if (toggleSelectionIfActive(selectedItem)) {
+                    return;
+                }
                 final FragmentManager fragmentManager = getFM();
 
                 if (selectedItem instanceof PlaylistMetadataEntry) {
@@ -164,7 +170,8 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
             @Override
             public void drag(final LocalItem selectedItem,
                              final RecyclerView.ViewHolder viewHolder) {
-                if (itemTouchHelper != null) {
+                // reordering while selecting is not supported
+                if (itemTouchHelper != null && !selection.isActive()) {
                     itemTouchHelper.startDrag(viewHolder);
                 }
             }
@@ -313,11 +320,82 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
         }
 
         itemListAdapter.addItems(result);
+        retainExistingSelection();
         if (itemsListState != null) {
             itemsList.getLayoutManager().onRestoreInstanceState(itemsListState);
             itemsListState = null;
         }
         hideLoading();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Multi-selection
+    ///////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull final Menu menu,
+                                    @NonNull final MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_bookmark, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
+        if (item.getItemId() == R.id.action_multi_select) {
+            selection.enter();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected int getSelectionMenu() {
+        return R.menu.menu_bookmark_selection;
+    }
+
+    /** Local and remote playlists have independent uids, so the type is part of the key. */
+    @Nullable
+    @Override
+    protected Long getSelectionKey(@NonNull final LocalItem item) {
+        if (item instanceof PlaylistMetadataEntry) {
+            return ((PlaylistMetadataEntry) item).uid * 2;
+        } else if (item instanceof PlaylistRemoteEntity) {
+            return ((PlaylistRemoteEntity) item).getUid() * 2 + 1;
+        }
+        return null;
+    }
+
+    @Override
+    protected boolean onSelectionAction(@NonNull final MenuItem item) {
+        if (item.getItemId() != R.id.action_selection_delete) {
+            return false;
+        }
+        final int count = selection.getSelectedCount();
+        if (count > 0) {
+            new AlertDialog.Builder(requireContext())
+                    .setMessage(getResources().getQuantityString(
+                            R.plurals.delete_selected_playlists_confirm, count, count))
+                    .setNegativeButton(R.string.cancel, null)
+                    .setPositiveButton(R.string.delete, (d, w) -> deleteSelected())
+                    .show();
+        }
+        return true;
+    }
+
+    private void deleteSelected() {
+        if (itemListAdapter == null || debounceSaver == null) {
+            return;
+        }
+        final List<LocalItem> items = getSelectedItems();
+        if (items.isEmpty()) {
+            return;
+        }
+        selection.exit();
+        itemListAdapter.removeItems(items);
+        if (itemListAdapter.getItemsList().isEmpty()) {
+            showEmptyState();
+        }
+        debounceSaver.saveChanges();
     }
 
     ///////////////////////////////////////////////////////////////////////////

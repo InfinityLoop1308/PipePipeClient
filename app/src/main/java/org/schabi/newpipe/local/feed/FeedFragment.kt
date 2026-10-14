@@ -83,6 +83,9 @@ import org.schabi.newpipe.player.playqueue.SinglePlayQueue
 import org.schabi.newpipe.util.DeviceUtils
 import org.schabi.newpipe.util.Localization
 import org.schabi.newpipe.util.NavigationHelper
+import org.schabi.newpipe.util.selection.SelectionController
+import org.schabi.newpipe.util.selection.SelectionToolbar
+import org.schabi.newpipe.util.selection.StreamSelectionActions
 import org.schabi.newpipe.util.NavigationHelper.openFeedChannelsFragment
 import org.schabi.newpipe.util.ThemeHelper.getGridSpanCountStreams
 import org.schabi.newpipe.util.ThemeHelper.getItemViewMode
@@ -115,6 +118,9 @@ class FeedFragment : BaseStateFragment<FeedState>() {
     private var lastNewItemsCount = 0
 
     private var playlistControlBinding: PlaylistControlBinding? = null
+
+    private val selection = SelectionController<Long>()
+    private var selectionToolbar: SelectionToolbar? = null
 
     private var autoBackgroundPlaying = false
     private var randomBackgroundPlaying = false
@@ -225,16 +231,26 @@ class FeedFragment : BaseStateFragment<FeedState>() {
 
         feedBinding.itemsList.adapter = groupAdapter
         setupListViewMode()
+
+        selection.setListener { controller ->
+            selectionToolbar?.update(controller)
+            applySelectionToItems()
+        }
     }
 
     override fun onPause() {
         super.onPause()
         listState = feedBinding.itemsList.layoutManager?.onSaveInstanceState()
+        selectionToolbar?.release()
+        selectionToolbar = null
     }
 
     override fun onResume() {
         super.onResume()
         updateRelativeTimeViews()
+        selectionToolbar = SelectionToolbar.bind(
+            activity, R.menu.menu_stream_selection, selection, ::onSelectionAction
+        )
 
         if (updateListViewModeOnResume) {
             updateListViewModeOnResume = false
@@ -351,6 +367,39 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         }
     }
 
+    // /////////////////////////////////////////////////////////////////////////
+    // Multi-selection
+    // /////////////////////////////////////////////////////////////////////////
+
+    /** Marks the items according to the selection and refreshes their highlight only. */
+    private fun applySelectionToItems() {
+        for (item in originalItems) {
+            item.isItemSelected = selection.isSelected(item.streamWithState.stream.uid)
+        }
+        groupAdapter.notifyItemRangeChanged(0, groupAdapter.itemCount, StreamItem.UPDATE_SELECTION)
+    }
+
+    private fun onSelectionAction(item: MenuItem): Boolean {
+        val shownKeys = (if (isFilterEnabled) filteredItems else originalItems)
+            .map { it.streamWithState.stream.uid }
+        when (item.itemId) {
+            R.id.action_selection_select_all -> selection.selectAll(shownKeys)
+            R.id.action_selection_invert -> selection.invert(shownKeys)
+            else -> {
+                // in the order they are shown, including ones hidden by the search filter
+                val streams = originalItems
+                    .filter { selection.isSelected(it.streamWithState.stream.uid) }
+                    .map { it.streamWithState.stream }
+                val handled = StreamSelectionActions.handle(this, disposables, item, streams)
+                if (handled) {
+                    selection.exit()
+                }
+                return handled
+            }
+        }
+        return true
+    }
+
     // Add method to create PlayQueue from feed items
     private fun getPlayQueue(startIndex: Int = 0): PlayQueue {
         val streamInfoItems = mutableListOf<StreamInfoItem>()
@@ -388,13 +437,17 @@ class FeedFragment : BaseStateFragment<FeedState>() {
 //        activity.supportActionBar?.subtitle = groupName
 
         inflater.inflate(R.menu.menu_feed_fragment, menu)
+        inflater.inflate(R.menu.menu_multi_select, menu)
         updateTogglePlayedItemsButton(menu.findItem(R.id.menu_item_feed_toggle_played_items))
         menu.findItem(R.id.action_search_feed)?.isVisible =
             menu.isItemVisible(R.id.action_search).not()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.menu_item_feed_toggle_played_items) {
+        if (item.itemId == R.id.action_multi_select) {
+            selection.enter()
+            return true
+        } else if (item.itemId == R.id.menu_item_feed_toggle_played_items) {
             showPlayedItems = !item.isChecked
             updateTogglePlayedItemsButton(item)
             viewModel.togglePlayedItems(showPlayedItems)
@@ -434,6 +487,7 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         // Ensure that all animations are canceled
         tryGetNewItemsLoadedButton()?.clearAnimation()
 
+        selection.setListener(null)
         feedBinding.itemsList.adapter = null
         _feedBinding = null
         playlistControlBinding?.let { binding ->
@@ -457,12 +511,14 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         super.onSaveInstanceState(outState)
         listState?.let { outState.putParcelable("listState", it) }
         outState.putBoolean("showPlayedItems", showPlayedItems)
+        outState.putBundle("selection", Bundle().also { selection.saveState(it) })
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         listState = savedInstanceState.getParcelable("listState")
         showPlayedItems = savedInstanceState.getBoolean("showPlayedItems", true)
+        selection.restoreState(savedInstanceState.getBundle("selection"))
     }
 
     private fun updateTogglePlayedItemsButton(menuItem: MenuItem) {
@@ -716,6 +772,10 @@ class FeedFragment : BaseStateFragment<FeedState>() {
 
     private val listenerStreamItem = object : OnItemClickListener, OnItemLongClickListener {
         override fun onItemClick(item: Item<*>, view: View) {
+            if (item is StreamItem && selection.isActive) {
+                selection.toggle(item.streamWithState.stream.uid)
+                return
+            }
             if (item is StreamItem && !isRefreshing) {
                 val stream = item.streamWithState.stream
 
@@ -754,6 +814,11 @@ class FeedFragment : BaseStateFragment<FeedState>() {
             else -> StreamItem.ItemVersion.NORMAL
         }
         loadedState.items.forEach { it.itemVersion = itemVersion }
+
+        // the feed items are recreated on every update, so drop selected ones that disappeared
+        // and mark the new instances
+        selection.retainOnly(loadedState.items.map { it.streamWithState.stream.uid })
+        loadedState.items.forEach { it.isItemSelected = selection.isSelected(it.streamWithState.stream.uid) }
 
         // Store original items for filtering
         originalItems.clear()
