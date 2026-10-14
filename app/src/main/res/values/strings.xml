@@ -1165,4 +1165,19 @@
 <string name="filter_id_invalid_format">Invalid format. Use ServiceName:ID, e.g. YouTube:UCxxxxxxxxxxxxxxxxxxxxxx, BiliBili:12345 or NicoNico:12345</string>
 <string name="subscribe_to_channel">Subscribe to channel</string>
 <string name="already_subscribed">Already subscribed</string>
+<string name="multi_select">Multi-select</string>
+<string name="select_all">Select all</string>
+<string name="invert_selection">Invert selection</string>
+<plurals name="selection_count">
+<item quantity="one">%d selected</item>
+<item quantity="other">%d selected</item>
+</plurals>
+<plurals name="delete_selected_history_confirm">
+<item quantity="one">Delete %d item from history?</item>
+<item quantity="other">Delete %d items from history?</item>
+</plurals>
+<plurals name="items_deleted">
+<item quantity="one">%d item deleted.</item>
+<item quantity="other">%d items deleted.</item>
+</plurals>
 </resources>

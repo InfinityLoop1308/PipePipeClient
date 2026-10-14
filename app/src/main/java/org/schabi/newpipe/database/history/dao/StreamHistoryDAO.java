@@ -68,6 +68,9 @@ public abstract class StreamHistoryDAO implements HistoryDAO<StreamHistoryEntity
     @Query("DELETE FROM " + STREAM_HISTORY_TABLE + " WHERE " + JOIN_STREAM_ID + " = :streamId")
     public abstract int deleteStreamHistory(long streamId);
 
+    @Query("DELETE FROM " + STREAM_HISTORY_TABLE + " WHERE " + JOIN_STREAM_ID + " IN (:streamIds)")
+    public abstract int deleteStreamHistories(List<Long> streamIds);
+
     @RewriteQueriesToDropUnusedColumns
     @Query("SELECT * FROM " + STREAM_TABLE
 

@@ -1,6 +1,7 @@
 package org.schabi.newpipe.local;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,6 +76,17 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
     private static final int LOCAL_PLAYLIST_CARD_HOLDER_TYPE = 0x2016;
     private static final int REMOTE_PLAYLIST_CARD_HOLDER_TYPE = 0x3016;
 
+    /** Payload used to only refresh the selection highlight of bound items. */
+    public static final Object SELECTION_PAYLOAD = new Object();
+
+    /** Tells the adapter which items are selected; null means selection is not supported. */
+    public interface SelectionState {
+        boolean isSelected(LocalItem item);
+    }
+
+    @Nullable
+    private SelectionState selectionState;
+
     private final LocalItemBuilder localItemBuilder;
     private final ArrayList<LocalItem> localItems;
     private final HistoryRecordManager recordManager;
@@ -107,6 +119,27 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public void unsetSelectedListener() {
         localItemBuilder.setOnItemSelectedListener(null);
+    }
+
+    public void setSelectionState(@Nullable final SelectionState selectionState) {
+        this.selectionState = selectionState;
+    }
+
+    /** Refreshes the selection highlight of all items without rebinding their content. */
+    public void notifySelectionChanged() {
+        notifyItemRangeChanged(0, getItemCount(), SELECTION_PAYLOAD);
+    }
+
+    private void bindSelection(final RecyclerView.ViewHolder holder, final LocalItem item) {
+        final boolean selected = selectionState != null && selectionState.isSelected(item);
+        if (selected) {
+            final int accent = ThemeHelper.resolveColorFromAttr(holder.itemView.getContext(),
+                    android.R.attr.colorAccent);
+            // ~24% alpha overlay keeps the thumbnail and text readable
+            holder.itemView.setForeground(new ColorDrawable((accent & 0x00FFFFFF) | 0x3D000000));
+        } else {
+            holder.itemView.setForeground(null);
+        }
     }
 
     public void addItems(@Nullable final List<? extends LocalItem> data) {
@@ -406,8 +439,10 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 position--;
             }
 
+            final LocalItem item = (isFilterEnabled ? filteredItems : localItems).get(position);
             ((LocalItemHolder) holder)
-                    .updateFromItem((isFilterEnabled?filteredItems:localItems).get(position), recordManager, dateTimeFormatter);
+                    .updateFromItem(item, recordManager, dateTimeFormatter);
+            bindSelection(holder, item);
         } else if (holder instanceof HeaderFooterHolder && position == 0 && header != null) {
             ((HeaderFooterHolder) holder).view = header;
         } else if (holder instanceof HeaderFooterHolder && position == sizeConsideringHeader()
@@ -421,7 +456,14 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
                                  @NonNull final List<Object> payloads) {
         if (!payloads.isEmpty() && holder instanceof LocalItemHolder) {
             for (final Object payload : payloads) {
-                if (payload instanceof StreamStateEntity) {
+                if (payload == SELECTION_PAYLOAD) {
+                    final List<LocalItem> currentItems =
+                            isFilterEnabled ? filteredItems : localItems;
+                    final int index = header == null ? position : position - 1;
+                    if (index >= 0 && index < currentItems.size()) {
+                        bindSelection(holder, currentItems.get(index));
+                    }
+                } else if (payload instanceof StreamStateEntity) {
                     ((LocalItemHolder) holder).updateState(localItems
                             .get(header == null ? position : position - 1), recordManager);
                 } else if (payload instanceof Boolean) {

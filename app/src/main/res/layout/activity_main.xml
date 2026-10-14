@@ -18,6 +18,11 @@
             layout="@layout/toolbar_layout"
             android:id="@+id/toolbar_layout"/>
 
+        <!-- Covers the main toolbar while a list is in multi-selection mode -->
+        <include
+            layout="@layout/selection_toolbar"
+            android:id="@+id/selection_toolbar" />
+
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment_player_holder"
             android:layout_width="match_parent"
