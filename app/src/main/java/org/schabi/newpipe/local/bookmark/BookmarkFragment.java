@@ -369,15 +369,6 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
     }
 
     @Override
-    public void setMenuVisibility(final boolean menuVisible) {
-        super.setMenuVisibility(menuVisible);
-        // the tab is not the current one anymore, drop its toolbar filter
-        if (!menuVisible && filterHelper != null) {
-            filterHelper.close();
-        }
-    }
-
-    @Override
     public boolean onBackPressed() {
         if (exitSelectionOnBack()) {
             return true;

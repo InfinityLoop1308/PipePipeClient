@@ -52,6 +52,7 @@ public class MainFragment extends BaseFragment
         implements TabLayout.OnTabSelectedListener, BackPressable {
     private FragmentMainBinding binding;
     private SelectedTabsPagerAdapter pagerAdapter;
+    private boolean closeToolbarFilterOnIdle = false;
 
     private final List<Tab> tabsList = new ArrayList<>();
     private TabsManager tabsManager;
@@ -104,6 +105,15 @@ public class MainFragment extends BaseFragment
 
         binding.mainTabLayout.setupWithViewPager(binding.pager);
         binding.mainTabLayout.addOnTabSelectedListener(this);
+        binding.pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageScrollStateChanged(final int state) {
+                if (state == ViewPager.SCROLL_STATE_IDLE && closeToolbarFilterOnIdle) {
+                    closeToolbarFilterOnIdle = false;
+                    closeToolbarFilterIfOpen();
+                }
+            }
+        });
         binding.mainTabLayout.setTabRippleColor(binding.mainTabLayout.getTabRippleColor()
                 .withAlpha(32));
 
@@ -246,15 +256,9 @@ public class MainFragment extends BaseFragment
         if (DEBUG) {
             Log.d(TAG, "onTabSelected() called with: selectedTab = [" + selectedTab + "]");
         }
-        // a toolbar filter opened in another tab must not leak into the newly selected tab
-        if (activity != null && activity.getSupportActionBar() != null
-                && activity.getSupportActionBar().getCustomView() != null) {
-            for (final Fragment child : getChildFragmentManager().getFragments()) {
-                if (child instanceof BackPressable) {
-                    ((BackPressable) child).onBackPressed();
-                }
-            }
-        }
+        // a toolbar filter opened in another tab must not leak into the newly selected tab;
+        // closing it is deferred until scrolling has settled to avoid dropping frames
+        closeToolbarFilterOnIdle = true;
         updateTitleForTab(selectedTab.getPosition());
     }
 
@@ -267,6 +271,18 @@ public class MainFragment extends BaseFragment
             Log.d(TAG, "onTabReselected() called with: tab = [" + tab + "]");
         }
         updateTitleForTab(tab.getPosition());
+    }
+
+    private void closeToolbarFilterIfOpen() {
+        if (activity == null || activity.getSupportActionBar() == null
+                || activity.getSupportActionBar().getCustomView() == null) {
+            return;
+        }
+        for (final Fragment child : getChildFragmentManager().getFragments()) {
+            if (child instanceof BackPressable) {
+                ((BackPressable) child).onBackPressed();
+            }
+        }
     }
 
     @Override
