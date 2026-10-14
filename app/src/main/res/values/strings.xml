@@ -1163,4 +1163,6 @@
 <string name="filter_by_channel_id_summary">Hide videos from channels with these IDs</string>
 <string name="comment_filter_by_user_id_summary">Hide comments posted by users with these channel IDs</string>
 <string name="filter_id_invalid_format">Invalid format. Use ServiceName:ID, e.g. YouTube:UCxxxxxxxxxxxxxxxxxxxxxx, BiliBili:12345 or NicoNico:12345</string>
+<string name="subscribe_to_channel">Subscribe to channel</string>
+<string name="already_subscribed">Already subscribed</string>
 </resources>

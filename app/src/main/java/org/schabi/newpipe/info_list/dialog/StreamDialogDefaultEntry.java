@@ -17,6 +17,13 @@ import androidx.annotation.StringRes;
 
 import androidx.preference.PreferenceManager;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.database.subscription.SubscriptionEntity;
+import org.schabi.newpipe.error.ErrorInfo;
+import org.schabi.newpipe.error.ErrorUtil;
+import org.schabi.newpipe.error.UserAction;
+import org.schabi.newpipe.local.subscription.SubscriptionManager;
+import org.schabi.newpipe.util.ExtractorHelper;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.download.DownloadDialog;
 import org.schabi.newpipe.local.dialog.PlaylistAppendDialog;
@@ -186,6 +193,37 @@ public enum StreamDialogDefaultEntry {
                 .show();
     }),
 
+
+    SUBSCRIBE_TO_CHANNEL(R.string.subscribe_to_channel, (fragment, item) -> {
+        final Context appContext = fragment.requireContext().getApplicationContext();
+        final int serviceId = item.getServiceId();
+        final java.util.function.Consumer<String> subscribe = channelUrl ->
+                ExtractorHelper.getChannelInfo(serviceId, channelUrl, false)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .map(info -> {
+                            final SubscriptionManager manager = new SubscriptionManager(appContext);
+                            if (manager.subscriptionTable()
+                                    .getSubscription(info.getServiceId(), info.getUrl())
+                                    .blockingGet() != null) {
+                                return R.string.already_subscribed;
+                            }
+                            manager.insertSubscription(SubscriptionEntity.from(info), info);
+                            return R.string.subscribed_button_title;
+                        })
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(msg -> Toast.makeText(appContext, msg, Toast.LENGTH_SHORT)
+                                        .show(),
+                                throwable -> ErrorUtil.createNotification(appContext,
+                                        new ErrorInfo(throwable, UserAction.SUBSCRIPTION_CHANGE,
+                                                "Subscribing: " + channelUrl, serviceId)));
+        if (item.getUploaderUrl() != null && !Objects.equals(item.getUploaderUrl(), "")) {
+            subscribe.accept(item.getUploaderUrl());
+        } else {
+            fetchUploaderUrlIfSparse(fragment.requireContext(), serviceId, item.getUrl(),
+                    item.getUploaderUrl(), subscribe);
+        }
+    }),
 
     NAVIGATE_TO(R.string.navigate_to, (fragment, item) -> {
         throw new UnsupportedOperationException("This needs to be implemented manually "

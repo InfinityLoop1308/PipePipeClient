@@ -353,6 +353,7 @@ public final class InfoItemDialog {
             addMarkAsWatchedEntryIfNeeded();
             addEntry(StreamDialogDefaultEntry.SHOW_CHANNEL_DETAILS);
             addEntry(StreamDialogDefaultEntry.ADD_TO_FILTER_LIST);
+            addEntry(StreamDialogDefaultEntry.SUBSCRIBE_TO_CHANNEL);
             return this;
         }
 
