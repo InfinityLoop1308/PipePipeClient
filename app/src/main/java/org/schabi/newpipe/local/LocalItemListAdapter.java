@@ -24,9 +24,12 @@ import org.schabi.newpipe.util.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.schabi.newpipe.util.ThemeHelper.isGrid;
 
@@ -224,6 +227,39 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
         localItems.clear();
         filteredItems.clear();
+        notifyDataSetChanged();
+    }
+
+    /** Removes several items at once, keeping the local filter consistent. */
+    public void removeItems(@NonNull final Collection<? extends LocalItem> items) {
+        if (items.isEmpty()) {
+            return;
+        }
+        final Set<LocalItem> toRemove = Collections.newSetFromMap(new IdentityHashMap<>());
+        toRemove.addAll(items);
+        localItems.removeIf(toRemove::contains);
+        reapplyFilter();
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Moves {@code items} to the top or bottom of the list, keeping their relative order.
+     * Only meaningful for the original (manual) order.
+     */
+    public void moveItemsToEdge(@NonNull final List<? extends LocalItem> items,
+                                final boolean toTop) {
+        if (items.isEmpty()) {
+            return;
+        }
+        final Set<LocalItem> toMove = Collections.newSetFromMap(new IdentityHashMap<>());
+        toMove.addAll(items);
+        localItems.removeIf(toMove::contains);
+        if (toTop) {
+            localItems.addAll(0, items);
+        } else {
+            localItems.addAll(items);
+        }
+        reapplyFilter();
         notifyDataSetChanged();
     }
 

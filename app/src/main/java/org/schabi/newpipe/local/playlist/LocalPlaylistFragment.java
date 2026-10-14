@@ -102,6 +102,8 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
     private AtomicBoolean isLoadingComplete;
     /* Has the playlist been modified (e.g. items reordered or deleted) */
     private AtomicBoolean isModified;
+    /* Has a save renumbered the join indexes since the last handled db emission */
+    private boolean joinIndexesRenumbered = false;
     /* Is the playlist currently being processed to remove watched videos */
     private boolean isRemovingWatched = false;
     /* Is the playlist currently being processed to remove duplicate streams */
@@ -267,6 +269,9 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
         itemListAdapter.setSelectedListener(new OnClickGesture<LocalItem>() {
             @Override
             public void selected(final LocalItem selectedItem) {
+                if (toggleSelectionIfActive(selectedItem)) {
+                    return;
+                }
                 if (selectedItem instanceof PlaylistStreamEntry) {
                     final StreamEntity item =
                             ((PlaylistStreamEntry) selectedItem).getStreamEntity();
@@ -294,7 +299,8 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             @Override
             public void drag(final LocalItem selectedItem,
                              final RecyclerView.ViewHolder viewHolder) {
-                if (itemTouchHelper != null) {
+                // reordering would invalidate the selection keys
+                if (itemTouchHelper != null && !selection.isActive()) {
                     itemTouchHelper.startDrag(viewHolder);
                 }
             }
@@ -480,7 +486,9 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        if (item.getItemId() == R.id.menu_item_share_playlist) {
+        if (item.getItemId() == R.id.action_multi_select) {
+            selection.enter();
+        } else if (item.getItemId() == R.id.menu_item_share_playlist) {
             createShareConfirmationDialog();
         } else if (item.getItemId() == R.id.menu_item_remove_watched) {
             if (!isRemovingWatched) {
@@ -872,6 +880,15 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
 
         itemListAdapter.clearStreamItemList();
 
+        if (selection.isActive()) {
+            if (joinIndexesRenumbered) {
+                remapSelectionAfterSave(result);
+            } else {
+                selection.retainOnly(getSelectionKeys(new ArrayList<>(result)));
+            }
+        }
+        joinIndexesRenumbered = false;
+
         if (result.isEmpty()) {
             showEmptyState();
             return;
@@ -1034,6 +1051,7 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
         }
 
         itemListAdapter.removeItem(item);
+        retainExistingSelection();
         if (playlistManager.getPlaylistThumbnail(playlistId)
                 .equals(item.getStreamEntity().getThumbnailUrl())) {
             updateThumbnailUrl();
@@ -1152,6 +1170,7 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                             if (isModified != null) {
                                 isModified.set(false);
                             }
+                            joinIndexesRenumbered = true;
                         },
                         throwable -> showError(new ErrorInfo(throwable,
                                 UserAction.REQUESTED_BOOKMARK, "Saving playlist"))
@@ -1218,7 +1237,7 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
 
             @Override
             public boolean isItemViewSwipeEnabled() {
-                return !isShowingAsTab;
+                return !isShowingAsTab && !selection.isActive();
             }
 
             @Override
@@ -1370,6 +1389,9 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
 
     @Override
     public boolean onBackPressed() {
+        if (exitSelectionOnBack()) {
+            return true;
+        }
         if(Objects.requireNonNull(activity.getSupportActionBar()).getCustomView() != null){
             destroyCustomViewInActionBar();
             return true;
@@ -1431,6 +1453,155 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
      * with the playlist details or just the list of stream URLs.
      * After the user has made a choice, the playlist is shared.
      */
+    /*//////////////////////////////////////////////////////////////////////////
+    // Multi-selection
+    //////////////////////////////////////////////////////////////////////////*/
+
+    @Override
+    protected int getSelectionMenu() {
+        return R.menu.menu_local_playlist_selection;
+    }
+
+    /** Join index is unique within the playlist, so duplicated streams stay distinguishable. */
+    @Nullable
+    @Override
+    protected Long getSelectionKey(@NonNull final LocalItem item) {
+        return item instanceof PlaylistStreamEntry
+                ? (long) ((PlaylistStreamEntry) item).getJoinIndex() : null;
+    }
+
+    @Nullable
+    @Override
+    protected StreamEntity getSelectionStream(@NonNull final LocalItem item) {
+        return item instanceof PlaylistStreamEntry
+                ? ((PlaylistStreamEntry) item).getStreamEntity() : null;
+    }
+
+    @Override
+    protected boolean canPersistSelection() {
+        // pending or just saved changes renumber join indexes once the playlist reloads
+        return !joinIndexesRenumbered && (isModified == null || !isModified.get());
+    }
+
+    @Override
+    protected boolean onSelectionAction(@NonNull final MenuItem item) {
+        final int id = item.getItemId();
+        if (id == R.id.action_selection_delete) {
+            confirmRemoveSelected();
+        } else if (id == R.id.action_selection_move_top) {
+            moveSelected(true);
+        } else if (id == R.id.action_selection_move_bottom) {
+            moveSelected(false);
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    private void confirmRemoveSelected() {
+        final int count = selection.getSelectedCount();
+        if (count == 0) {
+            return;
+        }
+        new AlertDialog.Builder(requireContext())
+                .setMessage(getResources().getQuantityString(
+                        R.plurals.remove_selected_from_playlist_confirm, count, count))
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.play_queue_remove, (d, w) -> removeSelected())
+                .show();
+    }
+
+    private void removeSelected() {
+        if (itemListAdapter == null || playlistManager == null) {
+            return;
+        }
+        final List<LocalItem> items = getSelectedItems();
+        if (items.isEmpty()) {
+            return;
+        }
+        final String thumbnailUrl = playlistManager.getPlaylistThumbnail(playlistId);
+        boolean thumbnailRemoved = false;
+        for (final LocalItem item : items) {
+            if (Objects.equals(thumbnailUrl,
+                    ((PlaylistStreamEntry) item).getStreamEntity().getThumbnailUrl())) {
+                thumbnailRemoved = true;
+                break;
+            }
+        }
+
+        selection.exit();
+        itemListAdapter.removeItems(items);
+        if (thumbnailRemoved) {
+            updateThumbnailUrl();
+        }
+        setStreamCountAndOverallDuration(itemListAdapter.getItemsList());
+        if (itemListAdapter.getItemsList().isEmpty()) {
+            showEmptyState();
+        }
+        saveChanges();
+    }
+
+    private void moveSelected(final boolean toTop) {
+        if (itemListAdapter == null) {
+            return;
+        }
+        // other sort modes are re-sorted by join index on save, which would undo the move
+        if (itemListAdapter.sortMode != SortMode.ORIGIN
+                && itemListAdapter.sortMode != SortMode.ORIGIN_REVERSE) {
+            Toast.makeText(requireContext(), R.string.move_requires_original_order,
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        final List<LocalItem> items = getSelectedItems();
+        if (items.isEmpty()) {
+            return;
+        }
+        selection.exit();
+        itemListAdapter.moveItemsToEdge(items, toTop);
+        saveChanges();
+    }
+
+    /**
+     * Saving rewrites join indexes as 0..n-1 in the saved order, so the selected keys are mapped
+     * to the new indexes by matching each entry's stream id and its occurrence among duplicates.
+     */
+    private void remapSelectionAfterSave(@NonNull final List<PlaylistStreamEntry> result) {
+        if (itemListAdapter == null) {
+            return;
+        }
+        // order the old entries were saved in, see saveImmediate()
+        final List<PlaylistStreamEntry> savedOrder = new ArrayList<>();
+        for (final LocalItem item : itemListAdapter.getItemsList()) {
+            if (item instanceof PlaylistStreamEntry) {
+                savedOrder.add((PlaylistStreamEntry) item);
+            }
+        }
+        if (itemListAdapter.sortMode == SortMode.ORIGIN_REVERSE) {
+            Collections.reverse(savedOrder);
+        }
+
+        final Set<String> selectedOccurrences = new HashSet<>();
+        final Map<Long, Integer> occurrences = new HashMap<>();
+        for (final PlaylistStreamEntry entry : savedOrder) {
+            final int occurrence = occurrences.merge(entry.getStreamId(), 1, Integer::sum);
+            if (selection.isSelected(entry.getJoinIndex())) {
+                selectedOccurrences.add(entry.getStreamId() + ":" + occurrence);
+            }
+        }
+
+        final List<PlaylistStreamEntry> newOrder = new ArrayList<>(result);
+        newOrder.sort(Comparator.comparingInt(PlaylistStreamEntry::getJoinIndex));
+        occurrences.clear();
+        final List<Long> newKeys = new ArrayList<>();
+        for (final PlaylistStreamEntry entry : newOrder) {
+            final int occurrence = occurrences.merge(entry.getStreamId(), 1, Integer::sum);
+            if (selectedOccurrences.contains(entry.getStreamId() + ":" + occurrence)) {
+                newKeys.add((long) entry.getJoinIndex());
+            }
+        }
+        selection.setSelected(newKeys);
+    }
+
     private void createShareConfirmationDialog() {
         new AlertDialog.Builder(requireContext())
                 .setTitle(R.string.share_playlist)

@@ -38,15 +38,12 @@ import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.info_list.dialog.InfoItemDialog;
 import org.schabi.newpipe.local.BaseLocalListFragment;
-import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
 import org.schabi.newpipe.settings.HistorySettingsFragment;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.OnClickGesture;
 import org.schabi.newpipe.info_list.dialog.StreamDialogDefaultEntry;
-import org.schabi.newpipe.util.selection.SelectionController;
-import org.schabi.newpipe.util.selection.SelectionToolbar;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,10 +61,6 @@ public class StatisticsPlaylistFragment
     private final CompositeDisposable disposables = new CompositeDisposable();
     Parcelable itemsListState;
     private StatisticSortMode sortMode = StatisticSortMode.LAST_PLAYED;
-
-    private final SelectionController selection = new SelectionController();
-    @Nullable
-    private SelectionToolbar selectionToolbar;
 
     private StatisticPlaylistControlBinding headerBinding;
     private PlaylistControlBinding playlistControlBinding;
@@ -131,9 +124,6 @@ public class StatisticsPlaylistFragment
         if (activity != null) {
             setTitle(activity.getString(R.string.title_activity_history));
         }
-        // the selection toolbar is shared by the activity; only the visible page owns it
-        selectionToolbar = SelectionToolbar.bind(activity, R.menu.menu_history_selection,
-                selection, this::onSelectionAction);
     }
 
     @Override
@@ -156,17 +146,6 @@ public class StatisticsPlaylistFragment
         if (!useAsFrontPage) {
             setTitle(getString(R.string.title_last_played));
         }
-
-        itemListAdapter.setSelectionState(item -> item instanceof StreamStatisticsEntry
-                && selection.isSelected(((StreamStatisticsEntry) item).getStreamId()));
-        selection.setListener(controller -> {
-            if (selectionToolbar != null) {
-                selectionToolbar.update(controller);
-            }
-            if (itemListAdapter != null) {
-                itemListAdapter.notifySelectionChanged();
-            }
-        });
     }
 
     @Override
@@ -185,10 +164,7 @@ public class StatisticsPlaylistFragment
         itemListAdapter.setSelectedListener(new OnClickGesture<LocalItem>() {
             @Override
             public void selected(final LocalItem selectedItem) {
-                if (selection.isActive()) {
-                    if (selectedItem instanceof StreamStatisticsEntry) {
-                        selection.toggle(((StreamStatisticsEntry) selectedItem).getStreamId());
-                    }
+                if (toggleSelectionIfActive(selectedItem)) {
                     return;
                 }
                 if (selectedItem instanceof StreamStatisticsEntry) {
@@ -266,10 +242,6 @@ public class StatisticsPlaylistFragment
     @Override
     public void onPause() {
         super.onPause();
-        if (selectionToolbar != null) {
-            selectionToolbar.release();
-            selectionToolbar = null;
-        }
         itemsListState = Objects.requireNonNull(itemsList.getLayoutManager()).onSaveInstanceState();
     }
 
@@ -277,14 +249,12 @@ public class StatisticsPlaylistFragment
     public void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable("itemsListState", itemsListState);
-        selection.saveState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         itemsListState = savedInstanceState.getParcelable("itemsListState");
-        selection.restoreState(savedInstanceState);
     }
 
     @Override
@@ -297,12 +267,6 @@ public class StatisticsPlaylistFragment
 
         if (itemListAdapter != null) {
             itemListAdapter.unsetSelectedListener();
-            itemListAdapter.setSelectionState(null);
-        }
-        selection.setListener(null);
-        if (selectionToolbar != null) {
-            selectionToolbar.release();
-            selectionToolbar = null;
         }
         if (playlistControlBinding != null) {
             playlistControlBinding.playlistCtrlPlayBgButton.setOnClickListener(null);
@@ -375,11 +339,7 @@ public class StatisticsPlaylistFragment
         itemListAdapter.clearStreamItemList();
 
         // drop selected entries that no longer exist (e.g. deleted elsewhere)
-        final List<Long> existingIds = new ArrayList<>(result.size());
-        for (final StreamStatisticsEntry entry : result) {
-            existingIds.add(entry.getStreamId());
-        }
-        selection.retainOnly(existingIds);
+        selection.retainOnly(getSelectionKeys(new ArrayList<>(result)));
 
         if (result.isEmpty()) {
             showEmptyState();
@@ -507,8 +467,7 @@ public class StatisticsPlaylistFragment
 
     @Override
     public boolean onBackPressed() {
-        if (selection.isActive()) {
-            selection.exit();
+        if (exitSelectionOnBack()) {
             return true;
         }
         if(Objects.requireNonNull(activity.getSupportActionBar()).getCustomView() != null){
@@ -534,36 +493,32 @@ public class StatisticsPlaylistFragment
     // Multi-selection
     //////////////////////////////////////////////////////////////////////////*/
 
-    private boolean onSelectionAction(@NonNull final MenuItem item) {
-        if (itemListAdapter == null) {
-            return false;
-        }
-        final int id = item.getItemId();
-        if (id == R.id.action_selection_select_all) {
-            selection.selectAll(getStreamIds(itemListAdapter.getCurrentItemsList()));
-        } else if (id == R.id.action_selection_invert) {
-            selection.invert(getStreamIds(itemListAdapter.getCurrentItemsList()));
-        } else if (id == R.id.action_selection_delete) {
+    @Override
+    protected int getSelectionMenu() {
+        return R.menu.menu_history_selection;
+    }
+
+    @Nullable
+    @Override
+    protected Long getSelectionKey(@NonNull final LocalItem item) {
+        return item instanceof StreamStatisticsEntry
+                ? ((StreamStatisticsEntry) item).getStreamId() : null;
+    }
+
+    @Nullable
+    @Override
+    protected StreamEntity getSelectionStream(@NonNull final LocalItem item) {
+        return item instanceof StreamStatisticsEntry
+                ? ((StreamStatisticsEntry) item).getStreamEntity() : null;
+    }
+
+    @Override
+    protected boolean onSelectionAction(@NonNull final MenuItem item) {
+        if (item.getItemId() == R.id.action_selection_delete) {
             confirmDeleteSelected();
-        } else if (id == R.id.action_selection_add_to_playlist) {
-            final List<StreamEntity> streams = new ArrayList<>();
-            for (final StreamStatisticsEntry entry : getSelectedEntries()) {
-                streams.add(entry.getStreamEntity());
-            }
-            disposables.add(PlaylistDialog.createCorrespondingDialog(requireContext(), streams,
-                    dialog -> dialog.show(getParentFragmentManager(),
-                            "StatisticsPlaylistFragment@selection_playlist")));
-            selection.exit();
-        } else if (id == R.id.action_selection_enqueue) {
-            NavigationHelper.enqueueOnPlayer(activity, getSelectedPlayQueue());
-            selection.exit();
-        } else if (id == R.id.action_selection_background) {
-            NavigationHelper.playOnBackgroundPlayer(activity, getSelectedPlayQueue(), false);
-            selection.exit();
-        } else {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     private void confirmDeleteSelected() {
@@ -600,39 +555,6 @@ public class StatisticsPlaylistFragment
                         },
                         throwable -> showSnackBarError(new ErrorInfo(throwable,
                                 UserAction.DELETE_FROM_HISTORY, "Deleting selected items"))));
-    }
-
-    /** Selected entries in displayed order (including ones hidden by the local filter). */
-    private List<StreamStatisticsEntry> getSelectedEntries() {
-        final List<StreamStatisticsEntry> result = new ArrayList<>();
-        if (itemListAdapter == null) {
-            return result;
-        }
-        for (final LocalItem item : itemListAdapter.getItemsList()) {
-            if (item instanceof StreamStatisticsEntry
-                    && selection.isSelected(((StreamStatisticsEntry) item).getStreamId())) {
-                result.add((StreamStatisticsEntry) item);
-            }
-        }
-        return result;
-    }
-
-    private PlayQueue getSelectedPlayQueue() {
-        final List<StreamInfoItem> items = new ArrayList<>();
-        for (final StreamStatisticsEntry entry : getSelectedEntries()) {
-            items.add(entry.toStreamInfoItem());
-        }
-        return new SinglePlayQueue(items, 0);
-    }
-
-    private static List<Long> getStreamIds(final List<LocalItem> items) {
-        final List<Long> ids = new ArrayList<>(items.size());
-        for (final LocalItem item : items) {
-            if (item instanceof StreamStatisticsEntry) {
-                ids.add(((StreamStatisticsEntry) item).getStreamId());
-            }
-        }
-        return ids;
     }
 
     private enum StatisticSortMode {

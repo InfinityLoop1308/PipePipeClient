@@ -115,6 +115,16 @@ public final class SelectionController {
         }
     }
 
+    /** Replaces the selected keys, e.g. after the keys of the underlying data were renumbered. */
+    public void setSelected(@NonNull final Collection<Long> keys) {
+        if (!active) {
+            return;
+        }
+        selectedKeys.clear();
+        selectedKeys.addAll(keys);
+        notifyChanged();
+    }
+
     public void saveState(@NonNull final Bundle outState) {
         outState.putBoolean(STATE_ACTIVE, active);
         final long[] keys = new long[selectedKeys.size()];
