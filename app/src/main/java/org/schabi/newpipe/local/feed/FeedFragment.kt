@@ -61,6 +61,7 @@ import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.database.subscription.SubscriptionEntity
 import org.schabi.newpipe.databinding.FragmentFeedBinding
 import org.schabi.newpipe.databinding.PlaylistControlBinding
+import org.schabi.newpipe.fragments.BackPressable
 import org.schabi.newpipe.error.ErrorInfo
 import org.schabi.newpipe.error.ErrorUtil
 import org.schabi.newpipe.error.UserAction
@@ -94,7 +95,7 @@ import org.schabi.newpipe.util.ThemeHelper.shouldUseGridLayout
 import java.time.OffsetDateTime
 import java.util.function.Consumer
 
-class FeedFragment : BaseStateFragment<FeedState>() {
+class FeedFragment : BaseStateFragment<FeedState>(), BackPressable {
     private var _feedBinding: FragmentFeedBinding? = null
     private val feedBinding get() = _feedBinding!!
 
@@ -439,8 +440,6 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         inflater.inflate(R.menu.menu_feed_fragment, menu)
         inflater.inflate(R.menu.menu_multi_select, menu)
         updateTogglePlayedItemsButton(menu.findItem(R.id.menu_item_feed_toggle_played_items))
-        menu.findItem(R.id.action_search_feed)?.isVisible =
-            menu.isItemVisible(R.id.action_search).not()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -460,6 +459,14 @@ class FeedFragment : BaseStateFragment<FeedState>() {
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed(): Boolean {
+        if (editText != null && activity?.supportActionBar?.customView != null) {
+            destroyCustomViewInActionBar()
+            return true
+        }
+        return false
     }
 
     override fun onDestroyOptionsMenu() {

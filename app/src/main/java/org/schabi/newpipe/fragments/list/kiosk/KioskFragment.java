@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -22,10 +23,12 @@ import org.schabi.newpipe.extractor.kiosk.KioskInfo;
 import org.schabi.newpipe.extractor.linkhandler.ListLinkHandlerFactory;
 import org.schabi.newpipe.extractor.localization.ContentCountry;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
+import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.fragments.list.BaseListInfoFragment;
 import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.util.KioskTranslator;
 import org.schabi.newpipe.util.Localization;
+import org.schabi.newpipe.util.ToolbarFilterHelper;
 
 import io.reactivex.rxjava3.core.Single;
 
@@ -53,7 +56,10 @@ import io.reactivex.rxjava3.core.Single;
  * </p>
  */
 
-public class KioskFragment extends BaseListInfoFragment<StreamInfoItem, KioskInfo> {
+public class KioskFragment extends BaseListInfoFragment<StreamInfoItem, KioskInfo>
+        implements BackPressable {
+
+    private ToolbarFilterHelper filterHelper;
     String kioskId = "";
     String kioskTranslatedName;
     ContentCountry contentCountry;
@@ -144,6 +150,42 @@ public class KioskFragment extends BaseListInfoFragment<StreamInfoItem, KioskInf
         if (supportActionBar != null && useAsFrontPage) {
             supportActionBar.setDisplayHomeAsUpEnabled(false);
         }
+        inflater.inflate(R.menu.menu_kiosk, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
+        if (item.getItemId() == R.id.action_search_local) {
+            if (filterHelper == null) {
+                filterHelper = new ToolbarFilterHelper(activity, text -> {
+                    if (infoListAdapter != null) {
+                        infoListAdapter.filter(text);
+                    }
+                    return kotlin.Unit.INSTANCE;
+                });
+            }
+            filterHelper.open();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (filterHelper != null && filterHelper.isActive()) {
+            filterHelper.close();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (filterHelper != null) {
+            filterHelper.close();
+            filterHelper = null;
+        }
+        super.onDestroyView();
     }
 
     /*//////////////////////////////////////////////////////////////////////////
