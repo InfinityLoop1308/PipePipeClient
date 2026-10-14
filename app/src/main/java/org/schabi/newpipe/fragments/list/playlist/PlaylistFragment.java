@@ -512,4 +512,8 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
         }
     }
 
+    @Override
+    protected boolean supportsMultiSelect() {
+        return true;
+    }
 }

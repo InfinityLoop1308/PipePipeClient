@@ -592,6 +592,9 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
 
     @Override
     public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
+        if (item.getItemId() == R.id.action_multi_select) {
+            return super.onOptionsItemSelected(item);
+        }
         if (useOldSearchFilter && !channelSearchMode && searchFilterUi != null) {
             return searchFilterUi.onOptionsItemSelected(item);
         }
@@ -1590,5 +1593,10 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
                         throwable -> showSnackBarError(new ErrorInfo(throwable,
                                 UserAction.DELETE_FROM_HISTORY, "Deleting item failed")));
         disposables.add(onDelete);
+    }
+
+    @Override
+    protected boolean supportsMultiSelect() {
+        return true;
     }
 }

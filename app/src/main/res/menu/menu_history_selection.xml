@@ -21,6 +21,11 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/action_selection_download"
+        android:title="@string/download"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_selection_enqueue"
         android:title="@string/enqueue_stream"
         app:showAsAction="never" />

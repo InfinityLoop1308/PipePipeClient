@@ -1584,7 +1584,7 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
         final Map<Long, Integer> occurrences = new HashMap<>();
         for (final PlaylistStreamEntry entry : savedOrder) {
             final int occurrence = occurrences.merge(entry.getStreamId(), 1, Integer::sum);
-            if (selection.isSelected(entry.getJoinIndex())) {
+            if (selection.isSelected((long) entry.getJoinIndex())) {
                 selectedOccurrences.add(entry.getStreamId() + ":" + occurrence);
             }
         }

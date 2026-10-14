@@ -1,6 +1,7 @@
 package org.schabi.newpipe.info_list;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,7 @@ import org.schabi.newpipe.info_list.holder.StreamMiniInfoItemHolder;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.util.FallbackViewHolder;
 import org.schabi.newpipe.util.OnClickGesture;
+import org.schabi.newpipe.util.ThemeHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,6 +101,38 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private Supplier<View> headerSupplier = null;
     private Supplier<View> footerSupplier = null;
+
+    /** Payload used to only refresh the selection highlight of bound items. */
+    public static final Object SELECTION_PAYLOAD = new Object();
+
+    /** Tells the adapter which items are selected; null means selection is not supported. */
+    public interface SelectionState {
+        boolean isSelected(InfoItem item);
+    }
+
+    @Nullable
+    private SelectionState selectionState;
+
+    public void setSelectionState(@Nullable final SelectionState selectionState) {
+        this.selectionState = selectionState;
+    }
+
+    /** Refreshes the selection highlight of all items without rebinding their content. */
+    public void notifySelectionChanged() {
+        notifyItemRangeChanged(0, getItemCount(), SELECTION_PAYLOAD);
+    }
+
+    private void bindSelection(final RecyclerView.ViewHolder holder, final InfoItem item) {
+        final boolean selected = selectionState != null && selectionState.isSelected(item);
+        if (selected) {
+            final int accent = ThemeHelper.resolveColorFromAttr(holder.itemView.getContext(),
+                    android.R.attr.colorAccent);
+            // ~24% alpha overlay keeps the thumbnail and text readable
+            holder.itemView.setForeground(new ColorDrawable((accent & 0x00FFFFFF) | 0x3D000000));
+        } else {
+            holder.itemView.setForeground(null);
+        }
+    }
 
     public void setFooterSupplier(@Nullable final Supplier<View> supplier) {
         footerSupplier = supplier;
@@ -373,10 +407,27 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     : footerSupplier.get());
         }
         if (holder instanceof InfoItemHolder) {
-            ((InfoItemHolder) holder).updateFromItem(
-                    // If header is present, offset the items by -1
-                    infoItemList.get(hasHeader() ? position - 1 : position), recordManager);
+            // If header is present, offset the items by -1
+            final InfoItem item = infoItemList.get(hasHeader() ? position - 1 : position);
+            ((InfoItemHolder) holder).updateFromItem(item, recordManager);
+            bindSelection(holder, item);
         }
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder,
+                                 final int position,
+                                 @NonNull final List<Object> payloads) {
+        if (payloads.contains(SELECTION_PAYLOAD)) {
+            if (holder instanceof InfoItemHolder) {
+                final int index = hasHeader() ? position - 1 : position;
+                if (index >= 0 && index < infoItemList.size()) {
+                    bindSelection(holder, infoItemList.get(index));
+                }
+            }
+            return;
+        }
+        super.onBindViewHolder(holder, position, payloads);
     }
 
     public GridLayoutManager.SpanSizeLookup getSpanSizeLookup(final int spanCount) {

@@ -131,4 +131,9 @@ public class ChannelTabFragment extends BaseListInfoFragment<InfoItem, ChannelTa
     public void setTitle(final String title) {
         super.setTitle(channelName);
     }
+
+    @Override
+    protected boolean supportsMultiSelect() {
+        return true;
+    }
 }

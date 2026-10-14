@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -17,17 +19,17 @@ import java.util.Set;
  * position, so the selection survives list reloads, sorting and filtering.
  * </p>
  */
-public final class SelectionController {
+public final class SelectionController<K extends Serializable> {
 
     public interface Listener {
         /** Called whenever the mode or the selected keys change. */
-        void onSelectionChanged(@NonNull SelectionController controller);
+        void onSelectionChanged(@NonNull SelectionController<?> controller);
     }
 
     private static final String STATE_ACTIVE = "selection_active";
     private static final String STATE_KEYS = "selection_keys";
 
-    private final LinkedHashSet<Long> selectedKeys = new LinkedHashSet<>();
+    private final LinkedHashSet<K> selectedKeys = new LinkedHashSet<>();
     private boolean active = false;
     @Nullable
     private Listener listener;
@@ -40,7 +42,7 @@ public final class SelectionController {
         return active;
     }
 
-    public boolean isSelected(final long key) {
+    public boolean isSelected(final K key) {
         return selectedKeys.contains(key);
     }
 
@@ -49,7 +51,7 @@ public final class SelectionController {
     }
 
     @NonNull
-    public Set<Long> getSelectedKeys() {
+    public Set<K> getSelectedKeys() {
         return new LinkedHashSet<>(selectedKeys);
     }
 
@@ -71,7 +73,7 @@ public final class SelectionController {
         notifyChanged();
     }
 
-    public void toggle(final long key) {
+    public void toggle(final K key) {
         if (!active) {
             return;
         }
@@ -82,7 +84,7 @@ public final class SelectionController {
     }
 
     /** Selects every key in {@code keys}, keeping the ones already selected. */
-    public void selectAll(@NonNull final Collection<Long> keys) {
+    public void selectAll(@NonNull final Collection<K> keys) {
         if (!active) {
             return;
         }
@@ -91,11 +93,11 @@ public final class SelectionController {
     }
 
     /** Inverts the selection within {@code keys}; keys outside it are left untouched. */
-    public void invert(@NonNull final Collection<Long> keys) {
+    public void invert(@NonNull final Collection<K> keys) {
         if (!active) {
             return;
         }
-        for (final Long key : keys) {
+        for (final K key : keys) {
             if (!selectedKeys.remove(key)) {
                 selectedKeys.add(key);
             }
@@ -104,19 +106,19 @@ public final class SelectionController {
     }
 
     /** Drops selected keys that no longer exist, e.g. after the underlying data reloaded. */
-    public void retainOnly(@NonNull final Collection<Long> existingKeys) {
+    public void retainOnly(@NonNull final Collection<K> existingKeys) {
         if (selectedKeys.isEmpty()) {
             return;
         }
-        final Set<Long> existing = existingKeys instanceof Set
-                ? (Set<Long>) existingKeys : new HashSet<>(existingKeys);
+        final Set<K> existing = existingKeys instanceof Set
+                ? (Set<K>) existingKeys : new HashSet<>(existingKeys);
         if (selectedKeys.retainAll(existing)) {
             notifyChanged();
         }
     }
 
     /** Replaces the selected keys, e.g. after the keys of the underlying data were renumbered. */
-    public void setSelected(@NonNull final Collection<Long> keys) {
+    public void setSelected(@NonNull final Collection<K> keys) {
         if (!active) {
             return;
         }
@@ -127,25 +129,19 @@ public final class SelectionController {
 
     public void saveState(@NonNull final Bundle outState) {
         outState.putBoolean(STATE_ACTIVE, active);
-        final long[] keys = new long[selectedKeys.size()];
-        int i = 0;
-        for (final Long key : selectedKeys) {
-            keys[i++] = key;
-        }
-        outState.putLongArray(STATE_KEYS, keys);
+        outState.putSerializable(STATE_KEYS, new ArrayList<>(selectedKeys));
     }
 
+    @SuppressWarnings("unchecked")
     public void restoreState(@Nullable final Bundle savedState) {
         if (savedState == null) {
             return;
         }
         active = savedState.getBoolean(STATE_ACTIVE, false);
         selectedKeys.clear();
-        final long[] keys = savedState.getLongArray(STATE_KEYS);
-        if (active && keys != null) {
-            for (final long key : keys) {
-                selectedKeys.add(key);
-            }
+        final Serializable keys = savedState.getSerializable(STATE_KEYS);
+        if (active && keys instanceof ArrayList) {
+            selectedKeys.addAll((ArrayList<K>) keys);
         }
     }
 

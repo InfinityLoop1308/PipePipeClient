@@ -13,10 +13,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.MenuRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -42,9 +44,14 @@ import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.OnClickGesture;
 import org.schabi.newpipe.util.StateSaver;
 import org.schabi.newpipe.util.ThemeHelper;
+import org.schabi.newpipe.util.selection.SelectionController;
+import org.schabi.newpipe.util.selection.SelectionToolbar;
+import org.schabi.newpipe.util.selection.StreamSelectionActions;
 import org.schabi.newpipe.views.SuperScrollLayoutManager;
 
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
@@ -66,6 +73,13 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
 
     protected InfoListAdapter infoListAdapter;
     protected RecyclerView itemsList;
+
+    /** Multi-selection of streams; only usable if {@link #supportsMultiSelect()}. */
+    protected final SelectionController<String> selection = new SelectionController<>();
+    @Nullable
+    private SelectionToolbar selectionToolbar;
+    private final CompositeDisposable selectionDisposables = new CompositeDisposable();
+    private static final String SELECTION_STATE_KEY = "list_selection";
     private int focusedPosition = -1;
     private int hiddenItemCount;
     private boolean manualFilterContinuation;
@@ -142,6 +156,7 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     @Override
     public void onDestroy() {
         super.onDestroy();
+        selectionDisposables.dispose();
         if (useDefaultStateSaving) {
             StateSaver.onDestroy(savedState);
         }
@@ -158,6 +173,40 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
                 refreshItemViewMode();
             }
             updateFlags = 0;
+        }
+        bindSelectionToolbar();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        releaseSelectionToolbar();
+    }
+
+    @Override
+    public void onDestroyView() {
+        selection.setListener(null);
+        if (infoListAdapter != null) {
+            infoListAdapter.setSelectionState(null);
+        }
+        super.onDestroyView();
+    }
+
+    /**
+     * Pages of a pager that are resumed but not shown must not own the shared selection toolbar.
+     */
+    @Override
+    @SuppressWarnings("deprecation")
+    public void setUserVisibleHint(final boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (!isResumed()) {
+            return;
+        }
+        if (isVisibleToUser) {
+            bindSelectionToolbar();
+        } else {
+            selection.exit();
+            releaseSelectionToolbar();
         }
     }
 
@@ -232,6 +281,11 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     @Override
     public void onSaveInstanceState(@NonNull final Bundle bundle) {
         super.onSaveInstanceState(bundle);
+        if (supportsMultiSelect()) {
+            final Bundle selectionState = new Bundle();
+            selection.saveState(selectionState);
+            bundle.putBundle(SELECTION_STATE_KEY, selectionState);
+        }
         if (useDefaultStateSaving) {
             savedState = StateSaver
                     .tryToSave(activity.isChangingConfigurations(), savedState, bundle, this);
@@ -241,6 +295,7 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     @Override
     protected void onRestoreInstanceState(@NonNull final Bundle bundle) {
         super.onRestoreInstanceState(bundle);
+        selection.restoreState(bundle.getBundle(SELECTION_STATE_KEY));
         if (useDefaultStateSaving) {
             savedState = StateSaver.tryToRestore(bundle, this);
         }
@@ -302,6 +357,21 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         }
 
         itemsList.setAdapter(infoListAdapter);
+
+        if (supportsMultiSelect()) {
+            infoListAdapter.setSelectionState(item -> {
+                final String key = getSelectionKey(item);
+                return key != null && selection.isSelected(key);
+            });
+            selection.setListener(controller -> {
+                if (selectionToolbar != null) {
+                    selectionToolbar.update(controller);
+                }
+                if (infoListAdapter != null) {
+                    infoListAdapter.notifySelectionChanged();
+                }
+            });
+        }
     }
 
     protected void onItemSelected(final InfoItem selectedItem) {
@@ -322,6 +392,10 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         infoListAdapter.setOnStreamSelectedListener(new OnClickGesture<>() {
             @Override
             public void selected(final StreamInfoItem selectedItem) {
+                if (selection.isActive()) {
+                    selection.toggle(getSelectionKey(selectedItem));
+                    return;
+                }
                 onStreamSelected(selectedItem);
             }
 
@@ -334,6 +408,9 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         infoListAdapter.setOnChannelSelectedListener(new OnClickGesture<>() {
             @Override
             public void selected(final ChannelInfoItem selectedItem) {
+                if (selection.isActive()) {
+                    return;
+                }
                 try {
                     if (isChannelBlocked(selectedItem.getName(), selectedItem.getServiceId(),
                             selectedItem.getUploaderId())) {
@@ -357,6 +434,9 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         infoListAdapter.setOnPlaylistSelectedListener(new OnClickGesture<>() {
             @Override
             public void selected(final PlaylistInfoItem selectedItem) {
+                if (selection.isActive()) {
+                    return;
+                }
                 try {
                     if (isChannelBlocked(selectedItem.getUploaderName(),
                             selectedItem.getServiceId(), selectedItem.getUploaderId())) {
@@ -533,6 +613,94 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
             supportActionBar.setDisplayShowTitleEnabled(true);
             supportActionBar.setDisplayHomeAsUpEnabled(!useAsFrontPage);
         }
+        if (supportsMultiSelect()) {
+            inflater.inflate(R.menu.menu_multi_select, menu);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
+        if (item.getItemId() == R.id.action_multi_select && supportsMultiSelect()) {
+            selection.enter();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+    // Multi-selection
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /** @return whether the stream items of this list can be multi-selected */
+    protected boolean supportsMultiSelect() {
+        return false;
+    }
+
+    @MenuRes
+    protected int getSelectionMenu() {
+        return R.menu.menu_stream_selection;
+    }
+
+    @Nullable
+    private static String getSelectionKey(@Nullable final InfoItem item) {
+        return item instanceof StreamInfoItem
+                ? item.getServiceId() + ":" + item.getUrl() : null;
+    }
+
+    private void bindSelectionToolbar() {
+        if (!supportsMultiSelect() || !getUserVisibleHint() || selectionToolbar != null) {
+            return;
+        }
+        selectionToolbar = SelectionToolbar.bind(activity, getSelectionMenu(), selection,
+                this::onSelectionAction);
+    }
+
+    private void releaseSelectionToolbar() {
+        if (selectionToolbar != null) {
+            selectionToolbar.release();
+            selectionToolbar = null;
+        }
+    }
+
+    @NonNull
+    private List<StreamInfoItem> getStreamItems(final boolean onlySelected) {
+        final List<StreamInfoItem> result = new ArrayList<>();
+        if (infoListAdapter == null) {
+            return result;
+        }
+        for (final InfoItem item : infoListAdapter.getItemsList()) {
+            if (item instanceof StreamInfoItem
+                    && (!onlySelected || selection.isSelected(getSelectionKey(item)))) {
+                result.add((StreamInfoItem) item);
+            }
+        }
+        return result;
+    }
+
+    @NonNull
+    private List<String> getStreamKeys() {
+        final List<String> keys = new ArrayList<>();
+        for (final StreamInfoItem item : getStreamItems(false)) {
+            keys.add(getSelectionKey(item));
+        }
+        return keys;
+    }
+
+    private boolean onSelectionAction(@NonNull final MenuItem item) {
+        final int id = item.getItemId();
+        if (id == R.id.action_selection_select_all) {
+            selection.selectAll(getStreamKeys());
+            return true;
+        } else if (id == R.id.action_selection_invert) {
+            selection.invert(getStreamKeys());
+            return true;
+        }
+        final boolean handled = StreamSelectionActions.handle(this, selectionDisposables, item,
+                StreamSelectionActions.toEntities(getStreamItems(true)));
+        if (handled) {
+            selection.exit();
+        }
+        return handled;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -541,6 +709,8 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
 
     @Override
     protected void startLoading(final boolean forceLoad) {
+        // the list is replaced, so the selected items would not exist anymore
+        selection.exit();
         resetFilterStatus();
         useInitialItemListLoadScrollListener();
         super.startLoading(forceLoad);

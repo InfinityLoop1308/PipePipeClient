@@ -172,4 +172,9 @@ public class KioskFragment extends BaseListInfoFragment<StreamInfoItem, KioskInf
         name = kioskTranslatedName;
         setTitle(kioskTranslatedName);
     }
+
+    @Override
+    protected boolean supportsMultiSelect() {
+        return true;
+    }
 }

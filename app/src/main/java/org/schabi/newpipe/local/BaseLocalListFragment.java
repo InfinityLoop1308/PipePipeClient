@@ -23,17 +23,13 @@ import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.LocalItem;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.databinding.PignateFooterBinding;
-import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.fragments.BaseStateFragment;
 import org.schabi.newpipe.fragments.list.ListViewContract;
 import org.schabi.newpipe.info_list.ItemViewMode;
-import org.schabi.newpipe.local.dialog.PlaylistDialog;
-import org.schabi.newpipe.player.playqueue.PlayQueue;
-import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
-import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.ThemeHelper;
 import org.schabi.newpipe.util.selection.SelectionController;
 import org.schabi.newpipe.util.selection.SelectionToolbar;
+import org.schabi.newpipe.util.selection.StreamSelectionActions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +63,7 @@ public abstract class BaseLocalListFragment<I, N> extends BaseStateFragment<I>
     private static final String SELECTION_STATE_KEY = "local_list_selection";
 
     /** Multi-selection state; only used if {@link #getSelectionMenu()} is not 0. */
-    protected final SelectionController selection = new SelectionController();
+    protected final SelectionController<Long> selection = new SelectionController<>();
     @Nullable
     private SelectionToolbar selectionToolbar;
     private final CompositeDisposable selectionDisposables = new CompositeDisposable();
@@ -362,15 +358,6 @@ public abstract class BaseLocalListFragment<I, N> extends BaseStateFragment<I>
         return streams;
     }
 
-    @NonNull
-    private PlayQueue getSelectedPlayQueue() {
-        final List<StreamInfoItem> items = new ArrayList<>();
-        for (final StreamEntity stream : getSelectedStreams()) {
-            items.add(stream.toStreamInfoItem());
-        }
-        return new SinglePlayQueue(items, 0);
-    }
-
     private boolean dispatchSelectionAction(@NonNull final MenuItem item) {
         if (itemListAdapter == null) {
             return false;
@@ -383,19 +370,13 @@ public abstract class BaseLocalListFragment<I, N> extends BaseStateFragment<I>
             selection.selectAll(getSelectionKeys(itemListAdapter.getCurrentItemsList()));
         } else if (id == R.id.action_selection_invert) {
             selection.invert(getSelectionKeys(itemListAdapter.getCurrentItemsList()));
-        } else if (id == R.id.action_selection_add_to_playlist) {
-            selectionDisposables.add(PlaylistDialog.createCorrespondingDialog(requireContext(),
-                    getSelectedStreams(), dialog -> dialog.show(getParentFragmentManager(),
-                            TAG + "@selection_playlist")));
-            selection.exit();
-        } else if (id == R.id.action_selection_enqueue) {
-            NavigationHelper.enqueueOnPlayer(activity, getSelectedPlayQueue());
-            selection.exit();
-        } else if (id == R.id.action_selection_background) {
-            NavigationHelper.playOnBackgroundPlayer(activity, getSelectedPlayQueue(), false);
-            selection.exit();
         } else {
-            return false;
+            final boolean handled = StreamSelectionActions.handle(this, selectionDisposables,
+                    item, getSelectedStreams());
+            if (handled) {
+                selection.exit();
+            }
+            return handled;
         }
         return true;
     }

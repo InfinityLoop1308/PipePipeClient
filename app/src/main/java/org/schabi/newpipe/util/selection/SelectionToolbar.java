@@ -26,13 +26,19 @@ public final class SelectionToolbar {
         boolean onSelectionAction(@NonNull MenuItem item);
     }
 
+    /** The toolbar currently owned by the visible page, used to route the back press. */
+    @Nullable
+    private static SelectionToolbar current;
+
     private final Toolbar toolbar;
+    private final SelectionController<?> controller;
 
     private SelectionToolbar(@NonNull final Toolbar toolbar,
                              @MenuRes final int menuRes,
-                             @NonNull final SelectionController controller,
+                             @NonNull final SelectionController<?> controller,
                              @NonNull final OnActionListener actionListener) {
         this.toolbar = toolbar;
+        this.controller = controller;
         toolbar.getMenu().clear();
         toolbar.inflateMenu(menuRes);
         toolbar.setNavigationOnClickListener(v -> controller.exit());
@@ -43,7 +49,7 @@ public final class SelectionToolbar {
     @Nullable
     public static SelectionToolbar bind(@Nullable final Activity activity,
                                         @MenuRes final int menuRes,
-                                        @NonNull final SelectionController controller,
+                                        @NonNull final SelectionController<?> controller,
                                         @NonNull final OnActionListener actionListener) {
         if (activity == null) {
             return null;
@@ -55,11 +61,25 @@ public final class SelectionToolbar {
         final SelectionToolbar selectionToolbar =
                 new SelectionToolbar(toolbar, menuRes, controller, actionListener);
         selectionToolbar.update(controller);
+        current = selectionToolbar;
         return selectionToolbar;
     }
 
+    /**
+     * Exits the selection mode of the visible page, if any.
+     *
+     * @return true if the back press has been consumed
+     */
+    public static boolean onBackPressed() {
+        if (current != null && current.controller.isActive()) {
+            current.controller.exit();
+            return true;
+        }
+        return false;
+    }
+
     /** Syncs visibility, title and action availability with the controller state. */
-    public void update(@NonNull final SelectionController controller) {
+    public void update(@NonNull final SelectionController<?> controller) {
         if (!controller.isActive()) {
             toolbar.setVisibility(View.GONE);
             return;
@@ -80,6 +100,9 @@ public final class SelectionToolbar {
 
     /** Hides the toolbar and detaches it from the owner; selection state is kept. */
     public void release() {
+        if (current == this) {
+            current = null;
+        }
         toolbar.setVisibility(View.GONE);
         toolbar.setNavigationOnClickListener(null);
         toolbar.setOnMenuItemClickListener(null);

@@ -773,4 +773,8 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
         }
     }
 
+    @Override
+    protected boolean supportsMultiSelect() {
+        return true;
+    }
 }
