@@ -246,6 +246,15 @@ public class MainFragment extends BaseFragment
         if (DEBUG) {
             Log.d(TAG, "onTabSelected() called with: selectedTab = [" + selectedTab + "]");
         }
+        // a toolbar filter opened in another tab must not leak into the newly selected tab
+        if (activity != null && activity.getSupportActionBar() != null
+                && activity.getSupportActionBar().getCustomView() != null) {
+            for (final Fragment child : getChildFragmentManager().getFragments()) {
+                if (child instanceof BackPressable) {
+                    ((BackPressable) child).onBackPressed();
+                }
+            }
+        }
         updateTitleForTab(selectedTab.getPosition());
     }
 
