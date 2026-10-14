@@ -48,7 +48,8 @@ import org.schabi.newpipe.views.ScrollableTabLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainFragment extends BaseFragment implements TabLayout.OnTabSelectedListener {
+public class MainFragment extends BaseFragment
+        implements TabLayout.OnTabSelectedListener, BackPressable {
     private FragmentMainBinding binding;
     private SelectedTabsPagerAdapter pagerAdapter;
 
@@ -257,6 +258,18 @@ public class MainFragment extends BaseFragment implements TabLayout.OnTabSelecte
             Log.d(TAG, "onTabReselected() called with: tab = [" + tab + "]");
         }
         updateTitleForTab(tab.getPosition());
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        // delegate to the currently shown tab
+        for (final Fragment child : getChildFragmentManager().getFragments()) {
+            if (child instanceof BackPressable && child.isResumed()
+                    && ((BackPressable) child).onBackPressed()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static final class SelectedTabsPagerAdapter
