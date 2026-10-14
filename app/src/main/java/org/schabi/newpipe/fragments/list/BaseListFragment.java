@@ -6,12 +6,14 @@ import static org.schabi.newpipe.util.ThemeHelper.getGridSpanCountStreams;
 import static org.schabi.newpipe.util.ThemeHelper.isGrid;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,6 +36,7 @@ import org.schabi.newpipe.fragments.OnScrollBelowItemsListener;
 import org.schabi.newpipe.info_list.ItemViewMode;
 import org.schabi.newpipe.info_list.dialog.InfoItemDialog;
 import org.schabi.newpipe.info_list.InfoListAdapter;
+import org.schabi.newpipe.settings.SettingsActivity;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.OnClickGesture;
 import org.schabi.newpipe.util.StateSaver;
@@ -63,6 +66,56 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     protected InfoListAdapter infoListAdapter;
     protected RecyclerView itemsList;
     private int focusedPosition = -1;
+    private int hiddenItemCount;
+    private boolean manualFilterContinuation;
+
+    /** A bounded empty-page batch must be resumed explicitly, never by the scroll listener. */
+    protected void updateFilterStatus(final int count, final boolean emptyBatch,
+                                      final boolean reset) {
+        hiddenItemCount = reset ? count : hiddenItemCount + count;
+        manualFilterContinuation = emptyBatch && hasMoreItems();
+        if (hiddenItemCount == 0 && !manualFilterContinuation) {
+            infoListAdapter.setFooterSupplier(null);
+            showListFooter(hasMoreItems());
+            return;
+        }
+        hideLoading();
+        if (manualFilterContinuation) {
+            useNormalItemListScrollListener();
+        }
+        infoListAdapter.setFooterSupplier(() -> {
+            final View footer = getLayoutInflater().inflate(
+                    R.layout.filter_list_footer, itemsList, false);
+            ((TextView) footer.findViewById(R.id.filter_status)).setText(
+                    hiddenItemCount > 0
+                            ? getString(infoListAdapter.getItemsList().isEmpty()
+                                    ? R.string.filter_all_items_hidden : R.string.filter_items_hidden,
+                                    hiddenItemCount)
+                            : getString(R.string.filter_no_visible_items_yet));
+            final View more = footer.findViewById(R.id.filter_continue);
+            more.setVisibility(manualFilterContinuation ? View.VISIBLE : View.GONE);
+            more.setOnClickListener(v -> {
+                if (isLoading.get()) {
+                    return;
+                }
+                // Keep automatic loading paused until the request completes.
+                loadMoreItems();
+            });
+            footer.findViewById(R.id.filter_settings).setOnClickListener(v ->
+                    startActivity(new Intent(requireContext(), SettingsActivity.class)
+                            .putExtra(SettingsActivity.EXTRA_CONTENT_FILTER, true)));
+            return footer;
+        });
+        showListFooter(true);
+    }
+
+    protected void resetFilterStatus() {
+        hiddenItemCount = 0;
+        manualFilterContinuation = false;
+        if (infoListAdapter != null) {
+            infoListAdapter.setFooterSupplier(null);
+        }
+    }
 
     /*//////////////////////////////////////////////////////////////////////////
     // LifeCycle
@@ -402,6 +455,9 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         @Override
         public void onScrolled(@Nonnull final RecyclerView recyclerView, final int dx, final int dy) {
             super.onScrolled(recyclerView, dx, dy);
+            if (manualFilterContinuation) {
+                return;
+            }
             if (dy != 0) {
                 log("Vertical scroll occurred");
 
@@ -444,7 +500,7 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     }
 
     protected void onScrollToBottom() {
-        if (hasMoreItems() && !isLoading.get()) {
+        if (hasMoreItems() && !isLoading.get() && !manualFilterContinuation) {
             loadMoreItems();
         }
     }
@@ -482,6 +538,7 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
 
     @Override
     protected void startLoading(final boolean forceLoad) {
+        resetFilterStatus();
         useInitialItemListLoadScrollListener();
         super.startLoading(forceLoad);
     }
@@ -517,7 +574,8 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     public void showListFooter(final boolean show) {
         itemsList.post(() -> {
             if (infoListAdapter != null && itemsList != null) {
-                infoListAdapter.showFooter(show);
+                infoListAdapter.showFooter(show || hiddenItemCount > 0
+                        || manualFilterContinuation);
             }
         });
     }

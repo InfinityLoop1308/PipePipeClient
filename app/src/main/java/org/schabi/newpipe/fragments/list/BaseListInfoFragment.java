@@ -225,9 +225,12 @@ public abstract class BaseListInfoFragment<I extends InfoItem, L extends ListInf
         super.handleNextItems(result);
 
         currentNextPage = result.getNextPage();
-        infoListAdapter.addInfoItemList(result.getItems());
+        final List<I> visible = visibleItems(result.getItems());
+        infoListAdapter.addInfoItemList(visible);
+        final int hidden = result.getFilteredCount() + result.getItems().size() - visible.size();
 
         showListFooter(hasMoreItems());
+        updateFilterStatus(hidden, visible.isEmpty(), false);
 
         if (!result.getErrors().isEmpty()) {
             dynamicallyShowErrorPanelOrSnackbar(new ErrorInfo(result.getErrors(), errorUserAction,
@@ -251,22 +254,19 @@ public abstract class BaseListInfoFragment<I extends InfoItem, L extends ListInf
         name = result.getName();
         setTitle(name);
 
+        final List<I> visible = visibleItems(result.getRelatedItems());
         if (infoListAdapter.getItemsList().isEmpty()) {
-            if (!result.getRelatedItems().isEmpty()) {
-                infoListAdapter.addInfoItemList(result.getRelatedItems().stream()
-                        .filter(item -> !filterFutureItems || !(item instanceof StreamInfoItem) || ((StreamInfoItem) item).getUploadDate() == null
-                                || ((StreamInfoItem)item).getUploadDate().offsetDateTime().isBefore(OffsetDateTime.now()))
-                                .collect(Collectors.toList()));
-                showListFooter(hasMoreItems());
-            } else {
-                infoListAdapter.clearStreamItemList();
-                // showEmptyState should be called only if there is no item as
-                // well as no header in infoListAdapter
-                if (!(result instanceof ChannelInfo && infoListAdapter.getItemCount() == 1)) {
-                    showEmptyState();
-                }
+            infoListAdapter.addInfoItemList(visible);
+            showListFooter(hasMoreItems());
+            if (visible.isEmpty() && result.getFilteredCount() == 0
+                    && result.getRelatedItems().isEmpty() && !hasMoreItems()
+                    && !(result instanceof ChannelInfo && infoListAdapter.getItemCount() == 1)) {
+                showEmptyState();
             }
         }
+        final int hidden = result.getFilteredCount() + result.getRelatedItems().size()
+                - visible.size();
+        updateFilterStatus(hidden, infoListAdapter.getItemsList().isEmpty(), true);
 
         if (!result.getErrors().isEmpty()) {
             final List<Throwable> errors = new ArrayList<>(result.getErrors());
@@ -284,6 +284,18 @@ public abstract class BaseListInfoFragment<I extends InfoItem, L extends ListInf
     /*//////////////////////////////////////////////////////////////////////////
     // Utils
     //////////////////////////////////////////////////////////////////////////*/
+
+    private List<I> visibleItems(final List<I> items) {
+        if (items == null) {
+            return java.util.Collections.emptyList();
+        }
+        final OffsetDateTime now = OffsetDateTime.now();
+        return items.stream().filter(item -> !filterFutureItems
+                || !(item instanceof StreamInfoItem)
+                || ((StreamInfoItem) item).getUploadDate() == null
+                || !((StreamInfoItem) item).getUploadDate().offsetDateTime()
+                        .isAfter(now)).collect(Collectors.toList());
+    }
 
     protected void setInitialData(final int sid, final String u, final String title) {
         this.serviceId = sid;

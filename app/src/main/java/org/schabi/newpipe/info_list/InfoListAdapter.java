@@ -98,6 +98,14 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private ItemViewMode itemMode = ItemViewMode.LIST;
 
     private Supplier<View> headerSupplier = null;
+    private Supplier<View> footerSupplier = null;
+
+    public void setFooterSupplier(@Nullable final Supplier<View> supplier) {
+        footerSupplier = supplier;
+        if (showFooter) {
+            notifyItemChanged(sizeConsideringHeaderOffset());
+        }
+    }
 
     public InfoListAdapter(final Context context) {
         layoutInflater = LayoutInflater.from(context);
@@ -311,10 +319,7 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             case HEADER_TYPE:
                 return new HFHolder(headerSupplier.get());
             case FOOTER_TYPE:
-                return new HFHolder(PignateFooterBinding
-                        .inflate(layoutInflater, parent, false)
-                        .getRoot()
-                );
+                return new HFHolder(new android.widget.FrameLayout(parent.getContext()));
             case COMPOSE_HOLDER_TYPE:
                 return new ComposeInfoItemHolder(infoItemBuilder, parent, itemMode);
             case MINI_STREAM_HOLDER_TYPE:
@@ -357,6 +362,15 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             Log.d(TAG, "onBindViewHolder() called with: "
                     + "holder = [" + holder.getClass().getSimpleName() + "], "
                     + "position = [" + position + "]");
+        }
+        if (getItemViewType(position) == FOOTER_TYPE) {
+            final ViewGroup container = (ViewGroup) holder.itemView;
+            container.setLayoutParams(new RecyclerView.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            container.removeAllViews();
+            container.addView(footerSupplier == null
+                    ? PignateFooterBinding.inflate(layoutInflater, container, false).getRoot()
+                    : footerSupplier.get());
         }
         if (holder instanceof InfoItemHolder) {
             ((InfoItemHolder) holder).updateFromItem(

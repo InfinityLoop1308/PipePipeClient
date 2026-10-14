@@ -1500,12 +1500,15 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
                 infoListAdapter.addInfoItemList(result.getRelatedItems());
             } else {
                 infoListAdapter.clearStreamItemList();
-                showEmptyState();
-                return;
+                if (result.getFilteredCount() == 0 && !hasMoreItems()) {
+                    showEmptyState();
+                    return;
+                }
             }
         }
 
         super.handleResult(result);
+        updateFilterStatus(result.getFilteredCount(), result.getRelatedItems().isEmpty(), true);
     }
 
     private void handleSearchSuggestion() {
@@ -1547,12 +1550,11 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
 
         if (!result.getErrors().isEmpty()) {
             showSnackBarError(new ErrorInfo(result.getErrors(), UserAction.SEARCHED,
-                    "\"" + searchString + "\" → pageUrl: " + nextPage.getUrl() + ", "
-                            + "pageIds: " + nextPage.getIds() + ", "
-                            + "pageCookies: " + nextPage.getCookies(),
+                    "\"" + searchString + "\" → page: " + nextPage,
                     serviceId));
         }
         super.handleNextItems(result);
+        updateFilterStatus(result.getFilteredCount(), result.getItems().isEmpty(), false);
     }
 
     @Override

@@ -1153,4 +1153,8 @@
 <string name="comment_filter_min_likes_title">Filter by like count</string>
 <string name="comment_filter_min_likes_summary">Only show comments that have at least this many likes. 0 disables this filter. Pinned comments are always shown</string>
 <string name="comment_filter_min_likes_current">Only show comments that have at least %d likes. Pinned comments are always shown</string>
+<string name="filter_items_hidden">Hidden by your filters: %d items</string>
+<string name="filter_all_items_hidden">All loaded items were hidden by your filters (%d items)</string>
+<string name="filter_no_visible_items_yet">No visible items on the loaded pages. More pages are available</string>
+<string name="filter_continue_loading">Continue loading</string>
 </resources>
