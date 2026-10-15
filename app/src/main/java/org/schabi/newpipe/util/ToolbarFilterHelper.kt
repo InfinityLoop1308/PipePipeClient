@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import org.schabi.newpipe.R
 
@@ -25,7 +26,10 @@ class ToolbarFilterHelper(
         val actionBar = activity.supportActionBar ?: return
         val customView = LayoutInflater.from(activity)
             .inflate(R.layout.local_playlist_search_toolbar, null, false)
-        actionBar.customView = customView
+        actionBar.setCustomView(
+            customView,
+            ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT)
+        )
         actionBar.setDisplayShowCustomEnabled(true)
         activity.invalidateOptionsMenu()
 
