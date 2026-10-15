@@ -362,17 +362,8 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
         if (item.getItemId() == R.id.action_multi_select) {
             selection.enter();
             return true;
-        } else if (item.getItemId() == R.id.menu_item_sort_name) {
-            changeSortMode(SortMode.SORT_NAME);
-            return true;
-        } else if (item.getItemId() == R.id.menu_item_sort_name_reverse) {
-            changeSortMode(SortMode.SORT_NAME_REVERSE);
-            return true;
-        } else if (item.getItemId() == R.id.menu_item_sort_origin) {
-            changeSortMode(SortMode.ORIGIN);
-            return true;
-        } else if (item.getItemId() == R.id.menu_item_sort_origin_reverse) {
-            changeSortMode(SortMode.ORIGIN_REVERSE);
+        } else if (item.getItemId() == R.id.menu_item_sort) {
+            showSortDialog();
             return true;
         } else if (item.getItemId() == R.id.action_search_local) {
             if (filterHelper == null) {
@@ -387,6 +378,23 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showSortDialog() {
+        final SortMode[] modes = {SortMode.ORIGIN, SortMode.ORIGIN_REVERSE,
+                SortMode.SORT_NAME, SortMode.SORT_NAME_REVERSE};
+        final String[] items = {getString(R.string.sort_origin),
+                getString(R.string.sort_origin_reverse),
+                getString(R.string.sort_name_ascending),
+                getString(R.string.sort_name_descending)};
+        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle(R.string.sort)
+                .setSingleChoiceItems(items, java.util.Arrays.asList(modes).indexOf(sortMode),
+                        (dialog, which) -> {
+                            changeSortMode(modes[which]);
+                            dialog.dismiss();
+                        })
+                .show();
     }
 
     private boolean isOriginMode() {

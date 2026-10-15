@@ -189,10 +189,8 @@ public class StatisticsPlaylistFragment
         } else if (item.getItemId() == R.id.action_history_clear) {
             HistorySettingsFragment
                     .openDeleteWatchHistoryDialog(requireContext(), recordManager, disposables);
-        } else if (item.getItemId() == R.id.menu_item_sort_last_played) {
-            setSortMode(StatisticSortMode.LAST_PLAYED);
-        } else if (item.getItemId() == R.id.menu_item_sort_most_played) {
-            setSortMode(StatisticSortMode.MOST_PLAYED);
+        } else if (item.getItemId() == R.id.menu_item_sort) {
+            showSortDialog();
         } else if (item.getItemId() == R.id.action_search_local) {
             ActionBar actionBar = activity.getSupportActionBar();
             View customView = getLayoutInflater().inflate(R.layout.local_playlist_search_toolbar, null, false);
@@ -379,6 +377,21 @@ public class StatisticsPlaylistFragment
     /*//////////////////////////////////////////////////////////////////////////
     // Utils
     //////////////////////////////////////////////////////////////////////////*/
+
+    private void showSortDialog() {
+        final StatisticSortMode[] modes = {StatisticSortMode.LAST_PLAYED,
+                StatisticSortMode.MOST_PLAYED};
+        final String[] items = {getString(R.string.title_last_played),
+                getString(R.string.title_most_played)};
+        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle(R.string.sort)
+                .setSingleChoiceItems(items, java.util.Arrays.asList(modes).indexOf(sortMode),
+                        (dialog, which) -> {
+                            setSortMode(modes[which]);
+                            dialog.dismiss();
+                        })
+                .show();
+    }
 
     private void setSortMode(final StatisticSortMode mode) {
         if (sortMode == mode) {
