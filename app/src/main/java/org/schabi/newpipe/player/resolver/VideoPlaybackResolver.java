@@ -204,7 +204,7 @@ public class VideoPlaybackResolver implements PlaybackResolver {
         final List<SubtitlesStream> subtitlesStreams = info.getSubtitles();
         if (subtitlesStreams != null) {
             // Torrent and non URL subtitles are not supported by ExoPlayer
-            final List<SubtitlesStream> nonTorrentAndUrlStreams = removeNonUrlAndTorrentStreams(
+            final List<SubtitlesStream> nonTorrentAndUrlStreams = removeTorrentStreams(
                     subtitlesStreams);
             for (final SubtitlesStream subtitle : nonTorrentAndUrlStreams) {
                 final MediaFormat mediaFormat = subtitle.getFormat();
