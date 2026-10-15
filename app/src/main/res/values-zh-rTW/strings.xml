@@ -782,8 +782,6 @@
 <string name="ai_subtitle">擷取串流詳細資訊（用於 AI 字幕）</string>
 <string name="cookie_functions_title">存取控制</string>
 <string name="navigate_to">導覽至</string>
-<string name="sort_name">按名稱排序</string>
-<string name="sort_name_reverse">按名稱排序（反向）</string>
 <string name="sort_origin">原始</string>
 <string name="sort_origin_reverse">原始（逆向）</string>
 <string name="dialog_title_enable_update_checker">啟用更新檢查</string>

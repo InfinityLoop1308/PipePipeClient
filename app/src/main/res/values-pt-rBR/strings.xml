@@ -884,8 +884,6 @@
     <string name="ai_subtitle">Obter detalhes do stream (para legendas por IA)</string>
     <string name="cookie_functions_title">Controle de acesso</string>
     <string name="navigate_to">Navegar</string>
-    <string name="sort_name">Ordenar por nome</string>
-    <string name="sort_name_reverse">Ordenar por nome (inverso)</string>
     <string name="sort_origin">Original</string>
     <string name="sort_origin_reverse">Original (inverso)</string>
     <string name="dialog_title_enable_update_checker">Ativar verificador de atualizações</string>

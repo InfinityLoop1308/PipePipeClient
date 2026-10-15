@@ -940,8 +940,6 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="ai_subtitle">Получение сведений о потоке (для ИИ-субтитров)</string>
     <string name="cookie_functions_title">Управление доступом</string>
     <string name="navigate_to">Навигация</string>
-    <string name="sort_name">По названию</string>
-    <string name="sort_name_reverse">По названию (в обратном порядке)</string>
     <string name="sort_origin">Исходный порядок</string>
     <string name="sort_origin_reverse">Исходный порядок (в обратном порядке)</string>
     <string name="dialog_title_enable_update_checker">Проверка обновлений</string>

@@ -878,8 +878,6 @@
 <string name="ai_subtitle">Akış ayrıntısını al (AI altyazıları için)</string>
 <string name="cookie_functions_title">Erişim kontrolü</string>
 <string name="navigate_to">Git</string>
-<string name="sort_name">İsme göre sırala</string>
-<string name="sort_name_reverse">İsme göre sırala (ters)</string>
 <string name="sort_origin">Orijinal</string>
 <string name="sort_origin_reverse">Orijinal (ters)</string>
 <string name="dialog_title_enable_update_checker">Güncelleme denetleyicisini etkinleştir</string>

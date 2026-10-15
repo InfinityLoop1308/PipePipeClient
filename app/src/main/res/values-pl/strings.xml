@@ -1002,8 +1002,6 @@
 <string name="ai_subtitle">Zdobądź szczegóły strumienia (AI dla napisów)</string>
 <string name="cookie_functions_title">Kontrola dostępu</string>
 <string name="navigate_to">Nawiguj</string>
-<string name="sort_name">Sortuj według nazwy</string>
-<string name="sort_name_reverse">Sortuj według nazwy (odwrócone)</string>
 <string name="sort_origin">Oryginalny</string>
 <string name="sort_origin_reverse">Oryginalny (odwrócony)</string>
 <string name="dialog_title_enable_update_checker">Włącz sprawdzanie aktualizacji</string>

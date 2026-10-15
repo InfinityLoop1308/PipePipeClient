@@ -669,8 +669,6 @@ Voulez-vous continuer?</string>
 <string name="ai_subtitle">Obtenir les détails du flux (pour les sous-titres AI)</string>
 <string name="cookie_functions_title">Contrôle d\'accès</string>
 <string name="navigate_to">Naviguer</string>
-<string name="sort_name">Trier par nom</string>
-<string name="sort_name_reverse">Trier par nom (inverse)</string>
 <string name="sort_origin">Original</string>
 <string name="sort_origin_reverse">Original (inversé)</string>
 <string name="dialog_title_enable_update_checker">Activer le vérificateur de mise à jour</string>

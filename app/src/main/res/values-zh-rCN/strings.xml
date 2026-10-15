@@ -795,8 +795,6 @@
 <string name="ai_subtitle">获取流的详细信息（用于AI字幕）</string>
 <string name="cookie_functions_title">访问控制</string>
 <string name="navigate_to">导航至</string>
-<string name="sort_name">按名称排序</string>
-<string name="sort_name_reverse">按名称排序（反向）</string>
 <string name="sort_origin">原始</string>
 <string name="sort_origin_reverse">原始（逆向）</string>
 <string name="dialog_title_enable_update_checker">启用更新检查器</string>

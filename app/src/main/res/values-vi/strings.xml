@@ -825,8 +825,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="ai_subtitle">Nhận thông tin chi tiết về luồng (đối với phụ đề AI)</string>
 <string name="cookie_functions_title">Kiểm soát truy cập</string>
 <string name="navigate_to">Điều hướng</string>
-<string name="sort_name">Sắp xếp theo tên</string>
-<string name="sort_name_reverse">Sắp xếp theo tên (đảo ngược)</string>
 <string name="sort_origin">Nguyên gốc</string>
 <string name="sort_origin_reverse">Nguyên bản (đảo ngược)</string>
 <string name="dialog_title_enable_update_checker">Bật trình kiểm tra cập nhật</string>

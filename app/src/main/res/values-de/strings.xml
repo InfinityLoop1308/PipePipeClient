@@ -715,8 +715,6 @@
 <string name="ai_subtitle">Detail des Streams erhalten (für KI-Untertitel)</string>
 <string name="cookie_functions_title">Zugriffskontrolle</string>
 <string name="navigate_to">Navigieren</string>
-<string name="sort_name">Nach Name sortieren</string>
-<string name="sort_name_reverse">Nach Name sortieren (umgekehrt)</string>
 <string name="sort_origin">Original</string>
 <string name="sort_origin_reverse">Original (umgekehrt)</string>
 <string name="dialog_title_enable_update_checker">Update-Checker aktivieren</string>

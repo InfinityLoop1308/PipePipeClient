@@ -734,8 +734,6 @@
 <string name="ai_subtitle">ストリームの詳細を取得 (AI 字幕に使用)</string>
 <string name="cookie_functions_title">アクセス制御</string>
 <string name="navigate_to">移動</string>
-<string name="sort_name">名前順に並び替え</string>
-<string name="sort_name_reverse">名前順に逆順に並び替え</string>
 <string name="sort_origin">オリジナル</string>
 <string name="sort_origin_reverse">オリジナル（逆）</string>
 <string name="dialog_title_enable_update_checker">更新チェッカーを有効にする</string>

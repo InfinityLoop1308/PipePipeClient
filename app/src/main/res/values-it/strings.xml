@@ -644,8 +644,6 @@
 <string name="ai_subtitle">Ottieni i dettagli del flusso (per sottotitoli AI)</string>
 <string name="cookie_functions_title">Controllo accessi</string>
 <string name="navigate_to">Naviga a</string>
-<string name="sort_name">Ordina per nome</string>
-<string name="sort_name_reverse">Ordina per nome (inverso)</string>
 <string name="sort_origin">Originale</string>
 <string name="sort_origin_reverse">Originale (invertito)</string>
 <string name="dialog_title_enable_update_checker">Abilita il controllo aggiornamenti</string>
