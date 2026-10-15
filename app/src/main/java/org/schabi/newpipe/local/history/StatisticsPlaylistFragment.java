@@ -188,8 +188,10 @@ public class StatisticsPlaylistFragment
         } else if (item.getItemId() == R.id.action_history_clear) {
             HistorySettingsFragment
                     .openDeleteWatchHistoryDialog(requireContext(), recordManager, disposables);
-        } else if (item.getItemId() == R.id.menu_item_sort) {
-            toggleSortMode();
+        } else if (item.getItemId() == R.id.menu_item_sort_last_played) {
+            setSortMode(StatisticSortMode.LAST_PLAYED);
+        } else if (item.getItemId() == R.id.menu_item_sort_most_played) {
+            setSortMode(StatisticSortMode.MOST_PLAYED);
         } else if (item.getItemId() == R.id.action_search_local) {
             ActionBar actionBar = activity.getSupportActionBar();
             View customView = getLayoutInflater().inflate(R.layout.local_playlist_search_toolbar, null, false);
@@ -377,14 +379,13 @@ public class StatisticsPlaylistFragment
     // Utils
     //////////////////////////////////////////////////////////////////////////*/
 
-    private void toggleSortMode() {
-        if (sortMode == StatisticSortMode.LAST_PLAYED) {
-            sortMode = StatisticSortMode.MOST_PLAYED;
-            setTitle(getString(R.string.title_most_played));
-        } else {
-            sortMode = StatisticSortMode.LAST_PLAYED;
-            setTitle(getString(R.string.title_last_played));
+    private void setSortMode(final StatisticSortMode mode) {
+        if (sortMode == mode) {
+            return;
         }
+        sortMode = mode;
+        setTitle(getString(mode == StatisticSortMode.LAST_PLAYED
+                ? R.string.title_last_played : R.string.title_most_played));
         startLoading(true);
     }
 

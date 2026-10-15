@@ -15,7 +15,18 @@
         android:icon="@drawable/ic_sort"
         android:orderInCategory="2"
         android:title="@string/sort"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/menu_item_sort_last_played"
+                android:title="@string/title_last_played"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/menu_item_sort_most_played"
+                android:title="@string/title_most_played"
+                app:showAsAction="never" />
+        </menu>
+    </item>
 
     <item
         android:id="@+id/action_multi_select"
