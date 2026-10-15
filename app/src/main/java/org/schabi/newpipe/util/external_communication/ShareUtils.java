@@ -66,7 +66,18 @@ public final class ShareUtils {
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         try {
-            // First try to open with the default browser
+            // Use a browser selector so that apps claiming the link (e.g. YouTube) are bypassed
+            final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            browserIntent.setSelector(Intent.makeMainSelectorActivity(
+                    Intent.ACTION_MAIN, Intent.CATEGORY_APP_BROWSER));
+            context.startActivity(browserIntent);
+            return true;
+        } catch (ActivityNotFoundException e0) {
+            // fall through to the generic handling below
+        }
+
+        try {
             context.startActivity(intent);
             return true;
         } catch (ActivityNotFoundException e1) {
