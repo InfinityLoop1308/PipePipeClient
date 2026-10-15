@@ -608,9 +608,15 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
 
     private void showSortDialog() {
         final SortMode[] modes = {SortMode.ORIGIN, SortMode.ORIGIN_REVERSE,
+                SortMode.UPLOAD_DATE, SortMode.UPLOAD_DATE_REVERSE,
+                SortMode.DURATION, SortMode.DURATION_REVERSE,
                 SortMode.SORT_NAME, SortMode.SORT_NAME_REVERSE};
         final String[] items = {getString(R.string.sort_origin),
                 getString(R.string.sort_origin_reverse),
+                getString(R.string.sort_upload_date_ascending),
+                getString(R.string.sort_upload_date_descending),
+                getString(R.string.sort_duration_ascending),
+                getString(R.string.sort_duration_descending),
                 getString(R.string.sort_name_ascending),
                 getString(R.string.sort_name_descending)};
         new AlertDialog.Builder(requireContext())
