@@ -3,7 +3,9 @@ package org.schabi.newpipe.local.playlist
 import android.app.Activity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.core.content.pm.ShortcutManagerCompat
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import org.schabi.newpipe.NewPipeDatabase
 import org.schabi.newpipe.R
@@ -23,9 +25,16 @@ class PlayPlaylistShortcutActivity : Activity() {
             return
         }
         val appContext = applicationContext
-        LocalPlaylistManager(NewPipeDatabase.getInstance(appContext))
-            .getPlaylistStreams(playlistId)
+        val database = NewPipeDatabase.getInstance(appContext)
+        database.playlistDAO().getPlaylist(playlistId)
             .firstOrError()
+            .flatMap { playlists ->
+                if (playlists.isEmpty()) {
+                    Single.error(PlaylistGoneException())
+                } else {
+                    LocalPlaylistManager(database).getPlaylistStreams(playlistId).firstOrError()
+                }
+            }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ items ->
@@ -36,13 +45,26 @@ class PlayPlaylistShortcutActivity : Activity() {
                     NavigationHelper.playOnBackgroundPlayer(appContext, queue, true)
                 }
                 finish()
-            }, {
-                Toast.makeText(appContext, R.string.error_snackbar_message, Toast.LENGTH_SHORT).show()
+            }, { error ->
+                if (error is PlaylistGoneException) {
+                    val message = getString(R.string.playlist_no_longer_exists)
+                    ShortcutManagerCompat.disableShortcuts(
+                        appContext, listOf(shortcutId(playlistId)), message
+                    )
+                    Toast.makeText(appContext, message, Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(appContext, R.string.error_snackbar_message, Toast.LENGTH_SHORT).show()
+                }
                 finish()
             })
     }
 
     companion object {
         const val EXTRA_PLAYLIST_ID = "playlist_id"
+
+        @JvmStatic
+        fun shortcutId(playlistId: Long) = "local_playlist_$playlistId"
+
+        private class PlaylistGoneException : Exception()
     }
 }

@@ -1222,4 +1222,5 @@
 <string name="danmaku_settings_summary">Appearance of scrolling danmaku over the video, independent of the chat display</string>
 <string name="search_in_page">Search in page</string>
 <string name="add_to_home_screen">Add to home screen</string>
+<string name="playlist_no_longer_exists">This playlist no longer exists</string>
 </resources>

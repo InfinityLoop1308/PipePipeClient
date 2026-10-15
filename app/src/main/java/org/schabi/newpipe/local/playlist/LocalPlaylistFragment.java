@@ -35,6 +35,7 @@ import org.reactivestreams.Subscription;
 import org.schabi.newpipe.NewPipeDatabase;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.LocalItem;
+import org.schabi.newpipe.util.PicassoHelper;
 import org.schabi.newpipe.database.history.model.StreamHistoryEntry;
 import org.schabi.newpipe.database.playlist.PlaylistStreamEntry;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
@@ -382,23 +383,47 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
     }
 
     private void addToHomeScreen() {
-        final android.content.Context context = requireContext();
-        final android.content.Intent launch = new android.content.Intent(context,
-                PlayPlaylistShortcutActivity.class)
-                .setAction(android.content.Intent.ACTION_VIEW)
-                .putExtra(PlayPlaylistShortcutActivity.EXTRA_PLAYLIST_ID, (long) playlistId);
-        final androidx.core.content.pm.ShortcutInfoCompat info =
-                new androidx.core.content.pm.ShortcutInfoCompat.Builder(
-                        context, "local_playlist_" + playlistId)
-                        .setShortLabel(name)
-                        .setIcon(androidx.core.graphics.drawable.IconCompat
-                                .createWithResource(context, R.mipmap.ic_launcher))
-                        .setIntent(launch)
-                        .build();
-        if (!androidx.core.content.pm.ShortcutManagerCompat.requestPinShortcut(
-                context, info, null)) {
-            Toast.makeText(context, R.string.general_error, Toast.LENGTH_SHORT).show();
-        }
+        final android.content.Context context = requireContext().getApplicationContext();
+        final long id = playlistId;
+        final String label = name;
+        disposables.add(io.reactivex.rxjava3.core.Single.fromCallable(() -> {
+                    try {
+                        final String url = playlistManager.getPlaylistThumbnail(id);
+                        if (url == null || url.isEmpty()) {
+                            return java.util.Optional.<android.graphics.Bitmap>empty();
+                        }
+                        return java.util.Optional.ofNullable(PicassoHelper.loadOrigin(url)
+                                .resize(192, 192).centerCrop().get());
+                    } catch (final Exception e) {
+                        return java.util.Optional.<android.graphics.Bitmap>empty();
+                    }
+                })
+                .subscribeOn(io.reactivex.rxjava3.schedulers.Schedulers.io())
+                .observeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+                .subscribe(bitmap -> {
+                    final androidx.core.graphics.drawable.IconCompat icon = bitmap.isPresent()
+                            ? androidx.core.graphics.drawable.IconCompat
+                                    .createWithAdaptiveBitmap(bitmap.get())
+                            : androidx.core.graphics.drawable.IconCompat
+                                    .createWithResource(context, R.mipmap.ic_launcher);
+                    final android.content.Intent launch = new android.content.Intent(context,
+                            PlayPlaylistShortcutActivity.class)
+                            .setAction(android.content.Intent.ACTION_VIEW)
+                            .putExtra(PlayPlaylistShortcutActivity.EXTRA_PLAYLIST_ID, id);
+                    final androidx.core.content.pm.ShortcutInfoCompat info =
+                            new androidx.core.content.pm.ShortcutInfoCompat.Builder(
+                                    context, PlayPlaylistShortcutActivity.shortcutId(id))
+                                    .setShortLabel(label)
+                                    .setIcon(icon)
+                                    .setIntent(launch)
+                                    .build();
+                    if (!androidx.core.content.pm.ShortcutManagerCompat.requestPinShortcut(
+                            context, info, null)) {
+                        Toast.makeText(context, R.string.general_error, Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                }, throwable -> Toast.makeText(context, R.string.general_error,
+                        Toast.LENGTH_SHORT).show()));
     }
 
     @Override
