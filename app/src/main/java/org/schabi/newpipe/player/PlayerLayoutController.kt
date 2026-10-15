@@ -156,7 +156,11 @@ class PlayerLayoutController(private val player: Player) {
             )
             binding.share.visibility = View.VISIBLE
             binding.switchCommentsVisibility.visibility =
-                if (player.bulletCommentsController.isChatMode) View.GONE else View.VISIBLE
+                if (player.bulletCommentsController.isChatMode) {
+                    player.bulletCommentsController.chatPanel.buttonVisibility()
+                } else {
+                    View.VISIBLE
+                }
             binding.openInBrowser.visibility = View.VISIBLE
             binding.sleepTimer.visibility = View.VISIBLE
             binding.switchMute.visibility = View.VISIBLE

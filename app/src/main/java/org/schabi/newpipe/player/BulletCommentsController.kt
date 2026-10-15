@@ -42,6 +42,7 @@ class BulletCommentsController(private val player: Player) {
         private set
 
     private val chat = ChatController(player)
+    val chatPanel = ChatPanelController(player)
 
     /** Whether messages go to the chat tab instead of floating over the video. */
     val isChatMode: Boolean
@@ -62,8 +63,8 @@ class BulletCommentsController(private val player: Player) {
             }
             bcPlayer = null
             disposeDrawComments()
-            player.binding.switchCommentsVisibility.visibility = View.GONE
             chat.init()
+            chatPanel.update()
             return
         }
         chat.release()
@@ -201,6 +202,10 @@ class BulletCommentsController(private val player: Player) {
 
     /** Toggles the visibility of the comments, persisting the choice and updating the icon. */
     fun toggleVisibility() {
+        if (isChatMode) {
+            chatPanel.toggle()
+            return
+        }
         isVisible = !isVisible
         player.prefs.edit().putBoolean(VISIBILITY_PREF_KEY, isVisible).apply()
         player.binding.switchCommentsVisibility.setImageDrawable(
@@ -221,6 +226,7 @@ class BulletCommentsController(private val player: Player) {
     /** Disconnects the player from a live extractor and clears its comments. */
     fun destroy() {
         chat.release()
+        chatPanel.release()
         val bulletCommentsPlayer = bcPlayer
         if (bulletCommentsPlayer != null) {
             bulletCommentsPlayer.disconnect()
