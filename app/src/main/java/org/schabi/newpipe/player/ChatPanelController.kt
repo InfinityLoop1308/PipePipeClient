@@ -1,6 +1,7 @@
 package org.schabi.newpipe.player
 
 import android.content.res.Configuration
+import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.Observer
@@ -77,6 +78,15 @@ class ChatPanelController(private val player: Player) {
         val binding = player.binding
         if (value && chatList == null) {
             chatList = ChatListView(binding.chatPanelList, null, forceLight = true)
+            // Keep the touch stream of the list away from the bottom sheet / player gestures
+            binding.chatPanelList.setOnTouchListener { v, event ->
+                when (event.actionMasked) {
+                    MotionEvent.ACTION_DOWN -> v.parent.requestDisallowInterceptTouchEvent(true)
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL ->
+                        v.parent.requestDisallowInterceptTouchEvent(false)
+                }
+                false
+            }
         }
         if (value) {
             // Bound the panel to the screen: an unbounded list would otherwise grow the player
