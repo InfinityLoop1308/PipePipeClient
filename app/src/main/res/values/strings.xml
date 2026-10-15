@@ -1203,4 +1203,5 @@
 <string name="list_control_page_channel_videos_title">Channel videos</string>
 <string name="list_control_page_playlist_title">Remote playlists</string>
 <string name="list_control_page_local_playlist_title">Local playlists</string>
+<string name="list_control_pages_restart_toast">Restart the app for the change to take effect</string>
 </resources>
