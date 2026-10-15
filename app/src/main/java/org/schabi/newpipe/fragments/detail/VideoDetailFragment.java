@@ -218,6 +218,7 @@ public final class VideoDetailFragment
     protected PlayQueue playQueue = null;
     int bottomSheetState = BottomSheetBehavior.STATE_EXPANDED;
     protected boolean autoPlayEnabled = true;
+    SponsorBlockMode currentSponsorBlockMode = null;
 
     @Nullable
     private StreamInfo currentInfo = null;
@@ -362,6 +363,7 @@ public final class VideoDetailFragment
         outState.putString("url", url);
         outState.putInt("bottomSheetState", sanitizeBottomSheetState(bottomSheetState));
         outState.putBoolean("autoPlayEnabled", autoPlayEnabled);
+        outState.putString("currentSponsorBlockMode", currentSponsorBlockMode != null ? currentSponsorBlockMode.name() : null);
     }
 
     @Override
@@ -373,6 +375,8 @@ public final class VideoDetailFragment
         bottomSheetState = sanitizeBottomSheetState(savedInstanceState.getInt(
                 "bottomSheetState", BottomSheetBehavior.STATE_EXPANDED));
         autoPlayEnabled = savedInstanceState.getBoolean("autoPlayEnabled", true);
+        String modeStr = savedInstanceState.getString("currentSponsorBlockMode");
+        currentSponsorBlockMode = modeStr != null ? SponsorBlockMode.valueOf(modeStr) : null;
     }
 
     @Override
@@ -1252,7 +1256,10 @@ public final class VideoDetailFragment
 
                 pageAdapter.updateItem(SPONSOR_BLOCK_TAB_TAG, sponsorBlockFragment);
 
-                sponsorBlockFragment.setSponsorBlockMode(getSponsorBlockModeFromPreferences());
+                if (currentSponsorBlockMode == null) {
+                    currentSponsorBlockMode = SponsorBlockMode.ENABLED;
+                }
+                sponsorBlockFragment.setSponsorBlockMode(currentSponsorBlockMode);
             }
         }
 
@@ -2256,11 +2263,19 @@ public final class VideoDetailFragment
 
     @Override
     public void onMetadataUpdate(final StreamInfo info, final PlayQueue queue) {
-        if (player != null) {
-            final SponsorBlockMode mode = getSponsorBlockModeFromPreferences();
-            player.setSponsorBlockMode(mode);
+        final Context context = requireContext();
+
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final boolean isSponsorBlockEnabled =
+                prefs.getBoolean(getString(R.string.sponsor_block_enable_key), true);
+
+        if (player != null && isSponsorBlockEnabled) {
+            if (currentSponsorBlockMode == null) {
+                currentSponsorBlockMode = SponsorBlockMode.ENABLED;
+            }
+            player.setSponsorBlockMode(currentSponsorBlockMode);
             getSponsorBlockFragment().ifPresent(
-                    fragment -> fragment.setSponsorBlockMode(mode));
+                    fragment -> fragment.setSponsorBlockMode(currentSponsorBlockMode));
         }
         final StackItem item = findQueueInStack(queue);
         if (item != null) {
@@ -2846,30 +2861,17 @@ public final class VideoDetailFragment
         }
     }
 
-    /**
-     * The global SponsorBlock switch is the single source of truth. The in-player switch only
-     * writes it and the player's SponsorBlockController follows it, so no in-memory copy is kept
-     * here: a stale copy would otherwise be written back on the next metadata update (which a
-     * fullscreen transition triggers) and silently turn SponsorBlock off again.
-     */
-    @NonNull
-    private SponsorBlockMode getSponsorBlockModeFromPreferences() {
-        final SharedPreferences prefs =
-                PreferenceManager.getDefaultSharedPreferences(requireContext());
-        return prefs.getBoolean(getString(R.string.sponsor_block_enable_key), true)
-                ? SponsorBlockMode.ENABLED
-                : SponsorBlockMode.DISABLED;
-    }
-
     @Override
     public void onSkippingEnabledChanged(final boolean newValue) {
         if (player == null) {
             return;
         }
 
-        player.setSponsorBlockMode(newValue
+        currentSponsorBlockMode = newValue
                 ? SponsorBlockMode.ENABLED
-                : SponsorBlockMode.DISABLED);
+                : SponsorBlockMode.DISABLED;
+
+        player.setSponsorBlockMode(currentSponsorBlockMode);
     }
 
     @Override
