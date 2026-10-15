@@ -1865,4 +1865,10 @@
     <string name="pinch_to_zoom_gesture_control_key" translatable="false">pinch_to_zoom_gesture_control</string>
         <string name="bullet_comments_chat_mode_key">bullet_comments_chat_mode_key</string>
     <string name="sponsor_block_skipping_enabled_key" translatable="false">sponsor_block_skipping_enabled</string>
+    <string name="preferred_audio_quality_key" translatable="false">preferred_audio_quality</string>
+    <string-array name="audio_quality_values" translatable="false">
+        <item>high</item>
+        <item>medium</item>
+        <item>low</item>
+    </string-array>
 </resources>

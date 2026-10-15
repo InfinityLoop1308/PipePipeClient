@@ -1223,4 +1223,10 @@
 <string name="search_in_page">Search in page</string>
 <string name="add_to_home_screen">Add to home screen</string>
 <string name="playlist_no_longer_exists">This playlist no longer exists</string>
+<string name="preferred_audio_quality_title">Preferred audio quality</string>
+<string-array name="audio_quality_names">
+    <item>High (highest bitrate)</item>
+    <item>Medium (~128 kbps)</item>
+    <item>Low (lowest bitrate, saves data)</item>
+</string-array>
 </resources>

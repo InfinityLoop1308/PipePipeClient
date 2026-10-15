@@ -44,8 +44,12 @@ public final class AudioStreamSelector {
         }
 
         final AudioStream selectedStream;
-        if (StreamDataLimit.isLimitingDataUsage(context)) {
+        final String quality = prefs.getString(
+                context.getString(R.string.preferred_audio_quality_key), "high");
+        if (StreamDataLimit.isLimitingDataUsage(context) || "low".equals(quality)) {
             selectedStream = getMostCompactAudioStream(null, filteredStreams);
+        } else if ("medium".equals(quality)) {
+            selectedStream = getMediumQualityAudioStream(filteredStreams);
         } else {
             selectedStream = getHighestQualityAudioStream(null, filteredStreams);
         }
@@ -71,6 +75,23 @@ public final class AudioStreamSelector {
         return audioStreams.stream()
                 .filter(audioStream -> format == null || audioStream.getFormat() == format)
                 .max((s1, s2) -> compareAudioStreamBitrate(s1, s2, AUDIO_FORMAT_QUALITY_RANKING))
+                .orElse(null);
+    }
+
+    @Nullable
+    private static AudioStream getMediumQualityAudioStream(
+            @NonNull final List<AudioStream> audioStreams) {
+        final int target = 128;
+        return audioStreams.stream()
+                .min((s1, s2) -> {
+                    final int d1 = Math.abs(s1.getAverageBitrate() - target);
+                    final int d2 = Math.abs(s2.getAverageBitrate() - target);
+                    if (d1 != d2) {
+                        return Integer.compare(d1, d2);
+                    }
+                    return AUDIO_FORMAT_EFFICIENCY_RANKING.indexOf(s1.getFormat())
+                            - AUDIO_FORMAT_EFFICIENCY_RANKING.indexOf(s2.getFormat());
+                })
                 .orElse(null);
     }
 
