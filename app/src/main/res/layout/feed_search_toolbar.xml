@@ -32,7 +32,7 @@
             android:id="@+id/toolbar_search_clear_local"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_gravity="right"
+            android:layout_gravity="right|center_vertical"
             android:contentDescription="@string/clear"
             android:focusable="true"
             tools:ignore="RtlHardcoded">
