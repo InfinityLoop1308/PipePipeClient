@@ -1022,8 +1022,6 @@ Voulez-vous continuer?</string>
 <string name="subscription_details_update_complete">Détails de la chaîne mis à jour</string>
 <string name="subscription_details_update_failed">Impossible de mettre à jour les détails de la chaîne</string>
 <string name="channel_is_blocked">Cette chaîne est dans votre liste de blocage</string>
-<string name="resize_pinch">Pincer</string>
-<string name="pinch_to_zoom_selected">Pincez pour zoomer.</string>
 <string name="rotate_fullscreen_to_video_orientation_title">Faire pivoter le plein écran selon l\'orientation de la vidéo</string>
 <string name="rotate_fullscreen_to_video_orientation_summary">Faire pivoter l\'écran en mode portrait ou paysage en fonction de la vidéo en mode plein écran</string>
 <string name="rotation_controls_fullscreen_title">Basculer automatiquement en plein écran lors de la rotation</string>

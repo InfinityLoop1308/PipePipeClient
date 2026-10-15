@@ -1094,8 +1094,6 @@
     <string name="subscription_details_update_ongoing">Buscando detalhes dos canais…</string>
     <string name="subscription_details_update_complete">Detalhes dos canais atualizados</string>
     <string name="subscription_details_update_failed">Não foi possível atualizar os detalhes dos canais</string>
-    <string name="resize_pinch">Pinça</string>
-    <string name="pinch_to_zoom_selected">Pinça para dar zoom.</string>
     <string name="rotate_fullscreen_to_video_orientation_title">Girar a tela cheia conforme a orientação do vídeo</string>
     <string name="rotate_fullscreen_to_video_orientation_summary">Gira a tela para retrato ou paisagem de acordo com o vídeo em tela cheia</string>
     <string name="rotation_controls_fullscreen_title">Alternar tela cheia automaticamente ao girar</string>

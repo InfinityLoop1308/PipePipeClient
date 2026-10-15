@@ -342,13 +342,7 @@ public final class PlayerHelper {
 
     public static boolean isPinchToZoomEnabled(@NonNull final Context context) {
         return getPreferences(context)
-                .getBoolean(context.getString(R.string.pinch_to_zoom_key), false);
-    }
-
-    public static void setPinchToZoomEnabled(@NonNull final Context context,
-                                              final boolean enabled) {
-        getPreferences(context).edit()
-                .putBoolean(context.getString(R.string.pinch_to_zoom_key), enabled).apply();
+                .getBoolean(context.getString(R.string.pinch_to_zoom_gesture_control_key), true);
     }
 
     public static boolean isSwipeSeekGestureEnabled(@NonNull final Context context) {

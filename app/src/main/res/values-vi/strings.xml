@@ -1114,8 +1114,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="subscription_details_update_complete">Đã cập nhật thông tin chi tiết kênh</string>
 <string name="subscription_details_update_failed">Không thể cập nhật thông tin chi tiết kênh</string>
 <string name="channel_is_blocked">Kênh này nằm trong danh sách chặn của bạn</string>
-<string name="resize_pinch">Chụm</string>
-<string name="pinch_to_zoom_selected">Chụm để thu phóng.</string>
 <string name="rotate_fullscreen_to_video_orientation_title">Xoay toàn màn hình theo hướng video</string>
 <string name="rotate_fullscreen_to_video_orientation_summary">Xoay màn hình sang dọc hoặc ngang dựa trên video khi ở chế độ toàn màn hình</string>
 <string name="rotation_controls_fullscreen_title">Tự động chuyển đổi chế độ toàn màn hình khi xoay</string>

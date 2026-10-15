@@ -1085,8 +1085,6 @@
 <string name="subscription_details_update_complete">Zaktualizowano szczegóły kanału</string>
 <string name="subscription_details_update_failed">Nie udało się zaktualizować szczegółów kanału</string>
 <string name="channel_is_blocked">Ten kanał jest na twojej liście zablokowanych</string>
-<string name="resize_pinch">Uszczypnij</string>
-<string name="pinch_to_zoom_selected">Uszczypnij, aby powiększyć.</string>
 <string name="rotate_fullscreen_to_video_orientation_title">Obróć pełny ekran do orientacji wideo</string>
 <string name="rotate_fullscreen_to_video_orientation_summary">Obróć ekran do orientacji pionowej lub poziomej na podstawie wideo w trybie pełnoekranowym</string>
 <string name="rotation_controls_fullscreen_title">Automatycznie przełączaj tryb pełnoekranowy przy obrocie</string>

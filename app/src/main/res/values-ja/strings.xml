@@ -1028,8 +1028,6 @@
 <string name="subscription_details_update_complete">チャンネルの詳細を更新しました</string>
 <string name="subscription_details_update_failed">チャンネルの詳細を更新できませんでした</string>
 <string name="channel_is_blocked">このチャンネルはブロックリストにあります</string>
-<string name="resize_pinch">ピンチ</string>
-<string name="pinch_to_zoom_selected">ピンチしてズームします。</string>
 <string name="rotate_fullscreen_to_video_orientation_title">動画の向きに合わせて全画面表示を回転</string>
 <string name="rotate_fullscreen_to_video_orientation_summary">全画面表示時に、動画に合わせて画面を縦向きまたは横向きに回転させます</string>
 <string name="rotation_controls_fullscreen_title">回転時に全画面表示を自動的に切り替える</string>

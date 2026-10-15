@@ -1059,8 +1059,6 @@
 <string name="subscription_details_update_complete">頻道詳細資訊已更新</string>
 <string name="subscription_details_update_failed">無法更新頻道詳細資訊</string>
 <string name="channel_is_blocked">此頻道在您的封鎖名單中</string>
-<string name="resize_pinch">捏合</string>
-<string name="pinch_to_zoom_selected">雙指捏合以縮放。</string>
 <string name="rotate_fullscreen_to_video_orientation_title">依影片方向旋轉全螢幕</string>
 <string name="rotate_fullscreen_to_video_orientation_summary">在全螢幕模式下，根據影片將螢幕旋轉為直向或橫向</string>
 <string name="rotation_controls_fullscreen_title">旋轉時自動切換全螢幕</string>

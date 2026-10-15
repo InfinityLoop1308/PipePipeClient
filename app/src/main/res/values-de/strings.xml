@@ -1005,8 +1005,6 @@
 <string name="subscription_details_update_complete">Kanaldetails aktualisiert</string>
 <string name="subscription_details_update_failed">Kanaldetails konnten nicht aktualisiert werden</string>
 <string name="channel_is_blocked">Dieser Kanal befindet sich auf deiner Blockierliste</string>
-<string name="resize_pinch">Zusammenziehen</string>
-<string name="pinch_to_zoom_selected">Zum Zoomen zusammenziehen.</string>
 <string name="rotate_fullscreen_to_video_orientation_title">Vollbild auf Videoausrichtung drehen</string>
 <string name="rotate_fullscreen_to_video_orientation_summary">Bildschirm im Vollbildmodus basierend auf dem Video ins Hoch- oder Querformat drehen</string>
 <string name="rotation_controls_fullscreen_title">Bei Drehung automatisch den Vollbildmodus umschalten</string>

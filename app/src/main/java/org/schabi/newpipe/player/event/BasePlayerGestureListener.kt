@@ -195,7 +195,8 @@ abstract class BasePlayerGestureListener(
                 if (mainStreamClaimed && mainStreamMinimizeAllowed) {
                     val travelDown = event.y - mainStreamDownY
                     val belongsToSheet = if (player.isFullscreen) {
-                        mainStreamMinimizeInFullscreen
+                        !gestureController.isZoomed
+                            && mainStreamMinimizeInFullscreen
                             && mainStreamDownPortion == DisplayPortion.MIDDLE
                             && travelDown >= RELINQUISH_DOWN_TRAVEL_PX
                             && travelDown > abs(event.x - mainStreamDownX)
@@ -373,6 +374,11 @@ abstract class BasePlayerGestureListener(
         if (DEBUG)
             Log.d(TAG, "onDoubleTap called with e = [$e]")
 
+        if (!player.popupPlayerSelected() && gestureController.isZoomed) {
+            gestureController.animateResetZoom()
+            return true
+        }
+
         onDoubleTap(e, getDisplayPortion(e))
         return true
     }
@@ -465,6 +471,12 @@ abstract class BasePlayerGestureListener(
         distanceX: Float,
         distanceY: Float
     ): Boolean {
+        // While zoomed in, every single-finger drag pans the viewport instead of seeking or
+        // changing volume/brightness/speed.
+        if (gestureController.isZoomed) {
+            gestureController.panZoomedVideo(-distanceX, -distanceY)
+            return true
+        }
 
         val isTouchingStatusBar: Boolean = initialEvent.y < getStatusBarHeight(service)
         val isTouchingNavigationBar: Boolean =
