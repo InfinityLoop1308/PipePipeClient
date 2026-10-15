@@ -1192,4 +1192,10 @@
 <item quantity="other">Remove %d items from playlist?</item>
 </plurals>
 <string name="filter_search_mismatch">%d loaded items do not match your search</string>
+<string name="sort_upload_date_ascending">Upload date (ascending)</string>
+<string name="sort_upload_date_descending">Upload date (descending)</string>
+<string name="sort_duration_ascending">Duration (ascending)</string>
+<string name="sort_duration_descending">Duration (descending)</string>
+<string name="sort_name_ascending">Name (ascending)</string>
+<string name="sort_name_descending">Name (descending)</string>
 </resources>

@@ -93,6 +93,8 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
     private ToolbarFilterHelper filterHelper;
     private boolean isInfinitePlayList;
 
+    private int sortMode = 0;
+
     private long streamCount;
     private long playlistOverallDurationSeconds;
 
@@ -256,6 +258,8 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
                 });
             }
             filterHelper.open();
+        } else if (item.getItemId() == R.id.menu_item_sort) {
+            showSortDialog();
         } else if (item.getItemId() == R.id.menu_item_openInBrowser) {
             ShareUtils.openUrlInBrowser(requireContext(), url);
         } else if (item.getItemId() == R.id.menu_item_share) {
@@ -395,6 +399,78 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
             NavigationHelper.enqueueOnPlayer(activity, getPlayQueue(), PlayerType.AUDIO);
             return true;
         });
+    }
+
+    private void showSortDialog() {
+        final int[] labels = {
+                R.string.sort_origin, R.string.sort_origin_reverse,
+                R.string.sort_upload_date_ascending, R.string.sort_upload_date_descending,
+                R.string.sort_duration_ascending, R.string.sort_duration_descending,
+                R.string.sort_name_ascending, R.string.sort_name_descending};
+        final String[] items = new String[labels.length];
+        for (int i = 0; i < labels.length; i++) {
+            items[i] = getString(labels[i]);
+        }
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.sort)
+                .setSingleChoiceItems(items, sortMode, (dialog, which) -> {
+                    sortMode = which;
+                    applySort();
+                    dialog.dismiss();
+                })
+                .show();
+    }
+
+    private static int compareDate(final StreamInfoItem a, final StreamInfoItem b) {
+        final var da = a.getUploadDate();
+        final var db = b.getUploadDate();
+        // items without a date are always placed last
+        if (da == null || db == null) {
+            return 0;
+        }
+        return da.offsetDateTime().compareTo(db.offsetDateTime());
+    }
+
+    private void applySort() {
+        if (infoListAdapter == null) {
+            return;
+        }
+        final boolean asc = sortMode % 2 == 0;
+        java.util.Comparator<InfoItem> comparator = null;
+        switch (sortMode) {
+            case 2:
+            case 3:
+                comparator = (a, b) -> {
+                    final var da = ((StreamInfoItem) a).getUploadDate();
+                    final var db = ((StreamInfoItem) b).getUploadDate();
+                    if (da == null || db == null) {
+                        return da == db ? 0 : da == null ? 1 : -1;
+                    }
+                    final int c = compareDate((StreamInfoItem) a, (StreamInfoItem) b);
+                    return asc ? c : -c;
+                };
+                break;
+            case 4:
+            case 5:
+                comparator = (a, b) -> {
+                    final int c = Long.compare(((StreamInfoItem) a).getDuration(),
+                            ((StreamInfoItem) b).getDuration());
+                    return asc ? c : -c;
+                };
+                break;
+            case 6:
+            case 7:
+                comparator = (a, b) -> {
+                    final int c = String.CASE_INSENSITIVE_ORDER.compare(
+                            a.getName() == null ? "" : a.getName(),
+                            b.getName() == null ? "" : b.getName());
+                    return asc ? c : -c;
+                };
+                break;
+            default:
+                break;
+        }
+        infoListAdapter.setSortComparator(comparator, sortMode == 1);
     }
 
     private PlayQueue getPlayQueue() {

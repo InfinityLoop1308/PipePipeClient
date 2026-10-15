@@ -93,7 +93,11 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private final InfoItemBuilder infoItemBuilder;
     private final List<InfoItem> infoItemList;
     private final List<InfoItem> filteredItemList = new ArrayList<>();
+    private final List<InfoItem> sortedItemList = new ArrayList<>();
     private String filterText = "";
+    @Nullable
+    private java.util.Comparator<InfoItem> sortComparator = null;
+    private boolean reverseOrigin = false;
     private final HistoryRecordManager recordManager;
 
     private boolean useMiniVariant = false;
@@ -187,7 +191,7 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     + infoItemList.size() + ", data.size() = " + data.size());
         }
 
-        if (!filterText.isEmpty()) {
+        if (!filterText.isEmpty() || isSorted()) {
             infoItemList.addAll(data);
             applyFilter();
             notifyDataSetChanged();
@@ -230,13 +234,38 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         notifyDataSetChanged();
     }
 
+    /** Sorts loaded items with the comparator; null restores the original order. */
+    public void setSortComparator(@Nullable final java.util.Comparator<InfoItem> comparator,
+                                  final boolean reverseOriginOrder) {
+        sortComparator = comparator;
+        reverseOrigin = reverseOriginOrder;
+        applyFilter();
+        notifyDataSetChanged();
+    }
+
+    private boolean isSorted() {
+        return sortComparator != null || reverseOrigin;
+    }
+
     private void applyFilter() {
         filteredItemList.clear();
+        sortedItemList.clear();
+        if (sortComparator != null || reverseOrigin) {
+            sortedItemList.addAll(infoItemList);
+            if (reverseOrigin) {
+                java.util.Collections.reverse(sortedItemList);
+            } else {
+                java.util.Collections.sort(sortedItemList, sortComparator);
+            }
+        }
         if (filterText.isEmpty()) {
+            if (!sortedItemList.isEmpty()) {
+                filteredItemList.addAll(sortedItemList);
+            }
             return;
         }
         final String needle = filterText.toLowerCase();
-        for (final InfoItem item : infoItemList) {
+        for (final InfoItem item : isSorted() ? sortedItemList : infoItemList) {
             final String name = item.getName();
             if (name != null && name.toLowerCase().contains(needle)) {
                 filteredItemList.add(item);
@@ -250,7 +279,7 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private List<InfoItem> shownList() {
-        return filterText.isEmpty() ? infoItemList : filteredItemList;
+        return filterText.isEmpty() && !isSorted() ? infoItemList : filteredItemList;
     }
 
     public void clearStreamItemList() {
@@ -259,6 +288,7 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
         infoItemList.clear();
         filteredItemList.clear();
+        sortedItemList.clear();
         notifyDataSetChanged();
     }
 
@@ -303,7 +333,7 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public List<InfoItem> getItemsList() {
-        return infoItemList;
+        return isSorted() ? sortedItemList : infoItemList;
     }
 
     @Override
