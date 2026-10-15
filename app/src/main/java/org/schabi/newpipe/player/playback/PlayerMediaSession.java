@@ -23,6 +23,16 @@ public class PlayerMediaSession implements MediaSessionCallback {
     }
 
     @Override
+    public void fastRewind() {
+        player.fastRewind();
+    }
+
+    @Override
+    public void fastForward() {
+        player.fastForward();
+    }
+
+    @Override
     public void playPrevious() {
         if (PlayerHelper.getSeekInsteadOfSkip(player.getContext())) {
             player.fastRewind();

@@ -27,6 +27,7 @@ public class PlayQueueNavigator implements MediaSessionConnector.QueueNavigator 
     private final int maxQueueSize;
 
     private long activeQueueItemId;
+    private java.util.function.BooleanSupplier seekInsteadOfSkip = () -> false;
 
     public PlayQueueNavigator(@NonNull final MediaSessionCompat mediaSession,
                               @NonNull final MediaSessionCallback callback) {
@@ -37,8 +38,17 @@ public class PlayQueueNavigator implements MediaSessionConnector.QueueNavigator 
         this.activeQueueItemId = MediaSessionCompat.QueueItem.UNKNOWN_ID;
     }
 
+    public void setSeekInsteadOfSkip(@NonNull final java.util.function.BooleanSupplier supplier) {
+        this.seekInsteadOfSkip = supplier;
+    }
+
     @Override
     public long getSupportedQueueNavigatorActions(@Nullable final Player player) {
+        if (seekInsteadOfSkip.getAsBoolean()) {
+            // advertise rewind/fast-forward (from the connector) instead of previous/next so
+            // that the system notification shows the matching icons
+            return ACTION_SKIP_TO_QUEUE_ITEM;
+        }
         return ACTION_SKIP_TO_NEXT | ACTION_SKIP_TO_PREVIOUS | ACTION_SKIP_TO_QUEUE_ITEM;
     }
 

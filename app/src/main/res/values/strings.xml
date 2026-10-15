@@ -74,8 +74,8 @@
 <string name="disable_android_auto_title">Disable Android Auto</string>
 <string name="disable_android_auto_summary">Disable Android Auto connection to avoid notification issues on on Android 12 and older.\n\nAfter re-enabling this option, you must restart the app and reconnect to the car for the change to take effect.</string>
 <string name="seek_duration_title">Fast-forward/-rewind seek duration</string>
-<string name="seek_on_media_button_events_title">Seek with Bluetooth or media controls</string>
-<string name="seek_on_media_button_events_summary">Use external media controls to seek instead of skipping tracks. Ideal for podcasts and audiobooks.</string>
+<string name="seek_on_media_button_events_title">Rewind/fast-forward instead of previous/next</string>
+<string name="seek_on_media_button_events_summary">Show rewind/fast-forward buttons in the notification (Android 13+) and make the previous/next keys of Bluetooth devices and headsets seek instead of skipping tracks. The seek step is set by “Fast-forward/-rewind seek duration” in gesture settings.</string>
 <string name="progressive_load_interval_title">Playback load interval size</string>
 <string name="progressive_load_interval_summary">Change the load interval size (currently %s). A lower value may speed up initial video loading. Changes require a player restart</string>
 <string name="download_thumbnail_title">Load thumbnails</string>
