@@ -95,6 +95,7 @@ import org.schabi.newpipe.player.PlayerUiModeController;
 import org.schabi.newpipe.player.event.OnKeyDownListener;
 import org.schabi.newpipe.player.event.PlayerServiceExtendedEventListener;
 import org.schabi.newpipe.player.helper.PlayerHelper;
+import org.schabi.newpipe.player.chat.ChatStore;
 import org.schabi.newpipe.player.helper.PlayerHolder;
 import org.schabi.newpipe.player.mediasession.PlayerServiceInterface;
 import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
@@ -162,6 +163,7 @@ public final class VideoDetailFragment
     private static final String DESCRIPTION_TAB_TAG = "DESCRIPTION TAB";
     private static final String SPONSOR_BLOCK_TAB_TAG = "SPONSOR_BLOCK TAB";
     private static final String EMPTY_TAB_TAG = "EMPTY TAB";
+    private static final String CHAT_TAB_TAG = "CHAT TAB";
     private static final String VIDEO_TAB_COMMENTS = "comments";
     private static final String VIDEO_TAB_RELATED = "related";
     private static final String VIDEO_TAB_DESCRIPTION = "description";
@@ -735,6 +737,7 @@ public final class VideoDetailFragment
         pageAdapter = new TabAdapter(getChildFragmentManager());
         binding.viewPager.setAdapter(pageAdapter);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
+        ChatStore.INSTANCE.getAvailable().observe(getViewLifecycleOwner(), v -> syncChatTab());
         updateStickyPlayerMode();
 
         binding.detailThumbnailRootLayout.requestFocus();
@@ -1147,6 +1150,7 @@ public final class VideoDetailFragment
             pageAdapter.addFragment(EmptyFragment.newInstance(true), EMPTY_TAB_TAG);
         }
         pageAdapter.notifyDataSetUpdate();
+        syncChatTab();
 
         if (pageAdapter.getCount() >= 2) {
             final int position = pageAdapter.getItemPositionByTitle(selectedTabTag);
@@ -1251,6 +1255,47 @@ public final class VideoDetailFragment
         updateTabLayoutVisibility();
         pageAdapter.notifyDataSetUpdate();
         updateTabIconsAndContentDescriptions();
+        syncChatTab();
+    }
+
+    private boolean shouldShowChat() {
+        if (currentInfo == null || !Boolean.TRUE.equals(ChatStore.INSTANCE.getAvailable().getValue())) {
+            return false;
+        }
+        return PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getBoolean(getString(R.string.bullet_comments_chat_mode_key), true);
+    }
+
+    /** Makes the presence of the chat tab match whether the current stream has a chat. */
+    private void syncChatTab() {
+        if (binding == null || pageAdapter == null || !isAdded()) {
+            return;
+        }
+        final boolean want = shouldShowChat();
+        final int index = pageAdapter.getItemPositionByTitle(CHAT_TAB_TAG);
+        if (want && index == -1) {
+            final int emptyIndex = pageAdapter.getItemPositionByTitle(EMPTY_TAB_TAG);
+            if (emptyIndex != -1) {
+                pageAdapter.removeItem(emptyIndex);
+            }
+            pageAdapter.addFragment(new ChatFragment(), CHAT_TAB_TAG);
+            tabIcons.add(R.drawable.ic_bullet_comment_enabled);
+            tabContentDescriptions.add(R.string.chat_tab_description);
+        } else if (!want && index != -1) {
+            pageAdapter.removeItem(index);
+            if (index < tabIcons.size()) {
+                tabIcons.remove(index);
+                tabContentDescriptions.remove(index);
+            }
+            if (pageAdapter.getCount() == 0) {
+                pageAdapter.addFragment(EmptyFragment.newInstance(true), EMPTY_TAB_TAG);
+            }
+        } else {
+            return;
+        }
+        pageAdapter.notifyDataSetUpdate();
+        updateTabIconsAndContentDescriptions();
+        updateTabLayoutVisibility();
     }
 
     private boolean shouldShowComments() {

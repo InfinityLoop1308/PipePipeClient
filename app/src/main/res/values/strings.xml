@@ -1213,4 +1213,10 @@
 </string-array>
 <string name="pinch_to_zoom_gesture_control_title">Pinch to zoom</string>
 <string name="pinch_to_zoom_gesture_control_summary">Pinch to zoom the video in fullscreen. While zoomed, drag to pan and double-tap to reset</string>
+<string name="bullet_comments_chat_mode_title">Show as chat</string>
+<string name="bullet_comments_chat_mode_summary">Show live chat and bullet comments in a chat tab instead of over the video</string>
+<string name="chat_tab_description">Chat</string>
+<string name="chat_anonymous">Anonymous</string>
+<string name="chat_jump_to_latest">Jump to latest</string>
+<string name="chat_empty">No messages yet</string>
 </resources>
