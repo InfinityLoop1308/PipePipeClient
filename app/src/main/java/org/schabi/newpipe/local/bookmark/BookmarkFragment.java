@@ -402,7 +402,7 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
                 list.add((PlaylistLocalItem) item);
             }
         }
-        final Comparator<PlaylistLocalItem> byName = (a, b) -> utils.compareChineseStrings(
+        final Comparator<PlaylistLocalItem> byName = (a, b) -> utils.compareNames(
                 a.getOrderingName() == null ? "" : a.getOrderingName(),
                 b.getOrderingName() == null ? "" : b.getOrderingName());
         switch (mode) {

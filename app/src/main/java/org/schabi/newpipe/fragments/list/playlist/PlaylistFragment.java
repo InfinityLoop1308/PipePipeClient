@@ -462,9 +462,8 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
             case 6:
             case 7:
                 comparator = (a, b) -> {
-                    final int c = String.CASE_INSENSITIVE_ORDER.compare(
-                            a.getName() == null ? "" : a.getName(),
-                            b.getName() == null ? "" : b.getName());
+                    final int c = org.schabi.newpipe.util.utils.compareNames(
+                            a.getName(), b.getName());
                     return asc ? c : -c;
                 };
                 break;

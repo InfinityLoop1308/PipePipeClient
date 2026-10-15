@@ -1852,4 +1852,15 @@
         <item>@string/list_control_page_local_playlist_title</item>
         <item>@string/title_activity_history</item>
     </string-array>
+    <string name="name_sort_locale_key" translatable="false">name_sort_locale</string>
+    <string name="name_sort_locale_english_value" translatable="false">english</string>
+    <string name="name_sort_locale_chinese_value" translatable="false">chinese</string>
+    <string name="name_sort_locale_japanese_value" translatable="false">japanese</string>
+    <string name="name_sort_locale_korean_value" translatable="false">korean</string>
+    <string-array name="name_sort_locale_values">
+        <item>@string/name_sort_locale_english_value</item>
+        <item>@string/name_sort_locale_chinese_value</item>
+        <item>@string/name_sort_locale_japanese_value</item>
+        <item>@string/name_sort_locale_korean_value</item>
+    </string-array>
 </resources>

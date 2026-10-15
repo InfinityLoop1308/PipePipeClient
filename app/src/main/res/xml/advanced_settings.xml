@@ -261,6 +261,16 @@
                 android:title="@string/auto_translated_subtitles_language_title"
                 app:singleLineTitle="false"
                 app:iconSpaceReserved="false" />
+
+        <ListPreference
+                android:defaultValue="@string/name_sort_locale_chinese_value"
+                android:entries="@array/name_sort_locale_names"
+                android:entryValues="@array/name_sort_locale_values"
+                android:key="@string/name_sort_locale_key"
+                android:summary="%s"
+                android:title="@string/name_sort_locale_title"
+                app:singleLineTitle="false"
+                app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
 </PreferenceScreen>
