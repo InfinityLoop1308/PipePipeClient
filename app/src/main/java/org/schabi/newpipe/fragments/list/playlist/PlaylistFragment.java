@@ -53,7 +53,6 @@ import org.schabi.newpipe.player.playqueue.PlaylistPlayQueue;
 import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.NavigationHelper;
-import org.schabi.newpipe.util.ToolbarFilterHelper;
 import org.schabi.newpipe.util.PicassoHelper;
 import org.schabi.newpipe.info_list.dialog.StreamDialogDefaultEntry;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
@@ -90,7 +89,6 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
     private PlaylistControlBinding playlistControlBinding;
 
     private MenuItem playlistBookmarkButton;
-    private ToolbarFilterHelper filterHelper;
     private boolean isInfinitePlayList;
 
     private int sortMode = 0;
@@ -188,19 +186,11 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
 
     @Override
     public boolean onBackPressed() {
-        if (filterHelper != null && filterHelper.isActive()) {
-            filterHelper.close();
-            return true;
-        }
-        return false;
+        return closeLocalFilterOnBack();
     }
 
     @Override
     public void onDestroyView() {
-        if (filterHelper != null) {
-            filterHelper.close();
-            filterHelper = null;
-        }
         headerBinding = null;
         playlistControlBinding = null;
 
@@ -252,13 +242,7 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
         if (item.getItemId() == R.id.action_settings) {
             NavigationHelper.openSettings(requireContext());
         } else if (item.getItemId() == R.id.action_search_local) {
-            if (filterHelper == null) {
-                filterHelper = new ToolbarFilterHelper(activity, text -> {
-                    onLocalFilterChanged(text);
-                    return kotlin.Unit.INSTANCE;
-                });
-            }
-            filterHelper.open();
+            openLocalFilter();
         } else if (item.getItemId() == R.id.menu_item_sort) {
             showSortDialog();
         } else if (item.getItemId() == R.id.menu_item_openInBrowser) {

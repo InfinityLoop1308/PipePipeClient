@@ -44,6 +44,7 @@ import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.OnClickGesture;
 import org.schabi.newpipe.util.StateSaver;
 import org.schabi.newpipe.util.ThemeHelper;
+import org.schabi.newpipe.util.ToolbarFilterHelper;
 import org.schabi.newpipe.util.selection.SelectionController;
 import org.schabi.newpipe.util.selection.SelectionToolbar;
 import org.schabi.newpipe.util.selection.StreamSelectionActions;
@@ -85,6 +86,27 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     private boolean manualFilterContinuation;
     /** True while the user's local toolbar filter has text; suspends automatic paging. */
     private boolean localFilterActive;
+    private ToolbarFilterHelper localFilterHelper;
+
+    /** Opens the toolbar filter field; every list's local search must go through here. */
+    protected void openLocalFilter() {
+        if (localFilterHelper == null) {
+            localFilterHelper = new ToolbarFilterHelper(activity, text -> {
+                onLocalFilterChanged(text);
+                return kotlin.Unit.INSTANCE;
+            });
+        }
+        localFilterHelper.open();
+    }
+
+    /** Closes the toolbar filter if open; returns true if it consumed the back press. */
+    protected boolean closeLocalFilterOnBack() {
+        if (localFilterHelper != null && localFilterHelper.isActive()) {
+            localFilterHelper.close();
+            return true;
+        }
+        return false;
+    }
 
     /** Applies the toolbar's local filter text; no automatic loading happens while it is set. */
     protected void onLocalFilterChanged(@NonNull final String text) {
@@ -241,6 +263,10 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
 
     @Override
     public void onDestroyView() {
+        if (localFilterHelper != null) {
+            localFilterHelper.close();
+            localFilterHelper = null;
+        }
         selection.setListener(null);
         if (infoListAdapter != null) {
             infoListAdapter.setSelectionState(null);

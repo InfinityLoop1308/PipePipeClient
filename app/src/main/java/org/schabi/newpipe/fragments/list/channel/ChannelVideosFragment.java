@@ -50,7 +50,6 @@ import org.schabi.newpipe.extractor.search.filter.FilterItem;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.fragments.list.BaseListInfoFragment;
-import org.schabi.newpipe.util.ToolbarFilterHelper;
 import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.local.feed.notifications.NotificationHelper;
 import org.schabi.newpipe.local.subscription.SubscriptionManager;
@@ -92,7 +91,6 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
     private Disposable subscribeButtonMonitor;
     private MenuItem menuSortButton;
     private MenuItem menuFilterButton;
-    private ToolbarFilterHelper filterHelper;
 
     protected int selectedSortFilterId = Filter.ITEM_IDENTIFIER_UNKNOWN;
 
@@ -175,20 +173,7 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
 
     @Override
     public boolean onBackPressed() {
-        if (filterHelper != null && filterHelper.isActive()) {
-            filterHelper.close();
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void onDestroyView() {
-        if (filterHelper != null) {
-            filterHelper.close();
-            filterHelper = null;
-        }
-        super.onDestroyView();
+        return closeLocalFilterOnBack();
     }
 
     @Override
@@ -203,13 +188,7 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
             showSortDialog();
             return true;
         } else if (item.getItemId() == R.id.action_search_local) {
-            if (filterHelper == null) {
-                filterHelper = new ToolbarFilterHelper(activity, text -> {
-                    onLocalFilterChanged(text);
-                    return kotlin.Unit.INSTANCE;
-                });
-            }
-            filterHelper.open();
+            openLocalFilter();
             return true;
         }
         return super.onOptionsItemSelected(item);

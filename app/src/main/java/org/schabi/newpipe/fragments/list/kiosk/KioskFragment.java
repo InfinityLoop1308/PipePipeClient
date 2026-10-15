@@ -28,7 +28,6 @@ import org.schabi.newpipe.fragments.list.BaseListInfoFragment;
 import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.util.KioskTranslator;
 import org.schabi.newpipe.util.Localization;
-import org.schabi.newpipe.util.ToolbarFilterHelper;
 
 import io.reactivex.rxjava3.core.Single;
 
@@ -59,7 +58,6 @@ import io.reactivex.rxjava3.core.Single;
 public class KioskFragment extends BaseListInfoFragment<StreamInfoItem, KioskInfo>
         implements BackPressable {
 
-    private ToolbarFilterHelper filterHelper;
     String kioskId = "";
     String kioskTranslatedName;
     ContentCountry contentCountry;
@@ -156,15 +154,7 @@ public class KioskFragment extends BaseListInfoFragment<StreamInfoItem, KioskInf
     @Override
     public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
         if (item.getItemId() == R.id.action_search_local) {
-            if (filterHelper == null) {
-                filterHelper = new ToolbarFilterHelper(activity, text -> {
-                    if (infoListAdapter != null) {
-                        infoListAdapter.filter(text);
-                    }
-                    return kotlin.Unit.INSTANCE;
-                });
-            }
-            filterHelper.open();
+            openLocalFilter();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -172,20 +162,7 @@ public class KioskFragment extends BaseListInfoFragment<StreamInfoItem, KioskInf
 
     @Override
     public boolean onBackPressed() {
-        if (filterHelper != null && filterHelper.isActive()) {
-            filterHelper.close();
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void onDestroyView() {
-        if (filterHelper != null) {
-            filterHelper.close();
-            filterHelper = null;
-        }
-        super.onDestroyView();
+        return closeLocalFilterOnBack();
     }
 
     /*//////////////////////////////////////////////////////////////////////////
