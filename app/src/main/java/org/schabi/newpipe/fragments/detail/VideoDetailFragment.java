@@ -1588,19 +1588,31 @@ public final class VideoDetailFragment
             return;
         }
 
+        // Fullscreen lives outside of the scrolling app bar, otherwise the detail page below
+        // could be scrolled/focused into view while the player is still in fullscreen
+        final boolean fullscreen = player.isFullscreen();
+        final ViewGroup target = fullscreen
+                ? binding.fullscreenPlayerContainer : binding.playerPlaceholder;
+
         // Check if viewHolder already contains a child
-        if (player.getRootView().getParent() != binding.playerPlaceholder) {
+        if (player.getRootView().getParent() != target) {
             playerService.removeViewFromParent();
         }
         setHeightThumbnail();
 
         // Prevent from re-adding a view multiple times
         if (player.getRootView().getParent() == null) {
-            binding.playerPlaceholder.addView(player.getRootView());
+            target.addView(player.getRootView());
             if (currentInfo != null) {
                 player.onMarkSeekbarRequested(currentInfo);
             }
         }
+
+        binding.fullscreenPlayerContainer.setVisibility(fullscreen ? View.VISIBLE : View.GONE);
+        // Keep the DPAD focus from wandering into the hidden detail page
+        final int blockFocus = fullscreen
+                ? ViewGroup.FOCUS_BLOCK_DESCENDANTS : ViewGroup.FOCUS_AFTER_DESCENDANTS;
+        ((ViewGroup) binding.detailMainContent).setDescendantFocusability(blockFocus);
     }
 
     private void removeVideoPlayerView() {
