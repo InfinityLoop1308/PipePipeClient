@@ -600,24 +600,31 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             openFilePicker();
         } else if (item.getItemId() == R.id.menu_item_append_playlist) {
             appendAllToOtherPlaylist();
-        } else if (item.getItemId() == R.id.menu_item_sort_origin) {
-            itemListAdapter.sortMode = SortMode.ORIGIN;
-            itemListAdapter.sort(SortMode.ORIGIN);
-            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_sort_mode_key), SortMode.ORIGIN.name()).apply();
-        } else if (item.getItemId() == R.id.menu_item_sort_origin_reverse) {
-            itemListAdapter.sortMode = SortMode.ORIGIN_REVERSE;
-            itemListAdapter.sort(SortMode.ORIGIN_REVERSE);
-            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_sort_mode_key), SortMode.ORIGIN_REVERSE.name()).apply();
-        } else if (item.getItemId() == R.id.menu_item_sort_name) {
-            itemListAdapter.sortMode = SortMode.SORT_NAME;
-            itemListAdapter.sort(SortMode.SORT_NAME);
-            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_sort_mode_key), SortMode.SORT_NAME.name()).apply();
-        } else if (item.getItemId() == R.id.menu_item_sort_name_reverse) {
-            itemListAdapter.sortMode = SortMode.SORT_NAME_REVERSE;
-            itemListAdapter.sort(SortMode.SORT_NAME_REVERSE);
-            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit().putString(getString(R.string.playlist_sort_mode_key), SortMode.SORT_NAME_REVERSE.name()).apply();
+        } else if (item.getItemId() == R.id.menu_item_sort) {
+            showSortDialog();
         }
         return true;
+    }
+
+    private void showSortDialog() {
+        final SortMode[] modes = {SortMode.ORIGIN, SortMode.ORIGIN_REVERSE,
+                SortMode.SORT_NAME, SortMode.SORT_NAME_REVERSE};
+        final String[] items = {getString(R.string.sort_origin),
+                getString(R.string.sort_origin_reverse),
+                getString(R.string.sort_name_ascending),
+                getString(R.string.sort_name_descending)};
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.sort)
+                .setSingleChoiceItems(items, java.util.Arrays.asList(modes)
+                        .indexOf(itemListAdapter.sortMode), (dialog, which) -> {
+                    itemListAdapter.sortMode = modes[which];
+                    itemListAdapter.sort(modes[which]);
+                    PreferenceManager.getDefaultSharedPreferences(requireContext()).edit()
+                            .putString(getString(R.string.playlist_sort_mode_key),
+                                    modes[which].name()).apply();
+                    dialog.dismiss();
+                })
+                .show();
     }
 
     private void openFilePicker() {
