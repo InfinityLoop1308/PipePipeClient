@@ -251,9 +251,7 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
         } else if (item.getItemId() == R.id.action_search_local) {
             if (filterHelper == null) {
                 filterHelper = new ToolbarFilterHelper(activity, text -> {
-                    if (infoListAdapter != null) {
-                        infoListAdapter.filter(text);
-                    }
+                    onLocalFilterChanged(text);
                     return kotlin.Unit.INSTANCE;
                 });
             }

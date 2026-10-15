@@ -298,6 +298,10 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return i;
     }
 
+    public int getShownCount() {
+        return shownList().size();
+    }
+
     public List<InfoItem> getItemsList() {
         return infoItemList;
     }

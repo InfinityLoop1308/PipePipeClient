@@ -83,6 +83,37 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     private int focusedPosition = -1;
     private int hiddenItemCount;
     private boolean manualFilterContinuation;
+    /** True while the user's local toolbar filter has text; suspends automatic paging. */
+    private boolean localFilterActive;
+
+    /** Applies the toolbar's local filter text; no automatic loading happens while it is set. */
+    protected void onLocalFilterChanged(@NonNull final String text) {
+        localFilterActive = !text.trim().isEmpty();
+        if (infoListAdapter != null) {
+            infoListAdapter.filter(text);
+        }
+        if (localFilterActive) {
+            installFilterFooter();
+        } else if (hiddenItemCount == 0 && !manualFilterContinuation && infoListAdapter != null) {
+            infoListAdapter.setFooterSupplier(null);
+        }
+        showListFooter(hasMoreItems());
+        if (!localFilterActive && itemsList != null) {
+            // resume paging if the unfiltered list doesn't fill the screen
+            itemsList.post(() -> {
+                if (itemsList != null && !localFilterActive && hasMoreItems()
+                        && !isLoading.get() && !manualFilterContinuation
+                        && !itemsList.canScrollVertically(1)) {
+                    loadMoreItems();
+                }
+            });
+        }
+    }
+
+    private int searchHiddenCount() {
+        return localFilterActive && infoListAdapter != null
+                ? infoListAdapter.getItemsList().size() - infoListAdapter.getShownCount() : 0;
+    }
 
     /** A bounded empty-page batch must be resumed explicitly, never by the scroll listener. */
     protected void updateFilterStatus(final int count, final boolean emptyBatch,
@@ -90,7 +121,9 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         hiddenItemCount = reset ? count : hiddenItemCount + count;
         manualFilterContinuation = emptyBatch && hasMoreItems();
         if (hiddenItemCount == 0 && !manualFilterContinuation) {
-            infoListAdapter.setFooterSupplier(null);
+            if (!localFilterActive) {
+                infoListAdapter.setFooterSupplier(null);
+            }
             showListFooter(hasMoreItems());
             return;
         }
@@ -98,17 +131,39 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         if (manualFilterContinuation) {
             useNormalItemListScrollListener();
         }
+        installFilterFooter();
+        showListFooter(true);
+    }
+
+    private boolean hasContentFilterNote() {
+        return hiddenItemCount > 0 || manualFilterContinuation;
+    }
+
+    private void installFilterFooter() {
         infoListAdapter.setFooterSupplier(() -> {
             final View footer = getLayoutInflater().inflate(
                     R.layout.filter_list_footer, itemsList, false);
-            ((TextView) footer.findViewById(R.id.filter_status)).setText(
-                    hiddenItemCount > 0
-                            ? getString(infoListAdapter.getItemsList().isEmpty()
-                                    ? R.string.filter_all_items_hidden : R.string.filter_items_hidden,
-                                    hiddenItemCount)
-                            : getString(R.string.filter_no_visible_items_yet));
+            final StringBuilder text = new StringBuilder();
+            if (hasContentFilterNote()) {
+                text.append(hiddenItemCount > 0
+                        ? getString(infoListAdapter.getItemsList().isEmpty()
+                                ? R.string.filter_all_items_hidden : R.string.filter_items_hidden,
+                                hiddenItemCount)
+                        : getString(R.string.filter_no_visible_items_yet));
+            }
+            final int mismatch = searchHiddenCount();
+            if (mismatch > 0) {
+                if (text.length() > 0) {
+                    text.append('\n');
+                }
+                text.append(getString(R.string.filter_search_mismatch, mismatch));
+            }
+            final TextView status = footer.findViewById(R.id.filter_status);
+            status.setText(text);
+            status.setVisibility(text.length() > 0 ? View.VISIBLE : View.GONE);
             final View more = footer.findViewById(R.id.filter_continue);
-            more.setVisibility(manualFilterContinuation ? View.VISIBLE : View.GONE);
+            more.setVisibility(manualFilterContinuation
+                    || (localFilterActive && hasMoreItems()) ? View.VISIBLE : View.GONE);
             more.setOnClickListener(v -> {
                 if (isLoading.get()) {
                     return;
@@ -116,12 +171,13 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
                 // Keep automatic loading paused until the request completes.
                 loadMoreItems();
             });
-            footer.findViewById(R.id.filter_settings).setOnClickListener(v ->
+            final View settings = footer.findViewById(R.id.filter_settings);
+            settings.setVisibility(hasContentFilterNote() ? View.VISIBLE : View.GONE);
+            settings.setOnClickListener(v ->
                     startActivity(new Intent(requireContext(), SettingsActivity.class)
                             .putExtra(SettingsActivity.EXTRA_CONTENT_FILTER, true)));
             return footer;
         });
-        showListFooter(true);
     }
 
     protected void resetFilterStatus() {
@@ -538,7 +594,7 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         @Override
         public void onScrolled(@Nonnull final RecyclerView recyclerView, final int dx, final int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            if (manualFilterContinuation) {
+            if (manualFilterContinuation || localFilterActive) {
                 return;
             }
             if (dy != 0) {
@@ -583,7 +639,8 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     }
 
     protected void onScrollToBottom() {
-        if (hasMoreItems() && !isLoading.get() && !manualFilterContinuation) {
+        if (hasMoreItems() && !isLoading.get() && !manualFilterContinuation
+                && !localFilterActive) {
             loadMoreItems();
         }
     }
@@ -748,7 +805,8 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         itemsList.post(() -> {
             if (infoListAdapter != null && itemsList != null) {
                 infoListAdapter.showFooter(show || hiddenItemCount > 0
-                        || manualFilterContinuation);
+                        || manualFilterContinuation
+                        || (localFilterActive && (searchHiddenCount() > 0 || hasMoreItems())));
             }
         });
     }

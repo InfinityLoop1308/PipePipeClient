@@ -1191,4 +1191,5 @@
 <item quantity="one">Remove %d item from playlist?</item>
 <item quantity="other">Remove %d items from playlist?</item>
 </plurals>
+<string name="filter_search_mismatch">%d loaded items do not match your search</string>
 </resources>
