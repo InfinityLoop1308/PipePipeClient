@@ -10,7 +10,8 @@ import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.stream.*;
 import org.schabi.newpipe.streams.io.StoredDirectoryHelper;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
-import org.schabi.newpipe.util.ListHelper;
+import org.schabi.newpipe.util.StreamFilters;
+import org.schabi.newpipe.util.VideoStreamSelector;
 import org.schabi.newpipe.util.SecondaryStreamHelper;
 import org.schabi.newpipe.util.StreamItemAdapter;
 import us.shandian.giga.postprocessing.Postprocessing;
@@ -44,19 +45,19 @@ public class DirectDownloader {
     private DownloadType type;
 
     public DirectDownloader(final Context context, final StreamInfo info, DownloadType type) {
-        final ArrayList<VideoStream> streamsList = new ArrayList<>(ListHelper
+        final ArrayList<VideoStream> streamsList = new ArrayList<>(VideoStreamSelector
                 .getSortedStreamVideosList(context, info.getVideoStreams(),
                         info.getVideoOnlyStreams(), false, false));
-        final List<VideoStream> filteredVideoStreams = ListHelper
+        final List<VideoStream> filteredVideoStreams = StreamFilters
                 .filterVideoStreamsByPreferredLanguage(context, streamsList,
                         info.getAudioStreams());
-        final int selectedStreamIndex = ListHelper.getDefaultResolutionIndex(
+        final int selectedStreamIndex = VideoStreamSelector.getDefaultResolutionIndex(
                 context, filteredVideoStreams);
         HlsDownloadStreamHelper.addManifestFallbackIfNeeded(filteredVideoStreams, info);
 
         this.setVideoStreams(filteredVideoStreams);
         this.setSelectedVideoStream(selectedStreamIndex >= 0 ? selectedStreamIndex : 0);
-        final List<AudioStream> downloadableAudio = ListHelper
+        final List<AudioStream> downloadableAudio = StreamFilters
                 .filterDownloadableAudioStreams(info.getAudioStreams());
         HlsDownloadStreamHelper.addAudioFallbackIfNeeded(downloadableAudio, info);
         this.setAudioStreams(downloadableAudio);

@@ -60,7 +60,7 @@ import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
 import org.schabi.newpipe.util.DeviceUtils;
-import org.schabi.newpipe.util.ListHelper;
+import org.schabi.newpipe.util.StreamDataLimit;
 
 import java.lang.annotation.Retention;
 import java.text.DecimalFormat;
@@ -415,7 +415,7 @@ public final class PlayerHelper {
             case PlayerHelper.AutoplayType.AUTOPLAY_TYPE_NEVER:
                 return false;
             case PlayerHelper.AutoplayType.AUTOPLAY_TYPE_WIFI:
-                return !ListHelper.isMeteredNetwork(context);
+                return !StreamDataLimit.isMeteredNetwork(context);
             case PlayerHelper.AutoplayType.AUTOPLAY_TYPE_ALWAYS:
             default:
                 return true;

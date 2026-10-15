@@ -64,7 +64,9 @@ import org.schabi.newpipe.streams.io.StoredDirectoryHelper;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
 import org.schabi.newpipe.util.FilePickerActivityHelper;
 import org.schabi.newpipe.util.FilenameUtils;
-import org.schabi.newpipe.util.ListHelper;
+import org.schabi.newpipe.util.AudioStreamSelector;
+import org.schabi.newpipe.util.StreamFilters;
+import org.schabi.newpipe.util.VideoStreamSelector;
 import org.schabi.newpipe.util.PermissionHelper;
 import org.schabi.newpipe.util.SecondaryStreamHelper;
 import org.schabi.newpipe.util.SimpleOnSeekBarChangeListener;
@@ -157,19 +159,19 @@ public class DownloadDialog extends DialogFragment
     }
 
     public static DownloadDialog newInstance(final Context context, final StreamInfo info) {
-        final ArrayList<VideoStream> streamsList = new ArrayList<>(ListHelper
+        final ArrayList<VideoStream> streamsList = new ArrayList<>(VideoStreamSelector
                 .getSortedStreamVideosList(context, info.getVideoStreams(),
                         info.getVideoOnlyStreams(), false, false));
 
-        final List<VideoStream> filteredVideoStreams = ListHelper
+        final List<VideoStream> filteredVideoStreams = StreamFilters
                 .filterVideoStreamsByPreferredLanguage(context, streamsList,
                         info.getAudioStreams());
 
-        final int selectedStreamIndex = ListHelper.getDefaultResolutionIndex(
+        final int selectedStreamIndex = VideoStreamSelector.getDefaultResolutionIndex(
                 context, filteredVideoStreams);
         HlsDownloadStreamHelper.addManifestFallbackIfNeeded(filteredVideoStreams, info);
 
-        final List<AudioStream> downloadableAudio = ListHelper
+        final List<AudioStream> downloadableAudio = StreamFilters
                 .filterDownloadableAudioStreams(info.getAudioStreams());
         HlsDownloadStreamHelper.addAudioFallbackIfNeeded(downloadableAudio, info);
 
@@ -330,7 +332,7 @@ public class DownloadDialog extends DialogFragment
 
         dialogBinding.fileName.setText(FilenameUtils.createFilename(getContext(),
                 currentInfo.getName()));
-        selectedAudioIndex = ListHelper
+        selectedAudioIndex = AudioStreamSelector
                 .getDefaultAudioFormat(getContext(), wrappedAudioStreams.getStreamsList());
 
         selectedSubtitleIndex = getSubtitleIndexBy(subtitleStreamsAdapter.getAll());

@@ -3,7 +3,8 @@ package org.schabi.newpipe.player.resolver
 import android.content.Context
 import org.schabi.newpipe.extractor.stream.AudioStream
 import org.schabi.newpipe.extractor.stream.VideoStream
-import org.schabi.newpipe.util.ListHelper
+import org.schabi.newpipe.util.AudioStreamSelector
+import org.schabi.newpipe.util.VideoStreamSelector
 import java.util.function.BooleanSupplier
 
 /**
@@ -21,17 +22,17 @@ class PlayerQualityResolver(
 
     override fun getDefaultResolutionIndex(sortedVideos: List<VideoStream>): Int =
         if (isVideoPlayer.asBoolean) {
-            ListHelper.getDefaultResolutionIndex(context, sortedVideos)
+            VideoStreamSelector.getDefaultResolutionIndex(context, sortedVideos)
         } else {
-            ListHelper.getPopupDefaultResolutionIndex(context, sortedVideos)
+            VideoStreamSelector.getPopupDefaultResolutionIndex(context, sortedVideos)
         }
 
     override fun getOverrideResolutionIndex(
         sortedVideos: List<VideoStream>,
         selectedResolution: String,
         selectedCodec: String?,
-    ): Int = ListHelper.getResolutionAndCodecIndex(selectedResolution, selectedCodec, sortedVideos)
+    ): Int = VideoStreamSelector.getResolutionAndCodecIndex(selectedResolution, selectedCodec, sortedVideos)
 
     override fun getCurrentAudioQualityIndex(audioStreams: List<AudioStream>): Int =
-        ListHelper.getDefaultAudioFormat(context, audioStreams)
+        AudioStreamSelector.getDefaultAudioFormat(context, audioStreams)
 }

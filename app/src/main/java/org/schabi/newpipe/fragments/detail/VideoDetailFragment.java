@@ -1425,7 +1425,7 @@ public final class VideoDetailFragment
             openNormalBackgroundPlayer(append);
         } else {
             final AudioStream audioStream = currentInfo.getAudioStreams()
-                    .get(ListHelper.getDefaultAudioFormat(activity, currentInfo.getAudioStreams()));
+                    .get(AudioStreamSelector.getDefaultAudioFormat(activity, currentInfo.getAudioStreams()));
             startOnExternalPlayer(activity, currentInfo, audioStream);
         }
     }
@@ -1995,13 +1995,13 @@ public final class VideoDetailFragment
         binding.detailToggleSecondaryControlsView.setVisibility(View.VISIBLE);
         binding.detailSecondaryControlPanel.setVisibility(View.GONE);
 
-        sortedVideoStreams = ListHelper.getSortedStreamVideosList(
+        sortedVideoStreams = VideoStreamSelector.getSortedStreamVideosList(
                 activity,
                 info.getVideoStreams(),
                 info.getVideoOnlyStreams(),
                 false,
                 false);
-        selectedVideoStreamIndex = ListHelper
+        selectedVideoStreamIndex = VideoStreamSelector
                 .getDefaultResolutionIndex(activity, sortedVideoStreams);
         updateProgressInfo(info);
         initThumbnailViews(info);

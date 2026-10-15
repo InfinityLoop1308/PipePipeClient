@@ -238,7 +238,7 @@ public final class NavigationHelper {
 
     public static void playOnExternalAudioPlayer(@NonNull final Context context,
                                                  @NonNull final StreamInfo info) {
-        final int index = ListHelper.getDefaultAudioFormat(context, info.getAudioStreams());
+        final int index = AudioStreamSelector.getDefaultAudioFormat(context, info.getAudioStreams());
 
         if (index == -1) {
             Toast.makeText(context, R.string.audio_streams_empty, Toast.LENGTH_SHORT).show();
@@ -252,9 +252,9 @@ public final class NavigationHelper {
     public static void playOnExternalVideoPlayer(@NonNull final Context context,
                                                  @NonNull final StreamInfo info) {
         final ArrayList<VideoStream> videoStreamsList = new ArrayList<>(
-                ListHelper.getSortedStreamVideosList(context, info.getVideoStreams(), null, false,
+                VideoStreamSelector.getSortedStreamVideosList(context, info.getVideoStreams(), null, false,
                         false));
-        final int index = ListHelper.getDefaultResolutionIndex(context, videoStreamsList);
+        final int index = VideoStreamSelector.getDefaultResolutionIndex(context, videoStreamsList);
 
         if (index == -1) {
             Toast.makeText(context, R.string.video_streams_empty, Toast.LENGTH_SHORT).show();

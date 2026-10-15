@@ -55,7 +55,7 @@ public class SecondaryStreamHelper<T extends Stream> {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             final String preferredAudioLanguage = prefs.getString(
                     context.getString(R.string.preferred_audio_language_key), "original");
-            filteredStreams = ListHelper.filterAudioStreamsByLanguage(audioStreams, preferredAudioLanguage);
+            filteredStreams = StreamFilters.filterAudioStreamsByLanguage(audioStreams, preferredAudioLanguage);
             if (filteredStreams.isEmpty()) {
                 filteredStreams = audioStreams;
             }
