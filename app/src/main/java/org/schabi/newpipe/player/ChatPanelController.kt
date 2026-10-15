@@ -78,6 +78,8 @@ class ChatPanelController(private val player: Player) {
         val binding = player.binding
         if (value && chatList == null) {
             chatList = ChatListView(binding.chatPanelList, null, forceLight = true)
+            // Never pass scrolls on to the AppBarLayout: it would scroll the fullscreen player away
+            binding.chatPanelList.isNestedScrollingEnabled = false
             // Keep the touch stream of the list away from the bottom sheet / player gestures
             binding.chatPanelList.setOnTouchListener { v, event ->
                 when (event.actionMasked) {
