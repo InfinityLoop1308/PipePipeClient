@@ -6,7 +6,7 @@
     <item
         android:id="@+id/action_search_local"
         android:icon="@drawable/ic_filter_alt"
-        android:orderInCategory="0"
+        android:orderInCategory="3"
         android:title="@string/search"
         app:showAsAction="ifRoom" />
 
@@ -14,21 +14,24 @@
         android:id="@+id/menu_item_share"
         android:icon="@drawable/ic_share"
         android:title="@string/share"
-        app:showAsAction="ifRoom" />
+        android:orderInCategory="5"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_item_bookmark"
         android:icon="@drawable/ic_playlist_add"
         android:title="@string/bookmark_playlist"
         android:visible="true"
-        app:showAsAction="ifRoom"
+        android:orderInCategory="6"
+        app:showAsAction="never"
         tools:visible="true" />
 
     <item
         android:id="@+id/menu_item_sort"
-        android:orderInCategory="4"
+        android:icon="@drawable/ic_sort"
+        android:orderInCategory="2"
         android:title="@string/sort"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_settings"

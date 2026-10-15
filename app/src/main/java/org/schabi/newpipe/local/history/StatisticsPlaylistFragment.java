@@ -188,6 +188,8 @@ public class StatisticsPlaylistFragment
         } else if (item.getItemId() == R.id.action_history_clear) {
             HistorySettingsFragment
                     .openDeleteWatchHistoryDialog(requireContext(), recordManager, disposables);
+        } else if (item.getItemId() == R.id.menu_item_sort) {
+            toggleSortMode();
         } else if (item.getItemId() == R.id.action_search_local) {
             ActionBar actionBar = activity.getSupportActionBar();
             View customView = getLayoutInflater().inflate(R.layout.local_playlist_search_toolbar, null, false);
@@ -355,7 +357,6 @@ public class StatisticsPlaylistFragment
                 NavigationHelper.playOnPopupPlayer(activity, getPlayQueue(), false));
         playlistControlBinding.playlistCtrlPlayBgButton.setOnClickListener(view ->
                 NavigationHelper.playOnBackgroundPlayer(activity, getPlayQueue(), false));
-        headerBinding.sortButton.setOnClickListener(view -> toggleSortMode());
 
         hideLoading();
     }
@@ -380,14 +381,9 @@ public class StatisticsPlaylistFragment
         if (sortMode == StatisticSortMode.LAST_PLAYED) {
             sortMode = StatisticSortMode.MOST_PLAYED;
             setTitle(getString(R.string.title_most_played));
-            headerBinding.sortButtonIcon.setImageResource(R.drawable.ic_history);
-            headerBinding.sortButtonText.setText(R.string.title_last_played);
         } else {
             sortMode = StatisticSortMode.LAST_PLAYED;
             setTitle(getString(R.string.title_last_played));
-            headerBinding.sortButtonIcon.setImageResource(
-                R.drawable.ic_filter_list);
-            headerBinding.sortButtonText.setText(R.string.title_most_played);
         }
         startLoading(true);
     }
