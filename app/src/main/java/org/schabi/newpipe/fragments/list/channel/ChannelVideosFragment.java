@@ -256,6 +256,7 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
         headerBinding = ChannelHeaderBinding
                 .inflate(activity.getLayoutInflater(), itemsList, false);
         playlistControlBinding = headerBinding.playlistControl;
+        playlistControlBinding.getRoot().configure(getString(R.string.list_control_page_channel_videos));
 
         return headerBinding::getRoot;
     }

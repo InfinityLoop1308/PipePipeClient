@@ -105,4 +105,14 @@
         app:singleLineTitle="false"
         app:iconSpaceReserved="false" />
 
+    <MultiSelectListPreference
+        android:key="@string/list_control_pages_key"
+        android:summary="@string/list_control_pages_summary"
+        android:title="@string/list_control_pages_title"
+        android:entries="@array/list_control_pages_description_list"
+        android:entryValues="@array/list_control_pages_value_list"
+        android:defaultValue="@array/list_control_pages_value_list"
+        app:iconSpaceReserved="false"
+        app:singleLineTitle="false" />
+
 </PreferenceScreen>

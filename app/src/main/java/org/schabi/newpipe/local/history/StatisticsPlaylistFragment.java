@@ -150,6 +150,7 @@ public class StatisticsPlaylistFragment
         headerBinding = StatisticPlaylistControlBinding.inflate(activity.getLayoutInflater(),
                 itemsList, false);
         playlistControlBinding = headerBinding.playlistControl;
+        playlistControlBinding.getRoot().configure(getString(R.string.list_control_page_history));
 
         return headerBinding;
     }

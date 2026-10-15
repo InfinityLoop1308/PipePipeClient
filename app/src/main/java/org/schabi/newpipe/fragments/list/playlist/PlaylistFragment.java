@@ -138,6 +138,7 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
         headerBinding = PlaylistHeaderBinding
                 .inflate(activity.getLayoutInflater(), itemsList, false);
         playlistControlBinding = headerBinding.playlistControl;
+        playlistControlBinding.getRoot().configure(getString(R.string.list_control_page_playlist));
 
         return headerBinding::getRoot;
     }

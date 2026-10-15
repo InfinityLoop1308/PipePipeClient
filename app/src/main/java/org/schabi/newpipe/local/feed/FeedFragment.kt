@@ -191,6 +191,7 @@ class FeedFragment : BaseStateFragment<FeedState>(), BackPressable {
         // super.onViewCreated() calls initListeners() which require the binding to be initialized
         _feedBinding = FragmentFeedBinding.bind(rootView)
         playlistControlBinding = PlaylistControlBinding.bind(feedBinding.playlistControl.root)
+        feedBinding.playlistControl.root.configure(getString(R.string.list_control_page_feed))
         super.onViewCreated(rootView, savedInstanceState)
         updatePullToRefreshState()
 

@@ -1832,4 +1832,24 @@
     <string name="filter_by_channel_id_key" translatable="false">filter_by_channel_id_key</string>
     <string name="comment_filter_by_user_id_key" translatable="false">comment_filter_by_user_id_key</string>
     <string name="bookmark_sort_mode_key" translatable="false">bookmark_sort_mode_key</string>
+    <string name="list_control_pages_key" translatable="false">list_control_pages</string>
+    <string name="list_control_page_feed" translatable="false">list_control_page_feed</string>
+    <string name="list_control_page_channel_videos" translatable="false">list_control_page_channel_videos</string>
+    <string name="list_control_page_playlist" translatable="false">list_control_page_playlist</string>
+    <string name="list_control_page_local_playlist" translatable="false">list_control_page_local_playlist</string>
+    <string name="list_control_page_history" translatable="false">list_control_page_history</string>
+    <string-array name="list_control_pages_value_list">
+        <item>@string/list_control_page_feed</item>
+        <item>@string/list_control_page_channel_videos</item>
+        <item>@string/list_control_page_playlist</item>
+        <item>@string/list_control_page_local_playlist</item>
+        <item>@string/list_control_page_history</item>
+    </string-array>
+    <string-array name="list_control_pages_description_list">
+        <item>@string/fragment_feed_title</item>
+        <item>@string/list_control_page_channel_videos_title</item>
+        <item>@string/list_control_page_playlist_title</item>
+        <item>@string/list_control_page_local_playlist_title</item>
+        <item>@string/title_activity_history</item>
+    </string-array>
 </resources>

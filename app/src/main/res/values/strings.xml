@@ -1198,4 +1198,9 @@
 <string name="sort_duration_descending">Duration (descending)</string>
 <string name="sort_name_ascending">Name (ascending)</string>
 <string name="sort_name_descending">Name (descending)</string>
+<string name="list_control_pages_title">Play buttons on list pages</string>
+<string name="list_control_pages_summary">Pages that show the background / play all / popup buttons</string>
+<string name="list_control_page_channel_videos_title">Channel videos</string>
+<string name="list_control_page_playlist_title">Remote playlists</string>
+<string name="list_control_page_local_playlist_title">Local playlists</string>
 </resources>
