@@ -734,6 +734,11 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             return;
         }
 
+        // Capture locally: the fragment may be destroyed (playlistManager nulled) while importing
+        final LocalPlaylistManager manager = new LocalPlaylistManager(
+                NewPipeDatabase.getInstance(requireContext().getApplicationContext()));
+        final long targetPlaylistId = playlistId;
+
         // Use StreamProcessor with custom callback for playlist addition
         StreamProcessor streamProcessor = new StreamProcessor();
         streamProcessor.processStreamsSequentiallyWithProgress(requireContext(), streamItems, null, 
@@ -741,14 +746,13 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                 // Convert StreamInfo to StreamEntity and add to playlist
                 StreamEntity streamEntity = new StreamEntity(streamInfo);
                 List<StreamEntity> entityList = Collections.singletonList(streamEntity);
-                playlistManager.appendToPlaylist(playlistId, entityList)
+                // Blocking on the processor's thread keeps order and surfaces errors as failures
+                manager.appendToPlaylist(targetPlaylistId, entityList)
                     .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
+                    .blockingSubscribe(
                         longs -> { /* Success handled by progress notification */ },
-                        throwable -> {
-                            throw new RuntimeException("Failed to add stream to playlist: " + streamInfo.getUrl(), throwable);
-                        }
+                        throwable -> Log.e(TAG, "Failed to add stream to playlist: "
+                                + streamInfo.getUrl(), throwable)
                     );
             }
         );
