@@ -884,8 +884,6 @@
     <string name="ai_subtitle">جلب تفاصيل البث (لترجمات الذكاء الاصطناعي)</string>
     <string name="cookie_functions_title">التحكم بالوصول</string>
     <string name="navigate_to">الانتقال إلى</string>
-    <string name="sort_name">ترتيب بالاسم</string>
-    <string name="sort_name_reverse">ترتيب بالاسم (عكسي)</string>
     <string name="sort_origin">الأصلي</string>
     <string name="sort_origin_reverse">الأصلي (عكسي)</string>
     <string name="dialog_title_enable_update_checker">تفعيل فاحص التحديثات</string>
