@@ -168,4 +168,15 @@ public final class AudioStreamSelector {
         return formatRanking.indexOf(streamA.getFormat())
                 - formatRanking.indexOf(streamB.getFormat());
     }
+
+    public static List<AudioStream> filterDownloadableAudioStreams(
+            final List<AudioStream> audioStreams) {
+        final List<AudioStream> result = new ArrayList<>();
+        for (final AudioStream a : audioStreams) {
+            if (a.getDeliveryMethod() != DeliveryMethod.HLS || a.isUrl()) {
+                result.add(a);
+            }
+        }
+        return result;
+    }
 }

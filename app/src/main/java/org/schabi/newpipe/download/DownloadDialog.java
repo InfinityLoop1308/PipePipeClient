@@ -171,7 +171,7 @@ public class DownloadDialog extends DialogFragment
                 context, filteredVideoStreams);
         HlsDownloadStreamHelper.addManifestFallbackIfNeeded(filteredVideoStreams, info);
 
-        final List<AudioStream> downloadableAudio = StreamFilters
+        final List<AudioStream> downloadableAudio = AudioStreamSelector
                 .filterDownloadableAudioStreams(info.getAudioStreams());
         HlsDownloadStreamHelper.addAudioFallbackIfNeeded(downloadableAudio, info);
 

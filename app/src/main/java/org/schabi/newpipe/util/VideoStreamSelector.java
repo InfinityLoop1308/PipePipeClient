@@ -27,7 +27,7 @@ public final class VideoStreamSelector {
             Arrays.asList("1440p", "2160p"));
 
     /**
-     * @see #getDefaultResolutionIndex(String, String, MediaFormat, List)
+     * @see #getDefaultResolutionIndex(String, String, List)
      * @param context      Android app context
      * @param videoStreams list of the video streams to check
      * @return index of the video stream with the default index
@@ -40,7 +40,7 @@ public final class VideoStreamSelector {
     }
 
     /**
-     * @see #getDefaultResolutionIndex(String, String, MediaFormat, List)
+     * @see #getDefaultResolutionIndex(String, String, List)
      * @param context           Android app context
      * @param videoStreams      list of the video streams to check
      * @return index of the video stream with the default index
@@ -242,60 +242,23 @@ public final class VideoStreamSelector {
      */
     private static int getDefaultResolutionIndex(@NonNull final String targetRes,
                                                  @NonNull final String bestResolutionKey,
-                                                 @Nullable final MediaFormat filterFormat,
                                                  @Nullable final List<VideoStream> streams) {
-
         if (streams == null || streams.isEmpty()) {
             return -1;
         }
 
-        // 1. User picked the best resolution key → simply return the highest actual stream
+        // User picked the best resolution key -> simply return the highest actual stream
         if (bestResolutionKey.equals(targetRes)) {
             return streams.indexOf(
                     Collections.max(streams, VideoStreamSelector::compareVideoStreamResolution));
         }
 
-        // 2. Prefer the requested frame rate variant before ignoring the frame rate suffix.
         final String normalizedTarget = normalizeResolutionKey(targetRes);
-        final String targetVariant = normalizeResolutionVariantKey(targetRes);
-
-        // 3. Build the bucket of streams that match both resolution and frame rate.
-        List<VideoStream> bucket = new ArrayList<>();
-        for (final VideoStream stream : streams) {
-            if (targetVariant.equals(normalizeResolutionVariantKey(stream.getResolution()))
-                    && (filterFormat == null || stream.getFormat() == filterFormat)) {
-                bucket.add(stream);
-            }
-        }
-
-        if (bucket.isEmpty() && filterFormat != null) {
-            for (final VideoStream stream : streams) {
-                if (targetVariant.equals(
-                        normalizeResolutionVariantKey(stream.getResolution()))) {
-                    bucket.add(stream);
-                }
-            }
-        }
-
-        // 4. No exact frame rate match: accept another variant at the same resolution.
-        if (bucket.isEmpty()) {
-            for (final VideoStream stream : streams) {
-                if (normalizedTarget.equals(normalizeResolutionKey(stream.getResolution()))
-                        && (filterFormat == null || stream.getFormat() == filterFormat)) {
-                    bucket.add(stream);
-                }
-            }
-        }
-
-        if (bucket.isEmpty() && filterFormat != null) {
-            for (final VideoStream stream : streams) {
-                if (normalizedTarget.equals(normalizeResolutionKey(stream.getResolution()))) {
-                    bucket.add(stream);
-                }
-            }
-        }
+        List<VideoStream> bucket = findMatchingStreams(
+                streams, normalizeResolutionVariantKey(targetRes), normalizedTarget);
 
         if (bucket.isEmpty()) {
+            // No match: use the closest lower resolution, or the lowest one available.
             String fallbackResolution = null;
             for (final VideoStream stream : streams) {
                 final String resolution = normalizeResolutionKey(stream.getResolution());
@@ -305,7 +268,6 @@ public final class VideoStreamSelector {
                     fallbackResolution = resolution;
                 }
             }
-
             if (fallbackResolution == null) {
                 for (final VideoStream stream : streams) {
                     final String resolution = normalizeResolutionKey(stream.getResolution());
@@ -315,46 +277,34 @@ public final class VideoStreamSelector {
                     }
                 }
             }
-
-            for (final VideoStream stream : streams) {
-                if (fallbackResolution.equals(
-                        normalizeResolutionVariantKey(stream.getResolution()))
-                        && (filterFormat == null || stream.getFormat() == filterFormat)) {
-                    bucket.add(stream);
-                }
-            }
-
-            if (bucket.isEmpty() && filterFormat != null) {
-                for (final VideoStream stream : streams) {
-                    if (fallbackResolution.equals(
-                            normalizeResolutionVariantKey(stream.getResolution()))) {
-                        bucket.add(stream);
-                    }
-                }
-            }
-
-            if (bucket.isEmpty()) {
-                for (final VideoStream stream : streams) {
-                    if (fallbackResolution.equals(normalizeResolutionKey(stream.getResolution()))
-                            && (filterFormat == null || stream.getFormat() == filterFormat)) {
-                        bucket.add(stream);
-                    }
-                }
-            }
-
-            if (bucket.isEmpty() && filterFormat != null) {
-                for (final VideoStream stream : streams) {
-                    if (fallbackResolution.equals(
-                            normalizeResolutionKey(stream.getResolution()))) {
-                        bucket.add(stream);
-                    }
-                }
-            }
+            bucket = findMatchingStreams(streams, fallbackResolution, fallbackResolution);
         }
 
         bucket.sort(VideoStreamSelector::compareVideoStreamResolution);
-        final VideoStream best = bucket.get(bucket.size() - 1);
-        return streams.indexOf(best);
+        return streams.indexOf(bucket.get(bucket.size() - 1));
+    }
+
+    /**
+     * Streams matching the exact frame rate variant, or else the same resolution ignoring
+     * the frame rate suffix. Empty if neither matches.
+     */
+    private static List<VideoStream> findMatchingStreams(final List<VideoStream> streams,
+                                                         final String variantKey,
+                                                         final String resolutionKey) {
+        final List<VideoStream> result = new ArrayList<>();
+        for (final VideoStream stream : streams) {
+            if (variantKey.equals(normalizeResolutionVariantKey(stream.getResolution()))) {
+                result.add(stream);
+            }
+        }
+        if (result.isEmpty()) {
+            for (final VideoStream stream : streams) {
+                if (resolutionKey.equals(normalizeResolutionKey(stream.getResolution()))) {
+                    result.add(stream);
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -463,7 +413,7 @@ public final class VideoStreamSelector {
                                                              final String defaultResolution,
                                                              final List<VideoStream> videoStreams) {
         return getDefaultResolutionIndex(defaultResolution,
-                context.getString(R.string.best_resolution_key), null, videoStreams);
+                context.getString(R.string.best_resolution_key), videoStreams);
     }
 
     private static int calculateResolution(String x){

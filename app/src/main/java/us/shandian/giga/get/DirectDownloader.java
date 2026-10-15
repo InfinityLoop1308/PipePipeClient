@@ -10,6 +10,7 @@ import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.stream.*;
 import org.schabi.newpipe.streams.io.StoredDirectoryHelper;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
+import org.schabi.newpipe.util.AudioStreamSelector;
 import org.schabi.newpipe.util.StreamFilters;
 import org.schabi.newpipe.util.VideoStreamSelector;
 import org.schabi.newpipe.util.SecondaryStreamHelper;
@@ -57,7 +58,7 @@ public class DirectDownloader {
 
         this.setVideoStreams(filteredVideoStreams);
         this.setSelectedVideoStream(selectedStreamIndex >= 0 ? selectedStreamIndex : 0);
-        final List<AudioStream> downloadableAudio = StreamFilters
+        final List<AudioStream> downloadableAudio = AudioStreamSelector
                 .filterDownloadableAudioStreams(info.getAudioStreams());
         HlsDownloadStreamHelper.addAudioFallbackIfNeeded(downloadableAudio, info);
         this.setAudioStreams(downloadableAudio);
