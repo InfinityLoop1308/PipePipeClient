@@ -11,8 +11,8 @@ object ChatStore {
     /** The messages to display, oldest first. */
     val items = MutableLiveData<List<BulletCommentsInfoItem>>(emptyList())
 
-    /** Whether the current stream has a chat worth showing a tab for. */
-    val available = MutableLiveData(false)
+    /** Whether the current stream has a chat: null while unknown. */
+    val available = MutableLiveData<Boolean?>(null)
 
     /** Url of the stream [items] and [available] belong to. */
     @Volatile
@@ -21,6 +21,6 @@ object ChatStore {
     fun reset() {
         url = null
         items.value = emptyList()
-        available.value = false
+        available.value = null
     }
 }

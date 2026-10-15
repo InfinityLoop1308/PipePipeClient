@@ -14,12 +14,14 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.AppBarLayout
 import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.bulletComments.BulletCommentsInfoItem
 import org.schabi.newpipe.player.chat.ChatStore
@@ -33,6 +35,10 @@ class ChatFragment : Fragment() {
     private lateinit var jump: Button
     private val adapter = ChatAdapter()
     private var stickToBottom = true
+    private var appBar: AppBarLayout? = null
+    private val offsetListener = AppBarLayout.OnOffsetChangedListener { bar, offset ->
+        applyBottomInset(bar.totalScrollRange + offset)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,6 +70,40 @@ class ChatFragment : Fragment() {
                 if (stickToBottom) {
                     scrollToEnd()
                 }
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // The tab is laid out as if the app bar was fully collapsed, so while it is not the lower
+        // part of the list is below the screen. Pad the list by that amount to keep the latest
+        // message visible.
+        var parent = view?.parent
+        while (parent != null && parent !is CoordinatorLayout) {
+            parent = parent.parent
+        }
+        val coordinator = parent as? CoordinatorLayout ?: return
+        val bar = (0 until coordinator.childCount)
+            .map { coordinator.getChildAt(it) }
+            .firstOrNull { it is AppBarLayout } as? AppBarLayout ?: return
+        appBar = bar
+        bar.addOnOffsetChangedListener(offsetListener)
+        bar.post { applyBottomInset(bar.totalScrollRange + bar.top) }
+    }
+
+    override fun onStop() {
+        appBar?.removeOnOffsetChangedListener(offsetListener)
+        appBar = null
+        super.onStop()
+    }
+
+    private fun applyBottomInset(inset: Int) {
+        val bottom = maxOf(0, inset)
+        if (list.paddingBottom != bottom) {
+            list.setPadding(list.paddingLeft, list.paddingTop, list.paddingRight, bottom)
+            if (stickToBottom) {
+                list.post { scrollToEnd() }
             }
         }
     }

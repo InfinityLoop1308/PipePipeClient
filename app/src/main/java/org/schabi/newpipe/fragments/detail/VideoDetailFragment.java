@@ -63,6 +63,7 @@ import org.schabi.newpipe.error.ReCaptchaActivity;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
@@ -1259,7 +1260,19 @@ public final class VideoDetailFragment
     }
 
     private boolean shouldShowChat() {
-        if (currentInfo == null || !Boolean.TRUE.equals(ChatStore.INSTANCE.getAvailable().getValue())) {
+        if (currentInfo == null || !currentInfo.isSupportBulletComments()) {
+            return false;
+        }
+        try {
+            if (!NewPipe.getService(serviceId).getServiceInfo().getMediaCapabilities()
+                    .contains(StreamingService.ServiceInfo.MediaCapability.BULLET_COMMENTS)) {
+                return false;
+            }
+        } catch (final ExtractionException e) {
+            return false;
+        }
+        // loading the chat found nothing for this stream
+        if (Boolean.FALSE.equals(ChatStore.INSTANCE.getAvailable().getValue())) {
             return false;
         }
         return PreferenceManager.getDefaultSharedPreferences(requireContext())
