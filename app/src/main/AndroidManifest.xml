@@ -202,6 +202,13 @@
         </provider>
 
         <activity
+                android:name=".local.playlist.PlayPlaylistShortcutActivity"
+                android:excludeFromRecents="true"
+                android:taskAffinity=""
+                android:theme="@android:style/Theme.NoDisplay"
+                android:exported="false" />
+
+        <activity
                 android:name=".RouterActivity"
                 android:excludeFromRecents="true"
                 android:label="@string/preferred_open_action_share_menu_title"

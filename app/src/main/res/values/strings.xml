@@ -1221,4 +1221,5 @@
 <string name="chat_empty">No messages yet</string>
 <string name="danmaku_settings_summary">Appearance of scrolling danmaku over the video, independent of the chat display</string>
 <string name="search_in_page">Search in page</string>
+<string name="add_to_home_screen">Add to home screen</string>
 </resources>

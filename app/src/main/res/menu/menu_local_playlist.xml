@@ -48,5 +48,9 @@
         android:id="@+id/menu_item_append_playlist"
         android:title="@string/add_to_playlist"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_item_add_to_home_screen"
+        android:title="@string/add_to_home_screen"
+        app:showAsAction="never" />
 
 </menu>

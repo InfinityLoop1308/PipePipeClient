@@ -381,6 +381,26 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
         itemsListState = savedInstanceState.getParcelable("itemsListState");
     }
 
+    private void addToHomeScreen() {
+        final android.content.Context context = requireContext();
+        final android.content.Intent launch = new android.content.Intent(context,
+                PlayPlaylistShortcutActivity.class)
+                .setAction(android.content.Intent.ACTION_VIEW)
+                .putExtra(PlayPlaylistShortcutActivity.EXTRA_PLAYLIST_ID, (long) playlistId);
+        final androidx.core.content.pm.ShortcutInfoCompat info =
+                new androidx.core.content.pm.ShortcutInfoCompat.Builder(
+                        context, "local_playlist_" + playlistId)
+                        .setShortLabel(name)
+                        .setIcon(androidx.core.graphics.drawable.IconCompat
+                                .createWithResource(context, R.mipmap.ic_launcher))
+                        .setIntent(launch)
+                        .build();
+        if (!androidx.core.content.pm.ShortcutManagerCompat.requestPinShortcut(
+                context, info, null)) {
+            Toast.makeText(context, R.string.general_error, Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public void onCreateOptionsMenu(@NonNull final Menu menu,
                                     @NonNull final MenuInflater inflater) {
@@ -602,6 +622,8 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             appendAllToOtherPlaylist();
         } else if (item.getItemId() == R.id.menu_item_sort) {
             showSortDialog();
+        } else if (item.getItemId() == R.id.menu_item_add_to_home_screen) {
+            addToHomeScreen();
         }
         return true;
     }
