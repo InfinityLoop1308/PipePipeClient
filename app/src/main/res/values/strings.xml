@@ -1220,4 +1220,5 @@
 <string name="chat_jump_to_latest">Jump to latest</string>
 <string name="chat_empty">No messages yet</string>
 <string name="danmaku_settings_summary">Appearance of scrolling danmaku over the video, independent of the chat display</string>
+<string name="search_in_page">Search in page</string>
 </resources>

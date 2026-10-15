@@ -6,7 +6,7 @@
             android:orderInCategory="3"
             android:id="@+id/action_search_feed"
             android:icon="@drawable/ic_filter_alt"
-            android:title="@string/search"
+            android:title="@string/search_in_page"
             app:showAsAction="always" />
 
 

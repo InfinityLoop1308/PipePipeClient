@@ -1086,4 +1086,5 @@
 <string name="dearrow_original_fallback_title">保留原始縮圖</string>
 <string name="dearrow_original_fallback_summary">當沒有可用的替換畫面時，顯示上傳者的縮圖，而非顯示佔位符。</string>
 <string name="dearrow_settings_summary">YouTube 影片的群眾外包標題與縮圖。點擊以啟用並調整。</string>
+<string name="search_in_page">頁內搜尋</string>
 </resources>
