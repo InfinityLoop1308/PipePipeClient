@@ -1864,4 +1864,5 @@
     </string-array>
     <string name="pinch_to_zoom_gesture_control_key" translatable="false">pinch_to_zoom_gesture_control</string>
         <string name="bullet_comments_chat_mode_key">bullet_comments_chat_mode_key</string>
+    <string name="sponsor_block_skipping_enabled_key" translatable="false">sponsor_block_skipping_enabled</string>
 </resources>
