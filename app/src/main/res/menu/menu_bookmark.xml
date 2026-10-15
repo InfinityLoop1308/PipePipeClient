@@ -10,6 +10,32 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/menu_item_sort"
+        android:icon="@drawable/ic_sort"
+        android:orderInCategory="2"
+        android:title="@string/sort"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/menu_item_sort_name"
+                android:title="@string/sort_name"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/menu_item_sort_name_reverse"
+                android:title="@string/sort_name_reverse"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/menu_item_sort_origin"
+                android:title="@string/sort_origin"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/menu_item_sort_origin_reverse"
+                android:title="@string/sort_origin_reverse"
+                app:showAsAction="never" />
+        </menu>
+    </item>
+
+    <item
         android:id="@+id/action_multi_select"
         android:title="@string/multi_select"
         app:showAsAction="never" />
