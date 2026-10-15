@@ -263,7 +263,7 @@
                 app:iconSpaceReserved="false" />
 
         <ListPreference
-                android:defaultValue="@string/name_sort_locale_chinese_value"
+                android:defaultValue="@string/name_sort_locale_english_value"
                 android:entries="@array/name_sort_locale_names"
                 android:entryValues="@array/name_sort_locale_values"
                 android:key="@string/name_sort_locale_key"

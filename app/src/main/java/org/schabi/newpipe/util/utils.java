@@ -75,7 +75,7 @@ public class utils {
         final App app = App.getApp();
         final String key = app.getString(R.string.name_sort_locale_key);
         final String value = PreferenceManager.getDefaultSharedPreferences(app)
-                .getString(key, app.getString(R.string.name_sort_locale_chinese_value));
+                .getString(key, app.getString(R.string.name_sort_locale_english_value));
         if (str1 == null) {
             str1 = "";
         }
