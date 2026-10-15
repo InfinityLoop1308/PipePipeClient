@@ -78,6 +78,19 @@ class ChatPanelController(private val player: Player) {
         if (value && chatList == null) {
             chatList = ChatListView(binding.chatPanelList, null, forceLight = true)
         }
+        if (value) {
+            // Bound the panel to the screen: an unbounded list would otherwise grow the player
+            // layout and push the video out of view.
+            val metrics = player.context.resources.displayMetrics
+            val rootHeight = binding.root.height
+            val height = if (rootHeight > 0) minOf(rootHeight, metrics.heightPixels)
+            else metrics.heightPixels
+            val width = minOf((300 * metrics.density).toInt(), (metrics.widthPixels * 0.45f).toInt())
+            binding.chatPanel.layoutParams = binding.chatPanel.layoutParams.apply {
+                this.height = height
+                this.width = width
+            }
+        }
         binding.chatPanel.visibility = if (value) View.VISIBLE else View.GONE
         if (value) {
             chatList?.submit(ChatStore.items.value.orEmpty())
