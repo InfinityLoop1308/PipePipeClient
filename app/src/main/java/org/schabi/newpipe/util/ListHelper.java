@@ -6,7 +6,6 @@ import android.net.ConnectivityManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
@@ -468,10 +467,10 @@ public final class ListHelper {
      * Core selection logic that prefers an exact frame rate variant, then falls back to another
      * variant at the same effective resolution and finally to the closest lower resolution.
      */
-    static int getDefaultResolutionIndex(@NonNull final String targetRes,
-                                         @NonNull final String bestResolutionKey,
-                                         @Nullable final MediaFormat filterFormat,
-                                         @Nullable final List<VideoStream> streams) {
+    private static int getDefaultResolutionIndex(@NonNull final String targetRes,
+                                                 @NonNull final String bestResolutionKey,
+                                                 @Nullable final MediaFormat filterFormat,
+                                                 @Nullable final List<VideoStream> streams) {
 
         if (streams == null || streams.isEmpty()) {
             return -1;
@@ -599,7 +598,7 @@ public final class ListHelper {
      * @return the sorted list
      */
     @NonNull
-    static List<VideoStream> getSortedStreamVideosList(
+    private static List<VideoStream> getSortedStreamVideosList(
             final Set<String> advancedFormats,
             @Nullable final List<VideoStream> videoStreams,
             @Nullable final List<VideoStream> videoOnlyStreams,
@@ -690,46 +689,8 @@ public final class ListHelper {
     private static int getDefaultResolutionWithDefaultFormat(@NonNull final Context context,
                                                              final String defaultResolution,
                                                              final List<VideoStream> videoStreams) {
-//        final MediaFormat defaultFormat = MediaFormat.MPEG_4;
         return getDefaultResolutionIndex(defaultResolution,
                 context.getString(R.string.best_resolution_key), null, videoStreams);
-    }
-
-    private static MediaFormat getDefaultFormat(@NonNull final Context context,
-                                                @StringRes final int defaultFormatKey,
-                                                @StringRes final int defaultFormatValueKey) {
-        final SharedPreferences preferences
-                = PreferenceManager.getDefaultSharedPreferences(context);
-
-        final String defaultFormat = context.getString(defaultFormatValueKey);
-        final String defaultFormatString = preferences.getString(
-                context.getString(defaultFormatKey), defaultFormat);
-
-        MediaFormat defaultMediaFormat = getMediaFormatFromKey(context, defaultFormatString);
-        if (defaultMediaFormat == null) {
-            preferences.edit().putString(context.getString(defaultFormatKey), defaultFormat)
-                    .apply();
-            defaultMediaFormat = getMediaFormatFromKey(context, defaultFormat);
-        }
-
-        return defaultMediaFormat;
-    }
-
-    private static MediaFormat getMediaFormatFromKey(@NonNull final Context context,
-                                                     @NonNull final String formatKey) {
-        MediaFormat format = null;
-        if (formatKey.equals(context.getString(R.string.video_webm_key))) {
-            format = MediaFormat.WEBM;
-        } else if (formatKey.equals(context.getString(R.string.video_mp4_key))) {
-            format = MediaFormat.MPEG_4;
-        } else if (formatKey.equals(context.getString(R.string.video_3gp_key))) {
-            format = MediaFormat.v3GPP;
-        } else if (formatKey.equals(context.getString(R.string.audio_webm_key))) {
-            format = MediaFormat.WEBMA;
-        } else if (formatKey.equals(context.getString(R.string.audio_m4a_key))) {
-            format = MediaFormat.M4A;
-        }
-        return format;
     }
 
     // Compares the quality of two audio streams
@@ -754,7 +715,7 @@ public final class ListHelper {
                 - formatRanking.indexOf(streamB.getFormat());
     }
 
-    public static int calculateResolution(String x){
+    private static int calculateResolution(String x){
         int res = 0;
         if(x.contains("8K")) {
             res = 4320;
@@ -913,7 +874,7 @@ public final class ListHelper {
         final Map<String, VideoStream> result = new LinkedHashMap<>();
         for (final VideoStream stream : videoStreams) {
             final String key = stream.getFormat() + "|"
-                    + getCodecFamily(stream) + "|" + stream.getResolution() + "|"
+                    + getCodecPrefix(stream) + "|" + stream.getResolution() + "|"
                     + stream.isVideoOnly();
             final VideoStream existing = result.get(key);
             if (existing == null || shouldPreferCollapsedVariant(existing, stream)) {
@@ -932,7 +893,7 @@ public final class ListHelper {
         return isOriginalAudioTrack(candidate) && !isOriginalAudioTrack(existing);
     }
 
-    private static String getCodecFamily(final VideoStream stream) {
+    private static String getCodecPrefix(final VideoStream stream) {
         final String codec = stream.getCodec();
         if (codec == null || codec.isEmpty()) {
             return "";
