@@ -93,6 +93,13 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:paddingVertical="4dp" />
+
+        <include
+            android:id="@+id/chatPanelPinned"
+            layout="@layout/view_chat_pinned"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top" />
     </FrameLayout>
 
     <!-- transparent background is needed for selectableItemBackgroundBorderless to work -->

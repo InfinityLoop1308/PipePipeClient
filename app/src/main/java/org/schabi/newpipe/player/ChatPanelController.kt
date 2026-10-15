@@ -8,7 +8,9 @@ import androidx.lifecycle.Observer
 import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.bulletComments.BulletCommentsInfoItem
 import org.schabi.newpipe.fragments.detail.ChatListView
+import org.schabi.newpipe.fragments.detail.PinnedScView
 import org.schabi.newpipe.player.chat.ChatStore
+import org.schabi.newpipe.player.chat.PinnedSc
 
 /**
  * Chat side panel of the fullscreen (landscape) player, shown when the chat tab of the detail
@@ -17,12 +19,14 @@ import org.schabi.newpipe.player.chat.ChatStore
 class ChatPanelController(private val player: Player) {
 
     private var chatList: ChatListView? = null
+    private var pinnedView: PinnedScView? = null
     private var open = false
     private var observing = false
 
     private val itemsObserver = Observer<List<BulletCommentsInfoItem>> { items ->
         chatList?.submit(items)
     }
+    private val pinnedObserver = Observer<List<PinnedSc>> { pinnedView?.submit(it) }
     private val availableObserver = Observer<Boolean?> { update() }
 
     private fun canShow(): Boolean =
@@ -78,6 +82,10 @@ class ChatPanelController(private val player: Player) {
         val binding = player.binding
         if (value && chatList == null) {
             chatList = ChatListView(binding.chatPanelList, null, forceLight = true)
+            val pinnedRoot = binding.chatPanelPinned.root
+            pinnedRoot.setBackgroundColor(0xE6000000.toInt())
+            pinnedView = PinnedScView(pinnedRoot)
+            pinnedView?.submit(ChatStore.pinned.value.orEmpty())
             // Never pass scrolls on to the AppBarLayout: it would scroll the fullscreen player away
             binding.chatPanelList.isNestedScrollingEnabled = false
             // Keep the touch stream of the list away from the bottom sheet / player gestures
@@ -115,6 +123,7 @@ class ChatPanelController(private val player: Player) {
             observing = true
             ChatStore.items.observeForever(itemsObserver)
             ChatStore.available.observeForever(availableObserver)
+            ChatStore.pinned.observeForever(pinnedObserver)
         }
     }
 
@@ -123,6 +132,7 @@ class ChatPanelController(private val player: Player) {
             observing = false
             ChatStore.items.removeObserver(itemsObserver)
             ChatStore.available.removeObserver(availableObserver)
+            ChatStore.pinned.removeObserver(pinnedObserver)
         }
     }
 }

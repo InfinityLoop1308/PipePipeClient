@@ -1286,14 +1286,16 @@ public final class VideoDetailFragment
         }
         final boolean want = shouldShowChat();
         final int index = pageAdapter.getItemPositionByTitle(CHAT_TAB_TAG);
+        final String currentTag = pageAdapter.getCount() == 0 ? null
+                : pageAdapter.getItemTitle(binding.viewPager.getCurrentItem());
         if (want && index == -1) {
             final int emptyIndex = pageAdapter.getItemPositionByTitle(EMPTY_TAB_TAG);
             if (emptyIndex != -1) {
                 pageAdapter.removeItem(emptyIndex);
             }
-            pageAdapter.addFragment(new ChatFragment(), CHAT_TAB_TAG);
-            tabIcons.add(R.drawable.ic_bullet_comment_enabled);
-            tabContentDescriptions.add(R.string.chat_tab_description);
+            pageAdapter.addFragment(new ChatFragment(), CHAT_TAB_TAG, 0);
+            tabIcons.add(0, R.drawable.ic_bullet_comment_enabled);
+            tabContentDescriptions.add(0, R.string.chat_tab_description);
         } else if (!want && index != -1) {
             pageAdapter.removeItem(index);
             if (index < tabIcons.size()) {
@@ -1307,6 +1309,12 @@ public final class VideoDetailFragment
             return;
         }
         pageAdapter.notifyDataSetUpdate();
+        if (currentTag != null) {
+            final int keep = pageAdapter.getItemPositionByTitle(currentTag);
+            if (keep != -1 && keep != binding.viewPager.getCurrentItem()) {
+                binding.viewPager.setCurrentItem(keep, false);
+            }
+        }
         updateTabIconsAndContentDescriptions();
         updateTabLayoutVisibility();
     }

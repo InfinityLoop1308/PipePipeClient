@@ -35,6 +35,8 @@ class ChatFragment : Fragment() {
         empty = view.findViewById(R.id.chat_empty)
         jump = view.findViewById(R.id.chat_jump_to_latest)
         chat = ChatListView(list, jump, forceLight = false)
+        val pinned = PinnedScView(view.findViewById(R.id.chat_pinned_root))
+        ChatStore.pinned.observe(viewLifecycleOwner) { pinned.submit(it) }
         ChatStore.items.observe(viewLifecycleOwner) { items ->
             empty.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
             chat.submit(items)

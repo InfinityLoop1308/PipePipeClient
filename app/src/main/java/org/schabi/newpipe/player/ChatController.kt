@@ -12,6 +12,8 @@ import org.schabi.newpipe.extractor.bulletComments.BulletCommentsInfoItem
 import org.schabi.newpipe.extractor.stream.StreamType
 import org.schabi.newpipe.util.ExtractorHelper
 import org.schabi.newpipe.player.chat.ChatStore
+import org.schabi.newpipe.player.chat.PinnedSc
+import org.schabi.newpipe.player.chat.ScTiers
 import org.schabi.newpipe.util.utils
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -46,6 +48,11 @@ class ChatController(private val player: Player) {
     private var lastPositionMs = -1L
     private var lastEndIndex = -1
 
+    private class Entry(val item: BulletCommentsInfoItem, val start: Long, val total: Long)
+
+    /** Super chats that may be pinned, with the playback position they start at. */
+    private val scEntries = ArrayList<Entry>()
+
     /** Prepares the chat for the current stream, if its service supports it. */
     fun init() {
         val metadata = player.currentMetadata
@@ -78,6 +85,7 @@ class ChatController(private val player: Player) {
             .subscribe({ (ex, items) ->
                 extractor = ex
                 staticItems = if (ex.isLive) null else items.sortedBy { it.duration }
+                staticItems?.forEach { addEntry(it, it.duration.toMillis()) }
                 loading = false
                 ChatStore.available.value =
                     !ex.isDisabled && (ex.isLive || items.isNotEmpty())
@@ -121,6 +129,7 @@ class ChatController(private val player: Player) {
         extractor = null
         staticItems = null
         buffer.clear()
+        scEntries.clear()
         lastPositionMs = -1L
         lastEndIndex = -1
         loading = false
@@ -156,13 +165,19 @@ class ChatController(private val player: Player) {
                 val fresh = ex.liveMessages
                 if (!fresh.isNullOrEmpty()) {
                     buffer.addAll(fresh)
+                    fresh.forEach {
+                        val at = it.duration?.toMillis() ?: 0L
+                        addEntry(it, if (at > 0) at else position)
+                    }
                     while (buffer.size > MAX_ITEMS) {
                         buffer.removeAt(0)
                     }
                     ChatStore.items.value = buffer.toList()
                 }
+                publishPinned(position)
             } else {
                 val list = staticItems ?: return
+                publishPinned(position)
                 val end = upperBound(list, position)
                 if (end != lastEndIndex) {
                     lastEndIndex = end
@@ -173,6 +188,25 @@ class ChatController(private val player: Player) {
             Log.e(TAG, Log.getStackTraceString(e))
         }
         lastPositionMs = position
+    }
+
+    private fun addEntry(item: BulletCommentsInfoItem, start: Long) {
+        if (item.position != BulletCommentsInfoItem.Position.SUPERCHAT) return
+        val total = ScTiers.pinMillis(item.argbColor)
+        if (total > 0) scEntries.add(Entry(item, start, total))
+    }
+
+    private fun publishPinned(position: Long) {
+        val active = scEntries
+            .filter { position >= it.start && position < it.start + it.total }
+            .sortedWith(compareByDescending<Entry> { it.total }.thenByDescending { it.start })
+            .map {
+                val left = (it.start + it.total - position).toFloat() / it.total
+                PinnedSc(it.item, Math.round(left * 100) / 100f)
+            }
+        if (active != ChatStore.pinned.value) {
+            ChatStore.pinned.value = active
+        }
     }
 
     /** Number of items whose time is not after [positionMs]. */

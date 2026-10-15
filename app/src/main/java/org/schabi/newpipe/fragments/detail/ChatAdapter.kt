@@ -119,7 +119,7 @@ class ChatAdapter(private val forceLight: Boolean) :
         }
     }
 
-    private class SuperChatHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class SuperChatHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val header = view.findViewById<View>(R.id.chat_sc_header)
         private val avatar = view.findViewById<ImageView>(R.id.chat_sc_avatar)
         private val name = view.findViewById<TextView>(R.id.chat_sc_name)
@@ -157,6 +157,125 @@ class ChatAdapter(private val forceLight: Boolean) :
             }
             text.text = item.commentText.orEmpty()
             text.visibility = if (item.commentText.isNullOrEmpty()) View.GONE else View.VISIBLE
+        }
+    }
+}
+
+/**
+ * Horizontally scrolling strip of the pinned super chats, like the ticker of YouTube: each chip
+ * is drawn in the colour of its tier and drains while its pin time runs out. Tapping a chip
+ * shows the whole message below the strip.
+ */
+class PinnedScView(private val root: View) {
+    private val list = root.findViewById<RecyclerView>(R.id.chat_pinned_list)
+    private val detail = root.findViewById<android.widget.FrameLayout>(R.id.chat_pinned_detail)
+    private val adapter = ChipAdapter { toggle(it) }
+    private var detailHolder: ChatAdapter.SuperChatHolder? = null
+    private var selected: BulletCommentsInfoItem? = null
+
+    init {
+        list.layoutManager =
+            LinearLayoutManager(list.context, LinearLayoutManager.HORIZONTAL, false)
+        list.itemAnimator = null
+        list.adapter = adapter
+        // let the horizontal strip scroll without the parent (pager, bottom sheet) stealing it
+        list.addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
+            override fun onInterceptTouchEvent(rv: RecyclerView, e: android.view.MotionEvent): Boolean {
+                if (e.actionMasked == android.view.MotionEvent.ACTION_DOWN) {
+                    rv.parent.requestDisallowInterceptTouchEvent(true)
+                }
+                return false
+            }
+        })
+    }
+
+    fun submit(items: List<org.schabi.newpipe.player.chat.PinnedSc>) {
+        root.visibility = if (items.isEmpty()) View.GONE else View.VISIBLE
+        if (selected != null && items.none { it.item === selected }) {
+            selected = null
+        }
+        adapter.submitList(items)
+        showDetail()
+    }
+
+    private fun toggle(item: BulletCommentsInfoItem) {
+        selected = if (selected === item) null else item
+        showDetail()
+    }
+
+    private fun showDetail() {
+        val item = selected
+        if (item == null) {
+            detail.visibility = View.GONE
+            return
+        }
+        if (detailHolder == null) {
+            val view = LayoutInflater.from(detail.context)
+                .inflate(R.layout.item_chat_super_chat, detail, false)
+            detail.addView(view)
+            detailHolder = ChatAdapter.SuperChatHolder(view)
+        }
+        detailHolder!!.bind(item)
+        detail.visibility = View.VISIBLE
+    }
+
+    private class ChipAdapter(private val onClick: (BulletCommentsInfoItem) -> Unit) :
+        ListAdapter<org.schabi.newpipe.player.chat.PinnedSc, ChipHolder>(
+            object : DiffUtil.ItemCallback<org.schabi.newpipe.player.chat.PinnedSc>() {
+                override fun areItemsTheSame(
+                    a: org.schabi.newpipe.player.chat.PinnedSc,
+                    b: org.schabi.newpipe.player.chat.PinnedSc,
+                ) = a.item === b.item
+
+                override fun areContentsTheSame(
+                    a: org.schabi.newpipe.player.chat.PinnedSc,
+                    b: org.schabi.newpipe.player.chat.PinnedSc,
+                ) = a == b
+            },
+        ) {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ChipHolder(
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_chat_pinned_chip, parent, false),
+            onClick,
+        )
+
+        override fun onBindViewHolder(holder: ChipHolder, position: Int) =
+            holder.bind(getItem(position))
+    }
+
+    private class ChipHolder(view: View, private val onClick: (BulletCommentsInfoItem) -> Unit) :
+        RecyclerView.ViewHolder(view) {
+        private val avatar = view.findViewById<ImageView>(R.id.chat_chip_avatar)
+        private val amount = view.findViewById<TextView>(R.id.chat_chip_amount)
+
+        fun bind(pinned: org.schabi.newpipe.player.chat.PinnedSc) {
+            val item = pinned.item
+            val body = item.argbColor or 0xFF000000.toInt()
+            val radius = itemView.resources.displayMetrics.density * 16
+            val dim = GradientDrawable().apply {
+                setColor(ColorUtils.blendARGB(body, Color.BLACK, 0.55f))
+                cornerRadius = radius
+            }
+            val bright = GradientDrawable().apply {
+                setColor(body)
+                cornerRadius = radius
+            }
+            val clip = android.graphics.drawable.ClipDrawable(
+                bright, android.view.Gravity.START, android.graphics.drawable.ClipDrawable.HORIZONTAL,
+            )
+            clip.level = (pinned.fraction.coerceIn(0f, 1f) * 10000).toInt()
+            itemView.background = android.graphics.drawable.LayerDrawable(arrayOf(dim, clip))
+            amount.setTextColor(if (ColorUtils.calculateLuminance(body) > 0.5) Color.BLACK else Color.WHITE)
+            amount.text = item.amountText?.takeIf { it.isNotEmpty() }
+                ?: item.authorName.orEmpty()
+            val url = item.authorAvatarUrl
+            if (url.isNullOrEmpty()) {
+                avatar.visibility = View.GONE
+            } else {
+                avatar.visibility = View.VISIBLE
+                PicassoHelper.loadAvatar(url).into(avatar)
+            }
+            itemView.setOnClickListener { onClick(item) }
         }
     }
 }
