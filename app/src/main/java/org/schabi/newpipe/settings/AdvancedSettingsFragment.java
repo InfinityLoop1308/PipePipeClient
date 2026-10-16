@@ -152,10 +152,10 @@ public class AdvancedSettingsFragment extends BasePreferenceFragment implements 
                 R.array.youtube_player_client_entries);
         final String[] values = getResources().getStringArray(
                 R.array.youtube_player_client_values);
-        // Logged in: MWEB only. Logged out: TV (Samsung), VisionOS, MWEB.
+        // Logged in: MWEB only. Logged out: VisionOS, TV (Samsung), MWEB.
         final String[] shownValues = loggedIn
                 ? new String[]{"mweb"}
-                : new String[]{"tv_samsung", "visionos", "mweb"};
+                : new String[]{"visionos", "tv_samsung", "mweb"};
         final List<CharSequence> shownEntries = new ArrayList<>();
         for (final String value : shownValues) {
             shownEntries.add(entries[Arrays.asList(values).indexOf(value)]);
@@ -165,7 +165,7 @@ public class AdvancedSettingsFragment extends BasePreferenceFragment implements 
         App.reconcileYoutubePlayerClient(requireContext());
         preference.setValue(defaultPreferences.getString(
                 getString(R.string.youtube_player_client_key),
-                loggedIn ? "mweb" : "tv_samsung"));
+                loggedIn ? "mweb" : "visionos"));
     }
 
     @Override

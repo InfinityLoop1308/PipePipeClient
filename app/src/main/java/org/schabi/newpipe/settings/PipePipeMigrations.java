@@ -66,17 +66,6 @@ public final class PipePipeMigrations {
         }
     };
 
-    public static final Migration MIGRATION_6_7 = new Migration(6, 7) {
-        @Override
-        protected void migrate(final Context context, final SharedPreferences preferences) {
-            // VisionOS was the persisted logged-out default; move it to the new tv_samsung default
-            final String key = context.getString(R.string.youtube_player_client_key);
-            if ("visionos".equals(preferences.getString(key, null))) {
-                preferences.edit().putString(key, "tv_samsung").apply();
-            }
-        }
-    };
-
     private static final Migration[] PIPEPIPE_MIGRATIONS = {
             MIGRATION_0_1,
             MIGRATION_1_2,
@@ -84,10 +73,9 @@ public final class PipePipeMigrations {
             MIGRATION_3_4,
             MIGRATION_4_5,
             MIGRATION_5_6,
-            MIGRATION_6_7,
     };
 
-    public static final int VERSION = 7;
+    public static final int VERSION = 6;
 
     public static void initMigrations(final Context context, final boolean isFirstRun) {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
