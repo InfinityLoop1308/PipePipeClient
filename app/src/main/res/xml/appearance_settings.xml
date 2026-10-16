@@ -115,4 +115,18 @@
         app:iconSpaceReserved="false"
         app:singleLineTitle="false" />
 
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:key="@string/bullet_comments_chat_mode_key"
+        android:summary="@string/bullet_comments_chat_mode_summary"
+        android:title="@string/bullet_comments_chat_mode_title"
+        app:singleLineTitle="false"
+        app:iconSpaceReserved="false" />
+
+    <PreferenceScreen
+        android:fragment="org.schabi.newpipe.settings.BulletCommentsSettingsFragment"
+        android:summary="@string/danmaku_settings_summary"
+        android:title="@string/settings_category_bullet_comments_summary"
+        app:singleLineTitle="false"
+        app:iconSpaceReserved="false" />
 </PreferenceScreen>
