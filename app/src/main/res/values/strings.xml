@@ -1164,29 +1164,9 @@
 <string name="multi_select">Multi-select</string>
 <string name="select_all">Select all</string>
 <string name="invert_selection">Invert selection</string>
-<plurals name="selection_count">
-<item quantity="one">%d selected</item>
-<item quantity="other">%d selected</item>
-</plurals>
-<plurals name="delete_selected_history_confirm">
-<item quantity="one">Delete %d item from history?</item>
-<item quantity="other">Delete %d items from history?</item>
-</plurals>
-<plurals name="items_deleted">
-<item quantity="one">%d item deleted.</item>
-<item quantity="other">%d items deleted.</item>
-</plurals>
 <string name="move_to_top">Move to top</string>
 <string name="move_to_bottom">Move to bottom</string>
 <string name="move_requires_original_order">Switch the sort order to "Original" to move items</string>
-<plurals name="delete_selected_playlists_confirm">
-<item quantity="one">Delete %d playlist?</item>
-<item quantity="other">Delete %d playlists?</item>
-</plurals>
-<plurals name="remove_selected_from_playlist_confirm">
-<item quantity="one">Remove %d item from playlist?</item>
-<item quantity="other">Remove %d items from playlist?</item>
-</plurals>
 <string name="filter_search_mismatch">%d loaded items do not match your search</string>
 <string name="sort_upload_date_ascending">Upload date (ascending)</string>
 <string name="sort_upload_date_descending">Upload date (descending)</string>
@@ -1205,12 +1185,6 @@
 <string name="name_sort_locale_chinese">Chinese (pinyin)</string>
 <string name="name_sort_locale_japanese">Japanese</string>
 <string name="name_sort_locale_korean">Korean</string>
-<string-array name="name_sort_locale_names">
-    <item>@string/name_sort_locale_english</item>
-    <item>@string/name_sort_locale_chinese</item>
-    <item>@string/name_sort_locale_japanese</item>
-    <item>@string/name_sort_locale_korean</item>
-</string-array>
 <string name="pinch_to_zoom_gesture_control_title">Pinch to zoom</string>
 <string name="pinch_to_zoom_gesture_control_summary">Pinch to zoom the video in fullscreen. While zoomed, drag to pan and double-tap to reset</string>
 <string name="bullet_comments_chat_mode_title">Show live chat and danmaku as chat</string>
@@ -1224,9 +1198,12 @@
 <string name="add_to_home_screen">Add to home screen</string>
 <string name="playlist_no_longer_exists">This playlist no longer exists</string>
 <string name="preferred_audio_quality_title">Preferred audio quality</string>
-<string-array name="audio_quality_names">
-    <item>High (highest bitrate)</item>
-    <item>Medium (~128 kbps)</item>
-    <item>Low (lowest bitrate, saves data)</item>
-</string-array>
+<string name="selection_count">%d selected</string>
+<string name="delete_selected_history_confirm">Delete %d items from history?</string>
+<string name="items_deleted">%d items deleted.</string>
+<string name="delete_selected_playlists_confirm">Delete %d playlists?</string>
+<string name="remove_selected_from_playlist_confirm">Remove %d items from playlist?</string>
+<string name="audio_quality_high">High (highest bitrate)</string>
+<string name="audio_quality_medium">Medium (~128 kbps)</string>
+<string name="audio_quality_low">Low (lowest bitrate, saves data)</string>
 </resources>

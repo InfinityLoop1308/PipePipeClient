@@ -485,8 +485,7 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
         final int count = selection.getSelectedCount();
         if (count > 0) {
             new AlertDialog.Builder(requireContext())
-                    .setMessage(getResources().getQuantityString(
-                            R.plurals.delete_selected_playlists_confirm, count, count))
+                    .setMessage(getResources().getString(R.string.delete_selected_playlists_confirm, count))
                     .setNegativeButton(R.string.cancel, null)
                     .setPositiveButton(R.string.delete, (d, w) -> deleteSelected())
                     .show();

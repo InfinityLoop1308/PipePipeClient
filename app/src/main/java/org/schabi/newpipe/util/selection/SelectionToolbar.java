@@ -87,7 +87,7 @@ public final class SelectionToolbar {
         toolbar.setVisibility(View.VISIBLE);
         final int count = controller.getSelectedCount();
         toolbar.setTitle(toolbar.getResources()
-                .getQuantityString(R.plurals.selection_count, count, count));
+                .getString(R.string.selection_count, count));
         for (int i = 0; i < toolbar.getMenu().size(); i++) {
             final MenuItem item = toolbar.getMenu().getItem(i);
             // Select all / invert are always usable; the rest needs at least one item

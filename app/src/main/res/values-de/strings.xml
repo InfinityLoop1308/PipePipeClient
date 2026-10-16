@@ -1097,4 +1097,56 @@
 <string name="chat_jump_to_latest">Zum Neuesten springen</string>
 <string name="chat_empty">Noch keine Nachrichten</string>
 <string name="danmaku_settings_summary">Erscheinungsbild von scrollendem Danmaku über dem Video, unabhängig von der Chat-Anzeige</string>
+<plurals name="subscribers">
+<item quantity="one">%s Abonnent</item>
+<item quantity="other">%s Abonnenten</item>
+</plurals>
+<plurals name="views">
+<item quantity="one">%s Aufruf</item>
+<item quantity="other">%s Aufrufe</item>
+</plurals>
+<plurals name="watching">
+<item quantity="one">%s schaut zu</item>
+<item quantity="other">%s schauen zu</item>
+</plurals>
+<plurals name="listening">
+<item quantity="one">%s Zuhörer</item>
+<item quantity="other">%s Zuhörer</item>
+</plurals>
+<plurals name="videos">
+<item quantity="one">%s Video</item>
+<item quantity="other">%s Videos</item>
+</plurals>
+<plurals name="new_streams">
+<item quantity="one">%s neuer Stream</item>
+<item quantity="other">%s neue Streams</item>
+</plurals>
+<plurals name="download_finished_notification">
+<item quantity="one">Download abgeschlossen</item>
+<item quantity="other">%s Downloads abgeschlossen</item>
+</plurals>
+<plurals name="deleted_downloads_toast">
+<item quantity="one">%1$s Download gelöscht</item>
+<item quantity="other">%1$s Downloads gelöscht</item>
+</plurals>
+<plurals name="seconds">
+<item quantity="one">%d Sekunde</item>
+<item quantity="other">%d Sekunden</item>
+</plurals>
+<plurals name="minutes">
+<item quantity="one">%d Minute</item>
+<item quantity="other">%d Minuten</item>
+</plurals>
+<plurals name="hours">
+<item quantity="one">%d Stunde</item>
+<item quantity="other">%d Stunden</item>
+</plurals>
+<plurals name="days">
+<item quantity="one">%d Tag</item>
+<item quantity="other">%d Tage</item>
+</plurals>
+<plurals name="feed_group_dialog_selection_count">
+<item quantity="one">%d ausgewählt</item>
+<item quantity="other">%d ausgewählt</item>
+</plurals>
 </resources>

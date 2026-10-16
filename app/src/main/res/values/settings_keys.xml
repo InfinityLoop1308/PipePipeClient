@@ -1871,4 +1871,15 @@
         <item>medium</item>
         <item>low</item>
     </string-array>
+    <string-array name="name_sort_locale_names">
+        <item>@string/name_sort_locale_english</item>
+        <item>@string/name_sort_locale_chinese</item>
+        <item>@string/name_sort_locale_japanese</item>
+        <item>@string/name_sort_locale_korean</item>
+    </string-array>
+    <string-array name="audio_quality_names">
+        <item>@string/audio_quality_high</item>
+        <item>@string/audio_quality_medium</item>
+        <item>@string/audio_quality_low</item>
+    </string-array>
 </resources>

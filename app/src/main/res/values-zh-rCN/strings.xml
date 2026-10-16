@@ -1161,4 +1161,40 @@
 <string name="chat_jump_to_latest">跳转到最新</string>
 <string name="chat_empty">暂无消息</string>
 <string name="danmaku_settings_summary">视频上滚动弹幕的外观，独立于聊天显示</string>
+<plurals name="subscribers">
+<item quantity="one">%s 位订阅者</item>
+<item quantity="other">%s 位订阅者</item>
+</plurals>
+<plurals name="views">
+<item quantity="one">%s 次观看</item>
+<item quantity="other">%s 次观看</item>
+</plurals>
+<plurals name="watching">
+<item quantity="one">%s 人正在观看</item>
+<item quantity="other">%s 人正在观看</item>
+</plurals>
+<plurals name="listening">
+<item quantity="one">%s 人正在收听</item>
+<item quantity="other">%s 人正在收听</item>
+</plurals>
+<plurals name="videos">
+<item quantity="one">%s 个视频</item>
+<item quantity="other">%s 个视频</item>
+</plurals>
+<plurals name="seconds">
+<item quantity="one">%d 秒</item>
+<item quantity="other">%d 秒</item>
+</plurals>
+<plurals name="minutes">
+<item quantity="one">%d 分钟</item>
+<item quantity="other">%d 分钟</item>
+</plurals>
+<plurals name="hours">
+<item quantity="one">%d 小时</item>
+<item quantity="other">%d 小时</item>
+</plurals>
+<plurals name="days">
+<item quantity="one">%d 天</item>
+<item quantity="other">%d 天</item>
+</plurals>
 </resources>

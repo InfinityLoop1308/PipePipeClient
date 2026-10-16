@@ -535,8 +535,7 @@ public class StatisticsPlaylistFragment
             return;
         }
         new AlertDialog.Builder(requireContext())
-                .setMessage(getResources().getQuantityString(
-                        R.plurals.delete_selected_history_confirm, count, count))
+                .setMessage(getResources().getString(R.string.delete_selected_history_confirm, count))
                 .setNegativeButton(R.string.cancel, null)
                 .setPositiveButton(R.string.delete, (d, w) -> deleteSelected())
                 .show();
@@ -554,7 +553,7 @@ public class StatisticsPlaylistFragment
                         () -> {
                             selection.exit();
                             final String message = getResources()
-                                    .getQuantityString(R.plurals.items_deleted, count, count);
+                                    .getString(R.string.items_deleted, count);
                             if (getView() != null) {
                                 Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
                             } else {

@@ -1569,8 +1569,7 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             return;
         }
         new AlertDialog.Builder(requireContext())
-                .setMessage(getResources().getQuantityString(
-                        R.plurals.remove_selected_from_playlist_confirm, count, count))
+                .setMessage(getResources().getString(R.string.remove_selected_from_playlist_confirm, count))
                 .setNegativeButton(R.string.cancel, null)
                 .setPositiveButton(R.string.play_queue_remove, (d, w) -> removeSelected())
                 .show();

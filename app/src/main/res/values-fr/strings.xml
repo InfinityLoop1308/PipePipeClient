@@ -1114,4 +1114,56 @@ Voulez-vous continuer?</string>
 <string name="chat_jump_to_latest">Aller au plus récent</string>
 <string name="chat_empty">Aucun message pour le moment</string>
 <string name="danmaku_settings_summary">Apparence des danmaku défilant sur la vidéo, indépendamment de l\'affichage du chat</string>
+<plurals name="subscribers">
+<item quantity="one">%s abonné</item>
+<item quantity="other">%s abonnés</item>
+</plurals>
+<plurals name="views">
+<item quantity="one">%s vue</item>
+<item quantity="other">%s vues</item>
+</plurals>
+<plurals name="watching">
+<item quantity="one">%s spectateur</item>
+<item quantity="other">%s spectateurs</item>
+</plurals>
+<plurals name="listening">
+<item quantity="one">%s auditeur</item>
+<item quantity="other">%s auditeurs</item>
+</plurals>
+<plurals name="videos">
+<item quantity="one">%s vidéo</item>
+<item quantity="other">%s vidéos</item>
+</plurals>
+<plurals name="new_streams">
+<item quantity="one">%s nouveau flux</item>
+<item quantity="other">%s nouveaux flux</item>
+</plurals>
+<plurals name="download_finished_notification">
+<item quantity="one">Téléchargement terminé</item>
+<item quantity="other">%s téléchargements terminés</item>
+</plurals>
+<plurals name="deleted_downloads_toast">
+<item quantity="one">%1$s téléchargement supprimé</item>
+<item quantity="other">%1$s téléchargements supprimés</item>
+</plurals>
+<plurals name="seconds">
+<item quantity="one">%d seconde</item>
+<item quantity="other">%d secondes</item>
+</plurals>
+<plurals name="minutes">
+<item quantity="one">%d minute</item>
+<item quantity="other">%d minutes</item>
+</plurals>
+<plurals name="hours">
+<item quantity="one">%d heure</item>
+<item quantity="other">%d heures</item>
+</plurals>
+<plurals name="days">
+<item quantity="one">%d jour</item>
+<item quantity="other">%d jours</item>
+</plurals>
+<plurals name="feed_group_dialog_selection_count">
+<item quantity="one">%d sélectionné</item>
+<item quantity="other">%d sélectionnés</item>
+</plurals>
 </resources>
