@@ -13,7 +13,6 @@ import org.schabi.newpipe.extractor.stream.StreamType
 import org.schabi.newpipe.util.ExtractorHelper
 import org.schabi.newpipe.player.chat.ChatStore
 import org.schabi.newpipe.player.chat.PinnedSc
-import org.schabi.newpipe.player.chat.ScTiers
 import org.schabi.newpipe.util.utils
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -192,7 +191,7 @@ class ChatController(private val player: Player) {
 
     private fun addEntry(item: BulletCommentsInfoItem, start: Long) {
         if (item.position != BulletCommentsInfoItem.Position.SUPERCHAT) return
-        val total = ScTiers.pinMillis(item.argbColor)
+        val total = item.pinnedTimeMillis
         if (total > 0) scEntries.add(Entry(item, start, total))
     }
 
