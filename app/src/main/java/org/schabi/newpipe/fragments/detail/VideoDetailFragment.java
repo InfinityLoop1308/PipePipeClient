@@ -45,6 +45,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
+import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -178,6 +179,8 @@ public final class VideoDetailFragment
     private boolean showDescription;
     private boolean showSponsorBlock;
     private String selectedTabTag;
+    // true while tabs are changed by code; only user selections update selectedTabTag
+    private boolean tabChangeByCode = false;
     @AttrRes
     @NonNull
     final List<Integer> tabIcons = new ArrayList<>();
@@ -384,8 +387,7 @@ public final class VideoDetailFragment
         restoreDefaultBrightness();
         PreferenceManager.getDefaultSharedPreferences(requireContext())
                 .edit()
-                .putString(getString(R.string.stream_info_selected_tab_key),
-                        pageAdapter.getItemTitle(binding.viewPager.getCurrentItem()))
+                .putString(getString(R.string.stream_info_selected_tab_key), selectedTabTag)
                 .apply();
     }
 
@@ -743,6 +745,15 @@ public final class VideoDetailFragment
         pageAdapter = new TabAdapter(getChildFragmentManager());
         binding.viewPager.setAdapter(pageAdapter);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
+        binding.viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(final int position) {
+                final String tag = pageAdapter.getItemTitle(position);
+                if (!tabChangeByCode && tag != null && !EMPTY_TAB_TAG.equals(tag)) {
+                    selectedTabTag = tag;
+                }
+            }
+        });
         ChatStore.INSTANCE.getAvailable().observe(getViewLifecycleOwner(), v -> syncChatTab());
         updateStickyPlayerMode();
 
@@ -1102,9 +1113,7 @@ public final class VideoDetailFragment
 
     private void initTabs() {
         tabsBuiltForUrl = null;
-        if (pageAdapter.getCount() != 0) {
-            selectedTabTag = pageAdapter.getItemTitle(binding.viewPager.getCurrentItem());
-        }
+        markTabChangeByCode();
         pageAdapter.clearAllItems();
         tabIcons.clear();
         tabContentDescriptions.clear();
@@ -1161,7 +1170,7 @@ public final class VideoDetailFragment
         if (pageAdapter.getCount() >= 2) {
             final int position = pageAdapter.getItemPositionByTitle(selectedTabTag);
             if (position != -1) {
-                binding.viewPager.setCurrentItem(position);
+                binding.viewPager.setCurrentItem(position, false);
             }
             updateTabIconsAndContentDescriptions();
         }
@@ -1285,12 +1294,19 @@ public final class VideoDetailFragment
                 .getBoolean(getString(R.string.bullet_comments_chat_mode_key), true);
     }
 
+    /** Ignores page changes caused by tab rebuilds until the pager has laid out again. */
+    private void markTabChangeByCode() {
+        tabChangeByCode = true;
+        binding.viewPager.post(() -> tabChangeByCode = false);
+    }
+
     /** Makes the presence of the chat tab match whether the current stream has a chat. */
     private void syncChatTab() {
         if (binding == null || pageAdapter == null || !isAdded()) {
             return;
         }
         final boolean want = shouldShowChat();
+        markTabChangeByCode();
         final int index = pageAdapter.getItemPositionByTitle(CHAT_TAB_TAG);
         final String currentTag = pageAdapter.getCount() == 0 ? null
                 : pageAdapter.getItemTitle(binding.viewPager.getCurrentItem());
@@ -1315,7 +1331,10 @@ public final class VideoDetailFragment
             return;
         }
         pageAdapter.notifyDataSetUpdate();
-        if (currentTag != null) {
+        final int chatIndex = pageAdapter.getItemPositionByTitle(CHAT_TAB_TAG);
+        if (want && CHAT_TAB_TAG.equals(selectedTabTag) && chatIndex != -1) {
+            binding.viewPager.setCurrentItem(chatIndex, false);
+        } else if (currentTag != null) {
             final int keep = pageAdapter.getItemPositionByTitle(currentTag);
             if (keep != -1 && keep != binding.viewPager.getCurrentItem()) {
                 binding.viewPager.setCurrentItem(keep, false);
