@@ -1197,4 +1197,12 @@
 <item quantity="one">%d 天</item>
 <item quantity="other">%d 天</item>
 </plurals>
+<string name="selection_count">已选择 %d 项</string>
+<string name="delete_selected_history_confirm">确定要从历史记录中删除 %d 项吗？</string>
+<string name="items_deleted">已删除 %d 项。</string>
+<string name="delete_selected_playlists_confirm">确定要删除 %d 个播放列表吗？</string>
+<string name="remove_selected_from_playlist_confirm">确定要从播放列表中移除 %d 项吗？</string>
+<string name="audio_quality_high">高（最高比特率）</string>
+<string name="audio_quality_medium">中（约 128 kbps）</string>
+<string name="audio_quality_low">低（最低比特率，节省流量）</string>
 </resources>

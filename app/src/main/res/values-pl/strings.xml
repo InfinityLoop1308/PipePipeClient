@@ -1177,4 +1177,12 @@
 <string name="chat_jump_to_latest">Przejdź do najnowszych</string>
 <string name="chat_empty">Brak wiadomości</string>
 <string name="danmaku_settings_summary">Wygląd przewijanego danmaku nad filmem, niezależnie od wyświetlania czatu</string>
+<string name="selection_count">Zaznaczono %d</string>
+<string name="delete_selected_history_confirm">Usunąć %d elementów z historii?</string>
+<string name="items_deleted">Usunięto %d elementów.</string>
+<string name="delete_selected_playlists_confirm">Usunąć %d playlist?</string>
+<string name="remove_selected_from_playlist_confirm">Usunąć %d elementów z playlisty?</string>
+<string name="audio_quality_high">Wysoka (najwyższy bitrate)</string>
+<string name="audio_quality_medium">Średnia (~128 kbps)</string>
+<string name="audio_quality_low">Niska (najniższy bitrate, oszczędza dane)</string>
 </resources>

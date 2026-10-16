@@ -1091,4 +1091,12 @@
 <string name="chat_jump_to_latest">Vai all\'ultimo</string>
 <string name="chat_empty">Ancora nessun messaggio</string>
 <string name="danmaku_settings_summary">Aspetto dei danmaku a scorrimento sul video, indipendente dalla visualizzazione della chat</string>
+<string name="selection_count">%d selezionati</string>
+<string name="delete_selected_history_confirm">Eliminare %d elementi dalla cronologia?</string>
+<string name="items_deleted">%d elementi eliminati.</string>
+<string name="delete_selected_playlists_confirm">Eliminare %d playlist?</string>
+<string name="remove_selected_from_playlist_confirm">Rimuovere %d elementi dalla playlist?</string>
+<string name="audio_quality_high">Alta (bitrate massimo)</string>
+<string name="audio_quality_medium">Media (~128 kbps)</string>
+<string name="audio_quality_low">Bassa (bitrate minimo, risparmia dati)</string>
 </resources>

@@ -1120,4 +1120,12 @@
 <string name="chat_jump_to_latest">最新にジャンプ</string>
 <string name="chat_empty">メッセージはまだありません</string>
 <string name="danmaku_settings_summary">チャットの表示とは独立した、動画上にスクロールする弾幕の外観</string>
+<string name="selection_count">%d件選択中</string>
+<string name="delete_selected_history_confirm">履歴から%d件削除しますか？</string>
+<string name="items_deleted">%d件削除しました。</string>
+<string name="delete_selected_playlists_confirm">%d件のプレイリストを削除しますか？</string>
+<string name="remove_selected_from_playlist_confirm">プレイリストから%d件削除しますか？</string>
+<string name="audio_quality_high">高 (最高ビットレート)</string>
+<string name="audio_quality_medium">中 (~128 kbps)</string>
+<string name="audio_quality_low">低 (最低ビットレート、データ通信量を節約)</string>
 </resources>

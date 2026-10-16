@@ -1151,4 +1151,12 @@
 <string name="chat_jump_to_latest">跳至最新</string>
 <string name="chat_empty">尚無訊息</string>
 <string name="danmaku_settings_summary">影片上方捲動彈幕的外觀，獨立於聊天顯示</string>
+<string name="selection_count">已選取 %d 項</string>
+<string name="delete_selected_history_confirm">確定要從歷史紀錄中刪除 %d 個項目嗎？</string>
+<string name="items_deleted">已刪除 %d 個項目。</string>
+<string name="delete_selected_playlists_confirm">確定要刪除 %d 個播放清單嗎？</string>
+<string name="remove_selected_from_playlist_confirm">確定要從播放清單中移除 %d 個項目嗎？</string>
+<string name="audio_quality_high">高 (最高位元率)</string>
+<string name="audio_quality_medium">中 (~128 kbps)</string>
+<string name="audio_quality_low">低 (最低位元率，節省數據用量)</string>
 </resources>
