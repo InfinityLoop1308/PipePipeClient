@@ -598,13 +598,13 @@ Voulez-vous continuer?</string>
 <string name="image_quality_low">Basse qualité</string>
 <string name="image_quality_medium">Qualité moyenne</string>
 <string name="image_quality_high">Haute qualité</string>
-<string name="regular_bullet_comments_duration_summary">Modifier la durée des commentaires défilants. Une durée plus courte peut causer des saccades.</string>
-<string name="regular_bullet_comments_duration_title">Durée des commentaires défilants</string>
-<string name="top_bottom_bullet_comments_duration_summary">Modifier la durée des commentaires défilants en haut/bas.</string>
-<string name="top_bottom_bullet_comments_duration_title">Durée des commentaires défilants hauts/bas</string>
+<string name="regular_bullet_comments_duration_summary">Modifier la durée des danmaku réguliers/défilants. Une durée plus courte peut causer des saccades/ralentissements.</string>
+<string name="regular_bullet_comments_duration_title">Durée des danmaku réguliers</string>
+<string name="top_bottom_bullet_comments_duration_summary">Modifier la durée des danmaku en haut/en bas. </string>
+<string name="top_bottom_bullet_comments_duration_title">Durée des danmaku en haut/en bas</string>
 <string name="append_playlist_not_supported">Ceci est une liste de lecture infinie, vous ne pouvez donc pas l\'ajouter à d\'autres listes de lecture.</string>
 <string name="add_failed">Ajout échoué</string>
-<string name="bullet_comments_outline_radius_title">Rayon du contour des commentaires défilants</string>
+<string name="bullet_comments_outline_radius_title">Rayon du contour des danmaku</string>
 <string name="top_100">Top 100</string>
 <string name="recommended_videos">Vidéos recommandées</string>
 <string name="top_lives">Meilleurs Lives</string>
@@ -618,7 +618,7 @@ Voulez-vous continuer?</string>
 <string name="login_warning">Les jetons ne seront utilisés que si nécessaire</string>
 <string name="login_title">Connexion</string>
 <string name="logout_title">Déconnexion</string>
-<string name="bullet_comments_font_title">Police des commentaires défilants</string>
+<string name="bullet_comments_font_title">Police des danmaku</string>
 <string name="auto_background_play_title">Mode lecteur de musique</string>
 <string name="auto_background_play_summary">Lire en arrière-plan automatiquement lorsque vous cliquez sur un élément dans une liste de lecture locale</string>
 <string name="download_all">Tout télécharger</string>
@@ -626,7 +626,7 @@ Voulez-vous continuer?</string>
     et accordé l\'accès, sinon le téléchargement échouera.
     Les fichiers existants ne seront pas remplacés.
     Si l\'audio ne peut être téléchargé séparément, la vidéo correspondante sera téléchargée.</string>
-<string name="bullet_comments_opacity_title">Opacité des commentaires défilants</string>
+<string name="bullet_comments_opacity_title">Opacité des danmaku</string>
 <string name="override_cookies_summary">Utiliser des cookies saisis manuellement au lieu des informations d\'identification enregistrées</string>
 <string name="override_cookies_title">Remplacer les cookies</string>
 <string name="override_cookies_value_title">Modifier les cookies</string>
@@ -642,7 +642,7 @@ Voulez-vous continuer?</string>
 <string name="sort_bookmark">Favoris</string>
 <string name="sort_likes">Aimés</string>
 <string name="sort_comments">Commentaires</string>
-<string name="sort_bullet_comments">Commentaires défilants</string>
+<string name="sort_bullet_comments">Danmaku</string>
 <string name="sort_length">Longueur</string>
 <string name="sort_publish_time">Heure de publication</string>
 <string name="sort_last_comment_time">Heure du dernier commentaire</string>
@@ -715,7 +715,7 @@ Voulez-vous continuer?</string>
 <string name="decoder_init_failure">Échec de l\'initialisation du décodeur</string>
 <string name="unable_to_decode_summary">Votre appareil ne dispose pas des décodeurs matériels requis, donc vous ne pouvez pas lire cette vidéo dans PipePipe.\nVeuillez la télécharger et la lire dans VLC.</string>
 <string name="settings_category_gestures_summary">Paramètres des gestes</string>
-<string name="settings_category_bullet_comments_summary">Paramètres des commentaires défilants</string>
+<string name="settings_category_bullet_comments_summary">Paramètres des danmaku</string>
 <string name="settings_category_backup_title">Sauvegarde</string>
 <string name="settings_category_advanced_title">Avancé</string>
 <string name="anti_bot_youtube_hint">Votre IP est bloquée par YouTube. Essayez d\'utiliser un VPN ou de vous connecter via les paramètres pour continuer.</string>
@@ -724,10 +724,10 @@ Voulez-vous continuer?</string>
 <string name="preferred_audio_language_title">Langue audio préférée</string>
 <string name="ip_blocked_summary">Votre IP a été temporairement bloquée par YouTube. Pendant un certain temps, vous rencontrerez des problèmes lors de la lecture de certaines vidéos. Si l\'erreur persiste, veuillez vous connecter via les Paramètres pour continuer.</string>
 <string name="settings_category_filter_title">Filtre de contenu</string>
-<string name="filter_by_keyword_title">Filtrer par mots-clés</string>
-<string name="filter_by_keyword_summary">Ajoutez ici les mots-clés que vous souhaitez bloquer, séparés par des virgules</string>
+<string name="filter_by_keyword_title">Mots-clés bloqués</string>
+<string name="filter_by_keyword_summary">Masquer les vidéos et autres éléments dont le titre contient l\'un de ces mots-clés. Entourez une entrée de barres obliques (/…/) pour utiliser une expression régulière</string>
 <string name="search_result">Résultats de recherche</string>
-<string name="filter_field_summary">Appliquer le filtre à</string>
+<string name="filter_field_summary">Appliquer les filtres à</string>
 <string name="channel_videos">Vidéos de la chaîne</string>
 <string name="success">Succès</string>
 <string name="settings_category_proxy_title">Proxy (Supporters)</string>
@@ -789,21 +789,21 @@ Voulez-vous continuer?</string>
 <string name="sponsor_block_show_manual_skip_summary">Afficher sur l\'écran des boutons pour ignorer/ne pas ignorer manuellement les segments. Il est recommandé d\'activer cette option lors de la configuration des catégories SponsorBlock à être ignorées manuellement.</string>
 <string name="video_not_released">La vidéo n\'a pas encore été publiée.</string>
 <string name="filter_shorts_title">Filtrer les vidéos courtes</string>
-<string name="filter_shorts_summary">Supprimer les vidéos courtes des résultats. Fonctionne uniquement pour YouTube.</string>
+<string name="filter_shorts_summary">Masquer les vidéos courtes des résultats. YouTube uniquement.</string>
 <string name="paid_video">Payant</string>
 <string name="share_playlist">Partager la liste de lecture</string>
 <string name="share_playlist_with_titles_message">Partagez la liste de lecture avec des détails tels que le nom de la liste et les titres des vidéos ou comme une simple liste d\'URLs de vidéos</string>
 <string name="share_playlist_with_titles">Partager avec les titres</string>
 <string name="share_playlist_with_list">Partager la liste d\'URLs</string>
 <string name="add_to_filter_list">Ajouter la chaîne à la liste de blocage</string>
-<string name="add_to_filter_list_confirm">Voulez-vous ajouter %s à la liste de blocage ?</string>
+<string name="add_to_filter_list_confirm">Ajouter \"%s\" à la liste de blocage ?</string>
 <string name="loading_timeout_title">Délai d\'attente pour le chargement de la vidéo</string>
 <string name="loading_timeout_description">Définissez le temps maximum autorisé pour attendre le chargement des informations vidéo. Si le chargement n\'est pas terminé dans ce délai, la demande de chargement sera annulée, et une erreur explicite sera signalée.</string>
 <string name="always_start_from_beginning_title">Toujours commencer la lecture depuis le début</string>
 <string name="fetch_full_playlist_title">Charger la liste de lecture complète</string>
 <string name="fetch_full_playlist_summary">Charger tout le contenu en même temps lors de l\'ouverture des listes de lecture</string>
 <string name="add_filter">Ajouter un filtre</string>
-<string name="no_filters">Aucun filtre</string>
+<string name="no_filters">Aucun filtre pour le moment</string>
 <string name="stream_processing_notification_title">Traitement des flux</string>
 <string name="stream_processing_starting">Démarrage du traitement des flux...</string>
 <string name="stream_processing_progress">Traitement : %1$d/%2$d</string>
@@ -816,11 +816,11 @@ Voulez-vous continuer?</string>
 <string name="announcement">Annonce</string>
 <string name="remove_from_group">Retirer du groupe</string>
 <string name="channel_removed_from_group">Retiré du groupe</string>
-<string name="max_bullet_comments_rows_top_summary">Nombre maximal de lignes pour les commentaires défilants en haut</string>
-<string name="max_bullet_comments_rows_bottom_summary">Nombre maximal de lignes pour les commentaires défilants en bas</string>
-<string name="max_bullet_comments_rows_regular_summary">Nombre maximal de lignes pour les commentaires défilants ordinaires</string>
+<string name="max_bullet_comments_rows_top_summary">Lignes max pour les danmaku en haut</string>
+<string name="max_bullet_comments_rows_bottom_summary">Lignes max pour les danmaku en bas</string>
+<string name="max_bullet_comments_rows_regular_summary">Lignes max pour les danmaku réguliers</string>
 <string name="enable_max_rows_customization_title">Personnaliser le nombre maximal de lignes</string>
-<string name="enable_max_rows_customization_summary">Activer pour personnaliser le nombre maximal de lignes pour les commentaires</string>
+<string name="enable_max_rows_customization_summary">Activer pour personnaliser le nombre maximum de lignes pour les danmaku</string>
 <string name="always_list_mode_for_bookmark_title">Toujours utiliser le mode liste pour les Favoris</string>
 <string name="select_channel_group_prompt">Sélectionnez un groupe de chaînes</string>
 <string name="press_back_again_to_exit">Appuyez à nouveau sur retour pour quitter</string>
@@ -836,8 +836,8 @@ Voulez-vous continuer?</string>
 <string name="sponsor_block_category_intro">Animation d\'interlude/d\'introduction</string>
 <string name="sponsor_block_category_outro">Écrans de fin/Crédits</string>
 <string name="sponsor_block_category_interaction">Rappels d\'interaction (S\'abonner)</string>
-<string name="filter_by_channel_title">Filtrer par chaînes</string>
-<string name="filter_by_channel_summary">Ajoutez ici les noms des chaînes que vous souhaitez bloquer, séparés par des virgules</string>
+<string name="filter_by_channel_title">Chaînes bloquées</string>
+<string name="filter_by_channel_summary">Masquer les vidéos, playlists et chaînes de ces chaînes</string>
 <string name="channel_group_tab_summary">Groupe de chaînes</string>
 <string name="recaptcha_request_toast">Défi reCAPTCHA demandé</string>
 <string name="recaptcha_solve">Résoudre</string>
@@ -916,8 +916,8 @@ Voulez-vous continuer?</string>
 <string name="import_urls_error">Erreur lors de l\'importation des URL : %s</string>
 <string name="import_urls_no_valid_urls">Aucune URL valide trouvée dans le fichier sélectionné</string>
 <string name="remove_from_playlist_confirmation">Supprimer cet élément de la playlist ?</string>
-<string name="filter_paid_contents_title">Filtrer les contenus payants</string>
-<string name="filter_paid_contents_summary">Supprimer les contenus payants des résultats</string>
+<string name="filter_paid_contents_title">Filtrer le contenu payant</string>
+<string name="filter_paid_contents_summary">Masquer les vidéos payantes et réservées aux membres des résultats</string>
 <string name="local_playlist_swipe_action_title">Action de balayage vers la droite dans les playlists locales</string>
 <string name="search_suggestions_count_title">Nombre de suggestions de recherche</string>
 <string name="search_suggestions_count_summary">Nombre de suggestions de recherche passées à afficher</string>
@@ -938,8 +938,8 @@ Voulez-vous continuer?</string>
 <string name="channel_tab_podcasts">Podcasts</string>
 <string name="video_tabs_title">Onglets vidéo</string>
 <string name="video_tabs_summary">Configurer les onglets à afficher sur l\'écran de détails de la vidéo</string>
-<string name="filter_future_items_title">Filtrer les éléments futurs</string>
-<string name="filter_future_items_summary">Supprimer les éléments programmés pour une sortie future</string>
+<string name="filter_future_items_title">Filtrer les éléments à venir</string>
+<string name="filter_future_items_summary">Masquer les éléments programmés pour une sortie future, comme les avant-premières</string>
 <string name="pin_video_to_top_title">Épingler la vidéo en haut</string>
 <string name="pin_video_to_top_summary">Garder la vidéo épinglée en haut lors du défilement de la page de détails de la vidéo</string>
 <string name="settings_category_behavior_title">Comportement</string>
@@ -1030,7 +1030,7 @@ Voulez-vous continuer?</string>
 <string name="minimize_gesture_none_description">Désactivé</string>
 <string name="minimize_gesture_non_fullscreen_description">Uniquement hors plein écran</string>
 <string name="minimize_gesture_fullscreen_description">En plein écran et en dehors (désactive les gestes de balayage du plein écran et de la vitesse de lecture)</string>
-<string name="delete_filter_confirm">Voulez-vous supprimer \"%s\" de la liste des filtres ?</string>
+<string name="delete_filter_confirm">Retirer \"%s\" de la liste des filtres ?</string>
 <string name="dearrow_home_page_title">Voir le site web</string>
 <string name="dearrow_home_page_summary">Voir le site web officiel de DeArrow.</string>
 <string name="dearrow_enable_title">Activer DeArrow</string>

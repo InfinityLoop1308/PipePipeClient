@@ -762,16 +762,14 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="image_quality_low">Chất lượng thấp</string>
 <string name="image_quality_medium">Chất lượng trung bình</string>
 <string name="image_quality_high">Chất lượng cao</string>
-<string name="regular_bullet_comments_duration_summary">Thay đổi thời lượng của dấu đầu dòng bình luận thông thường/cuộn. Thời gian ngắn hơn có thể gây ra
-        lắp bắp/bập bềnh/trễ.
-    </string>
-<string name="regular_bullet_comments_duration_title">Thời lượng dấu đầu dòng bình luận thông thường</string>
-<string name="top_bottom_bullet_comments_duration_summary">Thay đổi thời lượng của dấu đầu dòng bình luận trên/dưới. </string>
-<string name="top_bottom_bullet_comments_duration_title">Thời lượng dấu đầu dòng bình luận trên/dưới</string>
+<string name="regular_bullet_comments_duration_summary">Thay đổi thời lượng của danmaku thông thường/cuộn. Thời lượng ngắn hơn có thể gây giật/khựng/lag.</string>
+<string name="regular_bullet_comments_duration_title">Thời lượng danmaku thông thường</string>
+<string name="top_bottom_bullet_comments_duration_summary">Thay đổi thời lượng của danmaku trên/dưới. </string>
+<string name="top_bottom_bullet_comments_duration_title">Thời lượng danmaku trên/dưới</string>
 <string name="append_playlist_not_supported">Đây là danh sách phát vô hạn, vì vậy bạn không thể thêm nó vào danh sách phát khác.
     </string>
 <string name="add_failed">Thêm không được</string>
-<string name="bullet_comments_outline_radius_title">Bán kính viền của nhận xét dấu đầu dòng</string>
+<string name="bullet_comments_outline_radius_title">Bán kính viền của danmaku</string>
 <string name="top_100">Top 100</string>
 <string name="recommended_videos">Băng hình được đề xuất</string>
 <string name="top_lives">Trực tiếp hàng đầu</string>
@@ -786,12 +784,12 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="login_warning">Mã thông báo chỉ được sử dụng khi cần thiết</string>
 <string name="login_title">Đăng nhập</string>
 <string name="logout_title">Đăng xuất</string>
-<string name="bullet_comments_font_title">Phông chữ dấu đầu dòng bình luận</string>
+<string name="bullet_comments_font_title">Phông chữ của danmaku</string>
 <string name="auto_background_play_title">Chế độ trình phát nhạc</string>
 <string name="auto_background_play_summary">Tự động phát trong chế độ nền khi nhấp vào một mục trong danh sách phát cục bộ</string>
 <string name="download_all">Tải xuống tất cả</string>
 <string name="download_all_message">Hãy đảm bảo rằng bạn đã chọn thư mục tải xuống và cấp quyền truy cập, nếu không quá trình tải xuống sẽ không thành công. Các tệp đã tồn tại sẽ không bị ghi đè. Nếu âm thanh không thể tải xuống riêng biệt thì băng hình tương ứng sẽ được tải xuống.</string>
-<string name="bullet_comments_opacity_title">Độ mờ của dấu đầu dòng bình luận</string>
+<string name="bullet_comments_opacity_title">Độ mờ của danmaku</string>
 <string name="override_cookies_summary">Sử dụng cookie nhập thủ công thay vì thông tin xác thực đã lưu</string>
 <string name="override_cookies_title">Ghi đè cookie</string>
 <string name="override_cookies_value_title">Chỉnh sửa cookie</string>
@@ -807,7 +805,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sort_bookmark">Dấu trang</string>
 <string name="sort_likes">Lượt thích</string>
 <string name="sort_comments">Bình luận</string>
-<string name="sort_bullet_comments">Dấu đầu dòng bình luận</string>
+<string name="sort_bullet_comments">Danmaku</string>
 <string name="sort_length">Độ dài</string>
 <string name="sort_publish_time">Thời điểm xuất bản</string>
 <string name="sort_last_comment_time">Thời điểm bình luận cuối cùng</string>
@@ -870,7 +868,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="decoder_init_failure">Khởi tạo bộ giải mã thất bại</string>
 <string name="unable_to_decode_summary">Thiết bị của bạn thiếu các bộ giải mã phần cứng cần thiết, vì vậy bạn không thể phát video này trong PipePipe. \nVui lòng tải xuống và phát nó trong VLC.</string>
 <string name="settings_category_gestures_summary">Cài đặt cử chỉ</string>
-<string name="settings_category_bullet_comments_summary">Cài đặt bình luận đạn</string>
+<string name="settings_category_bullet_comments_summary">Cài đặt Danmaku</string>
 <string name="settings_category_backup_title">Sao lưu</string>
 <string name="settings_category_advanced_title">Nâng cao</string>
 <string name="anti_bot_youtube_hint">IP của bạn đã bị YouTube chặn. Hãy thử sử dụng VPN hoặc đăng nhập qua Cài đặt để tiếp tục.</string>
@@ -879,8 +877,8 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="preferred_audio_language_title">Ngôn ngữ âm thanh ưu tiên</string>
 <string name="ip_blocked_summary">IP của bạn đã bị YouTube tạm thời chặn. Trong một khoảng thời gian, bạn sẽ gặp sự cố khi phát một số video nhất định. Nếu lỗi vẫn tiếp diễn, vui lòng đăng nhập qua Cài đặt để tiếp tục.</string>
 <string name="settings_category_filter_title">Bộ lọc nội dung</string>
-<string name="filter_by_keyword_title">Lọc theo từ khóa</string>
-<string name="filter_by_keyword_summary">Thêm các từ khóa bạn muốn chặn tại đây, cách nhau bằng dấu phẩy</string>
+<string name="filter_by_keyword_title">Từ khóa bị chặn</string>
+<string name="filter_by_keyword_summary">Ẩn video và các mục khác có tiêu đề chứa bất kỳ từ khóa nào trong số này. Bao quanh một mục bằng dấu gạch chéo (/…/) để sử dụng biểu thức chính quy</string>
 <string name="search_result">Kết quả tìm kiếm</string>
 <string name="filter_field_summary">Áp dụng bộ lọc cho</string>
 <string name="channel_videos">Video của kênh</string>
@@ -944,21 +942,21 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sponsor_block_show_manual_skip_summary">Hiển thị các nút trên màn hình để tự tay bỏ qua/không bỏ qua đoạn. Khuyến nghị bật tính năng này khi cấu hình Danh mục Bỏ Qua của SponsorBlock thành thủ công.</string>
 <string name="video_not_released">Video chưa phát hành.</string>
 <string name="filter_shorts_title">Lọc video ngắn</string>
-<string name="filter_shorts_summary">Xóa video ngắn khỏi kết quả. Chỉ hoạt động cho YouTube.</string>
+<string name="filter_shorts_summary">Ẩn video ngắn khỏi kết quả. Chỉ dành cho YouTube.</string>
 <string name="paid_video">Trả phí</string>
 <string name="share_playlist">Chia sẻ danh sách phát</string>
 <string name="share_playlist_with_titles_message">Chia sẻ danh sách phát với các chi tiết như tên danh sách phát và tiêu đề video hoặc dưới dạng danh sách đơn giản các URL video</string>
 <string name="share_playlist_with_titles">Chia sẻ với tiêu đề</string>
 <string name="share_playlist_with_list">Chia sẻ danh sách URL</string>
 <string name="add_to_filter_list">Thêm kênh vào danh sách chặn</string>
-<string name="add_to_filter_list_confirm">Bạn có muốn thêm %s vào danh sách chặn không?</string>
+<string name="add_to_filter_list_confirm">Thêm \"%s\" vào danh sách chặn?</string>
 <string name="loading_timeout_title">Thời gian chờ tải video</string>
 <string name="loading_timeout_description">Đặt thời gian tối đa được phép chờ thông tin video tải. Nếu việc tải không hoàn thành trong thời gian này, yêu cầu tải sẽ bị hủy và một lỗi rõ ràng sẽ được báo cáo.</string>
 <string name="always_start_from_beginning_title">Luôn bắt đầu phát từ đầu</string>
 <string name="fetch_full_playlist_title">Tải toàn bộ danh sách phát</string>
 <string name="fetch_full_playlist_summary">Tải tất cả nội dung cùng lúc khi mở danh sách phát</string>
 <string name="add_filter">Thêm bộ lọc</string>
-<string name="no_filters">Không có bộ lọc</string>
+<string name="no_filters">Chưa có bộ lọc nào</string>
 <string name="stream_processing_notification_title">Đang xử lý luồng</string>
 <string name="stream_processing_starting">Bắt đầu xử lý luồng...</string>
 <string name="stream_processing_progress">Đang xử lý: %1$d/%2$d</string>
@@ -971,11 +969,11 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="announcement">Thông báo</string>
 <string name="remove_from_group">Xóa khỏi nhóm</string>
 <string name="channel_removed_from_group">Đã xóa khỏi nhóm</string>
-<string name="max_bullet_comments_rows_top_summary">Số hàng tối đa cho nhận xét dạng gạch đầu dòng trên cùng</string>
-<string name="max_bullet_comments_rows_bottom_summary">Số hàng tối đa cho nhận xét dạng gạch đầu dòng dưới cùng</string>
-<string name="max_bullet_comments_rows_regular_summary">Số hàng tối đa cho nhận xét dạng gạch đầu dòng thông thường</string>
+<string name="max_bullet_comments_rows_top_summary">Số hàng tối đa cho danmaku trên</string>
+<string name="max_bullet_comments_rows_bottom_summary">Số hàng tối đa cho danmaku dưới</string>
+<string name="max_bullet_comments_rows_regular_summary">Số hàng tối đa cho danmaku thông thường</string>
 <string name="enable_max_rows_customization_title">Tùy chỉnh Số Hàng Tối Đa</string>
-<string name="enable_max_rows_customization_summary">Bật để tùy chỉnh số hàng tối đa cho nhận xét dạng gạch đầu dòng</string>
+<string name="enable_max_rows_customization_summary">Bật để tùy chỉnh số hàng tối đa cho danmaku</string>
 <string name="always_list_mode_for_bookmark_title">Luôn sử dụng chế độ danh sách cho Dấu trang</string>
 <string name="select_channel_group_prompt">Chọn một nhóm kênh</string>
 <string name="press_back_again_to_exit">Nhấn quay lại lần nữa để thoát</string>
@@ -995,8 +993,8 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="sponsor_block_category_interaction">Nhắc nhở tương tác (Đăng ký)</string>
 <string name="channel_tab_tracks">Bài hát</string>
 <string name="settings_category_youtube_account_title">Tài khoản YouTube</string>
-<string name="filter_by_channel_title">Lọc theo kênh</string>
-<string name="filter_by_channel_summary">Thêm tên kênh bạn muốn chặn vào đây, cách nhau bởi dấu phẩy</string>
+<string name="filter_by_channel_title">Kênh bị chặn</string>
+<string name="filter_by_channel_summary">Ẩn video, danh sách phát và kênh từ các kênh này</string>
 <string name="channel_group_tab_summary">Nhóm kênh</string>
 <string name="pull_to_refresh_title">Kéo để làm mới</string>
 <string name="pull_to_refresh_summary">Bật cử chỉ kéo để làm mới trong nguồn cấp dữ liệu</string>
@@ -1009,7 +1007,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="import_urls_no_valid_urls">Không tìm thấy URL hợp lệ trong tệp đã chọn</string>
 <string name="remove_from_playlist_confirmation">Xóa mục này khỏi danh sách phát?</string>
 <string name="filter_paid_contents_title">Lọc nội dung trả phí</string>
-<string name="filter_paid_contents_summary">Xóa nội dung trả phí khỏi kết quả</string>
+<string name="filter_paid_contents_summary">Ẩn video trả phí và chỉ dành cho hội viên khỏi kết quả</string>
 <string name="local_playlist_swipe_action_title">Hành động vuốt sang phải trong danh sách phát cục bộ</string>
 <string name="search_suggestions_count_title">Số lượng gợi ý tìm kiếm</string>
 <string name="search_suggestions_count_summary">Số lượng gợi ý tìm kiếm trước đây để hiển thị</string>
@@ -1030,8 +1028,8 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="channel_tab_podcasts">Podcast</string>
 <string name="video_tabs_title">Các thẻ video</string>
 <string name="video_tabs_summary">Cấu hình các thẻ sẽ hiển thị trên màn hình chi tiết video</string>
-<string name="filter_future_items_title">Lọc các mục trong tương lai</string>
-<string name="filter_future_items_summary">Loại bỏ các mục được lên lịch phát hành trong tương lai</string>
+<string name="filter_future_items_title">Lọc các mục sắp tới</string>
+<string name="filter_future_items_summary">Ẩn các mục được lên lịch phát hành trong tương lai, chẳng hạn như video công chiếu</string>
 <string name="pin_video_to_top_title">Ghim video lên đầu</string>
 <string name="pin_video_to_top_summary">Giữ video được ghim ở đầu khi cuộn trang chi tiết video</string>
 <string name="settings_category_behavior_title">Hành vi</string>
@@ -1122,7 +1120,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="minimize_gesture_none_description">Đã tắt</string>
 <string name="minimize_gesture_non_fullscreen_description">Chỉ bên ngoài chế độ toàn màn hình</string>
 <string name="minimize_gesture_fullscreen_description">Trong và ngoài chế độ toàn màn hình (tắt cử chỉ vuốt toàn màn hình và tốc độ phát)</string>
-<string name="delete_filter_confirm">Bạn có muốn xóa \"%s\" khỏi danh sách bộ lọc không?</string>
+<string name="delete_filter_confirm">Xóa \"%s\" khỏi danh sách bộ lọc?</string>
 <string name="dearrow_home_page_title">Xem trang web</string>
 <string name="dearrow_home_page_summary">Xem trang web chính thức của DeArrow.</string>
 <string name="dearrow_enable_title">Bật DeArrow</string>
