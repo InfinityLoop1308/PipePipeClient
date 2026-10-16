@@ -1863,4 +1863,5 @@
         <item>@string/name_sort_locale_korean_value</item>
     </string-array>
     <string name="pinch_to_zoom_gesture_control_key" translatable="false">pinch_to_zoom_gesture_control</string>
+        <string name="bullet_comments_chat_mode_key">bullet_comments_chat_mode_key</string>
 </resources>

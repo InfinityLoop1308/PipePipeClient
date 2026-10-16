@@ -130,6 +130,7 @@ class PlayerBroadcastReceiver(private val player: Player) {
                 // Close it because when changing orientation from portrait
                 // (in fullscreen mode) the size of queue layout can be larger than the screen size
                 player.closeItemsList()
+                player.bulletCommentsController.chatPanel.update()
                 // When the orientation changed, the screen height might be smaller.
                 // If the end screen thumbnail is not re-scaled,
                 // it can be larger than the current screen height

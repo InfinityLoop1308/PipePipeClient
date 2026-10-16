@@ -79,6 +79,29 @@
         android:visibility="gone"
         tools:visibility="visible" />
 
+    <FrameLayout
+        android:id="@+id/chatPanel"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:background="#B3000000"
+        android:visibility="gone">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chatPanelList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingVertical="4dp" />
+
+        <include
+            android:id="@+id/chatPanelPinned"
+            layout="@layout/view_chat_pinned"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top" />
+    </FrameLayout>
+
     <!-- transparent background is needed for selectableItemBackgroundBorderless to work -->
     <RelativeLayout
         android:id="@+id/playbackControlRoot"

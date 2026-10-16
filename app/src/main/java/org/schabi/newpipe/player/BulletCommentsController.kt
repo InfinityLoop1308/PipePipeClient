@@ -41,11 +41,33 @@ class BulletCommentsController(private val player: Player) {
     var isVisible = false
         private set
 
+    private val chat = ChatController(player)
+    val chatPanel = ChatPanelController(player)
+
+    /** Whether messages go to the chat tab instead of floating over the video. */
+    val isChatMode: Boolean
+        get() = player.prefs.getBoolean(
+            player.context.getString(R.string.bullet_comments_chat_mode_key),
+            true,
+        )
+
     /**
      * Creates the [MovieBulletCommentsPlayer] for the current stream when its service supports
      * bullet comments, loads the persisted visibility and updates the visibility switch.
      */
     fun init() {
+        if (isChatMode) {
+            bcPlayer?.let {
+                it.disconnect()
+                it.clear()
+            }
+            bcPlayer = null
+            disposeDrawComments()
+            chat.init()
+            chatPanel.update()
+            return
+        }
+        chat.release()
         try {
             val metadata = player.currentMetadata
             if (metadata != null && NewPipe.getService(metadata.serviceId)
@@ -98,6 +120,10 @@ class BulletCommentsController(private val player: Player) {
 
     /** (Re)starts drawing comments from the current playback position. */
     fun start() {
+        if (isChatMode) {
+            chat.start()
+            return
+        }
         val bulletCommentsPlayer = bcPlayer
         if (bulletCommentsPlayer == null || drawCommentsObservable != null || !isVisible) {
             return
@@ -133,6 +159,7 @@ class BulletCommentsController(private val player: Player) {
 
     /** Pauses comment drawing, keeping the current comments on screen. */
     fun pause() {
+        chat.pause()
         val bulletCommentsPlayer = bcPlayer ?: return
         disposeDrawComments()
         bulletCommentsPlayer.pause()
@@ -146,11 +173,16 @@ class BulletCommentsController(private val player: Player) {
      * the periodic poll running.
      */
     fun disconnect() {
+        chat.disconnect()
         bcPlayer?.disconnect()
     }
 
     /** Draws the remaining comments up to the end of the stream and then clears them. */
     fun complete() {
+        if (isChatMode) {
+            chat.pause()
+            return
+        }
         val bulletCommentsPlayer = bcPlayer
         if (bulletCommentsPlayer == null || !isVisible || player.currentMetadata == null) {
             return
@@ -170,6 +202,10 @@ class BulletCommentsController(private val player: Player) {
 
     /** Toggles the visibility of the comments, persisting the choice and updating the icon. */
     fun toggleVisibility() {
+        if (isChatMode) {
+            chatPanel.toggle()
+            return
+        }
         isVisible = !isVisible
         player.prefs.edit().putBoolean(VISIBILITY_PREF_KEY, isVisible).apply()
         player.binding.switchCommentsVisibility.setImageDrawable(
@@ -189,6 +225,8 @@ class BulletCommentsController(private val player: Player) {
 
     /** Disconnects the player from a live extractor and clears its comments. */
     fun destroy() {
+        chat.release()
+        chatPanel.release()
         val bulletCommentsPlayer = bcPlayer
         if (bulletCommentsPlayer != null) {
             bulletCommentsPlayer.disconnect()

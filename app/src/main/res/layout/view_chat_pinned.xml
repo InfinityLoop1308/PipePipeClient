@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/chat_pinned_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/colorBackground"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chat_pinned_list"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:clipToPadding="false"
+        android:paddingHorizontal="4dp"
+        android:paddingVertical="4dp" />
+
+    <FrameLayout
+        android:id="@+id/chat_pinned_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+</LinearLayout>

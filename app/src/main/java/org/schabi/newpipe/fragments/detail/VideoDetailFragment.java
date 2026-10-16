@@ -63,6 +63,7 @@ import org.schabi.newpipe.error.ReCaptchaActivity;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
@@ -95,6 +96,7 @@ import org.schabi.newpipe.player.PlayerUiModeController;
 import org.schabi.newpipe.player.event.OnKeyDownListener;
 import org.schabi.newpipe.player.event.PlayerServiceExtendedEventListener;
 import org.schabi.newpipe.player.helper.PlayerHelper;
+import org.schabi.newpipe.player.chat.ChatStore;
 import org.schabi.newpipe.player.helper.PlayerHolder;
 import org.schabi.newpipe.player.mediasession.PlayerServiceInterface;
 import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
@@ -162,6 +164,7 @@ public final class VideoDetailFragment
     private static final String DESCRIPTION_TAB_TAG = "DESCRIPTION TAB";
     private static final String SPONSOR_BLOCK_TAB_TAG = "SPONSOR_BLOCK TAB";
     private static final String EMPTY_TAB_TAG = "EMPTY TAB";
+    private static final String CHAT_TAB_TAG = "CHAT TAB";
     private static final String VIDEO_TAB_COMMENTS = "comments";
     private static final String VIDEO_TAB_RELATED = "related";
     private static final String VIDEO_TAB_DESCRIPTION = "description";
@@ -735,6 +738,7 @@ public final class VideoDetailFragment
         pageAdapter = new TabAdapter(getChildFragmentManager());
         binding.viewPager.setAdapter(pageAdapter);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
+        ChatStore.INSTANCE.getAvailable().observe(getViewLifecycleOwner(), v -> syncChatTab());
         updateStickyPlayerMode();
 
         binding.detailThumbnailRootLayout.requestFocus();
@@ -1147,6 +1151,7 @@ public final class VideoDetailFragment
             pageAdapter.addFragment(EmptyFragment.newInstance(true), EMPTY_TAB_TAG);
         }
         pageAdapter.notifyDataSetUpdate();
+        syncChatTab();
 
         if (pageAdapter.getCount() >= 2) {
             final int position = pageAdapter.getItemPositionByTitle(selectedTabTag);
@@ -1251,6 +1256,67 @@ public final class VideoDetailFragment
         updateTabLayoutVisibility();
         pageAdapter.notifyDataSetUpdate();
         updateTabIconsAndContentDescriptions();
+        syncChatTab();
+    }
+
+    private boolean shouldShowChat() {
+        if (currentInfo == null || !currentInfo.isSupportBulletComments()) {
+            return false;
+        }
+        try {
+            if (!NewPipe.getService(serviceId).getServiceInfo().getMediaCapabilities()
+                    .contains(StreamingService.ServiceInfo.MediaCapability.BULLET_COMMENTS)) {
+                return false;
+            }
+        } catch (final ExtractionException e) {
+            return false;
+        }
+        // loading the chat found nothing for this stream
+        if (Boolean.FALSE.equals(ChatStore.INSTANCE.getAvailable().getValue())) {
+            return false;
+        }
+        return PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getBoolean(getString(R.string.bullet_comments_chat_mode_key), true);
+    }
+
+    /** Makes the presence of the chat tab match whether the current stream has a chat. */
+    private void syncChatTab() {
+        if (binding == null || pageAdapter == null || !isAdded()) {
+            return;
+        }
+        final boolean want = shouldShowChat();
+        final int index = pageAdapter.getItemPositionByTitle(CHAT_TAB_TAG);
+        final String currentTag = pageAdapter.getCount() == 0 ? null
+                : pageAdapter.getItemTitle(binding.viewPager.getCurrentItem());
+        if (want && index == -1) {
+            final int emptyIndex = pageAdapter.getItemPositionByTitle(EMPTY_TAB_TAG);
+            if (emptyIndex != -1) {
+                pageAdapter.removeItem(emptyIndex);
+            }
+            pageAdapter.addFragment(new ChatFragment(), CHAT_TAB_TAG, 0);
+            tabIcons.add(0, R.drawable.ic_bullet_comment_enabled);
+            tabContentDescriptions.add(0, R.string.chat_tab_description);
+        } else if (!want && index != -1) {
+            pageAdapter.removeItem(index);
+            if (index < tabIcons.size()) {
+                tabIcons.remove(index);
+                tabContentDescriptions.remove(index);
+            }
+            if (pageAdapter.getCount() == 0) {
+                pageAdapter.addFragment(EmptyFragment.newInstance(true), EMPTY_TAB_TAG);
+            }
+        } else {
+            return;
+        }
+        pageAdapter.notifyDataSetUpdate();
+        if (currentTag != null) {
+            final int keep = pageAdapter.getItemPositionByTitle(currentTag);
+            if (keep != -1 && keep != binding.viewPager.getCurrentItem()) {
+                binding.viewPager.setCurrentItem(keep, false);
+            }
+        }
+        updateTabIconsAndContentDescriptions();
+        updateTabLayoutVisibility();
     }
 
     private boolean shouldShowComments() {
@@ -1530,19 +1596,31 @@ public final class VideoDetailFragment
             return;
         }
 
+        // Fullscreen lives outside of the scrolling app bar, otherwise the detail page below
+        // could be scrolled/focused into view while the player is still in fullscreen
+        final boolean fullscreen = player.isFullscreen();
+        final ViewGroup target = fullscreen
+                ? binding.fullscreenPlayerContainer : binding.playerPlaceholder;
+
         // Check if viewHolder already contains a child
-        if (player.getRootView().getParent() != binding.playerPlaceholder) {
+        if (player.getRootView().getParent() != target) {
             playerService.removeViewFromParent();
         }
         setHeightThumbnail();
 
         // Prevent from re-adding a view multiple times
         if (player.getRootView().getParent() == null) {
-            binding.playerPlaceholder.addView(player.getRootView());
+            target.addView(player.getRootView());
             if (currentInfo != null) {
                 player.onMarkSeekbarRequested(currentInfo);
             }
         }
+
+        binding.fullscreenPlayerContainer.setVisibility(fullscreen ? View.VISIBLE : View.GONE);
+        // Keep the DPAD focus from wandering into the hidden detail page
+        final int blockFocus = fullscreen
+                ? ViewGroup.FOCUS_BLOCK_DESCENDANTS : ViewGroup.FOCUS_AFTER_DESCENDANTS;
+        ((ViewGroup) binding.detailMainContent).setDescendantFocusability(blockFocus);
     }
 
     private void removeVideoPlayerView() {

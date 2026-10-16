@@ -51,6 +51,16 @@ public class TabAdapter extends FragmentPagerAdapter {
         notifyDataSetChanged();
     }
 
+    public void addFragment(final Fragment fragment, final String title, final int index) {
+        if (fragmentManager.isStateSaved()) {
+            Log.d("TabAdapter", "This should not happen: addFragment() called after onSaveInstanceState()");
+            return;
+        }
+        mFragmentList.add(index, fragment);
+        mFragmentTitleList.add(index, title);
+        notifyDataSetChanged();
+    }
+
     public void clearAllItems() {
         if(fragmentManager.isStateSaved()){
             Log.d("TabAdapter", "This should not happen: clearAllItems() called after onSaveInstanceState()");
