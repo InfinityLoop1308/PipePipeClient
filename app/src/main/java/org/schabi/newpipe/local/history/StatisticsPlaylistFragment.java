@@ -195,7 +195,10 @@ public class StatisticsPlaylistFragment
             ActionBar actionBar = activity.getSupportActionBar();
             View customView = getLayoutInflater().inflate(R.layout.local_playlist_search_toolbar, null, false);
             assert actionBar != null;
-            actionBar.setCustomView(customView);
+            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setCustomView(customView, new ActionBar.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT));
             actionBar.setDisplayShowCustomEnabled(true);
             editText = activity.findViewById(R.id.toolbar_search_edit_text_local);
             editText.requestFocus();
@@ -489,6 +492,7 @@ public class StatisticsPlaylistFragment
         assert actionBar != null;
         actionBar.setCustomView(null);
         actionBar.setDisplayShowCustomEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(true);
 
         activity.invalidateOptionsMenu();
         

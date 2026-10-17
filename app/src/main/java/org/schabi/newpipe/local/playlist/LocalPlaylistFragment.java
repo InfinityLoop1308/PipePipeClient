@@ -571,7 +571,10 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             ActionBar actionBar = activity.getSupportActionBar();
             View customView = getLayoutInflater().inflate(R.layout.local_playlist_search_toolbar, null, false);
             assert actionBar != null;
-            actionBar.setCustomView(customView);
+            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setCustomView(customView, new ActionBar.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT));
             actionBar.setDisplayShowCustomEnabled(true);
             editText = activity.findViewById(R.id.toolbar_search_edit_text_local);
             editText.requestFocus();
@@ -1470,6 +1473,7 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
         }
         actionBar.setCustomView(null);
         actionBar.setDisplayShowCustomEnabled(false);
+        actionBar.setDisplayShowTitleEnabled(true);
         View searchLocal = activity.findViewById(R.id.action_search_local);
         // they will both be null if back button is pressed
         if(searchLocal != null){

@@ -26,6 +26,7 @@ class ToolbarFilterHelper(
         val actionBar = activity.supportActionBar ?: return
         val customView = LayoutInflater.from(activity)
             .inflate(R.layout.local_playlist_search_toolbar, null, false)
+        actionBar.setDisplayShowTitleEnabled(false)
         actionBar.setCustomView(
             customView,
             ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT)
@@ -60,6 +61,7 @@ class ToolbarFilterHelper(
         }
         actionBar.customView = null
         actionBar.setDisplayShowCustomEnabled(false)
+        actionBar.setDisplayShowTitleEnabled(true)
         activity.invalidateOptionsMenu()
         onFilterChanged("")
         val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
