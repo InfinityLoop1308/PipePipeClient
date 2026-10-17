@@ -155,7 +155,12 @@ class PlayerLayoutController(private val player: Player) {
                 AppCompatResources.getDrawable(player.context, R.drawable.ic_expand_more)
             )
             binding.share.visibility = View.VISIBLE
-            binding.switchCommentsVisibility.visibility = View.VISIBLE
+            binding.switchCommentsVisibility.visibility =
+                if (player.bulletCommentsController.isChatMode) {
+                    player.bulletCommentsController.chatPanel.buttonVisibility()
+                } else {
+                    View.VISIBLE
+                }
             binding.openInBrowser.visibility = View.VISIBLE
             binding.sleepTimer.visibility = View.VISIBLE
             binding.switchMute.visibility = View.VISIBLE

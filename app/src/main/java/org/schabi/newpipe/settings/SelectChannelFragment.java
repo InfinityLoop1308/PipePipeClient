@@ -3,6 +3,8 @@ package org.schabi.newpipe.settings;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -22,7 +24,9 @@ import org.schabi.newpipe.local.subscription.SubscriptionManager;
 import org.schabi.newpipe.util.PicassoHelper;
 import org.schabi.newpipe.util.ThemeHelper;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Vector;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -60,7 +64,10 @@ public class SelectChannelFragment extends DialogFragment {
     private TextView emptyView;
     private RecyclerView recyclerView;
 
+    private List<SubscriptionEntity> allSubscriptions = new Vector<>();
     private List<SubscriptionEntity> subscriptions = new Vector<>();
+    private SelectChannelAdapter channelAdapter;
+    private String filterQuery = "";
 
     public void setOnSelectedListener(final OnSelectedListener listener) {
         onSelectedListener = listener;
@@ -86,8 +93,24 @@ public class SelectChannelFragment extends DialogFragment {
         final View v = inflater.inflate(R.layout.select_channel_fragment, container, false);
         recyclerView = v.findViewById(R.id.items_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        final SelectChannelAdapter channelAdapter = new SelectChannelAdapter();
+        channelAdapter = new SelectChannelAdapter();
         recyclerView.setAdapter(channelAdapter);
+
+        ((TextView) v.findViewById(R.id.filter_input)).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(final CharSequence s, final int st, final int c,
+                                          final int a) { }
+
+            @Override
+            public void onTextChanged(final CharSequence s, final int st, final int b,
+                                      final int c) { }
+
+            @Override
+            public void afterTextChanged(final Editable s) {
+                filterQuery = s.toString().trim().toLowerCase(Locale.ROOT);
+                applyFilter();
+            }
+        });
 
         progressBar = v.findViewById(R.id.progressBar);
         emptyView = v.findViewById(R.id.empty_state_view);
@@ -131,14 +154,23 @@ public class SelectChannelFragment extends DialogFragment {
     //////////////////////////////////////////////////////////////////////////*/
 
     private void displayChannels(final List<SubscriptionEntity> newSubscriptions) {
-        this.subscriptions = newSubscriptions;
+        this.allSubscriptions = newSubscriptions;
         progressBar.setVisibility(View.GONE);
-        if (newSubscriptions.isEmpty()) {
-            emptyView.setVisibility(View.VISIBLE);
-            return;
-        }
-        recyclerView.setVisibility(View.VISIBLE);
+        applyFilter();
+    }
 
+    private void applyFilter() {
+        final List<SubscriptionEntity> filtered = new ArrayList<>();
+        for (final SubscriptionEntity e : allSubscriptions) {
+            if (filterQuery.isEmpty() || (e.getName() != null
+                    && e.getName().toLowerCase(Locale.ROOT).contains(filterQuery))) {
+                filtered.add(e);
+            }
+        }
+        subscriptions = filtered;
+        channelAdapter.notifyDataSetChanged();
+        emptyView.setVisibility(filtered.isEmpty() ? View.VISIBLE : View.GONE);
+        recyclerView.setVisibility(filtered.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     private Observer<List<SubscriptionEntity>> getSubscriptionObserver() {

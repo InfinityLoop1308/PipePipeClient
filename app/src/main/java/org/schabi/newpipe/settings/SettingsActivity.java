@@ -64,6 +64,7 @@ import java.util.concurrent.TimeUnit;
 public class SettingsActivity extends AppCompatActivity implements
         PreferenceFragmentCompat.OnPreferenceStartFragmentCallback,
         PreferenceSearchResultListener {
+    public static final String EXTRA_CONTENT_FILTER = "content_filter";
     private static final String TAG = "SettingsActivity";
     private static final boolean DEBUG = MainActivity.DEBUG;
 
@@ -111,7 +112,9 @@ public class SettingsActivity extends AppCompatActivity implements
             }
         } else {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.settings_fragment_holder, new MainSettingsFragment())
+                    .replace(R.id.settings_fragment_holder,
+                            getIntent().getBooleanExtra(EXTRA_CONTENT_FILTER, false)
+                                    ? new FilterSettingsFragment() : new MainSettingsFragment())
                     .commit();
         }
 

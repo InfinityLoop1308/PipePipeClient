@@ -876,13 +876,8 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="image_quality_low">Низкое</string>
     <string name="image_quality_medium">Среднее</string>
     <string name="image_quality_high">Высокое</string>
-    <string name="regular_bullet_comments_duration_summary">Изменение длительности отображения обычных/бегущих комментариев. Слишком малая длительность может привести к подергиваниям или лагам</string>
-    <string name="regular_bullet_comments_duration_title">Время отображения комментариев</string>
-    <string name="top_bottom_bullet_comments_duration_summary">Изменение длительности отображения закрепленных сверху и снизу комментариев. </string>
-    <string name="top_bottom_bullet_comments_duration_title">Длительность верхних/нижних комментариев</string>
     <string name="append_playlist_not_supported">Это бесконечный плейлист, его нельзя добавить в другие списки воспроизведения.</string>
     <string name="add_failed">Ошибка добавления</string>
-    <string name="bullet_comments_outline_radius_title">Радиус контура комментариев</string>
     <string name="top_100">Тор 100</string>
     <string name="recommended_videos">Рекомендованые видео</string>
     <string name="top_lives">Популярные трансляции</string>
@@ -896,7 +891,6 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="login_warning">Токены будут использоваться только при необходимости</string>
     <string name="login_title">Войти</string>
     <string name="logout_title">Выйти</string>
-    <string name="bullet_comments_font_title">Шрифт комментариев</string>
     <string name="auto_background_play_title">Режим музыкального плеера</string>
     <string name="auto_background_play_summary">Автоматически запускать видео в фоновом режиме при выборе в локальном плейлисте</string>
     <string name="download_all">Скачать всё</string>
@@ -904,7 +898,6 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="import_urls_from_file">Импортировать ссылки из файла</string>
     <string name="import_urls_error">Ошибка при импорте ссылок: %s</string>
     <string name="import_urls_no_valid_urls">В выбранном файле не найдено подходящих ссылок</string>
-    <string name="bullet_comments_opacity_title">Прозрачность комментариев</string>
     <string name="override_cookies_summary">Использовать введенные вручную cookies вместо сохраненных учетных данных</string>
     <string name="override_cookies_title">Переопределить cookies</string>
     <string name="override_cookies_value_title">Редактировать cookies</string>
@@ -920,7 +913,6 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="sort_bookmark">Закладкам</string>
     <string name="sort_likes">Лайкам</string>
     <string name="sort_comments">Комментариям</string>
-    <string name="sort_bullet_comments">Даммаку (бегущим комментариям)</string>
     <string name="sort_length">Длительности</string>
     <string name="sort_publish_time">Дате публикации</string>
     <string name="sort_last_comment_time">Дате последнего комментария</string>
@@ -940,8 +932,6 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="ai_subtitle">Получение сведений о потоке (для ИИ-субтитров)</string>
     <string name="cookie_functions_title">Управление доступом</string>
     <string name="navigate_to">Навигация</string>
-    <string name="sort_name">По названию</string>
-    <string name="sort_name_reverse">По названию (в обратном порядке)</string>
     <string name="sort_origin">Исходный порядок</string>
     <string name="sort_origin_reverse">Исходный порядок (в обратном порядке)</string>
     <string name="dialog_title_enable_update_checker">Проверка обновлений</string>
@@ -987,7 +977,6 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="unable_to_decode_summary">Ваше устройство не поддерживает необходимые аппаратные декодеры, поэтому PipePipe не может воспроизвести это видео.
 Пожалуйста, скачайте его и откройте через сторонний плеер (например, VLC).</string>
     <string name="settings_category_gestures_summary">Настройки жестов</string>
-    <string name="settings_category_bullet_comments_summary">Настройки комментариев над видео</string>
     <string name="settings_category_backup_title">Резервная копия</string>
     <string name="settings_category_advanced_title">Дополнительно</string>
     <string name="anti_bot_youtube_hint">Ваш IP-адрес заблокирован YouTube. Попробуйте использовать VPN или войдите в аккаунт через Настройки.</string>
@@ -998,12 +987,7 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="preferred_audio_language_title">Предпочтительный язык аудио</string>
     <string name="ip_blocked_summary">Ваш IP-адрес временно заблокирован YouTube. В течение некоторого времени могут возникать проблемы при воспроизведении некоторых видео. Если ошибка повторится, войдите в аккаунт через Настройки, чтобы продолжить.</string>
     <string name="settings_category_filter_title">Фильтр контента</string>
-    <string name="filter_by_keyword_title">Фильтр по ключевым словам</string>
-    <string name="filter_by_channel_title">Фильтр по каналам</string>
-    <string name="filter_by_keyword_summary">Добавьте ключевые слова, которые нужно скрывать, разделяя их запятыми</string>
-    <string name="filter_by_channel_summary">Добавьте названия каналов, которые нужно скрывать, разделяя их запятыми</string>
     <string name="search_result">Результаты поиска</string>
-    <string name="filter_field_summary">Применить фильтрацию для</string>
     <string name="channel_videos">Видео канала</string>
     <string name="success">Успешно</string>
     <string name="settings_category_proxy_title">Прокси (для спонсоров)</string>
@@ -1022,23 +1006,16 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="show_dislike_title">Показывать количество дизлайков</string>
     <string name="video_not_released">Видео ещё не вышло.</string>
     <string name="filter_shorts_title">Фильтр коротких видео</string>
-    <string name="filter_shorts_summary">Скрывает короткие видео из результатов. Работает только для YouTube.</string>
-    <string name="filter_paid_contents_title">Фильтр платного контента</string>
-    <string name="filter_paid_contents_summary">Скрывает платный контент из результатов</string>
     <string name="paid_video">Платно</string>
     <string name="share_playlist">Поделиться плейлистом</string>
     <string name="share_playlist_with_titles_message">Поделиться плейлистом с подробностями (название и заголовки видео) или просто списком ссылок</string>
     <string name="share_playlist_with_titles">С названиями видео</string>
     <string name="share_playlist_with_list">Только ссылки</string>
-    <string name="add_to_filter_list">Добавить канал в чёрный список</string>
-    <string name="add_to_filter_list_confirm">Вы действительно хотите добавить %s в чёрный список?</string>
     <string name="loading_timeout_title">Тайм-аут загрузки видео</string>
     <string name="loading_timeout_description">Задайте максимальное время ожидания загрузки информации о видео. Если загрузка не завершится в течение этого времени, запрос будет отменён и отобразится сообщение об ошибке.</string>
     <string name="always_start_from_beginning_title">Всегда начинать с начала</string>
     <string name="fetch_full_playlist_title">Полная загрузка плейлиста</string>
     <string name="fetch_full_playlist_summary">Загружать всё содержимое сразу при открытии плейлистов</string>
-    <string name="add_filter">Добавить фильтр</string>
-    <string name="no_filters">Нет фильтров</string>
     <string name="stream_processing_notification_title">Обработка потоков</string>
     <string name="stream_processing_starting">Запуск обработки потоков...</string>
     <string name="stream_processing_progress">Обработано: %1$d из %2$d</string>
@@ -1051,11 +1028,7 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="announcement">Анонс</string>
     <string name="remove_from_group">Удалить из группы</string>
     <string name="channel_removed_from_group">Удален из группы</string>
-    <string name="max_bullet_comments_rows_top_summary">Макс. строк для верхних комментариев</string>
-    <string name="max_bullet_comments_rows_bottom_summary">Макс. строк для нижних комментариев</string>
-    <string name="max_bullet_comments_rows_regular_summary">Макс. строк для обычных комментариев</string>
     <string name="enable_max_rows_customization_title">Изменение числа строк</string>
-    <string name="enable_max_rows_customization_summary">Разрешить настройку макс. количества строк</string>
     <string name="press_back_again_to_exit">Нажмите назад еще раз, чтобы выйти</string>
     <string name="always_list_mode_for_bookmark_title">Всегда использовать список для закладок</string>
     <string name="select_channel_group_prompt">Выберите группу каналов</string>
@@ -1094,8 +1067,6 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="channel_tab_podcasts">Подкасты</string>
     <string name="pin_video_to_top_title">Закрепить видео сверху</string>
     <string name="pin_video_to_top_summary">Оставлять видео закрепленным сверху при прокрутке страницы</string>
-    <string name="filter_future_items_title">Фильтровать будущие публикации</string>
-    <string name="filter_future_items_summary">Скрывать из списка видео, запланированные на будущее</string>
     <string name="force_end_on_overtime_title">Принудительное завершение при превышении времени</string>
     <string name="force_end_on_overtime_summary">Принудительно останавливать воспроизведение, если текущая позиция превышает длительность потока. Используется для обхода проблемы со стримами, которые не завершаются сами.</string>
     <string name="use_old_search_filter_title">Старый фильтр поиска</string>
@@ -1128,7 +1099,6 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="export_data_to_newpipe_summary">Экспорт резервной копии в формате, совместимом с NewPipe</string>
     <string name="settings_category_other_platforms_title">Другие платформы</string>
     <string name="youtube_player_client_title">Метод извлечения данных YouTube</string>
-    <string name="webview_unavailable_youtube_hint">WebView недоступен. Убедитесь, что версия WebView выше 80.\n\nAndroid 6 и 10: обновите Android System WebView в Play Маркете.\nAndroid 7, 8 и 9: обновите Chrome в Play Маркете.\nДругие версии: этого не должно было произойти. Пожалуйста, сообщите об ошибке на GitHub.</string>
     <string name="sabr_backoff_notification_channel_name">Ожидание воспроизведения YouTube</string>
     <string name="sabr_backoff_notification_channel_description">Уведомления, когда YouTube требует ожидания запроса на воспроизведение</string>
     <string name="sabr_backoff_notification_title">Ожидание ответа YouTube</string>

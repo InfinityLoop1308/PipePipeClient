@@ -233,6 +233,7 @@ public class BackupSettingsFragment extends BasePreferenceFragment {
             if (!manager.extractDb(file)) {
                 Toast.makeText(getContext(), R.string.could_not_import_all_files, Toast.LENGTH_LONG)
                         .show();
+                return;
             }
 
             // if settings file exist, ask if it should be imported.

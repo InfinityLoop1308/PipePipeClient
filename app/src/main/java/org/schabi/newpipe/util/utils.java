@@ -3,6 +3,10 @@ package org.schabi.newpipe.util;
 import org.schabi.newpipe.database.playlist.PlaylistStreamEntry;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 
+import androidx.preference.PreferenceManager;
+import org.schabi.newpipe.App;
+import org.schabi.newpipe.R;
+
 import java.text.Collator;
 import java.text.RuleBasedCollator;
 import java.util.Locale;
@@ -34,6 +38,14 @@ public class utils {
                 return SortMode.SORT_NAME;
             case "SORT_NAME_REVERSE":
                 return SortMode.SORT_NAME_REVERSE;
+            case "UPLOAD_DATE":
+                return SortMode.UPLOAD_DATE;
+            case "UPLOAD_DATE_REVERSE":
+                return SortMode.UPLOAD_DATE_REVERSE;
+            case "DURATION":
+                return SortMode.DURATION;
+            case "DURATION_REVERSE":
+                return SortMode.DURATION_REVERSE;
             default:
                 return SortMode.ORIGIN;
         }
@@ -46,6 +58,10 @@ public class utils {
                 return queue.size() - item.getJoinIndex() - 1;
             case SORT_NAME:
             case SORT_NAME_REVERSE:
+            case UPLOAD_DATE:
+            case UPLOAD_DATE_REVERSE:
+            case DURATION:
+            case DURATION_REVERSE:
                 int result = -1;
                 for(int i = 0; i < queue.getStreams().size(); i++){
                     if(queue.getStreams().get(i).getUrl().equals(item.getStreamEntity().getUrl())){
@@ -65,6 +81,27 @@ public class utils {
     public static int compareChineseStrings(String str1, String str2) {
         Collator collator = Collator.getInstance(Locale.CHINESE);
         return collator.compare(str1, str2);
+    }
+    /** Compares names according to the "name sorting order" setting. */
+    public static int compareNames(String str1, String str2) {
+        final App app = App.getApp();
+        final String key = app.getString(R.string.name_sort_locale_key);
+        final String value = PreferenceManager.getDefaultSharedPreferences(app)
+                .getString(key, app.getString(R.string.name_sort_locale_english_value));
+        if (str1 == null) {
+            str1 = "";
+        }
+        if (str2 == null) {
+            str2 = "";
+        }
+        if (app.getString(R.string.name_sort_locale_english_value).equals(value)) {
+            return String.CASE_INSENSITIVE_ORDER.compare(str1, str2);
+        } else if (app.getString(R.string.name_sort_locale_japanese_value).equals(value)) {
+            return compareJapaneseStrings(str1, str2);
+        } else if (app.getString(R.string.name_sort_locale_korean_value).equals(value)) {
+            return Collator.getInstance(Locale.KOREAN).compare(str1, str2);
+        }
+        return compareChineseStrings(str1, str2);
     }
 
     public static String convertDateToYYYYMMDD(String yymmdd) {

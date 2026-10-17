@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.content.res.AppCompatResources
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.video.VideoSize
 import org.schabi.newpipe.R
 import org.schabi.newpipe.player.helper.PlayerHelper
@@ -99,6 +98,7 @@ class PlayerUiModeController(private val player: Player) {
         // Pinch zoom is fullscreen-only and never survives either direction of the transition.
         player.gestureController.resetPinchZoom()
         if (!isFullscreen) {
+            player.controlsVisibilityController.setLocked(false)
             // Apply window insets because Android will not do it when orientation changes
             // from landscape to portrait (open vertical video to reproduce)
             player.binding.playbackControlRoot.setPadding(0, 0, 0, 0)
@@ -107,6 +107,7 @@ class PlayerUiModeController(private val player: Player) {
             player.hideControls(0L, 0L)
         }
         player.listeners.onFullscreenStateChanged(isFullscreen)
+        player.bulletCommentsController.chatPanel.update()
         // The detail fragment moves the layout to another parent from that callback and the
         // surface is recreated around the rotation, which drops the rendered subtitles. The
         // first frame of the new surface redraws them where it exists; this covers the devices
@@ -236,14 +237,7 @@ class PlayerUiModeController(private val player: Player) {
 
     /** Restore the look that belongs to the main video player: scaling mode and full size root. */
     fun initVideoPlayer() {
-        // Pinch zoom owns video scaling while enabled; otherwise restore the regular display mode.
-        player.menuController.setResizeMode(
-            if (PlayerHelper.isPinchToZoomEnabled(player.context)) {
-                AspectRatioFrameLayout.RESIZE_MODE_FIT
-            } else {
-                PlayerHelper.retrieveResizeModeFromPrefs(player)
-            }
-        )
+        player.menuController.setResizeMode(PlayerHelper.retrieveResizeModeFromPrefs(player))
         player.binding.surfaceView.resetPinchScale()
         player.binding.root.layoutParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT
@@ -254,6 +248,9 @@ class PlayerUiModeController(private val player: Player) {
         val binding = player.binding
         binding.screenRotationButton.visibility =
             if (player.videoPlayerSelected()) View.VISIBLE else View.GONE
+        if (!player.videoPlayerSelected() || !isFullscreen) {
+            binding.lockButton.visibility = View.GONE
+        }
         binding.screenRotationButton.setImageDrawable(
             AppCompatResources.getDrawable(
                 player.context,

@@ -1602,6 +1602,14 @@ public final class Player {
     }
 
     @NonNull
+    public boolean isScreenLocked() {
+        return controlsVisibilityController.isLocked();
+    }
+
+    public void showUnlockButtonTemporarily() {
+        controlsVisibilityController.showUnlockButtonTemporarily();
+    }
+
     PlayerControlsVisibilityController getControlsVisibilityController() {
         return controlsVisibilityController;
     }

@@ -23,7 +23,8 @@ import org.schabi.newpipe.player.helper.PlayerDataSource;
 import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.player.mediaitem.MediaItemQuality;
-import org.schabi.newpipe.util.ListHelper;
+import org.schabi.newpipe.util.AudioStreamSelector;
+import org.schabi.newpipe.util.VideoStreamSelector;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.google.android.exoplayer2.C.TIME_UNSET;
-import static org.schabi.newpipe.util.ListHelper.*;
+import static org.schabi.newpipe.util.StreamFilters.*;
 
 public class VideoPlaybackResolver implements PlaybackResolver {
 
@@ -97,7 +98,7 @@ public class VideoPlaybackResolver implements PlaybackResolver {
         }
 
         // Create video stream source
-        List<VideoStream> videos = ListHelper.getSortedStreamVideosList(context,
+        List<VideoStream> videos = VideoStreamSelector.getSortedStreamVideosList(context,
                 videoStreams, videoOnlyStreams, false, true)
                 .stream().filter(s -> !blacklistUrls.contains(s.getContent())).collect(Collectors.toList());
 
@@ -112,9 +113,9 @@ public class VideoPlaybackResolver implements PlaybackResolver {
             final boolean hasVideoAudioTracks = videos.stream()
                     .anyMatch(s -> s.getAudioTrackId() != null);
             if (hasVideoAudioTracks) {
-                final List<AudioStream> allAudioStreams = ListHelper.getFilteredAudioStreams(
+                final List<AudioStream> allAudioStreams = AudioStreamSelector.getFilteredAudioStreams(
                         context, info.getAudioStreams());
-                final int defaultIdx = ListHelper.getDefaultAudioFormat(context, allAudioStreams);
+                final int defaultIdx = AudioStreamSelector.getDefaultAudioFormat(context, allAudioStreams);
                 if (defaultIdx >= 0 && defaultIdx < allAudioStreams.size()) {
                     final String defaultTrackId = allAudioStreams.get(defaultIdx).getAudioTrackId();
                     if (defaultTrackId != null) {
@@ -165,11 +166,11 @@ public class VideoPlaybackResolver implements PlaybackResolver {
         }
 
         // Create optional audio stream source
-        final List<AudioStream> audioStreams = ListHelper.getFilteredAudioStreams(context,
+        final List<AudioStream> audioStreams = AudioStreamSelector.getFilteredAudioStreams(context,
                 info.getAudioStreams()
                         .stream().filter(s -> !blacklistUrls.contains(s.getContent()))
                         .collect(Collectors.toList()));
-        final int audioIndex = ListHelper.getAudioFormatIndex(context, audioStreams, audioTrack);
+        final int audioIndex = AudioStreamSelector.getAudioFormatIndex(context, audioStreams, audioTrack);
         final AudioStream audio = audioStreams.isEmpty() || audioIndex == -1
                 ? null : audioStreams.get(audioIndex);
 
@@ -204,7 +205,7 @@ public class VideoPlaybackResolver implements PlaybackResolver {
         final List<SubtitlesStream> subtitlesStreams = info.getSubtitles();
         if (subtitlesStreams != null) {
             // Torrent and non URL subtitles are not supported by ExoPlayer
-            final List<SubtitlesStream> nonTorrentAndUrlStreams = removeNonUrlAndTorrentStreams(
+            final List<SubtitlesStream> nonTorrentAndUrlStreams = removeTorrentStreams(
                     subtitlesStreams);
             for (final SubtitlesStream subtitle : nonTorrentAndUrlStreams) {
                 final MediaFormat mediaFormat = subtitle.getFormat();

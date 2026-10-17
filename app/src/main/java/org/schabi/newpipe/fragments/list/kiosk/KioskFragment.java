@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -22,6 +23,7 @@ import org.schabi.newpipe.extractor.kiosk.KioskInfo;
 import org.schabi.newpipe.extractor.linkhandler.ListLinkHandlerFactory;
 import org.schabi.newpipe.extractor.localization.ContentCountry;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
+import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.fragments.list.BaseListInfoFragment;
 import org.schabi.newpipe.util.ExtractorHelper;
 import org.schabi.newpipe.util.KioskTranslator;
@@ -53,7 +55,9 @@ import io.reactivex.rxjava3.core.Single;
  * </p>
  */
 
-public class KioskFragment extends BaseListInfoFragment<StreamInfoItem, KioskInfo> {
+public class KioskFragment extends BaseListInfoFragment<StreamInfoItem, KioskInfo>
+        implements BackPressable {
+
     String kioskId = "";
     String kioskTranslatedName;
     ContentCountry contentCountry;
@@ -144,6 +148,21 @@ public class KioskFragment extends BaseListInfoFragment<StreamInfoItem, KioskInf
         if (supportActionBar != null && useAsFrontPage) {
             supportActionBar.setDisplayHomeAsUpEnabled(false);
         }
+        inflater.inflate(R.menu.menu_kiosk, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
+        if (item.getItemId() == R.id.action_search_local) {
+            openLocalFilter();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return closeLocalFilterOnBack();
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -171,5 +190,10 @@ public class KioskFragment extends BaseListInfoFragment<StreamInfoItem, KioskInf
 
         name = kioskTranslatedName;
         setTitle(kioskTranslatedName);
+    }
+
+    @Override
+    protected boolean supportsMultiSelect() {
+        return true;
     }
 }

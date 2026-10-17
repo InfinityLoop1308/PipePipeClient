@@ -60,7 +60,7 @@ import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.player.playqueue.PlayQueue;
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue;
 import org.schabi.newpipe.util.DeviceUtils;
-import org.schabi.newpipe.util.ListHelper;
+import org.schabi.newpipe.util.StreamDataLimit;
 
 import java.lang.annotation.Retention;
 import java.text.DecimalFormat;
@@ -342,13 +342,7 @@ public final class PlayerHelper {
 
     public static boolean isPinchToZoomEnabled(@NonNull final Context context) {
         return getPreferences(context)
-                .getBoolean(context.getString(R.string.pinch_to_zoom_key), false);
-    }
-
-    public static void setPinchToZoomEnabled(@NonNull final Context context,
-                                              final boolean enabled) {
-        getPreferences(context).edit()
-                .putBoolean(context.getString(R.string.pinch_to_zoom_key), enabled).apply();
+                .getBoolean(context.getString(R.string.pinch_to_zoom_gesture_control_key), true);
     }
 
     public static boolean isSwipeSeekGestureEnabled(@NonNull final Context context) {
@@ -421,7 +415,7 @@ public final class PlayerHelper {
             case PlayerHelper.AutoplayType.AUTOPLAY_TYPE_NEVER:
                 return false;
             case PlayerHelper.AutoplayType.AUTOPLAY_TYPE_WIFI:
-                return !ListHelper.isMeteredNetwork(context);
+                return !StreamDataLimit.isMeteredNetwork(context);
             case PlayerHelper.AutoplayType.AUTOPLAY_TYPE_ALWAYS:
             default:
                 return true;
@@ -560,6 +554,11 @@ public final class PlayerHelper {
     @NonNull
     private static SharedPreferences getPreferences(@NonNull final Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
+    }
+
+    public static boolean getSeekInsteadOfSkip(@NonNull final Context context) {
+        return getPreferences(context)
+                .getBoolean(context.getString(R.string.seek_on_media_button_events_key), false);
     }
 
     private static boolean isUsingInexactSeek(@NonNull final Context context) {

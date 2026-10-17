@@ -5,10 +5,12 @@ import static org.schabi.newpipe.util.TimeUtils.millisecondsToString;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -95,10 +97,28 @@ public class SponsorBlockFragment
                 doMarkPendingSegment(true));
         binding.sponsorBlockControlsMarkSegmentEnd.setOnClickListener(v ->
                 doMarkPendingSegment(false));
-        binding.sponsorBlockControlsSegmentStart.setOnClickListener(v ->
-                doPendingSegmentSeek(true));
-        binding.sponsorBlockControlsSegmentEnd.setOnClickListener(v ->
-                doPendingSegmentSeek(false));
+        binding.sponsorBlockControlsSegmentStart.setOnClickListener(v -> {
+            if (markedStartTime == null) {
+                showTimeInputDialog(true);
+            } else {
+                doPendingSegmentSeek(true);
+            }
+        });
+        binding.sponsorBlockControlsSegmentEnd.setOnClickListener(v -> {
+            if (markedEndTime == null) {
+                showTimeInputDialog(false);
+            } else {
+                doPendingSegmentSeek(false);
+            }
+        });
+        binding.sponsorBlockControlsSegmentStart.setOnLongClickListener(v -> {
+            showTimeInputDialog(true);
+            return true;
+        });
+        binding.sponsorBlockControlsSegmentEnd.setOnLongClickListener(v -> {
+            showTimeInputDialog(false);
+            return true;
+        });
         binding.sponsorBlockControlsClearSegment.setOnClickListener(v ->
                 doClearPendingSegment());
         binding.sponsorBlockControlsSubmitSegment.setOnClickListener(v ->
@@ -211,6 +231,94 @@ public class SponsorBlockFragment
         Toast.makeText(getContext(),
                 message,
                 Toast.LENGTH_SHORT).show();
+    }
+
+    private void showTimeInputDialog(final boolean isStart) {
+        final Context context = requireContext();
+        final Integer existing = isStart ? markedStartTime : markedEndTime;
+        final EditText input = new EditText(context);
+        input.setSingleLine(true);
+        input.setHint(R.string.sponsor_block_time_input_hint);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        final int initial = existing != null ? existing : Math.max(currentProgress, 0);
+        input.setText(millisecondsToString(initial));
+        input.selectAll();
+
+        final AlertDialog dialog = new AlertDialog.Builder(context)
+                .setTitle(isStart ? R.string.sponsor_block_enter_start_time
+                        : R.string.sponsor_block_enter_end_time)
+                .setView(input)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.ok, null)
+                .create();
+        dialog.setOnShowListener(d ->
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                    final Integer millis = parseTimeToMillis(input.getText().toString());
+                    if (millis == null) {
+                        Toast.makeText(context, R.string.sponsor_block_invalid_time_toast,
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (applyMarkedTime(isStart, millis)) {
+                        dialog.dismiss();
+                    }
+                }));
+        dialog.show();
+    }
+
+    @Nullable
+    private static Integer parseTimeToMillis(final String text) {
+        final String[] parts = text.trim().split(":", -1);
+        if (parts.length < 1 || parts.length > 3) {
+            return null;
+        }
+        try {
+            double seconds = 0;
+            for (int i = 0; i < parts.length; i++) {
+                final String part = parts[i].trim();
+                if (part.isEmpty() || part.startsWith("-") || part.startsWith("+")) {
+                    return null;
+                }
+                final boolean last = i == parts.length - 1;
+                if (!last && !part.matches("\\d+")) {
+                    return null;
+                }
+                seconds = seconds * 60 + Double.parseDouble(part);
+            }
+            final double millis = seconds * 1000;
+            if (Double.isNaN(millis) || millis > Integer.MAX_VALUE) {
+                return null;
+            }
+            return (int) Math.round(millis);
+        } catch (final NumberFormatException e) {
+            return null;
+        }
+    }
+
+    /** Applies a manually entered time; returns false if it was rejected. */
+    private boolean applyMarkedTime(final boolean isStart, final int millis) {
+        if (isStart) {
+            if (markedEndTime != null && millis > markedEndTime) {
+                Toast.makeText(getContext(), R.string.sponsor_block_invalid_start_toast,
+                        Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            markedStartTime = millis;
+        } else {
+            if (markedStartTime != null && millis < markedStartTime) {
+                Toast.makeText(getContext(), R.string.sponsor_block_invalid_end_toast,
+                        Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            markedEndTime = millis;
+        }
+        updatePendingSegmentUI();
+        if (markedStartTime != null && markedEndTime != null
+                && sponsorBlockFragmentListener != null) {
+            sponsorBlockFragmentListener.onRequestNewPendingSegment(
+                    markedStartTime, markedEndTime);
+        }
+        return true;
     }
 
     @SuppressLint("SetTextI18n")

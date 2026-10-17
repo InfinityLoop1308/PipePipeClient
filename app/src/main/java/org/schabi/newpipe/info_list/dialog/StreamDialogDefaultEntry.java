@@ -1,5 +1,6 @@
 package org.schabi.newpipe.info_list.dialog;
 
+import org.schabi.newpipe.extractor.utils.ServiceScopedId;
 import static org.schabi.newpipe.util.NavigationHelper.openChannelFragment;
 import static org.schabi.newpipe.util.SparseItemUtil.fetchItemInfoIfSparse;
 import static org.schabi.newpipe.util.SparseItemUtil.fetchStreamInfoAndSaveToDatabase;
@@ -16,6 +17,13 @@ import androidx.annotation.StringRes;
 
 import androidx.preference.PreferenceManager;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.database.subscription.SubscriptionEntity;
+import org.schabi.newpipe.error.ErrorInfo;
+import org.schabi.newpipe.error.ErrorUtil;
+import org.schabi.newpipe.error.UserAction;
+import org.schabi.newpipe.local.subscription.SubscriptionManager;
+import org.schabi.newpipe.util.ExtractorHelper;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.download.DownloadDialog;
 import org.schabi.newpipe.local.dialog.PlaylistAppendDialog;
@@ -151,26 +159,33 @@ public enum StreamDialogDefaultEntry {
     ),
 
     ADD_TO_FILTER_LIST(R.string.add_to_filter_list, (fragment, item) -> {
+        final android.content.Context appContext = fragment.requireContext()
+                .getApplicationContext();
         // Create confirmation dialog
         new AlertDialog.Builder(fragment.requireContext())
                 .setMessage(fragment.getString(R.string.add_to_filter_list_confirm, item.getUploaderName()))
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                     // User confirmed - execute blocking logic
                     final SharedPreferences pref = PreferenceManager
-                            .getDefaultSharedPreferences(fragment.requireContext());
+                            .getDefaultSharedPreferences(appContext);
                     // Get the key from string resources
-                    String filterKey = fragment.requireContext().getString(R.string.filter_by_channel_key) + "_set";
+                    final String channelId = ServiceScopedId.of(item.getServiceId(),
+                            item.getUploaderId());
+                    final boolean byId = channelId != null;
+                    String filterKey = appContext.getString(byId
+                            ? R.string.filter_by_channel_id_key
+                            : R.string.filter_by_channel_key) + "_set";
                     // Retrieve current filter set or default to empty
                     Set<String> currentFilters = new HashSet<>(pref.getStringSet(filterKey, new HashSet<>()));
                     // Add the new channel to the set
-                    currentFilters.add(item.getUploaderName());
+                    currentFilters.add(byId ? channelId : item.getUploaderName());
                     // Save the updated set back to SharedPreferences
                     pref.edit()
                             .putStringSet(filterKey, currentFilters)
                             .apply();
-                    ServiceHelper.initServices(fragment.requireContext());
+                    ServiceHelper.initServices(appContext);
                     Toast.makeText(
-                            fragment.requireContext(), R.string.recaptcha_done_button,
+                            appContext, R.string.recaptcha_done_button,
                             Toast.LENGTH_SHORT
                     ).show();
                 })
@@ -178,6 +193,37 @@ public enum StreamDialogDefaultEntry {
                 .show();
     }),
 
+
+    SUBSCRIBE_TO_CHANNEL(R.string.subscribe_to_channel, (fragment, item) -> {
+        final Context appContext = fragment.requireContext().getApplicationContext();
+        final int serviceId = item.getServiceId();
+        final java.util.function.Consumer<String> subscribe = channelUrl ->
+                ExtractorHelper.getChannelInfo(serviceId, channelUrl, false)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .map(info -> {
+                            final SubscriptionManager manager = new SubscriptionManager(appContext);
+                            if (manager.subscriptionTable()
+                                    .getSubscription(info.getServiceId(), info.getUrl())
+                                    .blockingGet() != null) {
+                                return R.string.already_subscribed;
+                            }
+                            manager.insertSubscription(SubscriptionEntity.from(info), info);
+                            return R.string.subscribed_button_title;
+                        })
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(msg -> Toast.makeText(appContext, msg, Toast.LENGTH_SHORT)
+                                        .show(),
+                                throwable -> ErrorUtil.createNotification(appContext,
+                                        new ErrorInfo(throwable, UserAction.SUBSCRIPTION_CHANGE,
+                                                "Subscribing: " + channelUrl, serviceId)));
+        if (item.getUploaderUrl() != null && !Objects.equals(item.getUploaderUrl(), "")) {
+            subscribe.accept(item.getUploaderUrl());
+        } else {
+            fetchUploaderUrlIfSparse(fragment.requireContext(), serviceId, item.getUrl(),
+                    item.getUploaderUrl(), subscribe);
+        }
+    }),
 
     NAVIGATE_TO(R.string.navigate_to, (fragment, item) -> {
         throw new UnsupportedOperationException("This needs to be implemented manually "

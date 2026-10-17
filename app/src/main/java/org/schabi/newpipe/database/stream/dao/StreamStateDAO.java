@@ -37,6 +37,9 @@ public interface StreamStateDAO extends BasicDAO<StreamStateEntity> {
     @Query("DELETE FROM " + STREAM_STATE_TABLE + " WHERE " + JOIN_STREAM_ID + " = :streamId")
     int deleteState(long streamId);
 
+    @Query("DELETE FROM " + STREAM_STATE_TABLE + " WHERE " + JOIN_STREAM_ID + " IN (:streamIds)")
+    int deleteStates(List<Long> streamIds);
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void silentInsertInternal(StreamStateEntity streamState);
 

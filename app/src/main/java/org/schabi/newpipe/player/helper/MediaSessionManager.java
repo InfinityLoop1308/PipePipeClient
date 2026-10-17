@@ -24,6 +24,7 @@ import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector.Play
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.player.NotificationUtil;
+import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.mediasession.MediaSessionCallback;
 import org.schabi.newpipe.player.mediasession.PlayQueueNavigator;
 import org.schabi.newpipe.player.playback.PlayerMediaSession;
@@ -87,8 +88,42 @@ public class MediaSessionManager {
                 .build());
 
         sessionConnector = new MediaSessionConnector(mediaSession);
-        sessionConnector.setQueueNavigator(new PlayQueueNavigator(mediaSession, callback));
+        final PlayQueueNavigator queueNavigator = new PlayQueueNavigator(mediaSession, callback);
+        queueNavigator.setSeekInsteadOfSkip(() -> PlayerHelper.getSeekInsteadOfSkip(context));
+        sessionConnector.setQueueNavigator(queueNavigator);
+        // previous/next are no longer advertised when seeking instead, so handle the keys here
+        sessionConnector.setMediaButtonEventHandler((p, event) -> {
+            if (!PlayerHelper.getSeekInsteadOfSkip(context)) {
+                return false;
+            }
+            final KeyEvent key = event.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+            if (key == null) {
+                return false;
+            }
+            final int code = key.getKeyCode();
+            if (code != KeyEvent.KEYCODE_MEDIA_NEXT && code != KeyEvent.KEYCODE_MEDIA_PREVIOUS) {
+                return false;
+            }
+            if (key.getAction() == KeyEvent.ACTION_DOWN && key.getRepeatCount() == 0) {
+                if (code == KeyEvent.KEYCODE_MEDIA_NEXT) {
+                    callback.fastForward();
+                } else {
+                    callback.fastRewind();
+                }
+            }
+            return true;
+        });
         sessionConnector.setPlayer(new ForwardingPlayer(player) {
+            @Override
+            public void seekBack() {
+                callback.fastRewind();
+            }
+
+            @Override
+            public void seekForward() {
+                callback.fastForward();
+            }
+
             @Override
             public void play() {
                 callback.play();

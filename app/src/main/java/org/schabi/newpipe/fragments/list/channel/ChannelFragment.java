@@ -1,5 +1,6 @@
 package org.schabi.newpipe.fragments.list.channel;
 
+import org.schabi.newpipe.extractor.utils.ServiceScopedId;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -25,10 +26,14 @@ import org.schabi.newpipe.database.subscription.SubscriptionEntity;
 import org.schabi.newpipe.databinding.FragmentChannelBinding;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.UserAction;
+import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.channel.ChannelInfo;
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException;
+import org.schabi.newpipe.extractor.linkhandler.ChannelTabs;
 import org.schabi.newpipe.extractor.linkhandler.ListLinkHandler;
-import org.schabi.newpipe.extractor.ServiceList;
+import org.schabi.newpipe.extractor.search.filter.Filter;
+import org.schabi.newpipe.extractor.search.filter.FilterItem;
 import org.schabi.newpipe.fragments.BaseStateFragment;
 import org.schabi.newpipe.fragments.detail.TabAdapter;
 import org.schabi.newpipe.local.feed.notifications.NotificationHelper;
@@ -40,6 +45,7 @@ import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.StateSaver;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
@@ -215,8 +221,27 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
 
     private void updateSearchButton() {
         if (menuSearchButton != null) {
-            menuSearchButton.setVisible(currentInfo != null
-                    && currentInfo.getServiceId() == ServiceList.YouTube.getServiceId());
+            menuSearchButton.setVisible(currentInfo != null && supportsChannelSearch(currentInfo));
+        }
+    }
+
+    /**
+     * Ask the service whether it can search inside this channel, by building the very handler
+     * {@link org.schabi.newpipe.fragments.list.search.SearchFragment} would use. Services which do
+     * not support the search tab throw here (or have no channel tab factory at all), and only
+     * those get the button hidden.
+     */
+    private static boolean supportsChannelSearch(final ChannelInfo info) {
+        try {
+            final StreamingService service = NewPipe.getService(info.getServiceId());
+            service.getChannelTabLHFactory().fromQuery(
+                    service.getChannelLHFactory().fromUrl(info.getOriginalUrl()).getId(),
+                    Collections.singletonList(
+                            new FilterItem(Filter.ITEM_IDENTIFIER_UNKNOWN, ChannelTabs.SEARCH)),
+                    null);
+            return true;
+        } catch (final Exception e) {
+            return false;
         }
     }
 
@@ -408,7 +433,10 @@ public class ChannelFragment extends BaseStateFragment<ChannelInfo>
             final Set<String> blockedChannels = prefs.getStringSet(
                     getString(R.string.filter_by_channel_key) + "_set",
                     new HashSet<>());
-            if (blockedChannels.contains(channelName)) {
+            final String channelKey = ServiceScopedId.of(result.getServiceId(), result.getId());
+            if (blockedChannels.contains(channelName) || (channelKey != null
+                    && prefs.getStringSet(getString(R.string.filter_by_channel_id_key) + "_set",
+                    new HashSet<>()).contains(channelKey))) {
                 Toast.makeText(requireContext(),
                         R.string.channel_is_blocked,
                         Toast.LENGTH_SHORT).show();

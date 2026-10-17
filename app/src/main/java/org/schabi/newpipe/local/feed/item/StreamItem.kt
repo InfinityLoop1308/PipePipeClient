@@ -1,6 +1,7 @@
 package org.schabi.newpipe.local.feed.item
 
 import android.content.Context
+import android.graphics.drawable.ColorDrawable
 import android.text.TextUtils
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -16,8 +17,10 @@ import org.schabi.newpipe.extractor.stream.StreamType.AUDIO_STREAM
 import org.schabi.newpipe.extractor.stream.StreamType.LIVE_STREAM
 import org.schabi.newpipe.extractor.stream.StreamType.VIDEO_STREAM
 import org.schabi.newpipe.util.Localization
-import org.schabi.newpipe.util.PicassoHelper
+import org.schabi.newpipe.util.dearrow.DeArrowBinder
+import org.schabi.newpipe.util.dearrow.DeArrowRow
 import org.schabi.newpipe.util.StreamTypeUtil
+import org.schabi.newpipe.util.ThemeHelper
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 
@@ -27,7 +30,11 @@ data class StreamItem(
 ) : BindableItem<ListStreamItemBinding>() {
     companion object {
         const val UPDATE_RELATIVE_TIME = 1
+        const val UPDATE_SELECTION = 2
     }
+
+    /** Whether the item is selected in the multi-selection mode of the feed. */
+    var isItemSelected: Boolean = false
 
     private val stream: StreamEntity = streamWithState.stream
     private val stateProgressTime: Long? = streamWithState.stateProgressMillis
@@ -57,7 +64,23 @@ data class StreamItem(
             return
         }
 
+        if (payloads.contains(UPDATE_SELECTION)) {
+            bindSelection(viewBinding)
+            return
+        }
+
         super.bind(viewBinding, position, payloads)
+    }
+
+    private fun bindSelection(viewBinding: ListStreamItemBinding) {
+        val root = viewBinding.root
+        if (isItemSelected) {
+            val accent = ThemeHelper.resolveColorFromAttr(root.context, android.R.attr.colorAccent)
+            // ~24% alpha overlay keeps the thumbnail and text readable
+            root.foreground = ColorDrawable((accent and 0x00FFFFFF) or 0x3D000000)
+        } else {
+            root.foreground = null
+        }
     }
 
     override fun bind(viewBinding: ListStreamItemBinding, position: Int) {
@@ -106,13 +129,18 @@ data class StreamItem(
             viewBinding.itemProgressView.visibility = View.GONE
         }
 
-        PicassoHelper.loadScaledDownThumbnail(viewBinding.root.context, stream.thumbnailUrl)
-            .into(viewBinding.itemThumbnailView)
+        DeArrowBinder.bind(
+            DeArrowRow.fromStored(
+                stream.serviceId, stream.url, stream.thumbnailUrl
+            ),
+            viewBinding.itemVideoTitleView, viewBinding.itemThumbnailView
+        )
 
         viewBinding.itemAdditionalDetails.text =
             getStreamInfoDetailLine(viewBinding.itemAdditionalDetails.context)
 
         execBindEnd?.accept(viewBinding)
+        bindSelection(viewBinding)
     }
 
     override fun isLongClickable() = when (stream.streamType) {

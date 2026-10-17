@@ -22,4 +22,9 @@ public class KeywordFilterListActivity extends BaseFilterListActivity {
     protected String getActivityTitle() {
         return getString(R.string.filter_by_keyword_title);
     }
+
+    @Override
+    protected boolean supportsRegex() {
+        return true;
+    }
 }

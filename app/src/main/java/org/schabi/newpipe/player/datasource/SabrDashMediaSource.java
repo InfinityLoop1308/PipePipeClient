@@ -310,7 +310,7 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
     private static String segmentTemplate(final YoutubeSabrInfo.Format format,
                                           final YoutubeSabrFormatTimeline timeline) {
         final long endSegment = timeline.getEndSequence();
-        if (endSegment <= 0 || endSegment > 10_000) {
+        if (endSegment <= 0) {
             throw new IllegalStateException("Invalid exact SABR segment count: itag="
                     + format.getItag() + ", count=" + endSegment);
         }

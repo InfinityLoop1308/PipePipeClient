@@ -1,6 +1,7 @@
 package org.schabi.newpipe.local;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import org.schabi.newpipe.database.LocalItem;
 import org.schabi.newpipe.database.playlist.PlaylistStreamEntry;
 import org.schabi.newpipe.database.stream.StreamStatisticsEntry;
 import org.schabi.newpipe.database.stream.model.StreamStateEntity;
+import org.schabi.newpipe.database.playlist.PlaylistMetadataEntry;
+import org.schabi.newpipe.database.playlist.model.PlaylistRemoteEntity;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.info_list.ItemViewMode;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
@@ -23,9 +26,12 @@ import org.schabi.newpipe.util.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.schabi.newpipe.util.ThemeHelper.isGrid;
 
@@ -75,6 +81,17 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
     private static final int LOCAL_PLAYLIST_CARD_HOLDER_TYPE = 0x2016;
     private static final int REMOTE_PLAYLIST_CARD_HOLDER_TYPE = 0x3016;
 
+    /** Payload used to only refresh the selection highlight of bound items. */
+    public static final Object SELECTION_PAYLOAD = new Object();
+
+    /** Tells the adapter which items are selected; null means selection is not supported. */
+    public interface SelectionState {
+        boolean isSelected(LocalItem item);
+    }
+
+    @Nullable
+    private SelectionState selectionState;
+
     private final LocalItemBuilder localItemBuilder;
     private final ArrayList<LocalItem> localItems;
     private final HistoryRecordManager recordManager;
@@ -107,6 +124,27 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public void unsetSelectedListener() {
         localItemBuilder.setOnItemSelectedListener(null);
+    }
+
+    public void setSelectionState(@Nullable final SelectionState selectionState) {
+        this.selectionState = selectionState;
+    }
+
+    /** Refreshes the selection highlight of all items without rebinding their content. */
+    public void notifySelectionChanged() {
+        notifyItemRangeChanged(0, getItemCount(), SELECTION_PAYLOAD);
+    }
+
+    private void bindSelection(final RecyclerView.ViewHolder holder, final LocalItem item) {
+        final boolean selected = selectionState != null && selectionState.isSelected(item);
+        if (selected) {
+            final int accent = ThemeHelper.resolveColorFromAttr(holder.itemView.getContext(),
+                    android.R.attr.colorAccent);
+            // ~24% alpha overlay keeps the thumbnail and text readable
+            holder.itemView.setForeground(new ColorDrawable((accent & 0x00FFFFFF) | 0x3D000000));
+        } else {
+            holder.itemView.setForeground(null);
+        }
     }
 
     public void addItems(@Nullable final List<? extends LocalItem> data) {
@@ -191,6 +229,39 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
         localItems.clear();
         filteredItems.clear();
+        notifyDataSetChanged();
+    }
+
+    /** Removes several items at once, keeping the local filter consistent. */
+    public void removeItems(@NonNull final Collection<? extends LocalItem> items) {
+        if (items.isEmpty()) {
+            return;
+        }
+        final Set<LocalItem> toRemove = Collections.newSetFromMap(new IdentityHashMap<>());
+        toRemove.addAll(items);
+        localItems.removeIf(toRemove::contains);
+        reapplyFilter();
+        notifyDataSetChanged();
+    }
+
+    /**
+     * Moves {@code items} to the top or bottom of the list, keeping their relative order.
+     * Only meaningful for the original (manual) order.
+     */
+    public void moveItemsToEdge(@NonNull final List<? extends LocalItem> items,
+                                final boolean toTop) {
+        if (items.isEmpty()) {
+            return;
+        }
+        final Set<LocalItem> toMove = Collections.newSetFromMap(new IdentityHashMap<>());
+        toMove.addAll(items);
+        localItems.removeIf(toMove::contains);
+        if (toTop) {
+            localItems.addAll(0, items);
+        } else {
+            localItems.addAll(items);
+        }
+        reapplyFilter();
         notifyDataSetChanged();
     }
 
@@ -406,8 +477,10 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
                 position--;
             }
 
+            final LocalItem item = (isFilterEnabled ? filteredItems : localItems).get(position);
             ((LocalItemHolder) holder)
-                    .updateFromItem((isFilterEnabled?filteredItems:localItems).get(position), recordManager, dateTimeFormatter);
+                    .updateFromItem(item, recordManager, dateTimeFormatter);
+            bindSelection(holder, item);
         } else if (holder instanceof HeaderFooterHolder && position == 0 && header != null) {
             ((HeaderFooterHolder) holder).view = header;
         } else if (holder instanceof HeaderFooterHolder && position == sizeConsideringHeader()
@@ -421,7 +494,14 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
                                  @NonNull final List<Object> payloads) {
         if (!payloads.isEmpty() && holder instanceof LocalItemHolder) {
             for (final Object payload : payloads) {
-                if (payload instanceof StreamStateEntity) {
+                if (payload == SELECTION_PAYLOAD) {
+                    final List<LocalItem> currentItems =
+                            isFilterEnabled ? filteredItems : localItems;
+                    final int index = header == null ? position : position - 1;
+                    if (index >= 0 && index < currentItems.size()) {
+                        bindSelection(holder, currentItems.get(index));
+                    }
+                } else if (payload instanceof StreamStateEntity) {
                     ((LocalItemHolder) holder).updateState(localItems
                             .get(header == null ? position : position - 1), recordManager);
                 } else if (payload instanceof Boolean) {
@@ -459,6 +539,15 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
                     } else if (((PlaylistStreamEntry)item).getStreamEntity().getUploader().toLowerCase().contains(text.toLowerCase())) {
                         filteredItems.add(item);
                     }
+                } else if (item instanceof PlaylistMetadataEntry) {
+                    if (((PlaylistMetadataEntry) item).name.toLowerCase().contains(text.toLowerCase())) {
+                        filteredItems.add(item);
+                    }
+                } else if (item instanceof PlaylistRemoteEntity) {
+                    final String name = ((PlaylistRemoteEntity) item).getName();
+                    if (name != null && name.toLowerCase().contains(text.toLowerCase())) {
+                        filteredItems.add(item);
+                    }
                 } else if(item instanceof StreamStatisticsEntry) {
                     if (((StreamStatisticsEntry) item).getStreamEntity().getTitle().toLowerCase().contains(text.toLowerCase())) {
                         filteredItems.add(item);
@@ -493,7 +582,7 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
             case SORT_NAME:
                 Collections.sort(localItems, (o1, o2) -> {
                     if (o1 instanceof PlaylistStreamEntry && o2 instanceof PlaylistStreamEntry) {
-                        return utils.compareChineseStrings(((PlaylistStreamEntry) o1).getStreamEntity().getTitle(), ((PlaylistStreamEntry) o2).getStreamEntity().getTitle());
+                        return utils.compareNames(((PlaylistStreamEntry) o1).getStreamEntity().getTitle(), ((PlaylistStreamEntry) o2).getStreamEntity().getTitle());
                     } else {
                         return 0;
                     }
@@ -502,10 +591,39 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
             case SORT_NAME_REVERSE:
                 Collections.sort(localItems, (o1, o2) -> {
                     if (o1 instanceof PlaylistStreamEntry && o2 instanceof PlaylistStreamEntry) {
-                        return utils.compareChineseStrings(((PlaylistStreamEntry) o2).getStreamEntity().getTitle(), ((PlaylistStreamEntry) o1).getStreamEntity().getTitle());
+                        return utils.compareNames(((PlaylistStreamEntry) o2).getStreamEntity().getTitle(), ((PlaylistStreamEntry) o1).getStreamEntity().getTitle());
                     } else {
                         return 0;
                     }
+                });
+                break;
+            case UPLOAD_DATE:
+            case UPLOAD_DATE_REVERSE:
+                final boolean dateAsc = sortMode == SortMode.UPLOAD_DATE;
+                Collections.sort(localItems, (o1, o2) -> {
+                    if (o1 instanceof PlaylistStreamEntry && o2 instanceof PlaylistStreamEntry) {
+                        final var d1 = ((PlaylistStreamEntry) o1).getStreamEntity().getUploadDate();
+                        final var d2 = ((PlaylistStreamEntry) o2).getStreamEntity().getUploadDate();
+                        // items without a date are always placed last
+                        if (d1 == null || d2 == null) {
+                            return d1 == d2 ? 0 : d1 == null ? 1 : -1;
+                        }
+                        return dateAsc ? d1.compareTo(d2) : d2.compareTo(d1);
+                    }
+                    return 0;
+                });
+                break;
+            case DURATION:
+            case DURATION_REVERSE:
+                final boolean durAsc = sortMode == SortMode.DURATION;
+                Collections.sort(localItems, (o1, o2) -> {
+                    if (o1 instanceof PlaylistStreamEntry && o2 instanceof PlaylistStreamEntry) {
+                        final int c = Long.compare(
+                                ((PlaylistStreamEntry) o1).getStreamEntity().getDuration(),
+                                ((PlaylistStreamEntry) o2).getStreamEntity().getDuration());
+                        return durAsc ? c : -c;
+                    }
+                    return 0;
                 });
                 break;
             case ORIGIN:

@@ -36,6 +36,7 @@ import org.schabi.newpipe.databinding.PlaylistHeaderBinding;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
+import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.ListExtractor;
 import org.schabi.newpipe.extractor.ServiceList;
@@ -68,7 +69,8 @@ import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 
-public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, PlaylistInfo> {
+public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, PlaylistInfo>
+        implements BackPressable {
 
     private static final String PICASSO_PLAYLIST_TAG = "PICASSO_PLAYLIST_TAG";
 
@@ -88,6 +90,8 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
 
     private MenuItem playlistBookmarkButton;
     private boolean isInfinitePlayList;
+
+    private int sortMode = 0;
 
     private long streamCount;
     private long playlistOverallDurationSeconds;
@@ -132,6 +136,7 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
         headerBinding = PlaylistHeaderBinding
                 .inflate(activity.getLayoutInflater(), itemsList, false);
         playlistControlBinding = headerBinding.playlistControl;
+        playlistControlBinding.getRoot().configure(getString(R.string.list_control_page_playlist));
 
         return headerBinding::getRoot;
     }
@@ -177,6 +182,11 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
 
         playlistBookmarkButton = menu.findItem(R.id.menu_item_bookmark);
         updateBookmarkButtons();
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return closeLocalFilterOnBack();
     }
 
     @Override
@@ -231,6 +241,10 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
     public boolean onOptionsItemSelected(final MenuItem item) {
         if (item.getItemId() == R.id.action_settings) {
             NavigationHelper.openSettings(requireContext());
+        } else if (item.getItemId() == R.id.action_search_local) {
+            openLocalFilter();
+        } else if (item.getItemId() == R.id.menu_item_sort) {
+            showSortDialog();
         } else if (item.getItemId() == R.id.menu_item_openInBrowser) {
             ShareUtils.openUrlInBrowser(requireContext(), url);
         } else if (item.getItemId() == R.id.menu_item_share) {
@@ -370,6 +384,77 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
             NavigationHelper.enqueueOnPlayer(activity, getPlayQueue(), PlayerType.AUDIO);
             return true;
         });
+    }
+
+    private void showSortDialog() {
+        final int[] labels = {
+                R.string.sort_origin, R.string.sort_origin_reverse,
+                R.string.sort_upload_date_ascending, R.string.sort_upload_date_descending,
+                R.string.sort_duration_ascending, R.string.sort_duration_descending,
+                R.string.sort_name_ascending, R.string.sort_name_descending};
+        final String[] items = new String[labels.length];
+        for (int i = 0; i < labels.length; i++) {
+            items[i] = getString(labels[i]);
+        }
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.sort)
+                .setSingleChoiceItems(items, sortMode, (dialog, which) -> {
+                    sortMode = which;
+                    applySort();
+                    dialog.dismiss();
+                })
+                .show();
+    }
+
+    private static int compareDate(final StreamInfoItem a, final StreamInfoItem b) {
+        final var da = a.getUploadDate();
+        final var db = b.getUploadDate();
+        // items without a date are always placed last
+        if (da == null || db == null) {
+            return 0;
+        }
+        return da.offsetDateTime().compareTo(db.offsetDateTime());
+    }
+
+    private void applySort() {
+        if (infoListAdapter == null) {
+            return;
+        }
+        final boolean asc = sortMode % 2 == 0;
+        java.util.Comparator<InfoItem> comparator = null;
+        switch (sortMode) {
+            case 2:
+            case 3:
+                comparator = (a, b) -> {
+                    final var da = ((StreamInfoItem) a).getUploadDate();
+                    final var db = ((StreamInfoItem) b).getUploadDate();
+                    if (da == null || db == null) {
+                        return da == db ? 0 : da == null ? 1 : -1;
+                    }
+                    final int c = compareDate((StreamInfoItem) a, (StreamInfoItem) b);
+                    return asc ? c : -c;
+                };
+                break;
+            case 4:
+            case 5:
+                comparator = (a, b) -> {
+                    final int c = Long.compare(((StreamInfoItem) a).getDuration(),
+                            ((StreamInfoItem) b).getDuration());
+                    return asc ? c : -c;
+                };
+                break;
+            case 6:
+            case 7:
+                comparator = (a, b) -> {
+                    final int c = org.schabi.newpipe.util.utils.compareNames(
+                            a.getName(), b.getName());
+                    return asc ? c : -c;
+                };
+                break;
+            default:
+                break;
+        }
+        infoListAdapter.setSortComparator(comparator, sortMode == 1);
     }
 
     private PlayQueue getPlayQueue() {
@@ -512,4 +597,8 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
         }
     }
 
+    @Override
+    protected boolean supportsMultiSelect() {
+        return true;
+    }
 }

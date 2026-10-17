@@ -43,27 +43,19 @@ class SponsorBlockController(private val player: Player) {
 
     private val preferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (context.getString(R.string.sponsor_block_enable_key) == key) {
-                mode = if (prefs.getBoolean(key, true)) {
-                    SponsorBlockMode.ENABLED
-                } else {
-                    SponsorBlockMode.DISABLED
-                }
+            if (context.getString(R.string.sponsor_block_skipping_enabled_key) == key) {
+                mode = SponsorBlockHelper.getSkippingMode(context)
             }
         }
 
     init {
-        mode = if (prefs.getBoolean(context.getString(R.string.sponsor_block_enable_key), true)) {
-            SponsorBlockMode.ENABLED
-        } else {
-            SponsorBlockMode.DISABLED
-        }
+        mode = SponsorBlockHelper.getSkippingMode(context)
         prefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
     }
 
     fun setMode(newMode: SponsorBlockMode) {
         mode = newMode
-        // Persist so that the global switch and the player toggle stay in sync.
+        // Persist so that the in-player switch and the tab switch stay in sync.
         SponsorBlockHelper.setSponsorBlockMode(context, newMode)
     }
 
@@ -78,7 +70,9 @@ class SponsorBlockController(private val player: Player) {
         bypassSecondaryMode: Boolean,
         isUnSkip: Boolean,
     ) {
-        if (mode != SponsorBlockMode.ENABLED) {
+        if (mode != SponsorBlockMode.ENABLED ||
+            !prefs.getBoolean(context.getString(R.string.sponsor_block_enable_key), true)
+        ) {
             return
         }
 

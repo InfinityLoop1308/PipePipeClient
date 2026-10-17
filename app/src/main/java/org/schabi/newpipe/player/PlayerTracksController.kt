@@ -8,7 +8,7 @@ import com.google.android.exoplayer2.ui.CaptionStyleCompat
 import com.google.android.exoplayer2.ui.SubtitleView
 import org.schabi.newpipe.R
 import org.schabi.newpipe.player.helper.PlayerHelper
-import org.schabi.newpipe.util.ListHelper
+import org.schabi.newpipe.util.AudioStreamSelector
 import java.util.stream.Collectors
 
 /**
@@ -96,7 +96,7 @@ class PlayerTracksController(private val player: Player) {
         }
 
         val streamInfo = optStreamInfo.get()
-        val audioStreams = ListHelper.getFilteredAudioStreams(
+        val audioStreams = AudioStreamSelector.getFilteredAudioStreams(
             player.getContext(), streamInfo.audioStreams
         )
 
@@ -118,7 +118,7 @@ class PlayerTracksController(private val player: Player) {
             }
             if (idx >= 0) idx else 0
         } else {
-            ListHelper.getDefaultAudioFormat(player.getContext(), audioStreams)
+            AudioStreamSelector.getDefaultAudioFormat(player.getContext(), audioStreams)
         }
 
         if (selectedIndex >= 0 && selectedIndex < audioStreams.size) {

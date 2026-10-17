@@ -202,6 +202,13 @@
         </provider>
 
         <activity
+                android:name=".local.playlist.PlayPlaylistShortcutActivity"
+                android:excludeFromRecents="true"
+                android:taskAffinity=""
+                android:theme="@android:style/Theme.NoDisplay"
+                android:exported="false" />
+
+        <activity
                 android:name=".RouterActivity"
                 android:excludeFromRecents="true"
                 android:label="@string/preferred_open_action_share_menu_title"
@@ -553,6 +560,22 @@
         <activity
                 android:name=".settings.ChannelFilterListActivity"
                 android:label="@string/filter_by_channel_title"
+                android:parentActivityName=".settings.SettingsActivity" />
+        <activity
+                android:name=".settings.CommentKeywordFilterListActivity"
+                android:label="@string/filter_by_keyword_title"
+                android:parentActivityName=".settings.SettingsActivity" />
+        <activity
+                android:name=".settings.ChannelIdFilterListActivity"
+                android:label="@string/filter_by_channel_id_title"
+                android:parentActivityName=".settings.SettingsActivity" />
+        <activity
+                android:name=".settings.CommentUserIdFilterListActivity"
+                android:label="@string/filter_by_channel_id_title"
+                android:parentActivityName=".settings.SettingsActivity" />
+        <activity
+                android:name=".settings.CommentUsernameFilterListActivity"
+                android:label="@string/filter_by_username_title"
                 android:parentActivityName=".settings.SettingsActivity" />
 
         <activity

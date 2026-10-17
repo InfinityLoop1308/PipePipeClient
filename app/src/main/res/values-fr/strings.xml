@@ -598,13 +598,13 @@ Voulez-vous continuer?</string>
 <string name="image_quality_low">Basse qualité</string>
 <string name="image_quality_medium">Qualité moyenne</string>
 <string name="image_quality_high">Haute qualité</string>
-<string name="regular_bullet_comments_duration_summary">Modifier la durée des commentaires défilants. Une durée plus courte peut causer des saccades.</string>
-<string name="regular_bullet_comments_duration_title">Durée des commentaires défilants</string>
-<string name="top_bottom_bullet_comments_duration_summary">Modifier la durée des commentaires défilants en haut/bas.</string>
-<string name="top_bottom_bullet_comments_duration_title">Durée des commentaires défilants hauts/bas</string>
+<string name="regular_bullet_comments_duration_summary">Modifier la durée des danmaku réguliers/défilants. Une durée plus courte peut causer des saccades/ralentissements.</string>
+<string name="regular_bullet_comments_duration_title">Durée des danmaku réguliers</string>
+<string name="top_bottom_bullet_comments_duration_summary">Modifier la durée des danmaku en haut/en bas. </string>
+<string name="top_bottom_bullet_comments_duration_title">Durée des danmaku en haut/en bas</string>
 <string name="append_playlist_not_supported">Ceci est une liste de lecture infinie, vous ne pouvez donc pas l\'ajouter à d\'autres listes de lecture.</string>
 <string name="add_failed">Ajout échoué</string>
-<string name="bullet_comments_outline_radius_title">Rayon du contour des commentaires défilants</string>
+<string name="bullet_comments_outline_radius_title">Rayon du contour des danmaku</string>
 <string name="top_100">Top 100</string>
 <string name="recommended_videos">Vidéos recommandées</string>
 <string name="top_lives">Meilleurs Lives</string>
@@ -618,7 +618,7 @@ Voulez-vous continuer?</string>
 <string name="login_warning">Les jetons ne seront utilisés que si nécessaire</string>
 <string name="login_title">Connexion</string>
 <string name="logout_title">Déconnexion</string>
-<string name="bullet_comments_font_title">Police des commentaires défilants</string>
+<string name="bullet_comments_font_title">Police des danmaku</string>
 <string name="auto_background_play_title">Mode lecteur de musique</string>
 <string name="auto_background_play_summary">Lire en arrière-plan automatiquement lorsque vous cliquez sur un élément dans une liste de lecture locale</string>
 <string name="download_all">Tout télécharger</string>
@@ -626,7 +626,7 @@ Voulez-vous continuer?</string>
     et accordé l\'accès, sinon le téléchargement échouera.
     Les fichiers existants ne seront pas remplacés.
     Si l\'audio ne peut être téléchargé séparément, la vidéo correspondante sera téléchargée.</string>
-<string name="bullet_comments_opacity_title">Opacité des commentaires défilants</string>
+<string name="bullet_comments_opacity_title">Opacité des danmaku</string>
 <string name="override_cookies_summary">Utiliser des cookies saisis manuellement au lieu des informations d\'identification enregistrées</string>
 <string name="override_cookies_title">Remplacer les cookies</string>
 <string name="override_cookies_value_title">Modifier les cookies</string>
@@ -642,7 +642,7 @@ Voulez-vous continuer?</string>
 <string name="sort_bookmark">Favoris</string>
 <string name="sort_likes">Aimés</string>
 <string name="sort_comments">Commentaires</string>
-<string name="sort_bullet_comments">Commentaires défilants</string>
+<string name="sort_bullet_comments">Danmaku</string>
 <string name="sort_length">Longueur</string>
 <string name="sort_publish_time">Heure de publication</string>
 <string name="sort_last_comment_time">Heure du dernier commentaire</string>
@@ -669,8 +669,6 @@ Voulez-vous continuer?</string>
 <string name="ai_subtitle">Obtenir les détails du flux (pour les sous-titres AI)</string>
 <string name="cookie_functions_title">Contrôle d\'accès</string>
 <string name="navigate_to">Naviguer</string>
-<string name="sort_name">Trier par nom</string>
-<string name="sort_name_reverse">Trier par nom (inverse)</string>
 <string name="sort_origin">Original</string>
 <string name="sort_origin_reverse">Original (inversé)</string>
 <string name="dialog_title_enable_update_checker">Activer le vérificateur de mise à jour</string>
@@ -717,7 +715,7 @@ Voulez-vous continuer?</string>
 <string name="decoder_init_failure">Échec de l\'initialisation du décodeur</string>
 <string name="unable_to_decode_summary">Votre appareil ne dispose pas des décodeurs matériels requis, donc vous ne pouvez pas lire cette vidéo dans PipePipe.\nVeuillez la télécharger et la lire dans VLC.</string>
 <string name="settings_category_gestures_summary">Paramètres des gestes</string>
-<string name="settings_category_bullet_comments_summary">Paramètres des commentaires défilants</string>
+<string name="settings_category_bullet_comments_summary">Paramètres des danmaku</string>
 <string name="settings_category_backup_title">Sauvegarde</string>
 <string name="settings_category_advanced_title">Avancé</string>
 <string name="anti_bot_youtube_hint">Votre IP est bloquée par YouTube. Essayez d\'utiliser un VPN ou de vous connecter via les paramètres pour continuer.</string>
@@ -726,10 +724,10 @@ Voulez-vous continuer?</string>
 <string name="preferred_audio_language_title">Langue audio préférée</string>
 <string name="ip_blocked_summary">Votre IP a été temporairement bloquée par YouTube. Pendant un certain temps, vous rencontrerez des problèmes lors de la lecture de certaines vidéos. Si l\'erreur persiste, veuillez vous connecter via les Paramètres pour continuer.</string>
 <string name="settings_category_filter_title">Filtre de contenu</string>
-<string name="filter_by_keyword_title">Filtrer par mots-clés</string>
-<string name="filter_by_keyword_summary">Ajoutez ici les mots-clés que vous souhaitez bloquer, séparés par des virgules</string>
+<string name="filter_by_keyword_title">Mots-clés bloqués</string>
+<string name="filter_by_keyword_summary">Masquer les vidéos et autres éléments dont le titre contient l\'un de ces mots-clés. Entourez une entrée de barres obliques (/…/) pour utiliser une expression régulière</string>
 <string name="search_result">Résultats de recherche</string>
-<string name="filter_field_summary">Appliquer le filtre à</string>
+<string name="filter_field_summary">Appliquer les filtres à</string>
 <string name="channel_videos">Vidéos de la chaîne</string>
 <string name="success">Succès</string>
 <string name="settings_category_proxy_title">Proxy (Supporters)</string>
@@ -791,21 +789,21 @@ Voulez-vous continuer?</string>
 <string name="sponsor_block_show_manual_skip_summary">Afficher sur l\'écran des boutons pour ignorer/ne pas ignorer manuellement les segments. Il est recommandé d\'activer cette option lors de la configuration des catégories SponsorBlock à être ignorées manuellement.</string>
 <string name="video_not_released">La vidéo n\'a pas encore été publiée.</string>
 <string name="filter_shorts_title">Filtrer les vidéos courtes</string>
-<string name="filter_shorts_summary">Supprimer les vidéos courtes des résultats. Fonctionne uniquement pour YouTube.</string>
+<string name="filter_shorts_summary">Masquer les vidéos courtes des résultats. YouTube uniquement.</string>
 <string name="paid_video">Payant</string>
 <string name="share_playlist">Partager la liste de lecture</string>
 <string name="share_playlist_with_titles_message">Partagez la liste de lecture avec des détails tels que le nom de la liste et les titres des vidéos ou comme une simple liste d\'URLs de vidéos</string>
 <string name="share_playlist_with_titles">Partager avec les titres</string>
 <string name="share_playlist_with_list">Partager la liste d\'URLs</string>
 <string name="add_to_filter_list">Ajouter la chaîne à la liste de blocage</string>
-<string name="add_to_filter_list_confirm">Voulez-vous ajouter %s à la liste de blocage ?</string>
+<string name="add_to_filter_list_confirm">Ajouter \"%s\" à la liste de blocage ?</string>
 <string name="loading_timeout_title">Délai d\'attente pour le chargement de la vidéo</string>
 <string name="loading_timeout_description">Définissez le temps maximum autorisé pour attendre le chargement des informations vidéo. Si le chargement n\'est pas terminé dans ce délai, la demande de chargement sera annulée, et une erreur explicite sera signalée.</string>
 <string name="always_start_from_beginning_title">Toujours commencer la lecture depuis le début</string>
 <string name="fetch_full_playlist_title">Charger la liste de lecture complète</string>
 <string name="fetch_full_playlist_summary">Charger tout le contenu en même temps lors de l\'ouverture des listes de lecture</string>
 <string name="add_filter">Ajouter un filtre</string>
-<string name="no_filters">Aucun filtre</string>
+<string name="no_filters">Aucun filtre pour le moment</string>
 <string name="stream_processing_notification_title">Traitement des flux</string>
 <string name="stream_processing_starting">Démarrage du traitement des flux...</string>
 <string name="stream_processing_progress">Traitement : %1$d/%2$d</string>
@@ -818,11 +816,11 @@ Voulez-vous continuer?</string>
 <string name="announcement">Annonce</string>
 <string name="remove_from_group">Retirer du groupe</string>
 <string name="channel_removed_from_group">Retiré du groupe</string>
-<string name="max_bullet_comments_rows_top_summary">Nombre maximal de lignes pour les commentaires défilants en haut</string>
-<string name="max_bullet_comments_rows_bottom_summary">Nombre maximal de lignes pour les commentaires défilants en bas</string>
-<string name="max_bullet_comments_rows_regular_summary">Nombre maximal de lignes pour les commentaires défilants ordinaires</string>
+<string name="max_bullet_comments_rows_top_summary">Lignes max pour les danmaku en haut</string>
+<string name="max_bullet_comments_rows_bottom_summary">Lignes max pour les danmaku en bas</string>
+<string name="max_bullet_comments_rows_regular_summary">Lignes max pour les danmaku réguliers</string>
 <string name="enable_max_rows_customization_title">Personnaliser le nombre maximal de lignes</string>
-<string name="enable_max_rows_customization_summary">Activer pour personnaliser le nombre maximal de lignes pour les commentaires</string>
+<string name="enable_max_rows_customization_summary">Activer pour personnaliser le nombre maximum de lignes pour les danmaku</string>
 <string name="always_list_mode_for_bookmark_title">Toujours utiliser le mode liste pour les Favoris</string>
 <string name="select_channel_group_prompt">Sélectionnez un groupe de chaînes</string>
 <string name="press_back_again_to_exit">Appuyez à nouveau sur retour pour quitter</string>
@@ -838,8 +836,8 @@ Voulez-vous continuer?</string>
 <string name="sponsor_block_category_intro">Animation d\'interlude/d\'introduction</string>
 <string name="sponsor_block_category_outro">Écrans de fin/Crédits</string>
 <string name="sponsor_block_category_interaction">Rappels d\'interaction (S\'abonner)</string>
-<string name="filter_by_channel_title">Filtrer par chaînes</string>
-<string name="filter_by_channel_summary">Ajoutez ici les noms des chaînes que vous souhaitez bloquer, séparés par des virgules</string>
+<string name="filter_by_channel_title">Chaînes bloquées</string>
+<string name="filter_by_channel_summary">Masquer les vidéos, playlists et chaînes de ces chaînes</string>
 <string name="channel_group_tab_summary">Groupe de chaînes</string>
 <string name="recaptcha_request_toast">Défi reCAPTCHA demandé</string>
 <string name="recaptcha_solve">Résoudre</string>
@@ -918,8 +916,8 @@ Voulez-vous continuer?</string>
 <string name="import_urls_error">Erreur lors de l\'importation des URL : %s</string>
 <string name="import_urls_no_valid_urls">Aucune URL valide trouvée dans le fichier sélectionné</string>
 <string name="remove_from_playlist_confirmation">Supprimer cet élément de la playlist ?</string>
-<string name="filter_paid_contents_title">Filtrer les contenus payants</string>
-<string name="filter_paid_contents_summary">Supprimer les contenus payants des résultats</string>
+<string name="filter_paid_contents_title">Filtrer le contenu payant</string>
+<string name="filter_paid_contents_summary">Masquer les vidéos payantes et réservées aux membres des résultats</string>
 <string name="local_playlist_swipe_action_title">Action de balayage vers la droite dans les playlists locales</string>
 <string name="search_suggestions_count_title">Nombre de suggestions de recherche</string>
 <string name="search_suggestions_count_summary">Nombre de suggestions de recherche passées à afficher</string>
@@ -940,8 +938,8 @@ Voulez-vous continuer?</string>
 <string name="channel_tab_podcasts">Podcasts</string>
 <string name="video_tabs_title">Onglets vidéo</string>
 <string name="video_tabs_summary">Configurer les onglets à afficher sur l\'écran de détails de la vidéo</string>
-<string name="filter_future_items_title">Filtrer les éléments futurs</string>
-<string name="filter_future_items_summary">Supprimer les éléments programmés pour une sortie future</string>
+<string name="filter_future_items_title">Filtrer les éléments à venir</string>
+<string name="filter_future_items_summary">Masquer les éléments programmés pour une sortie future, comme les avant-premières</string>
 <string name="pin_video_to_top_title">Épingler la vidéo en haut</string>
 <string name="pin_video_to_top_summary">Garder la vidéo épinglée en haut lors du défilement de la page de détails de la vidéo</string>
 <string name="settings_category_behavior_title">Comportement</string>
@@ -993,7 +991,7 @@ Voulez-vous continuer?</string>
 <string name="error_sabr_download_muxing">Impossible de multiplexer le média SABR</string>
 <string name="error_sabr_download_storage">Impossible d\'écrire le téléchargement SABR</string>
 <string name="error_sabr_download_protocol">Erreur de protocole SABR</string>
-<string name="webview_unavailable_youtube_hint">WebView indisponible. Veuillez vous assurer que la version de votre WebView est supérieure à 80.\n\nAndroid 6 et 10 : Mettez à jour Android WebView dans le Play Store.\nAndroid 7, 8, 9 : Mettez à jour Chrome dans le Play Store.\nAutres versions : Cela ne devrait pas se produire. Veuillez le signaler sur notre GitHub.</string>
+<string name="webview_unavailable_youtube_hint">Erreur WebView. Veuillez réessayer.\n\nSi le problème persiste, veuillez le signaler sur notre GitHub.</string>
 <string name="sabr_backoff_notification_channel_name">Lecture YouTube en attente</string>
 <string name="sabr_backoff_notification_channel_description">Notifications lorsque YouTube exige qu\'une demande de lecture soit mise en attente</string>
 <string name="sabr_backoff_notification_title">En attente de YouTube</string>
@@ -1022,8 +1020,6 @@ Voulez-vous continuer?</string>
 <string name="subscription_details_update_complete">Détails de la chaîne mis à jour</string>
 <string name="subscription_details_update_failed">Impossible de mettre à jour les détails de la chaîne</string>
 <string name="channel_is_blocked">Cette chaîne est dans votre liste de blocage</string>
-<string name="resize_pinch">Pincer</string>
-<string name="pinch_to_zoom_selected">Pincez pour zoomer.</string>
 <string name="rotate_fullscreen_to_video_orientation_title">Faire pivoter le plein écran selon l\'orientation de la vidéo</string>
 <string name="rotate_fullscreen_to_video_orientation_summary">Faire pivoter l\'écran en mode portrait ou paysage en fonction de la vidéo en mode plein écran</string>
 <string name="rotation_controls_fullscreen_title">Basculer automatiquement en plein écran lors de la rotation</string>
@@ -1034,5 +1030,148 @@ Voulez-vous continuer?</string>
 <string name="minimize_gesture_none_description">Désactivé</string>
 <string name="minimize_gesture_non_fullscreen_description">Uniquement hors plein écran</string>
 <string name="minimize_gesture_fullscreen_description">En plein écran et en dehors (désactive les gestes de balayage du plein écran et de la vitesse de lecture)</string>
-<string name="delete_filter_confirm">Voulez-vous supprimer \"%s\" de la liste des filtres ?</string>
+<string name="delete_filter_confirm">Retirer \"%s\" de la liste des filtres ?</string>
+<string name="dearrow_home_page_title">Voir le site web</string>
+<string name="dearrow_home_page_summary">Voir le site web officiel de DeArrow.</string>
+<string name="dearrow_enable_title">Activer DeArrow</string>
+<string name="dearrow_enable_summary">Remplacer les titres et miniatures pièges à clics par ceux de la communauté. YouTube uniquement.</string>
+<string name="dearrow_replace_titles_title">Remplacer les titres</string>
+<string name="dearrow_replace_titles_summary">Afficher le titre de la communauté au lieu de celui de l\'auteur.</string>
+<string name="dearrow_replace_thumbnails_title">Remplacer les miniatures</string>
+<string name="dearrow_replace_thumbnails_summary">Afficher une vraie image de la vidéo au lieu de la miniature de l\'auteur.</string>
+<string name="dearrow_random_frame_title">Utiliser une image stockée comme solution de repli</string>
+<string name="dearrow_random_frame_summary">Quand personne n\'a soumis de miniature, afficher une image de la vidéo elle-même au lieu de la miniature de l\'auteur. Une diffusion en direct ou une toute nouvelle vidéo est rendue par le serveur DeArrow. Nécessite le téléchargement d\'une petite image.</string>
+<string name="dearrow_auto_format_title">Corriger les titres en MAJUSCULES</string>
+<string name="dearrow_auto_format_summary">Convertir les titres écrits entièrement en majuscules en casse de phrase. Les acronymes sont ignorés.</string>
+<string name="dearrow_clear_cache_title">Vider le cache de DeArrow</string>
+<string name="dearrow_clear_cache_summary">Oublier tous les titres et miniatures téléchargés et les récupérer à nouveau.</string>
+<string name="dearrow_cache_cleared_toast">Cache de DeArrow vidé</string>
+<string name="dearrow_original_fallback_title">Garder la miniature originale</string>
+<string name="dearrow_original_fallback_summary">Quand aucune image de remplacement n\'est disponible, afficher la miniature de l\'auteur au lieu de laisser un espace réservé.</string>
+<string name="dearrow_settings_summary">Titres et miniatures participatifs pour les vidéos YouTube. Appuyez pour activer et configurer.</string>
+<string name="seek_on_media_button_events_title">Retour/avance rapide au lieu de précédent/suivant</string>
+<string name="seek_on_media_button_events_summary">Afficher les boutons de retour/avance rapide dans la notification (Android 13+) et faire en sorte que les touches précédent/suivant des appareils et casques Bluetooth effectuent une recherche au lieu de sauter des pistes. Le pas de recherche est défini par \"Durée de recherche avance/retour rapide\" dans les paramètres de gestes.</string>
+<string name="player_lock">Verrouiller l\'écran</string>
+<string name="player_unlock">Déverrouiller l\'écran</string>
+<string name="sponsor_block_enter_start_time">Entrer l\'heure de début</string>
+<string name="sponsor_block_enter_end_time">Entrer l\'heure de fin</string>
+<string name="sponsor_block_time_input_hint">[[h:]m:]s, ex. 1:23:45.5</string>
+<string name="sponsor_block_invalid_time_toast">Heure invalide</string>
+<string name="video_filtering">Filtrage vidéo</string>
+<string name="comment_filtering">Filtrage des commentaires</string>
+<string name="comment_filter_by_keyword_summary">Masquer les commentaires contenant l\'un de ces mots-clés. Entourez une entrée de barres obliques (/…/) pour utiliser une expression régulière</string>
+<string name="filter_by_username_title">Noms d\'utilisateur bloqués</string>
+<string name="comment_filter_by_username_summary">Masquer les commentaires publiés par ces utilisateurs</string>
+<string name="comment_filter_min_likes_title">J\'aime minimum</string>
+<string name="comment_filter_min_likes_summary">N\'afficher que les commentaires avec au moins ce nombre de J\'aime. 0 désactive le filtre. Les commentaires épinglés sont toujours affichés</string>
+<string name="comment_filter_min_likes_current">N\'afficher que les commentaires avec au moins %d J\'aime. Les commentaires épinglés sont toujours affichés</string>
+<string name="filter_items_hidden">Masqués par vos filtres : %d éléments</string>
+<string name="filter_all_items_hidden">Tous les éléments chargés ont été masqués par vos filtres (%d éléments)</string>
+<string name="filter_no_visible_items_yet">Aucun élément visible sur les pages chargées. D\'autres pages sont disponibles</string>
+<string name="filter_continue_loading">Continuer le chargement</string>
+<string name="filter_keyword_regex_hint">Mot-clé, ou /regex/</string>
+<string name="filter_keyword_regex_invalid">Regex invalide : %s</string>
+<string name="filter_by_channel_id_title">ID de chaînes bloqués</string>
+<string name="filter_by_channel_id_summary">Masquer les vidéos des chaînes avec ces ID</string>
+<string name="comment_filter_by_user_id_summary">Masquer les commentaires publiés par les utilisateurs avec ces ID de chaîne</string>
+<string name="filter_id_invalid_format">Format invalide. Utilisez NomDuService:ID, ex. YouTube:UCxxxxxxxxxxxxxxxxxxxxxx, BiliBili:12345 ou NicoNico:12345</string>
+<string name="subscribe_to_channel">S\'abonner à la chaîne</string>
+<string name="already_subscribed">Déjà abonné</string>
+<string name="multi_select">Sélection multiple</string>
+<string name="select_all">Tout sélectionner</string>
+<string name="invert_selection">Inverser la sélection</string>
+<string name="move_to_top">Déplacer vers le haut</string>
+<string name="move_to_bottom">Déplacer vers le bas</string>
+<string name="move_requires_original_order">Basculez l\'ordre de tri sur \"Original\" pour déplacer des éléments</string>
+<string name="filter_search_mismatch">%d éléments chargés ne correspondent pas à votre recherche</string>
+<string name="sort_upload_date_ascending">Date de mise en ligne (croissant)</string>
+<string name="sort_upload_date_descending">Date de mise en ligne (décroissant)</string>
+<string name="sort_duration_ascending">Durée (croissant)</string>
+<string name="sort_duration_descending">Durée (décroissant)</string>
+<string name="sort_name_ascending">Nom (croissant)</string>
+<string name="sort_name_descending">Nom (décroissant)</string>
+<string name="list_control_pages_title">Boutons de lecture sur les pages de liste</string>
+<string name="list_control_pages_summary">Pages affichant les boutons d\'arrière-plan / tout lire / pop-up</string>
+<string name="list_control_page_channel_videos_title">Vidéos de la chaîne</string>
+<string name="list_control_page_playlist_title">Listes de lecture distantes</string>
+<string name="list_control_page_local_playlist_title">Listes de lecture locales</string>
+<string name="list_control_pages_restart_toast">Redémarrez l\'application pour que les modifications prennent effet</string>
+<string name="name_sort_locale_title">Ordre de tri par nom</string>
+<string name="name_sort_locale_english">Anglais (insensible à la casse)</string>
+<string name="name_sort_locale_chinese">Chinois (pinyin)</string>
+<string name="name_sort_locale_japanese">Japonais</string>
+<string name="name_sort_locale_korean">Coréen</string>
+<string name="pinch_to_zoom_gesture_control_title">Pincer pour zoomer</string>
+<string name="pinch_to_zoom_gesture_control_summary">Pincez pour zoomer la vidéo en plein écran. Une fois zoomé, faites glisser pour vous déplacer et appuyez deux fois pour réinitialiser</string>
+<string name="search_in_page">Rechercher dans la page</string>
+<string name="add_to_home_screen">Ajouter à l\'écran d\'accueil</string>
+<string name="playlist_no_longer_exists">Cette liste de lecture n\'existe plus</string>
+<string name="preferred_audio_quality_title">Qualité audio préférée</string>
+<string name="bullet_comments_chat_mode_title">Afficher le chat en direct et les danmaku comme chat</string>
+<string name="bullet_comments_chat_mode_summary">Activé : affiché dans un panneau de chat (style YouTube). Désactivé : tous affichés sous forme de danmaku défilant sur la vidéo (style BiliBili/NicoNico)</string>
+<string name="chat_tab_description">Chat</string>
+<string name="chat_anonymous">Anonyme</string>
+<string name="chat_jump_to_latest">Aller au plus récent</string>
+<string name="chat_empty">Aucun message pour le moment</string>
+<string name="danmaku_settings_summary">Apparence des danmaku défilant sur la vidéo, indépendamment de l\'affichage du chat</string>
+<plurals name="subscribers">
+<item quantity="one">%s abonné</item>
+<item quantity="other">%s abonnés</item>
+</plurals>
+<plurals name="views">
+<item quantity="one">%s vue</item>
+<item quantity="other">%s vues</item>
+</plurals>
+<plurals name="watching">
+<item quantity="one">%s spectateur</item>
+<item quantity="other">%s spectateurs</item>
+</plurals>
+<plurals name="listening">
+<item quantity="one">%s auditeur</item>
+<item quantity="other">%s auditeurs</item>
+</plurals>
+<plurals name="videos">
+<item quantity="one">%s vidéo</item>
+<item quantity="other">%s vidéos</item>
+</plurals>
+<plurals name="new_streams">
+<item quantity="one">%s nouveau flux</item>
+<item quantity="other">%s nouveaux flux</item>
+</plurals>
+<plurals name="download_finished_notification">
+<item quantity="one">Téléchargement terminé</item>
+<item quantity="other">%s téléchargements terminés</item>
+</plurals>
+<plurals name="deleted_downloads_toast">
+<item quantity="one">%1$s téléchargement supprimé</item>
+<item quantity="other">%1$s téléchargements supprimés</item>
+</plurals>
+<plurals name="seconds">
+<item quantity="one">%d seconde</item>
+<item quantity="other">%d secondes</item>
+</plurals>
+<plurals name="minutes">
+<item quantity="one">%d minute</item>
+<item quantity="other">%d minutes</item>
+</plurals>
+<plurals name="hours">
+<item quantity="one">%d heure</item>
+<item quantity="other">%d heures</item>
+</plurals>
+<plurals name="days">
+<item quantity="one">%d jour</item>
+<item quantity="other">%d jours</item>
+</plurals>
+<plurals name="feed_group_dialog_selection_count">
+<item quantity="one">%d sélectionné</item>
+<item quantity="other">%d sélectionnés</item>
+</plurals>
+<string name="selection_count">%d sélectionnés</string>
+<string name="delete_selected_history_confirm">Supprimer %d éléments de l\'historique ?</string>
+<string name="items_deleted">%d éléments supprimés.</string>
+<string name="delete_selected_playlists_confirm">Supprimer %d playlists ?</string>
+<string name="remove_selected_from_playlist_confirm">Retirer %d éléments de la playlist ?</string>
+<string name="audio_quality_high">Élevée (débit binaire le plus élevé)</string>
+<string name="audio_quality_medium">Moyenne (~128 kbps)</string>
+<string name="audio_quality_low">Faible (débit binaire le plus bas, économise les données)</string>
 </resources>

@@ -135,9 +135,10 @@ class ErrorPanelHelper(
 
             errorTextView.setText(getExceptionDescription(errorInfo.throwable))
 
-            if (errorInfo.throwable !is ContentNotAvailableException &&
-                errorInfo.throwable !is ContentNotSupportedException &&
-                errorInfo.throwable !is WebViewUnavailableException
+            val throwable = errorInfo.throwable
+            if (throwable !is ContentNotAvailableException &&
+                throwable !is ContentNotSupportedException &&
+                (throwable !is WebViewUnavailableException || throwable.isRetryable)
             ) {
                 // show retry button only for content which is not unavailable or unsupported
                 errorRetryButton.isVisible = true

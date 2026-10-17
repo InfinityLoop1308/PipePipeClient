@@ -18,6 +18,16 @@
         android:text="@string/select_a_channel"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <EditText
+        android:id="@+id/filter_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:hint="@string/search"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:maxLines="1" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/items_list"
         android:layout_width="match_parent"

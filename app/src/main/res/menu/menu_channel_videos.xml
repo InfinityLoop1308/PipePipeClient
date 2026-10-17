@@ -2,9 +2,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_search_local"
+        android:icon="@drawable/ic_filter_alt"
+        android:orderInCategory="3"
+        android:title="@string/search_in_page"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/menu_item_sort"
         android:icon="@drawable/ic_sort"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         android:title="@string/sort"
         android:visible="false"
         app:showAsAction="ifRoom" />

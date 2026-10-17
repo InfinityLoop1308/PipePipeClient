@@ -1,6 +1,7 @@
 package org.schabi.newpipe.info_list;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,7 @@ import org.schabi.newpipe.info_list.holder.StreamMiniInfoItemHolder;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.util.FallbackViewHolder;
 import org.schabi.newpipe.util.OnClickGesture;
+import org.schabi.newpipe.util.ThemeHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,6 +92,12 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private final LayoutInflater layoutInflater;
     private final InfoItemBuilder infoItemBuilder;
     private final List<InfoItem> infoItemList;
+    private final List<InfoItem> filteredItemList = new ArrayList<>();
+    private final List<InfoItem> sortedItemList = new ArrayList<>();
+    private String filterText = "";
+    @Nullable
+    private java.util.Comparator<InfoItem> sortComparator = null;
+    private boolean reverseOrigin = false;
     private final HistoryRecordManager recordManager;
 
     private boolean useMiniVariant = false;
@@ -98,6 +106,46 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private ItemViewMode itemMode = ItemViewMode.LIST;
 
     private Supplier<View> headerSupplier = null;
+    private Supplier<View> footerSupplier = null;
+
+    /** Payload used to only refresh the selection highlight of bound items. */
+    public static final Object SELECTION_PAYLOAD = new Object();
+
+    /** Tells the adapter which items are selected; null means selection is not supported. */
+    public interface SelectionState {
+        boolean isSelected(InfoItem item);
+    }
+
+    @Nullable
+    private SelectionState selectionState;
+
+    public void setSelectionState(@Nullable final SelectionState selectionState) {
+        this.selectionState = selectionState;
+    }
+
+    /** Refreshes the selection highlight of all items without rebinding their content. */
+    public void notifySelectionChanged() {
+        notifyItemRangeChanged(0, getItemCount(), SELECTION_PAYLOAD);
+    }
+
+    private void bindSelection(final RecyclerView.ViewHolder holder, final InfoItem item) {
+        final boolean selected = selectionState != null && selectionState.isSelected(item);
+        if (selected) {
+            final int accent = ThemeHelper.resolveColorFromAttr(holder.itemView.getContext(),
+                    android.R.attr.colorAccent);
+            // ~24% alpha overlay keeps the thumbnail and text readable
+            holder.itemView.setForeground(new ColorDrawable((accent & 0x00FFFFFF) | 0x3D000000));
+        } else {
+            holder.itemView.setForeground(null);
+        }
+    }
+
+    public void setFooterSupplier(@Nullable final Supplier<View> supplier) {
+        footerSupplier = supplier;
+        if (showFooter) {
+            notifyItemChanged(sizeConsideringHeaderOffset());
+        }
+    }
 
     public InfoListAdapter(final Context context) {
         layoutInflater = LayoutInflater.from(context);
@@ -143,6 +191,13 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     + infoItemList.size() + ", data.size() = " + data.size());
         }
 
+        if (!filterText.isEmpty() || isSorted()) {
+            infoItemList.addAll(data);
+            applyFilter();
+            notifyDataSetChanged();
+            return;
+        }
+
         final int offsetStart = sizeConsideringHeaderOffset();
         infoItemList.addAll(data);
 
@@ -168,7 +223,63 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void setInfoItemList(final List<? extends InfoItem> data) {
         infoItemList.clear();
         infoItemList.addAll(data);
+        applyFilter();
         notifyDataSetChanged();
+    }
+
+    /** Locally filters the loaded items by name (and uploader for streams). */
+    public void filter(@NonNull final String text) {
+        filterText = text.trim();
+        applyFilter();
+        notifyDataSetChanged();
+    }
+
+    /** Sorts loaded items with the comparator; null restores the original order. */
+    public void setSortComparator(@Nullable final java.util.Comparator<InfoItem> comparator,
+                                  final boolean reverseOriginOrder) {
+        sortComparator = comparator;
+        reverseOrigin = reverseOriginOrder;
+        applyFilter();
+        notifyDataSetChanged();
+    }
+
+    private boolean isSorted() {
+        return sortComparator != null || reverseOrigin;
+    }
+
+    private void applyFilter() {
+        filteredItemList.clear();
+        sortedItemList.clear();
+        if (sortComparator != null || reverseOrigin) {
+            sortedItemList.addAll(infoItemList);
+            if (reverseOrigin) {
+                java.util.Collections.reverse(sortedItemList);
+            } else {
+                java.util.Collections.sort(sortedItemList, sortComparator);
+            }
+        }
+        if (filterText.isEmpty()) {
+            if (!sortedItemList.isEmpty()) {
+                filteredItemList.addAll(sortedItemList);
+            }
+            return;
+        }
+        final String needle = filterText.toLowerCase();
+        for (final InfoItem item : isSorted() ? sortedItemList : infoItemList) {
+            final String name = item.getName();
+            if (name != null && name.toLowerCase().contains(needle)) {
+                filteredItemList.add(item);
+            } else if (item instanceof StreamInfoItem) {
+                final String uploader = ((StreamInfoItem) item).getUploaderName();
+                if (uploader != null && uploader.toLowerCase().contains(needle)) {
+                    filteredItemList.add(item);
+                }
+            }
+        }
+    }
+
+    private List<InfoItem> shownList() {
+        return filterText.isEmpty() && !isSorted() ? infoItemList : filteredItemList;
     }
 
     public void clearStreamItemList() {
@@ -176,6 +287,8 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             return;
         }
         infoItemList.clear();
+        filteredItemList.clear();
+        sortedItemList.clear();
         notifyDataSetChanged();
     }
 
@@ -208,20 +321,24 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private int sizeConsideringHeaderOffset() {
-        final int i = infoItemList.size() + (hasHeader() ? 1 : 0);
+        final int i = shownList().size() + (hasHeader() ? 1 : 0);
         if (DEBUG) {
             Log.d(TAG, "sizeConsideringHeaderOffset() called → " + i);
         }
         return i;
     }
 
+    public int getShownCount() {
+        return shownList().size();
+    }
+
     public List<InfoItem> getItemsList() {
-        return infoItemList;
+        return isSorted() ? sortedItemList : infoItemList;
     }
 
     @Override
     public int getItemCount() {
-        int count = infoItemList.size();
+        int count = shownList().size();
         if (hasHeader()) {
             count++;
         }
@@ -250,10 +367,10 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         } else if (hasHeader()) {
             position--;
         }
-        if (position == infoItemList.size() && showFooter) {
+        if (position == shownList().size() && showFooter) {
             return FOOTER_TYPE;
         }
-        final InfoItem item = infoItemList.get(position);
+        final InfoItem item = shownList().get(position);
         if (shouldUseExperimentalNewUi(layoutInflater.getContext())
                 && item.getInfoType() != InfoItem.InfoType.COMMENT) {
             return COMPOSE_HOLDER_TYPE;
@@ -311,10 +428,7 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             case HEADER_TYPE:
                 return new HFHolder(headerSupplier.get());
             case FOOTER_TYPE:
-                return new HFHolder(PignateFooterBinding
-                        .inflate(layoutInflater, parent, false)
-                        .getRoot()
-                );
+                return new HFHolder(new android.widget.FrameLayout(parent.getContext()));
             case COMPOSE_HOLDER_TYPE:
                 return new ComposeInfoItemHolder(infoItemBuilder, parent, itemMode);
             case MINI_STREAM_HOLDER_TYPE:
@@ -358,11 +472,37 @@ public class InfoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     + "holder = [" + holder.getClass().getSimpleName() + "], "
                     + "position = [" + position + "]");
         }
-        if (holder instanceof InfoItemHolder) {
-            ((InfoItemHolder) holder).updateFromItem(
-                    // If header is present, offset the items by -1
-                    infoItemList.get(hasHeader() ? position - 1 : position), recordManager);
+        if (getItemViewType(position) == FOOTER_TYPE) {
+            final ViewGroup container = (ViewGroup) holder.itemView;
+            container.setLayoutParams(new RecyclerView.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            container.removeAllViews();
+            container.addView(footerSupplier == null
+                    ? PignateFooterBinding.inflate(layoutInflater, container, false).getRoot()
+                    : footerSupplier.get());
         }
+        if (holder instanceof InfoItemHolder) {
+            // If header is present, offset the items by -1
+            final InfoItem item = shownList().get(hasHeader() ? position - 1 : position);
+            ((InfoItemHolder) holder).updateFromItem(item, recordManager);
+            bindSelection(holder, item);
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder,
+                                 final int position,
+                                 @NonNull final List<Object> payloads) {
+        if (payloads.contains(SELECTION_PAYLOAD)) {
+            if (holder instanceof InfoItemHolder) {
+                final int index = hasHeader() ? position - 1 : position;
+                if (index >= 0 && index < shownList().size()) {
+                    bindSelection(holder, shownList().get(index));
+                }
+            }
+            return;
+        }
+        super.onBindViewHolder(holder, position, payloads);
     }
 
     public GridLayoutManager.SpanSizeLookup getSpanSizeLookup(final int spanCount) {

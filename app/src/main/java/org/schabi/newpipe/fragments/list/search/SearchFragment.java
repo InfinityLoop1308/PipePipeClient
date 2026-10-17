@@ -592,6 +592,9 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
 
     @Override
     public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
+        if (item.getItemId() == R.id.action_multi_select) {
+            return super.onOptionsItemSelected(item);
+        }
         if (useOldSearchFilter && !channelSearchMode && searchFilterUi != null) {
             return searchFilterUi.onOptionsItemSelected(item);
         }
@@ -1117,15 +1120,26 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         }
     }
 
+    /**
+     * Build the handler of the search tab of the channel being searched.
+     *
+     * <p>
+     * The channel's own base URL has to be carried over, not just its id: on services with more
+     * than one instance a channel page may well live on another host than the selected one, and
+     * rebuilding its URL from the id alone would point the search at the selected instance, where
+     * that id does not exist. Services with a single host are unaffected, their base URL is
+     * constant.
+     * </p>
+     */
     private ListLinkHandler getChannelSearchHandler() throws Exception {
         final StreamingService streamingService = NewPipe.getService(serviceId);
-        final String channelId = streamingService.getChannelLHFactory()
-                .fromUrl(channelUrl)
-                .getId();
+        final ListLinkHandler channelHandler = streamingService.getChannelLHFactory()
+                .fromUrl(channelUrl);
         final List<FilterItem> contentFilters = Collections.singletonList(
                 new FilterItem(Filter.ITEM_IDENTIFIER_UNKNOWN, ChannelTabs.SEARCH));
         final ListLinkHandler searchHandler = streamingService.getChannelTabLHFactory()
-                .fromQuery(channelId, contentFilters, null);
+                .fromQuery(channelHandler.getId(), contentFilters, null,
+                        channelHandler.getBaseUrl());
         final String searchUrl = searchHandler.getUrl()
                 + "?query=" + URLEncoder.encode(searchString, "UTF-8").replace("+", "%20");
         return new ListLinkHandler(searchUrl, searchUrl, searchHandler.getId(),
@@ -1489,12 +1503,15 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
                 infoListAdapter.addInfoItemList(result.getRelatedItems());
             } else {
                 infoListAdapter.clearStreamItemList();
-                showEmptyState();
-                return;
+                if (result.getFilteredCount() == 0 && !hasMoreItems()) {
+                    showEmptyState();
+                    return;
+                }
             }
         }
 
         super.handleResult(result);
+        updateFilterStatus(result.getFilteredCount(), result.getRelatedItems().isEmpty(), true);
     }
 
     private void handleSearchSuggestion() {
@@ -1536,12 +1553,11 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
 
         if (!result.getErrors().isEmpty()) {
             showSnackBarError(new ErrorInfo(result.getErrors(), UserAction.SEARCHED,
-                    "\"" + searchString + "\" → pageUrl: " + nextPage.getUrl() + ", "
-                            + "pageIds: " + nextPage.getIds() + ", "
-                            + "pageCookies: " + nextPage.getCookies(),
+                    "\"" + searchString + "\" → page: " + nextPage,
                     serviceId));
         }
         super.handleNextItems(result);
+        updateFilterStatus(result.getFilteredCount(), result.getItems().isEmpty(), false);
     }
 
     @Override
@@ -1577,5 +1593,10 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
                         throwable -> showSnackBarError(new ErrorInfo(throwable,
                                 UserAction.DELETE_FROM_HISTORY, "Deleting item failed")));
         disposables.add(onDelete);
+    }
+
+    @Override
+    protected boolean supportsMultiSelect() {
+        return true;
     }
 }

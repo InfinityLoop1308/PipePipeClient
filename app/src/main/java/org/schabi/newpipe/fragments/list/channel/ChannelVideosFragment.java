@@ -48,6 +48,7 @@ import org.schabi.newpipe.extractor.search.filter.Filter;
 import org.schabi.newpipe.extractor.search.filter.FilterGroup;
 import org.schabi.newpipe.extractor.search.filter.FilterItem;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
+import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.fragments.list.BaseListInfoFragment;
 import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.local.feed.notifications.NotificationHelper;
@@ -81,7 +82,7 @@ import io.reactivex.rxjava3.functions.Function;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, ChannelInfo>
-        implements View.OnClickListener {
+        implements View.OnClickListener, BackPressable {
 
     private static final int BUTTON_DEBOUNCE_INTERVAL = 100;
     private static final String PICASSO_CHANNEL_TAG = "PICASSO_CHANNEL_TAG";
@@ -89,6 +90,7 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
     private final CompositeDisposable disposables = new CompositeDisposable();
     private Disposable subscribeButtonMonitor;
     private MenuItem menuSortButton;
+    private MenuItem menuFilterButton;
 
     protected int selectedSortFilterId = Filter.ITEM_IDENTIFIER_UNKNOWN;
 
@@ -161,7 +163,17 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_channel_videos, menu);
         menuSortButton = menu.findItem(R.id.menu_item_sort);
+        menuFilterButton = menu.findItem(R.id.action_search_local);
+        if (menuFilterButton != null) {
+            // inside ChannelFragment the (remote) search button is used instead
+            menuFilterButton.setVisible(useAsFrontPage);
+        }
         updateSortButton();
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return closeLocalFilterOnBack();
     }
 
     @Override
@@ -174,6 +186,9 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
     public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
         if (item.getItemId() == R.id.menu_item_sort) {
             showSortDialog();
+            return true;
+        } else if (item.getItemId() == R.id.action_search_local) {
+            openLocalFilter();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -220,6 +235,7 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
         headerBinding = ChannelHeaderBinding
                 .inflate(activity.getLayoutInflater(), itemsList, false);
         playlistControlBinding = headerBinding.playlistControl;
+        playlistControlBinding.getRoot().configure(getString(R.string.list_control_page_channel_videos));
 
         return headerBinding::getRoot;
     }
@@ -773,4 +789,8 @@ public class ChannelVideosFragment extends BaseListInfoFragment<StreamInfoItem, 
         }
     }
 
+    @Override
+    protected boolean supportsMultiSelect() {
+        return true;
+    }
 }

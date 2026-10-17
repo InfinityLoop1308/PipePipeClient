@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_selection_select_all"
+        android:icon="@drawable/ic_select_all"
+        android:title="@string/select_all"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_selection_add_to_playlist"
+        android:icon="@drawable/ic_playlist_add"
+        android:title="@string/add_to_playlist"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_selection_delete"
+        android:icon="@drawable/ic_delete"
+        android:title="@string/play_queue_remove"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_selection_download"
+        android:title="@string/download"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_selection_enqueue"
+        android:title="@string/enqueue_stream"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_selection_background"
+        android:title="@string/start_here_on_background"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_selection_move_top"
+        android:title="@string/move_to_top"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_selection_move_bottom"
+        android:title="@string/move_to_bottom"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_selection_invert"
+        android:title="@string/invert_selection"
+        app:showAsAction="never" />
+</menu>

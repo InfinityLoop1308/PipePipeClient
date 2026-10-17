@@ -23,7 +23,36 @@ class PlayerControlsVisibilityController(private val player: Player) {
     val isControlsVisible: Boolean
         get() = player.binding?.playbackControlRoot?.visibility == View.VISIBLE
 
+    /** Whether the player UI and gestures are locked; only the unlock button stays usable. */
+    var isLocked = false
+        private set
+
+    private val hideUnlockButtonRunnable = Runnable {
+        player.binding?.unlockButton?.visibility = View.GONE
+    }
+
+    fun setLocked(locked: Boolean) {
+        val binding = player.binding ?: return
+        isLocked = locked
+        controlsVisibilityHandler.removeCallbacks(hideUnlockButtonRunnable)
+        if (locked) {
+            hideControls(0L, 0L)
+            showUnlockButtonTemporarily()
+        } else {
+            binding.unlockButton.visibility = View.GONE
+            showControlsThenHide()
+        }
+    }
+
+    fun showUnlockButtonTemporarily() {
+        val binding = player.binding ?: return
+        binding.unlockButton.visibility = View.VISIBLE
+        controlsVisibilityHandler.removeCallbacks(hideUnlockButtonRunnable)
+        controlsVisibilityHandler.postDelayed(hideUnlockButtonRunnable, UNLOCK_BUTTON_HIDE_MS)
+    }
+
     fun showControlsThenHide() {
+        if (isLocked) return
         if (Player.DEBUG) {
             Log.d(Player.TAG, "showControlsThenHide() called")
         }
@@ -47,6 +76,7 @@ class PlayerControlsVisibilityController(private val player: Player) {
     }
 
     fun showControls(duration: Long) {
+        if (isLocked) return
         if (Player.DEBUG) {
             Log.d(Player.TAG, "showControls() called")
         }
@@ -84,6 +114,7 @@ class PlayerControlsVisibilityController(private val player: Player) {
      * @param v the view that was clicked
      */
     fun manageControlsAfterOnClick(v: View) {
+        if (isLocked) return
         if (player.currentState.isCompleted) {
             return
         }
@@ -115,6 +146,12 @@ class PlayerControlsVisibilityController(private val player: Player) {
 
     fun showHideShadow(show: Boolean, duration: Long) {
         val binding = player.binding
+        // The lock button lives outside the controls root (same spot as the unlock button)
+        // and follows the controls' visibility.
+        binding.lockButton.animate(
+            show && !isLocked && player.isFullscreen && player.videoPlayerSelected(),
+            duration, AnimationType.ALPHA, 0L, null
+        )
         binding.playbackControlsShadow.animate(show, duration, AnimationType.ALPHA, 0L, null)
         binding.playerTopShadow.animate(show, duration, AnimationType.ALPHA, 0L, null)
         binding.playerBottomShadow.animate(show, duration, AnimationType.ALPHA, 0L, null)
@@ -160,5 +197,9 @@ class PlayerControlsVisibilityController(private val player: Player) {
 
     fun hideSystemUIIfNeeded() {
         player.listeners.hideSystemUIIfNeeded()
+    }
+
+    companion object {
+        private const val UNLOCK_BUTTON_HIDE_MS = 3000L
     }
 }

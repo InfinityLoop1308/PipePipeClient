@@ -18,6 +18,8 @@ public interface MediaSessionCallback {
     void play();
 
     void pause();
+    void fastRewind();
+    void fastForward();
     void changePlayMode();
     void close();
 }

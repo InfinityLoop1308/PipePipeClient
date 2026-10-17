@@ -12,7 +12,8 @@ import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.DeliveryMethod;
 import org.schabi.newpipe.player.PlaybackStartupTrace;
-import org.schabi.newpipe.util.ListHelper;
+import org.schabi.newpipe.util.AudioStreamSelector;
+import org.schabi.newpipe.youtube.SabrPlayerReloader;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,6 +81,7 @@ public final class SabrSessionHelper {
                     + spec.getVideoId());
         }
         created.setPoToken(resolvedToken);
+        created.setInfoReloader(SabrPlayerReloader.INSTANCE);
         final SessionObserver observer = benchmarkSessionObserver;
         if (observer != null) {
             observer.onSessionCreated(created);
@@ -107,7 +109,7 @@ public final class SabrSessionHelper {
                 candidates.add(stream);
             }
         }
-        final int selectedIndex = ListHelper.getDefaultAudioFormat(context, candidates);
+        final int selectedIndex = AudioStreamSelector.getDefaultAudioFormat(context, candidates);
         if (selectedIndex < 0 || selectedIndex >= candidates.size()) return null;
         final AudioStream selected = candidates.get(selectedIndex);
         final String selectedCodec = codecGroup(selected);

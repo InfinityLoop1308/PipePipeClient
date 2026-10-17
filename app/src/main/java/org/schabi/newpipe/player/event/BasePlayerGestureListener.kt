@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Handler
 import android.util.Log
 import android.view.*
+import org.schabi.newpipe.ktx.AnimationType
 import org.schabi.newpipe.ktx.animate
 import org.schabi.newpipe.player.PlayerService
 import org.schabi.newpipe.player.Player
@@ -108,6 +109,12 @@ abstract class BasePlayerGestureListener(
     // ///////////////////////////////////////////////////////////////////
 
     override fun onTouch(v: View, event: MotionEvent): Boolean {
+        if (player.isScreenLocked) {
+            if (event.actionMasked == MotionEvent.ACTION_UP) {
+                player.showUnlockButtonTemporarily()
+            }
+            return true
+        }
         return if (player.popupPlayerSelected()) {
             onTouchInPopup(v, event)
         } else {
@@ -139,8 +146,7 @@ abstract class BasePlayerGestureListener(
             gestureController.gestureDetector.onTouchEvent(cancelEvent)
             cancelEvent.recycle()
             if (gestureController.longPressSpeedingEnabled) {
-                player.playbackSpeed /= gestureController.longPressSpeedingFactor
-                gestureController.longPressSpeedingEnabled = false
+                stopLongPressSpeeding()
             }
         }
         if (gestureController.isPinchToZoomEnabled) {
@@ -189,7 +195,8 @@ abstract class BasePlayerGestureListener(
                 if (mainStreamClaimed && mainStreamMinimizeAllowed) {
                     val travelDown = event.y - mainStreamDownY
                     val belongsToSheet = if (player.isFullscreen) {
-                        mainStreamMinimizeInFullscreen
+                        !gestureController.isZoomed
+                            && mainStreamMinimizeInFullscreen
                             && mainStreamDownPortion == DisplayPortion.MIDDLE
                             && travelDown >= RELINQUISH_DOWN_TRAVEL_PX
                             && travelDown > abs(event.x - mainStreamDownX)
@@ -223,8 +230,7 @@ abstract class BasePlayerGestureListener(
                     isMovingInMain = false
                     onScrollEnd(PlayerService.PlayerType.VIDEO, event)
                 } else if (gestureController.longPressSpeedingEnabled) {
-                    player.playbackSpeed /= gestureController.longPressSpeedingFactor
-                    gestureController.longPressSpeedingEnabled = false
+                    stopLongPressSpeeding()
                 }
             }
         }
@@ -368,6 +374,11 @@ abstract class BasePlayerGestureListener(
         if (DEBUG)
             Log.d(TAG, "onDoubleTap called with e = [$e]")
 
+        if (!player.popupPlayerSelected() && gestureController.isZoomed) {
+            gestureController.animateResetZoom()
+            return true
+        }
+
         onDoubleTap(e, getDisplayPortion(e))
         return true
     }
@@ -403,7 +414,16 @@ abstract class BasePlayerGestureListener(
         } else {
             gestureController.longPressSpeedingEnabled = true
             player.playbackSpeed *= gestureController.longPressSpeedingFactor
+            val display = gestureController.swipeSpeedDisplay
+            display.text = String.format(java.util.Locale.getDefault(), "%.1fx", player.playbackSpeed)
+            display.animate(true, Player.DEFAULT_CONTROLS_DURATION.toLong(), AnimationType.SCALE_AND_ALPHA)
         }
+    }
+
+    private fun stopLongPressSpeeding() {
+        player.playbackSpeed /= gestureController.longPressSpeedingFactor
+        gestureController.longPressSpeedingEnabled = false
+        gestureController.swipeSpeedDisplay.animate(false, 200, AnimationType.SCALE_AND_ALPHA, 200)
     }
 
     override fun onScroll(
@@ -451,6 +471,12 @@ abstract class BasePlayerGestureListener(
         distanceX: Float,
         distanceY: Float
     ): Boolean {
+        // While zoomed in, every single-finger drag pans the viewport instead of seeking or
+        // changing volume/brightness/speed.
+        if (gestureController.isZoomed) {
+            gestureController.panZoomedVideo(-distanceX, -distanceY)
+            return true
+        }
 
         val isTouchingStatusBar: Boolean = initialEvent.y < getStatusBarHeight(service)
         val isTouchingNavigationBar: Boolean =

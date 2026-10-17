@@ -23,6 +23,13 @@ public class AppearanceSettingsFragment extends BasePreferenceFragment {
             removePreference(getString(R.string.player_notification_screen_key));
         }
 
+        findPreference(getString(R.string.list_control_pages_key))
+                .setOnPreferenceChangeListener((preference, newValue) -> {
+                    Toast.makeText(getContext(), R.string.list_control_pages_restart_toast,
+                            Toast.LENGTH_LONG).show();
+                    return true;
+                });
+
         final String themeKey = getString(R.string.theme_key);
         // the key of the active theme when settings were opened (or recreated after theme change)
         final String startThemeKey = defaultPreferences

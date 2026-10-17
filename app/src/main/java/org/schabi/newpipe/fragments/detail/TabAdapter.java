@@ -51,6 +51,16 @@ public class TabAdapter extends FragmentPagerAdapter {
         notifyDataSetChanged();
     }
 
+    public void addFragment(final Fragment fragment, final String title, final int index) {
+        if (fragmentManager.isStateSaved()) {
+            Log.d("TabAdapter", "This should not happen: addFragment() called after onSaveInstanceState()");
+            return;
+        }
+        mFragmentList.add(index, fragment);
+        mFragmentTitleList.add(index, title);
+        notifyDataSetChanged();
+    }
+
     public void clearAllItems() {
         if(fragmentManager.isStateSaved()){
             Log.d("TabAdapter", "This should not happen: clearAllItems() called after onSaveInstanceState()");
@@ -110,6 +120,19 @@ public class TabAdapter extends FragmentPagerAdapter {
 
     public void notifyDataSetUpdate() {
         notifyDataSetChanged();
+    }
+
+    @NonNull
+    @Override
+    public Object instantiateItem(@NonNull final ViewGroup container, final int position) {
+        // FragmentPagerAdapter reuses a fragment already in the FragmentManager with the same tag
+        // (e.g. restored after process death) instead of calling getItem(). Keep our list in sync
+        // with what is actually attached, so getItem() never hands out a detached instance.
+        final Object item = super.instantiateItem(container, position);
+        if (position < mFragmentList.size() && mFragmentList.get(position) != item) {
+            mFragmentList.set(position, (Fragment) item);
+        }
+        return item;
     }
 
     @Override

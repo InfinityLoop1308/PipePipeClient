@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="32dp"
+    android:layout_marginHorizontal="3dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="4dp">
+
+    <ImageView
+        android:id="@+id/chat_chip_avatar"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:importantForAccessibility="no" />
+
+    <TextView
+        android:id="@+id/chat_chip_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="6dp"
+        android:maxLines="1"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+</LinearLayout>

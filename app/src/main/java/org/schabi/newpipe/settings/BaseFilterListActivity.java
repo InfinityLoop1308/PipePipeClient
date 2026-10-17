@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.extractor.utils.KeywordMatcher;
 import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.ThemeHelper;
 
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.PatternSyntaxException;
 
 public abstract class BaseFilterListActivity extends AppCompatActivity {
     protected RecyclerView recyclerView;
@@ -40,6 +42,24 @@ public abstract class BaseFilterListActivity extends AppCompatActivity {
     protected abstract String getEmptyViewText();
     protected abstract String getAddDialogTitle();
     protected abstract String getActivityTitle();
+
+    /**
+     * Validates and canonicalizes a new entry.
+     * @return the entry to store, or null if invalid (the dialog then stays open)
+     */
+    protected String normalizeEntry(final String input) {
+        return input;
+    }
+
+    /** Error text shown when {@link #normalizeEntry} rejects an entry. */
+    protected String getInvalidEntryMessage() {
+        return null;
+    }
+
+    /** Whether entries wrapped in slashes ({@code /pattern/}) are treated as regex. */
+    protected boolean supportsRegex() {
+        return false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,10 +168,36 @@ public abstract class BaseFilterListActivity extends AppCompatActivity {
 
         View view = getLayoutInflater().inflate(R.layout.dialog_add_filter, null);
         EditText input = view.findViewById(R.id.filter_input);
+        if (supportsRegex()) {
+            input.setHint(R.string.filter_keyword_regex_hint);
+        }
         builder.setView(view);
 
-        builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
+        // The OK listener is set in onShow so the dialog stays open on invalid regex
+        builder.setPositiveButton(android.R.string.ok, null);
+        builder.setNegativeButton(android.R.string.cancel, null);
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(d -> dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setOnClickListener(v -> {
             String newFilter = input.getText().toString().trim();
+            if (!newFilter.isEmpty()) {
+                final String normalized = normalizeEntry(newFilter);
+                if (normalized == null) {
+                    input.setError(getInvalidEntryMessage());
+                    return;
+                }
+                newFilter = normalized;
+            }
+            if (supportsRegex() && KeywordMatcher.isRegex(newFilter)) {
+                try {
+                    KeywordMatcher.compile(newFilter);
+                } catch (PatternSyntaxException e) {
+                    input.setError(getString(R.string.filter_keyword_regex_invalid,
+                            e.getDescription()));
+                    return;
+                }
+            }
+            dialog.dismiss();
             if (!newFilter.isEmpty() && !filterItems.contains(newFilter)) {
                 filterItems.add(newFilter);
                 // Also add to filtered list if it matches current filter
@@ -171,10 +217,8 @@ public abstract class BaseFilterListActivity extends AppCompatActivity {
                 adapter.updateEmptyViewVisibility();
                 saveFilterItems();
             }
-        });
-
-        builder.setNegativeButton(android.R.string.cancel, null);
-        builder.show();
+        }));
+        dialog.show();
     }
 
     private class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.ViewHolder> {

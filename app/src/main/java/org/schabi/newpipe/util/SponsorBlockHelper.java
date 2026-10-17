@@ -209,10 +209,20 @@ public final class SponsorBlockHelper {
         }
     }
 
+    /**
+     * The in-player "skipping" switch. It only pauses/resumes skipping and is independent
+     * from the global SponsorBlock switch in settings.
+     */
+    public static SponsorBlockMode getSkippingMode(final Context context) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(context.getString(R.string.sponsor_block_skipping_enabled_key),
+                true) ? SponsorBlockMode.ENABLED : SponsorBlockMode.DISABLED;
+    }
+
     public static void setSponsorBlockMode(final Context context, final SponsorBlockMode mode) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         prefs.edit()
-                .putBoolean(context.getString(R.string.sponsor_block_enable_key),
+                .putBoolean(context.getString(R.string.sponsor_block_skipping_enabled_key),
                         mode == SponsorBlockMode.ENABLED)
                 .apply();
     }

@@ -79,6 +79,29 @@
         android:visibility="gone"
         tools:visibility="visible" />
 
+    <FrameLayout
+        android:id="@+id/chatPanel"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:background="#B3000000"
+        android:visibility="gone">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chatPanelList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingVertical="4dp" />
+
+        <include
+            android:id="@+id/chatPanelPinned"
+            layout="@layout/view_chat_pinned"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top" />
+    </FrameLayout>
+
     <!-- transparent background is needed for selectableItemBackgroundBorderless to work -->
     <RelativeLayout
         android:id="@+id/playbackControlRoot"
@@ -969,5 +992,41 @@
         android:id="@+id/bulletCommentsView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/lockButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="32dp"
+        android:background="@drawable/background_rectangle_black_transparent"
+        android:clickable="true"
+        android:contentDescription="@string/player_lock"
+        android:focusable="true"
+        android:padding="12dp"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_lock"
+        app:tint="@color/white"
+        tools:ignore="RtlHardcoded" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/unlockButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="32dp"
+        android:background="@drawable/background_rectangle_black_transparent"
+        android:clickable="true"
+        android:contentDescription="@string/player_unlock"
+        android:focusable="true"
+        android:padding="12dp"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_lock_open"
+        app:tint="@color/white"
+        tools:ignore="RtlHardcoded" />
 
 </RelativeLayout>

@@ -3,36 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
             android:id="@+id/action_search_local"
-            android:icon="@drawable/ic_search"
-            android:orderInCategory="1"
-            android:title="@string/search"
+            android:icon="@drawable/ic_filter_alt"
+            android:orderInCategory="3"
+            android:title="@string/search_in_page"
             app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_item_sort"
+        android:orderInCategory="2"
         android:title="@string/sort"
         app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_sort" >
-            <menu>
-                <item
-                    android:title="@string/sort_name"
-                    android:id="@+id/menu_item_sort_name"
-                    app:showAsAction="never" />
-                <item
-                    android:title="@string/sort_name_reverse"
-                    android:id="@+id/menu_item_sort_name_reverse"
-                    app:showAsAction="never" />
-                <item
-                    android:title="@string/sort_origin"
-                    android:id="@+id/menu_item_sort_origin"
-                    app:showAsAction="never" />
-                <item
-                    android:title="@string/sort_origin_reverse"
-                    android:id="@+id/menu_item_sort_origin_reverse"
-                    app:showAsAction="never" />
-            </menu>
-    </item>
+        android:icon="@drawable/ic_sort" />
 
+    <item
+        android:id="@+id/action_multi_select"
+        android:title="@string/multi_select"
+        app:showAsAction="never" />
     <item
         android:id="@+id/menu_item_share_playlist"
         android:icon="@drawable/ic_share"
@@ -61,6 +47,10 @@
     <item
         android:id="@+id/menu_item_append_playlist"
         android:title="@string/add_to_playlist"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_item_add_to_home_screen"
+        android:title="@string/add_to_home_screen"
         app:showAsAction="never" />
 
 </menu>

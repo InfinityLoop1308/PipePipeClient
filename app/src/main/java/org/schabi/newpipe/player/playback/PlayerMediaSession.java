@@ -7,6 +7,7 @@ import android.support.v4.media.MediaMetadataCompat;
 
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.RepeatMode;
+import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
 import org.schabi.newpipe.player.mediasession.MediaSessionCallback;
 
@@ -22,13 +23,31 @@ public class PlayerMediaSession implements MediaSessionCallback {
     }
 
     @Override
+    public void fastRewind() {
+        player.fastRewind();
+    }
+
+    @Override
+    public void fastForward() {
+        player.fastForward();
+    }
+
+    @Override
     public void playPrevious() {
-        player.playPrevious();
+        if (PlayerHelper.getSeekInsteadOfSkip(player.getContext())) {
+            player.fastRewind();
+        } else {
+            player.playPrevious();
+        }
     }
 
     @Override
     public void playNext() {
-        player.playNext();
+        if (PlayerHelper.getSeekInsteadOfSkip(player.getContext())) {
+            player.fastForward();
+        } else {
+            player.playNext();
+        }
     }
 
     @Override

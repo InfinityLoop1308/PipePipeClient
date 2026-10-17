@@ -82,6 +82,9 @@ public class CommentsFragmentContainer extends BaseFragment implements BackPress
         // Replies are pushed onto our OWN child FragmentManager (tied to this fragment's view), so
         // backing out of a reply pops here. When the view is gone (e.g. video sent to pop-up) the
         // child FM is torn down with it, so there's no stale entry to recreate -> no crash on back.
+        if (!isAdded()) {
+            return false;
+        }
         final FragmentManager childFm = getChildFragmentManager();
         if (childFm.getBackStackEntryCount() > 0) {
             childFm.popBackStack();

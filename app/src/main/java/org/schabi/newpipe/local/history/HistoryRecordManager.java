@@ -64,6 +64,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class HistoryRecordManager {
     private final AppDatabase database;
     private final StreamDAO streamTable;
+    private static final int DELETE_BATCH_SIZE = 500;
     private final StreamHistoryDAO streamHistoryTable;
     private final SearchHistoryDAO searchHistoryTable;
     private final StreamStateDAO streamStateTable;
@@ -164,6 +165,23 @@ public class HistoryRecordManager {
         return Completable.fromAction(() -> database.runInTransaction(() -> {
             streamStateTable.deleteState(streamId);
             streamHistoryTable.deleteStreamHistory(streamId);
+        })).subscribeOn(Schedulers.io());
+    }
+
+    /**
+     * Deletes history and playback state of several streams in a single transaction, so the
+     * history flows are invalidated once instead of once per stream.
+     */
+    public Completable deleteStreamHistoryAndState(final Collection<Long> streamIds) {
+        final List<Long> ids = new ArrayList<>(streamIds);
+        return Completable.fromAction(() -> database.runInTransaction(() -> {
+            // stay well below SQLite's bound-variable limit
+            for (int start = 0; start < ids.size(); start += DELETE_BATCH_SIZE) {
+                final List<Long> chunk =
+                        ids.subList(start, Math.min(start + DELETE_BATCH_SIZE, ids.size()));
+                streamStateTable.deleteStates(chunk);
+                streamHistoryTable.deleteStreamHistories(chunk);
+            }
         })).subscribeOn(Schedulers.io());
     }
 

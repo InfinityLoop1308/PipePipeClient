@@ -82,11 +82,6 @@
                 android:title="@string/settings_category_exoplayer_title"
                 app:singleLineTitle="false"
                 app:iconSpaceReserved="false" />
-
-        <PreferenceScreen
-                android:fragment="org.schabi.newpipe.settings.BulletCommentsSettingsFragment"
-                android:title="@string/settings_category_bullet_comments_summary"
-                app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -164,6 +159,13 @@
             android:title="@string/settings_category_behavior_title"
             app:singleLineTitle="false"
             app:iconSpaceReserved="false">
+        <PreferenceScreen
+                android:fragment="org.schabi.newpipe.settings.DeArrowSettingsFragment"
+                android:title="@string/dearrow"
+                android:summary="@string/dearrow_settings_summary"
+                app:singleLineTitle="false"
+                app:iconSpaceReserved="false" />
+
         <MultiSelectListPreference
                 android:key="@string/show_search_suggestions_key"
                 android:summary="@string/show_search_suggestions_summary"
@@ -252,6 +254,16 @@
                 android:key="@string/auto_translated_subtitles_language_key"
                 android:summary="%s"
                 android:title="@string/auto_translated_subtitles_language_title"
+                app:singleLineTitle="false"
+                app:iconSpaceReserved="false" />
+
+        <ListPreference
+                android:defaultValue="@string/name_sort_locale_english_value"
+                android:entries="@array/name_sort_locale_names"
+                android:entryValues="@array/name_sort_locale_values"
+                android:key="@string/name_sort_locale_key"
+                android:summary="%s"
+                android:title="@string/name_sort_locale_title"
                 app:singleLineTitle="false"
                 app:iconSpaceReserved="false" />
     </PreferenceCategory>

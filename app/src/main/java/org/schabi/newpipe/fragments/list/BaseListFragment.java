@@ -1,19 +1,24 @@
 package org.schabi.newpipe.fragments.list;
 
+import org.schabi.newpipe.extractor.utils.ServiceScopedId;
 import static org.schabi.newpipe.ktx.ViewUtils.animate;
 import static org.schabi.newpipe.ktx.ViewUtils.animateHideRecyclerViewAllowingScrolling;
 import static org.schabi.newpipe.util.ThemeHelper.getGridSpanCountStreams;
 import static org.schabi.newpipe.util.ThemeHelper.isGrid;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.MenuRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -34,13 +39,20 @@ import org.schabi.newpipe.fragments.OnScrollBelowItemsListener;
 import org.schabi.newpipe.info_list.ItemViewMode;
 import org.schabi.newpipe.info_list.dialog.InfoItemDialog;
 import org.schabi.newpipe.info_list.InfoListAdapter;
+import org.schabi.newpipe.settings.SettingsActivity;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.OnClickGesture;
 import org.schabi.newpipe.util.StateSaver;
 import org.schabi.newpipe.util.ThemeHelper;
+import org.schabi.newpipe.util.ToolbarFilterHelper;
+import org.schabi.newpipe.util.selection.SelectionController;
+import org.schabi.newpipe.util.selection.SelectionToolbar;
+import org.schabi.newpipe.util.selection.StreamSelectionActions;
 import org.schabi.newpipe.views.SuperScrollLayoutManager;
 
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
@@ -62,7 +74,141 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
 
     protected InfoListAdapter infoListAdapter;
     protected RecyclerView itemsList;
+
+    /** Multi-selection of streams; only usable if {@link #supportsMultiSelect()}. */
+    protected final SelectionController<String> selection = new SelectionController<>();
+    @Nullable
+    private SelectionToolbar selectionToolbar;
+    private final CompositeDisposable selectionDisposables = new CompositeDisposable();
+    private static final String SELECTION_STATE_KEY = "list_selection";
     private int focusedPosition = -1;
+    private int hiddenItemCount;
+    private boolean manualFilterContinuation;
+    /** True while the user's local toolbar filter has text; suspends automatic paging. */
+    private boolean localFilterActive;
+    private ToolbarFilterHelper localFilterHelper;
+
+    /** Opens the toolbar filter field; every list's local search must go through here. */
+    protected void openLocalFilter() {
+        if (localFilterHelper == null) {
+            localFilterHelper = new ToolbarFilterHelper(activity, text -> {
+                onLocalFilterChanged(text);
+                return kotlin.Unit.INSTANCE;
+            });
+        }
+        localFilterHelper.open();
+    }
+
+    /** Closes the toolbar filter if open; returns true if it consumed the back press. */
+    protected boolean closeLocalFilterOnBack() {
+        if (localFilterHelper != null && localFilterHelper.isActive()) {
+            localFilterHelper.close();
+            return true;
+        }
+        return false;
+    }
+
+    /** Applies the toolbar's local filter text; no automatic loading happens while it is set. */
+    protected void onLocalFilterChanged(@NonNull final String text) {
+        localFilterActive = !text.trim().isEmpty();
+        if (infoListAdapter != null) {
+            infoListAdapter.filter(text);
+        }
+        if (localFilterActive) {
+            installFilterFooter();
+        } else if (hiddenItemCount == 0 && !manualFilterContinuation && infoListAdapter != null) {
+            infoListAdapter.setFooterSupplier(null);
+        }
+        showListFooter(hasMoreItems());
+        if (!localFilterActive && itemsList != null) {
+            // resume paging if the unfiltered list doesn't fill the screen
+            itemsList.post(() -> {
+                if (itemsList != null && !localFilterActive && hasMoreItems()
+                        && !isLoading.get() && !manualFilterContinuation
+                        && !itemsList.canScrollVertically(1)) {
+                    loadMoreItems();
+                }
+            });
+        }
+    }
+
+    private int searchHiddenCount() {
+        return localFilterActive && infoListAdapter != null
+                ? infoListAdapter.getItemsList().size() - infoListAdapter.getShownCount() : 0;
+    }
+
+    /** A bounded empty-page batch must be resumed explicitly, never by the scroll listener. */
+    protected void updateFilterStatus(final int count, final boolean emptyBatch,
+                                      final boolean reset) {
+        hiddenItemCount = reset ? count : hiddenItemCount + count;
+        manualFilterContinuation = emptyBatch && hasMoreItems();
+        if (hiddenItemCount == 0 && !manualFilterContinuation) {
+            if (!localFilterActive) {
+                infoListAdapter.setFooterSupplier(null);
+            }
+            showListFooter(hasMoreItems());
+            return;
+        }
+        hideLoading();
+        if (manualFilterContinuation) {
+            useNormalItemListScrollListener();
+        }
+        installFilterFooter();
+        showListFooter(true);
+    }
+
+    private boolean hasContentFilterNote() {
+        return hiddenItemCount > 0 || manualFilterContinuation;
+    }
+
+    private void installFilterFooter() {
+        infoListAdapter.setFooterSupplier(() -> {
+            final View footer = getLayoutInflater().inflate(
+                    R.layout.filter_list_footer, itemsList, false);
+            final StringBuilder text = new StringBuilder();
+            if (hasContentFilterNote()) {
+                text.append(hiddenItemCount > 0
+                        ? getString(infoListAdapter.getItemsList().isEmpty()
+                                ? R.string.filter_all_items_hidden : R.string.filter_items_hidden,
+                                hiddenItemCount)
+                        : getString(R.string.filter_no_visible_items_yet));
+            }
+            final int mismatch = searchHiddenCount();
+            if (mismatch > 0) {
+                if (text.length() > 0) {
+                    text.append('\n');
+                }
+                text.append(getString(R.string.filter_search_mismatch, mismatch));
+            }
+            final TextView status = footer.findViewById(R.id.filter_status);
+            status.setText(text);
+            status.setVisibility(text.length() > 0 ? View.VISIBLE : View.GONE);
+            final View more = footer.findViewById(R.id.filter_continue);
+            more.setVisibility(manualFilterContinuation
+                    || (localFilterActive && hasMoreItems()) ? View.VISIBLE : View.GONE);
+            more.setOnClickListener(v -> {
+                if (isLoading.get()) {
+                    return;
+                }
+                // Keep automatic loading paused until the request completes.
+                loadMoreItems();
+            });
+            final View settings = footer.findViewById(R.id.filter_settings);
+            settings.setVisibility(hasContentFilterNote() ? View.VISIBLE : View.GONE);
+            settings.setOnClickListener(v ->
+                    startActivity(new Intent(requireContext(), SettingsActivity.class)
+                            .putExtra(SettingsActivity.EXTRA_CONTENT_FILTER, true)));
+            return footer;
+        });
+    }
+
+    protected void resetFilterStatus() {
+        hiddenItemCount = 0;
+        manualFilterContinuation = false;
+        if (infoListAdapter != null) {
+            infoListAdapter.setFooterSupplier(null);
+        }
+    }
 
     /*//////////////////////////////////////////////////////////////////////////
     // LifeCycle
@@ -88,6 +234,7 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     @Override
     public void onDestroy() {
         super.onDestroy();
+        selectionDisposables.dispose();
         if (useDefaultStateSaving) {
             StateSaver.onDestroy(savedState);
         }
@@ -104,6 +251,44 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
                 refreshItemViewMode();
             }
             updateFlags = 0;
+        }
+        bindSelectionToolbar();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        releaseSelectionToolbar();
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (localFilterHelper != null) {
+            localFilterHelper.close();
+            localFilterHelper = null;
+        }
+        selection.setListener(null);
+        if (infoListAdapter != null) {
+            infoListAdapter.setSelectionState(null);
+        }
+        super.onDestroyView();
+    }
+
+    /**
+     * Pages of a pager that are resumed but not shown must not own the shared selection toolbar.
+     */
+    @Override
+    @SuppressWarnings("deprecation")
+    public void setUserVisibleHint(final boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (!isResumed()) {
+            return;
+        }
+        if (isVisibleToUser) {
+            bindSelectionToolbar();
+        } else {
+            selection.exit();
+            releaseSelectionToolbar();
         }
     }
 
@@ -178,6 +363,11 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     @Override
     public void onSaveInstanceState(@NonNull final Bundle bundle) {
         super.onSaveInstanceState(bundle);
+        if (supportsMultiSelect()) {
+            final Bundle selectionState = new Bundle();
+            selection.saveState(selectionState);
+            bundle.putBundle(SELECTION_STATE_KEY, selectionState);
+        }
         if (useDefaultStateSaving) {
             savedState = StateSaver
                     .tryToSave(activity.isChangingConfigurations(), savedState, bundle, this);
@@ -187,6 +377,7 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     @Override
     protected void onRestoreInstanceState(@NonNull final Bundle bundle) {
         super.onRestoreInstanceState(bundle);
+        selection.restoreState(bundle.getBundle(SELECTION_STATE_KEY));
         if (useDefaultStateSaving) {
             savedState = StateSaver.tryToRestore(bundle, this);
         }
@@ -248,6 +439,21 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         }
 
         itemsList.setAdapter(infoListAdapter);
+
+        if (supportsMultiSelect()) {
+            infoListAdapter.setSelectionState(item -> {
+                final String key = getSelectionKey(item);
+                return key != null && selection.isSelected(key);
+            });
+            selection.setListener(controller -> {
+                if (selectionToolbar != null) {
+                    selectionToolbar.update(controller);
+                }
+                if (infoListAdapter != null) {
+                    infoListAdapter.notifySelectionChanged();
+                }
+            });
+        }
     }
 
     protected void onItemSelected(final InfoItem selectedItem) {
@@ -268,6 +474,10 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         infoListAdapter.setOnStreamSelectedListener(new OnClickGesture<>() {
             @Override
             public void selected(final StreamInfoItem selectedItem) {
+                if (selection.isActive()) {
+                    selection.toggle(getSelectionKey(selectedItem));
+                    return;
+                }
                 onStreamSelected(selectedItem);
             }
 
@@ -280,8 +490,12 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         infoListAdapter.setOnChannelSelectedListener(new OnClickGesture<>() {
             @Override
             public void selected(final ChannelInfoItem selectedItem) {
+                if (selection.isActive()) {
+                    return;
+                }
                 try {
-                    if (isChannelBlocked(selectedItem.getName())) {
+                    if (isChannelBlocked(selectedItem.getName(), selectedItem.getServiceId(),
+                            selectedItem.getUploaderId())) {
                         Toast.makeText(requireContext(),
                                 R.string.channel_is_blocked,
                                 Toast.LENGTH_SHORT).show();
@@ -302,8 +516,12 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         infoListAdapter.setOnPlaylistSelectedListener(new OnClickGesture<>() {
             @Override
             public void selected(final PlaylistInfoItem selectedItem) {
+                if (selection.isActive()) {
+                    return;
+                }
                 try {
-                    if (isChannelBlocked(selectedItem.getUploaderName())) {
+                    if (isChannelBlocked(selectedItem.getUploaderName(),
+                            selectedItem.getServiceId(), selectedItem.getUploaderId())) {
                         Toast.makeText(requireContext(),
                                 R.string.channel_is_blocked,
                                 Toast.LENGTH_SHORT).show();
@@ -402,6 +620,9 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         @Override
         public void onScrolled(@Nonnull final RecyclerView recyclerView, final int dx, final int dy) {
             super.onScrolled(recyclerView, dx, dy);
+            if (manualFilterContinuation || localFilterActive) {
+                return;
+            }
             if (dy != 0) {
                 log("Vertical scroll occurred");
 
@@ -444,7 +665,8 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     }
 
     protected void onScrollToBottom() {
-        if (hasMoreItems() && !isLoading.get()) {
+        if (hasMoreItems() && !isLoading.get() && !manualFilterContinuation
+                && !localFilterActive) {
             loadMoreItems();
         }
     }
@@ -474,6 +696,94 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
             supportActionBar.setDisplayShowTitleEnabled(true);
             supportActionBar.setDisplayHomeAsUpEnabled(!useAsFrontPage);
         }
+        if (supportsMultiSelect()) {
+            inflater.inflate(R.menu.menu_multi_select, menu);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
+        if (item.getItemId() == R.id.action_multi_select && supportsMultiSelect()) {
+            selection.enter();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+    // Multi-selection
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /** @return whether the stream items of this list can be multi-selected */
+    protected boolean supportsMultiSelect() {
+        return false;
+    }
+
+    @MenuRes
+    protected int getSelectionMenu() {
+        return R.menu.menu_stream_selection;
+    }
+
+    @Nullable
+    private static String getSelectionKey(@Nullable final InfoItem item) {
+        return item instanceof StreamInfoItem
+                ? item.getServiceId() + ":" + item.getUrl() : null;
+    }
+
+    private void bindSelectionToolbar() {
+        if (!supportsMultiSelect() || !getUserVisibleHint() || selectionToolbar != null) {
+            return;
+        }
+        selectionToolbar = SelectionToolbar.bind(activity, getSelectionMenu(), selection,
+                this::onSelectionAction);
+    }
+
+    private void releaseSelectionToolbar() {
+        if (selectionToolbar != null) {
+            selectionToolbar.release();
+            selectionToolbar = null;
+        }
+    }
+
+    @NonNull
+    private List<StreamInfoItem> getStreamItems(final boolean onlySelected) {
+        final List<StreamInfoItem> result = new ArrayList<>();
+        if (infoListAdapter == null) {
+            return result;
+        }
+        for (final InfoItem item : infoListAdapter.getItemsList()) {
+            if (item instanceof StreamInfoItem
+                    && (!onlySelected || selection.isSelected(getSelectionKey(item)))) {
+                result.add((StreamInfoItem) item);
+            }
+        }
+        return result;
+    }
+
+    @NonNull
+    private List<String> getStreamKeys() {
+        final List<String> keys = new ArrayList<>();
+        for (final StreamInfoItem item : getStreamItems(false)) {
+            keys.add(getSelectionKey(item));
+        }
+        return keys;
+    }
+
+    private boolean onSelectionAction(@NonNull final MenuItem item) {
+        final int id = item.getItemId();
+        if (id == R.id.action_selection_select_all) {
+            selection.selectAll(getStreamKeys());
+            return true;
+        } else if (id == R.id.action_selection_invert) {
+            selection.invert(getStreamKeys());
+            return true;
+        }
+        final boolean handled = StreamSelectionActions.handle(this, selectionDisposables, item,
+                StreamSelectionActions.toEntities(getStreamItems(true)));
+        if (handled) {
+            selection.exit();
+        }
+        return handled;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -482,6 +792,9 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
 
     @Override
     protected void startLoading(final boolean forceLoad) {
+        // the list is replaced, so the selected items would not exist anymore
+        selection.exit();
+        resetFilterStatus();
         useInitialItemListLoadScrollListener();
         super.startLoading(forceLoad);
     }
@@ -517,7 +830,9 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     public void showListFooter(final boolean show) {
         itemsList.post(() -> {
             if (infoListAdapter != null && itemsList != null) {
-                infoListAdapter.showFooter(show);
+                infoListAdapter.showFooter(show || hiddenItemCount > 0
+                        || manualFilterContinuation
+                        || (localFilterActive && (searchHiddenCount() > 0 || hasMoreItems())));
             }
         });
     }
@@ -561,17 +876,25 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     /**
      * Check if a channel name is in the user's block list.
      * @param channelName the channel name to check
+     * @param serviceId the service the channel belongs to
+     * @param channelId the channel id to check, may be null
      * @return true if the channel is blocked
      */
-    protected boolean isChannelBlocked(@Nullable final String channelName) {
+    protected boolean isChannelBlocked(@Nullable final String channelName,
+                                       final int serviceId,
+                                       @Nullable final String channelId) {
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(requireContext());
+        final String channelKey = ServiceScopedId.of(serviceId, channelId);
+        if (channelKey != null
+                && prefs.getStringSet(getString(R.string.filter_by_channel_id_key) + "_set",
+                new HashSet<>()).contains(channelKey)) {
+            return true;
+        }
         if (channelName == null || channelName.isEmpty()) {
             return false;
         }
-        final SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(requireContext());
-        final Set<String> blockedChannels = prefs.getStringSet(
-                getString(R.string.filter_by_channel_key) + "_set",
-                new HashSet<>());
-        return blockedChannels.contains(channelName);
+        return prefs.getStringSet(getString(R.string.filter_by_channel_key) + "_set",
+                new HashSet<>()).contains(channelName);
     }
 }
