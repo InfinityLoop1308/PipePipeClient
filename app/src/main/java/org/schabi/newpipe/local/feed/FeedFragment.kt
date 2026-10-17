@@ -39,6 +39,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.edit
 import androidx.core.os.bundleOf
@@ -545,7 +546,15 @@ class FeedFragment : BaseStateFragment<FeedState>(), BackPressable {
         val actionBar = activity.supportActionBar ?: return
         val customView = layoutInflater.inflate(R.layout.feed_search_toolbar, null, false)
 
-        actionBar.setCustomView(customView)
+        // Hide the title and let the search bar take the full width
+        actionBar.setDisplayShowTitleEnabled(false)
+        actionBar.setCustomView(
+            customView,
+            ActionBar.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        )
         actionBar.setDisplayShowCustomEnabled(true)
 
         editText = activity.findViewById(R.id.toolbar_search_edit_text_feed)
@@ -684,6 +693,7 @@ class FeedFragment : BaseStateFragment<FeedState>(), BackPressable {
 
         actionBar.setCustomView(null)
         actionBar.setDisplayShowCustomEnabled(false)
+        actionBar.setDisplayShowTitleEnabled(true)
 
         val searchLocal = activity.findViewById<View>(R.id.action_search_feed)
         searchLocal?.visibility = View.VISIBLE
