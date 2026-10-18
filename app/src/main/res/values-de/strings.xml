@@ -1067,8 +1067,6 @@
 <string name="move_to_bottom">Nach ganz unten verschieben</string>
 <string name="move_requires_original_order">Ändere die Sortierreihenfolge auf \"Original\", um Elemente zu verschieben</string>
 <string name="filter_search_mismatch">%d geladene Elemente entsprechen nicht deiner Suche</string>
-<string name="sort_upload_date_ascending">Hochladedatum (aufsteigend)</string>
-<string name="sort_upload_date_descending">Hochladedatum (absteigend)</string>
 <string name="sort_duration_ascending">Dauer (aufsteigend)</string>
 <string name="sort_duration_descending">Dauer (absteigend)</string>
 <string name="sort_name_ascending">Name (aufsteigend)</string>

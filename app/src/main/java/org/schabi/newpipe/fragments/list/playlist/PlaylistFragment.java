@@ -389,7 +389,6 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
     private void showSortDialog() {
         final int[] labels = {
                 R.string.sort_origin, R.string.sort_origin_reverse,
-                R.string.sort_upload_date_ascending, R.string.sort_upload_date_descending,
                 R.string.sort_duration_ascending, R.string.sort_duration_descending,
                 R.string.sort_name_ascending, R.string.sort_name_descending};
         final String[] items = new String[labels.length];
@@ -406,16 +405,6 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
                 .show();
     }
 
-    private static int compareDate(final StreamInfoItem a, final StreamInfoItem b) {
-        final var da = a.getUploadDate();
-        final var db = b.getUploadDate();
-        // items without a date are always placed last
-        if (da == null || db == null) {
-            return 0;
-        }
-        return da.offsetDateTime().compareTo(db.offsetDateTime());
-    }
-
     private void applySort() {
         if (infoListAdapter == null) {
             return;
@@ -426,25 +415,13 @@ public class PlaylistFragment extends BaseListInfoFragment<StreamInfoItem, Playl
             case 2:
             case 3:
                 comparator = (a, b) -> {
-                    final var da = ((StreamInfoItem) a).getUploadDate();
-                    final var db = ((StreamInfoItem) b).getUploadDate();
-                    if (da == null || db == null) {
-                        return da == db ? 0 : da == null ? 1 : -1;
-                    }
-                    final int c = compareDate((StreamInfoItem) a, (StreamInfoItem) b);
-                    return asc ? c : -c;
-                };
-                break;
-            case 4:
-            case 5:
-                comparator = (a, b) -> {
                     final int c = Long.compare(((StreamInfoItem) a).getDuration(),
                             ((StreamInfoItem) b).getDuration());
                     return asc ? c : -c;
                 };
                 break;
-            case 6:
-            case 7:
+            case 4:
+            case 5:
                 comparator = (a, b) -> {
                     final int c = org.schabi.newpipe.util.utils.compareNames(
                             a.getName(), b.getName());

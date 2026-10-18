@@ -1122,8 +1122,6 @@
 <string name="move_to_bottom">移至底部</string>
 <string name="move_requires_original_order">將排序方式切換為「原始」以移動項目</string>
 <string name="filter_search_mismatch">%d 個載入的項目不符合您的搜尋</string>
-<string name="sort_upload_date_ascending">上傳日期 (遞增)</string>
-<string name="sort_upload_date_descending">上傳日期 (遞減)</string>
 <string name="sort_duration_ascending">時長 (遞增)</string>
 <string name="sort_duration_descending">時長 (遞減)</string>
 <string name="sort_name_ascending">名稱 (遞增)</string>

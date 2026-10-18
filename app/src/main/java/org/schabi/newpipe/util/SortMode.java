@@ -5,8 +5,6 @@ public enum SortMode {
     ORIGIN_REVERSE,
     SORT_NAME,
     SORT_NAME_REVERSE,
-    UPLOAD_DATE,
-    UPLOAD_DATE_REVERSE,
     DURATION,
     DURATION_REVERSE
 }

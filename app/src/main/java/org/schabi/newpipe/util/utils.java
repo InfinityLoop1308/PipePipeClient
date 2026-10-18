@@ -38,10 +38,6 @@ public class utils {
                 return SortMode.SORT_NAME;
             case "SORT_NAME_REVERSE":
                 return SortMode.SORT_NAME_REVERSE;
-            case "UPLOAD_DATE":
-                return SortMode.UPLOAD_DATE;
-            case "UPLOAD_DATE_REVERSE":
-                return SortMode.UPLOAD_DATE_REVERSE;
             case "DURATION":
                 return SortMode.DURATION;
             case "DURATION_REVERSE":
@@ -58,8 +54,6 @@ public class utils {
                 return queue.size() - item.getJoinIndex() - 1;
             case SORT_NAME:
             case SORT_NAME_REVERSE:
-            case UPLOAD_DATE:
-            case UPLOAD_DATE_REVERSE:
             case DURATION:
             case DURATION_REVERSE:
                 int result = -1;

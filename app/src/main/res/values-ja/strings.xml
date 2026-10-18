@@ -1090,8 +1090,6 @@
 <string name="move_to_bottom">一番下に移動</string>
 <string name="move_requires_original_order">アイテムを移動するには、並べ替え順序を「元の順序」に切り替えてください</string>
 <string name="filter_search_mismatch">読み込まれた %d 件のアイテムが検索条件と一致しません</string>
-<string name="sort_upload_date_ascending">アップロード日 (昇順)</string>
-<string name="sort_upload_date_descending">アップロード日 (降順)</string>
 <string name="sort_duration_ascending">再生時間 (昇順)</string>
 <string name="sort_duration_descending">再生時間 (降順)</string>
 <string name="sort_name_ascending">名前 (昇順)</string>

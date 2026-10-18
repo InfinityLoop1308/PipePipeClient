@@ -1147,8 +1147,6 @@
 <string name="move_to_bottom">Przenieś na dół</string>
 <string name="move_requires_original_order">Zmień kolejność sortowania na \"Oryginalna\", aby przenosić elementy</string>
 <string name="filter_search_mismatch">%d załadowanych elementów nie pasuje do Twojego wyszukiwania</string>
-<string name="sort_upload_date_ascending">Data przesłania (rosnąco)</string>
-<string name="sort_upload_date_descending">Data przesłania (malejąco)</string>
 <string name="sort_duration_ascending">Czas trwania (rosnąco)</string>
 <string name="sort_duration_descending">Czas trwania (malejąco)</string>
 <string name="sort_name_ascending">Nazwa (rosnąco)</string>

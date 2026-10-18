@@ -1061,8 +1061,6 @@
 <string name="move_to_bottom">Sposta in fondo</string>
 <string name="move_requires_original_order">Cambia l\'ordinamento in \"Originale\" per spostare gli elementi</string>
 <string name="filter_search_mismatch">%d elementi caricati non corrispondono alla tua ricerca</string>
-<string name="sort_upload_date_ascending">Data di caricamento (crescente)</string>
-<string name="sort_upload_date_descending">Data di caricamento (decrescente)</string>
 <string name="sort_duration_ascending">Durata (crescente)</string>
 <string name="sort_duration_descending">Durata (decrescente)</string>
 <string name="sort_name_ascending">Nome (crescente)</string>

@@ -1168,8 +1168,6 @@
 <string name="move_to_bottom">Move to bottom</string>
 <string name="move_requires_original_order">Switch the sort order to "Original" to move items</string>
 <string name="filter_search_mismatch">%d loaded items do not match your search</string>
-<string name="sort_upload_date_ascending">Upload date (ascending)</string>
-<string name="sort_upload_date_descending">Upload date (descending)</string>
 <string name="sort_duration_ascending">Duration (ascending)</string>
 <string name="sort_duration_descending">Duration (descending)</string>
 <string name="sort_name_ascending">Name (ascending)</string>

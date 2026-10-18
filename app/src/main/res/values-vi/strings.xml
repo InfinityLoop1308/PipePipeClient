@@ -1174,8 +1174,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="move_to_bottom">Di chuyển xuống cuối</string>
 <string name="move_requires_original_order">Chuyển thứ tự sắp xếp sang \"Gốc\" để di chuyển các mục</string>
 <string name="filter_search_mismatch">%d mục đã tải không khớp với tìm kiếm của bạn</string>
-<string name="sort_upload_date_ascending">Ngày tải lên (tăng dần)</string>
-<string name="sort_upload_date_descending">Ngày tải lên (giảm dần)</string>
 <string name="sort_duration_ascending">Thời lượng (tăng dần)</string>
 <string name="sort_duration_descending">Thời lượng (giảm dần)</string>
 <string name="sort_name_ascending">Tên (tăng dần)</string>

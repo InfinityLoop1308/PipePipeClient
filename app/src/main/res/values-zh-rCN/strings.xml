@@ -1132,8 +1132,6 @@
 <string name="move_to_bottom">移到底部</string>
 <string name="move_requires_original_order">将排序顺序切换为“原始”以移动项目</string>
 <string name="filter_search_mismatch">%d 个已加载项与您的搜索不匹配</string>
-<string name="sort_upload_date_ascending">上传日期（升序）</string>
-<string name="sort_upload_date_descending">上传日期（降序）</string>
 <string name="sort_duration_ascending">时长（升序）</string>
 <string name="sort_duration_descending">时长（降序）</string>
 <string name="sort_name_ascending">名称（升序）</string>

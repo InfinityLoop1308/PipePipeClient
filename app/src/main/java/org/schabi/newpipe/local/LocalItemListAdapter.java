@@ -597,22 +597,6 @@ public class LocalItemListAdapter extends RecyclerView.Adapter<RecyclerView.View
                     }
                 });
                 break;
-            case UPLOAD_DATE:
-            case UPLOAD_DATE_REVERSE:
-                final boolean dateAsc = sortMode == SortMode.UPLOAD_DATE;
-                Collections.sort(localItems, (o1, o2) -> {
-                    if (o1 instanceof PlaylistStreamEntry && o2 instanceof PlaylistStreamEntry) {
-                        final var d1 = ((PlaylistStreamEntry) o1).getStreamEntity().getUploadDate();
-                        final var d2 = ((PlaylistStreamEntry) o2).getStreamEntity().getUploadDate();
-                        // items without a date are always placed last
-                        if (d1 == null || d2 == null) {
-                            return d1 == d2 ? 0 : d1 == null ? 1 : -1;
-                        }
-                        return dateAsc ? d1.compareTo(d2) : d2.compareTo(d1);
-                    }
-                    return 0;
-                });
-                break;
             case DURATION:
             case DURATION_REVERSE:
                 final boolean durAsc = sortMode == SortMode.DURATION;

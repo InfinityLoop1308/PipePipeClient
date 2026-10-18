@@ -1123,8 +1123,6 @@
 <string name="move_to_bottom">Mover a la parte inferior</string>
 <string name="move_requires_original_order">Cambia el orden de clasificación a \"Original\" para mover elementos</string>
 <string name="filter_search_mismatch">%d elementos cargados no coinciden con tu búsqueda</string>
-<string name="sort_upload_date_ascending">Fecha de subida (ascendente)</string>
-<string name="sort_upload_date_descending">Fecha de subida (descendente)</string>
 <string name="sort_duration_ascending">Duración (ascendente)</string>
 <string name="sort_duration_descending">Duración (descendente)</string>
 <string name="sort_name_ascending">Nombre (ascendente)</string>

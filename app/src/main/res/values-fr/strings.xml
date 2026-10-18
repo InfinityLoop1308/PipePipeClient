@@ -1084,8 +1084,6 @@ Voulez-vous continuer?</string>
 <string name="move_to_bottom">Déplacer vers le bas</string>
 <string name="move_requires_original_order">Basculez l\'ordre de tri sur \"Original\" pour déplacer des éléments</string>
 <string name="filter_search_mismatch">%d éléments chargés ne correspondent pas à votre recherche</string>
-<string name="sort_upload_date_ascending">Date de mise en ligne (croissant)</string>
-<string name="sort_upload_date_descending">Date de mise en ligne (décroissant)</string>
 <string name="sort_duration_ascending">Durée (croissant)</string>
 <string name="sort_duration_descending">Durée (décroissant)</string>
 <string name="sort_name_ascending">Nom (croissant)</string>
