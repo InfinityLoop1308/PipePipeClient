@@ -4,12 +4,10 @@ import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.stream.StreamInfo
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import org.schabi.newpipe.player.helper.PlayerHelper
-import java.util.Arrays
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit.MILLISECONDS
-import java.util.regex.Pattern
 
 /**
  * Owns the auto-queue feature: appending the next related stream when the queue is about to run
@@ -32,27 +30,13 @@ class AutoQueueController(private val player: Player) {
         val playQueue = player.playQueue ?: return
 
         val partitions: List<StreamInfoItem> = info.partitions
-        if (partitions.size > 1
-            && playQueue.streams.stream()
-                .map { result -> result.url.split("p=").toTypedArray() }
-                .filter { parts -> parts.size == 2 }
-                .map { parts -> arrayOf(parts[0], parts[1]) }
-                .reduce { a: Array<String>, b: Array<String> ->
-                    if (Integer.parseInt(a[1]) + 1 == Integer.parseInt(b[1]) && a[0] == b[0]) {
-                        b
-                    } else {
-                        arrayOf("", "-1")
-                    }
-                }
-                .filter { result -> !Arrays.equals(result, arrayOf("", "-1")) }
-                .isPresent
-            && playQueue.index == playQueue.size() - 1
-        ) {
-            val p =
-                Integer.parseInt(info.url.split(Regex(Pattern.quote("?p=")))[1].split("&")[0])
-            if (partitions.size > p) {
+        if (playQueue.index == playQueue.size() - 1) {
+            val nextPage = BilibiliPartitionQueue.nextPageToAppend(
+                playQueue.streams.map { it.url }, info.url, partitions.size
+            )
+            if (nextPage != null) {
                 playQueue.appendAutoQueued(
-                    PlayerHelper.getAutoQueuedSinglePlayQueue(partitions[p]).streams
+                    PlayerHelper.getAutoQueuedSinglePlayQueue(partitions[nextPage - 1]).streams
                 )
             }
         }
