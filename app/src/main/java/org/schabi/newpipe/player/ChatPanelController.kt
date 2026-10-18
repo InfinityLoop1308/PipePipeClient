@@ -20,8 +20,14 @@ class ChatPanelController(private val player: Player) {
 
     private var chatList: ChatListView? = null
     private var pinnedView: PinnedScView? = null
+    /** Whether the panel is currently on screen. */
     private var open = false
     private var observing = false
+
+    /** The persisted choice of the user, which outlives the panel being hidden by the state of the player. */
+    private var wanted: Boolean
+        get() = player.prefs.getBoolean(PANEL_OPEN_PREF_KEY, false)
+        set(value) = player.prefs.edit().putBoolean(PANEL_OPEN_PREF_KEY, value).apply()
 
     private val itemsObserver = Observer<List<BulletCommentsInfoItem>> { items ->
         chatList?.submit(items)
@@ -49,13 +55,16 @@ class ChatPanelController(private val player: Player) {
             binding.switchCommentsVisibility.setImageDrawable(
                 AppCompatResources.getDrawable(
                     player.context,
-                    if (open) R.drawable.ic_bullet_comment_enabled
+                    if (wanted) R.drawable.ic_bullet_comment_enabled
                     else R.drawable.ic_bullet_comment_disabled,
                 ),
             )
         }
         if (show) {
             startObserving()
+            if (wanted != open) {
+                setOpen(wanted)
+            }
         } else {
             stopObserving()
             if (open) {
@@ -66,7 +75,7 @@ class ChatPanelController(private val player: Player) {
 
     fun toggle() {
         if (canShow()) {
-            setOpen(!open)
+            wanted = !wanted
             update()
         }
     }
@@ -134,5 +143,9 @@ class ChatPanelController(private val player: Player) {
             ChatStore.available.removeObserver(availableObserver)
             ChatStore.pinned.removeObserver(pinnedObserver)
         }
+    }
+
+    private companion object {
+        const val PANEL_OPEN_PREF_KEY = "isChatPanelOpen"
     }
 }
