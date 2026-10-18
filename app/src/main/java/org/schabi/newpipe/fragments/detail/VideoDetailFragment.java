@@ -406,7 +406,6 @@ public final class VideoDetailFragment
     @Override
     public void onResume() {
         super.onResume();
-
         activity.sendBroadcast(new Intent(ACTION_VIDEO_FRAGMENT_RESUMED));
 
         setupBrightness();
@@ -2661,24 +2660,23 @@ public final class VideoDetailFragment
         final FrameLayout bottomSheetLayout = activity.findViewById(R.id.fragment_player_holder);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
         bottomSheetState = sanitizeBottomSheetState(bottomSheetState);
-        bottomSheetBehavior.setState(bottomSheetState);
+        final int restoredState = bottomSheetState;
+        final int peekHeight = getResources().getDimensionPixelSize(R.dimen.mini_player_height);
         // The player may already be in fullscreen when this view is (re)created
         // (e.g. after a rotation while playing fullscreen): keep the drag disabled in that case.
         updateBottomSheetDraggableForFullscreen();
-        final int peekHeight = getResources().getDimensionPixelSize(R.dimen.mini_player_height);
-        if (bottomSheetState != BottomSheetBehavior.STATE_HIDDEN) {
+        if (restoredState != BottomSheetBehavior.STATE_HIDDEN) {
             manageSpaceAtTheBottom(false);
+            // Set the peek height before the state: the collapsed offset is computed from it.
             bottomSheetBehavior.setPeekHeight(peekHeight);
-            if (bottomSheetState == BottomSheetBehavior.STATE_COLLAPSED) {
-                binding.overlayLayout.setVisibility(View.VISIBLE);
-                binding.overlayLayout.setAlpha(MAX_OVERLAY_ALPHA);
-                setOverlayElementsClickable(true);
-            } else if (bottomSheetState == BottomSheetBehavior.STATE_EXPANDED) {
-                binding.overlayLayout.setAlpha(0);
-                binding.overlayLayout.setVisibility(View.INVISIBLE);
-                setOverlayElementsClickable(false);
-            }
         }
+        bottomSheetBehavior.setState(restoredState);
+        applyOverlayForState(restoredState);
+        // BottomSheetBehavior restores its own state silently (i.e. without onStateChanged) when
+        // the activity's view hierarchy is restored, and this can happen after this method ran
+        // and leaves the mini player overlay visible over an expanded detail page. Re-apply the
+        // state saved in this fragment once the view has actually been laid out.
+        syncPlayerSheetStateAfterLayout(restoredState, peekHeight);
 
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -2692,6 +2690,7 @@ public final class VideoDetailFragment
 
                             bottomSheetBehavior.setPeekHeight(0);
                             cleanUp();
+                            applyOverlayForState(newState);
                             break;
                         case BottomSheetBehavior.STATE_EXPANDED:
                             moveFocusToMainFragment(false);
@@ -2700,14 +2699,13 @@ public final class VideoDetailFragment
                             bottomSheetBehavior.setPeekHeight(peekHeight);
                             // Disable click because overlay buttons located on top of buttons
                             // from the player
-                            setOverlayElementsClickable(false);
+                            applyOverlayForState(newState);
                             hideSystemUiIfNeeded();
                             if (isPlayerAvailable()
                                     && player.isPlaying()
                                     && player.videoPlayerSelected()) {
                                 player.startBCPlayer();
                             }
-                            setOverlayLook(binding.appBarLayout, behavior, 1);
                             break;
                         case BottomSheetBehavior.STATE_COLLAPSED:
                             moveFocusToMainFragment(true);
@@ -2715,13 +2713,11 @@ public final class VideoDetailFragment
 
                             bottomSheetBehavior.setPeekHeight(peekHeight);
 
-                            // Re-enable clicks
-                            setOverlayElementsClickable(true);
+                            applyOverlayForState(newState);
                             if (isPlayerAvailable()) {
                                 player.closeItemsList();
                                 player.pauseBCPlayer();
                             }
-                            setOverlayLook(binding.appBarLayout, behavior, 0);
                             break;
                         case BottomSheetBehavior.STATE_DRAGGING:
                         case BottomSheetBehavior.STATE_SETTLING:
@@ -2827,6 +2823,93 @@ public final class VideoDetailFragment
         if (slideOffset >= 1) {
             binding.overlayLayout.setVisibility(View.INVISIBLE);
         }
+    }
+
+    /**
+     * Shows or hides the mini player overlay (and moves the detail AppBar) so that it matches the
+     * given bottom sheet state.
+     *
+     * <p>This must not rely on {@link BottomSheetBehavior.BottomSheetCallback#onStateChanged}
+     * having been called for the state: {@link BottomSheetBehavior} restores its own state without
+     * dispatching that callback, and this fragment restores its state separately.
+     */
+    private void applyOverlayForState(final int state) {
+        if (binding == null) {
+            return;
+        }
+        final AppBarLayout.Behavior appBarBehavior = getAppBarBehavior();
+        switch (state) {
+            case BottomSheetBehavior.STATE_COLLAPSED:
+                binding.overlayLayout.setVisibility(View.VISIBLE);
+                binding.overlayLayout.setAlpha(MAX_OVERLAY_ALPHA);
+                setOverlayElementsClickable(true);
+                setOverlayLook(binding.appBarLayout, appBarBehavior, 0);
+                break;
+            case BottomSheetBehavior.STATE_EXPANDED:
+                binding.overlayLayout.setAlpha(0);
+                binding.overlayLayout.setVisibility(View.INVISIBLE);
+                setOverlayElementsClickable(false);
+                setOverlayLook(binding.appBarLayout, appBarBehavior, 1);
+                break;
+            case BottomSheetBehavior.STATE_HIDDEN:
+            case BottomSheetBehavior.STATE_HALF_EXPANDED:
+            default:
+                // Don't leave the translucent overlay over the detail page for states which don't
+                // show the mini player bar.
+                binding.overlayLayout.setAlpha(0);
+                binding.overlayLayout.setVisibility(View.INVISIBLE);
+                setOverlayElementsClickable(false);
+                setOverlayLook(binding.appBarLayout, appBarBehavior, 1);
+                break;
+        }
+    }
+
+    @Nullable
+    private AppBarLayout.Behavior getAppBarBehavior() {
+        if (binding == null) {
+            return null;
+        }
+        final CoordinatorLayout.LayoutParams params =
+                (CoordinatorLayout.LayoutParams) binding.appBarLayout.getLayoutParams();
+        final CoordinatorLayout.Behavior<?> appBarBehavior = params.getBehavior();
+        return appBarBehavior instanceof AppBarLayout.Behavior
+                ? (AppBarLayout.Behavior) appBarBehavior
+                : null;
+    }
+
+    /**
+     * Re-applies the state saved in this fragment after the first layout pass, once the activity's
+     * view hierarchy (and therefore the bottom sheet) has been restored. The behavior's own state
+     * restoration does not call {@link BottomSheetBehavior.BottomSheetCallback#onStateChanged}, so
+     * without this the overlay could stay visible while the sheet is expanded.
+     */
+    private void syncPlayerSheetStateAfterLayout(final int state, final int peekHeight) {
+        if (binding == null) {
+            return;
+        }
+        final View root = binding.getRoot();
+        root.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        if (!root.getViewTreeObserver().isAlive()) {
+                            return;
+                        }
+                        root.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        if (binding == null || bottomSheetBehavior == null) {
+                            return;
+                        }
+                        bottomSheetState = state;
+                        if (state != BottomSheetBehavior.STATE_HIDDEN) {
+                            manageSpaceAtTheBottom(false);
+                            bottomSheetBehavior.setPeekHeight(peekHeight);
+                        }
+                        // Force the sheet to the saved state: the behavior may already claim to be
+                        // in that state while its view is still laid out at the opposite offset.
+                        bottomSheetBehavior.setState(state);
+                        applyOverlayForState(state);
+                    }
+                });
     }
 
     private void setOverlayElementsClickable(final boolean enable) {
