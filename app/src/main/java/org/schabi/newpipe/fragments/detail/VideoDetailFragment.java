@@ -2714,6 +2714,12 @@ public final class VideoDetailFragment
                             bottomSheetBehavior.setPeekHeight(peekHeight);
 
                             applyOverlayForState(newState);
+                            if (isPlayerAvailable() && player.isFullscreen()) {
+                                // Minimized by swiping down inside fullscreen: the player view
+                                // must leave fullscreen too, otherwise the full-size layout is
+                                // squeezed into the mini player and can't be interacted with.
+                                player.changeFullscreen(false);
+                            }
                             if (isPlayerAvailable()) {
                                 player.closeItemsList();
                                 player.pauseBCPlayer();
