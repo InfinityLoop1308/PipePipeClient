@@ -1646,6 +1646,17 @@ public final class VideoDetailFragment
         final int blockFocus = fullscreen
                 ? ViewGroup.FOCUS_BLOCK_DESCENDANTS : ViewGroup.FOCUS_AFTER_DESCENDANTS;
         ((ViewGroup) binding.detailMainContent).setDescendantFocusability(blockFocus);
+
+        if (fullscreen && DeviceUtils.isTv(getContext())) {
+            // The focus is still on the detail page's thumbnail (drawn as a white frame) or on
+            // the overlay button, both underneath the fullscreen player. Hand it to the player.
+            binding.detailThumbnailRootLayout.clearFocus();
+            player.getRootView().post(() -> {
+                if (isPlayerAvailable() && player.isFullscreen()) {
+                    player.getBinding().playPauseButton.requestFocus();
+                }
+            });
+        }
     }
 
     private void removeVideoPlayerView() {
@@ -2351,7 +2362,6 @@ public final class VideoDetailFragment
 
         if (fullscreen) {
             hideSystemUiIfNeeded();
-            binding.overlayPlayPauseButton.requestFocus();
         } else {
             showSystemUi();
         }
