@@ -78,9 +78,9 @@ public class PlayerService extends Service implements PlayerServiceInterface {
             = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_PLAY_NEXT";
     static final String ACTION_PLAY_PREVIOUS
             = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_PLAY_PREVIOUS";
-    static final String ACTION_FAST_REWIND
+    public static final String ACTION_FAST_REWIND
             = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_FAST_REWIND";
-    static final String ACTION_FAST_FORWARD
+    public static final String ACTION_FAST_FORWARD
             = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_FAST_FORWARD";
     public static final String ACTION_SHUFFLE
             = App.PACKAGE_NAME + ".player.MainPlayer.ACTION_SHUFFLE";
