@@ -186,6 +186,18 @@ class PlayerGestureController(private val player: Player) {
 
             KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_DPAD_DOWN,
             KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_DPAD_CENTER -> {
+                if (binding.chatPanel.hasFocus()) {
+                    // The chat list swallows the keys it can't use itself, which traps the focus
+                    // there: LEFT/RIGHT/CENTER leave the panel, UP/DOWN keep scrolling the list.
+                    if (keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                        return false
+                    }
+                    player.showControlsThenHide()
+                    player.showSystemUIPartially()
+                    binding.playPauseButton.requestFocus()
+                    return true
+                }
+
                 if ((binding.root.hasFocus() && !binding.playbackControlRoot.hasFocus())
                     || player.isQueueVisible
                 ) {
