@@ -345,6 +345,11 @@ public final class PlayerHelper {
                 .getBoolean(context.getString(R.string.pinch_to_zoom_gesture_control_key), true);
     }
 
+    public static boolean isLockScreenButtonEnabled(@NonNull final Context context) {
+        return getPreferences(context)
+                .getBoolean(context.getString(R.string.lock_screen_button_key), true);
+    }
+
     public static boolean isSwipeSeekGestureEnabled(@NonNull final Context context) {
         return getPreferences(context)
                 .getBoolean(context.getString(R.string.swipe_seek_gesture_control_key), true);

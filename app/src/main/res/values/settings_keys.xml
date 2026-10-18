@@ -1882,4 +1882,5 @@
         <item>@string/audio_quality_medium</item>
         <item>@string/audio_quality_low</item>
     </string-array>
+    <string name="lock_screen_button_key" translatable="false">lock_screen_button</string>
 </resources>
