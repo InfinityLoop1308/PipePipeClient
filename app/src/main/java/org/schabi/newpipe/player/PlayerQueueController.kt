@@ -262,9 +262,9 @@ class PlayerQueueController(private val player: Player) {
         override fun held(item: PlayerMediaItem, view: View) {
             val playQueue = player.playQueue ?: return
             if (playQueue.indexOf(item) != -1) {
-                val activity = player.parentActivity ?: return
                 QueueItemMenuUtil.openPopupMenu(
-                    playQueue, item, view, true, activity.supportFragmentManager, player.context
+                    playQueue, item, view, true,
+                    player.parentActivity?.supportFragmentManager, player.context
                 )
             }
         }

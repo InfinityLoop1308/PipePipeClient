@@ -8,6 +8,7 @@ import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.PopupMenu;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 
 import org.schabi.newpipe.database.stream.model.StreamEntity;
@@ -28,7 +29,7 @@ public final class QueueItemMenuUtil {
                                      final PlayerMediaItem item,
                                      final View view,
                                      final boolean hideDetails,
-                                     final FragmentManager fragmentManager,
+                                     @Nullable final FragmentManager fragmentManager,
                                      final Context context) {
         final ContextThemeWrapper themeWrapper =
                 new ContextThemeWrapper(context, R.style.DarkPopupMenu);
@@ -38,6 +39,12 @@ public final class QueueItemMenuUtil {
 
         if (hideDetails) {
             popupMenu.getMenu().findItem(R.id.menu_item_details).setVisible(false);
+        }
+
+        if (fragmentManager == null) {
+            // Popup player has no host activity to show dialogs from
+            popupMenu.getMenu().findItem(R.id.menu_item_append_playlist).setVisible(false);
+            popupMenu.getMenu().findItem(R.id.menu_item_download).setVisible(false);
         }
 
         popupMenu.setOnMenuItemClickListener(menuItem -> {
