@@ -2718,7 +2718,8 @@ public final class VideoDetailFragment
                                 // Minimized by swiping down inside fullscreen: the player view
                                 // must leave fullscreen too, otherwise the full-size layout is
                                 // squeezed into the mini player and can't be interacted with.
-                                player.changeFullscreen(false);
+                                // Keep the orientation: rotating back to portrait is unwanted.
+                                player.exitFullscreenLayoutOnly();
                             }
                             if (isPlayerAvailable()) {
                                 player.closeItemsList();

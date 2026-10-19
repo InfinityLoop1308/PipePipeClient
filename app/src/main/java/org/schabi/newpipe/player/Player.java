@@ -1315,6 +1315,14 @@ public final class Player {
         uiModeController.changeFullscreen(fullscreen);
     }
 
+    /**
+     * Leaves the fullscreen layout without requesting another screen orientation, so the screen
+     * stays as the user has it (e.g. landscape while minimizing by swiping down).
+     */
+    public void exitFullscreenLayoutOnly() {
+        uiModeController.setFullscreen(false);
+    }
+
     void setResizeMode(@AspectRatioFrameLayout.ResizeMode final int resizeMode) {
         menuController.setResizeMode(resizeMode);
     }
