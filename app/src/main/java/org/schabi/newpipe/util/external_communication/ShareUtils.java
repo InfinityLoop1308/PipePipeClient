@@ -65,31 +65,26 @@ public final class ShareUtils {
         final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        try {
-            // Use a browser selector so that apps claiming the link (e.g. YouTube) are bypassed
-            final Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            browserIntent.setSelector(Intent.makeMainSelectorActivity(
-                    Intent.ACTION_MAIN, Intent.CATEGORY_APP_BROWSER));
-            context.startActivity(browserIntent);
-            return true;
-        } catch (ActivityNotFoundException e0) {
-            // fall through to the generic handling below
-        }
+        // Resolve the target as if a generic http URL was opened, so that browsers are picked
+        // instead of apps claiming the specific link (e.g. the YouTube app). This requires the
+        // `http` scheme to be declared in <queries> in the manifest.
+        intent.setSelector(new Intent(Intent.ACTION_VIEW, Uri.parse("http://")));
 
         try {
             context.startActivity(intent);
             return true;
+        } catch (ActivityNotFoundException e0) {
+            // No browser is available: fall through to the app chooser, instead of opening the
+            // original URL with whichever app claims it (e.g. the YouTube app)
+            intent.setSelector(null);
+        }
+
+        try {
+            openAppChooser(context, intent, true);
+            return true;
         } catch (ActivityNotFoundException e1) {
-            try {
-                // If no direct handler, try the app chooser
-                openAppChooser(context, intent, true);
-                return true;
-            } catch (ActivityNotFoundException e2) {
-                // If even the app chooser fails, show error and return false
-                Toast.makeText(context, R.string.no_app_to_open_intent, Toast.LENGTH_LONG).show();
-                return false;
-            }
+            Toast.makeText(context, R.string.no_app_to_open_intent, Toast.LENGTH_LONG).show();
+            return false;
         }
     }
 
