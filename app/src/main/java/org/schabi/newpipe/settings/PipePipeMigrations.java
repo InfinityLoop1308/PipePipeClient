@@ -66,6 +66,13 @@ public final class PipePipeMigrations {
         }
     };
 
+    public static final Migration MIGRATION_6_7 = new Migration(6, 7) {
+        @Override
+        protected void migrate(final Context context, final SharedPreferences preferences) {
+            migrateVideoTabsAddChat(context, preferences);
+        }
+    };
+
     private static final Migration[] PIPEPIPE_MIGRATIONS = {
             MIGRATION_0_1,
             MIGRATION_1_2,
@@ -73,9 +80,10 @@ public final class PipePipeMigrations {
             MIGRATION_3_4,
             MIGRATION_4_5,
             MIGRATION_5_6,
+            MIGRATION_6_7,
     };
 
-    public static final int VERSION = 6;
+    public static final int VERSION = 7;
 
     public static void initMigrations(final Context context, final boolean isFirstRun) {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -275,6 +283,20 @@ public final class PipePipeMigrations {
 
         final Set<String> newSet = new HashSet<>(filterTypes);
         newSet.add("playlists");
+        preferences.edit().putStringSet(key, newSet).apply();
+    }
+
+    private static void migrateVideoTabsAddChat(
+            final Context context,
+            final SharedPreferences preferences) {
+        final String key = context.getString(R.string.video_tabs_key);
+        final Set<String> tabs = preferences.getStringSet(key, null);
+        if (tabs == null || tabs.contains("chat")) {
+            return;
+        }
+
+        final Set<String> newSet = new HashSet<>(tabs);
+        newSet.add("chat");
         preferences.edit().putStringSet(key, newSet).apply();
     }
 

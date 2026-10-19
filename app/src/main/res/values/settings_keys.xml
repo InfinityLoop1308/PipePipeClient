@@ -1721,12 +1721,14 @@
         <item>related</item>
         <item>sponsorblock</item>
         <item>description</item>
+        <item>chat</item>
     </string-array>
     <string-array name="video_tabs_description_list">
         <item>@string/comments_tab_description</item>
         <item>@string/related_items_tab_description</item>
         <item>@string/sponsor_block</item>
         <item>@string/description_tab_description</item>
+        <item>@string/chat_tab_description</item>
     </string-array>
     <string name="filter_future_items_key">filter_future_items_key</string>
     <string name="use_experimental_new_ui_key">use_experimental_new_ui</string>

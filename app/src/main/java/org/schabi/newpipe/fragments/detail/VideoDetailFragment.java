@@ -170,6 +170,7 @@ public final class VideoDetailFragment
     private static final String VIDEO_TAB_RELATED = "related";
     private static final String VIDEO_TAB_DESCRIPTION = "description";
     private static final String VIDEO_TAB_SPONSORBLOCK = "sponsorblock";
+    private static final String VIDEO_TAB_CHAT = "chat";
 
     private static final String PICASSO_VIDEO_DETAILS_TAG = "PICASSO_VIDEO_DETAILS_TAG";
 
@@ -1289,8 +1290,11 @@ public final class VideoDetailFragment
         if (Boolean.FALSE.equals(ChatStore.INSTANCE.getAvailable().getValue())) {
             return false;
         }
-        return PreferenceManager.getDefaultSharedPreferences(requireContext())
-                .getBoolean(getString(R.string.bullet_comments_chat_mode_key), true);
+        final SharedPreferences prefs =
+                PreferenceManager.getDefaultSharedPreferences(requireContext());
+        // the video tabs option only controls whether the tab is added, fullscreen chat is unaffected
+        return getVideoTabs(prefs).contains(VIDEO_TAB_CHAT)
+                && prefs.getBoolean(getString(R.string.bullet_comments_chat_mode_key), true);
     }
 
     /** Ignores page changes caused by tab rebuilds until the pager has laid out again. */
@@ -1371,7 +1375,8 @@ public final class VideoDetailFragment
                         VIDEO_TAB_COMMENTS,
                         VIDEO_TAB_RELATED,
                         VIDEO_TAB_SPONSORBLOCK,
-                        VIDEO_TAB_DESCRIPTION
+                        VIDEO_TAB_DESCRIPTION,
+                        VIDEO_TAB_CHAT
                 )));
     }
 
