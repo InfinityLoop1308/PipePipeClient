@@ -13,6 +13,7 @@ import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
 import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrMediaSegment;
 import org.schabi.newpipe.player.SabrBackoffCoordinator;
 import org.schabi.newpipe.youtube.SabrAttestationRetryHandler;
+import org.schabi.newpipe.youtube.SabrRecoveryExhaustedException;
 import org.schabi.newpipe.youtube.SabrRequestCoordinator;
 
 import java.io.IOException;
@@ -142,7 +143,14 @@ final class SabrMediaBridge {
             try {
                 final SabrMediaSegment delivered = cachedSegment(key);
                 if (delivered != null) return delivered;
-                requestFor(key);
+                try {
+                    requestFor(key);
+                } catch (final SabrRecoveryExhaustedException error) {
+                    requestCoordinator.resetRecoveryState();
+                    throw new IOException("SABR media acquisition exhausted in-place recovery:"
+                            + " itag=" + key.getFormat().getItag()
+                            + ", seq=" + key.getSequenceNumber(), error);
+                }
             } finally {
                 transactionLock.unlock();
             }

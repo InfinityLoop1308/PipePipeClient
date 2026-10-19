@@ -17,12 +17,18 @@ public final class SabrRequestCoordinator {
     private static final long EMPTY_RESPONSE_RETRY_MS = 250L;
     private static final long MAX_CONTINUOUS_BACKOFF_MS = 30_000L;
     private static final long MAX_CONTINUOUS_NO_PROGRESS_MS = 30_000L;
+    private static final int MAX_EMPTY_BACK_TO_BACK = 4;
+    private static final long MAX_DEFERRED_WITHOUT_PROGRESS_MS = 4_000L;
 
     private final YoutubeSabrSession session;
     private final SabrAttestationRetryHandler attestationRetryHandler;
     private final LongConsumer backoffObserver;
     private long backoffDeadlineNs;
     private long noProgressDeadlineNs;
+    private int consecutiveEmpty;
+    private long stalledSinceNs;
+    private long stalledBackoffMs;
+    private boolean recoveryAttempted;
 
     public SabrRequestCoordinator(
             final YoutubeSabrSession session,
@@ -51,6 +57,12 @@ public final class SabrRequestCoordinator {
      * consecutive backoff requests until a response delivers progress, while unproductive
      * responses accumulate until progress is made. Both are bounded by a continuous 30s
      * budget.
+     *
+     * <p>Stalls are additionally detected earlier: after {@value #MAX_EMPTY_BACK_TO_BACK}
+     * consecutive empty responses or {@value #MAX_DEFERRED_WITHOUT_PROGRESS_MS}ms spent
+     * deferred/backing off without progress, exactly one in-place recovery attempt is made;
+     * if that attempt also yields no progress a {@link SabrRecoveryExhaustedException} is
+     * thrown so the caller can rebuild the media source instead of spinning.
      */
     public YoutubeSabrSession.RequestResult request(
             final YoutubeSabrRequest request,
@@ -59,8 +71,12 @@ public final class SabrRequestCoordinator {
             throws IOException, ExtractionException {
         Objects.requireNonNull(request, "request");
         Objects.requireNonNull(consumer, "consumer");
+        resetRecoveryState();
         while (true) {
             awaitBackoff();
+            if (recoveryAttempted) {
+                sleepInPlaceRecoveryPause();
+            }
             final YoutubeSabrSession.RequestResult result;
             try {
                 result = session.requestOnce(request, segment -> {
@@ -79,13 +95,51 @@ public final class SabrRequestCoordinator {
             updateBackoffEpisode(progress, backoffMs);
             updateNoProgressEpisode(progress, backoffMs);
             if (progress) {
+                resetRecoveryState();
                 return result;
+            }
+            trackStall(result.isDeferred(), backoffMs);
+            if (recoveryAttempted) {
+                throw new SabrRecoveryExhaustedException(
+                        "SABR in-place recovery produced no progress: empty="
+                                + consecutiveEmpty + ", backoffSinceProgressMs="
+                                + stalledBackoffMs,
+                        stalledBackoffMs > 0);
+            }
+            if (isStallLimitReached()) {
+                recoveryAttempted = true;
+                continue;
             }
             if (result.isDeferred()) {
                 continue;
             }
             sleep(EMPTY_RESPONSE_RETRY_MS);
         }
+    }
+
+    private void sleepInPlaceRecoveryPause() throws IOException {
+        sleep(EMPTY_RESPONSE_RETRY_MS);
+    }
+
+    private void trackStall(final boolean deferred, final long backoffMs) {
+        if (deferred || backoffMs > 0) {
+            if (stalledSinceNs == 0) {
+                stalledSinceNs = System.nanoTime();
+            }
+            stalledBackoffMs += Math.max(backoffMs, 0);
+            consecutiveEmpty = 0;
+            return;
+        }
+        consecutiveEmpty++;
+    }
+
+    private boolean isStallLimitReached() {
+        if (consecutiveEmpty >= MAX_EMPTY_BACK_TO_BACK) {
+            return true;
+        }
+        return stalledSinceNs != 0
+                && (System.nanoTime() - stalledSinceNs) / 1_000_000L
+                > MAX_DEFERRED_WITHOUT_PROGRESS_MS;
     }
 
     private void awaitBackoff() throws IOException {
@@ -141,6 +195,14 @@ public final class SabrRequestCoordinator {
         if (deadlineNs != 0 && waitMs * 1_000_000L > deadlineNs - System.nanoTime()) {
             throw new IOException(message);
         }
+    }
+
+    /** Zeroes the empty-response and deferred/backoff stall counters. */
+    public void resetRecoveryState() {
+        consecutiveEmpty = 0;
+        stalledSinceNs = 0;
+        stalledBackoffMs = 0;
+        recoveryAttempted = false;
     }
 
     private static void sleep(final long milliseconds) throws IOException {

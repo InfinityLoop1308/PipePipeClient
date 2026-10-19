@@ -29,6 +29,7 @@ import org.schabi.newpipe.error.ErrorUtil
 import org.schabi.newpipe.error.UserAction
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrAttestationException
 import org.schabi.newpipe.player.datasource.SabrLogicException
+import org.schabi.newpipe.youtube.SabrRecoveryExhaustedException
 import java.util.Locale
 
 /**
@@ -80,6 +81,9 @@ class PlayerErrorHandler(private val player: Player) {
      * For any error above that is **not** explicitly **catchable**, the player will create a
      * notification so users are aware.
      *
+     * SABR recovery exhaustion rebuilds the media source at the current position once instead of
+     * shutting playback down, and is reported as catchable so no fatal notification is created.
+     *
      * Any error code not explicitly covered here is either unrelated to the app's use case (e.g.
      * DRM) or not recoverable (e.g. decoder error). In both cases, the player should shutdown.
      */
@@ -97,7 +101,13 @@ class PlayerErrorHandler(private val player: Player) {
             // describe broken source invariants, so rebuilding the same source cannot recover.
             player.onPlaybackShutdown()
         } else {
-            when (error.errorCode) {
+            if (containsSabrRecoveryExhausted(error)) {
+                // SABR ran out of in-place recovery: rebuilding the media source at the current
+                // position is the only remaining option, and it is a recoverable case.
+                isCatchableException = true
+                player.setRecovery()
+                player.reloadPlayQueueManager()
+            } else when (error.errorCode) {
                 ERROR_CODE_BEHIND_LIVE_WINDOW -> {
                     isCatchableException = true
                     if (recoverFromBehindLiveWindow()) {
@@ -275,6 +285,17 @@ class PlayerErrorHandler(private val player: Player) {
         var current: Throwable? = error
         while (current != null) {
             if (current is SabrAttestationException || current is SabrLogicException) {
+                return true
+            }
+            current = current.cause
+        }
+        return false
+    }
+
+    private fun containsSabrRecoveryExhausted(error: Throwable): Boolean {
+        var current: Throwable? = error
+        while (current != null) {
+            if (current is SabrRecoveryExhaustedException) {
                 return true
             }
             current = current.cause
