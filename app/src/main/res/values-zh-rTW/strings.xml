@@ -801,7 +801,7 @@
 <string name="sponsor_promote">成為支持者</string>
 <string name="random_play_order_title">隨機順序</string>
 <string name="random_play_order_summary">在背景播放時自動隨機播放您的本地播放列表</string>
-<string name="update_log">### 新功能\n\n- 大幅優化電視控制\n- 新增支援直播畫質選擇\n- 「向下滑動以最小化」手勢現在可在設定中進行配置\n- 優化內容過濾器的刪除互動\n- 新增支援推薦/熱門直播 (NicoNico)\n- 新增支援頻道的直播分頁 (NicoNico)\n\n### 錯誤修復\n\n- 修復「以全螢幕啟動」設定無效的問題\n- 修復無法使用分割畫面模式的問題\n- 修復進入全螢幕模式時字幕會消失的問題\n- 修復內容封鎖未套用於公開播放清單的問題\n- 修復直播暫停時仍持續擷取資料的問題\n- 修復使用 SABR 協定中斷的影片無法恢復播放的問題\n- 修復在特定條件下開始播放時可能發生的崩潰問題\n- 修復在某些情況下播放清單總時長會無限增加的問題\n- 修復在特定條件下刪除觀看紀錄所引起的崩潰問題\n- 修復全新安裝時不喜歡計數器未預設停用的問題\n- 修復在特定條件下發生的下載失敗問題 (Bilibili)\n- 修復推薦直播顯示為空的問題 (Bilibili)</string>
+<string name="update_log">### 新功能\n\n- 在列表頁面新增多選功能\n- 在全螢幕播放時新增螢幕鎖定按鈕\n- 最佳化雙指縮放邏輯並預設啟用\n- 支援將上一首/下一首控制按鈕更改為快轉/倒轉\n- 支援 YouTube 風格的即時聊天，可與彈幕切換\n- 支援更多排序選項\n- 新增選項以設定是否在列表頁面顯示播放介面\n- 所有關鍵字過濾器現在皆支援正規表示式 (Regex)\n- 支援透過關鍵字、使用者名稱或按讚數過濾留言\n- 支援選擇偏好的音訊品質\n- 新增 DeArrow 支援\n\n### 錯誤修正\n\n- 修正特定情況下無法開始播放的問題 (YouTube)\n- 修正特定情況下播放意外停止的問題 (YouTube)\n- 修正特定情況下搜尋結果少於預期的問題 (YouTube)\n- 修正部分曲目無法播放的問題 (SoundCloud)\n- 修正從背景播放返回前景時影片詳細資訊未重新整理的問題\n- 修正特定情況下的介面排版錯誤\n- 修正特定情況下發生的閃退問題\n- 修正離開頁面後透過 URL 匯入播放清單失敗的問題\n- 修正特定情況下 SponsorBlock 被錯誤地全域停用的問題\n- 修正特定情況下 WebView 載入失敗的問題\n\n### 其他\n\n- 最佳化內容過濾的介面顯示\n- 最佳化列表內搜尋功能並將圖示統一為漏斗\n- 現在可以透過頻道 ID 封鎖頻道\n- SponsorBlock 現在支援手動輸入開始/結束時間\n- 支援 YouTube 上的「Releases」分頁\n- 名稱排序現在可以根據偏好切換 (英/中/日/韓)</string>
 <string name="speeding_playback_title">按住以加速播放</string>
 <string name="view_on_github">在 GitHub 上查看</string>
 <string name="donation_dialog_title">支持這項計畫</string>
