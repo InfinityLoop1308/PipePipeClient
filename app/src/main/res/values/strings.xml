@@ -1211,4 +1211,6 @@
 <string name="history_filter_start_date">Start date</string>
 <string name="history_filter_end_date">End date</string>
 <string name="history_filter_invalid_date">Not a valid date</string>
+<string name="title_last_played_ascending">Last Played (oldest first)</string>
+<string name="title_most_played_ascending">Most Played (fewest first)</string>
 </resources>

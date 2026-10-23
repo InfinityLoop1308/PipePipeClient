@@ -95,15 +95,31 @@ public class StatisticsPlaylistFragment
         final Comparator<StreamStatisticsEntry> comparator;
         switch (sortMode) {
             case LAST_PLAYED:
+                comparator = Comparator.comparing(StreamStatisticsEntry::getLatestAccessDate)
+                        .reversed();
+                break;
+            case LAST_PLAYED_ASC:
                 comparator = Comparator.comparing(StreamStatisticsEntry::getLatestAccessDate);
                 break;
             case MOST_PLAYED:
+                comparator = Comparator.comparingLong(StreamStatisticsEntry::getWatchCount)
+                        .reversed();
+                break;
+            case MOST_PLAYED_ASC:
                 comparator = Comparator.comparingLong(StreamStatisticsEntry::getWatchCount);
+                break;
+            case NAME_ASC:
+                comparator = (a, b) -> org.schabi.newpipe.util.utils.compareNames(
+                        a.getStreamEntity().getTitle(), b.getStreamEntity().getTitle());
+                break;
+            case NAME_DESC:
+                comparator = (a, b) -> org.schabi.newpipe.util.utils.compareNames(
+                        b.getStreamEntity().getTitle(), a.getStreamEntity().getTitle());
                 break;
             default:
                 return null;
         }
-        Collections.sort(results, comparator.reversed());
+        Collections.sort(results, comparator);
         return results;
     }
 
@@ -394,10 +410,11 @@ public class StatisticsPlaylistFragment
     //////////////////////////////////////////////////////////////////////////*/
 
     private void showSortDialog() {
-        final StatisticSortMode[] modes = {StatisticSortMode.LAST_PLAYED,
-                StatisticSortMode.MOST_PLAYED};
-        final String[] items = {getString(R.string.title_last_played),
-                getString(R.string.title_most_played)};
+        final StatisticSortMode[] modes = StatisticSortMode.values();
+        final String[] items = new String[modes.length];
+        for (int i = 0; i < modes.length; i++) {
+            items[i] = getString(sortModeTitle(modes[i]));
+        }
         new androidx.appcompat.app.AlertDialog.Builder(requireContext())
                 .setTitle(R.string.sort)
                 .setSingleChoiceItems(items, java.util.Arrays.asList(modes).indexOf(sortMode),
@@ -439,9 +456,26 @@ public class StatisticsPlaylistFragment
             return;
         }
         sortMode = mode;
-        setTitle(getString(mode == StatisticSortMode.LAST_PLAYED
-                ? R.string.title_last_played : R.string.title_most_played));
+        setTitle(getString(sortModeTitle(mode)));
         startLoading(true);
+    }
+
+    private static int sortModeTitle(final StatisticSortMode mode) {
+        switch (mode) {
+            case LAST_PLAYED_ASC:
+                return R.string.title_last_played_ascending;
+            case MOST_PLAYED:
+                return R.string.title_most_played;
+            case MOST_PLAYED_ASC:
+                return R.string.title_most_played_ascending;
+            case NAME_ASC:
+                return R.string.sort_name_ascending;
+            case NAME_DESC:
+                return R.string.sort_name_descending;
+            case LAST_PLAYED:
+            default:
+                return R.string.title_last_played;
+        }
     }
 
     private PlayQueue getPlayQueueStartingAt(final StreamStatisticsEntry infoItem) {
@@ -608,6 +642,10 @@ public class StatisticsPlaylistFragment
 
     private enum StatisticSortMode {
         LAST_PLAYED,
+        LAST_PLAYED_ASC,
         MOST_PLAYED,
+        MOST_PLAYED_ASC,
+        NAME_ASC,
+        NAME_DESC,
     }
 }
