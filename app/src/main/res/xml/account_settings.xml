@@ -15,6 +15,10 @@
             android:fragment="org.schabi.newpipe.settings.NicoNicoAccountSettingsFragment"
             android:title="NicoNico"
             app:iconSpaceReserved="false" />
+    <PreferenceScreen
+            android:fragment="org.schabi.newpipe.settings.TwitchAccountSettingsFragment"
+            android:title="Twitch"
+            app:iconSpaceReserved="false" />
 
     <PreferenceCategory
             android:layout="@layout/settings_category_header_layout"

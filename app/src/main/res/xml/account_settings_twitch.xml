@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:title="@string/settings_category_twitch_account_title">
+    <EditTextPreference
+        android:key="@string/twitch_cookies_key"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Enter Twitch API token"
+        app:icon="@drawable/ic_add" />
+    <Preference
+        android:key="@string/logout_key"
+        android:title="Delete Twitch API token"
+        app:icon="@drawable/ic_delete"
+        app:singleLineTitle="false" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="twitch_use_token_kiosk"
+        android:title="Use token for kiosk"
+        app:icon="@drawable/ic_explore"
+        app:summary="Whether to use the provided token to fetch data for the kiosk.\nNot using a token will only show the top 30 streams." />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="twitch_use_token_search"
+        android:title="Use token for search"
+        app:icon="@drawable/ic_search"
+        app:summary="Whether to use the provided token to fetch search results.\nNot using a token will only show the first ~30 results." />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="twitch_use_token_categories"
+        android:title="Use token for categories"
+        app:icon="@drawable/ic_playlist_play"
+        app:summary="Whether to use the provided token to fetch the streams of a category.\nNot using a token will only show the top 100 streams." />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="twitch_use_token_clips"
+        android:title="Use token for channel clips"
+        app:icon="@drawable/ic_play_arrow"
+        app:summary="Whether to use the provided token to fetch the clips of a channel.\nNot using a token will only show the top 100 clips." />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="twitch_use_token_vods"
+        android:title="Use token for channel vods"
+        app:icon="@drawable/ic_play_arrow"
+        app:summary="Whether to use the provided token to fetch the vods of a channel.\nNot using a token will only show the ~30 latest vods." />
+</PreferenceScreen>

@@ -127,6 +127,25 @@
         <item name="colorAccent">@color/dark_media_ccc_accent_color</item>
     </style>
 
+    <!-- Twitch -->
+    <style name="LightTheme.Twitch" parent="LightTheme" tools:keep="@style/LightTheme_Twitch">
+        <item name="colorPrimary">@color/light_twitch_primary_color</item>
+        <item name="colorPrimaryDark">@color/light_twitch_primary_color</item>
+        <item name="colorAccent">@color/light_twitch_accent_color</item>
+    </style>
+
+    <style name="DarkTheme.Twitch" parent="DarkTheme" tools:keep="@style/DarkTheme_Twitch">
+        <item name="colorPrimary">@color/dark_twitch_primary_color</item>
+        <item name="colorPrimaryDark">@color/dark_twitch_primary_color</item>
+        <item name="colorAccent">@color/dark_twitch_accent_color</item>
+    </style>
+
+    <style name="BlackTheme.Twitch" parent="BlackTheme" tools:keep="@style/BlackTheme_Twitch">
+        <item name="colorPrimary">@color/dark_twitch_primary_color</item>
+        <item name="colorPrimaryDark">@color/dark_twitch_primary_color</item>
+        <item name="colorAccent">@color/dark_twitch_accent_color</item>
+    </style>
+
     <!-- collector -->
     <style name="LightTheme.Collector" parent="LightTheme">
         <item name="colorPrimary">@color/light_collector_primary_color</item>

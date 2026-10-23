@@ -51,3 +51,6 @@
 -dontwarn androidx.room.paging.**
 
 -keep class org.json.JSONException { *; }
+
+# keep constructors since they are being called via reflection and will otherwise be removed
+-keepclassmembers class org.schabi.newpipe.extractor.services.twitch.data.api.responses.** { <init>(...); }

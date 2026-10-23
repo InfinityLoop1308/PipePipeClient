@@ -60,6 +60,13 @@
     <color name="dark_bilibili_accent_color">#FFFFFF</color>
     <color name="dark_bilibili_statusbar_color">#D94E74</color>
 
+    <!-- Twitch -->
+    <color name="light_twitch_primary_color">#9147FF</color>
+    <color name="light_twitch_accent_color">#000000</color>
+
+    <color name="dark_twitch_primary_color">#472678</color>
+    <color name="dark_twitch_accent_color">#FFFFFF</color>
+
     <!-- Collector -->
     <color name="light_collector_primary_color">#e2c9a3</color>
     <color name="light_collector_accent_color">#000000</color>

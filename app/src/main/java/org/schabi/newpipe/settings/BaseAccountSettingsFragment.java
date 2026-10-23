@@ -59,15 +59,19 @@ public abstract class BaseAccountSettingsFragment extends BasePreferenceFragment
     }
 
     private void setupClickListeners() {
-        login.setOnPreferenceClickListener(preference -> {
-            onLoginClicked();
-            return true;
-        });
+        if(login != null) {
+            login.setOnPreferenceClickListener(preference -> {
+                onLoginClicked();
+                return true;
+            });
+        }
 
-        logout.setOnPreferenceClickListener(preference -> {
-            performLogout();
-            return true;
-        });
+        if(logout != null) {
+            logout.setOnPreferenceClickListener(preference -> {
+                performLogout();
+                return true;
+            });
+        }
 
         if (shouldCheckOverrideKeys()) {
             setupOverrideClickListeners();
@@ -92,8 +96,11 @@ public abstract class BaseAccountSettingsFragment extends BasePreferenceFragment
 
     private void updateLoginLogoutState() {
         boolean hasCredentials = !defaultPreferences.getString(getCookiesKey(), "").equals("");
-        login.setEnabled(!hasCredentials);
-        logout.setEnabled(hasCredentials);
+        if(login != null)
+            login.setEnabled(!hasCredentials);
+
+        if(logout != null)
+            logout.setEnabled(hasCredentials);
     }
 
     private void configureOverridePreferences() {
@@ -105,15 +112,20 @@ public abstract class BaseAccountSettingsFragment extends BasePreferenceFragment
     protected void onLoginSuccess() {
         refreshAccountDependentState();
         Toast.makeText(requireContext(), R.string.success, Toast.LENGTH_SHORT).show();
-        login.setEnabled(false);
-        logout.setEnabled(true);
+
+        if(login != null)
+            login.setEnabled(false);
+        if(logout != null)
+            logout.setEnabled(true);
     }
 
     protected void onLogoutSuccess() {
         refreshAccountDependentState();
         Toast.makeText(requireContext(), R.string.success, Toast.LENGTH_SHORT).show();
-        login.setEnabled(true);
-        logout.setEnabled(false);
+        if(login != null)
+            login.setEnabled(true);
+        if(logout != null)
+            logout.setEnabled(false);
     }
 
     protected void refreshAccountDependentState() {
