@@ -89,4 +89,26 @@ public abstract class StreamHistoryDAO implements HistoryDAO<StreamHistoryEntity
             + " FROM " + STREAM_STATE_TABLE + " )"
             + " ON " + STREAM_ID + " = " + JOIN_STREAM_ID_ALIAS)
     public abstract Flowable<List<StreamStatisticsEntry>> getStatistics();
+
+    @RewriteQueriesToDropUnusedColumns
+    @Query("SELECT * FROM " + STREAM_TABLE
+
+            // Select the latest entry and watch count for each stream id on history table
+            + " INNER JOIN "
+            + "(SELECT " + JOIN_STREAM_ID + ", "
+            + "  MAX(" + STREAM_ACCESS_DATE + ") AS " + STREAM_LATEST_DATE + ", "
+            + "  SUM(" + STREAM_REPEAT_COUNT + ") AS " + STREAM_WATCH_COUNT
+            + " FROM " + STREAM_HISTORY_TABLE
+            + " WHERE " + STREAM_ACCESS_DATE + " >= :startMillis AND "
+            + STREAM_ACCESS_DATE + " < :endMillis GROUP BY " + JOIN_STREAM_ID + ")"
+
+            + " ON " + STREAM_ID + " = " + JOIN_STREAM_ID
+
+            + " LEFT JOIN "
+            + "(SELECT " + JOIN_STREAM_ID + " AS " + JOIN_STREAM_ID_ALIAS + ", "
+            + STREAM_PROGRESS_MILLIS
+            + " FROM " + STREAM_STATE_TABLE + " )"
+            + " ON " + STREAM_ID + " = " + JOIN_STREAM_ID_ALIAS)
+    public abstract Flowable<List<StreamStatisticsEntry>> getStatisticsBetween(
+            long startMillis, long endMillis);
 }

@@ -18,6 +18,12 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/action_history_date_filter"
+        android:orderInCategory="920"
+        android:title="@string/history_filter_by_date"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_multi_select"
         android:orderInCategory="930"
         android:title="@string/multi_select"

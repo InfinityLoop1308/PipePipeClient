@@ -22,6 +22,9 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.viewbinding.ViewBinding;
 
+import androidx.core.util.Pair;
+
+import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.reactivestreams.Subscriber;
@@ -45,6 +48,10 @@ import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.OnClickGesture;
 import org.schabi.newpipe.info_list.dialog.StreamDialogDefaultEntry;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -61,6 +68,9 @@ public class StatisticsPlaylistFragment
     private final CompositeDisposable disposables = new CompositeDisposable();
     Parcelable itemsListState;
     private StatisticSortMode sortMode = StatisticSortMode.LAST_PLAYED;
+    /** Inclusive start / exclusive end of the date filter in epoch millis, or null if unset. */
+    @Nullable private Long filterStartMillis = null;
+    @Nullable private Long filterEndMillis = null;
 
     private StatisticPlaylistControlBinding headerBinding;
     private PlaylistControlBinding playlistControlBinding;
@@ -189,6 +199,8 @@ public class StatisticsPlaylistFragment
         } else if (item.getItemId() == R.id.action_history_clear) {
             HistorySettingsFragment
                     .openDeleteWatchHistoryDialog(requireContext(), recordManager, disposables);
+        } else if (item.getItemId() == R.id.action_history_date_filter) {
+            showDateFilterDialog();
         } else if (item.getItemId() == R.id.menu_item_sort) {
             showSortDialog();
         } else if (item.getItemId() == R.id.action_search_local) {
@@ -233,7 +245,9 @@ public class StatisticsPlaylistFragment
     @Override
     public void startLoading(final boolean forceLoad) {
         super.startLoading(forceLoad);
-        recordManager.getStreamStatistics()
+        (filterStartMillis != null && filterEndMillis != null
+                ? recordManager.getStreamStatistics(filterStartMillis, filterEndMillis)
+                : recordManager.getStreamStatistics())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getHistoryObserver());
     }
@@ -394,6 +408,44 @@ public class StatisticsPlaylistFragment
                             dialog.dismiss();
                         })
                 .show();
+    }
+
+    private void showDateFilterDialog() {
+        final MaterialDatePicker.Builder<Pair<Long, Long>> builder =
+                MaterialDatePicker.Builder.dateRangePicker()
+                        .setTitleText(R.string.history_filter_by_date);
+        if (filterStartMillis != null && filterEndMillis != null) {
+            // the picker works with UTC midnight timestamps
+            final ZoneId zone = ZoneId.systemDefault();
+            builder.setSelection(new Pair<>(
+                    toUtcMillis(Instant.ofEpochMilli(filterStartMillis).atZone(zone)
+                            .toLocalDate()),
+                    toUtcMillis(Instant.ofEpochMilli(filterEndMillis - 1).atZone(zone)
+                            .toLocalDate())));
+            builder.setNegativeButtonText(R.string.history_clear_date_filter);
+        }
+        final MaterialDatePicker<Pair<Long, Long>> picker = builder.build();
+        picker.addOnPositiveButtonClickListener(selection -> {
+            final ZoneId zone = ZoneId.systemDefault();
+            final LocalDate first = Instant.ofEpochMilli(selection.first)
+                    .atZone(ZoneOffset.UTC).toLocalDate();
+            final LocalDate last = Instant.ofEpochMilli(selection.second)
+                    .atZone(ZoneOffset.UTC).toLocalDate();
+            applyDateFilter(first.atStartOfDay(zone).toInstant().toEpochMilli(),
+                    last.plusDays(1).atStartOfDay(zone).toInstant().toEpochMilli());
+        });
+        picker.addOnNegativeButtonClickListener(v -> applyDateFilter(null, null));
+        picker.show(getChildFragmentManager(), "history_date_filter");
+    }
+
+    private static long toUtcMillis(final LocalDate date) {
+        return date.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli();
+    }
+
+    private void applyDateFilter(@Nullable final Long start, @Nullable final Long end) {
+        filterStartMillis = start;
+        filterEndMillis = end;
+        startLoading(true);
     }
 
     private void setSortMode(final StatisticSortMode mode) {

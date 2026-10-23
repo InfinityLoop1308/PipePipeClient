@@ -214,6 +214,12 @@ public class HistoryRecordManager {
                         .subscribeOn(Schedulers.io()));
     }
 
+    public Flowable<List<StreamStatisticsEntry>> getStreamStatistics(final long startMillis,
+                                                                     final long endMillis) {
+        return streamHistoryTable.getStatisticsBetween(startMillis, endMillis)
+                .subscribeOn(Schedulers.io());
+    }
+
     public Single<List<Long>> insertStreamHistory(final Collection<StreamHistoryEntry> entries) {
         final List<StreamHistoryEntity> entities = new ArrayList<>(entries.size());
         for (final StreamHistoryEntry entry : entries) {

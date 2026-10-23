@@ -1206,4 +1206,6 @@
 <string name="audio_quality_low">Low (lowest bitrate, saves data)</string>
 <string name="lock_screen_button_title">Lock screen button</string>
 <string name="lock_screen_button_summary">Show a button in the fullscreen player to lock touch controls</string>
+<string name="history_filter_by_date">Filter by date</string>
+<string name="history_clear_date_filter">Clear filter</string>
 </resources>
