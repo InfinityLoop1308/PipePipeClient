@@ -1208,4 +1208,7 @@
 <string name="lock_screen_button_summary">Show a button in the fullscreen player to lock touch controls</string>
 <string name="history_filter_by_date">Filter by date</string>
 <string name="history_clear_date_filter">Clear filter</string>
+<string name="history_filter_start_date">Start date</string>
+<string name="history_filter_end_date">End date</string>
+<string name="history_filter_invalid_date">Not a valid date</string>
 </resources>
