@@ -1,5 +1,7 @@
 package org.schabi.newpipe.util;
 
+import org.schabi.newpipe.plugin.PluginObjectInputStream;
+
 import androidx.annotation.NonNull;
 
 import java.io.ByteArrayInputStream;
@@ -22,7 +24,7 @@ public final class SerializedUtils {
             objectOutput.writeObject(item);
             objectOutput.flush();
         }
-        final Object clone = new ObjectInputStream(
+        final Object clone = new PluginObjectInputStream(
                 new ByteArrayInputStream(bytesOutput.toByteArray())).readObject();
         return type.cast(clone);
     }

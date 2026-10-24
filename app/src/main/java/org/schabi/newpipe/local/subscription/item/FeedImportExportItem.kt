@@ -13,7 +13,6 @@ import com.xwray.groupie.viewbinding.GroupieViewHolder
 import org.schabi.newpipe.R
 import org.schabi.newpipe.databinding.FeedImportExportGroupBinding
 import org.schabi.newpipe.extractor.NewPipe
-import org.schabi.newpipe.extractor.exceptions.ExtractionException
 import org.schabi.newpipe.ktx.animateRotation
 import org.schabi.newpipe.util.ServiceHelper
 import org.schabi.newpipe.util.ThemeHelper
@@ -129,24 +128,19 @@ class FeedImportExportItem(
         previousBackupItem.setOnClickListener { onImportPreviousSelected() }
 
         val iconColor = if (ThemeHelper.isLightThemeSelected(listHolder.context)) Color.BLACK else Color.WHITE
-        val services = listHolder.context.resources.getStringArray(R.array.service_list)
-        for (serviceName in services) {
-            try {
-                val service = NewPipe.getService(serviceName)
+        // every service, including plugins, whose subscription extractor supports a source
+        for (service in NewPipe.getServices()) {
+            val subscriptionExtractor = runCatching { service.subscriptionExtractor }.getOrNull()
+                ?: continue
+            if (subscriptionExtractor.supportedSources.isEmpty()) continue
 
-                val subscriptionExtractor = service.subscriptionExtractor ?: continue
+            val itemView = addItemView(
+                service.serviceInfo.name, ServiceHelper.getIcon(service.serviceId), listHolder
+            )
+            val iconView = itemView.findViewById<ImageView>(android.R.id.icon1)
+            iconView.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
 
-                val supportedSources = subscriptionExtractor.supportedSources
-                if (supportedSources.isEmpty()) continue
-
-                val itemView = addItemView(serviceName, ServiceHelper.getIcon(service.serviceId), listHolder)
-                val iconView = itemView.findViewById<ImageView>(android.R.id.icon1)
-                iconView.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
-
-                itemView.setOnClickListener { onImportFromServiceSelected(service.serviceId) }
-            } catch (e: ExtractionException) {
-                throw RuntimeException("Services array contains an entry that it's not a valid service name ($serviceName)", e)
-            }
+            itemView.setOnClickListener { onImportFromServiceSelected(service.serviceId) }
         }
     }
 

@@ -26,6 +26,7 @@ import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.downloader.Downloader;
 import org.schabi.newpipe.extractor.services.youtube.YoutubeApiDecoder;
 import org.schabi.newpipe.ktx.ExceptionUtils;
+import org.schabi.newpipe.plugin.PluginManager;
 import org.schabi.newpipe.settings.NewPipeSettings;
 import org.schabi.newpipe.util.*;
 import org.schabi.newpipe.util.dearrow.DeArrowImages;
@@ -142,6 +143,8 @@ public class App extends MultiDexApplication {
         StateSaver.init(this);
         initNotificationChannels();
 
+        // register plugin services before anything reads the service list
+        PluginManager.loadInstalledPlugins(this);
         ServiceHelper.initServices(this);
         LocalDomPoTokenProvider.initialize(this);
         NewPipe.setYoutubePoTokenResolver(LocalDomPoTokenProvider.INSTANCE::getPlayerPoToken);

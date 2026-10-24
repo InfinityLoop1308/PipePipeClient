@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.plugin.PluginManager;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.ListExtractor;
@@ -64,6 +65,8 @@ public class ChannelTabFragment extends BaseListInfoFragment<InfoItem, ChannelTa
     @Override
     protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+        // the handler may be a class defined by a plugin
+        savedInstanceState.setClassLoader(PluginManager.getHostAndPluginsClassLoader());
         serviceId = savedInstanceState.getInt(KEY_SERVICE_ID, Constants.NO_SERVICE_ID);
         if (savedInstanceState.containsKey(KEY_TAB_HANDLER)) {
             tabHandler = (ListLinkHandler) savedInstanceState.getSerializable(KEY_TAB_HANDLER);
@@ -96,6 +99,7 @@ public class ChannelTabFragment extends BaseListInfoFragment<InfoItem, ChannelTa
 
     void restoreFromArguments() {
         if (tabHandler == null && getArguments() != null) {
+            getArguments().setClassLoader(PluginManager.getHostAndPluginsClassLoader());
             serviceId = getArguments().getInt(KEY_SERVICE_ID, Constants.NO_SERVICE_ID);
             tabHandler = (ListLinkHandler) getArguments().getSerializable(KEY_TAB_HANDLER);
             channelName = getArguments().getString(KEY_CHANNEL_NAME);

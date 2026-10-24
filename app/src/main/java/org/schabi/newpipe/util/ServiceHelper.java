@@ -7,27 +7,22 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.StringRes;
 import androidx.preference.PreferenceManager;
 
-import com.grack.nanojson.JsonObject;
-import com.grack.nanojson.JsonParser;
-import com.grack.nanojson.JsonParserException;
 
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
-import org.schabi.newpipe.extractor.services.peertube.PeertubeInstance;
 import org.schabi.newpipe.extractor.sponsorblock.SponsorBlockApiSettings;
 import org.schabi.newpipe.extractor.InfoItemsCollector.FilterConfig;
 import org.schabi.newpipe.extractor.comments.CommentsFilterConfig;
+import org.schabi.newpipe.plugin.PluginManager;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static org.schabi.newpipe.extractor.ServiceList.NicoNico;
-import static org.schabi.newpipe.extractor.ServiceList.SoundCloud;
 public final class ServiceHelper {
     private static final StreamingService DEFAULT_FALLBACK_SERVICE = ServiceList.YouTube;
 
@@ -36,8 +31,14 @@ public final class ServiceHelper {
     @DrawableRes
     public static int getIcon(final int serviceId) {
         switch (serviceId) {
+            // built-in services
             case 0:
                 return R.drawable.ic_youtube;
+            case 5:
+                return R.drawable.ic_bilibili;
+            case 6:
+                return R.drawable.place_holder_niconico;
+            // ids reserved for the former built-in services, now plugins
             case 1:
                 return R.drawable.place_holder_cloud;
             case 2:
@@ -46,12 +47,8 @@ public final class ServiceHelper {
                 return R.drawable.place_holder_peertube;
             case 4:
                 return R.drawable.place_holder_bandcamp;
-            case 5:
-                return R.drawable.ic_bilibili;
-            case 6:
-                return R.drawable.place_holder_niconico;
             default:
-                return R.drawable.place_holder_circle;
+                return R.drawable.ic_extension;
         }
     }
 
@@ -173,18 +170,14 @@ public final class ServiceHelper {
      * Get a resource string with instructions for importing subscriptions for each service.
      *
      * @param serviceId service to get the instructions for
-     * @return the string resource containing the instructions or -1 if the service don't support it
+     * @return the string resource containing the instructions or 0 if there are none
      */
     @StringRes
     public static int getImportInstructions(final int serviceId) {
-        switch (serviceId) {
-            case 0:
-                return R.string.import_youtube_instructions;
-            case 1:
-                return R.string.import_soundcloud_instructions;
-            default:
-                return -1;
+        if (serviceId == ServiceList.YouTube.getServiceId()) {
+            return R.string.import_youtube_instructions;
         }
+        return 0;
     }
 
     /**
@@ -192,16 +185,11 @@ public final class ServiceHelper {
      * be used in the EditText that the user will type in his channel url.
      *
      * @param serviceId service to get the hint for
-     * @return the hint's string resource or -1 if the service don't support it
+     * @return the hint's string resource or 0 if there is none
      */
     @StringRes
     public static int getImportInstructionsHint(final int serviceId) {
-        switch (serviceId) {
-            case 1:
-                return R.string.import_soundcloud_instructions_hint;
-            default:
-                return -1;
-        }
+        return 0;
     }
 
     public static int getSelectedServiceId(final Context context) {
@@ -247,47 +235,23 @@ public final class ServiceHelper {
     }
 
     public static long getCacheExpirationMillis(final int serviceId) {
-        if (serviceId == SoundCloud.getServiceId()) {
-            return TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES);
-        } else if (serviceId == NicoNico.getServiceId()) {
-            return TimeUnit.MILLISECONDS.convert(2, TimeUnit.MINUTES);
-        } else {
+        try {
+            return NewPipe.getService(serviceId).getInfoCacheExpirationMillis();
+        } catch (final ExtractionException e) {
             return TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS);
         }
     }
 
+    /**
+     * @return whether the service is provided by a plugin, which is shown with a label since
+     * it is not maintained by PipePipe
+     */
     public static boolean isBeta(final StreamingService s) {
-        switch (s.getServiceInfo().getName()) {
-            case "YouTube":
-            case "BiliBili":
-            case "NicoNico":
-                return false;
-            default:
-                return true;
-        }
+        return PluginManager.isPluginService(s);
     }
 
     public static void initService(final Context context, final int serviceId) {
-        if (serviceId == ServiceList.PeerTube.getServiceId()) {
-            final SharedPreferences sharedPreferences = PreferenceManager
-                    .getDefaultSharedPreferences(context);
-            final String json = sharedPreferences.getString(context.getString(
-                    R.string.peertube_selected_instance_key), null);
-            if (null == json) {
-                return;
-            }
-
-            final JsonObject jsonObject;
-            try {
-                jsonObject = JsonParser.object().from(json);
-            } catch (final JsonParserException e) {
-                return;
-            }
-            final String name = jsonObject.getString("name");
-            final String url = jsonObject.getString("url");
-            final PeertubeInstance instance = new PeertubeInstance(url, name);
-            ServiceList.PeerTube.setInstance(instance);
-        } else if (serviceId == ServiceList.NicoNico.getServiceId()) {
+        if (serviceId == ServiceList.NicoNico.getServiceId()) {
             final SharedPreferences sharedPreferences = PreferenceManager
                     .getDefaultSharedPreferences(context);
             final String tokens = sharedPreferences.getString(context.getString(

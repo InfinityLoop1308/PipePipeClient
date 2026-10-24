@@ -1,5 +1,7 @@
 package us.shandian.giga.util;
 
+import org.schabi.newpipe.plugin.PluginObjectInputStream;
+
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -97,7 +99,7 @@ public class Utility {
         T object;
 
         try (ObjectInputStream objectInputStream =
-                     new ObjectInputStream(new FileInputStream(file))) {
+                     new PluginObjectInputStream(new FileInputStream(file))) {
             object = (T) objectInputStream.readObject();
         } catch (Exception e) {
             Log.e("Utility", "Failed to deserialize the object", e);
