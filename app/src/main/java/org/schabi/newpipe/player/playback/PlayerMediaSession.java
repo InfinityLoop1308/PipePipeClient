@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
+import android.text.TextUtils;
 
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.RepeatMode;
@@ -101,9 +102,9 @@ public class PlayerMediaSession implements MediaSessionCallback {
                 .putLong(MediaMetadataCompat.METADATA_KEY_NUM_TRACKS, player.getPlayQueue().size());
         descriptionBuilder.setExtras(additionalMetadata);
 
-        final Uri thumbnailUri = Uri.parse(item.getThumbnailUrl());
-        if (thumbnailUri != null) {
-            descriptionBuilder.setIconUri(thumbnailUri);
+        final String thumbnailUrl = item.getThumbnailUrl();
+        if (!TextUtils.isEmpty(thumbnailUrl)) {
+            descriptionBuilder.setIconUri(Uri.parse(thumbnailUrl));
         }
 
         return descriptionBuilder.build();

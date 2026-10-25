@@ -31,11 +31,6 @@ class PlayerStartController(private val player: Player) {
         val newQueue = SerializedCache.getInstance().take(queueCache, PlayQueue::class.java)
             ?: return
 
-        val oldPlayerType = player.playerType
-        player.setPlayerType(PlayerHelper.retrievePlayerTypeFromIntent(intent))
-        // We need to setup audioOnly before super(), see "sourceOf"
-        player.setAudioOnly(player.audioPlayerSelected())
-
         val playQueue = player.playQueue
 
         // Resolve enqueue intents
@@ -53,6 +48,11 @@ class PlayerStartController(private val player: Player) {
             playQueue.move(playQueue.size() - 1, currentIndex + 1)
             return
         }
+
+        val oldPlayerType = player.playerType
+        player.setPlayerType(PlayerHelper.retrievePlayerTypeFromIntent(intent))
+        // We need to setup audioOnly before super(), see "sourceOf"
+        player.setAudioOnly(player.audioPlayerSelected())
 
         val parametersBuilder = player.trackSelector.buildUponParameters()
         parametersBuilder.setTrackTypeDisabled(C.TRACK_TYPE_TEXT, player.audioPlayerSelected())
