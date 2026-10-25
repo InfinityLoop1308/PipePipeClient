@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -31,8 +32,18 @@ public final class WebViewJavaScriptDecoder implements YoutubeJavaScriptDecoder 
     private static final String PLAYER_URL =
             "https://www.youtube.com/s/player/%s/player_ias.vflset/en_US/base.js";
     private static final String IFRAME_URL = "https://www.youtube.com/iframe_api";
+    private static final String[] EMBED_URL_FORMATS = {
+            "https://www.youtube-nocookie.com/embed/%s?html5=1",
+            "https://www.youtube.com/embed/%s?html5=1"
+    };
     private static final long TIMEOUT_MS = 30_000L;
     private static final long PLAYER_CACHE_TTL_MS = 24L * 60L * 60L * 1000L;
+    /**
+     * Matches the player URL advertised by an embeddable player page, which carries the hash of
+     * the current player in its player configuration.
+     */
+    private static final Pattern EMBED_PLAYER_PATTERN = Pattern.compile(
+            "jsUrl.{0,64}?/s/player/([a-z0-9]{8})/");
     private static final String PLAYER_CACHE_PREFIX = "youtube-player-";
     private static final String PLAYER_CACHE_PREFS = "youtube-player-cache";
     private static final Pattern PLAYER_PATTERN = Pattern.compile(
@@ -81,27 +92,46 @@ public final class WebViewJavaScriptDecoder implements YoutubeJavaScriptDecoder 
     public synchronized PlayerData getPlayerData(@Nonnull final String videoId)
             throws ParsingException {
         final long start = SystemClock.elapsedRealtime();
+        final String cachedPlayerId = preferences.getString("playerId", null);
+        final int cachedTimestamp = preferences.getInt("signatureTimestamp", 0);
+        final long expiresAt = preferences.getLong("expiresAt", 0);
+        final boolean playerOnDisk = cachedPlayerId != null && cachedTimestamp != 0
+                && playerFile(cachedPlayerId).isFile();
+        if (playerOnDisk && System.currentTimeMillis() < expiresAt) {
+            prepareCachedPlayer(cachedPlayerId);
+            logMetadata(start, "disk", cachedPlayerId, preparedPlayerCode.length());
+            return new PlayerData(cachedPlayerId, cachedTimestamp);
+        }
         try {
-            final String cachedPlayerId = preferences.getString("playerId", null);
-            final int cachedTimestamp = preferences.getInt("signatureTimestamp", 0);
-            final long expiresAt = preferences.getLong("expiresAt", 0);
-            if (cachedPlayerId != null && cachedTimestamp != 0
-                    && System.currentTimeMillis() < expiresAt) {
-                final File cachedFile = playerFile(cachedPlayerId);
-                if (cachedFile.isFile()) {
-                    final String playerCode = readFile(cachedFile);
-                    preparedPlayerId = cachedPlayerId;
-                    preparedPlayerCode = playerCode;
-                    logMetadata(start, "disk", cachedPlayerId, playerCode.length());
-                    return new PlayerData(cachedPlayerId, cachedTimestamp);
-                }
+            return refreshPlayerData(videoId, start);
+        } catch (final ParsingException e) {
+            if (!playerOnDisk) {
+                throw e;
             }
-            final Matcher playerMatcher = PLAYER_PATTERN.matcher(
-                    DownloaderImpl.getInstance().get(IFRAME_URL).responseBody());
-            if (!playerMatcher.find()) {
-                throw new ParsingException("Could not find YouTube player ID");
+            // A player file which is already stored keeps producing valid signatures long after
+            // its metadata expired, so an unreachable YouTube is no reason to stop playback.
+            Log.w(TAG, "Could not refresh player metadata, reusing player " + cachedPlayerId, e);
+            try {
+                prepareCachedPlayer(cachedPlayerId);
+            } catch (final ParsingException cachedFailure) {
+                cachedFailure.addSuppressed(e);
+                throw cachedFailure;
             }
-            final String playerId = playerMatcher.group(1);
+            logMetadata(start, "disk-stale", cachedPlayerId, preparedPlayerCode.length());
+            return new PlayerData(cachedPlayerId, cachedTimestamp);
+        }
+    }
+
+    private void prepareCachedPlayer(@Nonnull final String playerId) throws ParsingException {
+        preparedPlayerCode = readFile(playerFile(playerId));
+        preparedPlayerId = playerId;
+    }
+
+    @Nonnull
+    private PlayerData refreshPlayerData(@Nonnull final String videoId, final long start)
+            throws ParsingException {
+        try {
+            final String playerId = findPlayerId(videoId);
             final File playerFile = playerFile(playerId);
             final boolean diskCached = playerFile.isFile();
             final String playerCode = diskCached
@@ -126,6 +156,54 @@ public final class WebViewJavaScriptDecoder implements YoutubeJavaScriptDecoder 
         } catch (final Exception e) {
             throw new ParsingException("Could not load local player metadata", e);
         }
+    }
+
+    /**
+     * Read the hash of the current player from one of the pages which advertise it.
+     *
+     * <p>
+     * YouTube answers the iframe API with a bot check page when it considers the address to be
+     * too busy, which broke every playback because it used to be the only source. An embeddable
+     * player page carries the same hash in its player configuration, so it is asked first, and
+     * {@code youtube-nocookie.com} comes before {@code www.youtube.com} because it is a separate
+     * host which YouTube limits on its own.
+     * </p>
+     */
+    @Nonnull
+    private String findPlayerId(@Nonnull final String videoId) throws ParsingException {
+        final List<String> urls = new ArrayList<>();
+        for (final String format : EMBED_URL_FORMATS) {
+            urls.add(String.format(format, videoId));
+        }
+        urls.add(IFRAME_URL);
+
+        ParsingException failure = null;
+        for (final String url : urls) {
+            try {
+                final String body = DownloaderImpl.getInstance().get(url).responseBody();
+                final Matcher matcher = (IFRAME_URL.equals(url)
+                        ? PLAYER_PATTERN : EMBED_PLAYER_PATTERN).matcher(body);
+                if (matcher.find()) {
+                    return matcher.group(1);
+                }
+                failure = accumulate(failure,
+                        new ParsingException("Could not find YouTube player ID in " + url));
+            } catch (final Exception e) {
+                failure = accumulate(failure, new ParsingException("Could not fetch " + url, e));
+            }
+        }
+        throw failure;
+    }
+
+    @Nonnull
+    private static ParsingException accumulate(@Nullable final ParsingException failure,
+                                               @Nonnull final Exception next) {
+        if (failure == null) {
+            return next instanceof ParsingException
+                    ? (ParsingException) next : new ParsingException(next.getMessage(), next);
+        }
+        failure.addSuppressed(next);
+        return failure;
     }
 
     private File playerFile(final String playerId) {
