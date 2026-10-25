@@ -29,6 +29,7 @@ public final class Migrations {
     public static final int DB_VER_9 = 9;
     public static final int DB_VER_900 = 900;
     public static final int DB_VER_901 = 901;
+    public static final int DB_VER_902 = 902;
 
     private static final String TAG = Migrations.class.getName();
     public static final boolean DEBUG = MainActivity.DEBUG;
@@ -424,6 +425,22 @@ public final class Migrations {
         @Override
         public void migrate(@NonNull final SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE streams ADD COLUMN is_paid INTEGER NOT NULL DEFAULT 0");
+        }
+    };
+
+    public static final Migration MIGRATION_901_902 = new Migration(DB_VER_901, DB_VER_902) {
+        @Override
+        public void migrate(@NonNull final SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE feed_group "
+                    + "ADD COLUMN content_selection INTEGER NOT NULL DEFAULT 7");
+            database.execSQL("ALTER TABLE feed_group_subscription_join "
+                    + "ADD COLUMN content_selection_override INTEGER DEFAULT NULL");
+            database.execSQL("ALTER TABLE feed "
+                    + "ADD COLUMN content_selection INTEGER NOT NULL DEFAULT 1");
+            database.execSQL("UPDATE feed SET content_selection = 4 WHERE stream_id IN ("
+                    + "SELECT uid FROM streams WHERE stream_type IN ("
+                    + "'LIVE_STREAM', 'AUDIO_LIVE_STREAM', "
+                    + "'POST_LIVE_STREAM', 'POST_LIVE_AUDIO_STREAM'))");
         }
     };
 

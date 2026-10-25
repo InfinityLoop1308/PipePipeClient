@@ -1,6 +1,7 @@
 package org.schabi.newpipe.database
 
 import androidx.room.TypeConverter
+import org.schabi.newpipe.database.feed.model.FeedContentSelection
 import org.schabi.newpipe.extractor.stream.StreamType
 import org.schabi.newpipe.local.subscription.FeedGroupIcon
 import java.time.Instant
@@ -48,5 +49,15 @@ class Converters {
     @TypeConverter
     fun feedGroupIconOf(id: Int): FeedGroupIcon {
         return FeedGroupIcon.values().first { it.id == id }
+    }
+
+    @TypeConverter
+    fun integerOf(feedContentSelection: FeedContentSelection?): Int? {
+        return feedContentSelection?.mask
+    }
+
+    @TypeConverter
+    fun feedContentSelectionOf(mask: Int?): FeedContentSelection? {
+        return mask?.let(FeedContentSelection::fromMask)
     }
 }

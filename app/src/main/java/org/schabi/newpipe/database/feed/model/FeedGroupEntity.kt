@@ -24,7 +24,10 @@ data class FeedGroupEntity(
     var icon: FeedGroupIcon,
 
     @ColumnInfo(name = SORT_ORDER)
-    var sortOrder: Long = -1
+    var sortOrder: Long = -1,
+
+    @ColumnInfo(name = CONTENT_SELECTION, defaultValue = "7")
+    var contentSelection: FeedContentSelection = FeedContentSelection.ALL
 ) {
     companion object {
         const val FEED_GROUP_TABLE = "feed_group"
@@ -33,6 +36,7 @@ data class FeedGroupEntity(
         const val NAME = "name"
         const val ICON = "icon_id"
         const val SORT_ORDER = "sort_order"
+        const val CONTENT_SELECTION = "content_selection"
 
         const val GROUP_ALL_ID = -1L
     }

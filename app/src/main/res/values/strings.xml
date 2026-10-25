@@ -641,6 +641,17 @@
 </plurals>
 <string name="feed_group_dialog_empty_name">Empty group name</string>
 <string name="feed_group_dialog_delete_message">Do you want to delete this group?</string>
+<string name="feed_group_content_rules">Content rules</string>
+<string name="feed_group_content_default">Default content</string>
+    <string name="feed_group_content_exceptions">Channel exceptions</string>
+    <string name="feed_group_content_add_exception">Add channel exception</string>
+    <string name="feed_group_content_summary">Configure content: %1$s</string>
+    <plurals name="feed_group_content_rule_summary">
+        <item quantity="one">%1$s · %2$d channel</item>
+        <item quantity="other">%1$s · %2$d channels</item>
+    </plurals>
+    <string name="feed_group_content_nonempty">Select at least one content type</string>
+<string name="feed_group_content_matches_default">That selection already uses the group default</string>
 <string name="feed_create_new_group_button_title">New</string>
 <string name="feed_group_show_only_ungrouped_subscriptions">Show only ungrouped subscriptions</string>
 <string name="settings_category_feed_title">Feed</string>

@@ -15,9 +15,9 @@ import org.schabi.newpipe.R
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.database.subscription.NotificationMode
 import org.schabi.newpipe.extractor.Info
+import org.schabi.newpipe.extractor.ListInfo
 import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.feed.FeedInfo
-import org.schabi.newpipe.extractor.ListInfo
 import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
@@ -152,7 +152,7 @@ class FeedLoadManager(private val context: Context) {
                                 // check for and load new streams
                                 // either by using the dedicated feed method or by getting the channel info
                                 var originalInfo: Info? = null
-                                var streams: List<StreamInfoItem>? = null
+                                var streams: List<FeedStreamItem>? = null
                                 val errors = ArrayList<Throwable>()
 
                                 if (useFeedExtractor) {
@@ -163,7 +163,12 @@ class FeedLoadManager(private val context: Context) {
                                             val feedInfo = FeedInfo.getInfo(feedExtractor)
                                             errors.addAll(feedInfo.errors)
                                             originalInfo = feedInfo
-                                            streams = feedInfo.relatedItems
+                                            streams = feedInfo.relatedItems.map { stream ->
+                                                FeedStreamItem(
+                                                    stream,
+                                                    FeedContentClassifier.fromStream(stream)
+                                                )
+                                            }
                                         }
                                 }
 
@@ -198,7 +203,9 @@ class FeedLoadManager(private val context: Context) {
                                         }
                                         .flatMap { (channelTabInfo, linkHandler) ->
                                             errors.addAll(channelTabInfo.errors)
-                                            if (channelTabInfo.relatedItems.isEmpty()) {
+                                            val tabName = linkHandler.contentFilters
+                                                .firstOrNull()?.name.orEmpty()
+                                            val items = if (channelTabInfo.relatedItems.isEmpty()) {
                                                 if (channelTabInfo.nextPage == null) {
                                                     return@flatMap emptyList()
                                                 }
@@ -208,19 +215,30 @@ class FeedLoadManager(private val context: Context) {
                                                 )
                                                     .blockingGet()
                                                 errors.addAll(infoItemsPage.errors)
-                                                return@flatMap infoItemsPage.items
+                                                infoItemsPage.items
                                             } else {
-                                                return@flatMap channelTabInfo.relatedItems
+                                                channelTabInfo.relatedItems
+                                            }
+
+                                            items.filterIsInstance<StreamInfoItem>().map { stream ->
+                                                FeedStreamItem(stream,
+                                                    FeedContentClassifier.fromChannelTab(tabName, stream))
                                             }
                                         }
-                                        .filterIsInstance<StreamInfoItem>()
                                 }
-                                streams = streams?.filterNot { it.isRoundPlayStream || (filterFutureItems && it.uploadDate != null && it.uploadDate!!.offsetDateTime().isAfter(OffsetDateTime.now())) }
+                                streams = streams?.filterNot { item ->
+                                    val stream = item.stream
+                                    val uploadDate = stream.uploadDate
+                                    stream.isRoundPlayStream ||
+                                        (filterFutureItems && uploadDate != null &&
+                                            uploadDate.offsetDateTime()
+                                                .isAfter(OffsetDateTime.now()))
+                                }?.let(FeedContentClassifier::mergeDuplicates)
 
                                 return@defer Flowable.just(
                                     FeedUpdateInfo(
                                         subscriptionEntity,
-                                        originalInfo!!,
+                                        originalInfo,
                                         streams!!,
                                         errors,
                                     )
@@ -322,7 +340,7 @@ class FeedLoadManager(private val context: Context) {
 
                             notification.value!!.newStreams = filterNewStreams(info.streams)
 
-                            feedDatabaseManager.upsertAll(info.uid, info.streams)
+                            feedDatabaseManager.upsertAllWithContent(info.uid, info.streams)
                             subscriptionManager.updateFromInfo(info)
 
                             if (reportableErrors.isNotEmpty()) {
@@ -362,8 +380,8 @@ class FeedLoadManager(private val context: Context) {
             }
         }
 
-        private fun filterNewStreams(list: List<StreamInfoItem>): List<StreamInfoItem> {
-            return list.filter {
+        private fun filterNewStreams(list: List<FeedStreamItem>): List<StreamInfoItem> {
+            return list.map { it.stream }.filter {
                 !feedDatabaseManager.doesStreamExist(it) &&
                         it.uploadDate != null &&
                         // Streams older than this date are automatically removed from the feed.

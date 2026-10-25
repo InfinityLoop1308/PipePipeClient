@@ -58,7 +58,14 @@ abstract class FeedDAO {
         INNER JOIN feed_group_subscription_join fgs
         ON fgs.subscription_id = f.subscription_id
 
+        INNER JOIN feed_group fg
+        ON fg.uid = fgs.group_id
+
         WHERE fgs.group_id = :groupId
+        AND (f.content_selection & COALESCE(
+            fgs.content_selection_override,
+            fg.content_selection
+        )) != 0
 
         ORDER BY s.upload_date IS NULL DESC, s.upload_date DESC, s.uploader ASC
         LIMIT 500
@@ -125,7 +132,14 @@ abstract class FeedDAO {
         INNER JOIN feed_group_subscription_join fgs
         ON fgs.subscription_id = f.subscription_id
 
+        INNER JOIN feed_group fg
+        ON fg.uid = fgs.group_id
+
         WHERE fgs.group_id = :groupId
+        AND (f.content_selection & COALESCE(
+            fgs.content_selection_override,
+            fg.content_selection
+        )) != 0
         AND (
             sh.stream_id IS NULL
             OR sst.stream_id IS NULL
@@ -177,7 +191,32 @@ abstract class FeedDAO {
     abstract fun insert(feedEntity: FeedEntity)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    abstract fun insertAll(entities: List<FeedEntity>): List<Long>
+    internal abstract fun insertAllInternal(entities: List<FeedEntity>): List<Long>
+
+    @Query(
+        """
+        UPDATE feed
+        SET content_selection = content_selection | :contentSelection
+        WHERE stream_id = :streamId AND subscription_id = :subscriptionId
+        """
+    )
+    internal abstract fun addContentSelection(
+        streamId: Long,
+        subscriptionId: Long,
+        contentSelection: Int
+    )
+
+    @Transaction
+    open fun upsertAll(entities: List<FeedEntity>) {
+        insertAllInternal(entities)
+        entities.forEach { entity ->
+            addContentSelection(
+                entity.streamId,
+                entity.subscriptionId,
+                entity.contentSelection.mask
+            )
+        }
+    }
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     internal abstract fun insertLastUpdated(lastUpdatedEntity: FeedLastUpdatedEntity): Long

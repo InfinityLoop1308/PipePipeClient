@@ -8,6 +8,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Maybe
+import org.schabi.newpipe.database.feed.model.FeedContentSelection
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.database.feed.model.FeedGroupSubscriptionEntity
 
@@ -39,16 +40,79 @@ abstract class FeedGroupDAO {
     @Query("SELECT subscription_id FROM feed_group_subscription_join WHERE group_id = :groupId")
     abstract fun getSubscriptionIdsFor(groupId: Long): Flowable<List<Long>>
 
+    @Query("SELECT * FROM feed_group_subscription_join WHERE group_id = :groupId")
+    abstract fun getSubscriptionsForGroup(
+        groupId: Long
+    ): Flowable<List<FeedGroupSubscriptionEntity>>
+
+    @Query("SELECT * FROM feed_group_subscription_join WHERE group_id = :groupId")
+    protected abstract fun getSubscriptionsForGroupNow(
+        groupId: Long
+    ): List<FeedGroupSubscriptionEntity>
+
     @Query("DELETE FROM feed_group_subscription_join WHERE group_id = :groupId")
     abstract fun deleteSubscriptionsFromGroup(groupId: Long): Int
+
+    @Query(
+        """
+        DELETE FROM feed_group_subscription_join
+        WHERE group_id = :groupId AND subscription_id IN (:subscriptionIds)
+        """
+    )
+    protected abstract fun deleteSubscriptionsFromGroup(
+        groupId: Long,
+        subscriptionIds: List<Long>
+    ): Int
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insertSubscriptionsToGroup(entities: List<FeedGroupSubscriptionEntity>): List<Long>
 
+    @Query(
+        """
+        UPDATE feed_group_subscription_join
+        SET content_selection_override = :contentSelectionOverride
+        WHERE group_id = :groupId AND subscription_id = :subscriptionId
+        """
+    )
+    protected abstract fun updateContentSelectionOverride(
+        groupId: Long,
+        subscriptionId: Long,
+        contentSelectionOverride: Int?
+    ): Int
+
     @Transaction
     open fun updateSubscriptionsForGroup(groupId: Long, subscriptionIds: List<Long>) {
-        deleteSubscriptionsFromGroup(groupId)
-        insertSubscriptionsToGroup(subscriptionIds.map { FeedGroupSubscriptionEntity(groupId, it) })
+        val currentSubscriptionIds = getSubscriptionsForGroupNow(groupId)
+            .mapTo(mutableSetOf()) { it.subscriptionId }
+        val updatedSubscriptionIds = subscriptionIds.toSet()
+        val removedSubscriptionIds = currentSubscriptionIds - updatedSubscriptionIds
+        val addedSubscriptionIds = updatedSubscriptionIds - currentSubscriptionIds
+
+        if (removedSubscriptionIds.isNotEmpty()) {
+            deleteSubscriptionsFromGroup(groupId, removedSubscriptionIds.toList())
+        }
+        if (addedSubscriptionIds.isNotEmpty()) {
+            insertSubscriptionsToGroup(
+                addedSubscriptionIds.map { FeedGroupSubscriptionEntity(groupId, it) }
+            )
+        }
+    }
+
+    @Transaction
+    open fun updateContentRulesForGroup(
+        groupId: Long,
+        subscriptionIds: Set<Long>,
+        contentSelectionOverrides: Map<Long, FeedContentSelection>
+    ) {
+        updateSubscriptionsForGroup(groupId, subscriptionIds.toList())
+
+        subscriptionIds.forEach { subscriptionId ->
+            updateContentSelectionOverride(
+                groupId,
+                subscriptionId,
+                contentSelectionOverrides[subscriptionId]?.mask
+            )
+        }
     }
 
     @Transaction
