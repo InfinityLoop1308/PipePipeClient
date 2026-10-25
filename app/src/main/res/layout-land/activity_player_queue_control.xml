@@ -27,7 +27,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
+    <org.schabi.newpipe.views.ItemDragRecyclerView
         android:id="@+id/play_queue"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -37,6 +37,7 @@
         android:layout_toLeftOf="@+id/control_pane"
         android:scrollbars="vertical"
         app:layoutManager="LinearLayoutManager"
+        tools:viewBindingType="org.schabi.newpipe.views.ItemDragRecyclerView"
         tools:listitem="@layout/play_queue_item" />
 
     <RelativeLayout
