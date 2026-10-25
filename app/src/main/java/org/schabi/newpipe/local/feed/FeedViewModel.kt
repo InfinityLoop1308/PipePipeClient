@@ -14,7 +14,6 @@ import io.reactivex.rxjava3.processors.BehaviorProcessor
 import io.reactivex.rxjava3.schedulers.Schedulers
 import org.schabi.newpipe.R
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
-import org.schabi.newpipe.database.stream.StreamWithState
 import org.schabi.newpipe.local.feed.item.StreamItem
 import org.schabi.newpipe.local.feed.service.FeedEventManager
 import org.schabi.newpipe.local.feed.service.FeedEventManager.Event.ErrorResultEvent
@@ -40,6 +39,8 @@ class FeedViewModel(
     private val mutableStateLiveData = MutableLiveData<FeedState>()
     val stateLiveData: LiveData<FeedState> = mutableStateLiveData
 
+    private val stateCache = FeedRefreshStateCache()
+
     private var combineDisposable = Flowable
         .combineLatest(
             FeedEventManager.events(),
@@ -56,25 +57,38 @@ class FeedViewModel(
         .subscribeOn(Schedulers.io())
         .observeOn(Schedulers.io())
         .map { (event, showPlayedItems, notLoadedCount, oldestUpdate) ->
-            val streamItems = if (event is SuccessResultEvent || event is IdleEvent)
-                feedDatabaseManager
-                    .getStreams(groupId, showPlayedItems)
-                    .blockingGet(arrayListOf())
-            else
-                arrayListOf()
+            val needsSnapshot = event is IdleEvent ||
+                event is SuccessResultEvent ||
+                stateCache.needsSnapshot(showPlayedItems)
+            val loadedState = if (needsSnapshot) {
+                FeedState.LoadedState(
+                    feedDatabaseManager
+                        .getStreams(groupId, showPlayedItems)
+                        .blockingGet(arrayListOf())
+                        .map(::StreamItem),
+                    oldestUpdate,
+                    notLoadedCount,
+                    (event as? SuccessResultEvent)?.itemsErrors ?: emptyList()
+                ).let { stateCache.remember(it, showPlayedItems) }
+            } else {
+                null
+            }
 
-            CombineResultDataHolder(event, streamItems, notLoadedCount, oldestUpdate)
+            val state = when (event) {
+                is IdleEvent -> loadedState!!
+                is ProgressEvent -> stateCache.progress(
+                    event.currentProgress,
+                    event.maxProgress,
+                    event.progressMessage
+                )
+                is SuccessResultEvent -> loadedState!!
+                is ErrorResultEvent -> stateCache.error(event.error)
+            }
+            CombineResultDataHolder(event, state)
         }
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { (event, listFromDB, notLoadedCount, oldestUpdate) ->
-            mutableStateLiveData.postValue(
-                when (event) {
-                    is IdleEvent -> FeedState.LoadedState(listFromDB.map { e -> StreamItem(e) }, oldestUpdate, notLoadedCount)
-                    is ProgressEvent -> FeedState.ProgressState(event.currentProgress, event.maxProgress, event.progressMessage)
-                    is SuccessResultEvent -> FeedState.LoadedState(listFromDB.map { e -> StreamItem(e) }, oldestUpdate, notLoadedCount, event.itemsErrors)
-                    is ErrorResultEvent -> FeedState.ErrorState(event.error)
-                }
-            )
+        .subscribe { (event, state) ->
+            mutableStateLiveData.value = state
 
             if (event is ErrorResultEvent || event is SuccessResultEvent) {
                 FeedEventManager.reset()
@@ -95,9 +109,7 @@ class FeedViewModel(
 
     private data class CombineResultDataHolder(
         val t1: FeedEventManager.Event,
-        val t2: List<StreamWithState>,
-        val t3: Long,
-        val t4: OffsetDateTime?
+        val t2: FeedState
     )
 
     fun togglePlayedItems(showPlayedItems: Boolean) {
