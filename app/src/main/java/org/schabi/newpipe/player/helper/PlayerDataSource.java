@@ -97,7 +97,7 @@ public class PlayerDataSource {
         cacheDataSourceFactoryBuilder = new CacheFactory.Builder(context, userAgent,
                 transferListener);
         cachelessDataSourceFactory = new DefaultDataSource.Factory(context,
-                new DefaultHttpDataSource.Factory().setUserAgent(userAgent).setDefaultRequestProperties(Map.of("Referer", "https://www.bilibili.com")))
+                new DefaultHttpDataSource.Factory().setUserAgent(userAgent))
                 .setTransferListener(transferListener);
 
         this.context = context;
