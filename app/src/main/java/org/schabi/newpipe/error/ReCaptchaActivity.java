@@ -2,7 +2,6 @@ package org.schabi.newpipe.error;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,8 +16,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
-import androidx.preference.PreferenceManager;
+import androidx.webkit.ProfileStore;
 import androidx.webkit.WebViewClientCompat;
+import androidx.webkit.WebViewCompat;
+import androidx.webkit.WebViewFeature;
 
 import org.schabi.newpipe.databinding.ActivityRecaptchaBinding;
 import org.schabi.newpipe.DownloaderImpl;
@@ -28,6 +29,8 @@ import org.schabi.newpipe.util.ThemeHelper;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /*
  * Created by beneth <bmauduit@beneth.fr> on 06.12.16.
@@ -53,7 +56,6 @@ public class ReCaptchaActivity extends AppCompatActivity {
     public static final String RECAPTCHA_URL_EXTRA = "recaptcha_url_extra";
     public static final String TAG = ReCaptchaActivity.class.toString();
     public static final String YT_URL = "https://www.youtube.com";
-    public static final String RECAPTCHA_COOKIES_KEY = "recaptcha_cookies";
 
     public static String sanitizeRecaptchaUrl(@Nullable final String url) {
         if (url == null || url.trim().isEmpty()) {
@@ -65,7 +67,9 @@ public class ReCaptchaActivity extends AppCompatActivity {
     }
 
     private ActivityRecaptchaBinding recaptchaBinding;
-    private String foundCookies = "";
+    // registrable domain -> cookie name -> cookie value
+    private final Map<String, Map<String, String>> foundCookies = new LinkedHashMap<>();
+    private CookieManager cookieManager;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -80,6 +84,20 @@ public class ReCaptchaActivity extends AppCompatActivity {
         final String url = sanitizeRecaptchaUrl(getIntent().getStringExtra(RECAPTCHA_URL_EXTRA));
         // set return to Cancel by default
         setResult(RESULT_CANCELED);
+
+        // Use a dedicated profile when possible, so that the challenge neither sees nor wipes the
+        // cookies of the default profile (e.g. the YouTube login page). Must be done before
+        // anything else is done with the WebView.
+        if (WebViewFeature.isFeatureSupported(WebViewFeature.MULTI_PROFILE)) {
+            WebViewCompat.setProfile(recaptchaBinding.reCaptchaWebView,
+                    ChallengeCookies.WEBVIEW_PROFILE);
+            cookieManager = ProfileStore.getInstance()
+                    .getOrCreateProfile(ChallengeCookies.WEBVIEW_PROFILE).getCookieManager();
+        } else {
+            cookieManager = CookieManager.getInstance();
+        }
+        // challenge widgets (e.g. Cloudflare Turnstile) may be embedded from another site
+        cookieManager.setAcceptThirdPartyCookies(recaptchaBinding.reCaptchaWebView, true);
 
         // enable Javascript
         final WebSettings webSettings = recaptchaBinding.reCaptchaWebView.getSettings();
@@ -104,14 +122,12 @@ public class ReCaptchaActivity extends AppCompatActivity {
             }
         });
 
-        // cleaning cache, history and cookies from webView
+        // cleaning cache, history and cookies from webView, so that only cookies obtained by
+        // this challenge are collected. Cookies of previous challenges are already stored.
         recaptchaBinding.reCaptchaWebView.clearCache(true);
         recaptchaBinding.reCaptchaWebView.clearHistory();
-        final CookieManager cookieManager = CookieManager.getInstance();
-        cookieManager.removeAllCookies(value -> {
-        });
-
-        recaptchaBinding.reCaptchaWebView.loadUrl(url);
+        cookieManager.removeAllCookies(value ->
+                recaptchaBinding.reCaptchaWebView.loadUrl(url));
     }
 
     @Override
@@ -150,14 +166,10 @@ public class ReCaptchaActivity extends AppCompatActivity {
         }
 
         if (!foundCookies.isEmpty()) {
-            // save cookies to preferences
-            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
-                    getApplicationContext());
-            final String key = getApplicationContext().getString(R.string.recaptcha_cookies_key);
-            prefs.edit().putString(key, foundCookies).apply();
-
-            // give cookies to Downloader class
-            DownloaderImpl.getInstance().setCookie(RECAPTCHA_COOKIES_KEY, foundCookies);
+            // each domain only gets back its own cookies
+            for (final Map.Entry<String, Map<String, String>> entry : foundCookies.entrySet()) {
+                ChallengeCookies.put(entry.getKey(), joinCookies(entry.getValue()));
+            }
             setResult(RESULT_OK);
         }
 
@@ -178,9 +190,12 @@ public class ReCaptchaActivity extends AppCompatActivity {
         if (url == null) {
             return;
         }
+        final String domain = ChallengeCookies.domainOf(url);
+        if (domain == null) {
+            return;
+        }
 
-        final String cookies = CookieManager.getInstance().getCookie(url);
-        handleCookies(cookies);
+        handleCookies(domain, cookieManager.getCookie(url));
 
         // sometimes cookies are inside the url
         final int abuseStart = url.indexOf("google_abuse=");
@@ -190,7 +205,7 @@ public class ReCaptchaActivity extends AppCompatActivity {
             try {
                 String abuseCookie = url.substring(abuseStart + 13, abuseEnd);
                 abuseCookie = URLDecoder.decode(abuseCookie, "UTF-8");
-                handleCookies(abuseCookie);
+                handleCookies(domain, abuseCookie);
             } catch (UnsupportedEncodingException | StringIndexOutOfBoundsException e) {
                 if (MainActivity.DEBUG) {
                     e.printStackTrace();
@@ -201,39 +216,44 @@ public class ReCaptchaActivity extends AppCompatActivity {
         }
     }
 
-    private void handleCookies(@Nullable final String cookies) {
+    /**
+     * Remember the cookies the WebView holds for {@code domain}, later values of a cookie
+     * override earlier ones.
+     */
+    private void handleCookies(@NonNull final String domain, @Nullable final String cookies) {
         if (MainActivity.DEBUG) {
-            Log.d(TAG, "handleCookies: cookies=" + (cookies == null ? "null" : cookies));
+            Log.d(TAG, "handleCookies: domain=" + domain
+                    + " cookies=" + (cookies == null ? "null" : cookies));
         }
 
-        if (cookies == null) {
+        if (cookies == null || cookies.trim().isEmpty()) {
             return;
         }
 
-        addYoutubeCookies(cookies);
-        // add here methods to extract cookies for other services
-    }
-
-    private void addYoutubeCookies(@NonNull final String cookies) {
-        if (cookies.contains("s_gl=") || cookies.contains("goojf=")
-                || cookies.contains("VISITOR_INFO1_LIVE=")
-                || cookies.contains("GOOGLE_ABUSE_EXEMPTION=")) {
-            // youtube seems to also need the other cookies:
-            addCookie(cookies);
+        Map<String, String> domainCookies = foundCookies.get(domain);
+        if (domainCookies == null) {
+            domainCookies = new LinkedHashMap<>();
+            foundCookies.put(domain, domainCookies);
+        }
+        for (final String pair : cookies.split(";")) {
+            final String trimmed = pair.trim();
+            final int separator = trimmed.indexOf('=');
+            if (separator > 0) {
+                domainCookies.put(trimmed.substring(0, separator),
+                        trimmed.substring(separator + 1));
+            }
         }
     }
 
-    private void addCookie(final String cookie) {
-        if (foundCookies.contains(cookie)) {
-            return;
+    @NonNull
+    private static String joinCookies(@NonNull final Map<String, String> cookies) {
+        final StringBuilder builder = new StringBuilder();
+        for (final Map.Entry<String, String> cookie : cookies.entrySet()) {
+            if (builder.length() > 0) {
+                builder.append("; ");
+            }
+            builder.append(cookie.getKey()).append('=').append(cookie.getValue());
         }
-
-        if (foundCookies.isEmpty() || foundCookies.endsWith("; ")) {
-            foundCookies += cookie;
-        } else if (foundCookies.endsWith(";")) {
-            foundCookies += " " + cookie;
-        } else {
-            foundCookies += "; " + cookie;
-        }
+        return builder.toString();
     }
 }

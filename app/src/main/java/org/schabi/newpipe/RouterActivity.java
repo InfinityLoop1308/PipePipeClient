@@ -206,6 +206,8 @@ public class RouterActivity extends AppCompatActivity {
             Toast.makeText(context, R.string.recaptcha_request_toast, Toast.LENGTH_LONG).show();
             // Starting ReCaptcha Challenge Activity
             final Intent intent = new Intent(context, ReCaptchaActivity.class);
+            intent.putExtra(ReCaptchaActivity.RECAPTCHA_URL_EXTRA,
+                    ((ReCaptchaException) throwable).getUrl());
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         } else if (throwable != null
