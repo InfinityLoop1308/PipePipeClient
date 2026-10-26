@@ -100,7 +100,7 @@ class PluginSettingsFragment : BasePreferenceFragment() {
                     isIconSpaceReserved = false
                     isSingleLineTitle = false
                     title = plugin.name
-                    summary = when {
+                    summary = authorLine(plugin.author.ifEmpty { loadedAuthor(plugin.pluginId) }) + when {
                         error != null -> getString(R.string.plugin_status_error, plugin.versionName, error)
                         PluginManager.isLoaded(plugin.pluginId) -> getString(R.string.plugin_status_loaded, plugin.versionName)
                         else -> getString(R.string.plugin_status_pending, plugin.versionName)
@@ -122,7 +122,7 @@ class PluginSettingsFragment : BasePreferenceFragment() {
                     isIconSpaceReserved = false
                     isSingleLineTitle = false
                     title = entry.name + " " + entry.versionName
-                    summary = if (entry.isApiCompatible) {
+                    summary = authorLine(entry.author) + if (entry.isApiCompatible) {
                         entry.description ?: entry.pluginId
                     } else {
                         getString(R.string.plugin_incompatible)
@@ -178,6 +178,13 @@ class PluginSettingsFragment : BasePreferenceFragment() {
             }
         )
     }
+
+    /** "by xxx" followed by a line break, or nothing when the author is unknown. */
+    private fun authorLine(author: String?): String =
+        if (author.isNullOrBlank()) "" else getString(R.string.plugin_author, author) + "\n"
+
+    private fun loadedAuthor(pluginId: String): String? =
+        installedPluginServiceId(pluginId)?.let { PluginManager.getLoadedManifest(it)?.author }
 
     private fun availableEntries(): List<Pair<String, PluginRepository.Entry>> =
         repositories.mapNotNull { (url, result) -> result.getOrNull()?.let { url to it } }

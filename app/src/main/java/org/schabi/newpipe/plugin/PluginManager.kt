@@ -71,6 +71,8 @@ object PluginManager {
         val publicKey: String,
         val repositoryUrl: String,
         val fileName: String,
+        /** Empty for plugins installed before authors were declared. */
+        val author: String = "",
     )
 
     /** Plugins loaded in this process, by service id. */
@@ -120,6 +122,7 @@ object PluginManager {
                     o.getString("pluginId"), o.getString("name"), o.getInt("versionCode"),
                     o.getString("versionName"), o.getString("publicKey"),
                     o.getString("repositoryUrl"), o.getString("fileName"),
+                    o.getString("author", ""),
                 )
             }
         }.getOrElse {
@@ -141,6 +144,7 @@ object PluginManager {
                     put("publicKey", it.publicKey)
                     put("repositoryUrl", it.repositoryUrl)
                     put("fileName", it.fileName)
+                    put("author", it.author)
                 }
             )
         }
@@ -365,6 +369,7 @@ object PluginManager {
         val dir = pluginDir(context).apply { mkdirs() }
         val tmp = File(dir, "${entry.pluginId}.tmp")
         val target = File(dir, "${entry.pluginId}-${entry.versionCode}${PluginPackage.FILE_EXTENSION}")
+        val author: String
         try {
             tmp.writeBytes(download(entry.packageUrl, MAX_PACKAGE_SIZE))
             PluginPackage.verify(tmp, entry.sha256, entry.signature, entry.publicKey)
@@ -374,9 +379,13 @@ object PluginManager {
             ) {
                 throw PluginException("Package does not match repository entry")
             }
+            if (entry.author != null && manifest.author != entry.author) {
+                throw PluginException("Package does not match repository entry")
+            }
             if (!manifest.isApiCompatible) {
                 throw PluginException("Plugin requires API ${manifest.apiVersion}")
             }
+            author = manifest.author
             if (!PluginPackage.hasDex(tmp)) {
                 throw PluginException("Package has no Android code")
             }
@@ -395,7 +404,7 @@ object PluginManager {
         val updated = getInstalled(context).filter { it.pluginId != entry.pluginId } +
             InstalledPlugin(
                 entry.pluginId, entry.name, entry.versionCode, entry.versionName,
-                entry.publicKey, repositoryUrl, target.name,
+                entry.publicKey, repositoryUrl, target.name, author,
             )
         saveInstalled(context, updated)
         if (existing != null && existing.fileName != target.name) {
