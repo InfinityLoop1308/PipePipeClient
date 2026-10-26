@@ -2,11 +2,13 @@ package org.schabi.newpipe.local.subscription.item
 
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.SearchView
 import com.xwray.groupie.viewbinding.BindableItem
 import com.xwray.groupie.viewbinding.GroupieViewHolder
@@ -108,13 +110,16 @@ class FeedImportExportItem(
 
     private var expandIconListener: CollapsibleView.StateListener? = null
 
-    private fun addItemView(title: String, @DrawableRes icon: Int, container: ViewGroup): View {
+    private fun addItemView(title: String, @DrawableRes icon: Int, container: ViewGroup): View =
+        addItemView(title, AppCompatResources.getDrawable(container.context, icon), container)
+
+    private fun addItemView(title: String, icon: Drawable?, container: ViewGroup): View {
         val itemRoot = View.inflate(container.context, R.layout.subscription_import_export_item, null)
         val titleView = itemRoot.findViewById<TextView>(android.R.id.text1)
         val iconView = itemRoot.findViewById<ImageView>(android.R.id.icon1)
 
         titleView.text = title
-        iconView.setImageResource(icon)
+        iconView.setImageDrawable(icon)
 
         container.addView(itemRoot)
         return itemRoot
@@ -135,7 +140,8 @@ class FeedImportExportItem(
             if (subscriptionExtractor.supportedSources.isEmpty()) continue
 
             val itemView = addItemView(
-                service.serviceInfo.name, ServiceHelper.getIcon(service.serviceId), listHolder
+                service.serviceInfo.name, ServiceHelper.getIconDrawable(listHolder.context, service.serviceId),
+                listHolder
             )
             val iconView = itemView.findViewById<ImageView>(android.R.id.icon1)
             iconView.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)

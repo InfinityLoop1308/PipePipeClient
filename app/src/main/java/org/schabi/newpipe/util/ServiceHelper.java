@@ -2,9 +2,12 @@ package org.schabi.newpipe.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 
 import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.preference.PreferenceManager;
 
 
@@ -20,6 +23,7 @@ import org.schabi.newpipe.plugin.PluginManager;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -50,6 +54,18 @@ public final class ServiceHelper {
             default:
                 return R.drawable.ic_extension;
         }
+    }
+
+    /**
+     * @return the icon the plugin of the service ships, else the one of {@link #getIcon(int)}
+     */
+    @NonNull
+    public static Drawable getIconDrawable(final Context context, final int serviceId) {
+        final Drawable pluginIcon = PluginManager.getIcon(context, serviceId);
+        if (pluginIcon != null) {
+            return pluginIcon;
+        }
+        return Objects.requireNonNull(AppCompatResources.getDrawable(context, getIcon(serviceId)));
     }
 
     public static String getTranslatedFilterString(final String filter, final Context c) {

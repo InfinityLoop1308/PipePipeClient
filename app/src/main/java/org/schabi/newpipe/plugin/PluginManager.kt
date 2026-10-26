@@ -2,6 +2,10 @@ package org.schabi.newpipe.plugin
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.util.Log
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
@@ -71,6 +75,9 @@ object PluginManager {
 
     /** Plugins loaded in this process, by service id. */
     private val loaded = ConcurrentHashMap<Int, PluginManifest>()
+
+    /** Decoded icons of the loaded plugins, by service id. */
+    private val icons = ConcurrentHashMap<Int, Bitmap>()
 
     /** Class loaders of the plugins loaded in this process. */
     private val classLoaders = CopyOnWriteArrayList<ClassLoader>()
@@ -245,9 +252,36 @@ object PluginManager {
         )
         ServiceList.register(service)
         loaded[serviceId] = manifest
+        loadIcon(file, manifest, serviceId)
         classLoaders.add(classLoader)
         Log.i(TAG, "Loaded plugin ${manifest.pluginId} ${manifest.versionName} as $serviceId")
     }
+
+    /** A broken icon must not keep the plugin from working, the default icon is used then. */
+    private fun loadIcon(file: File, manifest: PluginManifest, serviceId: Int) {
+        try {
+            val bytes = PluginPackage.readIcon(file, manifest) ?: return
+            val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
+            val max = PluginManifest.ICON_MAX_DIMENSION
+            if (bounds.outWidth !in 1..max || bounds.outHeight !in 1..max) {
+                throw PluginException("Icon must be at most ${max}x$max")
+            }
+            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                ?: throw PluginException("Icon cannot be decoded")
+            icons[serviceId] = bitmap
+        } catch (e: Exception) {
+            Log.w(TAG, "Ignoring icon of ${manifest.pluginId}", e)
+        }
+    }
+
+    /**
+     * @return the icon a plugin ships, or null if the service is not a plugin or has none
+     */
+    @JvmStatic
+    fun getIcon(context: Context, serviceId: Int): Drawable? =
+        // a new drawable per call: drawables are tinted by their users
+        icons[serviceId]?.let { BitmapDrawable(context.resources, it) }
 
     @JvmStatic
     fun getLoadedManifest(serviceId: Int): PluginManifest? = loaded[serviceId]

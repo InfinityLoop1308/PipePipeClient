@@ -466,7 +466,7 @@ public class MainActivity extends AppCompatActivity {
 
             drawerLayoutBinding.navigation.getMenu()
                     .add(R.id.menu_services_group, s.getServiceId(), ORDER, title)
-                    .setIcon(ServiceHelper.getIcon(s.getServiceId()));
+                    .setIcon(ServiceHelper.getIconDrawable(this, s.getServiceId()));
         }
         setServiceMenuItemChecked(ServiceHelper.getSelectedServiceId(this), true);
     }
@@ -497,8 +497,8 @@ public class MainActivity extends AppCompatActivity {
             final String selectedServiceName = NewPipe.getService(selectedServiceId)
                     .getServiceInfo().getName();
             drawerHeaderBinding.drawerHeaderServiceView.setText(selectedServiceName);
-            drawerHeaderBinding.drawerHeaderServiceIcon.setImageResource(ServiceHelper
-                    .getIcon(selectedServiceId));
+            drawerHeaderBinding.drawerHeaderServiceIcon.setImageDrawable(ServiceHelper
+                    .getIconDrawable(this, selectedServiceId));
 
             drawerHeaderBinding.drawerHeaderServiceView.post(() -> drawerHeaderBinding
                     .drawerHeaderServiceView.setSelected(true));
