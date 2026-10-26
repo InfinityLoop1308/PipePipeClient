@@ -53,6 +53,9 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 /**
  * Lists, adds, removes, reorders and selects the instances of a service that implements
  * {@link ServiceInstances}. Which service is shown is passed as {@link Constants#KEY_SERVICE_ID}.
+ *
+ * <p>The {@code peertube_instance_*} string resources used here are named after their first
+ * user, but their texts are generic, so any service can use this screen.</p>
  */
 public class ServiceInstanceListFragment extends Fragment {
     private final List<ServiceInstance> instanceList = new ArrayList<>();
@@ -272,12 +275,13 @@ public class ServiceInstanceListFragment extends Fragment {
     }
 
     private void addInstance(final String url) {
-        final String cleanUrl = cleanUrl(url);
-        if (cleanUrl == null) {
+        final String trimmedUrl = url.trim();
+        if (trimmedUrl.isEmpty()) {
             return;
         }
         progressBar.setVisibility(View.VISIBLE);
-        disposables.add(Single.fromCallable(() -> provider.addInstance(cleanUrl))
+        // the service knows which url forms it accepts and normalizes them
+        disposables.add(Single.fromCallable(() -> provider.addInstance(trimmedUrl))
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe((instance) -> {
                     progressBar.setVisibility(View.GONE);
@@ -289,35 +293,11 @@ public class ServiceInstanceListFragment extends Fragment {
                 }));
     }
 
-    @Nullable
-    private String cleanUrl(final String url) {
-        String cleanUrl = url.trim();
-        // if protocol not present, add https
-        if (!cleanUrl.startsWith("http")) {
-            cleanUrl = "https://" + cleanUrl;
-        }
-        // remove trailing slash
-        cleanUrl = cleanUrl.replaceAll("/$", "");
-        // only allow https
-        if (!cleanUrl.startsWith("https://")) {
-            Toast.makeText(getActivity(), R.string.peertube_instance_add_https_only,
-                    Toast.LENGTH_SHORT).show();
-            return null;
-        }
-        // only allow if not already exists
-        for (final ServiceInstance instance : instanceList) {
-            if (instance.getUrl().equals(cleanUrl)) {
-                Toast.makeText(getActivity(), R.string.peertube_instance_add_exists,
-                        Toast.LENGTH_SHORT).show();
-                return null;
-            }
-        }
-        return cleanUrl;
-    }
-
     private void add(final ServiceInstance instance) {
         for (final ServiceInstance saved : instanceList) {
             if (saved.getUrl().equals(instance.getUrl())) {
+                Toast.makeText(getActivity(), R.string.peertube_instance_add_exists,
+                        Toast.LENGTH_SHORT).show();
                 return;
             }
         }
