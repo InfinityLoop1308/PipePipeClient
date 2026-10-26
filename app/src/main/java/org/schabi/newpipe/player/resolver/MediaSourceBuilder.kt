@@ -398,8 +398,7 @@ object MediaSourceBuilder {
                 content.substring(markerIndex + COOKIE_MARKER.length),
                 StandardCharsets.UTF_8.name(),
             )
-            val headers = request.headers + ("Cookie" to fragment.substringBefore(LENGTH_MARKER))
-            return request.dataSource.hlsFactory(headers, request.cache(true))
+            return request.dataSource.nicoHlsFactory(fragment.substringBefore(LENGTH_MARKER))
                 .createMediaSource(request.mediaItem(content.substring(0, markerIndex)))
         }
 

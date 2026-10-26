@@ -178,7 +178,14 @@ class PlayerDataSource(
         .setUserAgentForNonMobileStreams(userAgent)
 
     // endregion
-    // region NicoNico live
+    // region NicoNico
+
+    /** NicoNico VOD HLS, sent with the session [cookie] and the platform's user agent. */
+    fun nicoHlsFactory(cookie: String): HlsMediaSource.Factory {
+        val http = PurifiedHttpDataSource.Factory()
+            .setDefaultRequestProperties(mapOf("Cookie" to cookie))
+        return HlsMediaSource.Factory(cached(http))
+    }
 
     fun nicoLiveHlsFactory(liveUrl: String): HlsMediaSource.Factory {
         val httpFactory = NiconicoLiveHttpDataSource.Factory(liveUrl)
