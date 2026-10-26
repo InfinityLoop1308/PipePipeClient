@@ -9,6 +9,7 @@ import java.net.URLDecoder
 
 class HttpTransferConnectionFactory(
     private val config: HttpTransferConfig,
+    private val requestHeaders: Map<String, String>? = null,
 ) {
     @Throws(IOException::class)
     fun open(
@@ -32,6 +33,7 @@ class HttpTransferConnectionFactory(
         if (cookie != null) {
             connection.setRequestProperty("Cookie", cookie)
         }
+        Utility.setStreamRequestHeaders(connection, requestHeaders)
         if (rangeStart != null) {
             connection.setRequestProperty("Range", formatRange(rangeStart, rangeEnd))
         }

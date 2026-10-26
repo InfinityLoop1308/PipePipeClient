@@ -19,6 +19,8 @@ import javax.net.ssl.SSLException;
 import java.io.*;
 import java.net.*;
 import java.nio.channels.ClosedByInterruptException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import static org.schabi.newpipe.BuildConfig.DEBUG;
@@ -136,6 +138,13 @@ public class DownloadMission extends Mission {
     public String[] resourceDeliveryMethods;
     public String[] resourceManifestUrls;
     public boolean[] resourceIsUrls;
+
+    /**
+     * Headers declared by the stream of each resource ({@code Stream#getRequestHeaders()}), sent
+     * with every request of that resource. Entries are {@code null} when a stream declares none,
+     * the whole array is {@code null} for missions created before this was stored.
+     */
+    public HashMap<String, String>[] resourceRequestHeaders;
     public HlsDownloadCheckpoint hlsCheckpoint;
     public SabrDownloadCheckpoint sabrCheckpoint;
     public boolean sabrStarted;
@@ -221,10 +230,21 @@ public class DownloadMission extends Mission {
      * @throws IOException if an I/O exception occurs.
      */
     HttpURLConnection openConnection(boolean headRequest, long rangeStart, long rangeEnd) throws IOException {
-        return openConnection(urls[current], headRequest, rangeStart, rangeEnd);
+        return openConnection(current, headRequest, rangeStart, rangeEnd);
     }
 
-    HttpURLConnection openConnection(String url, boolean headRequest, long rangeStart, long rangeEnd) throws IOException {
+    HttpURLConnection openConnection(int index, boolean headRequest, long rangeStart, long rangeEnd) throws IOException {
+        return openConnection(urls[index], requestHeadersOf(index), headRequest, rangeStart, rangeEnd);
+    }
+
+    @Nullable
+    Map<String, String> requestHeadersOf(int index) {
+        return resourceRequestHeaders != null && index >= 0 && index < resourceRequestHeaders.length
+                ? resourceRequestHeaders[index] : null;
+    }
+
+    HttpURLConnection openConnection(String url, @Nullable Map<String, String> headers,
+                                     boolean headRequest, long rangeStart, long rangeEnd) throws IOException {
         String cookie = null;
         if(url.contains("#cookie=")) {
             cookie = URLDecoder.decode(url.split("#cookie=")[1].split("&")[0]);
@@ -241,6 +261,7 @@ public class DownloadMission extends Mission {
 
         conn.setRequestProperty("Accept", "*/*");
         conn.setRequestProperty("Accept-Encoding", "*");
+        Utility.setStreamRequestHeaders(conn, headers);
 
         if (headRequest && !headEmulation) conn.setRequestMethod("HEAD");
 

@@ -7,7 +7,9 @@ import org.schabi.newpipe.extractor.stream.Stream;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.extractor.stream.VideoStream;
+import us.shandian.giga.util.Utility;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -128,6 +130,18 @@ public final class HlsDownloadStreamHelper {
             return new String[]{selectedStream.getManifestUrl()};
         }
         return new String[]{selectedStream.getManifestUrl(), secondaryStream.getManifestUrl()};
+    }
+
+    @SuppressWarnings("unchecked")
+    public static HashMap<String, String>[] buildResourceRequestHeaders(final Stream selectedStream,
+                                                                        final Stream secondaryStream) {
+        final HashMap<String, String>[] headers =
+                new HashMap[secondaryStream == null ? 1 : 2];
+        headers[0] = Utility.copyRequestHeaders(selectedStream.getRequestHeaders());
+        if (secondaryStream != null) {
+            headers[1] = Utility.copyRequestHeaders(secondaryStream.getRequestHeaders());
+        }
+        return headers;
     }
 
     public static boolean[] buildResourceIsUrls(final Stream selectedStream,
