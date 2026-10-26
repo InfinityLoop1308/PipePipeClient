@@ -47,6 +47,7 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
             preference.setTitle(getString(R.string.service_instances_title,
                     service.getServiceInfo().getName()));
             preference.setSummary(R.string.service_instances_summary);
+            preference.setIconSpaceReserved(false);
             preference.setFragment(ServiceInstanceListFragment.class.getName());
             preference.getExtras().putInt(Constants.KEY_SERVICE_ID, service.getServiceId());
             getPreferenceScreen().addPreference(preference);
