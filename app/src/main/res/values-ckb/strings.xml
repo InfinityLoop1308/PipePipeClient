@@ -11,7 +11,6 @@
 \nیوتیوب نموونەیە لەم خزمەتگوزارییە کە ڕێگەی خێرا بەکاردەبات بەهۆی پیشاندەری RSS.
 \n
 \nبۆیە هەڵژرادن بۆ خۆت دەگەڕێتەوە: زانیاری تەواو یان خێرا.</string>
-    <string name="app_license">نیوپایپ نه‌رمه‌والایه‌كی سەرچاوە کراوەیە : دەتوانیت بەکاریبهێنیت، بیخوێنیتەوە و هاوبەشی پێبکەیت و بەرەوپێشی ببەیت. بەتایبەتی دەتوانی دابەشیبکەیتەوە یاخوود بگۆڕیت بەپێی مەرجەکانی GNU مۆڵەتنامەی گشتی وەک نه‌رمه‌واڵایه‌كی بڵاوی خۆڕایی, بەهۆی وەشانی ٣ ی مۆڵەتنامە، یان هەر وەشانێکی دوواتر.</string>
     <string name="info_labels">چی:\\nداواكاری:\\nزمانی بابەت:\\nوڵاتی بابەت:\\nزمانی به‌رنامه‌:\\nخزمه‌تگوزاری:\\nGMT كات:\\nپاكێج:\\nوه‌شان:\\nOS وه‌شان:</string>
     <string name="privacy_policy_encouragement">پڕۆژەی نیوپایپ زانیارییە تایبەتییەکانت بە وردی دەپارێزێت. هەروەها به‌رنامه‌كه‌ هیچ زانایارییەکت بەبێ ئاگاداری تۆ بەکارنابات.
 \n‫سیاسەتی تایبەتی نیوپایپ بە وردی ڕوونکردنەوەت دەداتێ لەسەر ئەو زانیاریانەی وەریاندەگرێت و بەکاریاندەبات.</string>
@@ -92,8 +91,6 @@
     <string name="export_to">هەناردە کردن بۆ</string>
     <string name="select_a_channel">کەناڵێک دیار بکە</string>
     <string name="downloads_storage_ask_title">پرس بکرێت لەکوێ داببەزێنرێت</string>
-    <string name="copyright" formatted="true">© %1$s لەلایەن %2$s لەژێر %3$s</string>
-    <string name="title_licenses">مۆڵەتنامەی لایەنی-سێیەم</string>
     <string name="app_license_title">مۆڵەتنامەی نیوپایپ</string>
     <string name="msg_threads">دابەشکراوەکان</string>
     <string name="title_most_played">زۆرترین لێدراو</string>
@@ -146,7 +143,6 @@
     <string name="detail_drag_description">ڕاکێشان بۆ ڕیزكردنه‌وه‌</string>
     <string name="play_queue_remove">لادان</string>
     <string name="always">هه‌رده‌م</string>
-    <string name="read_full_license">خوێندنه‌وه‌ی مۆڵەتنامە</string>
     <string name="app_ui_crash">بەرنامە/ڕووکار ڕاوەستا</string>
     <string name="play_all">لێدانی گشتی</string>
     <string name="invalid_source">هەمان فایل/بابەت بوونی نییە</string>
@@ -600,7 +596,6 @@
     <string name="off">ناکارا</string>
     <string name="on">کارا</string>
     <string name="tablet_mode_title">دۆخی تابلێت</string>
-    <string name="open_website_license">کردنەوەی ماڵپەڕ</string>
     <string name="detail_heart_img_view_description">بەدڵکراوە لەلایەن بڵاوکەرەوە</string>
     <string name="dont_show">پیشان نەدرێت</string>
     <string name="low_quality_smaller">کواڵێتی نزم (بچووکتر)</string>

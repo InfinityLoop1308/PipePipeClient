@@ -194,8 +194,6 @@
     <string name="charset_most_special_characters">De fleste specialtegn</string>
     <string name="toast_no_player">Der ingen app installeret der kan afspille denne fil</string>
     <string name="title_activity_about">Om NewPipe</string>
-    <string name="title_licenses">Tredjepartslicenser</string>
-    <string name="copyright" formatted="true">© %1$s af %2$s under %3$s</string>
     <string name="tab_about">Om</string>
     <string name="app_description">Åben letvægtsstreaming på Android.</string>
     <string name="contribution_title">Bidrag til projektet</string>
@@ -207,8 +205,6 @@
     <string name="website_encouragement">Besøg NewPipes websted for mere information og nyheder.</string>
     <string name="privacy_policy_title">NewPipes fortrolighedspolitik</string>
     <string name="app_license_title">NewPipes licens</string>
-    <string name="app_license">NewPipe er copyleft, fri software: Du kan bruge, studere, dele og forbedre den som du vil. Specifikt kan du redistribuere og/eller ændre den under betingelserne i GNU General Public License som udgivet af Free Software Foundation, enten version 3 af licensen eller (efter dit ønske) en vilkårlig senere version.</string>
-    <string name="read_full_license">Læs licens</string>
     <string name="title_activity_history">Historik</string>
     <string name="action_history">Historik</string>
     <string name="delete_item_search_history">Vil du slette dette element fra søgehistorikken\?</string>

@@ -33,10 +33,7 @@ class AboutActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
         val mAboutStateAdapter = AboutStateAdapter(this)
-        // Set up the ViewPager with the sections adapter.
         aboutBinding.aboutViewPager2.adapter = mAboutStateAdapter
         TabLayoutMediator(
             aboutBinding.aboutTabLayout,
@@ -54,9 +51,6 @@ class AboutActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
     class AboutFragment : Fragment() {
         private fun Button.openLink(url: Int) {
             setOnClickListener {
@@ -82,10 +76,6 @@ class AboutActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * A [FragmentStateAdapter] that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
     private class AboutStateAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
         private val posAbout = 0
         private val totalCount = 1
@@ -98,7 +88,6 @@ class AboutActivity : AppCompatActivity() {
         }
 
         override fun getItemCount(): Int {
-            // Show 2 total pages.
             return totalCount
         }
 
@@ -108,86 +97,5 @@ class AboutActivity : AppCompatActivity() {
                 else -> throw IllegalArgumentException("Unknown position for ViewPager2")
             }
         }
-    }
-
-    companion object {
-        /**
-         * List of all software components.
-         */
-        private val SOFTWARE_COMPONENTS = arrayOf(
-            SoftwareComponent(
-                "ACRA", "2013", "Kevin Gaudin",
-                "https://github.com/ACRA/acra", StandardLicenses.APACHE2
-            ),
-            SoftwareComponent(
-                "AndroidX", "2005 - 2011", "The Android Open Source Project",
-                "https://developer.android.com/jetpack", StandardLicenses.APACHE2
-            ),
-            SoftwareComponent(
-                "ExoPlayer", "2014 - 2020", "Google, Inc.",
-                "https://github.com/google/ExoPlayer", StandardLicenses.APACHE2
-            ),
-            SoftwareComponent(
-                "GigaGet", "2014 - 2015", "Peter Cai",
-                "https://github.com/PaperAirplane-Dev-Team/GigaGet", StandardLicenses.GPL3
-            ),
-            SoftwareComponent(
-                "Groupie", "2016", "Lisa Wray",
-                "https://github.com/lisawray/groupie", StandardLicenses.MIT
-            ),
-            SoftwareComponent(
-                "Jsoup", "2009 - 2020", "Jonathan Hedley",
-                "https://github.com/jhy/jsoup", StandardLicenses.MIT
-            ),
-            SoftwareComponent(
-                "Markwon", "2019", "Dimitry Ivanov",
-                "https://github.com/noties/Markwon", StandardLicenses.APACHE2
-            ),
-            SoftwareComponent(
-                "Material Components for Android", "2016 - 2020", "Google, Inc.",
-                "https://github.com/material-components/material-components-android",
-                StandardLicenses.APACHE2
-            ),
-            SoftwareComponent(
-                "NewPipe Extractor", "2017 - 2020", "Christian Schabesberger",
-                "https://github.com/TeamNewPipe/NewPipeExtractor", StandardLicenses.GPL3
-            ),
-            SoftwareComponent(
-                "NoNonsense-FilePicker", "2016", "Jonas Kalderstam",
-                "https://github.com/spacecowboy/NoNonsense-FilePicker", StandardLicenses.MPL2
-            ),
-            SoftwareComponent(
-                "OkHttp", "2019", "Square, Inc.",
-                "https://square.github.io/okhttp/", StandardLicenses.APACHE2
-            ),
-            SoftwareComponent(
-                "Picasso", "2013", "Square, Inc.",
-                "https://square.github.io/picasso/", StandardLicenses.APACHE2
-            ),
-            SoftwareComponent(
-                "PrettyTime", "2012 - 2020", "Lincoln Baxter, III",
-                "https://github.com/ocpsoft/prettytime", StandardLicenses.APACHE2
-            ),
-            SoftwareComponent(
-                "ProcessPhoenix", "2015", "Jake Wharton",
-                "https://github.com/JakeWharton/ProcessPhoenix", StandardLicenses.APACHE2
-            ),
-            SoftwareComponent(
-                "RxAndroid", "2015", "The RxAndroid authors",
-                "https://github.com/ReactiveX/RxAndroid", StandardLicenses.APACHE2
-            ),
-            SoftwareComponent(
-                "RxBinding", "2015", "Jake Wharton",
-                "https://github.com/JakeWharton/RxBinding", StandardLicenses.APACHE2
-            ),
-            SoftwareComponent(
-                "RxJava", "2016 - 2020", "RxJava Contributors",
-                "https://github.com/ReactiveX/RxJava", StandardLicenses.APACHE2
-            ),
-            SoftwareComponent(
-                "SearchPreference", "2018", "ByteHamster",
-                "https://github.com/ByteHamster/SearchPreference", StandardLicenses.MIT
-            ),
-        )
     }
 }

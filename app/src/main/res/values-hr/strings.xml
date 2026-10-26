@@ -108,14 +108,11 @@
     <string name="charset_letters_and_digits">Slova i brojevi</string>
     <string name="charset_most_special_characters">Posebni znakovi</string>
     <string name="title_activity_about">O NewPipeu</string>
-    <string name="title_licenses">Licence treće strane</string>
-    <string name="copyright" formatted="true">© %1$s od %2$s pod %3$s</string>
     <string name="tab_about">O aplikaciji</string>
     <string name="app_description">Slobodan i mali YouTube program za Android.</string>
     <string name="view_on_github">Pogledaj na GitHubu</string>
     <string name="app_license_title">Licenca za NewPipe</string>
     <string name="contribution_encouragement">Ako imate ideja za prijevod, promjene u dizajnu, čišćenje koda ili neke veće promjene u kodu, pomoć je uvijek dobro došla. Što više radimo, to bolji postajemo!</string>
-    <string name="read_full_license">Pročitaj licencu</string>
     <string name="contribution_title">Doprinos</string>
     <string name="title_activity_history">Povijest</string>
     <string name="action_history">Povijest</string>
@@ -365,7 +362,6 @@
     <string name="no_comments">Nema komentara</string>
     <string name="error_unable_to_load_comments">Komentare nije moguće učitati</string>
     <string name="close">Zatvori</string>
-    <string name="app_license">NewPipe je copyleft libre software: Može se koristiti, proučavati i poboljšavati po volji. Konkretno, može se redistribuirati i / ili modificirati pod uvjetima GNU opće javne licence koju je objavila Free Software Foundation, bilo licence verzije 3, ili (po vlastitom izboru) bilo koje kasnije verzije.</string>
     <string name="privacy_policy_encouragement">Projekt NewPipe ozbiljno shvaća tvou privatnost. Stoga program ne prikuplja nikakve podatke bez tvog pristanka.
 \nNewPipe pravila o privatnosti detaljno objašnjavaju koji se podaci šalju i spremaju kad šalješ izvještaje o prekidu rada programa.</string>
     <string name="start_accept_privacy_policy">Kako bismo se uskladili s Europskom općom uredbom o zaštiti podataka (GDPR), upozoravamo vas na politiku privatnosti tvrtke NewPipe. Pažljivo ga pročitajte.
@@ -582,7 +578,6 @@
     <string name="off">Isklj.</string>
     <string name="on">Uklj.</string>
     <string name="tablet_mode_title">Način rada na tabletu</string>
-    <string name="open_website_license">Otvori stranicu</string>
     <string name="detail_heart_img_view_description">Srce autora</string>
     <string name="metadata_privacy_private">Privatno</string>
     <string name="metadata_privacy_unlisted">Nenavedeno</string>

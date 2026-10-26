@@ -185,11 +185,9 @@
     <string name="blank_page_summary">খালি পাতা</string>
     <string name="title_most_played">সবথেকে বেশি চালানো</string>
     <string name="title_last_played">শেষ চালানো</string>
-    <string name="read_full_license">লাইসেন্স পড়ুন</string>
     <string name="app_license_title">নিউপাইপ এর লাইসেন্স</string>
     <string name="privacy_policy_title">নিউপাইপ এর গোপনীয়তা নীতি</string>
     <string name="view_on_github">গিটহাব এ দেখুন</string>
-    <string name="title_licenses">থার্ড-পার্টি লাইসেন্স সমূহ</string>
     <string name="charset_letters_and_digits">শব্দ ও নম্বর</string>
     <string name="one_item_deleted">একটি আইটেম ডিলিট হয়েছে।</string>
     <string name="no_comments">কোন মন্তব্য নেই</string>
@@ -317,7 +315,6 @@
     <string name="off">বন্ধ</string>
     <string name="on">চালু</string>
     <string name="tablet_mode_title">ট্যাবলেট মোড</string>
-    <string name="open_website_license">সক্রিয় ওয়েবসাইট</string>
     <string name="metadata_privacy_private">গোপন</string>
     <string name="metadata_privacy_unlisted">নথিভুক্ত নয়</string>
     <string name="metadata_support">সহায়তা</string>

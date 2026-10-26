@@ -104,14 +104,12 @@
     <string name="tab_about">О програму</string>
     <string name="app_description">Слободно и лагано стримовање на Андроиду.</string>
     <string name="view_on_github">Погледај на Гитхабу</string>
-    <string name="read_full_license">Прочитај лиценцу</string>
     <string name="contribution_title">Допринос</string>
     <string name="title_activity_history">Историјат</string>
     <string name="action_history">Историјат</string>
     <string name="resume_on_audio_focus_gain_summary">Настави пуштање након прекида (нпр. позива)</string>
     <string name="settings_file_charset_title">Дозвољени знакови у називима</string>
     <string name="charset_letters_and_digits">слова и бројке</string>
-    <string name="copyright" formatted="true">© %1$s од %2$s под %3$s</string>
     <string name="channel_unsubscribed">Одјављен са канала</string>
     <string name="subscription_change_failed">Не могу да променим претплату</string>
     <string name="subscription_update_failed">Не могу да ажурирам претплату</string>
@@ -141,7 +139,6 @@
         <item quantity="other">%s видеа</item>
     </plurals>
     <string name="charset_most_special_characters">и посебни знакови</string>
-    <string name="title_licenses">Лиценце треће стране</string>
     <string name="app_license_title">Лиценца Њупајпа</string>
     <string name="contribution_encouragement">Помоћ је увек добро дошла, било да имате идеју за превод, дизајн, козметичке или озбиљне измене кôда. Што се више уради, боље је!</string>
     <string name="play_all">Пусти све</string>
@@ -358,7 +355,6 @@
     <string name="main_page_content_summary">Које картице се налазе на главној страници</string>
     <string name="title_most_played">Највише пуштано</string>
     <string name="title_last_played">Последње пуштано</string>
-    <string name="app_license">ЊуПајп је бесплатни слободни софтвер. Можете га користити, проучавати и делити по жељи. Конкретно, можете га дистрибуирати и/или мењати под условима ГНУ Опште јавне лиценце коју је објавила Фондација за слободни софтвер, било верзије 3 лиценце, или (по вашој жељи) било које касније верзије.</string>
     <string name="privacy_policy_encouragement">Пројекат ЊуПајп врло озбиљно схвата вашу приватност. Стога апликација не прикупља никакве податке без вашег пристанка.
 \nПолитика приватности ЊуПајпа детаљно објашњава који се подаци шаљу и чувају када пошаљете извештај о паду апликације.</string>
     <string name="privacy_policy_title">Политика приватности ЊуПајпа</string>
@@ -578,7 +574,6 @@
     <string name="related_items_tab_description">Повезани записи</string>
     <string name="disable_media_tunneling_summary">Искључите тунеловање ако имате црн екран или прекиде у репродукцији</string>
     <string name="disable_media_tunneling_title">Искључи тунеловање медија</string>
-    <string name="open_website_license">Отвори веб страну</string>
     <string name="metadata_privacy_internal">интерно</string>
     <string name="metadata_privacy_private">лично</string>
     <string name="metadata_privacy_unlisted">ненаведено</string>

@@ -128,8 +128,6 @@
     <string name="charset_letters_and_digits">문자 및 숫자</string>
     <string name="charset_most_special_characters">가장 특수한 문자</string>
     <string name="title_activity_about">NewPipe에 대해서</string>
-    <string name="title_licenses">제3자 라이센스</string>
-    <string name="copyright" formatted="true">© %3$s 하에서 %2$s 에 의한 %1$s</string>
     <string name="tab_about">NewPipe 정보</string>
     <string name="app_description">가볍고 빠른 자유 안드로이드 스트리밍 앱입니다.</string>
     <string name="contribution_title">기여</string>
@@ -140,7 +138,6 @@
     <string name="website_title">웹사이트</string>
     <string name="website_encouragement">NewPipe에 관한 더 많은 정보를 얻으려면 웹사이트를 방문하세요.</string>
     <string name="app_license_title">NewPipe가 채택한 라이센스</string>
-    <string name="read_full_license">라이센스 읽기</string>
     <string name="title_activity_history">기록</string>
     <string name="action_history">기록</string>
     <string name="delete_item_search_history">이 항목을 검색 기록에서 삭제할까요?</string>
@@ -286,7 +283,6 @@
     <string name="privacy_policy_title">NewPipe 개인정보 보호 정책</string>
     <string name="privacy_policy_encouragement">NewPipe 프로젝트는 사용자의 개인 정보 보호를 최우선으로 생각하며, 동의 없이 어떠한 정보도 수집하지 않습니다. 
 \nNewPipe 개인정보 보호 정책에서는 오류 보고 시 어떠한 정보가 수집되고 저장되는지 자세히 명시되어 있습니다.</string>
-    <string name="app_license">NewPipe는 카피레프트 자유 소프트웨어입니다. 사용자는 이 앱을 사용, 공유, 또는 수정할 수 있고, 수정 후 재배포 시 자유 소프트웨어 재단의 GNU 라이센스 버전 3 또는 그 이상의 버전을 포함해야 합니다.</string>
     <string name="import_settings">설정도 가져오시겠습니까\?</string>
     <string name="skip_silence_checkbox">무음 구간 빨리 감기</string>
     <string name="start_accept_privacy_policy">유럽 연합 일반 데이터 보호 규정 (GDPR) 에 따라, 사용자는 NewPipe 개인정보 보호 정책을 읽고 꼼꼼히 확인해야 합니다. 버그 리포트를 보내시려면 개인정보 보호 정책에 동의해주세요.</string>

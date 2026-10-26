@@ -51,8 +51,6 @@
     <string name="delete_item_search_history">Vai jūs vēlaties izdzēst šo lietu no meklēšanas vēstures\?</string>
     <string name="action_history">Vēsture</string>
     <string name="title_activity_history">Vēsture</string>
-    <string name="read_full_license">Izlasīt licenci</string>
-    <string name="app_license">Newpipe ir bezmaksas programmatūra: jūs varat izmantot, izpētīt, dalīties un uzlabot to jebkurā brīdī. Tieši jūs varat kopīgot un/ vai modificēt to saskaņā ar GNU Vispārējās Publiskās Licences noteikumiem, ko publicējusi Brīvās Programmatūras Fonds, vai nu 3. licences versija, vai (pēc jūsu izvēles) jebkura vēlāka versija.</string>
     <string name="app_license_title">NewPipe Licence</string>
     <string name="privacy_policy_encouragement">NewPipe projekts uztver jūsu privātumu ļoti nopietni . Tāpēc lietotne nesavāc datus bez jūsu piekrišanas.
 \nNewPipe privātuma politika sīki izskaidro, kādi dati tiek nosūtīti un uzglabāti, nosūtot kļūdas ziņojumu.</string>
@@ -66,7 +64,6 @@
     <string name="contribution_title">Atbalstiet</string>
     <string name="app_description">Libre, viegla atskaņošana uz Android.</string>
     <string name="tab_about">Par</string>
-    <string name="title_licenses">Trešo pušu Licences</string>
     <string name="title_activity_about">Par NewPipe</string>
     <string name="toast_no_player">Nav instalētu aplikāciju, lai atskaņotu šo failu</string>
     <string name="charset_most_special_characters">Lielākā daļa īpašo rakstzīmju</string>
@@ -427,7 +424,6 @@
     <string name="video_player">Video atskaņotājs</string>
     <string name="preferred_open_action_settings_title">Vēlamā \'atvēršanas\' darbība</string>
     <string name="trending">Tendences</string>
-    <string name="copyright">© %1$s no %2$s zem %3$s</string>
     <string name="download_failed">Lejupielāde neizdevās</string>
     <string name="enqueue">Rinda</string>
     <string name="paused">Pausēts</string>
@@ -619,7 +615,6 @@
     <string name="description_select_disable">Izslēgt teksta atlasīšanu video aprakstā</string>
     <string name="metadata_privacy_internal">Iekšeji</string>
     <string name="detail_heart_img_view_description">Autors piekrīt</string>
-    <string name="open_website_license">Atvērt mājaslapu</string>
     <string name="tablet_mode_title">Tabletes režīms</string>
     <string name="low_quality_smaller">Zemas kvalitātes (mazāks)</string>
     <string name="metadata_privacy">Privātums</string>

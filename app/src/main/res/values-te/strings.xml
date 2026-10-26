@@ -103,12 +103,10 @@
     <string name="settings_file_charset_title">ఫైల్ పేర్లలో అనుమతించిన అక్షరాలు</string>
     <string name="charset_letters_and_digits">లెటర్స్ మరియు అంకెలు</string>
     <string name="title_activity_about">న్యూపిప్ గురించి</string>
-    <string name="title_licenses">మూడవ పార్టీ లైసెన్స్</string>
     <string name="tab_about">గురించి</string>
     <string name="view_on_github">GitHub పై చూడండి</string>
     <string name="app_license_title">న్యూపెయిప్స్ లైసెన్స్</string>
     <string name="contribution_encouragement">మీకు ఆలోచనలు ఉన్నాయా; అనువాదం, డిజైన్ మార్పులు, కోడ్ శుభ్రపరచడం లేదా నిజమైన భారీ కోడ్ మార్పులు-సహాయం ఎల్లప్పుడూ స్వాగతం. ఎంత ఎక్కువ చేస్తే అంత మంచిది!</string>
-    <string name="read_full_license">లైసెన్స్ చదువు</string>
     <string name="contribution_title">సహకరించటానికి</string>
     <string name="title_activity_history">చరిత్ర</string>
     <string name="action_history">చరిత్ర</string>
@@ -297,7 +295,6 @@
     <string name="website_encouragement">మరింత సమాచారం మరియు వార్తల కోసం NewPipe వెబ్‌సైట్‌ని సందర్శించండి.</string>
     <string name="privacy_policy_encouragement">NewPipe ప్రాజెక్ట్ మీ గోప్యతను చాలా తీవ్రంగా పరిగణిస్తుంది. కాబట్టి, మీ సమ్మతి లేకుండా యాప్ ఎలాంటి డేటాను సేకరించదు.
 \nNewPipe యొక్క గోప్యతా విధానం మీరు క్రాష్ నివేదికను పంపినప్పుడు ఏ డేటా పంపబడుతుందో మరియు నిల్వ చేయబడుతుందో వివరంగా వివరిస్తుంది.</string>
-    <string name="app_license">NewPipe అనేది కాపీ లెఫ్ట్ లిబ్రే సాఫ్ట్‌వేర్: మీరు దీన్ని ఇష్టానుసారంగా ఉపయోగించవచ్చు, అధ్యయనం చేయవచ్చు మరియు మెరుగుపరచవచ్చు. ప్రత్యేకంగా మీరు ఫ్రీ సాఫ్ట్‌వేర్ ఫౌండేషన్ ద్వారా ప్రచురించబడిన GNU జనరల్ పబ్లిక్ లైసెన్స్ నిబంధనల ప్రకారం, లైసెన్స్ యొక్క వెర్షన్ 3 లేదా (మీ ఐచ్ఛికం ప్రకారం) ఏదైనా తర్వాతి సంస్కరణలో దాన్ని పునఃపంపిణీ చేయవచ్చు మరియు/లేదా సవరించవచ్చు.</string>
     <string name="no_playlist_bookmarked_yet">ప్లేజాబితా బుక్‌మార్క్‌లు ఇంకా లేవు</string>
     <string name="detail_uploader_thumbnail_view_description">అప్‌లోడర్ అవతార్ థంబ్‌నెయిల్</string>
     <string name="donation_title">విరాళం ఇవ్వండి</string>
@@ -305,7 +302,6 @@
     <string name="recaptcha_cookies_cleared">reCAPTCHA కుక్కీలను క్లియర్ చేయండి</string>
     <string name="msg_popup_permission">దీనికి ఈ అనుమతి అవసరం
 \nతేలియాడే పద్ధతిలో తెరవండి</string>
-    <string name="copyright">© %3$s కింద %2$s ద్వారా %1$s</string>
     <string name="title_last_played">చివరిగా ఆడింది</string>
     <string name="export_data_summary">చరిత్ర, సభ్యత్వాలు, ప్లేజాబితాలు మరియు అమరికలను ఎగుమతిచేయుము</string>
     <string name="import_data_summary">మీ ప్రస్తుత చరిత్ర, సభ్యత్వాలు, ప్లేజాబితాలు మరియు (ఐచ్ఛికంగా) సెట్టింగ్‌లను భర్తీ చేస్తుంది</string>

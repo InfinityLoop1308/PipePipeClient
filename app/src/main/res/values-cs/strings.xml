@@ -133,14 +133,11 @@
     <string name="charset_letters_and_digits">Písmena a číslice</string>
     <string name="charset_most_special_characters">Většina speciálních znaků</string>
     <string name="title_activity_about">O NewPipe</string>
-    <string name="title_licenses">Licence třetích stran</string>
-    <string name="copyright" formatted="true">© %1$s od %2$s pod %3$s</string>
     <string name="tab_about">O aplikaci</string>
     <string name="app_description">Svobodné a nenáročné streamování v Androidu.</string>
     <string name="view_on_github">Zobraz na GitHubu</string>
     <string name="app_license_title">Licence NewPipe</string>
     <string name="contribution_encouragement">Pokud máte nápady na zlepšení jako; překlad, změny designu, vylepšování kódu nebo opravdu velké změny kódu - pomoc je vždy vítána. Čím více se udělá, tím lepší to bude!</string>
-    <string name="read_full_license">Přečíst licenci</string>
     <string name="contribution_title">Podílet se</string>
     <string name="title_activity_history">Historie</string>
     <string name="action_history">Historie</string>
@@ -290,7 +287,6 @@
     <string name="delete_search_history_alert">Vymazat celkovou historii vyhledávání\?</string>
     <string name="search_history_deleted">Historie vyhledávání smazána</string>
     <string name="one_item_deleted">Jedna položka smazána.</string>
-    <string name="app_license">NewPipe je svobodný software s copyleft licencí: Můžete jej libovolně používat, studovat, sdílet a vylepšovat. Konkrétně jej můžete šířit a/nebo upravovat za podmínek Obecné veřejné licence GNU (GNU GPL) vydané nadací Free Software Foundation, a to buď za podmínek Licence verze 3 nebo (dle vaší volby) jakékoli pozdější verze.</string>
     <string name="channels">kanály</string>
     <string name="playlists">Playlisty</string>
     <string name="tracks">Stopy</string>
@@ -579,7 +575,6 @@
     <string name="night_theme_title">Noční motiv</string>
     <string name="disable_media_tunneling_summary">Vypněte media-tunelling, pokud zaznamenáte temnou obrazovku nebo zadrhávání během playbacku</string>
     <string name="disable_media_tunneling_title">Vypnout media-tunelling</string>
-    <string name="open_website_license">Přejít na website</string>
     <string name="metadata_privacy_internal">Interní</string>
     <string name="metadata_privacy_private">Soukromé</string>
     <string name="metadata_privacy_unlisted">Neuvedeno v seznamu</string>

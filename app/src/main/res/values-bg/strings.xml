@@ -121,7 +121,6 @@
     <string name="settings_file_charset_title">Позволени символи в името на файловете</string>
     <string name="charset_letters_and_digits">Букви и цифри</string>
     <string name="title_activity_about">За NewPipe</string>
-    <string name="title_licenses">Лицензи от трети страни</string>
     <string name="tab_about">Относно приложението</string>
     <string name="app_description">Безплатно и леко поточно предаване за Android.</string>
     <string name="view_on_github">Виж в GitHub</string>
@@ -172,7 +171,6 @@
     <string name="create">Създай</string>
     <string name="dismiss">Откажи</string>
     <string name="toast_no_player">Няма инсталирано приложение, което да изпълни този файл</string>
-    <string name="copyright" formatted="true">© %1$s от %2$s под лиценза %3$s</string>
     <string name="contribution_title">Съдействайте</string>
     <string name="contribution_encouragement">За всичко, което се сетите: превод, промени по дизайна, изчистване на кода или много сериозни промени по кода – помощта е винаги добре дошла. Колкото повече развитие, толкова по-добре!</string>
     <string name="donation_title">Направете дарение</string>
@@ -200,8 +198,6 @@
     <string name="recaptcha_request_toast">Изисква се въвеждане на reCAPTCHA</string>
     <string name="settings_category_downloads_title">Изтегляне</string>
     <string name="charset_most_special_characters">Повечето специални символи</string>
-    <string name="app_license">NewPipe е безплатен „copyleft“ софтуер: Можете да го използвате, изучавате, споделяте и подобрявате по желание. В частност, Вие можете да препубликувате и/или модифицирате приложението според правилата на Главния обществен лиценз на ГНУ, издаден от Фондацията за свободен софтуер – версия 3 на лиценза или по-нова.</string>
-    <string name="read_full_license">Прочетете лиценза</string>
     <string name="title_activity_history">История</string>
     <string name="action_history">История</string>
     <string name="delete_item_search_history">Искате ли да изтриете този елемент от историята на търсенията?</string>
@@ -420,7 +416,6 @@
     <string name="metadata_privacy_internal">Вътрешен</string>
     <string name="on">Включен</string>
     <string name="off">Изключен</string>
-    <string name="open_website_license">Отвори уеб-страницата</string>
     <string name="detail_heart_img_view_description">Отбелязан със сърце от автора</string>
     <string name="conferences">Конференции</string>
     <string name="most_liked">Най-харесвани</string>

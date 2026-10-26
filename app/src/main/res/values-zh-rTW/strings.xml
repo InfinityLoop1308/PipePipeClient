@@ -122,11 +122,8 @@
 <string name="settings_file_charset_title">檔案名稱中允許的字元</string>
 <string name="charset_letters_and_digits">字母與數字</string>
 <string name="charset_most_special_characters">大部分的特殊字元</string>
-<string name="title_licenses">第三方授權</string>
-<string formatted="true" name="copyright">© %1$s 由 %2$s 使用 %3$s 授權條款發佈</string>
 <string name="tab_about">關於</string>
 <string name="contribution_encouragement">不管你有什麼點子——翻譯、設計、程式碼整理，或者程式碼撰寫——我們永遠歡迎你來幫忙。完成的越多，NewPipe 也會更好！</string>
-<string name="read_full_license">閱讀授權條款</string>
 <string name="contribution_title">貢獻</string>
 <string name="title_activity_history">歷史紀錄</string>
 <string name="action_history">歷史紀錄</string>
@@ -273,7 +270,6 @@
 <string name="delete_search_history_alert">刪除所有搜尋歷史記錄？</string>
 <string name="search_history_deleted">搜尋歷史已刪除</string>
 <string name="one_item_deleted">已刪除 1 個項目。</string>
-<string name="app_license">NewPipe 是一個 Copyleft 的自由軟體：您可以隨意使用、研究、分享並改進它。在遵守由自由軟體基金會所發佈的 GNU 通用公共授權條款的狀況下，您可以自由地再散佈及 / 或修改它；授權條款預設使用第三版，但您也可以選擇更新的版本。</string>
 <string name="import_settings">您是否要同時匯入設定？</string>
 <string name="limit_data_usage_none_description">沒有限制</string>
 <string name="limit_mobile_data_usage_title">使用行動網路時限制解析度</string>
@@ -553,7 +549,6 @@
 <string name="description_select_disable">停用選取描述中的文字</string>
 <string name="description_select_enable">啟用選取描述中的文字</string>
 <string name="description_select_note">您現在可以選取描述中的文字了。請注意，在選取模式下，頁面可能會閃爍，連結也可能無法點擊。</string>
-<string name="open_website_license">開啟網站</string>
 <string name="service_provides_reason">%s 提供了這個理由：</string>
 <string name="account_terminated">帳號已終止</string>
 <string name="feed_load_error_fast_unknown">快速 feed 模式不會提供更多資訊。</string>
@@ -676,7 +671,6 @@
 <string name="error_report_open_issue_button_text_new">在 GitHub 上報告</string>
 <string name="msg_running_new">PipePipe 下載中</string>
 <string name="title_activity_about_new">關於 PipePipe</string>
-<string name="app_license_title_new">NewPipe 的許可證（上游）</string>
 <string name="duplicate_in_playlist">已灰掉的播放清單已包含此項目。</string>
 <string name="playlist_add_stream_success_duplicate">重複新增 %d 次</string>
 <string name="youtube_visitor_data_title">YouTube 訪客數據</string>

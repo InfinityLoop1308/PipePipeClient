@@ -108,8 +108,6 @@
     <string name="charset_letters_and_digits">Bokstaver og tall</string>
     <string name="charset_most_special_characters">De fleste spesialtegn</string>
     <string name="title_activity_about">Om NewPipe</string>
-    <string name="title_licenses">Tredjepartslisenser</string>
-    <string name="copyright" formatted="true">© %1$s av %2$s lisensiert %3$s</string>
     <string name="tab_about">Om</string>
     <string name="app_description">Fri lett strømming på Android.</string>
     <string name="resume_on_audio_focus_gain_title">Fortsett avspilling</string>
@@ -137,7 +135,6 @@
     <string name="view_on_github">Vis på GitHub</string>
     <string name="app_license_title">NewPipe sin lisens</string>
     <string name="contribution_encouragement">Hvorvidt du har idéer vedrørende oversettelser, designendringer, koderenskning, eller tunge kodeendringer—hjelp er alltids kjærkommen. Desto mer som gjøres, desto bedre blir det!</string>
-    <string name="read_full_license">Les lisensen</string>
     <string name="contribution_title">Bidra</string>
     <string name="title_activity_history">Historikk</string>
     <string name="action_history">Historikk</string>
@@ -263,7 +260,6 @@
     <string name="toast_no_player">Inget program installert for avspilling av denne filen</string>
     <string name="caption_setting_title">Undertekster</string>
     <string name="caption_setting_description">Endre undertekststørrelse og bakgrunnsstiler. Krever omstart av programmet for å tre i effekt.</string>
-    <string name="app_license">NewPipe er copyleft, fri programvare: Du kan bruke, studere og forbedre etter egen vilje. Spesifikt kan du redistribuere og/eller modifisere det i henhold til vilkårene gitt i GNU General Public-lisensen, som publisert av Free Software Foundation, enten versjon 3 av lisensen, eller (etter eget ønske) enhver senere versjon.</string>
     <string name="import_settings">Ønsker du også å importere innstillinger?</string>
     <string name="subscriptions_import_unsuccessful">Kunne ikke importere abonnementer</string>
     <string name="subscriptions_export_unsuccessful">Kunne ikke eksportere abonnementer</string>
@@ -585,7 +581,6 @@
     <string name="off">Av</string>
     <string name="on">På</string>
     <string name="tablet_mode_title">Nettbrett-modus</string>
-    <string name="open_website_license">Åpne nettside</string>
     <string name="metadata_privacy_internal">Intern</string>
     <string name="metadata_privacy_private">Privat</string>
     <string name="metadata_privacy_unlisted">Ulistet</string>

@@ -130,13 +130,10 @@
     <string name="settings_file_charset_title">السماح بالرموز في أسماء الملفات</string>
     <string name="charset_letters_and_digits">الحروف والأرقام</string>
     <string name="charset_most_special_characters">معظم الأحرف الخاصة</string>
-    <string name="title_licenses">تراخيص الجهات الخارجية</string>
-    <string name="copyright">© %1$s بواسطة %2$s تحت %3$s</string>
     <string name="contribution_title">ساهم</string>
     <string name="contribution_encouragement">إذا كانت لديك أفكار تخص الترجمة، أو تغييرات في التصميم، أو تنظيف وتحسين الشفرة البرمجية، أو تعديلات عميقة عليها، فتذكّر أنّ مساعدتك دائمًا موضع ترحيب. وكلما أتممنا شيئًا كان ذلك أفضل!</string>
     <string name="view_on_github">عرض على GitHub</string>
     <string name="donation_title">تبرع</string>
-    <string name="read_full_license">قراءة الرخصة</string>
     <string name="delete_item_search_history">هل تريد حذف هذا العنصر من سجل البحث؟</string>
     <string name="main_page_content">محتوى الشاشة الرئيسية</string>
     <string name="blank_page_summary">صفحة فارغة</string>
@@ -260,7 +257,6 @@
     <string name="no_streams_available_download">لا يوجد بث متاح للتنزيل</string>
     <string name="one_item_deleted">تم حذف عنصر واحد.</string>
     <string name="toast_no_player">لم يتم تثبيت أي تطبيق لتشغيل هذا الملف</string>
-    <string name="app_license">NewPipe هو برنامج مفتوح المصدر وبحقوق متروكة: يمكنك استخدام الكود ودراسته وتحسينه كما شئت. وعلى وجه التحديد يمكنك إعادة توزيعه / أو تعديله تحت شروط رخصة GNU العمومية والتي نشرتها مؤسسة البرمجيات الحرة، سواء الإصدار 3 من الرخصة، أو (باختيارك) أي إصدار أحدث.</string>
     <string name="title_last_played">آخر ما تم تشغيله</string>
     <string name="title_most_played">الأكثر تشغيلا</string>
     <string name="override_current_data">هذا سوف يُزيل إعداداتك الحالية.</string>
@@ -588,7 +584,6 @@
     <string name="description_select_disable">تعطيل تحديد النص في الوصف</string>
     <string name="description_select_enable">تمكين تحديد النص في الوصف</string>
     <string name="description_select_note">يمكنك الآن تحديد أي نص داخل الوصف. لاحظ أن الصفحة قد تومض وقد لا تكون الروابط قابلة للنقر أثناء وضع التحديد.</string>
-    <string name="open_website_license">فتح الموقع</string>
     <string name="service_provides_reason">%s يقدم هذا السبب:</string>
     <string name="account_terminated">تم إنهاء الحساب</string>
     <string name="feed_load_error_fast_unknown">لا يوفر وضع التغذية السريعة مزيدًا من المعلومات حول هذا الموضوع.</string>
@@ -1049,7 +1044,6 @@
     <string name="msg_running_new">يقوم PipePipe بالتنزيل</string>
     <string name="title_activity_about_new">حول PipePipe</string>
     <string name="app_description_new">تطبيق أندرويد مجاني ومفتوح المصدر (FLOSS) يتيح لك تصفح يوتيوب وNicoNico وBiliBili بحرية</string>
-    <string name="app_license_title_new">ترخيص NewPipe (المصدر الأساسي)</string>
     <string name="app_update_notification_content_title_new">تحديث PipePipe متاح!</string>
     <string name="error_postprocessing_stopped_new">تم إغلاق PipePipe أثناء العمل على الملف</string>
     <string name="feed_load_error_terminated_new">حساب منشئ المحتوى قد تم إنهاؤه.\nلن يتمكن PipePipe من تحميل هذه الخلاصة في المستقبل.\nهل تريد إلغاء الاشتراك من هذه القناة؟</string>

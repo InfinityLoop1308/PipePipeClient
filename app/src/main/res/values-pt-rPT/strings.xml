@@ -68,7 +68,6 @@
     <string name="restricted_video">Este vídeo está restringido a idades.
 \n
 \nPara o poder ver, tem que ativar \"%1$s\" nas definições.</string>
-    <string name="read_full_license">Ver licença</string>
     <string name="help">Ajuda</string>
     <string name="peertube_instance_add_https_only">Apenas os URL HTTPS são suportados</string>
     <string name="peertube_instance_add_fail">Falha ao validar a instância</string>
@@ -147,7 +146,6 @@
     <string name="audio_streams_empty">Não foram encontradas emissões de áudio</string>
     <string name="error_postprocessing_stopped">NewPipe foi fechado enquanto trabalhava no ficheiro</string>
     <string name="create_playlist">Nova lista de reprodução</string>
-    <string name="copyright">© %1$s de %2$s nos termos da %3$s</string>
     <string name="black_theme_title">Preto</string>
     <string name="no_one_listening">Ninguém está a ouvir</string>
     <string name="playlist_thumbnail_change_success">Miniatura da lista de reprodução alterada.</string>
@@ -184,7 +182,6 @@
     <string name="error_snackbar_message">Desculpe mas algo correu mal.</string>
     <string name="theme_title">Tema</string>
     <string name="error_path_creation">Não foi possível criar a pasta de destino</string>
-    <string name="title_licenses">Licenças de terceiros</string>
     <string name="generate_unique_name">Gerar nome único</string>
     <string name="minimize_on_exit_summary">Ação a executar ao trocar para outra aplicação a partir do menu principal - %s</string>
     <string name="info_labels">O quê:\\nPedido:\\nIdioma do conteúdo:\\nPaís do conteúdo\\nIdioma da app\\nServiço:\\nHora GMT:\\nPacote:\\nVersão:\\nVersão do SO:</string>
@@ -349,7 +346,6 @@
     <string name="app_ui_crash">Aplicação terminou em erro</string>
     <string name="delete_item_search_history">Deseja remover este item do histórico de pesquisas\?</string>
     <string name="resume_on_audio_focus_gain_title">Continuar reprodução</string>
-    <string name="app_license">NewPipe é um software livre \"copyleft\": pode utilizar, estudar, partilhar e melhorar a aplicação. Especificamente, pode redistribuir e/ou modificar a aplicação nos termos da GNU General Public License, conforme publicada pela Free Software Foundation, tanto a versão 3 da licença ou (por opção) qualquer versão posterior.</string>
     <string name="infinite_videos">∞ vídeos</string>
     <string name="export_ongoing">A exportar…</string>
     <string name="most_liked">Mais apreciados</string>
@@ -572,7 +568,6 @@
     <string name="off">Desligado</string>
     <string name="on">Ligado</string>
     <string name="tablet_mode_title">Modo tablet</string>
-    <string name="open_website_license">Abrir site de web</string>
     <string name="detail_heart_img_view_description">Entusiasmado pelo criador</string>
     <string name="metadata_privacy_internal">Interno</string>
     <string name="metadata_privacy_private">Privado</string>

@@ -127,13 +127,11 @@
     <string name="charset_letters_and_digits">Kirjaimet ja numerot</string>
     <string name="charset_most_special_characters">Suurin osa erikoismerkeistä</string>
     <string name="title_activity_about">Tietoja NewPipe</string>
-    <string name="title_licenses">Kolmannen osapuolen Lisenssit</string>
     <string name="tab_about">Tietoja</string>
     <string name="app_description">Vapaata ja kevyttä suoratoistoa Androidilla.</string>
     <string name="view_on_github">Näytä GitHub:ssa</string>
     <string name="app_license_title">NewPipe:n Lisenssi</string>
     <string name="contribution_encouragement">Olkoon sinulla ideoita; käännöksistä, designmuutoksista, koodin siivoamisesta tai raskaista koodimuutoksista—apu on aina tervetullutta. Mitä enemmän saadaan tehtyä, sen paremmaksi sovellus tulee!</string>
-    <string name="read_full_license">Lue lisenssi</string>
     <string name="contribution_title">Osallistu</string>
     <string name="title_activity_history">Historia</string>
     <string name="action_history">Historia</string>
@@ -141,7 +139,6 @@
     <string name="resume_on_audio_focus_gain_title">Jatka toistoa</string>
     <string name="what_device_headline">Info:</string>
     <string name="info_labels">Mikä:\\nPyyntö:\\nSisällön kieli:\\nSisällön maa:\\n:Sovelluksen kieli:\\nPalvelu:\\nGMT Aika:\\nPaketti:\\nVersio:\\nOS versio:</string>
-    <string name="copyright" formatted="true">© %1$s %2$s %3$s alla</string>
     <string name="main_page_content">Pääsivun sisältö</string>
     <string name="blank_page_summary">Tyhjä sivu</string>
     <string name="kiosk_page_summary">Kioski</string>
@@ -224,7 +221,6 @@
 \nNewPipen tietosuojakäytännössä selitetään tarkasti mitä tietoja lähetetään tai tallennetaan virheraportin yhteydessä.</string>
     <string name="auto_queue_title">Lisää ehdotettu suoratoistosisältö automaattisesti soittolistaan</string>
     <string name="no_streams_available_download">Suoratoistosisältöä ei saatavilla ladattavaksi</string>
-    <string name="app_license">NewPipe on vapaata ohjelmistoa. Voit käyttää, opiskella, jakaa ja parantaa sitä mielesi mukaan. Tarkemmin sanottuna voit jakaa sitä edelleen ja/tai muokata sitä Free Software Foundationin julkaiseman GNU General Public Licensen, version 3 tai uudemman, ehdoilla.</string>
     <string name="title_last_played">Viimeksi toistettu</string>
     <string name="title_most_played">Eniten toistetut</string>
     <string name="export_complete_toast">Vienti valmis</string>
@@ -576,7 +572,6 @@
     <string name="off">Pois päältä</string>
     <string name="on">Päällä</string>
     <string name="tablet_mode_title">Tablettitila</string>
-    <string name="open_website_license">Avaa verkkosivu</string>
     <string name="detail_heart_img_view_description">Tekijän tykkäämä</string>
     <string name="metadata_privacy_internal">Sisäinen</string>
     <string name="metadata_privacy_private">Yksityinen</string>

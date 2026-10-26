@@ -91,13 +91,10 @@
     <string name="recaptcha_request_toast">Запрошен ввод reCAPTCHA</string>
     <string name="title_activity_about">О NewPipe</string>
     <string name="app_license_title">Лицензия NewPipe</string>
-    <string name="title_licenses">Сторонние лицензии</string>
     <string name="tab_about">О приложении</string>
-    <string name="read_full_license">Прочитать текст лицензии</string>
     <string name="app_description">Свободный и легковесный потоковый плеер для Android.</string>
     <string name="view_on_github">Открыть на GitHub</string>
     <string name="contribution_encouragement">Приветствуется всё — идеи, перевод, редизайн, чистка кода или огромные изменения в коде. Чем больше сделано, тем лучше!</string>
-    <string name="copyright" formatted="true">© %1$s, %2$s. Лицензия: %3$s</string>
     <string name="contribution_title">Помощь проекту</string>
     <string name="subscribe_button_title">Подписаться</string>
     <string name="subscription_change_failed">Не удалось изменить подписку</string>
@@ -297,7 +294,6 @@
     <string name="delete_search_history_alert">Удалить всю историю поиска\?</string>
     <string name="search_history_deleted">История поиска удалена</string>
     <string name="one_item_deleted">1 элемент удалён.</string>
-    <string name="app_license">NewPipe — это свободное программное обеспечение (copyleft): вы можете использовать, изучать, распространять и улучшать его по своему усмотрению. В частности, вы можете распространять и/или изменять его в соответствии с условиями Стандартной общественной лицензии GNU (GPL), опубликованной Фондом свободного программного обеспечения, версии 3 или (по вашему выбору) любой более поздней версии.</string>
     <string name="preferred_open_action_settings_title">При открытии ссылки</string>
     <string name="import_settings">Хотите импортировать настройки?</string>
     <string name="privacy_policy_title">Конфиденциальность</string>
@@ -611,7 +607,6 @@
 \nОтписаться от этого канала\?</string>
     <string name="feed_load_error_account_info">Не удалось загрузить подписку \'%s\'.</string>
     <string name="feed_load_error">Ошибка загрузки подписок</string>
-    <string name="open_website_license">Открыть веб-сайт</string>
     <string name="service_provides_reason">Причина от сервиса %s:</string>
     <string name="account_terminated">Аккаунт заблокирован</string>
     <string name="downloads_storage_use_saf_summary_api_19">\"Storage Access Framework\" не поддерживается на Android KitKat и ниже</string>
@@ -713,7 +708,6 @@
     <string name="msg_running_new">Загружает PipePipe</string>
     <string name="title_activity_about_new">О NewPipe</string>
     <string name="app_description_new">Свободное Android-приложение для удобного и независимого просмотра YouTube, NicoNico и BiliBili </string>
-    <string name="app_license_title_new">Лицензия NewPipe (Upstream)</string>
     <string name="duplicate_in_playlist">Серым цветом отмечены плейлисты, в которых этот элемент уже есть.</string>
     <string name="playlist_add_stream_success_duplicate">Добавлено дубликатов: %d</string>
     <string name="youtube_visitor_data_title">Данные гостя YouTube</string>

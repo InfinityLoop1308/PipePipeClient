@@ -88,8 +88,6 @@
     <string name="delete_item_search_history">Cheres iscantzellare custu elementu dae sa cronologia de chirca\?</string>
     <string name="action_history">Cronologia</string>
     <string name="title_activity_history">Cronologia</string>
-    <string name="read_full_license">Leghe sa litzèntzia</string>
-    <string name="app_license">NewPipe est unu programma lìberu cun litzèntzia copyleft: lu podes impreare, cumpartzire e megiorare comente cheres. Pro èssere prus craros, lu podes torrare a intregare in suta de sos tèrmines de sa Litzèntzia Generale Pùblica GNU publicada dae sa Free Software Foundation, sa versione 3 de sa litzèntzia o, si preferis, una prus noa.</string>
     <string name="app_license_title">Litzèntzia de NewPipe</string>
     <string name="privacy_policy_encouragement">Su progetu NewPipe pigat sa riservadesa tua in manera sèria a beru. Pro custa resone s\'aplicatzione non collit perunu datu chene su cunsensu tuo.
 \n Sa polìtica de riservadesa de NewPipe ispiegat a sa minuda ite genia de datos benint imbiados cando imbias unu raportu de errore.</string>
@@ -103,8 +101,6 @@
     <string name="contribution_title">Contribui</string>
     <string name="app_description">Riprodutzione lìbera e lèbia de trasmissiones (streaming) in Android.</string>
     <string name="tab_about">Informatziones</string>
-    <string name="copyright">© %1$s de %2$s cun litzèntzia %3$s</string>
-    <string name="title_licenses">Litzèntzias de tertzas partes</string>
     <string name="title_activity_about">In subra de NewPipe</string>
     <string name="toast_no_player">Peruna aplicatzione installada pro pòdere riproduire custu documentu</string>
     <string name="charset_most_special_characters">Majoria de sos caràteres ispetziales</string>
@@ -585,7 +581,6 @@
     <string name="description_select_disable">Disabìlita s\'ischerta de su testu in sa descritzione</string>
     <string name="description_select_enable">Abìlita s\'ischerta de su testu in sa descritzione</string>
     <string name="description_select_note">Como podes ischertare su testu in intro de sa descritzione. Ammenta·ti chi sa pàgina diat pòdere trèmere e sos ligàmenes si diant pòdere no abèrrere cando ses in modalidade de ischerta.</string>
-    <string name="open_website_license">Aberi su situ web</string>
     <string name="service_provides_reason">%s frunit custa resone:</string>
     <string name="account_terminated">Contu serradu</string>
     <string name="feed_load_error_fast_unknown">Su recùperu lestru de sos flussos non frunit àteras informatziones in subra de custu.</string>

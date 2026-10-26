@@ -328,16 +328,11 @@
 <string name="toast_no_player">Bu dosyayı oynatmak için yüklü bir uygulama yok</string>
 <!-- About -->
 <string name="title_activity_about_new">PipePipe Hakkında</string>
-<string name="title_licenses">Üçüncü Taraf Lisansları</string>
-<string name="copyright">© %1$s %2$s tarafından %3$s altında</string>
 <string name="tab_about">Hakkında</string>
 <string name="app_description_new">YouTube, NicoNico ve BiliBili\'ye özgürce göz atmanızı sağlayan bir FLOSS Android uygulaması</string>
 <string name="contribution_title">Katkıda Bulun</string>
 <string name="contribution_encouragement">Çeviri, tasarım değişiklikleri, kod temizliği veya gerçek ağır kod değişiklikleri gibi fikirleriniz varsa—yardım her zaman memnuniyetle karşılanır. Ne kadar çok yapılırsa o kadar iyi olur!</string>
 <string name="donation_title">Bağış Yap</string>
-<string name="app_license_title_new">NewPipe\'ın Lisansı (Kaynak)</string>
-<string name="app_license">NewPipe copyleft özgür yazılımdır: İsteğinize göre kullanabilir, inceleyebilir, paylaşabilir ve geliştirebilirsiniz. Özellikle, Özgür Yazılım Vakfı tarafından yayınlanan GNU Genel Kamu Lisansı\'nın 3. sürümü veya (tercihinize göre) daha sonraki herhangi bir sürümü altında yeniden dağıtabilir ve/veya değiştirebilirsiniz.</string>
-<string name="read_full_license">Lisansı oku</string>
 <!-- History -->
 <string name="title_activity_history">Geçmiş</string>
 <string name="action_history">Geçmiş</string>
@@ -788,7 +783,6 @@
 <string name="metadata_subscribers">Aboneler</string>
 <string name="detail_pinned_comment_view_description">Sabitlenmiş yorum</string>
 <string name="detail_heart_img_view_description">Oluşturucu tarafından kalp bırakıldı</string>
-<string name="open_website_license">Web sitesini aç</string>
 <string name="tablet_mode_title">Tablet modu</string>
 <string name="on">Açık</string>
 <string name="off">Kapalı</string>

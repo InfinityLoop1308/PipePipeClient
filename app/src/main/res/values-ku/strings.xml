@@ -164,7 +164,6 @@
     <string name="charset_letters_and_digits">پیت و ژمارەکان</string>
     <string name="charset_most_special_characters">هێما تایبەتییەکان</string>
     <string name="title_activity_about">لەبارەی ئەپ</string>
-    <string name="copyright" formatted="true">© %1$s لەلایەن %2$s لەژێر %3$s</string>
     <string name="tab_about">سەبارەت</string>
     <string name="contribution_title">هاوبەشبوون</string>
     <string name="contribution_encouragement">هەرکاتێ بیرۆکەیەکت هەبوو وەک ; وەرگێڕان، گۆڕینی دیزاین ، سڕینەوەی کۆد ،یان هەر گۆڕانکارییەکیتر ئەوا یارمەتییەکەت لەسەرچاوانمانە. ئێمە هەمیشە دەمانەوێ ئەپەکە زیاتر بەرەوپێش ببەین!</string>
@@ -173,7 +172,6 @@
     <string name="donation_encouragement">ئەم ئەپە لەلایەن چەند خۆبەخشێکەوە دروستکراوە کەکاتی خۆیان پێ بەخشیووە تاکو باشترین خزمەتگوزاریت پێشکەش بکەن. هیچ نەبێت بە کڕینی کوپێک قاوە یارمەتی گەشەپێدەرەکانمان بدە بۆ ئەوەی کاتی زیاتر تەرخان بکەین بۆ بەرەوپێشبردنی NewPipe.</string>
     <string name="website_title">ماڵپەڕ</string>
     <string name="website_encouragement">سەردانی ماڵپەڕی ئەپەکەمان بکە بۆ زانیاری و هەواڵی نوێ.</string>
-    <string name="read_full_license">خوێندنەوەی مۆڵەتنامە</string>
     <string name="title_activity_history">مێژوو</string>
     <string name="action_history">مێژوو</string>
     <string name="delete_item_search_history">ئایا دەتەوێ ئەم بابەتە لە مێژووی گەڕان بسڕدرێتەوە؟</string>
@@ -249,8 +247,6 @@
     <string name="delete_search_history_alert">تەواوی گەڕانەکانت بسڕدرێنەوە؟</string>
     <string name="search_history_deleted">مێژووی گەڕانەکانت سڕانەوە.</string>
     <string name="one_item_deleted">1 بابەت سڕایەوە.</string>
-    <string name="app_license">ئەم ئەپە سەرچاوە کراوەیە : دەتوانی بەکاریبهێنی، بیخوێنیتەوە و هاوبەشی پێبکەیت و بەرەوپێشی ببەیت.
-\nبەتایبەتی دەتوانی دابەشیبکەیتەوە یاخوود بگۆڕیت بەپێی مەرجەکانی GNU مۆڵەتنامەی گشتی وەک ئەپێکی بڵاوی خۆڕایی!</string>
     <string name="privacy_policy_title">سیاسەتی تایبەتی ئەپ</string>
     <string name="privacy_policy_encouragement">پڕۆژەی ئەپەکە زانیارییە تایبەتییەکانت بەوردی دەپارێزێ. هەروەها ئەپەکە هیچ داتایەک بەبێ ئاگاداری تۆ بەکارنابات.
 \nسیاسەتی تایبەتی ئەپ بەوردەکاری ڕوونکردنەوەت دەداتێ لەسەر ئەو داتایانەی وەریاندەگرێ و بەکاریاندەبات.</string>
@@ -318,7 +314,6 @@
     <string name="invalid_source">هەمان فایل/بابەت بوونی نییە</string>
     <string name="info_labels">چی:\\nداواکراو:\\nناوەڕۆک:\\nلانگ:\\nخزمەتگوزاری:\\nGMT:\\nکات:\\nپاکێج:\\nوەشان:\\nوەشانی سیستەم:</string>
     <string name="settings_file_charset_title">هێما ڕێگەپێدراوەکان لە فایلێکی ناویدا</string>
-    <string name="title_licenses">مۆڵەتنامەی ئەپ</string>
     <string name="app_description">ئەپێکی خۆڕایی و کێشی کەم تایبەت بە یوتوب لەسەر ئەندرۆید.</string>
     <string name="app_license_title">مۆڵەتنامەی ئەپ</string>
     <string name="blank_page_summary">پەڕەی بەتاڵ</string>

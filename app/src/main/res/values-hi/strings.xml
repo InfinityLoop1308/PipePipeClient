@@ -25,11 +25,9 @@
     <string name="no_views">कोई दर्शक नहीं</string>
     <string name="no_videos">कोई वीडियो नहीं है</string>
     <string name="title_activity_about">न्यूपाइप के बारे में जाने</string>
-    <string name="title_licenses">तृतीय-पक्ष लाइसेंस</string>
     <string name="tab_about">इसके बारे में</string>
     <string name="view_on_github">GitHub में देखें</string>
     <string name="app_license_title">न्यूपाइप का लाइसेंस</string>
-    <string name="read_full_license">लाइसेंस पढ़ें</string>
     <string name="contribution_title">योगदान करें</string>
     <string name="title_activity_history">इतिहास</string>
     <string name="action_history">इतिहास</string>
@@ -144,7 +142,6 @@
     <string name="settings_file_charset_title">फाइल के नाम के लिए आवश्यक characters(जैसे - १२३, abc) की अनुमति है</string>
     <string name="charset_letters_and_digits">वर्ण और अंक</string>
     <string name="charset_most_special_characters">विशेष वर्ण</string>
-    <string name="copyright" formatted="true">%2$s के द्वारा © %1$s जो %3$s के अधीन आते है</string>
     <string name="app_description">एंड्राइड के लिए हल्का और मुफ्त स्ट्रीमिंग एप्लिकेशन|</string>
     <string name="contribution_encouragement">अगर आपके पास कोई सुझाव हो जैसे -अनुवाद , डिजाईन में बदलाव ,code को साफ़ रखना , या फिर code में जायदा बदलाव लाना हो तो - साहयता के लिए आपका स्वागत है . जितना ज्यादा होगा उतना बेहतर होगा !</string>
     <string name="delete_item_search_history">क्या आप इसको खोज इतिहास के मिटाना चाहते है ?</string>
@@ -293,7 +290,6 @@
     <string name="minimize_on_exit_none_description">कोई नही</string>
     <string name="minimize_on_exit_background_description">पृष्ठभूमि प्लेयर में बदले</string>
     <string name="minimize_on_exit_popup_description">पॉप अप प्लेयर में बदले</string>
-    <string name="app_license">न्यूपाइप एक काॅपीलेफ़्ट फ़्री साॅफ़्टवेर है: इसे आप अपनी इच्छा के अनुसार इस्तेमाल, जाँच, बाँट तथा और बेहतर बना सकते है। खास तौर पर आप इसे फ़्री साॅफ़्टवेर फ़ाउंडेशन के द्वारा जारी जीएनयू जनरल पब्लिक लाइसेंस के तीसरे या उसके बाद आने वाले कोई भी वर्णन के शर्तों के मुताबिक फिर से बाँट या बदल सकते हैं।</string>
     <string name="unsubscribe">अनसब्सक्राइब करे</string>
     <string name="tab_choose">टैब चुने</string>
     <string name="volume_gesture_control_title">गेस्चर वॉल्यूम नियंत्रण</string>

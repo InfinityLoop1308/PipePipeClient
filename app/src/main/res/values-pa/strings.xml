@@ -183,8 +183,6 @@
     <string name="charset_most_special_characters">ਬਹੁਤੇ ਖ਼ਾਸ ਅੱਖਰ</string>
     <string name="toast_no_player">ਇਸ ਫਾਈਲ ਨੂੰ ਚਲਾਉਣ ਲਈ ਕੋਈ ਐਪ ਇੰਸਟਾਲ ਨਹੀਂ ਹੈ</string>
     <string name="title_activity_about">NewPipe ਬਾਰੇ</string>
-    <string name="title_licenses">ਥਰਡ-ਪਾਰਟੀ ਲਾਇਸੈਂਸ</string>
-    <string name="copyright" formatted="true">© %1$s ਵਲੋਂ %2$s, %3$s ਅਧੀਨ</string>
     <string name="tab_about">ਐਪ ਬਾਰੇ</string>
     <string name="app_description">ਐਂਡਰਾਇਡ ਤੇ ਮੁਫਤ ਲਾਈਟਵੇਟ ਸਟ੍ਰੀਮਿੰਗ.</string>
     <string name="contribution_title">ਯੋਗਦਾਨ ਪਾਓ</string>
@@ -195,8 +193,6 @@
     <string name="website_title">ਵੈਬਸਾਈਟ</string>
     <string name="website_encouragement">ਵਧੇਰੇ ਜਾਣਕਾਰੀ ਅਤੇ ਖ਼ਬਰਾਂ ਲਈ NewPipe ਵੈਬਸਾਈਟ ਵੇਖੋ.</string>
     <string name="app_license_title">NewPipe\'s ਲਾਇਸੈਂਸ</string>
-    <string name="app_license">NewPipe ਇੱਕ ਕਾੱਪੀਲਿਫਟ ਮੁਫ਼ਤ ਸਾੱਫਟਵੇਅਰ ਹੈ: ਤੁਸੀਂ ਇਸ ਦੀ ਵਰਤੋਂ, ਅਧਿਐਨ ਅਤੇ ਇਸ ਨੂੰ ਸਾਂਝਾ ਕਰ ਸਕਦੇ ਹੋ ਅਤੇ ਇਸ ਵਿੱਚ ਆਪਣੀ ਮਰਜ਼ੀ ਅਨੁਸਾਰ ਸੁਧਾਰ ਸਕਦੇ ਹੋ. ਖਾਸ ਤੌਰ \'ਤੇ ਤੁਸੀਂ ਇਸ ਨੂੰ GNU ਜਨਰਲ ਪਬਲਿਕ ਲਾਇਸੈਂਸ ਦੀਆਂ ਸ਼ਰਤਾਂ ਦੇ ਅਧੀਨ ਵੰਡ ਸਕਦੇ ਹੋ / ਜਾਂ ਸੰਸ਼ੋਧਿਤ ਕਰ ਸਕਦੇ ਹੋ ਜਿਵੇਂ ਕਿ ਮੁਫਤ ਸਾੱਫਟਵੇਅਰ ਫਾਊਂਡੇਸ਼ਨ ਦੁਆਰਾ ਪ੍ਰਕਾਸ਼ਤ ਕੀਤਾ ਗਿਆ ਹੈ, ਜਾਂ ਤਾਂ ਲਾਇਸੈਂਸ ਦਾ ਵਰਜ਼ਨ 3, ਜਾਂ (ਤੁਹਾਡੇ ਵਿਕਲਪ\' ਤੇ) ਬਾਅਦ ਦਾ ਕੋਈ ਸੰਸਕਰਣ.</string>
-    <string name="read_full_license">ਲਾਇਸੈਂਸ ਪੜ੍ਹੋ</string>
     <string name="title_activity_history">ਹਿਸਟਰੀ</string>
     <string name="action_history">ਹਿਸਟਰੀ</string>
     <string name="delete_item_search_history">ਕੀ ਤੁਸੀਂ ਇਸ ਚੀਜ਼ ਨੂੰ ਖੋਜ ਸੂਚੀ ਵਿੱਚੋਂ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ\?</string>
@@ -409,7 +405,6 @@
 \nਯੂਟਿਊਬ ਦੀਆਂ ਉਮਰ-ਹੱਦ ਪਾਬੰਦੀਸ਼ੁਦਾ ਵੀਡੀਓਜ਼ ਬਾਰੇ ਨੀਤੀਆਂ ਦੇ ਕਾਰਨ ਨਿਊ-ਪਾਈਪ ਇਸਦੀਆਂ ਵੀਡੀਓ ਸਟ੍ਰੀਮ ਤੱਕ ਨਹੀਂ ਪਹੁੰਚ ਸਕਦੀ ਅਤੇ ਇਸੇ ਕਰਕੇ ਇਸਨੂੰ ਚਲਾ ਵੀ ਨਹੀਂ ਸਕਦੀ।</string>
     <string name="notification_scale_to_square_image_summary">ਇਤਲਾਹਾਂ ਵਿੱਚ ਵੀਡਿਓ ਥਮਨੇਲ ਦੇ ਪੈਮਾਨੇ ਨੂੰ 16:9 ਤੋਂ ਘਟਾ ਕੇ 1:1 ਕਰੋ (ਤਸਵੀਰ ਵਿਗੜੀ ਹੋਈ ਦਿਸ ਸਕਦੀ ਹੈ)</string>
     <string name="open_with">ਇਸ ਵਿੱਚ ਖੋਲ੍ਹੋ</string>
-    <string name="open_website_license">ਵੈਬਸਾਈਟ ਖੋਲ੍ਹੋ</string>
     <string name="metadata_privacy_internal">ਅੰਦਰੂਨੀ</string>
     <string name="metadata_privacy_private">ਨਿੱਜੀ (ਪ੍ਰਾਈਵੇਟ)</string>
     <string name="metadata_privacy_unlisted">ਅਨ-ਸੂਚੀਬੱਧ</string>

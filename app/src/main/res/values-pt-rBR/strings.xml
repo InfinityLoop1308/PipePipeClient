@@ -320,8 +320,6 @@
     <string name="toast_no_player">Sem app instalado para reproduzir tal arquivo</string>
     <!-- About -->
     <string name="title_activity_about_new">Sobre PipePipe</string>
-    <string name="title_licenses">Licenças de Terceiros</string>
-    <string name="copyright">© %1$s por %2$s sob %3$s</string>
     <string name="tab_about">Sobre</string>
     <string name="app_description_new">Front-end alternativo de streaming para Android do BiliBili, NicoNico, YouTube e muito mais</string>
     <string name="contribution_title">Contribua</string>
@@ -331,9 +329,6 @@
     <string name="website_encouragement">Visite o Site NewPipe para mais informações e notícias.</string>
     <string name="privacy_policy_title_new">Política de Privacidade do NewPipe (Upstream)</string>
     <string name="privacy_policy_encouragement">O projeto NewPipe leva a sua privacidade à sério. Logo, o aplicativo não coleta nenhum dado sem seu consentimento.\nA política de privacidade explica em detalhes quais dados são mandados e armazenados quando você manda um relatório de erro.</string>
-    <string name="app_license_title_new">Licença do NewPipe (Upstream)</string>
-    <string name="app_license">NewPipe é um software livre com copyleft: Você pode usá-lo, estudá-lo, compartilhá-lo e melhorá-lo como quiser. Especificamente, você pode redistribuir ou/e modificá-lo dentro dos termos da GNU General Public License como publicada pela Free Software Foundation, tanto a versão 3 da Licença, ou (a seu critério) qualquer versão superior.</string>
-    <string name="read_full_license">Ler licença</string>
     <!-- History -->
     <string name="title_activity_history">Histórico</string>
     <string name="action_history">Histórico</string>
@@ -677,7 +672,6 @@
     <string name="metadata_subscribers">Inscritos</string>
     <string name="detail_pinned_comment_view_description">Comentário fixado</string>
     <string name="detail_heart_img_view_description">Comentário amado pelo criador</string>
-    <string name="open_website_license">Abrir página web</string>
     <string name="tablet_mode_title">Modo tablet</string>
     <string name="on">Habilitado</string>
     <string name="off">Desabilitado</string>

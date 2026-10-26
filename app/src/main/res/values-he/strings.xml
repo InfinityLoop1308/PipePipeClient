@@ -141,8 +141,6 @@
     <string name="charset_letters_and_digits">אותיות וספרות</string>
     <string name="charset_most_special_characters">רוב התווים המיוחדים</string>
     <string name="title_activity_about">על אודות NewPipe</string>
-    <string name="title_licenses">רישיונות צד שלישי</string>
-    <string name="copyright" formatted="true">© %1$s ע״י %2$s תחת %3$s</string>
     <string name="tab_about">על אודות</string>
     <string name="app_description">נגן קל וחופשי להזרמת מדיה עבור Android.</string>
     <string name="contribution_title">התנדבות</string>
@@ -153,7 +151,6 @@
     <string name="website_title">אתר הבית</string>
     <string name="website_encouragement">מומלץ לבקר באתר של NewPipe לפרטים נוספים ולחדשות.</string>
     <string name="app_license_title">הרישיון של NewPipe</string>
-    <string name="read_full_license">הצגת הרישיון</string>
     <string name="title_activity_history">היסטוריה</string>
     <string name="action_history">היסטוריה</string>
     <string name="delete_item_search_history">למחוק את הפריט הזה מהיסטוריית החיפושים\?</string>
@@ -271,7 +268,6 @@
     <string name="privacy_policy_title">מדיניות הפרטיות של NewPipe</string>
     <string name="privacy_policy_encouragement">מיזם NewPipe שומר על הפרטיות שלך בצורה מאוד קפדנית. לפיכך, היישומון אינו אוסף נתונים ללא הסכמתך.
 \nמדיניות הפרטיות של NewPipe מסבירה בפרטי פרטים אילו נתונים נשלחים ומאוחסנים בעת שליחת דיווח על תקלה.</string>
-    <string name="app_license">NewPipe הוא יישומון חופשי בהתאם לרישיון קופילפט: מותר לך להשתמש, לחקור, לשתף ולשפר בכל דרך שנראית לך. במיוחד מותר לך להפיץ מחדש ו/או לשנות תחת תנאי הרישיון הציבורי הכללי של GNU כפי שמופץ על ידי קרן התכנה החופשית, בין אם גרסה 3 של הרישיון או (לשיקולך) כל גרסה עדכנית יותר שלו.</string>
     <string name="title_last_played">התנגנו אחרונים</string>
     <string name="title_most_played">הכי נצפים</string>
     <string name="could_not_import_all_files">אזהרה: ייבוא חלק מהקבצים נכשל.</string>
@@ -608,7 +604,6 @@
     <string name="feed_load_error_terminated">חשבון היוצר הושמד.
 \nל־NewPipe לא תהיה אפשרות להוריד את ההזנה הזאת בעתיד.
 \nלהסיר את המינוי מהערוץ הזה\?</string>
-    <string name="open_website_license">פתיחת האתר</string>
     <string name="service_provides_reason">%s מספק את הסיבה הבאה:</string>
     <string name="account_terminated">החשבון הושמד</string>
     <string name="feed_load_error_fast_unknown">מצב ההזנה המהירה לא מספק מידע נוסף על כך.</string>

@@ -173,8 +173,6 @@
     <string name="charset_letters_and_digits">حروف اور ہندسے</string>
     <string name="charset_most_special_characters">اہم مخصوص حروف</string>
     <string name="title_activity_about">نیو پائپ کے بارے میں</string>
-    <string name="title_licenses">تیسری پارٹی کی لائسنس</string>
-    <string name="copyright" formatted="true">© %1$s بذریعہ %2$s %3$s کے تحت</string>
     <string name="tab_about">کے بارے میں</string>
     <string name="app_description">اینڈروئیڈ پر لِبرے کی ہلکی اسٹریمنگ۔</string>
     <string name="contribution_title">تعاون کریں</string>
@@ -185,7 +183,6 @@
     <string name="website_title">ویب سائٹ</string>
     <string name="website_encouragement">مزید معلومات اور خبروں کے لئے نیو پائپ ویب سائٹ ملاحظہ کریں۔</string>
     <string name="app_license_title">نیو پائپ کا لائسنس</string>
-    <string name="read_full_license">لائسنس پڑھیں</string>
     <string name="title_activity_history">سرگزشت</string>
     <string name="action_history">سرگزشت</string>
     <string name="delete_item_search_history">کیا آپ اس آئٹم کو تلاش کی سرگزشت سے حذف کرنا چاہتے ہیں؟</string>
@@ -282,7 +279,6 @@
     <string name="delete_search_history_alert">تلاش کی مکمل سرگزشت حذف کریں؟</string>
     <string name="search_history_deleted">تلاش کی سرگزشت حذف ہوئی۔</string>
     <string name="one_item_deleted">1 شے حذف کر دی گئی۔</string>
-    <string name="app_license">نیو پائپ کاپلیفٹ فری سافٹ ویئر ہے: آپ استعمال کرسکتے ہیں، مطالعہ شیئر کرسکتے ہیں اور اپنی مرضی سے اسے بہتر کرسکتے ہیں۔ خاص طور پر آپ اسے مفت سافٹ ویئر فاؤنڈیشن کے ذریعہ شائع کردہ GNU جنرل پبلک لائسنس کی شرائط کے تحت دوبارہ تقسیم اور / یا ترمیم کرسکتے ہیں، خواہ لائسنس کا ورژن 3، یا (آپ کے اختیار پر) کسی بھی بعد کا ورژن۔</string>
     <string name="import_settings">کیا آپ ترتیبات بھی درآمد کرنا چاہتے ہیں؟</string>
     <string name="privacy_policy_title">نیو پائپ کی رازداری کی پالیسی</string>
     <string name="privacy_policy_encouragement">نیو پائپ منصوبہ آپ کی رازداری کو بہت سنجیدگی سے لیتا ہے. لہذا، ایپلی کیشن آپ کی رضامندی کے بغیر کسی بھی ڈیٹا کو جمع نہیں کرتا./nنیو پائپ کی رازداری پالیسی تفصیل سے وضاحت کرتی ہے کہ آپ کے کریش رپورٹ بھیجنے پر کیا ڈیٹا بھیجا جاتا ہے اور ذخیرہ کیا جاتا ہے ۔</string>

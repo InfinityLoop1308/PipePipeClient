@@ -572,7 +572,6 @@ Voulez-vous continuer?</string>
 <string name="metadata_subscribers">Abonnés</string>
 <string name="detail_pinned_comment_view_description">Commentaire épinglé</string>
 <string name="detail_heart_img_view_description">Enregistré par le créateur</string>
-<string name="open_website_license">Ouvrir le site</string>
 <string name="tablet_mode_title">Mode tablette</string>
 <string name="on">Activé</string>
 <string name="off">Désactivé</string>
@@ -847,16 +846,11 @@ Voulez-vous continuer?</string>
 <string name="charset_letters_and_digits">Lettres et chiffres</string>
 <string name="charset_most_special_characters">La plupart des caractères spéciaux</string>
 <string name="toast_no_player">Aucune application installée pour lire ce fichier</string>
-<string name="title_licenses">Licences tierces</string>
-<string name="copyright">© %1$s par %2$s sous %3$s</string>
 <string name="tab_about">À propos</string>
 <string name="app_description_new">Une application Android FLOSS pour vous permettre de naviguer librement sur YouTube, NicoNico et BiliBili</string>
 <string name="contribution_title">Contribuer</string>
 <string name="contribution_encouragement">Que vous ayez des idées de traduction, de changements de design, de nettoyage de code ou de modifications de code importantes, l\'aide est toujours la bienvenue. Plus il y en a, mieux c\'est !</string>
 <string name="donation_title">Faire un don</string>
-<string name="app_license_title_new">Licence de NewPipe (amont)</string>
-<string name="app_license">NewPipe est un logiciel libre copyleft : Vous pouvez l\'utiliser, l\'étudier, le partager et l\'améliorer à votre guise. Plus précisément, vous pouvez le redistribuer et/ou le modifier selon les termes de la Licence Publique Générale GNU telle que publiée par la Free Software Foundation, soit la version 3 de la Licence, soit (à votre discrétion) toute version ultérieure.</string>
-<string name="read_full_license">Lire la licence</string>
 <string name="title_activity_history">Historique</string>
 <string name="action_history">Historique</string>
 <string name="delete_item_search_history">Voulez-vous supprimer cet élément de l\'historique de recherche ?</string>

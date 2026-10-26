@@ -225,7 +225,6 @@
     <string name="delete_item_search_history">Doni ta fshini këtë objekt nga historiku i kërkimeve\?</string>
     <string name="title_activity_history">Historiku</string>
     <string name="action_history">Historiku</string>
-    <string name="read_full_license">Lexo licensën</string>
     <string name="app_license_title">Licensa e NewPipe</string>
     <string name="privacy_policy_encouragement">Projekti NewPipe e merr privatësinë tuaj seriozisht. Kështu, aplikacioni nuk mbledh të dhëna pa dijeninë tuaj.
 \nPolitika e privatësisë së NewPipe shpjegon në detaje se çfarë të dhënat dërgohen dhe ruhen kur ju dërgoni një raport dështimi/crash.</string>
@@ -239,8 +238,6 @@
     <string name="contribution_title">Kontribuo</string>
     <string name="app_description">Luajtës i lehtë dhe libre në Android.</string>
     <string name="tab_about">Rreth</string>
-    <string name="copyright" formatted="true">© %1$s nga %2$s nën %3$s</string>
-    <string name="title_licenses">Licensat e palëve të treta</string>
     <string name="title_activity_about">Rreth NewPipe</string>
     <string name="toast_no_player">Nuk ka aplikacion të instaluar që mund ta luajë këtë skedar</string>
     <string name="charset_most_special_characters">Shumica e karaktereve speciale</string>
@@ -366,7 +363,6 @@
 \n
 \nSi përfundim, zgjedhja mbetet në dorën tuaj dhe se çfarë ju preferoni: shpejtësi apo informacion të saktë.</string>
     <string name="enable_disposed_exceptions_summary">Detyroni raportimin e përjashtimeve Rx të padërgueshme jashtë fragmentit apo ciklit jetësor të aktivitetit pas hedhjes</string>
-    <string name="app_license">NewPipe është program i lirë copyleft: Ju mund ta përdorni, ta studioni, ta ndani me të tjerët dhe ta përmirësoni sipas dëshirës. Specifikisht ju mund ta rishpërndani dhe/ose ta modifikoni sipas kushteve të Licensës GNU General Public siç është publikuar nga Fondacioni për Softuerin e Lirë (FSF), sipas versionit 3 të Licensës, ose (sipas mundësive tuaja) në një version më të ri.</string>
     <string name="content_not_supported">Kjo përmbajtje nuk është ende e mbështetur nga NewPipe.
 \n
 \nShpresojmë se do të mbështetet në një version të ardhshëm.</string>
@@ -553,7 +549,6 @@
     <string name="off">Fikur</string>
     <string name="on">Ndezur</string>
     <string name="tablet_mode_title">Modaliteti tablet</string>
-    <string name="open_website_license">Hap faqen e internetit</string>
     <string name="metadata_privacy_internal">E brendshme</string>
     <string name="metadata_privacy_private">Private</string>
     <string name="metadata_privacy_unlisted">E palistuar</string>

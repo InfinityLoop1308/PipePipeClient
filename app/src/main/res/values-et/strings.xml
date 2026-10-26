@@ -182,7 +182,6 @@
     <string name="charset_most_special_characters">Erimärgid</string>
     <string name="toast_no_player">Selle faili esitamiseks puudub rakendus</string>
     <string name="title_activity_about">NewPipe rakendusest</string>
-    <string name="title_licenses">Kolmanda osapoole litsentsid</string>
     <string name="tab_about">Programmist</string>
     <string name="contribution_title">Panusta</string>
     <string name="view_on_github">Vaata GitHubis</string>
@@ -191,7 +190,6 @@
     <string name="website_encouragement">Enama info saamiseks külasta NewPipe veebilehte.</string>
     <string name="privacy_policy_title">NewPipe privaatsuspoliitika</string>
     <string name="app_license_title">NewPipe litsents</string>
-    <string name="read_full_license">Loe litsentsi</string>
     <string name="title_activity_history">Ajalugu</string>
     <string name="action_history">Ajalugu</string>
     <string name="delete_item_search_history">Kas kustutada see kirje otsinguajaloost?</string>
@@ -280,13 +278,11 @@
     <string name="switch_to_main">Lülitu peamisele</string>
     <string name="title_activity_recaptcha">reCAPTCHA nõue</string>
     <string name="recaptcha_request_toast">reCAPTCHA nõude taotlus</string>
-    <string name="copyright" formatted="true">© %1$s %2$s %3$s alla</string>
     <string name="app_description">Vaba kergekaaluline Androidi voogesitus.</string>
     <string name="contribution_encouragement">Kui sul on ideid kujunduse muutmisest, koodi puhastamisest või suurtest koodi muudatustest - abi on alati teretulnud. Mida rohkem tehtud, seda paremaks läheb!</string>
     <string name="donation_encouragement">NewPipe arendajad on vabatahtlikud, kes kulutavad oma vaba aega, toomaks sulle parimat kasutamise kogemust. On aeg anda tagasi aidates arendajaid ja muuta NewPipe veel paremaks, nautides ise tassi kohvi.</string>
     <string name="privacy_policy_encouragement">NewPipe võtab privaatsust väga tõsiselt. Seetõttu ei kogu rakendus ilma nõusolekuta mingeid andmeid.
 \nNewPipe privaatsuspoliitika selgitab üksikasjalikult, milliseid andmeid saadetakse ja kogutakse veateate saatmisel.</string>
-    <string name="app_license">NewPipe vaba avatud koodiga tarkvara. Seada võid kasutada, uurida, jagada ja parandada nii, nagu õigemaks pead. Täpsemalt - seda võid levitada ja/või muuta vastavalt Vaba Tarkvara Sihtasutuse avaldatud GNU Üldise Avaliku Litsentsi v.3 (või sinu valikul hilisema versiooni) tingimustele.</string>
     <string name="enable_disposed_exceptions_title">Teavita elutsüklist väljas vigadest</string>
     <string name="import_soundcloud_instructions">Impordi SoundCloudi profiil trükkides URL või oma ID:
 \n
@@ -551,7 +547,6 @@
     <string name="off">Väljalülitatatud</string>
     <string name="on">Kasutusel</string>
     <string name="tablet_mode_title">Vaade tahvelarvuti jaoks</string>
-    <string name="open_website_license">Vaata veebis</string>
     <string name="metadata_privacy_internal">Sisemine</string>
     <string name="metadata_privacy_private">Privaatne</string>
     <string name="metadata_privacy_public">Avalik</string>

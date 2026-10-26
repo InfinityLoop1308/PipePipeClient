@@ -138,8 +138,6 @@
     <string name="charset_letters_and_digits">Raidės ir skaičiai</string>
     <string name="charset_most_special_characters">Ypatingieji simboliai</string>
     <string name="title_activity_about">Apie NewPipe</string>
-    <string name="title_licenses">Trečiųjų šalių licencijos</string>
-    <string name="copyright" formatted="true">© %1$s %2$s pagal %3$s</string>
     <string name="tab_about">Apie</string>
     <string name="app_description">Nemokama, atviro kodo transliacijų peržiūros programėlė Android sistemai.</string>
     <string name="contribution_title">Prisidėti</string>
@@ -150,7 +148,6 @@
     <string name="website_title">Interneto puslapis</string>
     <string name="website_encouragement">Kad sužinotumėte daugiau apie NewPipe apsilankykite mūsų interneto puslapyje.</string>
     <string name="app_license_title">NewPipe licencija</string>
-    <string name="read_full_license">Skaityti licenciją</string>
     <string name="title_activity_history">Istorija</string>
     <string name="action_history">Istorija</string>
     <string name="delete_item_search_history">Ar norite ištrinti šį elementą iš paieškos istorijos?</string>
@@ -361,7 +358,6 @@
 \n5. Pasirodžius mygtukui „Download“ (Atsisiųsti), spustelėkite jį ir
 \n6. Spustelėkite toliau Importuoti failą ir pasirinkite atsisiųstą ZIP failą
 \n7. [Jei nepavyksta importuoti ZIP failo] Ištraukite .csv failą (paprastai po „YouTube and YouTube Music/subscriptions/subscriptions.json“), spustelėkite toliau esantį Importuoti failą ir pasirinkite išgautą CSV failą</string>
-    <string name="app_license">NewPipe yra „copyleft libre“ programinė įranga: galite ją naudoti, studijuoti ir patobulinti. Konkrečiau, galite ją platinti ir (arba) modifikuoti pagal „Free Software Foundation“ paskelbtą GNU bendrosios viešosios licencijos sąlygas, pasirinktinai pagal 3 licencijos versiją arba (jūsų pasirinkimu) bet kurią vėlesnę versiją.</string>
     <string name="import_soundcloud_instructions">Importuokite \"SoundCloud\" profilį įvesdami URL arba savo ID:
 \n
 \n1. Interneto naršyklėje įjunkite darbalaukio režimą (svetainė neprieinama mobiliesiems įrenginiams).
@@ -583,7 +579,6 @@
     <string name="on">Įjungta</string>
     <string name="off">Išjungta</string>
     <string name="tablet_mode_title">Planšetės režimas</string>
-    <string name="open_website_license">Atidaryti puslapį</string>
     <string name="metadata_privacy_internal">Vidinis</string>
     <string name="metadata_privacy_public">Viešas</string>
     <string name="metadata_privacy_private">Privatus</string>

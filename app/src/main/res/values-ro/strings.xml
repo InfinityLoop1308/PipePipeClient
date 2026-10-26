@@ -133,14 +133,11 @@
     <string name="charset_letters_and_digits">Litere și cifre</string>
     <string name="charset_most_special_characters">Caracterele cele mai speciale</string>
     <string name="title_activity_about">Despre NewPipe</string>
-    <string name="title_licenses">Licențe terță-parte</string>
-    <string name="copyright" formatted="true">© %1$s de %2$s sub %3$s</string>
     <string name="tab_about">Despre</string>
     <string name="app_description">Un player de streaming „uşor” liber, pentru Android.</string>
     <string name="view_on_github">Vedeți pe GitHub</string>
     <string name="app_license_title">Licența NewPipe</string>
     <string name="contribution_encouragement">Fie că aveți idei de: traducere, modificări de design, curățare a codului sau modificări de cod cu adevărat importante - ajutorul este întotdeauna binevenit. Cu cât se face mai mult, cu atât mai bine devine!</string>
-    <string name="read_full_license">Citiți licența</string>
     <string name="contribution_title">Contribuiți</string>
     <string name="title_activity_history">Istoric</string>
     <string name="action_history">Istoric</string>
@@ -282,7 +279,6 @@
     <string name="resize_zoom">Mărire</string>
     <string name="caption_setting_title">Subtitrări</string>
     <string name="caption_setting_description">Modificați scara textului de legendă a playerului și stilurile de fundal. Necesită repornirea aplicației pentru a intra în vigoare</string>
-    <string name="app_license">NewPipe este un software liber cu copyleft: îl puteți folosi, studia, partaja și îmbunătăți în voie. Mai exact, îl puteți redistribui și/sau modifica în conformitate cu termenii Licenței Publice Generale GNU, așa cum a fost publicată de Free Software Foundation, fie versiunea 3 a Licenței, fie (la alegerea dumneavoastră) orice versiune ulterioară.</string>
     <string name="privacy_policy_title">Politica de confidențialitate a NewPipe</string>
     <string name="privacy_policy_encouragement">Proiectul NewPipe ia foarte în serios confidențialitatea dumneavoastră. Prin urmare, aplicația nu colectează niciun fel de date fără consimțământul dumneavoastră.
 \nPolitica de confidențialitate a NewPipe explică în detaliu ce date sunt trimise și stocate atunci când trimiteți un raport de eroare.</string>
@@ -583,7 +579,6 @@
     <string name="off">Oprit</string>
     <string name="on">Pornit</string>
     <string name="tablet_mode_title">Mod tabletă</string>
-    <string name="open_website_license">Deschideți site-ul web</string>
     <string name="detail_heart_img_view_description">Inimă de la creator</string>
     <string name="metadata_privacy_internal">Intern</string>
     <string name="metadata_privacy_private">Privat</string>

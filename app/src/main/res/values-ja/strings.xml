@@ -89,11 +89,8 @@
 <string name="show_search_suggestions_title">検索候補の表示</string>
 <string name="show_search_suggestions_summary">検索時に表示する候補を選択します</string>
 <string name="best_resolution">最高の解像度</string>
-<string name="title_licenses">サードパーティー ライセンス</string>
-<string formatted="true" name="copyright">© %1$s 作者 %2$s ライセンス %3$s</string>
 <string name="tab_about">このアプリについて</string>
 <string name="contribution_encouragement">翻訳、デザインの変更、コードの整理、動作の重いコードの変更など、アイデアをお持ちではありませんか？ヘルプはいつでも歓迎します。より良いものを一緒に作り上げましょう！</string>
-<string name="read_full_license">ライセンスを読む</string>
 <string name="contribution_title">貢献する</string>
 <string name="subscribe_button_title">チャンネル登録</string>
 <string name="subscribed_button_title">登録済み</string>
@@ -238,7 +235,6 @@
 <item quantity="other">再生回数 %s回</item>
 </plurals>
 <string name="one_item_deleted">1 つのアイテムが削除されました。</string>
-<string name="app_license">NewPipe はコピーレフトなソフトウェアです。あなたは自由にそれを使用し、研究し、共有し、そして改善することができます。あなたは、GNU フリーソフトウェア財団が公開する GNU General Public ライセンス バージョン3以降の下に、自由に再配布・修正を行うことができます。</string>
 <string name="title_last_played">最終再生日時</string>
 <string name="title_most_played">最も再生された動画</string>
 <string name="resize_zoom">拡大</string>
@@ -523,7 +519,6 @@
 <string name="metadata_support">サポート</string>
 <string name="metadata_host">ホスト</string>
 <string name="metadata_thumbnail_url">サムネイルの URL</string>
-<string name="open_website_license">ウェブサイトを開く</string>
 <string name="downloads_storage_ask_summary_no_saf_notice">ダウンロードのたびに保存する場所を尋ねます</string>
 <string name="no_dir_yet">ダウンロードフォルダがまだ設定されていません。今すぐデフォルトのフォルダを選択してください</string>
 <string name="feed_load_error_fast_unknown">高速モードでこの情報の詳細は提供されません。</string>
@@ -622,7 +617,6 @@
 <string name="error_report_open_issue_button_text_new">GitHubで報告する</string>
 <string name="msg_running_new">PipePipe ダウンロード中</string>
 <string name="title_activity_about_new">PipePipeについて</string>
-<string name="app_license_title_new">NewPipeのライセンス（上流）</string>
 <string name="duplicate_in_playlist">グレーアウトされたプレイリストにはすでにこのアイテムが含まれています。</string>
 <string name="playlist_add_stream_success_duplicate">重複が追加されました %d 回</string>
 <string name="youtube_visitor_data_title">YouTubeビジターデータ</string>

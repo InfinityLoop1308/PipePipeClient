@@ -299,16 +299,11 @@
 <string name="charset_most_special_characters">Die meisten Sonderzeichen</string>
 <string name="toast_no_player">Keine App installiert, um diese Datei abzuspielen</string>
 <string name="title_activity_about_new">Über PipePipe</string>
-<string name="title_licenses">Lizenzen von Drittanbietern</string>
-<string name="copyright">© %1$s von %2$s unter %3$s</string>
 <string name="tab_about">Über</string>
 <string name="app_description_new">Eine FLOSS-Android-App, mit der Sie YouTube, NicoNico und BiliBili frei durchsuchen können</string>
 <string name="contribution_title">Beitragen</string>
 <string name="contribution_encouragement">Ob Sie Ideen für Übersetzungen, Designänderungen, Codebereinigung oder wirklich umfassende Codeänderungen haben - Hilfe ist immer willkommen. Je mehr getan wird, desto besser wird es!</string>
 <string name="donation_title">Spenden</string>
-<string name="app_license_title_new">NewPipe Lizenz (Upstream)</string>
-<string name="app_license">NewPipe ist copyleft freie Software: Sie können sie nach Belieben verwenden, studieren, teilen und verbessern. Insbesondere können Sie es unter den Bedingungen der GNU General Public License, wie von der Free Software Foundation veröffentlicht, entweder Version 3 der Lizenz oder (nach Ihrer Wahl) jeder späteren Version, weitergeben und/oder modifizieren.</string>
-<string name="read_full_license">Lizenz lesen</string>
 <string name="title_activity_history">Verlauf</string>
 <string name="action_history">Verlauf</string>
 <string name="delete_item_search_history">Möchten Sie diesen Eintrag aus dem Suchverlauf löschen?</string>
@@ -630,7 +625,6 @@
 <string name="metadata_subscribers">Abonnenten</string>
 <string name="detail_pinned_comment_view_description">Angehefteter Kommentar</string>
 <string name="detail_heart_img_view_description">Vom Ersteller mit einem Herzen versehen</string>
-<string name="open_website_license">Webseite öffnen</string>
 <string name="tablet_mode_title">Tablet-Modus</string>
 <string name="on">Ein</string>
 <string name="off">Aus</string>

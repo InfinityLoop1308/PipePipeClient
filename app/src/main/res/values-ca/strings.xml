@@ -55,12 +55,10 @@
     <string name="msg_name">Nom de fitxer</string>
     <string name="msg_error">Error</string>
     <string name="settings_category_downloads_title">Baixades</string>
-    <string name="title_licenses">Llicències de tercers</string>
     <string name="tab_about">Quant a</string>
     <string name="contribution_title">Col·labora-hi</string>
     <string name="website_title">Lloc web</string>
     <string name="app_license_title">Llicència del NewPipe</string>
-    <string name="read_full_license">Llegiu la llicència</string>
     <string name="title_activity_history">Historial</string>
     <string name="action_history">Historial</string>
     <string name="delete_item_search_history">Voleu eliminar aquest element de l\'historial de cerca\?</string>
@@ -176,7 +174,6 @@
     <string name="settings_file_charset_title">Caràcters permesos als noms de fitxer</string>
     <string name="charset_letters_and_digits">Lletres i dígits</string>
     <string name="title_activity_about">Quant al NewPipe</string>
-    <string name="copyright" formatted="true">© %1$s per %2$s sota %3$s</string>
     <string name="app_description">Reprodueix transmissions de manera lliure i lleugera a l\'Android.</string>
     <string name="view_on_github">Visualitza a GitHub</string>
     <string name="donation_title">Feu una donació</string>
@@ -287,7 +284,6 @@
     <string name="delete_search_history_alert">Voleu suprimir tot l\'historial de cerca\?</string>
     <string name="search_history_deleted">S\'ha esborrat l\'historial de cerca</string>
     <string name="one_item_deleted">S\'ha esborrat 1 element.</string>
-    <string name="app_license">El NewPipe és programari lliure sota llicència copyleft: el podeu fer servir, estudiar, compartir i millorar com vulgueu. Concretament, el podeu redistribuir i/o modificar d\'acord amb els termes de la llicència GNU GPL publicada per la Free Software Foundation, versió 3 o qualsevol altra versió posterior.</string>
     <string name="import_settings">Voleu importar també els paràmetres\?</string>
     <string name="privacy_policy_title">Política de privadesa del NewPipe</string>
     <string name="privacy_policy_encouragement">El projecte NewPipe es pren molt seriosament la vostra privadesa. Per aquesta raó, l\'aplicació no emmagatzema cap dada sense el vostre consentiment.
@@ -565,7 +561,6 @@
     <string name="off">Desactiva</string>
     <string name="on">Activa</string>
     <string name="tablet_mode_title">Mode tablet</string>
-    <string name="open_website_license">Obra pàgina web</string>
     <string name="detail_heart_img_view_description">Destacat pel creador</string>
     <string name="metadata_privacy_internal">Intern</string>
     <string name="metadata_privacy_private">Privat</string>

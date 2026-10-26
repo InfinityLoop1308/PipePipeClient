@@ -300,15 +300,10 @@
 <string name="toast_no_player">未安装播放此文件的应用</string>
 <!-- About -->
 <string name="title_activity_about_new">关于 PipePipe</string>
-<string name="title_licenses">第三方许可证</string>
-<string name="copyright">© %1$s 作者 %2$s 使用 %3$s</string>
 <string name="tab_about">关于</string>
 <string name="app_description_new">一个自由浏览 YouTube、NicoNico 和 BiliBili 的 FLOSS Android 应用程序</string>
 <string name="contribution_title">贡献</string>
 <string name="contribution_encouragement">您是否有想法；翻译、更改设计、代码清理或繁重的代码更改——我们随时欢迎您提供帮助。做得越多越好！</string>
-<string name="app_license_title_new">NewPipe 的许可证（上游）</string>
-<string name="app_license">NewPipe 是版权自由软件：您可以随时使用、研究共享和改进。您可以根据自由软件基金会发布的 GNU 通用公共许可证 GPLv3 或（由您选择）任何更高版本的许可证重新分发或修改该软件。</string>
-<string name="read_full_license">阅读许可证</string>
 <!-- History -->
 <string name="title_activity_history">历史</string>
 <string name="action_history">历史</string>
@@ -655,7 +650,6 @@
 <string name="metadata_subscribers">订阅者</string>
 <string name="detail_pinned_comment_view_description">置顶评论</string>
 <string name="detail_heart_img_view_description">受创作者喜爱</string>
-<string name="open_website_license">打开网站</string>
 <string name="tablet_mode_title">平板模式</string>
 <string name="on">开</string>
 <string name="off">关</string>

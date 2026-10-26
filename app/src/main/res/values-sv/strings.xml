@@ -134,14 +134,11 @@
     <string name="charset_letters_and_digits">Bokstäver och siffror</string>
     <string name="charset_most_special_characters">De flesta specialtecken</string>
     <string name="title_activity_about">Om NewPipe</string>
-    <string name="title_licenses">Tredjepartslicenser</string>
-    <string name="copyright" formatted="true">© %1$s av %2$s under %3$s</string>
     <string name="tab_about">Om</string>
     <string name="app_description">Öppen och enkel Android-app för mediastreaming.</string>
     <string name="view_on_github">Visa på GitHub</string>
     <string name="app_license_title">NewPipes licens</string>
     <string name="contribution_encouragement">Oavsett om du vill bidra med översättningar, designändringar, kodstädning eller större kodändringar är din hjälp alltid välkommen. Ju mer vi gör, desto bättre blir appen!</string>
-    <string name="read_full_license">Läs hela licensen</string>
     <string name="contribution_title">Bidra</string>
     <string name="title_activity_history">Historik</string>
     <string name="action_history">Historik</string>
@@ -223,7 +220,6 @@
     <string name="privacy_policy_title">NewPipes sekretesspolicy</string>
     <string name="privacy_policy_encouragement">NewPipe-projektet tar din integritet på största allvar. Appen samlar därför inte in några uppgifter utan ditt medgivande.
 \nNewPipes sekretesspolicy förklarar i detalj vad för data som skickas och lagras när du skickar en kraschrapport.</string>
-    <string name="app_license">NewPipe är fri programvara med copyleft: du får använda, studera, dela och förbättra den som du vill. Du får vidare distribuera och/eller ändra den enligt villkoren i GNU General Public License, som publiceras av Free Software Foundation, antingen version 3 av licensen eller valfri senare version.</string>
     <string name="title_last_played">Senast uppspelade</string>
     <string name="title_most_played">Mest uppspelade</string>
     <string name="export_complete_toast">Exporterad</string>
@@ -503,7 +499,6 @@
     <string name="enqueued">Köad</string>
     <string name="soundcloud_go_plus_content">Det här är ett SoundCloud Go+-spår, åtminstone i ditt land, så det kan inte strömmas eller hämtas via NewPipe.</string>
     <string name="metadata_host">Värd</string>
-    <string name="open_website_license">Öppna webbplats</string>
     <string name="tablet_mode_title">Surfplatteläge</string>
     <string name="enqueue_stream">Köa</string>
     <string name="related_items_tab_description">Relaterade objekt</string>
@@ -677,7 +672,6 @@
     <string name="msg_running_new">PipePipe hämtar</string>
     <string name="title_activity_about_new">Om PipePipe</string>
     <string name="app_description_new">En fri Android-app med öppen källkod som låter dig utforska YouTube, NicoNico och BiliBili fritt</string>
-    <string name="app_license_title_new">Licens för ursprungsprojektet NewPipe</string>
     <string name="duplicate_in_playlist">De nedtonade spellistorna innehåller redan det här objektet.</string>
     <string name="playlist_add_stream_success_duplicate">Antal gånger dubbletten har lagts till: %d</string>
     <string name="aspect_ratio_custom">Anpassat…</string>

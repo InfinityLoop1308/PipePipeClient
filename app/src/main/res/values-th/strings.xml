@@ -188,8 +188,6 @@
     <string name="charset_most_special_characters">อักขระพิเศษส่วนใหญ่</string>
     <string name="toast_no_player">ไม่มีแอพที่ติดตั้งเพื่อให้เล่นไฟล์นี้ได้</string>
     <string name="title_activity_about">เกี่ยวกับ NewPipe</string>
-    <string name="title_licenses">สัญญาอนุญาตของบุคคลที่สาม</string>
-    <string name="copyright" formatted="true">© %1$s โดย %2$s ภายใต้ %3$s</string>
     <string name="tab_about">เกี่ยวกับ</string>
     <string name="app_description">แอปสตรีมมิ่งที่เล็กและเสรีบน Android</string>
     <string name="contribution_title">สนับสนุน</string>
@@ -202,7 +200,6 @@
     <string name="privacy_policy_encouragement">โครงการ NewPipe คำนึงถึงความเป็นส่วนตัวของคุณอย่างจริงจัง ดังนั้นแอปจะไม่เก็บรวบรวมข้อมูลใดๆ โดยไม่ได้รับความยินยอมจากคุณ
 \nนโยบายความเป็นส่วนตัวของ NewPipe มีการอธิบายในรายละเอียดเกี่ยวกับข้อมูลที่จะถูกส่งออกไปและเก็บไว้เมื่อคุณรายงานความผิดพลาดของแอป</string>
     <string name="app_license_title">สัญญาอนุญาตของ NewPipe</string>
-    <string name="read_full_license">อ่านสัญญาอนุญาต</string>
     <string name="title_activity_history">ประวัติ</string>
     <string name="action_history">ประวัติ</string>
     <string name="delete_item_search_history">คุณต้องการลบรายการนี้ออกจากประวัติการค้นหาหรือไม่\?</string>

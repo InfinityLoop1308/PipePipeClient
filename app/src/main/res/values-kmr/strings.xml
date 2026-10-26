@@ -165,8 +165,6 @@
     <string name="delete_item_search_history">Ma hûn dixwazin vî tiştî ji dîroka lêgerînê paqij bikin\?</string>
     <string name="action_history">Dîrok</string>
     <string name="title_activity_history">Dîrok</string>
-    <string name="read_full_license">Destûrê bixwînin</string>
-    <string name="app_license">NewPipe nermalava kopîleft libre ye: Hûn dikarin li gorî kêfa xwe bikar bînin, parve bikin û baştir bikin. Bi taybetî hûn dikarin wê di bin mercên Lîsansa Giştî ya GNU ya Giştî ya ku ji hêla Weqfa Nermalava Azad ve hatî weşandin de, an guhertoya 3 ya Lîsansê, an jî (li gorî vebijarka we) guhertoyek paşîn ji nû ve belav bikin û / an biguherînin.</string>
     <string name="clear">Zelal</string>
     <string name="disabled">Bêmecel</string>
     <string name="artists">Hunermend</string>
@@ -547,7 +545,5 @@
     <string name="feed_use_dedicated_fetch_method_disable_button">Modeya lezgîn neçalak bikin</string>
     <string name="feed_use_dedicated_fetch_method_enable_button">Modeya lezgîn çalak bikin</string>
     <string name="tab_about">Derbar</string>
-    <string name="copyright">© %1$s bi %2$s di bin %3$s de</string>
-    <string name="title_licenses">Lîsansên partiya sêyemîn</string>
     <string name="crash_the_app">Serlêdanê kilît bikin</string>
 </resources>

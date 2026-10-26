@@ -205,8 +205,6 @@
     <string name="charset_most_special_characters">सबै विशेष वर्णहरु</string>
     <string name="toast_no_player">कुनै अनुप्रयोग यो फाइल खेल्न स्थापित</string>
     <string name="title_activity_about">न्यू पाइपको बारेमा</string>
-    <string name="title_licenses">तेस्रो-पक्ष इजाजत पत्र</string>
-    <string name="copyright" formatted="true">©%1$s को %2$s द्वारा %3$s अन्तर्गत</string>
     <string name="tab_about">बारेमा</string>
     <string name="app_description">(Android) एन्ड्रोइडमा निःशुल्क लाइटवेट स्ट्रिमिंग।</string>
     <string name="contribution_title">योगदान</string>
@@ -220,8 +218,6 @@
     <string name="privacy_policy_encouragement">न्यू पाइप परियोजना आफ्नो गोपनीयता धेरै गम्भीरतापूर्वक लिन्छ। तसर्थ, तपाईँको सहमति बिना कुनै पनि डाटा संकलन गर्दैन।
 \nन्यू पाइपको गोपनीयता नीतिले क्र्यास रिपोर्ट पठाउने बित्तिकै कुन डाटा पठाइएको र भण्डारण गरिएको छ भनेर विस्तृत वर्णन गर्दछ।</string>
     <string name="app_license_title">NewPipe इजाजत पत्र</string>
-    <string name="app_license">NewPipe copyleft छ मुफ्त सफ्टवेयर: तपाईं प्रयोग गर्न सक्नुहुन्छ, अध्ययन शेयर र इच्छामा सुधार। विशेष तपाईं redistribute गर्न सक्नुहुन्छ र / वा रूपमा फ्री सफ्टवेयर फाउंडेशन द्वारा प्रकाशित GNU जनरल सार्वजनिक लाइसेन्स सर्तहरू अन्तर्गत यो परिमार्जन, कि त लाइसेन्स को संस्करण 3, वा (तपाईँको विकल्प मा) कुनै पनि पछि संस्करण।</string>
-    <string name="read_full_license">लाइसेन्स पढ्नुहोस्</string>
     <string name="title_activity_history">इतिहास</string>
     <string name="action_history">इतिहास</string>
     <string name="delete_item_search_history">तपाईं खोज इतिहासबाट यो वस्तु मेटाउन चाहनुहुन्छ\?</string>

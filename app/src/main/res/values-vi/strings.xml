@@ -338,16 +338,11 @@ của YouTube
 <string name="toast_no_player">Chưa cài đặt ứng dụng nào để phát tệp này</string>
 <!-- About -->
 <string name="title_activity_about_new">Về PipePipe</string>
-<string name="title_licenses">Giấy phép của bên thứ ba</string>
-<string name="copyright">© %1$s bởi %2$s dưới %3$s</string>
 <string name="tab_about">Giới thiệu</string>
 <string name="app_description_new">Ứng dụng FLOSS Android cho phép bạn duyệt YouTube, NicoNico và BiliBili một cách tự do</string>
 <string name="contribution_title">Đóng góp</string>
 <string name="contribution_encouragement">Cho dù bạn có ý tưởng về; dịch thuật, thay đổi thiết kế, dọn mã hoặc thay đổi mã thực sự nhiều—sự trợ giúp luôn hoan nghênh. Càng làm nhiều thì càng tốt!</string>
 <string name="donation_title">Quyên tặng</string>
-<string name="app_license_title_new">Giấy phép của NewPipe (Ngược dòng)</string>
-<string name="app_license">NewPipe là phần mềm miễn phí copyleft: Bạn có thể sử dụng, nghiên cứu, chia sẻ và cải tiến nó theo ý muốn. Cụ thể là bạn có thể phân phối lại và/hoặc sửa đổi nó theo các điều khoản của Giấy phép Công cộng GNU do Tổ chức Phần mềm Tự do xuất bản, phiên bản 3 của Giấy phép hoặc (tùy theo lựa chọn của bạn) bất kỳ phiên bản nào mới hơn.</string>
-<string name="read_full_license">Đọc giấy phép</string>
 <!-- History -->
 <string name="title_activity_history">Lịch sử</string>
 <string name="action_history">Lịch sử</string>
@@ -735,7 +730,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="metadata_subscribers">Người đăng ký</string>
 <string name="detail_pinned_comment_view_description">Đã ghim bình luận</string>
 <string name="detail_heart_img_view_description">Được người sáng tạo hết lòng</string>
-<string name="open_website_license">Mở trang web</string>
 <string name="tablet_mode_title">Chế độ máy tính bảng</string>
 <string name="on">Bật</string>
 <string name="off">Tắt</string>

@@ -330,16 +330,11 @@
 <string name="toast_no_player">No hay aplicación instalada para reproducir este archivo</string>
 <!-- About -->
 <string name="title_activity_about_new">Acerca de PipePipe</string>
-<string name="title_licenses">Licencias de terceros</string>
-<string name="copyright">© %1$s por %2$s bajo %3$s</string>
 <string name="tab_about">Acerca de</string>
 <string name="app_description_new">Una aplicación Android FLOSS que te permite navegar YouTube, NicoNico y BiliBili libremente</string>
 <string name="contribution_title">Contribuir</string>
 <string name="contribution_encouragement">Ya sean ideas de traducción, cambios de diseño, limpieza de código o cambios importantes en el código, toda ayuda es bienvenida. ¡Cuanto más se haga, mejor será!</string>
 <string name="donation_title">Donar</string>
-<string name="app_license_title_new">Licencia de NewPipe (Upstream)</string>
-<string name="app_license">NewPipe es software libre copyleft: puedes usarlo, estudiarlo, compartirlo y mejorarlo a voluntad. Específicamente puedes redistribuirlo y/o modificarlo bajo los términos de la Licencia Pública General GNU publicada por la Free Software Foundation, ya sea la versión 3 de la Licencia, o (a tu elección) cualquier versión posterior.</string>
-<string name="read_full_license">Leer licencia</string>
 <!-- History -->
 <string name="title_activity_history">Historial</string>
 <string name="action_history">Historial</string>
@@ -691,7 +686,6 @@
 <string name="metadata_subscribers">Suscriptores</string>
 <string name="detail_pinned_comment_view_description">Comentario fijado</string>
 <string name="detail_heart_img_view_description">Le gusta al creador</string>
-<string name="open_website_license">Abrir página web</string>
 <string name="tablet_mode_title">Modo tableta</string>
 <string name="on">Activado</string>
 <string name="off">Desactivado</string>
