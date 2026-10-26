@@ -49,6 +49,8 @@ public final class SettingsResourceRegistry {
         add(DeArrowSettingsFragment.class, R.xml.dearrow_settings);
         add(SponsorBlockCategoriesSettingsFragment.class, R.xml.sponsor_block_category_settings);
         add(FilterSettingsFragment.class, R.xml.filter_settings);
+        // content is created at runtime from the installed plugins
+        add(PluginSettingsFragment.class, R.xml.plugin_settings).setSearchable(false);
     }
 
     private SettingRegistryEntry add(

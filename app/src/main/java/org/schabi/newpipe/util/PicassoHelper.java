@@ -18,18 +18,25 @@ import com.squareup.picasso.Target;
 import com.squareup.picasso.Transformation;
 
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.extractor.ServiceList;
+import org.schabi.newpipe.extractor.StreamingService;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public final class PicassoHelper {
     public static final String PLAYER_THUMBNAIL_TAG = "PICASSO_PLAYER_THUMBNAIL_TAG";
     private static final String PLAYER_THUMBNAIL_TRANSFORMATION_KEY
             = "PICASSO_PLAYER_THUMBNAIL_TRANSFORMATION_KEY";
+    private static final String TAG = "PicassoHelper";
 
     private PicassoHelper() {
     }
@@ -93,6 +100,7 @@ public final class PicassoHelper {
                         512 * 1024 * 1024))
                 // this should already be the default timeout in OkHttp3, but just to be sure...
                 .callTimeout(15, TimeUnit.SECONDS)
+                .addInterceptor(PicassoHelper::addServiceImageHeaders)
                 .build();
 
         picassoInstance = new Picasso.Builder(context)
@@ -100,6 +108,40 @@ public final class PicassoHelper {
                 .downloader(new OkHttp3Downloader(picassoDownloaderClient)) // disk cache
                 .defaultBitmapConfig(Bitmap.Config.RGB_565)
                 .build();
+    }
+
+    /**
+     * Adds the headers a service declares for the image being loaded
+     * ({@link StreamingService#getImageRequestHeaders(String)}). Image urls are persisted as
+     * plain strings, so the owner is looked up per request instead of being remembered.
+     */
+    private static Response addServiceImageHeaders(final Interceptor.Chain chain)
+            throws IOException {
+        final Request request = chain.request();
+        final String url = request.url().toString();
+        for (final StreamingService service : ServiceList.all()) {
+            final Map<String, String> headers;
+            try {
+                headers = service.getImageRequestHeaders(url);
+            } catch (final RuntimeException e) {
+                // a faulty plugin must not break image loading for everything else
+                Log.e(TAG, "Image headers of " + service + " failed", e);
+                continue;
+            }
+            if (headers == null) {
+                continue;
+            }
+            final Request.Builder builder = request.newBuilder();
+            for (final Map.Entry<String, String> header : headers.entrySet()) {
+                try {
+                    builder.header(header.getKey(), header.getValue());
+                } catch (final IllegalArgumentException e) {
+                    Log.w(TAG, "Ignoring invalid image header from " + service, e);
+                }
+            }
+            return chain.proceed(builder.build());
+        }
+        return chain.proceed(request);
     }
 
     public static void terminate() {

@@ -22,6 +22,7 @@ import us.shandian.giga.service.DownloadManagerService;
 import java.io.IOException;
 // Keep for BiliBili video case if it writes to outputstream directly
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.schabi.newpipe.util.FilenameUtils.createFilename;
@@ -273,6 +274,8 @@ public class DirectDownloader {
                 .buildResourceManifestUrls(selectedStream, secondaryStream);
         resourceIsUrls = HlsDownloadStreamHelper
                 .buildResourceIsUrls(selectedStream, secondaryStream);
+        final HashMap<String, String>[] resourceRequestHeaders = HlsDownloadStreamHelper
+                .buildResourceRequestHeaders(selectedStream, secondaryStream);
         if (HlsDownloadStreamHelper.containsHlsResource(resourceDeliveryMethods,
                 resourceManifestUrls, urls)
                 || SabrDownloadStreamHelper.containsSabrStream(selectedStream, secondaryStream)) {
@@ -282,6 +285,7 @@ public class DirectDownloader {
 
         DownloadManagerService.startMission(context, urls, storage, kind, threads,
                 currentInfo.getUrl(), psName, psArgs, nearLength, recoveryInfo,
-                resourceDeliveryMethods, resourceManifestUrls, resourceIsUrls);
+                resourceDeliveryMethods, resourceManifestUrls, resourceIsUrls,
+                resourceRequestHeaders);
     }
 }

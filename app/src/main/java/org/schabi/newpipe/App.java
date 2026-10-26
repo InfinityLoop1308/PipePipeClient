@@ -21,11 +21,12 @@ import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import org.acra.ACRA;
 import org.acra.config.CoreConfigurationBuilder;
-import org.schabi.newpipe.error.ReCaptchaActivity;
+import org.schabi.newpipe.error.ChallengeCookies;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.downloader.Downloader;
 import org.schabi.newpipe.extractor.services.youtube.YoutubeApiDecoder;
 import org.schabi.newpipe.ktx.ExceptionUtils;
+import org.schabi.newpipe.plugin.PluginManager;
 import org.schabi.newpipe.settings.NewPipeSettings;
 import org.schabi.newpipe.util.*;
 import org.schabi.newpipe.util.dearrow.DeArrowImages;
@@ -142,6 +143,8 @@ public class App extends MultiDexApplication {
         StateSaver.init(this);
         initNotificationChannels();
 
+        // register plugin services before anything reads the service list
+        PluginManager.loadInstalledPlugins(this);
         ServiceHelper.initServices(this);
         LocalDomPoTokenProvider.initialize(this);
         NewPipe.setYoutubePoTokenResolver(LocalDomPoTokenProvider.INSTANCE::getPlayerPoToken);
@@ -257,10 +260,7 @@ public class App extends MultiDexApplication {
     }
 
     protected void setCookiesToDownloader(final DownloaderImpl downloader) {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
-                getApplicationContext());
-        final String key = getApplicationContext().getString(R.string.recaptcha_cookies_key);
-        downloader.setCookie(ReCaptchaActivity.RECAPTCHA_COOKIES_KEY, prefs.getString(key, null));
+        ChallengeCookies.init(getApplicationContext());
         downloader.updateYoutubeRestrictedModeCookies(getApplicationContext());
     }
 

@@ -8,11 +8,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.preference.Preference;
 
-import org.schabi.newpipe.DownloaderImpl;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.error.ChallengeCookies;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
-import org.schabi.newpipe.error.ReCaptchaActivity;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.util.InfoCache;
@@ -42,16 +41,14 @@ public class HistorySettingsFragment extends BasePreferenceFragment {
 
         final Preference clearCookiePref = requirePreference(R.string.clear_cookie_key);
         clearCookiePref.setOnPreferenceClickListener(preference -> {
-            defaultPreferences.edit()
-                    .putString(getString(R.string.recaptcha_cookies_key), "").apply();
-            DownloaderImpl.getInstance().setCookie(ReCaptchaActivity.RECAPTCHA_COOKIES_KEY, "");
+            ChallengeCookies.clear();
             Toast.makeText(getActivity(), R.string.recaptcha_cookies_cleared,
                     Toast.LENGTH_SHORT).show();
             clearCookiePref.setEnabled(false);
             return true;
         });
 
-        if (defaultPreferences.getString(getString(R.string.recaptcha_cookies_key), "").isEmpty()) {
+        if (ChallengeCookies.isEmpty()) {
             clearCookiePref.setEnabled(false);
         }
     }

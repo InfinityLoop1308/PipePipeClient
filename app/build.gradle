@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         applicationId "InfinityLoop1309.NewPipeEnhanced"
-        minSdk 23
+        minSdk 24
         //noinspection OldTargetApi,ExpiredTargetSdkVersion
         targetSdk 36
         versionCode baseVersionCode
@@ -314,4 +314,10 @@ static String getGitWorkingBranch() {
         // git was not found
         return ""
     }
+}
+
+// Plugins use java.time / streams through the desugared library (j$.*). By default L8 only
+// keeps the j$ classes the app itself uses (in debug builds too), so keep all of them for plugins.
+tasks.withType(com.android.build.gradle.internal.tasks.L8DexDesugarLibTask).configureEach {
+    keepRulesConfigurations.add('-keep class j$.** { *; }')
 }

@@ -6,7 +6,7 @@ import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 import com.grack.nanojson.JsonParserException;
 import okhttp3.*;
-import org.schabi.newpipe.error.ReCaptchaActivity;
+import org.schabi.newpipe.error.ChallengeCookies;
 import org.schabi.newpipe.extractor.downloader.CancellableCall;
 import org.schabi.newpipe.extractor.downloader.Downloader;
 import org.schabi.newpipe.extractor.downloader.Request;
@@ -188,18 +188,36 @@ public final class DownloaderImpl extends Downloader {
 
     public String getCookies(final String url) {
         final List<String> resultCookies = new ArrayList<>();
-        if (url.contains(YOUTUBE_DOMAIN)) {
+        if (isYoutubeUrl(url)) {
             final String youtubeCookie = getCookie(YOUTUBE_RESTRICTED_MODE_COOKIE_KEY);
             if (youtubeCookie != null) {
                 resultCookies.add(youtubeCookie);
             }
         }
-        // Recaptcha cookie is always added TODO: not sure if this is necessary
-        final String recaptchaCookie = getCookie(ReCaptchaActivity.RECAPTCHA_COOKIES_KEY);
-        if (recaptchaCookie != null) {
-            resultCookies.add(recaptchaCookie);
+        // cookies of a solved challenge, only sent back to the domain that issued them
+        final String challengeCookies = ChallengeCookies.get(url);
+        if (challengeCookies != null) {
+            resultCookies.add(challengeCookies);
         }
         return CookieUtils.concatCookies(resultCookies);
+    }
+
+    private static boolean isYoutubeUrl(final String url) {
+        final HttpUrl httpUrl = HttpUrl.parse(url);
+        if (httpUrl == null) {
+            return false;
+        }
+        final String host = httpUrl.host();
+        return host.equals(YOUTUBE_DOMAIN) || host.endsWith("." + YOUTUBE_DOMAIN);
+    }
+
+    /**
+     * @return whether the response is a challenge the user can solve in the WebView:
+     * a rate limit (YouTube/Google reCAPTCHA) or a Cloudflare challenge page
+     */
+    private static boolean isChallenge(final okhttp3.Response response) {
+        return response.code() == 429
+                || "challenge".equalsIgnoreCase(response.header("cf-mitigated"));
     }
 
     public String getCookie(final String key) {
@@ -357,7 +375,7 @@ public final class DownloaderImpl extends Downloader {
         }
 
 
-        if (response.code() == 429) {
+        if (isChallenge(response)) {
             response.close();
 
             throw new ReCaptchaException("reCaptcha Challenge requested", url);
@@ -476,7 +494,7 @@ public final class DownloaderImpl extends Downloader {
                 }
             }
         }
-        if (response.code() == 429) {
+        if (isChallenge(response)) {
             response.close();
             throw new ReCaptchaException("reCaptcha Challenge requested", url);
         }
@@ -563,7 +581,7 @@ public final class DownloaderImpl extends Downloader {
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
                 try {
-                    if (response.code() == 429) {
+                    if (isChallenge(response)) {
                         callback.onError(new ReCaptchaException("reCaptcha Challenge requested", url));
                         return;
                     }

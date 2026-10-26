@@ -1207,4 +1207,39 @@
 <string name="history_filter_invalid_date">Not a valid date</string>
 <string name="title_last_played_ascending">Last Played (oldest first)</string>
 <string name="title_most_played_ascending">Most Played (fewest first)</string>
+<string name="plugins">Plugins</string>
+<string name="plugins_enable_title">Allow plugins</string>
+<string name="plugins_enable_summary">Plugins are downloaded from third party repositories and run with the same permissions as PipePipe</string>
+<string name="plugins_warning_title">Enable plugins?</string>
+<string name="plugins_warning_message">Plugins are code downloaded from the repositories you add. They are not reviewed by PipePipe or by the store you installed PipePipe from (such as F-Droid), and run with the same permissions and data access as PipePipe, including your logins.
+
+Only add repositories you trust.</string>
+<string name="plugins_warning_accept">Enable</string>
+<string name="plugins_repositories">Repositories</string>
+<string name="plugins_add_repository">Add repository</string>
+<string name="plugins_repository_url_hint">Repository URL (index.json)</string>
+<string name="plugins_repository_https_only">Only HTTPS repositories are supported</string>
+<string name="plugins_remove_repository">Remove repository</string>
+<string name="plugins_no_repositories">No repositories. Add one to browse plugins.</string>
+<string name="plugins_installed">Installed</string>
+<string name="plugins_available">Available</string>
+<string name="plugins_none_installed">No plugins installed</string>
+<string name="plugin_update">Update</string>
+<string name="plugin_uninstall">Uninstall</string>
+<string name="plugin_installing">Installing %s…</string>
+<string name="plugin_install_failed">Could not install %1$s: %2$s</string>
+<string name="plugin_repository_failed">Could not load %1$s: %2$s</string>
+<string name="plugin_restart_required">Restart PipePipe to apply plugin changes</string>
+<string name="plugin_restart">Restart</string>
+<string name="plugin_status_loaded">Version %s</string>
+<string name="plugin_status_pending">Version %s, active after restart</string>
+<string name="plugin_status_error">Version %1$s, failed to load: %2$s</string>
+<string name="plugin_incompatible">Requires a newer PipePipe</string>
+<string name="plugin_key_changed">The plugin is now signed with a different key. Uninstall it first if you trust the new publisher.</string>
+<string name="plugin_settings_title">%s settings</string>
+<string name="plugin_uninstall_confirm">Uninstall %s? Your subscriptions and history for it are kept.</string>
+<string name="plugin_install_from">Install %1$s from %2$s?</string>
+<string name="plugin_author">by %s</string>
+<string name="service_instances_title">%s instances</string>
+<string name="service_instances_summary">Select the instances you use</string>
 </resources>

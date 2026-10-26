@@ -6,7 +6,6 @@
     <!-- Service -->
     <string-array name="service_list">
         <item>@string/youtube</item>
-        <item>@string/soundcloud</item>
     </string-array>
     <string name="current_service_key">service</string>
     <string name="default_service_value">@string/youtube</string>
@@ -1885,4 +1884,6 @@
         <item>@string/audio_quality_low</item>
     </string-array>
     <string name="lock_screen_button_key" translatable="false">lock_screen_button</string>
+    <string name="plugins_enabled_key" translatable="false">plugins_enabled</string>
+    <string name="plugins_settings_key" translatable="false">plugins_settings</string>
 </resources>

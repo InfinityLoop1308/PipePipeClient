@@ -9,8 +9,9 @@ import java.io.IOException
 
 class HlsManifestResolver(
     config: HttpTransferConfig = HttpTransferConfig(),
+    requestHeaders: Map<String, String>? = null,
 ) {
-    private val connectionFactory = HttpTransferConnectionFactory(config)
+    private val connectionFactory = HttpTransferConnectionFactory(config, requestHeaders)
     private val parser = HlsPlaylistParser()
 
     @Throws(IOException::class)

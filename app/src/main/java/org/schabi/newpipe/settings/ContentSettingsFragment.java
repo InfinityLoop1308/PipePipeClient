@@ -2,10 +2,16 @@ package org.schabi.newpipe.settings;
 
 import android.os.Bundle;
 import android.widget.Toast;
+
+import androidx.preference.PreferenceScreen;
+
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.ServiceInstances;
+import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.localization.ContentCountry;
 import org.schabi.newpipe.extractor.localization.Localization;
+import org.schabi.newpipe.util.Constants;
 
 public class ContentSettingsFragment extends BasePreferenceFragment {
     private Localization initialSelectedLocalization;
@@ -15,13 +21,37 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
     @Override
     public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
         addPreferencesFromResourceRegistry();
-
+        addInstancePreferences();
 
         initialSelectedLocalization = org.schabi.newpipe.util.Localization
                 .getPreferredLocalization(requireContext());
         initialSelectedContentCountry = org.schabi.newpipe.util.Localization
                 .getPreferredContentCountry(requireContext());
         initialLanguage = defaultPreferences.getString(getString(R.string.app_language_key), "en");
+    }
+
+    /**
+     * Add an entry for every service whose instances the user can manage, which is usually a
+     * plugin. Services without the {@link ServiceInstances} capability do not get an entry,
+     * so nothing is shown while no such plugin is installed and enabled.
+     */
+    private void addInstancePreferences() {
+        for (final StreamingService service : NewPipe.getServices()) {
+            if (!(service instanceof ServiceInstances)) {
+                continue;
+            }
+            final PreferenceScreen preference =
+                    getPreferenceManager().createPreferenceScreen(requireContext());
+            preference.setKey("service_instances_" + service.getServiceId());
+            preference.setPersistent(false);
+            preference.setTitle(getString(R.string.service_instances_title,
+                    service.getServiceInfo().getName()));
+            preference.setSummary(R.string.service_instances_summary);
+            preference.setIconSpaceReserved(false);
+            preference.setFragment(ServiceInstanceListFragment.class.getName());
+            preference.getExtras().putInt(Constants.KEY_SERVICE_ID, service.getServiceId());
+            getPreferenceScreen().addPreference(preference);
+        }
     }
 
     @Override

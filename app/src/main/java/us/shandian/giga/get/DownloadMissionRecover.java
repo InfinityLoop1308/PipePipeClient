@@ -19,10 +19,12 @@ import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.HttpURLConnection;
 import java.nio.channels.ClosedByInterruptException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import us.shandian.giga.get.DownloadMission.HttpError;
+import us.shandian.giga.util.Utility;
 
 import static us.shandian.giga.get.DownloadMission.ERROR_RESOURCE_GONE;
 import static us.shandian.giga.util.Utility.setRequestPropertyIfDownloadingBilibili;
@@ -189,6 +191,8 @@ public class DownloadMissionRecover extends Thread {
 
     private void resolve(Stream stream) throws IOException, HttpError {
         final String url = stream == null ? null : stream.getUrl();
+        final Map<String, String> headers = stream == null ? null : stream.getRequestHeaders();
+        storeRequestHeaders(headers);
         if (mRecovery.getValidateCondition() == null) {
             Log.w(TAG, "validation condition not defined, the resource can be stale");
         }
@@ -202,7 +206,7 @@ public class DownloadMissionRecover extends Thread {
         ////// Validate the http resource doing a range request
         /////////////////////
         try {
-            mConn = mMission.openConnection(url, true, mMission.length - 10, mMission.length);
+            mConn = mMission.openConnection(url, headers, true, mMission.length - 10, mMission.length);
             mConn.setRequestProperty("If-Range", mRecovery.getValidateCondition());
             setRequestPropertyIfDownloadingBilibili(url, mConn);
             mMission.establishConnection(mID, mConn);
@@ -274,6 +278,22 @@ public class DownloadMissionRecover extends Thread {
 
         mMission.running = false;
         mMission.start();
+    }
+
+    /**
+     * Keeps the headers of the re-resolved stream, the ones saved with the mission belong to the
+     * stream that was extracted when the download started.
+     */
+    @SuppressWarnings("unchecked")
+    private void storeRequestHeaders(Map<String, String> headers) {
+        if (mMission.current < 0 || mMission.current >= mMission.urls.length) {
+            return;
+        }
+        if (mMission.resourceRequestHeaders == null
+                || mMission.resourceRequestHeaders.length != mMission.urls.length) {
+            mMission.resourceRequestHeaders = new HashMap[mMission.urls.length];
+        }
+        mMission.resourceRequestHeaders[mMission.current] = Utility.copyRequestHeaders(headers);
     }
 
     private void updateResourceMetadata(Stream stream) {
@@ -365,7 +385,7 @@ public class DownloadMissionRecover extends Thread {
         if (mMission.urls[mMission.current] == null) return false;
 
         try {
-            mConn = mMission.openConnection(mMission.urls[mMission.current], true, -1, -1);
+            mConn = mMission.openConnection(mMission.current, true, -1, -1);
             mMission.establishConnection(mID, mConn);
 
             // 206: bilibili urls probe reachability with a range GET instead of HEAD

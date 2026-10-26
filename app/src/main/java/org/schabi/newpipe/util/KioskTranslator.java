@@ -61,7 +61,12 @@ public final class KioskTranslator {
             case "Recommended Lives":
                 return c.getString(R.string.recommended_lives);
             default:
-                return kioskId;
+                // Plugin services may define their own kiosk ids. Show a readable label
+                // instead of the raw id (which is also used by the settings screens).
+                final String readable = kioskId.replace('_', ' ').trim();
+                return readable.isEmpty()
+                        ? kioskId
+                        : Character.toUpperCase(readable.charAt(0)) + readable.substring(1);
         }
     }
 
@@ -92,7 +97,10 @@ public final class KioskTranslator {
             case "Recommended Podcasts":
                 return R.drawable.ic_podcast;
             default:
-                return 0;
+                // Never return 0 here: callers pass the result to setIcon/setImageResource,
+                // and resource id 0 throws Resources$NotFoundException. Plugin kiosks are
+                // not in the list above, so they get a generic icon.
+                return R.drawable.ic_whatshot;
         }
     }
 }

@@ -11,8 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        android:autoLink="web"
-        android:text="@string/peertube_instance_url_help" />
+        android:autoLink="web" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/instances"

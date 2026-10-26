@@ -18,8 +18,8 @@ public final class KoreUtils {
     private KoreUtils() { }
 
     public static boolean isServiceSupportedByKore(final int serviceId) {
-        return (serviceId == ServiceList.YouTube.getServiceId()
-                || serviceId == ServiceList.SoundCloud.getServiceId());
+        // the Kodi addon also supports SoundCloud, which has the reserved legacy id 1
+        return serviceId == ServiceList.YouTube.getServiceId() || serviceId == 1;
     }
 
     public static boolean shouldShowPlayWithKodi(@NonNull final Context context,

@@ -29,14 +29,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.grack.nanojson.JsonStringWriter;
-import com.grack.nanojson.JsonWriter;
 
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.DialogEditTextBinding;
-import org.schabi.newpipe.extractor.services.peertube.PeertubeInstance;
+import org.schabi.newpipe.extractor.NewPipe;
+import org.schabi.newpipe.extractor.ServiceInstance;
+import org.schabi.newpipe.extractor.ServiceInstances;
+import org.schabi.newpipe.extractor.StreamingService;
+import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.util.Constants;
-import org.schabi.newpipe.util.PeertubeHelper;
+import org.schabi.newpipe.util.ServiceHelper;
 import org.schabi.newpipe.util.ThemeHelper;
 
 import java.util.ArrayList;
@@ -46,19 +48,40 @@ import java.util.List;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class PeertubeInstanceListFragment extends Fragment {
-    private final List<PeertubeInstance> instanceList = new ArrayList<>();
-    private PeertubeInstance selectedInstance;
-    private String savedInstanceListKey;
+/**
+ * Lists, adds, removes, reorders and selects the instances of a service that implements
+ * {@link ServiceInstances}. Which service is shown is passed as {@link Constants#KEY_SERVICE_ID}.
+ *
+ * <p>The {@code peertube_instance_*} string resources used here are named after their first
+ * user, but their texts are generic, so any service can use this screen.</p>
+ */
+public class ServiceInstanceListFragment extends Fragment {
+    private final List<ServiceInstance> instanceList = new ArrayList<>();
+    private ServiceInstances provider;
+    private ServiceInstance selectedInstance;
+    private String serviceName;
+    private int serviceId = Constants.NO_SERVICE_ID;
+
     private InstanceListAdapter instanceListAdapter;
 
     private ProgressBar progressBar;
     private SharedPreferences sharedPreferences;
 
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable disposables = new CompositeDisposable();
+
+    /**
+     * @param serviceId id of a service that implements {@link ServiceInstances}
+     */
+    @NonNull
+    public static ServiceInstanceListFragment newInstance(final int serviceId) {
+        final ServiceInstanceListFragment fragment = new ServiceInstanceListFragment();
+        final Bundle args = new Bundle();
+        args.putInt(Constants.KEY_SERVICE_ID, serviceId);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     /*//////////////////////////////////////////////////////////////////////////
     // Lifecycle
@@ -68,17 +91,26 @@ public class PeertubeInstanceListFragment extends Fragment {
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        savedInstanceListKey = getString(R.string.peertube_instance_list_key);
-        selectedInstance = PeertubeHelper.getCurrentInstance();
+        serviceId = requireArguments().getInt(Constants.KEY_SERVICE_ID, Constants.NO_SERVICE_ID);
+        provider = getProvider();
+        if (provider == null) {
+            return;
+        }
+        serviceName = getService().getServiceInfo().getName();
+        selectedInstance = provider.getCurrentInstance();
         updateInstanceList();
 
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
         setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
+        if (provider == null) {
+            Toast.makeText(requireContext(), R.string.general_error, Toast.LENGTH_SHORT).show();
+            return new View(requireContext());
+        }
         return inflater.inflate(R.layout.fragment_instance_list, container, false);
     }
 
@@ -86,34 +118,20 @@ public class PeertubeInstanceListFragment extends Fragment {
     public void onViewCreated(@NonNull final View rootView,
                               @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(rootView, savedInstanceState);
-
+        if (provider == null) {
+            return;
+        }
         initViews(rootView);
-    }
-
-    private void initViews(@NonNull final View rootView) {
-        final TextView instanceHelpTV = rootView.findViewById(R.id.instanceHelpTV);
-        instanceHelpTV.setText(getString(R.string.peertube_instance_url_help,
-                getString(R.string.peertube_instance_list_url)));
-
-        initButton(rootView);
-
-        final RecyclerView listInstances = rootView.findViewById(R.id.instances);
-        listInstances.setLayoutManager(new LinearLayoutManager(requireContext()));
-
-        final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(getItemTouchCallback());
-        itemTouchHelper.attachToRecyclerView(listInstances);
-
-        instanceListAdapter = new InstanceListAdapter(requireContext(), itemTouchHelper);
-        listInstances.setAdapter(instanceListAdapter);
-
-        progressBar = rootView.findViewById(R.id.loading_progress_bar);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        if (provider == null) {
+            return;
+        }
         ThemeHelper.setTitleToAppCompatActivity(getActivity(),
-                getString(R.string.peertube_instance_url_title));
+                getString(R.string.service_instances_title, serviceName));
     }
 
     @Override
@@ -125,10 +143,7 @@ public class PeertubeInstanceListFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (disposables != null) {
-            disposables.clear();
-        }
-        disposables = null;
+        disposables.clear();
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -144,6 +159,9 @@ public class PeertubeInstanceListFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
+        if (provider == null) {
+            return super.onOptionsItemSelected(item);
+        }
         if (item.getItemId() == R.id.menu_item_restore_default) {
             restoreDefaults();
             return true;
@@ -156,26 +174,64 @@ public class PeertubeInstanceListFragment extends Fragment {
     // Utils
     //////////////////////////////////////////////////////////////////////////*/
 
-    private void updateInstanceList() {
-        instanceList.clear();
-        instanceList.addAll(PeertubeHelper.getInstanceList(requireContext()));
+    @Nullable
+    private ServiceInstances getProvider() {
+        try {
+            final StreamingService service = NewPipe.getService(serviceId);
+            return service instanceof ServiceInstances ? (ServiceInstances) service : null;
+        } catch (final ExtractionException e) {
+            return null;
+        }
     }
 
-    private void selectInstance(final PeertubeInstance instance) {
-        selectedInstance = PeertubeHelper.selectInstance(instance, requireContext());
+    @NonNull
+    private StreamingService getService() {
+        try {
+            return NewPipe.getService(serviceId);
+        } catch (final ExtractionException e) {
+            throw new IllegalStateException("No service with id " + serviceId, e);
+        }
+    }
+
+    private void initViews(@NonNull final View rootView) {
+        final TextView instanceHelpTV = rootView.findViewById(R.id.instanceHelpTV);
+        final String helpUrl = provider.getInstancesHelpUrl();
+        if (helpUrl == null) {
+            instanceHelpTV.setVisibility(View.GONE);
+        } else {
+            instanceHelpTV.setText(getString(R.string.peertube_instance_url_help, helpUrl));
+        }
+
+        initButton(rootView);
+
+        final RecyclerView listInstances = rootView.findViewById(R.id.instances);
+        listInstances.setLayoutManager(new LinearLayoutManager(requireContext()));
+
+        final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(getItemTouchCallback());
+        itemTouchHelper.attachToRecyclerView(listInstances);
+
+        instanceListAdapter = new InstanceListAdapter(requireContext(), itemTouchHelper);
+        listInstances.setAdapter(instanceListAdapter);
+
+        progressBar = rootView.findViewById(R.id.loading_progress_bar);
+    }
+
+    private void updateInstanceList() {
+        instanceList.clear();
+        instanceList.addAll(provider.getInstances());
+    }
+
+    private void selectInstance(final ServiceInstance instance) {
+        provider.selectInstance(instance);
+        selectedInstance = provider.getCurrentInstance();
         sharedPreferences.edit().putBoolean(Constants.KEY_MAIN_PAGE_CHANGE, true).apply();
     }
 
     private void saveChanges() {
-        final JsonStringWriter jsonWriter = JsonWriter.string().object().array("instances");
-        for (final PeertubeInstance instance : instanceList) {
-            jsonWriter.object();
-            jsonWriter.value("name", instance.getName());
-            jsonWriter.value("url", instance.getUrl());
-            jsonWriter.end();
+        if (provider == null) {
+            return;
         }
-        final String jsonToSave = jsonWriter.end().end().done();
-        sharedPreferences.edit().putString(savedInstanceListKey, jsonToSave).apply();
+        provider.setInstances(instanceList);
     }
 
     private void restoreDefaults() {
@@ -184,33 +240,34 @@ public class PeertubeInstanceListFragment extends Fragment {
                 .setMessage(R.string.restore_defaults_confirmation)
                 .setNegativeButton(R.string.cancel, null)
                 .setPositiveButton(R.string.ok, (dialog, which) -> {
-                    sharedPreferences.edit().remove(savedInstanceListKey).apply();
-                    selectInstance(PeertubeInstance.DEFAULT_INSTANCE);
+                    provider.setInstances(Collections.emptyList());
+                    selectedInstance = provider.getCurrentInstance();
                     updateInstanceList();
                     instanceListAdapter.notifyDataSetChanged();
+                    sharedPreferences.edit()
+                            .putBoolean(Constants.KEY_MAIN_PAGE_CHANGE, true).apply();
                 })
                 .show();
     }
 
     private void initButton(final View rootView) {
         final FloatingActionButton fab = rootView.findViewById(R.id.addInstanceButton);
-        fab.setOnClickListener(v ->
-                showAddItemDialog(requireContext()));
+        fab.setOnClickListener(v -> showAddItemDialog(requireContext()));
     }
 
-    private void showAddItemDialog(final Context c) {
+    private void showAddItemDialog(final Context context) {
         final DialogEditTextBinding dialogBinding
                 = DialogEditTextBinding.inflate(getLayoutInflater());
         dialogBinding.dialogEditText.setInputType(
                 InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
         dialogBinding.dialogEditText.setHint(R.string.peertube_instance_add_help);
 
-        new AlertDialog.Builder(c)
+        new AlertDialog.Builder(context)
                 .setTitle(R.string.peertube_instance_add_title)
-                .setIcon(R.drawable.place_holder_peertube)
+                .setIcon(ServiceHelper.getIconDrawable(context, serviceId))
                 .setView(dialogBinding.getRoot())
                 .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton(R.string.ok, (dialog1, which) -> {
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
                     final String url = dialogBinding.dialogEditText.getText().toString();
                     addInstance(url);
                 })
@@ -218,16 +275,14 @@ public class PeertubeInstanceListFragment extends Fragment {
     }
 
     private void addInstance(final String url) {
-        final String cleanUrl = cleanUrl(url);
-        if (cleanUrl == null) {
+        final String trimmedUrl = url.trim();
+        if (trimmedUrl.isEmpty()) {
             return;
         }
         progressBar.setVisibility(View.VISIBLE);
-        final Disposable disposable = Single.fromCallable(() -> {
-            final PeertubeInstance instance = new PeertubeInstance(cleanUrl);
-            instance.fetchInstanceMetaData();
-            return instance;
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        // the service knows which url forms it accepts and normalizes them
+        disposables.add(Single.fromCallable(() -> provider.addInstance(trimmedUrl))
+                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe((instance) -> {
                     progressBar.setVisibility(View.GONE);
                     add(instance);
@@ -235,39 +290,19 @@ public class PeertubeInstanceListFragment extends Fragment {
                     progressBar.setVisibility(View.GONE);
                     Toast.makeText(getActivity(), R.string.peertube_instance_add_fail,
                             Toast.LENGTH_SHORT).show();
-                });
-        disposables.add(disposable);
+                }));
     }
 
-    @Nullable
-    private String cleanUrl(final String url) {
-        String cleanUrl = url.trim();
-        // if protocol not present, add https
-        if (!cleanUrl.startsWith("http")) {
-            cleanUrl = "https://" + cleanUrl;
-        }
-        // remove trailing slash
-        cleanUrl = cleanUrl.replaceAll("/$", "");
-        // only allow https
-        if (!cleanUrl.startsWith("https://")) {
-            Toast.makeText(getActivity(), R.string.peertube_instance_add_https_only,
-                    Toast.LENGTH_SHORT).show();
-            return null;
-        }
-        // only allow if not already exists
-        for (final PeertubeInstance instance : instanceList) {
-            if (instance.getUrl().equals(cleanUrl)) {
+    private void add(final ServiceInstance instance) {
+        for (final ServiceInstance saved : instanceList) {
+            if (saved.getUrl().equals(instance.getUrl())) {
                 Toast.makeText(getActivity(), R.string.peertube_instance_add_exists,
                         Toast.LENGTH_SHORT).show();
-                return null;
+                return;
             }
         }
-        return cleanUrl;
-    }
-
-    private void add(final PeertubeInstance instance) {
         instanceList.add(instance);
-        instanceListAdapter.notifyDataSetChanged();
+        instanceListAdapter.notifyItemInserted(instanceList.size() - 1);
     }
 
     private ItemTouchHelper.SimpleCallback getItemTouchCallback() {
@@ -279,10 +314,9 @@ public class PeertubeInstanceListFragment extends Fragment {
                                                     final int viewSizeOutOfBounds,
                                                     final int totalSize,
                                                     final long msSinceStartScroll) {
-                final int standardSpeed = super.interpolateOutOfBoundsScroll(recyclerView, viewSize,
-                        viewSizeOutOfBounds, totalSize, msSinceStartScroll);
-                final int minimumAbsVelocity = Math.max(12,
-                        Math.abs(standardSpeed));
+                final int standardSpeed = super.interpolateOutOfBoundsScroll(recyclerView,
+                        viewSize, viewSizeOutOfBounds, totalSize, msSinceStartScroll);
+                final int minimumAbsVelocity = Math.max(12, Math.abs(standardSpeed));
                 return minimumAbsVelocity * (int) Math.signum(viewSizeOutOfBounds);
             }
 
@@ -336,7 +370,7 @@ public class PeertubeInstanceListFragment extends Fragment {
     //////////////////////////////////////////////////////////////////////////*/
 
     private class InstanceListAdapter
-            extends RecyclerView.Adapter<InstanceListAdapter.TabViewHolder> {
+            extends RecyclerView.Adapter<InstanceListAdapter.InstanceViewHolder> {
         private final LayoutInflater inflater;
         private final ItemTouchHelper itemTouchHelper;
         private RadioButton lastChecked;
@@ -353,15 +387,14 @@ public class PeertubeInstanceListFragment extends Fragment {
 
         @NonNull
         @Override
-        public InstanceListAdapter.TabViewHolder onCreateViewHolder(@NonNull final ViewGroup parent,
-                                                                    final int viewType) {
+        public InstanceViewHolder onCreateViewHolder(@NonNull final ViewGroup parent,
+                                                     final int viewType) {
             final View view = inflater.inflate(R.layout.item_instance, parent, false);
-            return new InstanceListAdapter.TabViewHolder(view);
+            return new InstanceViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull final InstanceListAdapter.TabViewHolder holder,
-                                     final int position) {
+        public void onBindViewHolder(@NonNull final InstanceViewHolder holder, final int position) {
             holder.bind(position, holder);
         }
 
@@ -370,14 +403,14 @@ public class PeertubeInstanceListFragment extends Fragment {
             return instanceList.size();
         }
 
-        class TabViewHolder extends RecyclerView.ViewHolder {
+        class InstanceViewHolder extends RecyclerView.ViewHolder {
             private final AppCompatImageView instanceIconView;
             private final TextView instanceNameView;
             private final TextView instanceUrlView;
             private final RadioButton instanceRB;
             private final ImageView handle;
 
-            TabViewHolder(final View itemView) {
+            InstanceViewHolder(final View itemView) {
                 super(itemView);
 
                 instanceIconView = itemView.findViewById(R.id.instanceIcon);
@@ -388,12 +421,14 @@ public class PeertubeInstanceListFragment extends Fragment {
             }
 
             @SuppressLint("ClickableViewAccessibility")
-            void bind(final int position, final TabViewHolder holder) {
+            void bind(final int position, final InstanceViewHolder holder) {
                 handle.setOnTouchListener(getOnTouchListener(holder));
 
-                final PeertubeInstance instance = instanceList.get(position);
+                final ServiceInstance instance = instanceList.get(position);
                 instanceNameView.setText(instance.getName());
                 instanceUrlView.setText(instance.getUrl());
+                instanceIconView.setImageDrawable(
+                        ServiceHelper.getIconDrawable(itemView.getContext(), serviceId));
                 instanceRB.setOnCheckedChangeListener(null);
                 if (selectedInstance.getUrl().equals(instance.getUrl())) {
                     if (lastChecked != null && lastChecked != instanceRB) {
@@ -401,6 +436,8 @@ public class PeertubeInstanceListFragment extends Fragment {
                     }
                     instanceRB.setChecked(true);
                     lastChecked = instanceRB;
+                } else {
+                    instanceRB.setChecked(false);
                 }
                 instanceRB.setOnCheckedChangeListener((buttonView, isChecked) -> {
                     if (isChecked) {
@@ -411,7 +448,6 @@ public class PeertubeInstanceListFragment extends Fragment {
                         lastChecked = instanceRB;
                     }
                 });
-                instanceIconView.setImageResource(R.drawable.place_holder_peertube);
             }
 
             @SuppressLint("ClickableViewAccessibility")

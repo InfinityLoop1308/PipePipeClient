@@ -84,6 +84,13 @@
 <!--            app:iconSpaceReserved="false" />-->
 
     <PreferenceScreen
+        android:fragment="org.schabi.newpipe.settings.PluginSettingsFragment"
+        android:icon="@drawable/ic_extension"
+        android:key="@string/plugins_settings_key"
+        android:title="@string/plugins"
+        app:iconSpaceReserved="false" />
+
+    <PreferenceScreen
             android:fragment="org.schabi.newpipe.settings.AdvancedSettingsFragment"
             android:icon="@drawable/ic_advanced"
             android:title="@string/settings_category_advanced_title"

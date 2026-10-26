@@ -173,7 +173,10 @@ public class SettingsActivity extends AppCompatActivity implements
     @Override
     public boolean onPreferenceStartFragment(@NonNull final PreferenceFragmentCompat caller,
                                              final Preference preference) {
-        showSettingsFragment(instantiateFragment(preference.getFragment()));
+        final Fragment fragment = instantiateFragment(preference.getFragment());
+        // preferences created at runtime, such as service instances, pass their arguments here
+        fragment.setArguments(preference.getExtras());
+        showSettingsFragment(fragment);
         return true;
     }
 

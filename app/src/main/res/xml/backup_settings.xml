@@ -37,13 +37,6 @@
                 app:iconSpaceReserved="false" />
 
         <Preference
-                android:key="@string/import_soundcloud_subscriptions_key"
-                android:summary="@string/import_soundcloud_subscriptions_summary"
-                android:title="@string/import_soundcloud_subscriptions_title"
-                app:singleLineTitle="false"
-                app:iconSpaceReserved="false" />
-
-        <Preference
                 android:key="@string/export_subscriptions_key"
                 android:summary="@string/export_subscriptions_summary"
                 android:title="@string/export_subscriptions_title"

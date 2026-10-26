@@ -28,8 +28,9 @@ internal class HlsDownloader(
         maxRetries = mission.maxRetry,
         parallelism = mission.threadCount.coerceIn(1, MAX_PARALLELISM),
     )
-    private val hlsTransfer = HlsSegmentFileTransferEngine(transferConfig, controller)
-    private val connectionFactory = HttpTransferConnectionFactory(transferConfig)
+
+    private fun requestHeadersOf(index: Int): Map<String, String>? =
+        mission.resourceRequestHeaders?.getOrNull(index)
 
     override fun run() {
         try {
@@ -93,7 +94,7 @@ internal class HlsDownloader(
             ?.bytesWritten
             ?: 0L
 
-        hlsTransfer.transfer(
+        HlsSegmentFileTransferEngine(transferConfig, controller, requestHeadersOf(index)).transfer(
             resourceIndex = index,
             manifestUrl = hlsManifestUrl(index),
             targetFile = targetFile,
@@ -144,7 +145,8 @@ internal class HlsDownloader(
 
         var written = 0L
         targetFile.outputStream().use { output ->
-            connectionFactory.open(mission.urls[index], "GET", null, null).useTransferConnection { connection ->
+            HttpTransferConnectionFactory(transferConfig, requestHeadersOf(index))
+                .open(mission.urls[index], "GET", null, null).useTransferConnection { connection ->
                 val statusCode = connection.responseCode
                 if (statusCode < 200 || statusCode > 299) {
                     throw TransferHttpException(statusCode)

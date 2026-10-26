@@ -51,3 +51,11 @@
 -dontwarn androidx.room.paging.**
 
 -keep class org.json.JSONException { *; }
+
+# Plugins (see org.schabi.newpipe.plugin.PluginManager) are compiled against the extractor,
+# nanojson and jsoup and link to them at runtime by name. Keep that API complete.
+-keep class org.schabi.newpipe.extractor.** { *; }
+-keep interface org.schabi.newpipe.extractor.** { *; }
+-keep class com.grack.nanojson.** { *; }
+-keep class org.jsoup.** { *; }
+-dontwarn org.jsoup.**

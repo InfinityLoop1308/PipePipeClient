@@ -1,5 +1,7 @@
 package us.shandian.giga.util;
 
+import org.schabi.newpipe.plugin.PluginObjectInputStream;
+
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -32,6 +34,7 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -97,7 +100,7 @@ public class Utility {
         T object;
 
         try (ObjectInputStream objectInputStream =
-                     new ObjectInputStream(new FileInputStream(file))) {
+                     new PluginObjectInputStream(new FileInputStream(file))) {
             object = (T) objectInputStream.readObject();
         } catch (Exception e) {
             Log.e("Utility", "Failed to deserialize the object", e);
@@ -326,6 +329,33 @@ public class Utility {
 
         return str + pad(s);
     }
+    /**
+     * Applies the headers a stream declares ({@code Stream#getRequestHeaders()}) on top of the
+     * ones already set. {@code Range} and {@code Accept-Encoding} are left alone, the downloader
+     * relies on controlling both to resume and to measure what it writes.
+     */
+    public static void setStreamRequestHeaders(@NonNull HttpURLConnection conn,
+                                               @Nullable Map<String, String> headers) {
+        if (headers == null) return;
+        for (Map.Entry<String, String> header : headers.entrySet()) {
+            final String name = header.getKey();
+            if (name == null || header.getValue() == null
+                    || name.equalsIgnoreCase("Range")
+                    || name.equalsIgnoreCase("Accept-Encoding")) {
+                continue;
+            }
+            conn.setRequestProperty(name, header.getValue());
+        }
+    }
+
+    /**
+     * @return a serializable copy of the headers, or {@code null} if there are none
+     */
+    @Nullable
+    public static HashMap<String, String> copyRequestHeaders(@Nullable Map<String, String> headers) {
+        return headers == null || headers.isEmpty() ? null : new HashMap<>(headers);
+    }
+
     public static void setRequestPropertyIfDownloadingBilibili(String url, HttpURLConnection conn) throws IOException {
         if(BilibiliService.isBiliBiliDownloadUrl(url)){
             // from header map set RequestProperty

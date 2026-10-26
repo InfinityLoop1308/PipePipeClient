@@ -29,9 +29,10 @@ import javax.crypto.spec.SecretKeySpec
 class HlsSegmentFileTransferEngine(
     private val config: HttpTransferConfig = HttpTransferConfig(),
     private val controller: TransferController = AlwaysRunningTransferController,
+    requestHeaders: Map<String, String>? = null,
 ) {
-    private val connectionFactory = HttpTransferConnectionFactory(config)
-    private val manifestResolver = HlsManifestResolver(config)
+    private val connectionFactory = HttpTransferConnectionFactory(config, requestHeaders)
+    private val manifestResolver = HlsManifestResolver(config, requestHeaders)
     private val retryPolicy = TransferRetryPolicy(config.maxRetries)
 
     @Throws(IOException::class)

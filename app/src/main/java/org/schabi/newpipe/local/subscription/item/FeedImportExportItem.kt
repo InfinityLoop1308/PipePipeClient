@@ -2,18 +2,19 @@ package org.schabi.newpipe.local.subscription.item
 
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.SearchView
 import com.xwray.groupie.viewbinding.BindableItem
 import com.xwray.groupie.viewbinding.GroupieViewHolder
 import org.schabi.newpipe.R
 import org.schabi.newpipe.databinding.FeedImportExportGroupBinding
 import org.schabi.newpipe.extractor.NewPipe
-import org.schabi.newpipe.extractor.exceptions.ExtractionException
 import org.schabi.newpipe.ktx.animateRotation
 import org.schabi.newpipe.util.ServiceHelper
 import org.schabi.newpipe.util.ThemeHelper
@@ -109,13 +110,16 @@ class FeedImportExportItem(
 
     private var expandIconListener: CollapsibleView.StateListener? = null
 
-    private fun addItemView(title: String, @DrawableRes icon: Int, container: ViewGroup): View {
+    private fun addItemView(title: String, @DrawableRes icon: Int, container: ViewGroup): View =
+        addItemView(title, AppCompatResources.getDrawable(container.context, icon), container)
+
+    private fun addItemView(title: String, icon: Drawable?, container: ViewGroup): View {
         val itemRoot = View.inflate(container.context, R.layout.subscription_import_export_item, null)
         val titleView = itemRoot.findViewById<TextView>(android.R.id.text1)
         val iconView = itemRoot.findViewById<ImageView>(android.R.id.icon1)
 
         titleView.text = title
-        iconView.setImageResource(icon)
+        iconView.setImageDrawable(icon)
 
         container.addView(itemRoot)
         return itemRoot
@@ -129,24 +133,20 @@ class FeedImportExportItem(
         previousBackupItem.setOnClickListener { onImportPreviousSelected() }
 
         val iconColor = if (ThemeHelper.isLightThemeSelected(listHolder.context)) Color.BLACK else Color.WHITE
-        val services = listHolder.context.resources.getStringArray(R.array.service_list)
-        for (serviceName in services) {
-            try {
-                val service = NewPipe.getService(serviceName)
+        // every service, including plugins, whose subscription extractor supports a source
+        for (service in NewPipe.getServices()) {
+            val subscriptionExtractor = runCatching { service.subscriptionExtractor }.getOrNull()
+                ?: continue
+            if (subscriptionExtractor.supportedSources.isEmpty()) continue
 
-                val subscriptionExtractor = service.subscriptionExtractor ?: continue
+            val itemView = addItemView(
+                service.serviceInfo.name, ServiceHelper.getIconDrawable(listHolder.context, service.serviceId),
+                listHolder
+            )
+            val iconView = itemView.findViewById<ImageView>(android.R.id.icon1)
+            iconView.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
 
-                val supportedSources = subscriptionExtractor.supportedSources
-                if (supportedSources.isEmpty()) continue
-
-                val itemView = addItemView(serviceName, ServiceHelper.getIcon(service.serviceId), listHolder)
-                val iconView = itemView.findViewById<ImageView>(android.R.id.icon1)
-                iconView.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
-
-                itemView.setOnClickListener { onImportFromServiceSelected(service.serviceId) }
-            } catch (e: ExtractionException) {
-                throw RuntimeException("Services array contains an entry that it's not a valid service name ($serviceName)", e)
-            }
+            itemView.setOnClickListener { onImportFromServiceSelected(service.serviceId) }
         }
     }
 
