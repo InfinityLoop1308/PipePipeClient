@@ -55,6 +55,10 @@ object PluginManager {
     private const val KEY_REPOSITORIES = "repositories"
     private const val MAX_PACKAGE_SIZE = 32L * 1024 * 1024
 
+    /** Official repository, always listed while plugins are enabled and not removable. */
+    const val BUILTIN_REPOSITORY =
+        "https://github.com/InfinityLoop1308/PipePipe-builtin-plugins/releases/download/repo/index.json"
+
     /** Ids of services that used to be built in, so existing data keeps working. */
     private val LEGACY_IDS = mapOf(
         "org.pipepipe.plugin.soundcloud" to 1,
@@ -184,8 +188,12 @@ object PluginManager {
         return id
     }
 
+    /** The built-in repository followed by the ones added by the user. */
     @JvmStatic
-    fun getRepositories(context: Context): List<String> {
+    fun getRepositories(context: Context): List<String> =
+        (listOf(BUILTIN_REPOSITORY) + getUserRepositories(context)).distinct()
+
+    private fun getUserRepositories(context: Context): List<String> {
         val stored = state(context).getString(KEY_REPOSITORIES, null)
             ?: return emptyList()
         return runCatching {
@@ -196,8 +204,8 @@ object PluginManager {
 
     @JvmStatic
     fun addRepository(context: Context, url: String) {
-        val list = getRepositories(context).toMutableList()
-        if (url !in list) {
+        val list = getUserRepositories(context).toMutableList()
+        if (url != BUILTIN_REPOSITORY && url !in list) {
             list.add(url)
             state(context).edit { putString(KEY_REPOSITORIES, JsonWriter.string(JsonArray(list))) }
         }
@@ -205,7 +213,10 @@ object PluginManager {
 
     @JvmStatic
     fun removeRepository(context: Context, url: String) {
-        val list = getRepositories(context).filter { it != url }
+        if (url == BUILTIN_REPOSITORY) {
+            return
+        }
+        val list = getUserRepositories(context).filter { it != url }
         state(context).edit { putString(KEY_REPOSITORIES, JsonWriter.string(JsonArray(list))) }
     }
 

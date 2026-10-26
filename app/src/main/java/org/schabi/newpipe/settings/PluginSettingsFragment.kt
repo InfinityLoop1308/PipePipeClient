@@ -152,6 +152,9 @@ class PluginSettingsFragment : BasePreferenceFragment() {
                         getString(R.string.plugin_repository_failed, url, it.message ?: it.javaClass.simpleName)
                     } ?: url
                     setOnPreferenceClickListener {
+                        if (url == PluginManager.BUILTIN_REPOSITORY) {
+                            return@setOnPreferenceClickListener true
+                        }
                         AlertDialog.Builder(context)
                             .setTitle(R.string.plugins_remove_repository)
                             .setMessage(url)
