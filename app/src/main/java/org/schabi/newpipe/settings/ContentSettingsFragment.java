@@ -12,7 +12,6 @@ import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.localization.ContentCountry;
 import org.schabi.newpipe.extractor.localization.Localization;
 import org.schabi.newpipe.util.Constants;
-import org.schabi.newpipe.util.ServiceHelper;
 
 public class ContentSettingsFragment extends BasePreferenceFragment {
     private Localization initialSelectedLocalization;
@@ -48,8 +47,6 @@ public class ContentSettingsFragment extends BasePreferenceFragment {
             preference.setTitle(getString(R.string.service_instances_title,
                     service.getServiceInfo().getName()));
             preference.setSummary(R.string.service_instances_summary);
-            preference.setIcon(ServiceHelper.getIconDrawable(requireContext(),
-                    service.getServiceId()));
             preference.setFragment(ServiceInstanceListFragment.class.getName());
             preference.getExtras().putInt(Constants.KEY_SERVICE_ID, service.getServiceId());
             getPreferenceScreen().addPreference(preference);
