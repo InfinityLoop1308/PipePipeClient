@@ -519,8 +519,7 @@ private fun getServiceDisplayName(serviceId: Int): String {
     if (isYouTubeMusicService(serviceId)) {
         return SearchFilterDialog.YOUTUBE_MUSIC_SERVICE_NAME
     }
-    val service = NewPipe.getService(serviceId)
-    return service.serviceInfo.name + if (ServiceHelper.isBeta(service)) " (Legacy)" else ""
+    return NewPipe.getService(serviceId).serviceInfo.name
 }
 
 private fun resolveActualServiceId(serviceId: Int): Int {
