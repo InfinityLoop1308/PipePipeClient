@@ -1246,4 +1246,6 @@ Only add repositories you trust.</string>
 <string name="plugin_uninstall_confirm">Uninstall %s? Your subscriptions and history for it are kept.</string>
 <string name="plugin_install_from">Install %1$s from %2$s?</string>
 <string name="plugin_author">by %s</string>
+<string name="service_instances_title">%s instances</string>
+<string name="service_instances_summary">Select the instances you use</string>
 </resources>
