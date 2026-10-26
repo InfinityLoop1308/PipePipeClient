@@ -40,9 +40,11 @@ import java.nio.charset.StandardCharsets
  * Turns extracted streams into ExoPlayer [MediaSource]s.
  *
  * Each stream is played with the headers of its service ([ServicePlayback.defaultHeaders])
- * overlaid with the headers the stream declares ([Stream.getRequestHeaders]). Services that
- * need more than headers (YouTube, NicoNico, BiliBili) get a [ServicePlayback]; every other
- * service, including plugins, uses the generic path chosen by [DeliveryMethod].
+ * overlaid with the headers the stream declares ([Stream.getRequestHeaders]); live manifests
+ * use [StreamInfo.getManifestRequestHeaders] instead. A stream is kept in the media cache if
+ * it declares so ([Stream.getCacheable]), otherwise by the default of its delivery method.
+ * Services that need more than that (YouTube, NicoNico, BiliBili) get a [ServicePlayback];
+ * every other service, including plugins, uses the generic path chosen by [DeliveryMethod].
  */
 object MediaSourceBuilder {
     private const val TAG = "MediaSourceBuilder"
@@ -57,6 +59,9 @@ object MediaSourceBuilder {
         val initialPositionMs: Long,
         val headers: Map<String, String>,
     ) {
+        /** The cache policy declared by the stream, or [default] if it declares none. */
+        fun cache(default: Boolean): Boolean = stream.cacheable ?: default
+
         fun mediaItem(uri: String = stream.content): MediaItem = MediaItem.Builder()
             .setTag(metadata)
             .setUri(Uri.parse(uri))
@@ -89,8 +94,8 @@ object MediaSourceBuilder {
         else -> GenericPlayback
     }
 
-    private fun headersOf(playback: ServicePlayback, info: StreamInfo, stream: Stream?) =
-        playback.defaultHeaders(info) + stream?.requestHeaders.orEmpty()
+    private fun headersOf(playback: ServicePlayback, info: StreamInfo, stream: Stream) =
+        playback.defaultHeaders(info) + stream.requestHeaders.orEmpty()
 
     // region Entry points
 
@@ -130,7 +135,7 @@ object MediaSourceBuilder {
         val metadata = PlayerMediaItem.forStreamInfo(info)
         playback.buildLive(dataSource, url, metadata)?.let { return it }
 
-        val headers = headersOf(playback, info, null)
+        val headers = playback.defaultHeaders(info) + info.manifestRequestHeaders.orEmpty()
         val factory = when (type) {
             C.CONTENT_TYPE_DASH -> dataSource.liveDashFactory(
                 headers, youtubeManifest = playback === YoutubePlayback
@@ -147,9 +152,11 @@ object MediaSourceBuilder {
         info: StreamInfo,
         subtitle: SubtitlesStream,
         configuration: MediaItem.SubtitleConfiguration,
-    ): MediaSource = dataSource
-        .singleSampleFactory(headersOf(playbackOf(info), info, subtitle))
-        .createMediaSource(configuration, C.TIME_UNSET)
+    ): MediaSource {
+        val headers = headersOf(playbackOf(info), info, subtitle)
+        return dataSource.singleSampleFactory(headers, subtitle.cacheable ?: true)
+            .createMediaSource(configuration, C.TIME_UNSET)
+    }
 
     // endregion
     // region Generic path
@@ -165,35 +172,36 @@ object MediaSourceBuilder {
         val ds = request.dataSource
         val headers = request.headers
         return when (stream.deliveryMethod) {
-            DeliveryMethod.PROGRESSIVE_HTTP -> ds.progressiveFactory(headers, cache = false)
+            DeliveryMethod.PROGRESSIVE_HTTP -> ds.progressiveFactory(headers, request.cache(false))
                 .createMediaSource(request.mediaItem())
 
             DeliveryMethod.DASH -> if (stream.isUrl) {
-                ds.dashFactory(headers).createMediaSource(request.mediaItem())
+                ds.dashFactory(headers, request.cache(true)).createMediaSource(request.mediaItem())
             } else {
-                ds.dashFactory(headers).createMediaSource(
+                ds.dashFactory(headers, request.cache(true)).createMediaSource(
                     parseDashManifest(stream.content, stream),
                     request.mediaItem(manifestBaseUrl(stream)),
                 )
             }
 
             DeliveryMethod.HLS -> if (stream.isUrl) {
-                ds.hlsFactory(headers).createMediaSource(request.mediaItem())
+                ds.hlsFactory(headers, request.cache(true)).createMediaSource(request.mediaItem())
             } else {
                 val playlist = parseManifest("HLS", stream.content) {
                     HlsPlaylistParser().parse(Uri.parse(manifestBaseUrl(stream)), it)
                 }
-                ds.hlsFactory(headers, NonUriHlsPlaylistParserFactory(playlist))
+                val parserFactory = NonUriHlsPlaylistParserFactory(playlist)
+                ds.hlsFactory(headers, request.cache(true), parserFactory)
                     .createMediaSource(request.mediaItem())
             }
 
             DeliveryMethod.SS -> if (stream.isUrl) {
-                ds.ssFactory(headers).createMediaSource(request.mediaItem())
+                ds.ssFactory(headers, request.cache(false)).createMediaSource(request.mediaItem())
             } else {
                 val manifest = parseManifest("SmoothStreaming", stream.content) {
                     SsManifestParser().parse(Uri.parse(manifestBaseUrl(stream)), it)
                 }
-                ds.ssFactory(headers)
+                ds.ssFactory(headers, request.cache(false))
                     .createMediaSource(manifest, request.mediaItem(manifestBaseUrl(stream)))
             }
 
@@ -391,7 +399,7 @@ object MediaSourceBuilder {
                 StandardCharsets.UTF_8.name(),
             )
             val headers = request.headers + ("Cookie" to fragment.substringBefore(LENGTH_MARKER))
-            return request.dataSource.hlsFactory(headers)
+            return request.dataSource.hlsFactory(headers, request.cache(true))
                 .createMediaSource(request.mediaItem(content.substring(0, markerIndex)))
         }
 
@@ -403,7 +411,8 @@ object MediaSourceBuilder {
             if (!url.contains(LIVE_WATCH_URL)) {
                 return null
             }
-            return dataSource.nicoLiveHlsFactory(url).createMediaSource(liveMediaItem(url, metadata))
+            return dataSource.nicoLiveHlsFactory(url)
+                .createMediaSource(liveMediaItem(url, metadata))
         }
     }
 
@@ -419,11 +428,11 @@ object MediaSourceBuilder {
             val ds = request.dataSource
             val manifest = BiliBiliDashManifest.create(request.stream, request.info)
             if (manifest != null) {
-                return ds.dashFactory(request.headers).createMediaSource(
+                return ds.dashFactory(request.headers, request.cache(true)).createMediaSource(
                     parseDashManifest(manifest, request.stream), request.mediaItem()
                 )
             }
-            val cache = !request.info.url.contains("live.bilibili.com")
+            val cache = request.cache(!request.info.url.contains("live.bilibili.com"))
             return ds.progressiveFactory(request.headers, cache)
                 .createMediaSource(request.mediaItem())
         }

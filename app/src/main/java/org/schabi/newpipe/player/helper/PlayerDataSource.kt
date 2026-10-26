@@ -110,26 +110,29 @@ class PlayerDataSource(
         ProgressiveMediaSource.Factory(source(headers, cache))
             .setContinueLoadingCheckIntervalBytes(continueLoadingCheckIntervalBytes)
 
-    fun dashFactory(headers: Map<String, String>): DashMediaSource.Factory =
-        dashFactory(source(headers, cache = true))
+    fun dashFactory(headers: Map<String, String>, cache: Boolean): DashMediaSource.Factory =
+        dashFactory(source(headers, cache))
 
     @JvmOverloads
     fun hlsFactory(
         headers: Map<String, String>,
+        cache: Boolean,
         playlistParserFactory: HlsPlaylistParserFactory? = null,
-    ): HlsMediaSource.Factory = HlsMediaSource.Factory(source(headers, cache = true)).apply {
+    ): HlsMediaSource.Factory = HlsMediaSource.Factory(source(headers, cache)).apply {
         if (playlistParserFactory != null) {
             setPlaylistParserFactory(playlistParserFactory)
         }
     }
 
-    fun ssFactory(headers: Map<String, String>): SsMediaSource.Factory {
-        val dataSource = source(headers, cache = false)
+    fun ssFactory(headers: Map<String, String>, cache: Boolean): SsMediaSource.Factory {
+        val dataSource = source(headers, cache)
         return SsMediaSource.Factory(DefaultSsChunkSource.Factory(dataSource), dataSource)
     }
 
-    fun singleSampleFactory(headers: Map<String, String>): SingleSampleMediaSource.Factory =
-        SingleSampleMediaSource.Factory(source(headers, cache = true))
+    fun singleSampleFactory(
+        headers: Map<String, String>,
+        cache: Boolean,
+    ): SingleSampleMediaSource.Factory = SingleSampleMediaSource.Factory(source(headers, cache))
 
     fun liveHlsFactory(headers: Map<String, String>): HlsMediaSource.Factory =
         HlsMediaSource.Factory(source(headers, cache = false))
