@@ -177,6 +177,39 @@ public class PlayerDataSource {
                 .setContinueLoadingCheckIntervalBytes(continueLoadingCheckIntervalBytes);
     }
 
+    /**
+     * Upstream factory sending the request headers a service declared on its stream.
+     * A {@code User-Agent} entry overrides the default one.
+     */
+    @NonNull
+    private DataSource.Factory getRequestHeadersDataSourceFactory(
+            @NonNull final Map<String, String> headers) {
+        final Map<String, String> properties = new HashMap<>();
+        String ua = userAgent;
+        for (final Map.Entry<String, String> entry : headers.entrySet()) {
+            if ("User-Agent".equalsIgnoreCase(entry.getKey())) {
+                ua = entry.getValue();
+            } else {
+                properties.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return new PurifiedDataSource.Factory(context,
+                new PurifiedHttpDataSource.Factory().setUserAgent(ua)
+                        .setDefaultRequestProperties(properties))
+                .setTransferListener(transferListener);
+    }
+
+    public ProgressiveMediaSource.Factory getProgressiveMediaSourceFactory(
+            @NonNull final Map<String, String> requestHeaders) {
+        return new ProgressiveMediaSource.Factory(getRequestHeadersDataSourceFactory(requestHeaders))
+                .setContinueLoadingCheckIntervalBytes(continueLoadingCheckIntervalBytes);
+    }
+
+    public HlsMediaSource.Factory getRequestHeadersHlsMediaSourceFactory(
+            @NonNull final Map<String, String> requestHeaders) {
+        return new HlsMediaSource.Factory(getRequestHeadersDataSourceFactory(requestHeaders));
+    }
+
     public SsMediaSource.Factory getSSMediaSourceFactory() {
         return new SsMediaSource.Factory(
                 new DefaultSsChunkSource.Factory(cachelessDataSourceFactory),

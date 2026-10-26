@@ -63,6 +63,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -198,7 +199,9 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
                     "Try to generate a progressive media source from an empty string or from a "
                             + "null object");
         } else {
-            return dataSource.getProgressiveMediaSourceFactory().createMediaSource(
+            final Map<String, String> headers = stream.getRequestHeaders();
+            return (headers == null ? dataSource.getProgressiveMediaSourceFactory()
+                    : dataSource.getProgressiveMediaSourceFactory(headers)).createMediaSource(
                     new MediaItem.Builder()
                             .setTag(metadata)
                             .setUri(Uri.parse(url))
@@ -275,7 +278,9 @@ public interface PlaybackResolver extends Resolver<StreamInfo, MediaSource> {
         }
 
         if (isUrlStream) {
-            return dataSource.getHlsMediaSourceFactory(null).createMediaSource(
+            final Map<String, String> headers = stream.getRequestHeaders();
+            return (headers == null ? dataSource.getHlsMediaSourceFactory(null)
+                    : dataSource.getRequestHeadersHlsMediaSourceFactory(headers)).createMediaSource(
                     new MediaItem.Builder()
                             .setTag(metadata)
                             .setUri(Uri.parse(stream.getContent()))
