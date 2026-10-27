@@ -59,6 +59,10 @@ object PluginManager {
     const val BUILTIN_REPOSITORY =
         "https://github.com/InfinityLoop1308/PipePipe-builtin-plugins/releases/download/repo/index.json"
 
+    /** Community repository, offered as a one-tap addition in the plugin settings. */
+    const val AWESOME_REPOSITORY =
+        "https://raw.githubusercontent.com/InfinityLoop1308/awesome-pipepipe-plugins/main/index.json"
+
     /** Ids of services that used to be built in, so existing data keeps working. */
     private val LEGACY_IDS = mapOf(
         "org.pipepipe.plugin.soundcloud" to 1,

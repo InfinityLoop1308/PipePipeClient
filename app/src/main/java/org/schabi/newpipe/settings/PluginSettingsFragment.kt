@@ -170,6 +170,22 @@ class PluginSettingsFragment : BasePreferenceFragment() {
                 }
             )
         }
+        if (PluginManager.AWESOME_REPOSITORY !in repoUrls) {
+            repoCategory.addPreference(
+                Preference(context).apply {
+                    isIconSpaceReserved = false
+                    isSingleLineTitle = false
+                    title = getString(R.string.plugins_add_awesome_repository)
+                    summary = getString(R.string.plugins_add_awesome_repository_summary)
+                    setOnPreferenceClickListener {
+                        PluginManager.addRepository(context, PluginManager.AWESOME_REPOSITORY)
+                        rebuild()
+                        refreshRepositories()
+                        true
+                    }
+                }
+            )
+        }
         repoCategory.addPreference(
             Preference(context).apply {
                 isIconSpaceReserved = false
