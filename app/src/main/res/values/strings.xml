@@ -1242,4 +1242,6 @@ Only add repositories you trust.</string>
 <string name="plugin_author">by %s</string>
 <string name="service_instances_title">%s instances</string>
 <string name="service_instances_summary">Select the instances you use</string>
+<string name="plugins_add_awesome_repository">Add awesome-pipepipe-plugins</string>
+<string name="plugins_add_awesome_repository_summary">Community-curated plugin repository</string>
 </resources>
