@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
+import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreferenceCompat
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -42,8 +43,15 @@ class PluginSettingsFragment : BasePreferenceFragment() {
                 // loaded plugins keep running until the process restarts
                 showRestartHint()
                 rebuild()
+                // the value is stored after this callback returns
+                requirePreference(R.string.plugins_show_nsfw_key).isVisible = false
                 true
             }
+        }
+        requirePreference(R.string.plugins_show_nsfw_key).setOnPreferenceChangeListener { _, _ ->
+            // the value is stored after this callback returns
+            view?.post { rebuild() }
+            true
         }
         rebuild()
         refreshRepositories()
@@ -75,11 +83,14 @@ class PluginSettingsFragment : BasePreferenceFragment() {
         val screen = preferenceScreen
         for (i in screen.preferenceCount - 1 downTo 0) {
             val pref = screen.getPreference(i)
-            if (pref.key != getString(R.string.plugins_enabled_key)) {
+            if (pref.key != getString(R.string.plugins_enabled_key) &&
+                pref.key != getString(R.string.plugins_show_nsfw_key)
+            ) {
                 screen.removePreference(pref)
             }
         }
         val context = requireContext()
+        requirePreference(R.string.plugins_show_nsfw_key).isVisible = PluginManager.isEnabled(context)
         if (!PluginManager.isEnabled(context)) {
             return
         }
@@ -113,9 +124,12 @@ class PluginSettingsFragment : BasePreferenceFragment() {
             )
         }
 
+        val showNsfw = PreferenceManager.getDefaultSharedPreferences(context)
+            .getBoolean(getString(R.string.plugins_show_nsfw_key), false)
         val availableCategory = category(R.string.plugins_available)
         val notInstalled = availableEntries()
             .filter { (_, entry) -> installed.none { it.pluginId == entry.pluginId } }
+            .filter { (_, entry) -> !entry.isNsfw || showNsfw }
         for ((repoUrl, entry) in notInstalled) {
             availableCategory.addPreference(
                 Preference(context).apply {
