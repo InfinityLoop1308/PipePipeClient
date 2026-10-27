@@ -13,6 +13,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import org.schabi.newpipe.BuildConfig
 import org.schabi.newpipe.R
 import org.schabi.newpipe.databinding.DialogEditTextBinding
 import org.schabi.newpipe.extractor.plugin.PluginRepository
@@ -268,7 +269,10 @@ class PluginSettingsFragment : BasePreferenceFragment() {
             .setNegativeButton(R.string.cancel, null)
             .setPositiveButton(R.string.ok) { _, _ ->
                 val url = binding.dialogEditText.text.toString().trim()
-                if (!url.startsWith("https://")) {
+                // plain http is allowed in debug builds only, to test against a local repository
+                val allowed = url.startsWith("https://") ||
+                    (BuildConfig.DEBUG && url.startsWith("http://"))
+                if (!allowed) {
                     Toast.makeText(context, R.string.plugins_repository_https_only, Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }

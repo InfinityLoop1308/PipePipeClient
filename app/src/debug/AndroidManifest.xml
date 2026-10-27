@@ -6,5 +6,6 @@
 
     <application
         android:name=".DebugApp"
+        android:usesCleartextTraffic="true"
         tools:replace="android:name" />
 </manifest>
