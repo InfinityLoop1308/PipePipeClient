@@ -261,7 +261,7 @@ object PluginManager {
         val classLoader = DexClassLoader(
             file.absolutePath, optimizedDir.absolutePath, null, PluginManager::class.java.classLoader
         )
-        val prefs = AndroidPluginPreferences(context, manifest.pluginId)
+        val prefs = AndroidPluginPreferences(context, manifest.pluginId, manifest.settings)
         val service = PluginLoader.createService(
             classLoader, manifest, serviceId,
             object : PluginContext {
@@ -316,7 +316,7 @@ object PluginManager {
         runCatching {
             val url = JsonParser.`object`().from(json).getString("url")
             val pluginPrefs = AndroidPluginPreferences(context, "org.pipepipe.plugin.peertube")
-            if (url != null && pluginPrefs.getString("instance_url", null) == null) {
+            if (url != null && pluginPrefs.getString("instance_url") == null) {
                 pluginPrefs.putString("instance_url", url)
             }
         }
