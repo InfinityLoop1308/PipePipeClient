@@ -222,7 +222,11 @@ class PluginSettingsFragment : BasePreferenceFragment() {
 
     private fun availableEntries(): List<Pair<String, PluginRepository.Entry>> =
         repositories.mapNotNull { (url, result) -> result.getOrNull()?.let { url to it } }
-            .flatMap { (url, repo) -> repo.plugins.map { url to it } }
+            // within one repository the highest versionCode wins
+            .flatMap { (url, repo) ->
+                repo.plugins.groupBy { it.pluginId }
+                    .values.map { entries -> url to entries.maxByOrNull { it.versionCode }!! }
+            }
             // the first repository wins when several publish the same plugin
             .distinctBy { it.second.pluginId }
 
