@@ -15,8 +15,9 @@ import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.ktx.ViewUtils;
 import org.schabi.newpipe.local.LocalItemBuilder;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
-import org.schabi.newpipe.util.PicassoHelper;
 import org.schabi.newpipe.util.Localization;
+import org.schabi.newpipe.util.dearrow.DeArrowBinder;
+import org.schabi.newpipe.util.dearrow.DeArrowRow;
 import org.schabi.newpipe.views.AnimatedProgressBar;
 
 import java.time.format.DateTimeFormatter;
@@ -92,8 +93,11 @@ public class LocalPlaylistStreamItemHolder extends LocalItemHolder {
         }
 
         // Default thumbnail is shown on error, while loading and if the url is empty
-        PicassoHelper.loadScaledDownThumbnail(itemBuilder.getContext(), item.getStreamEntity().getThumbnailUrl())
-                .into(itemThumbnailView);
+        DeArrowBinder.bind(DeArrowRow.fromStored(
+                item.getStreamEntity().getServiceId(),
+                item.getStreamEntity().getUrl(),
+                item.getStreamEntity().getThumbnailUrl()),
+                itemVideoTitleView, itemThumbnailView);
 
         itemView.setOnClickListener(view -> {
             if (itemBuilder.getOnItemSelectedListener() != null) {
