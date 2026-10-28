@@ -38,6 +38,7 @@ import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.plugin.PluginThemeLoader;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
@@ -73,6 +74,8 @@ public final class ThemeHelper {
      */
     public static void setTheme(final Context context, final int serviceId) {
         context.setTheme(getThemeForService(context, serviceId));
+        PluginThemeLoader.apply(context, serviceId,
+                isLightThemeSelected(context), isBlackThemeSelected(context));
     }
 
     /**
@@ -88,6 +91,25 @@ public final class ThemeHelper {
         return selectedThemeKey.equals(res.getString(R.string.light_theme_key))
                 || (selectedThemeKey.equals(res.getString(R.string.auto_device_theme_key))
                 && !isDeviceDarkThemeEnabled(context));
+    }
+
+
+    /**
+     * Return true if the selected theme (on PipePipe settings) is the Black theme.
+     *
+     * @param context context to get the preference
+     * @return whether the black theme is selected
+     */
+    public static boolean isBlackThemeSelected(final Context context) {
+        final Resources res = context.getResources();
+        final String blackThemeKey = res.getString(R.string.black_theme_key);
+        final String selectedThemeKey = getSelectedThemeKey(context);
+        if (selectedThemeKey.equals(blackThemeKey)) {
+            return true;
+        }
+        return selectedThemeKey.equals(res.getString(R.string.auto_device_theme_key))
+                && isDeviceDarkThemeEnabled(context)
+                && getSelectedNightThemeKey(context).equals(blackThemeKey);
     }
 
     /**

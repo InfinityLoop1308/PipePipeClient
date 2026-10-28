@@ -245,6 +245,7 @@ object PluginManager {
                 loadErrors[plugin.pluginId] = e.message ?: e.javaClass.simpleName
             }
         }
+        PluginThemeLoader.load(context, loaded)
     }
 
     private fun load(context: Context, plugin: InstalledPlugin) {
