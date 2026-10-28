@@ -1246,4 +1246,5 @@ Only add repositories you trust.</string>
 <string name="plugins_add_awesome_repository_summary">Community-curated plugin repository</string>
 <string name="plugins_show_nsfw_title">Show NSFW plugins</string>
 <string name="plugins_show_nsfw_summary">List plugins marked as NSFW in the available plugins</string>
+<string name="plugin_installed_other_publisher">Published by someone else. Uninstall %1$s first to install this one.</string>
 </resources>

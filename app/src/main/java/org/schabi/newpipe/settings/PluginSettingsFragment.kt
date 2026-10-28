@@ -103,7 +103,9 @@ class PluginSettingsFragment : BasePreferenceFragment() {
         }
         for (plugin in installed) {
             val error = PluginManager.getLoadError(plugin.pluginId)
-            val available = availableEntries().firstOrNull { it.second.pluginId == plugin.pluginId }
+            val available = availableEntries().firstOrNull {
+                it.second.pluginId == plugin.pluginId && it.second.publicKey == plugin.publicKey
+            }
             val updatable = available != null &&
                 available.second.versionCode > plugin.versionCode &&
                 available.second.isApiCompatible
@@ -129,7 +131,9 @@ class PluginSettingsFragment : BasePreferenceFragment() {
             .getBoolean(getString(R.string.plugins_show_nsfw_key), false)
         val availableCategory = category(R.string.plugins_available)
         val notInstalled = availableEntries()
-            .filter { (_, entry) -> installed.none { it.pluginId == entry.pluginId } }
+            .filter { (_, entry) ->
+                installed.none { it.pluginId == entry.pluginId && it.publicKey == entry.publicKey }
+            }
             .filter { (_, entry) -> !entry.isNsfw || showNsfw }
         for ((repoUrl, entry) in notInstalled) {
             availableCategory.addPreference(
@@ -137,12 +141,14 @@ class PluginSettingsFragment : BasePreferenceFragment() {
                     isIconSpaceReserved = false
                     isSingleLineTitle = false
                     title = entry.name + " " + entry.versionName
-                    summary = authorLine(entry.author) + if (entry.isApiCompatible) {
-                        entry.description ?: entry.pluginId
-                    } else {
-                        getString(R.string.plugin_incompatible)
+                    // same plugin id, different publisher: recognised, but the installed one must go first
+                    val otherAuthor = installed.firstOrNull { it.pluginId == entry.pluginId }
+                    summary = authorLine(entry.author) + when {
+                        otherAuthor != null -> getString(R.string.plugin_installed_other_publisher, otherAuthor.name)
+                        entry.isApiCompatible -> entry.description ?: entry.pluginId
+                        else -> getString(R.string.plugin_incompatible)
                     }
-                    isEnabled = entry.isApiCompatible
+                    isEnabled = entry.isApiCompatible && otherAuthor == null
                     setOnPreferenceClickListener {
                         confirmInstall(repoUrl, entry)
                         true
@@ -222,13 +228,14 @@ class PluginSettingsFragment : BasePreferenceFragment() {
 
     private fun availableEntries(): List<Pair<String, PluginRepository.Entry>> =
         repositories.mapNotNull { (url, result) -> result.getOrNull()?.let { url to it } }
+            // a plugin is identified by plugin id and publisher key;
             // within one repository the highest versionCode wins
             .flatMap { (url, repo) ->
-                repo.plugins.groupBy { it.pluginId }
+                repo.plugins.groupBy { it.pluginId to it.publicKey }
                     .values.map { entries -> url to entries.maxByOrNull { it.versionCode }!! }
             }
             // the first repository wins when several publish the same plugin
-            .distinctBy { it.second.pluginId }
+            .distinctBy { it.second.pluginId to it.second.publicKey }
 
     private fun category(title: Int) = PreferenceCategory(requireContext()).also {
         it.layoutResource = R.layout.settings_category_header_layout
