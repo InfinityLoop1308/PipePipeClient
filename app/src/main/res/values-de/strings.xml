@@ -1193,4 +1193,7 @@
 <string name="service_instances_summary">Wähle die Instanzen aus, die du verwendest</string>
 <string name="plugins_add_awesome_repository">awesome-pipepipe-plugins hinzufügen</string>
 <string name="plugins_add_awesome_repository_summary">Von der Community kuratiertes Plugin-Repository</string>
+<string name="plugins_show_nsfw_title">NSFW-Plugins anzeigen</string>
+<string name="plugins_show_nsfw_summary">Als NSFW markierte Plugins in den verfügbaren Plugins auflisten</string>
+<string name="plugin_installed_other_publisher">Von einem anderen Herausgeber veröffentlicht. Deinstalliere zuerst %1$s, um dieses zu installieren.</string>
 </resources>

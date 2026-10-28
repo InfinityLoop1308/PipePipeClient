@@ -1248,4 +1248,7 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="service_instances_summary">Chọn các instance bạn sử dụng</string>
 <string name="plugins_add_awesome_repository">Thêm awesome-pipepipe-plugins</string>
 <string name="plugins_add_awesome_repository_summary">Kho lưu trữ plugin do cộng đồng quản lý</string>
+<string name="plugins_show_nsfw_title">Hiển thị các plugin NSFW</string>
+<string name="plugins_show_nsfw_summary">Liệt kê các plugin được đánh dấu là NSFW trong danh sách plugin có sẵn</string>
+<string name="plugin_installed_other_publisher">Được phát hành bởi người khác. Vui lòng gỡ cài đặt %1$s trước khi cài đặt plugin này.</string>
 </resources>

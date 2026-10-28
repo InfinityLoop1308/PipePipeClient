@@ -1210,4 +1210,7 @@ Voulez-vous continuer?</string>
 <string name="service_instances_summary">Sélectionnez les instances que vous utilisez</string>
 <string name="plugins_add_awesome_repository">Ajouter awesome-pipepipe-plugins</string>
 <string name="plugins_add_awesome_repository_summary">Dépôt de plugins géré par la communauté</string>
+<string name="plugins_show_nsfw_title">Afficher les plugins NSFW</string>
+<string name="plugins_show_nsfw_summary">Lister les plugins marqués comme NSFW parmi les plugins disponibles</string>
+<string name="plugin_installed_other_publisher">Publié par quelqu\'un d\'autre. Désinstallez d\'abord %1$s pour installer celui-ci.</string>
 </resources>

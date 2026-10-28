@@ -1164,4 +1164,7 @@
 <string name="service_instances_summary">使用するインスタンスを選択してください</string>
 <string name="plugins_add_awesome_repository">awesome-pipepipe-plugins を追加</string>
 <string name="plugins_add_awesome_repository_summary">コミュニティが厳選したプラグインリポジトリ</string>
+<string name="plugins_show_nsfw_title">NSFWプラグインを表示</string>
+<string name="plugins_show_nsfw_summary">利用可能なプラグイン一覧にNSFWとしてマークされたプラグインを表示します</string>
+<string name="plugin_installed_other_publisher">他のパブリッシャーによって公開されています。これをインストールするには、まず %1$s をアンインストールしてください。</string>
 </resources>

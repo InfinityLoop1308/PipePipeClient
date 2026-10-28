@@ -1241,4 +1241,7 @@
 <string name="service_instances_summary">选择您使用的实例</string>
 <string name="plugins_add_awesome_repository">添加 awesome-pipepipe-plugins</string>
 <string name="plugins_add_awesome_repository_summary">社区精选插件仓库</string>
+<string name="plugins_show_nsfw_title">显示 NSFW 插件</string>
+<string name="plugins_show_nsfw_summary">在可用插件中列出被标记为 NSFW 的插件</string>
+<string name="plugin_installed_other_publisher">由其他发布者发布。请先卸载 %1$s 才能安装此插件。</string>
 </resources>

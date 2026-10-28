@@ -1195,4 +1195,7 @@
 <string name="service_instances_summary">選擇您使用的實例</string>
 <string name="plugins_add_awesome_repository">新增 awesome-pipepipe-plugins</string>
 <string name="plugins_add_awesome_repository_summary">社群維護的外掛程式存放區</string>
+<string name="plugins_show_nsfw_title">顯示 NSFW 外掛</string>
+<string name="plugins_show_nsfw_summary">在可用外掛中列出標記為 NSFW 的外掛</string>
+<string name="plugin_installed_other_publisher">由其他人發布。請先解除安裝 %1$s 才能安裝此項目。</string>
 </resources>
