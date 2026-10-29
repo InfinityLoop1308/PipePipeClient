@@ -2,10 +2,8 @@ package org.schabi.newpipe.fragments.detail;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.database.ContentObserver;
@@ -53,7 +51,6 @@ import com.google.android.material.tabs.TabLayout;
 import com.squareup.picasso.Callback;
 
 import io.reactivex.rxjava3.core.Single;
-import org.schabi.newpipe.App;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.stream.model.StreamEntity;
 import org.schabi.newpipe.databinding.FragmentVideoDetailBinding;
@@ -94,6 +91,7 @@ import org.schabi.newpipe.player.PlayerPlaybackParameters;
 import org.schabi.newpipe.player.RepeatMode;
 import org.schabi.newpipe.player.PlaybackStartupTrace;
 import org.schabi.newpipe.player.PlayerUiModeController;
+import org.schabi.newpipe.player.event.DetailPlayerEvents;
 import org.schabi.newpipe.player.event.OnKeyDownListener;
 import org.schabi.newpipe.player.event.PlayerServiceExtendedEventListener;
 import org.schabi.newpipe.player.helper.PlayerHelper;
@@ -142,23 +140,6 @@ public final class VideoDetailFragment
 
     private static final float MAX_OVERLAY_ALPHA = 0.9f;
     private static final float MAX_PLAYER_HEIGHT = 0.7f;
-
-    public static final String ACTION_SHOW_MAIN_PLAYER =
-            App.PACKAGE_NAME + ".VideoDetailFragment.ACTION_SHOW_MAIN_PLAYER";
-    public static final String ACTION_HIDE_MAIN_PLAYER =
-            App.PACKAGE_NAME + ".VideoDetailFragment.ACTION_HIDE_MAIN_PLAYER";
-    public static final String ACTION_PLAYER_STARTED =
-            App.PACKAGE_NAME + ".VideoDetailFragment.ACTION_PLAYER_STARTED";
-    public static final String ACTION_VIDEO_FRAGMENT_RESUMED =
-            App.PACKAGE_NAME + ".VideoDetailFragment.ACTION_VIDEO_FRAGMENT_RESUMED";
-    public static final String ACTION_VIDEO_FRAGMENT_STOPPED =
-            App.PACKAGE_NAME + ".VideoDetailFragment.ACTION_VIDEO_FRAGMENT_STOPPED";
-    public static final String ACTION_VIDEO_ERROR =
-            App.PACKAGE_NAME + ".VideoDetailFragment.ACTION_VIDEO_ERROR";
-    public static final String ACTION_SEEK_TO =
-            App.PACKAGE_NAME + ".VideoDetailFragment.ACTION_SEEK_TO";
-    public static final String ACTION_ENTER_FULLSCREEN
-            = App.PACKAGE_NAME + ".VideoDetailFragment.ACTION_ENTER_FULLSCREEN";
 
     private static final String COMMENTS_TAB_TAG = "COMMENTS";
     private static final String RELATED_TAB_TAG = "NEXT VIDEO";
@@ -241,7 +222,7 @@ public final class VideoDetailFragment
     private int selectedVideoStreamIndex = -1;
     private long pendingStartupTraceId;
     private BottomSheetBehavior<FrameLayout> bottomSheetBehavior;
-    private BroadcastReceiver broadcastReceiver;
+    private DetailPlayerEvents.Listener detailEventListener;
 
     /*//////////////////////////////////////////////////////////////////////////
     // Views
@@ -335,7 +316,7 @@ public final class VideoDetailFragment
                 getString(R.string.stream_info_selected_tab_key), COMMENTS_TAB_TAG);
         prefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
 
-        setupBroadcastReceiver();
+        setupDetailEventListener();
 
         settingsContentObserver = new ContentObserver(new Handler()) {
             @Override
@@ -407,7 +388,7 @@ public final class VideoDetailFragment
     @Override
     public void onResume() {
         super.onResume();
-        activity.sendBroadcast(new Intent(ACTION_VIDEO_FRAGMENT_RESUMED));
+        DetailPlayerEvents.detailResumed();
 
         setupBrightness();
 
@@ -434,7 +415,7 @@ public final class VideoDetailFragment
         super.onStop();
 
         if (!activity.isChangingConfigurations()) {
-            activity.sendBroadcast(new Intent(ACTION_VIDEO_FRAGMENT_STOPPED));
+            DetailPlayerEvents.detailStopped();
         }
     }
 
@@ -452,7 +433,7 @@ public final class VideoDetailFragment
 
         PreferenceManager.getDefaultSharedPreferences(activity)
                 .unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
-        activity.unregisterReceiver(broadcastReceiver);
+        DetailPlayerEvents.removeListener(detailEventListener);
         activity.getContentResolver().unregisterContentObserver(settingsContentObserver);
 
         if (positionSubscriber != null) {
@@ -1842,48 +1823,24 @@ public final class VideoDetailFragment
         binding.tabLayout.setVisibility(View.GONE);
     }
 
-    private void setupBroadcastReceiver() {
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(final Context context, final Intent intent) {
-                switch (intent.getAction()) {
-                    case ACTION_SHOW_MAIN_PLAYER:
-                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                        break;
-                    case ACTION_HIDE_MAIN_PLAYER:
-                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                        break;
-                    case ACTION_PLAYER_STARTED:
-                        // If the state is not hidden we don't need to show the mini player
-                        if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
-                            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                        }
-                        // Rebound to the service if it was closed via notification or mini player
-                        if (!playerHolder.isBound()) {
-                            playerHolder.startService(
-                                    false, VideoDetailFragment.this);
-                        }
-                        break;
-                    case ACTION_ENTER_FULLSCREEN:
-                        if (player != null) {
-                            moveFocusToMainFragment(false);
-                            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                            player.changeFullscreen(true);
-                        }
-                        break;
+    private void setupDetailEventListener() {
+        detailEventListener = event -> {
+            if (event == DetailPlayerEvents.Event.ShowMainPlayer.INSTANCE) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            } else if (event == DetailPlayerEvents.Event.HideMainPlayer.INSTANCE) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+            } else if (event == DetailPlayerEvents.Event.PlayerStarted.INSTANCE) {
+                // If the state is not hidden we don't need to show the mini player
+                if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                }
+                // Rebound to the service if it was closed via notification or mini player
+                if (!playerHolder.isBound()) {
+                    playerHolder.startService(false, VideoDetailFragment.this);
                 }
             }
         };
-        final IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_SHOW_MAIN_PLAYER);
-        intentFilter.addAction(ACTION_HIDE_MAIN_PLAYER);
-        intentFilter.addAction(ACTION_PLAYER_STARTED);
-        intentFilter.addAction(ACTION_ENTER_FULLSCREEN);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            activity.registerReceiver(broadcastReceiver, intentFilter, Context.RECEIVER_EXPORTED);
-        } else {
-            activity.registerReceiver(broadcastReceiver, intentFilter);
-        }
+        DetailPlayerEvents.addListener(detailEventListener);
     }
 
 

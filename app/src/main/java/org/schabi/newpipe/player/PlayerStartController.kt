@@ -187,7 +187,7 @@ class PlayerStartController(private val player: Player) {
                 player.pause()
             }
         }
-        NavigationHelper.sendPlayerStartedEvent(player.context)
+        NavigationHelper.sendPlayerStartedEvent()
     }
 
     private fun initPlayback(

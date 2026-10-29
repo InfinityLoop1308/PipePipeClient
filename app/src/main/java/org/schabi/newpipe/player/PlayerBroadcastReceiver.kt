@@ -8,7 +8,7 @@ import android.media.AudioManager
 import android.os.Build
 import android.util.Log
 import android.view.WindowManager
-import org.schabi.newpipe.fragments.detail.VideoDetailFragment
+import org.schabi.newpipe.player.event.DetailPlayerEvents
 import org.schabi.newpipe.util.DeviceUtils
 import org.schabi.newpipe.util.Localization.assureCorrectAppLanguage
 
@@ -16,7 +16,8 @@ import org.schabi.newpipe.util.Localization.assureCorrectAppLanguage
  * Owns the broadcast receiver of a [Player] and the last known orientation.
  *
  * The [IntentFilter], the registered [BroadcastReceiver] and the handling of the player actions
- * sent by the notification and the video detail fragment all live here. [Player] only keeps a few
+ * sent by the notification live here, as well as the in-process [DetailPlayerEvents] sent by the
+ * video detail fragment. [Player] only keeps a few
  * package-private primitives this controller cannot own (the seek, the screen size, the
  * fullscreen state), so the playback intents are handled exactly as before.
  */
@@ -29,6 +30,26 @@ class PlayerBroadcastReceiver(private val player: Player) {
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(ctx: Context?, intent: Intent?) {
             onBroadcastReceived(intent)
+        }
+    }
+
+    private val detailEventListener = DetailPlayerEvents.Listener { event ->
+        when (event) {
+            is DetailPlayerEvents.Event.SeekTo -> {
+                player.seekTo(event.seconds * 1000L)
+                if (player.progressController.wasPlaying) {
+                    player.simpleExoPlayer.play()
+                }
+            }
+            DetailPlayerEvents.Event.DetailResumed -> {
+                player.listeners.isFragmentVisible = true
+                player.useVideoSource(true)
+            }
+            DetailPlayerEvents.Event.DetailStopped -> {
+                player.listeners.isFragmentVisible = false
+                player.onFragmentStopped()
+            }
+            else -> Unit
         }
     }
 
@@ -51,16 +72,10 @@ class PlayerBroadcastReceiver(private val player: Player) {
         intentFilter.addAction(PlayerService.ACTION_SHUFFLE)
         intentFilter.addAction(PlayerService.ACTION_RECREATE_NOTIFICATION)
 
-        intentFilter.addAction(VideoDetailFragment.ACTION_SEEK_TO)
-        intentFilter.addAction(VideoDetailFragment.ACTION_VIDEO_FRAGMENT_RESUMED)
-        intentFilter.addAction(VideoDetailFragment.ACTION_VIDEO_FRAGMENT_STOPPED)
-
         intentFilter.addAction(Intent.ACTION_CONFIGURATION_CHANGED)
         intentFilter.addAction(Intent.ACTION_SCREEN_ON)
         intentFilter.addAction(Intent.ACTION_SCREEN_OFF)
         intentFilter.addAction(Intent.ACTION_HEADSET_PLUG)
-
-        intentFilter.addAction(VideoDetailFragment.ACTION_VIDEO_ERROR)
     }
 
     private fun onBroadcastReceived(intent: Intent?) {
@@ -90,20 +105,6 @@ class PlayerBroadcastReceiver(private val player: Player) {
             PlayerService.ACTION_RECREATE_NOTIFICATION ->
                 NotificationUtil.getInstance()
                     .createNotificationIfNeededAndUpdate(player, true)
-            VideoDetailFragment.ACTION_SEEK_TO -> {
-                player.seekTo(intent.getIntExtra("Timestamp", 0) * 1000L)
-                if (player.progressController.wasPlaying) {
-                    player.simpleExoPlayer.play()
-                }
-            }
-            VideoDetailFragment.ACTION_VIDEO_FRAGMENT_RESUMED -> {
-                player.listeners.isFragmentVisible = true
-                player.useVideoSource(true)
-            }
-            VideoDetailFragment.ACTION_VIDEO_FRAGMENT_STOPPED -> {
-                player.listeners.isFragmentVisible = false
-                player.onFragmentStopped()
-            }
             Intent.ACTION_CONFIGURATION_CHANGED -> {
                 assureCorrectAppLanguage(player.service.instance)
                 if (Player.DEBUG) {
@@ -141,7 +142,7 @@ class PlayerBroadcastReceiver(private val player: Player) {
             Intent.ACTION_SCREEN_ON -> {
                 // Interrupt playback only when screen turns on
                 // and user is watching video in popup player.
-                // Same actions for video player will be handled in ACTION_VIDEO_FRAGMENT_RESUMED
+                // Same actions for video player will be handled on DetailPlayerEvents.Event.DetailResumed
                 if (player.popupPlayerSelected() && (player.isPlaying || player.isLoading)) {
                     player.useVideoSource(true)
                 }
@@ -164,6 +165,7 @@ class PlayerBroadcastReceiver(private val player: Player) {
     fun register() {
         // Try to unregister current first
         unregister()
+        DetailPlayerEvents.addListener(detailEventListener)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.registerReceiver(broadcastReceiver, intentFilter, Context.RECEIVER_EXPORTED)
         } else {
@@ -172,6 +174,7 @@ class PlayerBroadcastReceiver(private val player: Player) {
     }
 
     fun unregister() {
+        DetailPlayerEvents.removeListener(detailEventListener)
         try {
             context.unregisterReceiver(broadcastReceiver)
         } catch (unregisteredException: IllegalArgumentException) {
