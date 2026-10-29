@@ -9,6 +9,7 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -67,6 +68,12 @@ class VideoDetailFragment : BaseStateFragment<StreamInfo>(), BackPressable,
 
         /** Delay of redrawing the page for a stream started by the player, see onMetadataUpdate. */
         private const val PLAYER_STREAM_RENDER_DELAY = 200L
+
+        private fun isDpadKey(keyCode: Int): Boolean = when (keyCode) {
+            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_DPAD_LEFT,
+            KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_DPAD_CENTER -> true
+            else -> false
+        }
 
         @JvmStatic
         fun getInstance(serviceId: Int, videoUrl: String?, name: String,
@@ -334,8 +341,26 @@ class VideoDetailFragment : BaseStateFragment<StreamInfo>(), BackPressable,
     }
 
     // the pager first: ViewPager handled DPAD left/right itself before they reached the player
-    override fun onKeyDown(keyCode: Int): Boolean =
-        tabs?.onKeyDown(keyCode) == true || player?.onKeyDown(keyCode) == true
+    override fun onKeyDown(keyCode: Int): Boolean {
+        if (tabs?.onKeyDown(keyCode) == true) {
+            return true
+        }
+        val player = player ?: return false
+        // The activity gets the keys before they move the focus: while the controls are hidden
+        // the player would take any DPAD key to show them, pulling the focus out of the page.
+        if (isDpadKey(keyCode) && !player.isFullscreen && isFocusOutsidePlayer(player)) {
+            return false
+        }
+        return player.onKeyDown(keyCode)
+    }
+
+    /** Whether a view of the page other than the player (or its thumbnail) has the focus. */
+    private fun isFocusOutsidePlayer(player: Player): Boolean {
+        val page = view ?: return false
+        return page.hasFocus()
+            && !binding.detailThumbnailRootLayout.root.hasFocus()
+            && !player.binding.root.hasFocus()
+    }
 
     // Loading
 
