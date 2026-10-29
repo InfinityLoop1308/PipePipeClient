@@ -333,7 +333,9 @@ class VideoDetailFragment : BaseStateFragment<StreamInfo>(), BackPressable,
         }
     }
 
-    override fun onKeyDown(keyCode: Int): Boolean = player?.onKeyDown(keyCode) == true
+    // the pager first: ViewPager handled DPAD left/right itself before they reached the player
+    override fun onKeyDown(keyCode: Int): Boolean =
+        tabs?.onKeyDown(keyCode) == true || player?.onKeyDown(keyCode) == true
 
     // Loading
 

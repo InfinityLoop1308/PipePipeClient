@@ -4,12 +4,18 @@ import android.content.SharedPreferences
 import android.graphics.Point
 import android.graphics.Rect
 import android.util.TypedValue
+import android.view.FocusFinder
+import android.view.KeyEvent
+import android.view.SoundEffectConstants
 import android.view.View
+import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentOnAttachListener
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -31,6 +37,7 @@ import org.schabi.newpipe.fragments.list.sponsorblock.SponsorBlockFragmentListen
 import org.schabi.newpipe.fragments.list.videos.RelatedItemsFragment
 import org.schabi.newpipe.player.chat.ChatStore
 import org.schabi.newpipe.util.SponsorBlockHelper
+import org.schabi.newpipe.views.FocusAwareCoordinator
 
 /**
  * Owns the tabs of the video detail page: which tabs exist for a stream, the pager showing them,
@@ -61,6 +68,22 @@ class DetailTabsController(
     private val childFm get() = fragment.childFragmentManager
 
     private val adapter = DetailTabsAdapter(childFm, fragment.viewLifecycleOwner.lifecycle)
+
+    /** The RecyclerView inside the pager, holding one item view per page. */
+    private val pagesView = pager.getChildAt(0) as RecyclerView
+
+    /**
+     * Scrolls the page to the focused view (tablet and TV layout only). ViewPager2 clears the
+     * focus when it changes pages, which gives it to the thumbnail at the top of the page until
+     * the focus is moved to the new page: the page must not scroll there meanwhile.
+     */
+    private val focusScroller = pager.parent as? FocusAwareCoordinator
+
+    /** The view focused last on each page left with DPAD left/right, by item id. */
+    private val lastFocused = HashMap<Long, View>()
+
+    /** Focuses the page switched to with DPAD left/right once it is laid out. */
+    private var pendingPageFocus: ViewTreeObserver.OnPreDrawListener? = null
     private val mediator = TabLayoutMediator(tabLayout, pager) { tab, position ->
         val detailTab = adapter.specs[position].tab
         if (detailTab.icon != 0) {
@@ -79,6 +102,7 @@ class DetailTabsController(
 
     private val pageCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
+            updatePagesFocusability()
             val tab = adapter.specs.getOrNull(position)?.tab ?: return
             // Page changes caused by rebuilding the tabs are reported after the fact, but always
             // for the page selected by applySelection(): those are not the user's choice.
@@ -90,6 +114,16 @@ class DetailTabsController(
                 state.preferredTag = tab.tag
             }
         }
+    }
+
+    /**
+     * Unlike ViewPager, ViewPager2 lets the DPAD focus move into the pages kept off screen and
+     * never scrolls to them: only the current page may take the focus.
+     */
+    private val pageAttachListener = object : RecyclerView.OnChildAttachStateChangeListener {
+        override fun onChildViewAttachedToWindow(view: View) = updatePageFocusability(view)
+
+        override fun onChildViewDetachedFromWindow(view: View) = Unit
     }
 
     private val attachListener = FragmentOnAttachListener { _, child ->
@@ -108,6 +142,7 @@ class DetailTabsController(
         // keep every tab alive, so that switching tabs never reloads one
         pager.offscreenPageLimit = DetailTab.entries.size
         pager.registerOnPageChangeCallback(pageCallback)
+        pagesView.addOnChildAttachStateChangeListener(pageAttachListener)
         mediator.attach()
         childFm.addFragmentOnAttachListener(attachListener)
         childFm.fragments.filterIsInstance<SponsorBlockFragment>()
@@ -185,6 +220,39 @@ class DetailTabsController(
             && (adapter.fragmentOf(DetailTab.COMMENTS) as? BackPressable)?.onBackPressed() == true
     }
 
+    /**
+     * DPAD left/right inside the pager, like ViewPager: moves the focus within the current page,
+     * or switches to the neighbouring tab if there is nothing to focus in that direction.
+     * Called only after the views did not handle the key.
+     */
+    fun onKeyDown(keyCode: Int): Boolean {
+        val direction = when (keyCode) {
+            KeyEvent.KEYCODE_DPAD_LEFT -> View.FOCUS_LEFT
+            KeyEvent.KEYCODE_DPAD_RIGHT -> View.FOCUS_RIGHT
+            else -> return false
+        }
+        if (!pager.hasFocus()) {
+            return false
+        }
+        if (pendingPageFocus != null) {
+            // the page switched to is not in place yet
+            return true
+        }
+        // the pager's RecyclerView itself has the focus when a page has nothing focusable
+        val focused = pager.findFocus()?.takeUnless { it === pagesView }
+        val next = FocusFinder.getInstance().findNextFocus(pager, focused, direction)
+        val handled = if (next != null && next !== focused
+            && (focused == null || isFurther(next, focused, direction))) {
+            next.requestFocus()
+        } else {
+            switchPage(direction)
+        }
+        if (handled) {
+            pager.playSoundEffect(SoundEffectConstants.getContantForFocusDirection(direction))
+        }
+        return handled
+    }
+
     fun sponsorBlockFragment(): SponsorBlockFragment? =
         adapter.fragmentOf(DetailTab.SPONSOR_BLOCK) as? SponsorBlockFragment
 
@@ -198,7 +266,12 @@ class DetailTabsController(
     fun release() {
         mediator.detach()
         pager.unregisterOnPageChangeCallback(pageCallback)
+        pagesView.removeOnChildAttachStateChangeListener(pageAttachListener)
         childFm.removeFragmentOnAttachListener(attachListener)
+        pendingPageFocus?.let { pager.viewTreeObserver.removeOnPreDrawListener(it) }
+        pendingPageFocus = null
+        focusScroller?.setFocusScrollSuppressed(false)
+        lastFocused.clear()
         pager.adapter = null
     }
 
@@ -261,6 +334,12 @@ class DetailTabsController(
             }
         }
         val currentTab = adapter.specs.getOrNull(pager.currentItem)?.tab
+        val focused = pager.findFocus()
+        if (focused != null) {
+            focusScroller?.setFocusScrollSuppressed(true)
+        }
+        val itemIds = specs.mapTo(HashSet()) { it.itemId }
+        lastFocused.keys.retainAll(itemIds)
         applying = true
         try {
             adapter.submit(specs)
@@ -269,6 +348,115 @@ class DetailTabsController(
         }
         applySelection(currentTab)
         updateTabLayoutVisibility()
+        // After the pages are laid out again: ViewPager2 drops the focus when the selected
+        // position changes, keep it in the pager as ViewPager did.
+        pager.post {
+            focusScroller?.setFocusScrollSuppressed(false)
+            if (pager.adapter == null) {
+                return@post
+            }
+            updatePagesFocusability()
+            if (focused != null && currentPageView()?.hasFocus() != true) {
+                focusCurrentPage(focused)
+            }
+        }
+    }
+
+    private fun currentPageView(): View? =
+        pagesView.layoutManager?.findViewByPosition(pager.currentItem)
+
+    private fun updatePagesFocusability() {
+        for (i in 0 until pagesView.childCount) {
+            updatePageFocusability(pagesView.getChildAt(i))
+        }
+    }
+
+    private fun updatePageFocusability(page: View) {
+        (page as? ViewGroup)?.descendantFocusability =
+            if (pagesView.getChildLayoutPosition(page) == pager.currentItem) {
+                ViewGroup.FOCUS_AFTER_DESCENDANTS
+            } else {
+                ViewGroup.FOCUS_BLOCK_DESCENDANTS
+            }
+    }
+
+    /**
+     * Focuses [previous] if it is still on the current page, or else the first focusable view of
+     * the current page, or else the pager itself, so that DPAD left/right still switch tabs.
+     */
+    private fun focusCurrentPage(previous: View?) {
+        updatePagesFocusability()
+        val page = currentPageView()
+        if (page != null && previous != null && previous !== pagesView
+            && isInside(previous, page) && previous.requestFocus()) {
+            return
+        }
+        if (page?.requestFocus(View.FOCUS_FORWARD) != true) {
+            pagesView.requestFocus()
+        }
+    }
+
+    /** Switches to the tab next to the current one in [direction], see [onKeyDown]. */
+    private fun switchPage(direction: Int): Boolean {
+        // ViewPager2 mirrors the pages for right-to-left layouts
+        val rtl = pager.layoutDirection == View.LAYOUT_DIRECTION_RTL
+        val step = if ((direction == View.FOCUS_RIGHT) != rtl) 1 else -1
+        val target = pager.currentItem + step
+        if (target !in 0 until adapter.itemCount) {
+            return false
+        }
+        val page = currentPageView()
+        val focused = pager.findFocus()
+        if (page != null && focused != null && focused !== pagesView) {
+            lastFocused[pagesView.getChildItemId(page)] = focused
+        }
+        // Until the new page is focused, the page must not scroll to the focus: ViewPager2 clears
+        // it when changing pages, which gives it to the thumbnail at the top of the page.
+        focusScroller?.setFocusScrollSuppressed(true)
+        // a user's choice, recorded by pageCallback
+        pager.setCurrentItem(target, false)
+        // keep the keys coming to the pager meanwhile
+        pagesView.requestFocus()
+        // Focus the new page only once it is laid out in place, before it is drawn: a view still
+        // beside the pager is outside of the screen, and focusing it collapses the app bar.
+        val listener = object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                pager.viewTreeObserver.removeOnPreDrawListener(this)
+                pendingPageFocus = null
+                focusScroller?.setFocusScrollSuppressed(false)
+                val newPage = currentPageView()
+                focusCurrentPage(newPage?.let { lastFocused[pagesView.getChildItemId(it)] })
+                // draw the new focus instead
+                return false
+            }
+        }
+        pendingPageFocus = listener
+        pager.viewTreeObserver.addOnPreDrawListener(listener)
+        return true
+    }
+
+    /** Whether [next] is further than [focused] in [direction], compared by the left edges. */
+    private fun isFurther(next: View, focused: View, direction: Int): Boolean {
+        val nextLeft = leftInPager(next)
+        val focusedLeft = leftInPager(focused)
+        return if (direction == View.FOCUS_LEFT) nextLeft < focusedLeft else nextLeft > focusedLeft
+    }
+
+    private fun leftInPager(view: View): Int {
+        val rect = Rect(0, 0, view.width, view.height)
+        pager.offsetDescendantRectToMyCoords(view, rect)
+        return rect.left
+    }
+
+    private fun isInside(view: View, ancestor: View): Boolean {
+        var current: View? = view
+        while (current != null) {
+            if (current === ancestor) {
+                return true
+            }
+            current = current.parent as? View
+        }
+        return false
     }
 
     /** Selects the remembered tab, or else [fallback], or else the first one. */
