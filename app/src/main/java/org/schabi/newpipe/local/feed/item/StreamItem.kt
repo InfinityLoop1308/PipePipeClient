@@ -96,7 +96,13 @@ data class StreamItem(
                 )
             )
             viewBinding.itemDurationView.visibility = View.VISIBLE
-            viewBinding.itemProgressView.visibility = View.GONE
+            if (stateProgressTime != null && stream.duration > 0) {
+                viewBinding.itemProgressView.visibility = View.VISIBLE
+                viewBinding.itemProgressView.max = stream.duration.toInt()
+                viewBinding.itemProgressView.progress = TimeUnit.MILLISECONDS.toSeconds(stateProgressTime).toInt()
+            } else {
+                viewBinding.itemProgressView.visibility = View.GONE
+            }
         } else if (stream.duration > 0) {
             viewBinding.itemDurationView.text = Localization.getDurationString(stream.duration)
             viewBinding.itemDurationView.setBackgroundColor(

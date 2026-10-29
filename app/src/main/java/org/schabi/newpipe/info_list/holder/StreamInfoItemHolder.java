@@ -89,7 +89,16 @@ public class StreamInfoItemHolder extends InfoItemHolder {
             itemDurationView.setBackgroundColor(ContextCompat.getColor(itemBuilder.getContext(),
                     R.color.paid_video_background_color));
             itemDurationView.setVisibility(View.VISIBLE);
-            itemProgressView.setVisibility(View.GONE);
+            final StreamStateEntity paidState = historyRecordManager.loadStreamState(infoItem)
+                    .blockingGet()[0];
+            if (paidState != null && item.getDuration() > 0) {
+                itemProgressView.setVisibility(View.VISIBLE);
+                itemProgressView.setMax((int) item.getDuration());
+                itemProgressView.setProgress((int) TimeUnit.MILLISECONDS
+                        .toSeconds(paidState.getProgressMillis()));
+            } else {
+                itemProgressView.setVisibility(View.GONE);
+            }
         } else if (item.getDuration() > 0) {
             itemDurationView.setText(Localization.getDurationString(item.getDuration()));
             itemDurationView.setBackgroundColor(ContextCompat.getColor(itemBuilder.getContext(),
