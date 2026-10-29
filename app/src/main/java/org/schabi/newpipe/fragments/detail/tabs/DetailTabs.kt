@@ -69,6 +69,9 @@ class DetailTabsState {
     /** Tag of the tab the user selected last. */
     var preferredTag: String? = null
 
+    /** Whether [tabs] were built for the layout with the related items side panel. */
+    var withSidePanel = false
+
     /** Whether a submit was skipped because the fragment state was already saved. */
     var pendingSubmit = false
 }

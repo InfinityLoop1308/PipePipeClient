@@ -114,9 +114,13 @@ class DetailTabsController(
             .forEach { it.setListener(host.sponsorBlockListener) }
         ChatStore.available.observe(fragment.viewLifecycleOwner) { syncChatTab() }
 
-        // the views were recreated: show the very same tabs again
-        if (state.tabs.isNotEmpty()) {
+        // The views were recreated: show the very same tabs again, unless they were built for
+        // the other layout (tablets have the related items in a side panel only in landscape).
+        if (state.tabs.isNotEmpty() && state.withSidePanel == (relatedPanel != null)) {
             submit()
+        } else {
+            state.tabs = emptyList()
+            state.infoUrl = null
         }
     }
 
@@ -290,6 +294,7 @@ class DetailTabsController(
         val capabilities = capabilitiesOf(info?.serviceId ?: host.serviceId)
         val generation = state.generation
         state.infoUrl = info?.url
+        state.withSidePanel = relatedPanel != null
         val tabs = mutableListOf<TabSpec>()
         fun add(tab: DetailTab, create: (StreamInfo) -> Fragment) {
             tabs += TabSpec(tab, itemIdOf(tab, generation)) {
