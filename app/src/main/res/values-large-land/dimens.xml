@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- fragment_video_detail on tablets and TV -->
+    <dimen name="video_item_detail_thumbnail_min_height">0dp</dimen>
+    <dimen name="video_item_detail_uploader_text_margin">15dp</dimen>
+    <dimen name="mini_player_thumbnail_width">85dp</dimen>
+</resources>

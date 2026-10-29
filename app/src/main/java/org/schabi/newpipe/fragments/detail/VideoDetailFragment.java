@@ -658,7 +658,7 @@ public final class VideoDetailFragment
             }
         } else if (id == R.id.detail_video_title_view || id == R.id.detail_title_root_layout) {
             ShareUtils.copyToClipboard(requireContext(),
-                    binding.detailVideoTitleView.getText().toString());
+                    binding.detailContentRootLayout.detailVideoTitleView.getText().toString());
         } else if (id == R.id.detail_toggle_secondary_controls_view) {
             hideTitleAndSecondaryControls();
         } else if (id == R.id.detail_controls_playlist_append) {
@@ -681,30 +681,30 @@ public final class VideoDetailFragment
     }
 
     private void toggleTitleAndSecondaryControls() {
-        if (binding.detailSecondaryControlPanel.getVisibility() == View.GONE) {
-            binding.detailVideoTitleView.setMaxLines(10);
-            animateRotation(binding.detailToggleSecondaryControlsView,
+        if (binding.detailContentRootLayout.detailSecondaryControlPanel.getVisibility() == View.GONE) {
+            binding.detailContentRootLayout.detailVideoTitleView.setMaxLines(10);
+            animateRotation(binding.detailContentRootLayout.detailToggleSecondaryControlsView,
                     Player.DEFAULT_CONTROLS_DURATION, 180);
-            binding.detailSecondaryControlPanel.setVisibility(View.VISIBLE);
+            binding.detailContentRootLayout.detailSecondaryControlPanel.setVisibility(View.VISIBLE);
         } else {
-            binding.detailVideoTitleView.setMaxLines(1);
-            animateRotation(binding.detailToggleSecondaryControlsView,
+            binding.detailContentRootLayout.detailVideoTitleView.setMaxLines(1);
+            animateRotation(binding.detailContentRootLayout.detailToggleSecondaryControlsView,
                     Player.DEFAULT_CONTROLS_DURATION, 0);
-            binding.detailSecondaryControlPanel.setVisibility(View.GONE);
+            binding.detailContentRootLayout.detailSecondaryControlPanel.setVisibility(View.GONE);
         }
         // view pager height has changed, update the tab layout
         updateTabLayoutVisibility();
     }
 
     private void hideTitleAndSecondaryControls() {
-        if (binding.detailContentRootHiding.getVisibility() == View.GONE) {
-            binding.detailVideoTitleView.setMaxLines(10);
-            animateRotation(binding.detailToggleSecondaryControlsView,
+        if (binding.detailContentRootLayout.detailContentRootHiding.getVisibility() == View.GONE) {
+            binding.detailContentRootLayout.detailVideoTitleView.setMaxLines(10);
+            animateRotation(binding.detailContentRootLayout.detailToggleSecondaryControlsView,
                     Player.DEFAULT_CONTROLS_DURATION, 180);
-            binding.detailContentRootHiding.setVisibility(View.VISIBLE);
+            binding.detailContentRootLayout.detailContentRootHiding.setVisibility(View.VISIBLE);
         } else {
-            binding.detailVideoTitleView.setMaxLines(1);
-            binding.detailContentRootHiding.setVisibility(View.GONE);
+            binding.detailContentRootLayout.detailVideoTitleView.setMaxLines(1);
+            binding.detailContentRootLayout.detailContentRootHiding.setVisibility(View.GONE);
         }
         // view pager height has changed, update the tab layout
         updateTabLayoutVisibility();
@@ -738,14 +738,14 @@ public final class VideoDetailFragment
         ChatStore.INSTANCE.getAvailable().observe(getViewLifecycleOwner(), v -> syncChatTab());
         updateStickyPlayerMode();
 
-        binding.detailThumbnailRootLayout.requestFocus();
+        binding.detailThumbnailRootLayout.getRoot().requestFocus();
 
-        binding.detailControlsPlayWithKodi.setVisibility(
+        binding.detailContentRootLayout.detailControlsPlayWithKodi.setVisibility(
                 KoreUtils.shouldShowPlayWithKodi(requireContext(), serviceId)
                         ? View.VISIBLE
                         : View.GONE
         );
-        binding.detailControlsCrashThePlayer.setVisibility(
+        binding.detailContentRootLayout.detailControlsCrashThePlayer.setVisibility(
                 DEBUG && PreferenceManager.getDefaultSharedPreferences(getContext())
                         .getBoolean(getString(R.string.show_crash_the_player_key), false)
                         ? View.VISIBLE
@@ -756,13 +756,13 @@ public final class VideoDetailFragment
             // remove ripple effects from detail controls
             final int transparent = ContextCompat.getColor(requireContext(),
                     R.color.transparent_background_color);
-            binding.detailControlsPlaylistAppend.setBackgroundColor(transparent);
-            binding.detailControlsBackground.setBackgroundColor(transparent);
-            binding.detailControlsPopup.setBackgroundColor(transparent);
-            binding.detailControlsDownload.setBackgroundColor(transparent);
-            binding.detailControlsShare.setBackgroundColor(transparent);
-            binding.detailControlsOpenInBrowser.setBackgroundColor(transparent);
-            binding.detailControlsPlayWithKodi.setBackgroundColor(transparent);
+            binding.detailContentRootLayout.detailControlsPlaylistAppend.setBackgroundColor(transparent);
+            binding.detailContentRootLayout.detailControlsBackground.setBackgroundColor(transparent);
+            binding.detailContentRootLayout.detailControlsPopup.setBackgroundColor(transparent);
+            binding.detailContentRootLayout.detailControlsDownload.setBackgroundColor(transparent);
+            binding.detailContentRootLayout.detailControlsShare.setBackgroundColor(transparent);
+            binding.detailContentRootLayout.detailControlsOpenInBrowser.setBackgroundColor(transparent);
+            binding.detailContentRootLayout.detailControlsPlayWithKodi.setBackgroundColor(transparent);
         }
     }
 
@@ -770,28 +770,28 @@ public final class VideoDetailFragment
     protected void initListeners() {
         super.initListeners();
 
-        binding.detailTitleRootLayout.setOnClickListener(this);
-        binding.detailTitleRootLayout.setOnLongClickListener(this);
-        binding.detailToggleSecondaryControlsView.setOnClickListener(this);
-        binding.detailToggleSecondaryControlsView.setOnLongClickListener(this);
-        binding.detailUploaderRootLayout.setOnClickListener(this);
-        binding.detailUploaderRootLayout.setOnLongClickListener(this);
-        binding.detailThumbnailRootLayout.setOnClickListener(this);
+        binding.detailContentRootLayout.detailTitleRootLayout.setOnClickListener(this);
+        binding.detailContentRootLayout.detailTitleRootLayout.setOnLongClickListener(this);
+        binding.detailContentRootLayout.detailToggleSecondaryControlsView.setOnClickListener(this);
+        binding.detailContentRootLayout.detailToggleSecondaryControlsView.setOnLongClickListener(this);
+        binding.detailContentRootLayout.detailUploaderRootLayout.setOnClickListener(this);
+        binding.detailContentRootLayout.detailUploaderRootLayout.setOnLongClickListener(this);
+        binding.detailThumbnailRootLayout.getRoot().setOnClickListener(this);
 
-        binding.detailControlsBackground.setOnClickListener(this);
-        binding.detailControlsBackground.setOnLongClickListener(this);
-        binding.detailControlsPopup.setOnClickListener(this);
-        binding.detailControlsPopup.setOnLongClickListener(this);
-        binding.detailControlsPlaylistAppend.setOnClickListener(this);
-        binding.detailControlsPlaylistAppend.setOnLongClickListener(this);
-        binding.detailControlsDownload.setOnClickListener(this);
-        binding.detailControlsDownload.setOnLongClickListener(this);
-        binding.detailControlsShare.setOnClickListener(this);
-        binding.detailControlsOpenInBrowser.setOnClickListener(this);
-        binding.detailControlsStartSleepTimer.setOnClickListener(this);
-        binding.detailControlsPlayWithKodi.setOnClickListener(this);
+        binding.detailContentRootLayout.detailControlsBackground.setOnClickListener(this);
+        binding.detailContentRootLayout.detailControlsBackground.setOnLongClickListener(this);
+        binding.detailContentRootLayout.detailControlsPopup.setOnClickListener(this);
+        binding.detailContentRootLayout.detailControlsPopup.setOnLongClickListener(this);
+        binding.detailContentRootLayout.detailControlsPlaylistAppend.setOnClickListener(this);
+        binding.detailContentRootLayout.detailControlsPlaylistAppend.setOnLongClickListener(this);
+        binding.detailContentRootLayout.detailControlsDownload.setOnClickListener(this);
+        binding.detailContentRootLayout.detailControlsDownload.setOnLongClickListener(this);
+        binding.detailContentRootLayout.detailControlsShare.setOnClickListener(this);
+        binding.detailContentRootLayout.detailControlsOpenInBrowser.setOnClickListener(this);
+        binding.detailContentRootLayout.detailControlsStartSleepTimer.setOnClickListener(this);
+        binding.detailContentRootLayout.detailControlsPlayWithKodi.setOnClickListener(this);
         if (DEBUG) {
-            binding.detailControlsCrashThePlayer.setOnClickListener(
+            binding.detailContentRootLayout.detailControlsCrashThePlayer.setOnClickListener(
                     v -> VideoDetailPlayerCrasher.onCrashThePlayer(
                             this.getContext(),
                             this.player,
@@ -799,17 +799,17 @@ public final class VideoDetailFragment
             );
         }
 
-        binding.overlayThumbnail.setOnClickListener(this);
-        binding.overlayThumbnail.setOnLongClickListener(this);
-        binding.overlayMetadataLayout.setOnClickListener(this);
-        binding.overlayMetadataLayout.setOnLongClickListener(this);
-        binding.overlayButtonsLayout.setOnClickListener(this);
-        binding.overlayCloseButton.setOnClickListener(this);
-        binding.overlayPlayPauseButton.setOnClickListener(this);
-        binding.overlayPlayQueueButton.setOnClickListener(this);
+        binding.overlayLayout.overlayThumbnail.setOnClickListener(this);
+        binding.overlayLayout.overlayThumbnail.setOnLongClickListener(this);
+        binding.overlayLayout.overlayMetadataLayout.setOnClickListener(this);
+        binding.overlayLayout.overlayMetadataLayout.setOnLongClickListener(this);
+        binding.overlayLayout.overlayButtonsLayout.setOnClickListener(this);
+        binding.overlayLayout.overlayCloseButton.setOnClickListener(this);
+        binding.overlayLayout.overlayPlayPauseButton.setOnClickListener(this);
+        binding.overlayLayout.overlayPlayQueueButton.setOnClickListener(this);
 
-        binding.detailControlsBackground.setOnTouchListener(getOnControlsTouchListener());
-        binding.detailControlsPopup.setOnTouchListener(getOnControlsTouchListener());
+        binding.detailContentRootLayout.detailControlsBackground.setOnTouchListener(getOnControlsTouchListener());
+        binding.detailContentRootLayout.detailControlsPopup.setOnTouchListener(getOnControlsTouchListener());
 
         binding.appBarLayout.addOnOffsetChangedListener((layout, verticalOffset) -> {
             // prevent useless updates to tab layout visibility if nothing changed
@@ -847,7 +847,7 @@ public final class VideoDetailFragment
 
     private void initThumbnailViews(@NonNull final StreamInfo info) {
         PicassoHelper.loadScaledDownThumbnail(getContext(), info.getThumbnailUrl()).tag(PICASSO_VIDEO_DETAILS_TAG)
-                .into(binding.detailThumbnailImageView, new Callback() {
+                .into(binding.detailThumbnailRootLayout.detailThumbnailImageView, new Callback() {
                     @Override
                     public void onSuccess() {
                         // nothing to do, the image was loaded correctly into the thumbnail
@@ -861,9 +861,9 @@ public final class VideoDetailFragment
                 });
 
         PicassoHelper.loadAvatar(info.getSubChannelAvatarUrl()).tag(PICASSO_VIDEO_DETAILS_TAG)
-                .into(binding.detailSubChannelThumbnailView);
+                .into(binding.detailContentRootLayout.detailSubChannelThumbnailView);
         PicassoHelper.loadAvatar(info.getUploaderAvatarUrl()).tag(PICASSO_VIDEO_DETAILS_TAG)
-                .into(binding.detailUploaderThumbnailView);
+                .into(binding.detailContentRootLayout.detailUploaderThumbnailView);
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -1004,7 +1004,7 @@ public final class VideoDetailFragment
             // drawn yet" would redraw the whole page on every check. The title alone is not
             // enough though: titles can repeat across videos, and the title may be updated while
             // the tabs failed to, so the tabs must also belong to this stream.
-            final String shown = binding.detailVideoTitleView.getText().toString();
+            final String shown = binding.detailContentRootLayout.detailVideoTitleView.getText().toString();
             if ((info.getName().equals(shown)
                     || DeArrowBinder.isShowingTitle(activity, info, shown))
                     && info.getUrl().equals(tabsBuiltForUrl)) {
@@ -1610,7 +1610,7 @@ public final class VideoDetailFragment
         // could be scrolled/focused into view while the player is still in fullscreen
         final boolean fullscreen = player.isFullscreen();
         final ViewGroup target = fullscreen
-                ? binding.fullscreenPlayerContainer : binding.playerPlaceholder;
+                ? binding.fullscreenPlayerContainer : binding.detailThumbnailRootLayout.playerPlaceholder;
 
         // Check if viewHolder already contains a child
         if (player.getRootView().getParent() != target) {
@@ -1635,7 +1635,7 @@ public final class VideoDetailFragment
         if (fullscreen && DeviceUtils.isTv(getContext())) {
             // The focus is still on the detail page's thumbnail (drawn as a white frame) or on
             // the overlay button, both underneath the fullscreen player. Hand it to the player.
-            binding.detailThumbnailRootLayout.clearFocus();
+            binding.detailThumbnailRootLayout.getRoot().clearFocus();
             player.getRootView().post(() -> {
                 if (isPlayerAvailable() && player.isFullscreen()) {
                     player.getBinding().playPauseButton.requestFocus();
@@ -1655,8 +1655,8 @@ public final class VideoDetailFragment
             return;
         }
 
-        binding.playerPlaceholder.getLayoutParams().height = FrameLayout.LayoutParams.MATCH_PARENT;
-        binding.playerPlaceholder.requestLayout();
+        binding.detailThumbnailRootLayout.playerPlaceholder.getLayoutParams().height = FrameLayout.LayoutParams.MATCH_PARENT;
+        binding.detailThumbnailRootLayout.playerPlaceholder.requestLayout();
     }
 
     private final ViewTreeObserver.OnPreDrawListener preDrawListener =
@@ -1707,10 +1707,10 @@ public final class VideoDetailFragment
     }
 
     private void setHeightThumbnail(final int newHeight, final DisplayMetrics metrics) {
-        binding.detailThumbnailImageView.setLayoutParams(
+        binding.detailThumbnailRootLayout.detailThumbnailImageView.setLayoutParams(
                 new FrameLayout.LayoutParams(
                         RelativeLayout.LayoutParams.MATCH_PARENT, newHeight));
-        binding.detailThumbnailImageView.setMinimumHeight(newHeight);
+        binding.detailThumbnailRootLayout.detailThumbnailImageView.setMinimumHeight(newHeight);
         updateStickyPlayerLayout(newHeight);
         if (isPlayerAvailable()) {
             final int maxHeight = (int) (metrics.heightPixels * MAX_PLAYER_HEIGHT);
@@ -1738,18 +1738,18 @@ public final class VideoDetailFragment
         if (binding.stickyPlayerContainer.getVisibility() != stickyPlayerVisibility) {
             binding.stickyPlayerContainer.setVisibility(stickyPlayerVisibility);
         }
-        updateStickyPlayerLayout(binding.detailThumbnailRootLayout.getHeight());
+        updateStickyPlayerLayout(binding.detailThumbnailRootLayout.getRoot().getHeight());
     }
 
     private void moveThumbnailToContainer(@NonNull final ViewGroup targetParent) {
-        final ViewGroup currentParent = (ViewGroup) binding.detailThumbnailRootLayout.getParent();
+        final ViewGroup currentParent = (ViewGroup) binding.detailThumbnailRootLayout.getRoot().getParent();
         if (currentParent == targetParent) {
             return;
         }
         if (currentParent != null) {
-            currentParent.removeView(binding.detailThumbnailRootLayout);
+            currentParent.removeView(binding.detailThumbnailRootLayout.getRoot());
         }
-        targetParent.addView(binding.detailThumbnailRootLayout);
+        targetParent.addView(binding.detailThumbnailRootLayout.getRoot());
     }
 
     private void updateStickyPlayerLayout(final int playerHeight) {
@@ -1757,7 +1757,7 @@ public final class VideoDetailFragment
             return;
         }
 
-        final int height = Math.max(playerHeight, binding.detailThumbnailImageView.getMinimumHeight());
+        final int height = Math.max(playerHeight, binding.detailThumbnailRootLayout.detailThumbnailImageView.getMinimumHeight());
         final ViewGroup.LayoutParams stickyParams = binding.stickyPlayerContainer.getLayoutParams();
         if (stickyParams != null) {
             final int stickyHeight = stickyPlayerEnabled ? height : 0;
@@ -1785,7 +1785,7 @@ public final class VideoDetailFragment
     }
 
     private void showContent() {
-        binding.detailContentRootHiding.setVisibility(View.VISIBLE);
+        binding.detailContentRootLayout.detailContentRootHiding.setVisibility(View.VISIBLE);
     }
 
     protected void setInitialData(final int newServiceId,
@@ -1803,10 +1803,10 @@ public final class VideoDetailFragment
             return;
         }
 
-        binding.detailThumbnailImageView.setImageDrawable(
+        binding.detailThumbnailRootLayout.detailThumbnailImageView.setImageDrawable(
                 AppCompatResources.getDrawable(requireContext(), imageResource));
-        animate(binding.detailThumbnailImageView, false, 0, AnimationType.ALPHA,
-                0, () -> animate(binding.detailThumbnailImageView, true, 500));
+        animate(binding.detailThumbnailRootLayout.detailThumbnailImageView, false, 0, AnimationType.ALPHA,
+                0, () -> animate(binding.detailThumbnailRootLayout.detailThumbnailImageView, true, 500));
     }
 
     @Override
@@ -1862,21 +1862,21 @@ public final class VideoDetailFragment
 
         //if data is already cached, transition from VISIBLE -> INVISIBLE -> VISIBLE is not required
         if (!ExtractorHelper.isCached(serviceId, url, InfoItem.InfoType.STREAM)) {
-            binding.detailContentRootHiding.setVisibility(View.INVISIBLE);
+            binding.detailContentRootLayout.detailContentRootHiding.setVisibility(View.INVISIBLE);
         }
 
-        animate(binding.detailThumbnailPlayButton, false, 50);
-        animate(binding.detailDurationView, false, 100);
-        animate(binding.detailPositionView, false, 100);
-        animate(binding.positionView, false, 50);
+        animate(binding.detailThumbnailRootLayout.detailThumbnailPlayButton, false, 50);
+        animate(binding.detailThumbnailRootLayout.detailDurationView, false, 100);
+        animate(binding.detailThumbnailRootLayout.detailPositionView, false, 100);
+        animate(binding.detailThumbnailRootLayout.positionView, false, 50);
 
-        binding.detailVideoTitleView.setText(title);
-        binding.detailVideoTitleView.setMaxLines(shouldEllipsize? 1: 10);
-        animate(binding.detailVideoTitleView, true, 0);
+        binding.detailContentRootLayout.detailVideoTitleView.setText(title);
+        binding.detailContentRootLayout.detailVideoTitleView.setMaxLines(shouldEllipsize? 1: 10);
+        animate(binding.detailContentRootLayout.detailVideoTitleView, true, 0);
 
-        binding.detailToggleSecondaryControlsView.setVisibility(View.GONE);
-        binding.detailTitleRootLayout.setClickable(false);
-        binding.detailSecondaryControlPanel.setVisibility(View.GONE);
+        binding.detailContentRootLayout.detailToggleSecondaryControlsView.setVisibility(View.GONE);
+        binding.detailContentRootLayout.detailTitleRootLayout.setClickable(false);
+        binding.detailContentRootLayout.detailSecondaryControlPanel.setVisibility(View.GONE);
 
         if (binding.relatedItemsLayout != null) {
             if (showRelatedItems) {
@@ -1888,8 +1888,8 @@ public final class VideoDetailFragment
         }
 
         PicassoHelper.cancelTag(PICASSO_VIDEO_DETAILS_TAG);
-        binding.detailThumbnailImageView.setImageBitmap(null);
-        binding.detailSubChannelThumbnailView.setImageBitmap(null);
+        binding.detailThumbnailRootLayout.detailThumbnailImageView.setImageBitmap(null);
+        binding.detailContentRootLayout.detailSubChannelThumbnailView.setImageBitmap(null);
     }
 
     @Override
@@ -1901,90 +1901,90 @@ public final class VideoDetailFragment
 
         updateTabs(info);
 
-        animate(binding.detailThumbnailPlayButton, true, 200);
-        binding.detailVideoTitleView.setText(title);
+        animate(binding.detailThumbnailRootLayout.detailThumbnailPlayButton, true, 200);
+        binding.detailContentRootLayout.detailVideoTitleView.setText(title);
 
-        binding.detailSubChannelThumbnailView.setVisibility(View.GONE);
+        binding.detailContentRootLayout.detailSubChannelThumbnailView.setVisibility(View.GONE);
 
         if (!isEmpty(info.getSubChannelName())) {
             displayBothUploaderAndSubChannel(info, activity);
         } else if (!isEmpty(info.getUploaderName())) {
             displayUploaderAsSubChannel(info, activity);
         } else {
-            binding.detailUploaderTextView.setVisibility(View.GONE);
-            binding.detailUploaderThumbnailView.setVisibility(View.GONE);
+            binding.detailContentRootLayout.detailUploaderTextView.setVisibility(View.GONE);
+            binding.detailContentRootLayout.detailUploaderThumbnailView.setVisibility(View.GONE);
         }
 
         final Drawable buddyDrawable = AppCompatResources.getDrawable(activity, R.drawable.buddy);
-        binding.detailSubChannelThumbnailView.setImageDrawable(buddyDrawable);
-        binding.detailUploaderThumbnailView.setImageDrawable(buddyDrawable);
+        binding.detailContentRootLayout.detailSubChannelThumbnailView.setImageDrawable(buddyDrawable);
+        binding.detailContentRootLayout.detailUploaderThumbnailView.setImageDrawable(buddyDrawable);
 
         if (info.getViewCount() >= 0) {
             if (info.getStreamType().equals(StreamType.AUDIO_LIVE_STREAM)) {
-                binding.detailViewCountView.setText(Localization.listeningCount(activity,
+                binding.detailContentRootLayout.detailViewCountView.setText(Localization.listeningCount(activity,
                         info.getViewCount()));
             } else if (info.getStreamType().equals(StreamType.LIVE_STREAM)) {
-                binding.detailViewCountView.setText(Localization
+                binding.detailContentRootLayout.detailViewCountView.setText(Localization
                         .localizeWatchingCount(activity, info.getViewCount()));
             } else {
-                binding.detailViewCountView.setText(Localization
+                binding.detailContentRootLayout.detailViewCountView.setText(Localization
                         .localizeViewCount(activity, info.getViewCount()));
             }
-            binding.detailViewCountView.setVisibility(View.VISIBLE);
+            binding.detailContentRootLayout.detailViewCountView.setVisibility(View.VISIBLE);
         } else {
-            binding.detailViewCountView.setVisibility(View.GONE);
+            binding.detailContentRootLayout.detailViewCountView.setVisibility(View.GONE);
         }
 
         if (info.getDislikeCount() == -1 && info.getLikeCount() == -1) {
-            binding.detailThumbsDownImgView.setVisibility(View.VISIBLE);
-            binding.detailThumbsUpImgView.setVisibility(View.VISIBLE);
-            binding.detailThumbsUpCountView.setVisibility(View.GONE);
-            binding.detailThumbsDownCountView.setVisibility(View.GONE);
+            binding.detailContentRootLayout.detailThumbsDownImgView.setVisibility(View.VISIBLE);
+            binding.detailContentRootLayout.detailThumbsUpImgView.setVisibility(View.VISIBLE);
+            binding.detailContentRootLayout.detailThumbsUpCountView.setVisibility(View.GONE);
+            binding.detailContentRootLayout.detailThumbsDownCountView.setVisibility(View.GONE);
 
-            binding.detailThumbsDisabledView.setVisibility(View.VISIBLE);
+            binding.detailContentRootLayout.detailThumbsDisabledView.setVisibility(View.VISIBLE);
         } else {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
             boolean showDislikeCount = prefs.getBoolean(activity.getString(R.string.show_dislike_key), false);
             if (info.getDislikeCount() >= 0 && showDislikeCount) {
-                binding.detailThumbsDownCountView.setText(Localization
+                binding.detailContentRootLayout.detailThumbsDownCountView.setText(Localization
                         .shortCount(activity, info.getDislikeCount()));
-                binding.detailThumbsDownCountView.setVisibility(View.VISIBLE);
-                binding.detailThumbsDownImgView.setVisibility(View.VISIBLE);
+                binding.detailContentRootLayout.detailThumbsDownCountView.setVisibility(View.VISIBLE);
+                binding.detailContentRootLayout.detailThumbsDownImgView.setVisibility(View.VISIBLE);
             } else {
-                binding.detailThumbsDownCountView.setVisibility(View.GONE);
-                binding.detailThumbsDownImgView.setVisibility(View.GONE);
+                binding.detailContentRootLayout.detailThumbsDownCountView.setVisibility(View.GONE);
+                binding.detailContentRootLayout.detailThumbsDownImgView.setVisibility(View.GONE);
             }
 
             if (info.getLikeCount() >= 0) {
-                binding.detailThumbsUpCountView.setText(Localization.shortCount(activity,
+                binding.detailContentRootLayout.detailThumbsUpCountView.setText(Localization.shortCount(activity,
                         info.getLikeCount()));
-                binding.detailThumbsUpCountView.setVisibility(View.VISIBLE);
-                binding.detailThumbsUpImgView.setVisibility(View.VISIBLE);
+                binding.detailContentRootLayout.detailThumbsUpCountView.setVisibility(View.VISIBLE);
+                binding.detailContentRootLayout.detailThumbsUpImgView.setVisibility(View.VISIBLE);
             } else {
-                binding.detailThumbsUpCountView.setVisibility(View.GONE);
-                binding.detailThumbsUpImgView.setVisibility(View.GONE);
+                binding.detailContentRootLayout.detailThumbsUpCountView.setVisibility(View.GONE);
+                binding.detailContentRootLayout.detailThumbsUpImgView.setVisibility(View.GONE);
             }
-            binding.detailThumbsDisabledView.setVisibility(View.GONE);
+            binding.detailContentRootLayout.detailThumbsDisabledView.setVisibility(View.GONE);
         }
 
         if (info.getDuration() > 0) {
-            binding.detailDurationView.setText(Localization.getDurationString(info.getDuration()));
-            binding.detailDurationView.setBackgroundColor(
+            binding.detailThumbnailRootLayout.detailDurationView.setText(Localization.getDurationString(info.getDuration()));
+            binding.detailThumbnailRootLayout.detailDurationView.setBackgroundColor(
                     ContextCompat.getColor(activity, R.color.duration_background_color));
-            animate(binding.detailDurationView, true, 100);
+            animate(binding.detailThumbnailRootLayout.detailDurationView, true, 100);
         } else if (info.getStreamType() == StreamType.LIVE_STREAM) {
-            binding.detailDurationView.setText(R.string.duration_live);
-            binding.detailDurationView.setBackgroundColor(
+            binding.detailThumbnailRootLayout.detailDurationView.setText(R.string.duration_live);
+            binding.detailThumbnailRootLayout.detailDurationView.setBackgroundColor(
                     ContextCompat.getColor(activity, R.color.live_duration_background_color));
-            animate(binding.detailDurationView, true, 100);
+            animate(binding.detailThumbnailRootLayout.detailDurationView, true, 100);
         } else {
-            binding.detailDurationView.setVisibility(View.GONE);
+            binding.detailThumbnailRootLayout.detailDurationView.setVisibility(View.GONE);
         }
 
-        binding.detailTitleRootLayout.setClickable(true);
-        binding.detailToggleSecondaryControlsView.setRotation(0);
-        binding.detailToggleSecondaryControlsView.setVisibility(View.VISIBLE);
-        binding.detailSecondaryControlPanel.setVisibility(View.GONE);
+        binding.detailContentRootLayout.detailTitleRootLayout.setClickable(true);
+        binding.detailContentRootLayout.detailToggleSecondaryControlsView.setRotation(0);
+        binding.detailContentRootLayout.detailToggleSecondaryControlsView.setVisibility(View.VISIBLE);
+        binding.detailContentRootLayout.detailSecondaryControlPanel.setVisibility(View.GONE);
 
         sortedVideoStreams = VideoStreamSelector.getSortedStreamVideosList(
                 activity,
@@ -2002,9 +2002,9 @@ public final class VideoDetailFragment
         // deliberately not handed over, so the binder only ever paints a replacement over the
         // top and never blanks this view.
         DeArrowBinder.bind(DeArrowRow.fromDetail(info.getServiceId(), info.getUrl()),
-                binding.detailVideoTitleView, binding.detailThumbnailImageView);
-        showMetaInfoInTextView(info.getMetaInfo(), binding.detailMetaInfoTextView,
-                binding.detailMetaInfoSeparator, disposables);
+                binding.detailContentRootLayout.detailVideoTitleView, binding.detailThumbnailRootLayout.detailThumbnailImageView);
+        showMetaInfoInTextView(info.getMetaInfo(), binding.detailContentRootLayout.detailMetaInfoTextView,
+                binding.detailContentRootLayout.detailMetaInfoSeparator, disposables);
 
         if (!isPlayerAvailable() || player.isStopped()) {
             updateOverlayData(info.getName(), info.getUploaderName(), info.getThumbnailUrl());
@@ -2026,36 +2026,36 @@ public final class VideoDetailFragment
             }
         }
 
-        binding.detailControlsDownload.setVisibility(info.getStreamType() == StreamType.LIVE_STREAM
+        binding.detailContentRootLayout.detailControlsDownload.setVisibility(info.getStreamType() == StreamType.LIVE_STREAM
                 || info.getStreamType() == StreamType.AUDIO_LIVE_STREAM ? View.GONE : View.VISIBLE);
 
         final boolean noVideoStreams = info.getStreamType() != StreamType.LIVE_STREAM
                 && info.getVideoStreams().isEmpty() && info.getVideoOnlyStreams().isEmpty();
-        binding.detailControlsPopup.setVisibility(noVideoStreams ? View.GONE : View.VISIBLE);
-        binding.detailThumbnailPlayButton.setImageResource(
+        binding.detailContentRootLayout.detailControlsPopup.setVisibility(noVideoStreams ? View.GONE : View.VISIBLE);
+        binding.detailThumbnailRootLayout.detailThumbnailPlayButton.setImageResource(
                 noVideoStreams ? R.drawable.ic_headset_shadow : R.drawable.ic_play_arrow_shadow);
     }
 
     private void displayUploaderAsSubChannel(final StreamInfo info, final Context context) {
-        binding.detailSubChannelTextView.setText(info.getUploaderName());
-        binding.detailSubChannelTextView.setVisibility(View.VISIBLE);
-        binding.detailSubChannelTextView.setSelected(true);
+        binding.detailContentRootLayout.detailSubChannelTextView.setText(info.getUploaderName());
+        binding.detailContentRootLayout.detailSubChannelTextView.setVisibility(View.VISIBLE);
+        binding.detailContentRootLayout.detailSubChannelTextView.setSelected(true);
 
         if (info.getUploaderSubscriberCount() > -1) {
-            binding.detailUploaderTextView.setText(
+            binding.detailContentRootLayout.detailUploaderTextView.setText(
                     Localization.shortSubscriberCount(context, info.getUploaderSubscriberCount()));
-            binding.detailUploaderTextView.setVisibility(View.VISIBLE);
+            binding.detailContentRootLayout.detailUploaderTextView.setVisibility(View.VISIBLE);
         } else {
-            binding.detailUploaderTextView.setVisibility(View.GONE);
+            binding.detailContentRootLayout.detailUploaderTextView.setVisibility(View.GONE);
         }
     }
 
     private void displayBothUploaderAndSubChannel(final StreamInfo info, final Context context) {
-        binding.detailSubChannelTextView.setText(info.getSubChannelName());
-        binding.detailSubChannelTextView.setVisibility(View.VISIBLE);
-        binding.detailSubChannelTextView.setSelected(true);
+        binding.detailContentRootLayout.detailSubChannelTextView.setText(info.getSubChannelName());
+        binding.detailContentRootLayout.detailSubChannelTextView.setVisibility(View.VISIBLE);
+        binding.detailContentRootLayout.detailSubChannelTextView.setSelected(true);
 
-        binding.detailSubChannelThumbnailView.setVisibility(View.VISIBLE);
+        binding.detailContentRootLayout.detailSubChannelThumbnailView.setVisibility(View.VISIBLE);
 
         final StringBuilder subText = new StringBuilder();
         if (!isEmpty(info.getUploaderName())) {
@@ -2071,11 +2071,11 @@ public final class VideoDetailFragment
         }
 
         if (subText.length() > 0) {
-            binding.detailUploaderTextView.setText(subText);
-            binding.detailUploaderTextView.setVisibility(View.VISIBLE);
-            binding.detailUploaderTextView.setSelected(true);
+            binding.detailContentRootLayout.detailUploaderTextView.setText(subText);
+            binding.detailContentRootLayout.detailUploaderTextView.setVisibility(View.VISIBLE);
+            binding.detailContentRootLayout.detailUploaderTextView.setSelected(true);
         } else {
-            binding.detailUploaderTextView.setVisibility(View.GONE);
+            binding.detailContentRootLayout.detailUploaderTextView.setVisibility(View.GONE);
         }
     }
 
@@ -2110,8 +2110,8 @@ public final class VideoDetailFragment
         if (!playbackResumeEnabled) {
             if (playQueue == null || playQueue.getStreams().isEmpty()
                     || playQueue.getRecoveryPosition(playQueue.getIndex()) == RECOVERY_UNSET) {
-                binding.positionView.setVisibility(View.INVISIBLE);
-                binding.detailPositionView.setVisibility(View.GONE);
+                binding.detailThumbnailRootLayout.positionView.setVisibility(View.INVISIBLE);
+                binding.detailThumbnailRootLayout.detailPositionView.setVisibility(View.GONE);
                 // TODO: Remove this check when separation of concerns is done.
                 //  (live streams weren't getting updated because they are mixed)
                 if (!info.getStreamType().equals(StreamType.LIVE_STREAM)
@@ -2122,8 +2122,8 @@ public final class VideoDetailFragment
                 // Show saved position from backStack if user allows it
                 showPlaybackProgress(playQueue.getRecoveryPosition(playQueue.getIndex()),
                         playQueue.getItem().getDuration() * 1000);
-                animate(binding.positionView, true, 500);
-                animate(binding.detailPositionView, true, 500);
+                animate(binding.detailThumbnailRootLayout.positionView, true, 500);
+                animate(binding.detailThumbnailRootLayout.detailPositionView, true, 500);
             }
             return;
         }
@@ -2137,15 +2137,15 @@ public final class VideoDetailFragment
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(state -> {
                     showPlaybackProgress(state.getProgressMillis(), info.getDuration() * 1000);
-                    animate(binding.positionView, true, 500);
-                    animate(binding.detailPositionView, true, 500);
+                    animate(binding.detailThumbnailRootLayout.positionView, true, 500);
+                    animate(binding.detailThumbnailRootLayout.detailPositionView, true, 500);
                 }, e -> {
                     if (DEBUG) {
                         e.printStackTrace();
                     }
                 }, () -> {
-                    binding.positionView.setVisibility(View.GONE);
-                    binding.detailPositionView.setVisibility(View.GONE);
+                    binding.detailThumbnailRootLayout.positionView.setVisibility(View.GONE);
+                    binding.detailThumbnailRootLayout.detailPositionView.setVisibility(View.GONE);
                 });
     }
 
@@ -2154,21 +2154,21 @@ public final class VideoDetailFragment
         final int durationSeconds = (int) TimeUnit.MILLISECONDS.toSeconds(duration);
         // If the old and the new progress values have a big difference then use
         // animation. Otherwise don't because it affects CPU
-        final boolean shouldAnimate = Math.abs(binding.positionView.getProgress()
+        final boolean shouldAnimate = Math.abs(binding.detailThumbnailRootLayout.positionView.getProgress()
                 - progressSeconds) > 2;
-        binding.positionView.setMax(durationSeconds);
+        binding.detailThumbnailRootLayout.positionView.setMax(durationSeconds);
         if (shouldAnimate) {
-            binding.positionView.setProgressAnimated(progressSeconds);
+            binding.detailThumbnailRootLayout.positionView.setProgressAnimated(progressSeconds);
         } else {
-            binding.positionView.setProgress(progressSeconds);
+            binding.detailThumbnailRootLayout.positionView.setProgress(progressSeconds);
         }
         final String position = Localization.getDurationString(progressSeconds);
-        if (position != binding.detailPositionView.getText()) {
-            binding.detailPositionView.setText(position);
+        if (position != binding.detailThumbnailRootLayout.detailPositionView.getText()) {
+            binding.detailThumbnailRootLayout.detailPositionView.setText(position);
         }
-        if (binding.positionView.getVisibility() != View.VISIBLE) {
-            animate(binding.positionView, true, 100);
-            animate(binding.detailPositionView, true, 100);
+        if (binding.detailThumbnailRootLayout.positionView.getVisibility() != View.VISIBLE) {
+            animate(binding.detailThumbnailRootLayout.positionView, true, 100);
+            animate(binding.detailThumbnailRootLayout.detailPositionView, true, 100);
         }
     }
 
@@ -2218,12 +2218,12 @@ public final class VideoDetailFragment
 
         switch (state) {
             case PLAYING:
-                if (binding.positionView.getAlpha() != 1.0f
+                if (binding.detailThumbnailRootLayout.positionView.getAlpha() != 1.0f
                         && player.getPlayQueue() != null
                         && player.getPlayQueue().getItem() != null
                         && player.getPlayQueue().getItem().getUrl().equals(url)) {
-                    animate(binding.positionView, true, 100);
-                    animate(binding.detailPositionView, true, 100);
+                    animate(binding.detailThumbnailRootLayout.positionView, true, 100);
+                    animate(binding.detailThumbnailRootLayout.detailPositionView, true, 100);
                 }
                 break;
         }
@@ -2344,7 +2344,7 @@ public final class VideoDetailFragment
                 (CoordinatorLayout.LayoutParams) binding.appBarLayout.getLayoutParams();
         final AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
         final ValueAnimator valueAnimator = ValueAnimator
-                .ofInt(0, -binding.playerPlaceholder.getHeight());
+                .ofInt(0, -binding.detailThumbnailRootLayout.playerPlaceholder.getHeight());
         valueAnimator.setInterpolator(new DecelerateInterpolator());
         valueAnimator.addUpdateListener(animation -> {
             behavior.setTopAndBottomOffset((int) animation.getAnimatedValue());
@@ -2560,7 +2560,7 @@ public final class VideoDetailFragment
             ((ViewGroup) requireView()).setDescendantFocusability(afterDescendants);
             // Only focus the player if it not already has focus
             if (!binding.getRoot().hasFocus()) {
-                binding.detailThumbnailRootLayout.requestFocus();
+                binding.detailThumbnailRootLayout.getRoot().requestFocus();
             }
         }
     }
@@ -2690,7 +2690,7 @@ public final class VideoDetailFragment
                             break;
                         case BottomSheetBehavior.STATE_DRAGGING:
                         case BottomSheetBehavior.STATE_SETTLING:
-                            binding.overlayLayout.setVisibility(View.VISIBLE);
+                            binding.overlayLayout.getRoot().setVisibility(View.VISIBLE);
                             if (isPlayerAvailable() && player.isFullscreen()) {
                                 showSystemUi();
                             }
@@ -2759,18 +2759,18 @@ public final class VideoDetailFragment
     private void updateOverlayData(@Nullable final String overlayTitle,
                                    @Nullable final String uploader,
                                    @Nullable final String thumbnailUrl) {
-        binding.overlayTitleTextView.setText(isEmpty(overlayTitle) ? "" : overlayTitle);
-        binding.overlayChannelTextView.setText(isEmpty(uploader) ? "" : uploader);
-        binding.overlayThumbnail.setImageResource(R.drawable.dummy_thumbnail_dark);
+        binding.overlayLayout.overlayTitleTextView.setText(isEmpty(overlayTitle) ? "" : overlayTitle);
+        binding.overlayLayout.overlayChannelTextView.setText(isEmpty(uploader) ? "" : uploader);
+        binding.overlayLayout.overlayThumbnail.setImageResource(R.drawable.dummy_thumbnail_dark);
         PicassoHelper.loadScaledDownThumbnail(getContext(), thumbnailUrl).tag(PICASSO_VIDEO_DETAILS_TAG)
-                .into(binding.overlayThumbnail);
+                .into(binding.overlayLayout.overlayThumbnail);
     }
 
     private void setOverlayPlayPauseImage(final boolean playerIsPlaying) {
         final int drawable = playerIsPlaying
                 ? R.drawable.ic_pause
                 : R.drawable.ic_play_arrow;
-        binding.overlayPlayPauseButton.setImageResource(drawable);
+        binding.overlayLayout.overlayPlayPauseButton.setImageResource(drawable);
     }
 
     private void setOverlayLook(final AppBarLayout appBar,
@@ -2782,15 +2782,15 @@ public final class VideoDetailFragment
             return;
         }
         if (slideOffset < 1) {
-            binding.overlayLayout.setVisibility(View.VISIBLE);
+            binding.overlayLayout.getRoot().setVisibility(View.VISIBLE);
         }
-        binding.overlayLayout.setAlpha(Math.min(MAX_OVERLAY_ALPHA, 1 - slideOffset));
+        binding.overlayLayout.getRoot().setAlpha(Math.min(MAX_OVERLAY_ALPHA, 1 - slideOffset));
         // These numbers are not special. They just do a cool transition
         behavior.setTopAndBottomOffset(
-                (int) (-binding.detailThumbnailImageView.getHeight() * 2 * (1 - slideOffset) / 3));
+                (int) (-binding.detailThumbnailRootLayout.detailThumbnailImageView.getHeight() * 2 * (1 - slideOffset) / 3));
         appBar.requestLayout();
         if (slideOffset >= 1) {
-            binding.overlayLayout.setVisibility(View.INVISIBLE);
+            binding.overlayLayout.getRoot().setVisibility(View.INVISIBLE);
         }
     }
 
@@ -2809,14 +2809,14 @@ public final class VideoDetailFragment
         final AppBarLayout.Behavior appBarBehavior = getAppBarBehavior();
         switch (state) {
             case BottomSheetBehavior.STATE_COLLAPSED:
-                binding.overlayLayout.setVisibility(View.VISIBLE);
-                binding.overlayLayout.setAlpha(MAX_OVERLAY_ALPHA);
+                binding.overlayLayout.getRoot().setVisibility(View.VISIBLE);
+                binding.overlayLayout.getRoot().setAlpha(MAX_OVERLAY_ALPHA);
                 setOverlayElementsClickable(true);
                 setOverlayLook(binding.appBarLayout, appBarBehavior, 0);
                 break;
             case BottomSheetBehavior.STATE_EXPANDED:
-                binding.overlayLayout.setAlpha(0);
-                binding.overlayLayout.setVisibility(View.INVISIBLE);
+                binding.overlayLayout.getRoot().setAlpha(0);
+                binding.overlayLayout.getRoot().setVisibility(View.INVISIBLE);
                 setOverlayElementsClickable(false);
                 setOverlayLook(binding.appBarLayout, appBarBehavior, 1);
                 break;
@@ -2825,8 +2825,8 @@ public final class VideoDetailFragment
             default:
                 // Don't leave the translucent overlay over the detail page for states which don't
                 // show the mini player bar.
-                binding.overlayLayout.setAlpha(0);
-                binding.overlayLayout.setVisibility(View.INVISIBLE);
+                binding.overlayLayout.getRoot().setAlpha(0);
+                binding.overlayLayout.getRoot().setVisibility(View.INVISIBLE);
                 setOverlayElementsClickable(false);
                 setOverlayLook(binding.appBarLayout, appBarBehavior, 1);
                 break;
@@ -2882,20 +2882,20 @@ public final class VideoDetailFragment
     }
 
     private void setOverlayElementsClickable(final boolean enable) {
-        binding.overlayLayout.setDescendantFocusability(enable
+        binding.overlayLayout.getRoot().setDescendantFocusability(enable
                 ? ViewGroup.FOCUS_AFTER_DESCENDANTS
                 : ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-        binding.overlayLayout.setImportantForAccessibility(enable
+        binding.overlayLayout.getRoot().setImportantForAccessibility(enable
                 ? View.IMPORTANT_FOR_ACCESSIBILITY_AUTO
                 : View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
-        binding.overlayThumbnail.setClickable(enable);
-        binding.overlayThumbnail.setLongClickable(enable);
-        binding.overlayMetadataLayout.setClickable(enable);
-        binding.overlayMetadataLayout.setLongClickable(enable);
-        binding.overlayButtonsLayout.setClickable(enable);
-        binding.overlayPlayPauseButton.setClickable(enable);
-        binding.overlayCloseButton.setClickable(enable);
-        binding.overlayPlayQueueButton.setClickable(enable);
+        binding.overlayLayout.overlayThumbnail.setClickable(enable);
+        binding.overlayLayout.overlayThumbnail.setLongClickable(enable);
+        binding.overlayLayout.overlayMetadataLayout.setClickable(enable);
+        binding.overlayLayout.overlayMetadataLayout.setLongClickable(enable);
+        binding.overlayLayout.overlayButtonsLayout.setClickable(enable);
+        binding.overlayLayout.overlayPlayPauseButton.setClickable(enable);
+        binding.overlayLayout.overlayCloseButton.setClickable(enable);
+        binding.overlayLayout.overlayPlayQueueButton.setClickable(enable);
     }
 
     // helpers to check the state of player and playerService
