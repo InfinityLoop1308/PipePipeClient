@@ -68,6 +68,7 @@ import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.search.filter.FilterGroup
 import org.schabi.newpipe.extractor.search.filter.FilterItem
+import org.schabi.newpipe.fragments.list.search.filter.SearchFilterFallback
 import org.schabi.newpipe.util.ServiceHelper
 import org.schabi.newpipe.util.ThemeHelper
 
@@ -251,7 +252,9 @@ private fun createState(
 ): FilterUiState {
     val actualServiceId = resolveActualServiceId(serviceId)
     val service = NewPipe.getService(actualServiceId)
-    val contentFilters = service.searchQHFactory.availableContentFilter.filterGroups
+    val contentFilters = SearchFilterFallback.contentFilterGroups(
+        service.searchQHFactory.availableContentFilter
+    )
         .flatMap { it.filterItems.asList() }
         .filter {
             when {

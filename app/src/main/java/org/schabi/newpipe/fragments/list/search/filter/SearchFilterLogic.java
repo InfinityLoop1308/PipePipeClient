@@ -211,8 +211,8 @@ public abstract class SearchFilterLogic implements CallbackOptions {
     private void createContentFilterMenuEntries(final boolean isInit) {
         contentFilterIdToItemMap.clear();
 
-        final FilterGroup[] contentFilterGroups =
-                service.getSearchQHFactory().getAvailableContentFilter().getFilterGroups();
+        final FilterGroup[] contentFilterGroups = SearchFilterFallback.contentFilterGroups(
+                service.getSearchQHFactory().getAvailableContentFilter());
 
         // if > 0 we have content filters -> create the 'search'-button
         //if (contentFilterGroups.length > 0) {
