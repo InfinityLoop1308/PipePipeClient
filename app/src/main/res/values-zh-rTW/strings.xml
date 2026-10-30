@@ -1198,4 +1198,22 @@
 <string name="plugins_show_nsfw_title">顯示 NSFW 外掛</string>
 <string name="plugins_show_nsfw_summary">在可用外掛中列出標記為 NSFW 的外掛</string>
 <string name="plugin_installed_other_publisher">由其他人發布。請先解除安裝 %1$s 才能安裝此項目。</string>
+<string name="cast_to_pipepipe">投放至 PipePipe</string>
+<string name="cast_searching">正在此網路上搜尋 PipePipe 裝置…</string>
+<string name="cast_enter_pin">輸入顯示在 %1$s 上的代碼</string>
+<string name="cast_wrong_pin">代碼錯誤</string>
+<string name="cast_locked">錯誤代碼次數過多。請在接收裝置上重新啟動 PipePipe 再試一次。</string>
+<string name="cast_disconnect">中斷連線</string>
+<string name="cast_pairing_code_toast">%1$s 想要投放至此。配對代碼：%2$s</string>
+<string name="cast_receiver_title">接收來自其他 PipePipe 裝置的投放</string>
+<string name="cast_receiver_summary">在 PipePipe 開啟時保持區域網路監聽器運作，這會消耗一些電量。在電視上預設為啟用。</string>
+<string name="cast_plugin_missing">%2$s 未安裝 %1$s 外掛程式，因此無法播放此影片。</string>
+<string name="cast_service_unsupported">%1$s 不支援此影片的服務。</string>
+<string name="cast_play_failed">%1$s 無法載入此影片。</string>
+<string name="cast_remote_menu">PipePipe 遙控器</string>
+<string name="cast_reconnect">重新連線</string>
+<string name="cast_reconnecting">正在重新連線…</string>
+<string name="cast_disconnected">已中斷連線</string>
+<string name="cast_resume_device">繼續控制 %1$s</string>
+<string name="cast_connect_failed">無法連線至 %1$s。</string>
 </resources>

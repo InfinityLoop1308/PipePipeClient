@@ -1200,4 +1200,22 @@
 <string name="plugins_show_nsfw_title">Mostrar plugins NSFW</string>
 <string name="plugins_show_nsfw_summary">Listar los plugins marcados como NSFW en los plugins disponibles</string>
 <string name="plugin_installed_other_publisher">Publicado por otra persona. Desinstala %1$s primero para instalar este.</string>
+<string name="cast_to_pipepipe">Transmitir a PipePipe</string>
+<string name="cast_searching">Buscando dispositivos PipePipe en esta red…</string>
+<string name="cast_enter_pin">Introduce el código que se muestra en %1$s</string>
+<string name="cast_wrong_pin">Código incorrecto</string>
+<string name="cast_locked">Demasiados códigos incorrectos. Reinicia PipePipe en el dispositivo receptor para volver a intentarlo.</string>
+<string name="cast_disconnect">Desconectar</string>
+<string name="cast_pairing_code_toast">%1$s quiere transmitir aquí. Código de emparejamiento: %2$s</string>
+<string name="cast_receiver_title">Recibir transmisiones de otros dispositivos PipePipe</string>
+<string name="cast_receiver_summary">Mantiene un oyente de red local en ejecución mientras PipePipe está abierto, lo que consume algo de batería. Activado por defecto en televisores.</string>
+<string name="cast_plugin_missing">%2$s no tiene el complemento %1$s instalado, por lo que no puede reproducir este vídeo.</string>
+<string name="cast_service_unsupported">%1$s no es compatible con el servicio de este vídeo.</string>
+<string name="cast_play_failed">%1$s no pudo cargar este vídeo.</string>
+<string name="cast_remote_menu">Control remoto de PipePipe</string>
+<string name="cast_reconnect">Reconectar</string>
+<string name="cast_reconnecting">Reconectando…</string>
+<string name="cast_disconnected">Desconectado</string>
+<string name="cast_resume_device">Continuar controlando %1$s</string>
+<string name="cast_connect_failed">No se pudo conectar a %1$s.</string>
 </resources>

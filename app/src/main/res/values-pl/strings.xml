@@ -1224,4 +1224,22 @@
 <string name="plugins_show_nsfw_title">Pokaż wtyczki NSFW</string>
 <string name="plugins_show_nsfw_summary">Wyświetlaj wtyczki oznaczone jako NSFW wśród dostępnych wtyczek</string>
 <string name="plugin_installed_other_publisher">Opublikowane przez kogoś innego. Najpierw odinstaluj %1$s, aby zainstalować tę.</string>
+<string name="cast_to_pipepipe">Przesyłaj do PipePipe</string>
+<string name="cast_searching">Wyszukiwanie urządzeń PipePipe w tej sieci…</string>
+<string name="cast_enter_pin">Wprowadź kod wyświetlany na %1$s</string>
+<string name="cast_wrong_pin">Nieprawidłowy kod</string>
+<string name="cast_locked">Zbyt wiele nieprawidłowych kodów. Uruchom ponownie PipePipe na urządzeniu odbierającym, aby spróbować jeszcze raz.</string>
+<string name="cast_disconnect">Rozłącz</string>
+<string name="cast_pairing_code_toast">%1$s chce tutaj przesyłać. Kod parowania: %2$s</string>
+<string name="cast_receiver_title">Odbieraj przesyłanie z innych urządzeń PipePipe</string>
+<string name="cast_receiver_summary">Utrzymuje działanie nasłuchiwania w sieci lokalnej, gdy aplikacja PipePipe jest otwarta, co zużywa trochę baterii. Domyślnie włączone na telewizorach.</string>
+<string name="cast_plugin_missing">%2$s nie ma zainstalowanej wtyczki %1$s, więc nie może odtworzyć tego filmu.</string>
+<string name="cast_service_unsupported">%1$s nie obsługuje serwisu tego filmu.</string>
+<string name="cast_play_failed">%1$s nie mógł załadować tego filmu.</string>
+<string name="cast_remote_menu">Pilot zdalnego sterowania PipePipe</string>
+<string name="cast_reconnect">Połącz ponownie</string>
+<string name="cast_reconnecting">Ponowne łączenie…</string>
+<string name="cast_disconnected">Rozłączono</string>
+<string name="cast_resume_device">Kontynuuj sterowanie %1$s</string>
+<string name="cast_connect_failed">Nie udało się połączyć z %1$s.</string>
 </resources>
