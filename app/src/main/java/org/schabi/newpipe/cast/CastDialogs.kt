@@ -2,24 +2,20 @@ package org.schabi.newpipe.cast
 
 import android.content.Context
 import android.os.PowerManager
-import android.text.InputType
-import android.view.Gravity
-import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.ListView
-import android.widget.TextView
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.FastRewind
@@ -30,27 +26,32 @@ import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.preference.PreferenceManager
-import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import org.schabi.newpipe.R
 import org.schabi.newpipe.util.ThemeHelper
 
@@ -60,96 +61,169 @@ object CastDialogs {
     /** Menu entry: opens the remote panel if connected, otherwise lets the user pick a receiver. */
     fun open(activity: AppCompatActivity) {
         CastController.init(activity)
+        val host = Host(activity)
         val connected = CastController.connectedDevice
-        if (connected != null) RemotePanel(activity, connected).show(connect = false) else pick(activity, null)
+        host.show(if (connected != null) RemotePanel(host, connected, connect = false) else PickerScreen(host, null))
     }
 
     /** Lets the user pick a receiver, then plays [url] on it and opens the remote panel. */
     fun showPicker(activity: AppCompatActivity, serviceId: Int, url: String, posMs: Long) {
         CastController.init(activity)
+        val host = Host(activity)
         val play = CastController.playMessage(serviceId, url, posMs)
         val paired = CastController.connectedDevice ?: CastController.lastDevice()
-        if (paired == null) {
-            pick(activity, play)
-            return
-        }
         // A receiver is already paired: let the user choose between controlling it and casting anew.
-        val items = arrayOf(
-            activity.getString(R.string.cast_resume_device, paired.name),
-            activity.getString(R.string.cast_to_pipepipe)
-        )
-        AlertDialog.Builder(activity)
-            .setTitle(R.string.cast_to_pipepipe)
-            .setItems(items) { _, which ->
-                if (which == 0) {
-                    RemotePanel(activity, paired).show(connect = CastController.connectedDevice?.id != paired.id)
-                } else {
-                    pick(activity, play)
+        host.show(if (paired != null) ChoiceScreen(host, paired, play) else PickerScreen(host, play))
+    }
+
+    /**
+     * Hosts one dialog at a time. It lives in a ComposeView attached to the activity's content, so the
+     * dialogs get the activity's lifecycle and saved-state owners; the view itself draws nothing.
+     */
+    private class Host(val activity: AppCompatActivity) {
+        private var screen by mutableStateOf<Screen?>(null)
+        private val isLight = ThemeHelper.isLightThemeSelected(activity)
+        private val view = ComposeView(activity).apply {
+            setContent {
+                MaterialTheme(colorScheme = if (isLight) lightColorScheme() else darkColorScheme()) {
+                    screen?.let { s -> androidx.compose.runtime.key(s) { Dialog(onDismissRequest = { dismiss() }) { s.Content() } } }
                 }
             }
-            .setNegativeButton(android.R.string.cancel, null)
-            .show()
+        }
+
+        fun show(next: Screen) {
+            screen?.onClose()
+            if (view.parent == null) {
+                activity.findViewById<ViewGroup>(android.R.id.content).addView(
+                    view, ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                )
+            }
+            screen = next
+            next.onShow()
+        }
+
+        fun dismiss() {
+            screen?.onClose()
+            screen = null
+            (view.parent as? ViewGroup)?.removeView(view)
+        }
     }
 
-    private fun pick(activity: AppCompatActivity, play: String?) {
-        // Without something to play, offer the last receiver so a dropped session can be resumed.
-        val last = if (play == null) CastController.lastDevice() else null
-        val adapter = ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1)
-        val list = ListView(activity).also { it.adapter = adapter }
-        val empty = TextView(activity).apply {
-            setText(R.string.cast_searching)
-            setPadding(48, 32, 48, 32)
-        }
-        val root = LinearLayout(activity).apply {
-            orientation = LinearLayout.VERTICAL
-            addView(empty)
-            addView(list)
-        }
-        var shown: List<CastDevice> = emptyList()
-        val dialog = AlertDialog.Builder(activity)
-            .setTitle(R.string.cast_to_pipepipe)
-            .setView(root)
-            .setNegativeButton(android.R.string.cancel, null)
-            .create()
+    private abstract class Screen {
+        @Composable abstract fun Content()
+        open fun onShow() {}
+        open fun onClose() {}
+    }
 
-        fun refresh(found: List<CastDevice>) {
-            val resume = last?.takeIf { l -> found.none { it.id == l.id } }
-            shown = listOfNotNull(resume) + found
-            adapter.clear()
-            adapter.addAll(
-                shown.map {
-                    if (it === resume) activity.getString(R.string.cast_resume_device, it.name) else it.name
+    @Composable
+    private fun Card(
+        title: String?,
+        buttons: @Composable () -> Unit,
+        content: @Composable () -> Unit
+    ) {
+        Surface(shape = MaterialTheme.shapes.extraLarge, color = MaterialTheme.colorScheme.surfaceContainerHigh) {
+            Column(Modifier.padding(24.dp)) {
+                if (title != null) {
+                    Text(title, style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.onSurface)
+                    androidx.compose.foundation.layout.Spacer(Modifier.size(16.dp))
                 }
-            )
-            empty.visibility = if (found.isEmpty()) View.VISIBLE else View.GONE
+                content()
+                androidx.compose.foundation.layout.Spacer(Modifier.size(16.dp))
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { buttons() }
+            }
         }
-        refresh(emptyList())
-
-        val pickerListener = object : CastListener {
-            override fun onDevicesChanged(devices: List<CastDevice>) = refresh(devices)
-        }
-        CastController.listener = pickerListener
-        dialog.setOnDismissListener {
-            CastController.stopDiscovery()
-            // Dismiss is delivered asynchronously, after a picked device may have installed its own listener.
-            if (CastController.listener === pickerListener) CastController.listener = null
-        }
-        list.setOnItemClickListener { _, _, position, _ ->
-            val device = shown.getOrNull(position) ?: return@setOnItemClickListener
-            dialog.dismiss()
-            if (play != null) connectAndPlay(activity, device, play, null) else RemotePanel(activity, device).show(true)
-        }
-        dialog.show()
-        CastController.startDiscovery(activity)
     }
 
-    private fun connectAndPlay(activity: AppCompatActivity, device: CastDevice, play: String?, pin: String?) {
+    private class ChoiceScreen(
+        private val host: Host,
+        private val paired: CastDevice,
+        private val play: String
+    ) : Screen() {
+        @Composable
+        override fun Content() {
+            val activity = host.activity
+            Card(
+                title = stringResource(R.string.cast_to_pipepipe),
+                buttons = { TextButton({ host.dismiss() }) { Text(stringResource(android.R.string.cancel)) } }
+            ) {
+                Column {
+                    ChoiceRow(stringResource(R.string.cast_resume_device, paired.name)) {
+                        host.show(RemotePanel(host, paired, connect = CastController.connectedDevice?.id != paired.id))
+                    }
+                    ChoiceRow(stringResource(R.string.cast_to_pipepipe)) { host.show(PickerScreen(host, play)) }
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun ChoiceRow(text: String, onClick: () -> Unit) {
+        Text(
+            text,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 14.dp)
+        )
+    }
+
+    private class PickerScreen(private val host: Host, private val play: String?) : Screen() {
+        private val activity = host.activity
+        // Without something to play, offer the last receiver so a dropped session can be resumed.
+        private val last = if (play == null) CastController.lastDevice() else null
+        private var found by mutableStateOf<List<CastDevice>>(emptyList())
+        private val listener = object : CastListener {
+            override fun onDevicesChanged(devices: List<CastDevice>) { found = devices }
+        }
+
+        override fun onShow() {
+            CastController.listener = listener
+            CastController.startDiscovery(activity)
+        }
+
+        override fun onClose() {
+            CastController.stopDiscovery()
+            if (CastController.listener === listener) CastController.listener = null
+        }
+
+        @Composable
+        override fun Content() {
+            val resume = last?.takeIf { l -> found.none { it.id == l.id } }
+            val shown = listOfNotNull(resume) + found
+            Card(
+                title = stringResource(R.string.cast_to_pipepipe),
+                buttons = { TextButton({ host.dismiss() }) { Text(stringResource(android.R.string.cancel)) } }
+            ) {
+                Column {
+                    if (found.isEmpty()) {
+                        Text(stringResource(R.string.cast_searching), color = MaterialTheme.colorScheme.onSurface)
+                    }
+                    LazyColumn {
+                        itemsIndexed(shown) { _, device ->
+                            val label = if (device === resume) {
+                                stringResource(R.string.cast_resume_device, device.name)
+                            } else {
+                                device.name
+                            }
+                            ChoiceRow(label) { pick(device) }
+                        }
+                    }
+                }
+            }
+        }
+
+        private fun pick(device: CastDevice) {
+            host.dismiss()
+            if (play != null) connectAndPlay(host, device, play, null) else host.show(RemotePanel(host, device, true))
+        }
+    }
+
+    private fun connectAndPlay(host: Host, device: CastDevice, play: String?, pin: String?) {
+        val activity = host.activity
         CastController.listener = object : CastListener {
             override fun onAuth(ok: Boolean, reason: String?) {
                 when {
-                    ok -> RemotePanel(activity, device).show(connect = false)
-                    reason == CastProtocol.REASON_LOCKED -> showLocked(activity)
-                    else -> askPin(activity, device, play, reason == CastProtocol.REASON_BAD_PIN)
+                    ok -> host.show(RemotePanel(host, device, connect = false))
+                    reason == CastProtocol.REASON_LOCKED -> host.show(LockedScreen(host))
+                    else -> host.show(PinScreen(host, device, play, reason == CastProtocol.REASON_BAD_PIN))
                 }
             }
             override fun onDisconnected() {
@@ -160,25 +234,48 @@ object CastDialogs {
         CastController.connect(device, pin, play)
     }
 
-    private fun showLocked(activity: AppCompatActivity) {
-        AlertDialog.Builder(activity).setMessage(R.string.cast_locked)
-            .setPositiveButton(android.R.string.ok, null).show()
+    private class LockedScreen(private val host: Host) : Screen() {
+        @Composable
+        override fun Content() {
+            Card(
+                title = null,
+                buttons = { TextButton({ host.dismiss() }) { Text(stringResource(android.R.string.ok)) } }
+            ) { Text(stringResource(R.string.cast_locked), color = MaterialTheme.colorScheme.onSurface) }
+        }
     }
 
-    private fun askPin(activity: AppCompatActivity, device: CastDevice, play: String?, wrong: Boolean) {
-        val input = EditText(activity).apply {
-            inputType = InputType.TYPE_CLASS_NUMBER
-            if (wrong) error = activity.getString(R.string.cast_wrong_pin)
-        }
-        AlertDialog.Builder(activity)
-            .setTitle(activity.getString(R.string.cast_enter_pin, device.name))
-            .setView(input)
-            .setPositiveButton(android.R.string.ok) { _, _ ->
-                CastController.disconnect()
-                connectAndPlay(activity, device, play, input.text.toString())
+    private class PinScreen(
+        private val host: Host,
+        private val device: CastDevice,
+        private val play: String?,
+        private val wrong: Boolean
+    ) : Screen() {
+        @Composable
+        override fun Content() {
+            var pin by remember { mutableStateOf("") }
+            Card(
+                title = stringResource(R.string.cast_enter_pin, device.name),
+                buttons = {
+                    TextButton({ host.dismiss(); CastController.disconnect() }) {
+                        Text(stringResource(android.R.string.cancel))
+                    }
+                    TextButton({
+                        host.dismiss()
+                        CastController.disconnect()
+                        connectAndPlay(host, device, play, pin)
+                    }) { Text(stringResource(android.R.string.ok)) }
+                }
+            ) {
+                OutlinedTextField(
+                    value = pin,
+                    onValueChange = { pin = it },
+                    singleLine = true,
+                    isError = wrong,
+                    supportingText = if (wrong) ({ Text(stringResource(R.string.cast_wrong_pin)) }) else null,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
             }
-            .setNegativeButton(android.R.string.cancel) { _, _ -> CastController.disconnect() }
-            .show()
+        }
     }
 
     /**
@@ -187,9 +284,11 @@ object CastDialogs {
      * offers a button. It also retries when the app comes back to the foreground (e.g. after unlock).
      */
     private class RemotePanel(
-        private val activity: AppCompatActivity,
-        private var device: CastDevice
-    ) : DefaultLifecycleObserver {
+        private val host: Host,
+        private var device: CastDevice,
+        private val connect: Boolean
+    ) : Screen(), DefaultLifecycleObserver {
+        private val activity = host.activity
         private var closed = false
         private var busy = false
         private var attempt = 0
@@ -201,7 +300,6 @@ object CastDialogs {
         private var sliderValue by mutableFloatStateOf(0f)
         private var statusRes by mutableStateOf<Int?>(null)
         private var showRetry by mutableStateOf(false)
-        private lateinit var dialog: AlertDialog
 
         private fun seekStepMs(): Double {
             val prefs = PreferenceManager.getDefaultSharedPreferences(activity)
@@ -209,7 +307,7 @@ object CastDialogs {
                 activity.getString(R.string.seek_duration_key),
                 activity.getString(R.string.seek_duration_default_value)
             )
-            return (value?.toDoubleOrNull() ?: 10_000.0)
+            return value?.toDoubleOrNull() ?: 10_000.0
         }
 
         private fun seekBy(direction: Int) {
@@ -236,11 +334,10 @@ object CastDialogs {
                     showRetry = false
                     return
                 }
-                closePanel()
                 if (reason == CastProtocol.REASON_LOCKED) {
-                    showLocked(activity)
+                    host.show(LockedScreen(host))
                 } else {
-                    askPin(activity, device, null, reason == CastProtocol.REASON_BAD_PIN)
+                    host.show(PinScreen(host, device, null, reason == CastProtocol.REASON_BAD_PIN))
                 }
             }
 
@@ -278,45 +375,22 @@ object CastDialogs {
             }
         }
 
-        init {
-            val isLight = ThemeHelper.isLightThemeSelected(activity)
-            val root = ComposeView(activity).apply {
-                setContent {
-                    MaterialTheme(colorScheme = if (isLight) lightColorScheme() else darkColorScheme()) {
-                        PanelContent()
-                    }
-                }
-            }
-            dialog = AlertDialog.Builder(activity)
-                .setTitle(device.name)
-                .setView(root)
-                .setNegativeButton(R.string.cast_disconnect) { _, _ -> CastController.disconnect() }
-                .setPositiveButton(R.string.close, null)
-                .create()
-            // The dialog window is not part of the activity's view tree, so Compose needs the owners.
-            dialog.window?.decorView?.let {
-                it.setViewTreeLifecycleOwner(activity)
-                it.setViewTreeSavedStateRegistryOwner(activity)
-            }
-            dialog.setOnDismissListener {
-                closed = true
-                activity.lifecycle.removeObserver(this)
-                // Dismiss is asynchronous: do not touch state a newer panel or dialog now owns.
-                if (CastController.listener === listener) {
-                    CastController.listener = null
-                    CastController.cancelLocate()
-                    CastController.setWatching(false)
-                }
-            }
-        }
-
-        fun show(connect: Boolean) {
+        override fun onShow() {
             CastController.listener = listener
-            dialog.show()
             CastController.setWatching(true)
             if (connect) startReconnect()
             // Reports the current state immediately, and again on every return to the foreground.
             activity.lifecycle.addObserver(this)
+        }
+
+        override fun onClose() {
+            closed = true
+            activity.lifecycle.removeObserver(this)
+            if (CastController.listener === listener) {
+                CastController.listener = null
+                CastController.cancelLocate()
+                CastController.setWatching(false)
+            }
         }
 
         override fun onResume(owner: LifecycleOwner) {
@@ -338,81 +412,82 @@ object CastDialogs {
             showRetry = true
         }
 
-        @androidx.compose.runtime.Composable
-        private fun PanelContent() {
-            Column(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    titleText,
-                    fontSize = 16.sp,
-                    maxLines = 2,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-                )
-                statusRes?.let {
-                    Text(stringResource(it), color = MaterialTheme.colorScheme.onSurface)
-                }
-                if (showRetry) {
-                    TextButton(onClick = { startReconnect() }) { Text(stringResource(R.string.cast_reconnect)) }
-                }
-                Slider(
-                    value = sliderValue.coerceIn(0f, durMs.toFloat().coerceAtLeast(1f)),
-                    onValueChange = { dragging = true; sliderValue = it },
-                    onValueChangeFinished = {
-                        dragging = false
-                        posMs = sliderValue.toLong()
-                        CastController.sendCommand("seek", sliderValue.toDouble())
-                    },
-                    valueRange = 0f..durMs.toFloat().coerceAtLeast(1f)
-                )
-                Text(
-                    "${fmt(if (dragging) sliderValue.toLong() else posMs)} / ${fmt(durMs)}",
-                    color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.End,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    ControlButton(Icons.Filled.SkipPrevious, R.string.previous) { CastController.sendCommand("prev") }
-                    ControlButton(Icons.Filled.FastRewind, null) { seekBy(-1) }
-                    IconButton(
-                        onClick = { CastController.sendCommand(if (playing) "pause" else "play") },
-                        modifier = Modifier.size(56.dp)
-                    ) {
-                        Crossfade(targetState = playing, label = "playPause") { isPlaying ->
-                            Icon(
-                                if (isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.size(40.dp)
-                            )
-                        }
+        private fun isInteractive(): Boolean =
+            (activity.getSystemService(Context.POWER_SERVICE) as PowerManager).isInteractive
+
+        @Composable
+        override fun Content() {
+            Card(
+                title = device.name,
+                buttons = {
+                    TextButton({ host.dismiss(); CastController.disconnect() }) {
+                        Text(stringResource(R.string.cast_disconnect))
                     }
-                    ControlButton(Icons.Filled.FastForward, null) { seekBy(1) }
-                    ControlButton(Icons.Filled.SkipNext, null) { CastController.sendCommand("next") }
+                    TextButton({ host.dismiss() }) { Text(stringResource(R.string.close)) }
+                }
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        titleText,
+                        fontSize = 16.sp,
+                        maxLines = 2,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                    )
+                    statusRes?.let { Text(stringResource(it), color = MaterialTheme.colorScheme.onSurface) }
+                    if (showRetry) {
+                        TextButton({ startReconnect() }) { Text(stringResource(R.string.cast_reconnect)) }
+                    }
+                    val max = durMs.toFloat().coerceAtLeast(1f)
+                    Slider(
+                        value = sliderValue.coerceIn(0f, max),
+                        onValueChange = { dragging = true; sliderValue = it },
+                        onValueChangeFinished = {
+                            dragging = false
+                            posMs = sliderValue.toLong()
+                            CastController.sendCommand("seek", sliderValue.toDouble())
+                        },
+                        valueRange = 0f..max
+                    )
+                    Text(
+                        "${fmt(if (dragging) sliderValue.toLong() else posMs)} / ${fmt(durMs)}",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.End,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        ControlButton(Icons.Filled.SkipPrevious, R.string.previous) { CastController.sendCommand("prev") }
+                        ControlButton(Icons.Filled.FastRewind, null) { seekBy(-1) }
+                        IconButton(
+                            onClick = { CastController.sendCommand(if (playing) "pause" else "play") },
+                            modifier = Modifier.size(56.dp)
+                        ) {
+                            Crossfade(targetState = playing, label = "playPause") { isPlaying ->
+                                Icon(
+                                    if (isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.size(40.dp)
+                                )
+                            }
+                        }
+                        ControlButton(Icons.Filled.FastForward, null) { seekBy(1) }
+                        ControlButton(Icons.Filled.SkipNext, null) { CastController.sendCommand("next") }
+                    }
                 }
             }
         }
 
-        @androidx.compose.runtime.Composable
-        private fun ControlButton(icon: androidx.compose.ui.graphics.vector.ImageVector, desc: Int?, onClick: () -> Unit) {
+        @Composable
+        private fun ControlButton(icon: ImageVector, desc: Int?, onClick: () -> Unit) {
             IconButton(onClick = onClick) {
                 Icon(icon, contentDescription = desc?.let { stringResource(it) }, tint = MaterialTheme.colorScheme.onSurface)
             }
         }
-
-        private fun closePanel() {
-            closed = true
-            dialog.dismiss()
-        }
-
-        private fun isInteractive(): Boolean =
-            (activity.getSystemService(Context.POWER_SERVICE) as PowerManager).isInteractive
     }
 
     private fun fmt(ms: Long): String {
