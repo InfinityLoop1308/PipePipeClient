@@ -15,8 +15,6 @@
 <string name="download_path_summary">ダウンロードした動画をここに保存します</string>
 <string name="download_path_dialog_title">動画ファイルをダウンロードするフォルダを選択して下さい</string>
 <string name="default_resolution_title">デフォルトの解像度</string>
-<string name="play_with_kodi_title">Kodi で再生</string>
-<string name="kore_not_found">Kore をインストールしますか？</string>
 <string name="play_audio">音声</string>
 <string name="download_dialog_title">ダウンロード</string>
 <string name="unsupported_url">対応していないURLです</string>
@@ -1167,4 +1165,22 @@
 <string name="plugins_show_nsfw_title">NSFWプラグインを表示</string>
 <string name="plugins_show_nsfw_summary">利用可能なプラグイン一覧にNSFWとしてマークされたプラグインを表示します</string>
 <string name="plugin_installed_other_publisher">他のパブリッシャーによって公開されています。これをインストールするには、まず %1$s をアンインストールしてください。</string>
+<string name="cast_to_pipepipe">PipePipeにキャスト</string>
+<string name="cast_searching">このネットワーク上のPipePipeデバイスを検索しています…</string>
+<string name="cast_enter_pin">%1$s に表示されているコードを入力してください</string>
+<string name="cast_wrong_pin">コードが間違っています</string>
+<string name="cast_locked">コードの間違いが多すぎます。受信側デバイスでPipePipeを再起動して、もう一度お試しください。</string>
+<string name="cast_disconnect">切断</string>
+<string name="cast_pairing_code_toast">%1$s がここにキャストしようとしています。ペアリングコード: %2$s</string>
+<string name="cast_receiver_title">他のPipePipeデバイスからのキャストを受信する</string>
+<string name="cast_receiver_summary">PipePipeを開いている間、ローカルネットワークリスナーを実行し続けます（バッテリーを消費します）。テレビではデフォルトで有効になっています。</string>
+<string name="cast_plugin_missing">%2$s には %1$s プラグインがインストールされていないため、この動画を再生できません。</string>
+<string name="cast_service_unsupported">%1$s はこの動画のサービスをサポートしていません。</string>
+<string name="cast_play_failed">%1$s はこの動画を読み込めませんでした。</string>
+<string name="cast_remote_menu">PipePipe リモートコントロール</string>
+<string name="cast_reconnect">再接続</string>
+<string name="cast_reconnecting">再接続しています…</string>
+<string name="cast_disconnected">切断されました</string>
+<string name="cast_resume_device">%1$s の制御を続ける</string>
+<string name="cast_connect_failed">%1$s に接続できませんでした。</string>
 </resources>

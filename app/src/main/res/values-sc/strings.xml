@@ -468,8 +468,6 @@
     <string name="light_theme_title">Craru</string>
     <string name="theme_title">Tema</string>
     <string name="play_audio">Àudio</string>
-    <string name="kore_not_found">Cheres installare s\'aplicatzione Kore chi mancat\?</string>
-    <string name="play_with_kodi_title">Riprodui cun Kodi</string>
     <string name="default_popup_resolution_title">Risolutzione predefinida de sa ventanedda</string>
     <string name="default_resolution_title">Risolutzione predefinida</string>
     <string name="download_path_audio_dialog_title">Issèbera sa cartella de iscarrigamentu pro sos documentos àudio</string>

@@ -43,8 +43,6 @@
 <string name="download_path_audio_dialog_title">选择音频文件下载路径</string>
 <string name="default_resolution_title">默认分辨率</string>
 <string name="default_popup_resolution_title">默认悬浮窗分辨率</string>
-<string name="play_with_kodi_title">使用 Kodi 播放</string>
-<string name="kore_not_found">安装缺少的 Kore 应用？</string>
 <string name="crash_the_player">崩溃播放器</string>
 <string name="notification_scale_to_square_image_title">将缩略图裁剪为 1:1 比例</string>
 <string name="notification_scale_to_square_image_summary">将通知中显示的视频缩略图从 16:9 裁剪为 1:1 比例</string>
@@ -1244,4 +1242,22 @@
 <string name="plugins_show_nsfw_title">显示 NSFW 插件</string>
 <string name="plugins_show_nsfw_summary">在可用插件中列出被标记为 NSFW 的插件</string>
 <string name="plugin_installed_other_publisher">由其他发布者发布。请先卸载 %1$s 才能安装此插件。</string>
+<string name="cast_to_pipepipe">投屏到 PipePipe</string>
+<string name="cast_searching">正在此网络上搜索 PipePipe 设备…</string>
+<string name="cast_enter_pin">输入 %1$s 上显示的代码</string>
+<string name="cast_wrong_pin">代码错误</string>
+<string name="cast_locked">错误代码次数过多。请在接收设备上重启 PipePipe 后重试。</string>
+<string name="cast_disconnect">断开连接</string>
+<string name="cast_pairing_code_toast">%1$s 想要投屏到此处。配对码：%2$s</string>
+<string name="cast_receiver_title">接收来自其他 PipePipe 设备的投屏</string>
+<string name="cast_receiver_summary">在 PipePipe 打开时保持本地网络监听器运行，这会消耗一些电量。在电视上默认启用。</string>
+<string name="cast_plugin_missing">%2$s 未安装 %1$s 插件，因此无法播放此视频。</string>
+<string name="cast_service_unsupported">%1$s 不支持此视频的服务。</string>
+<string name="cast_play_failed">%1$s 无法加载此视频。</string>
+<string name="cast_remote_menu">PipePipe 遥控器</string>
+<string name="cast_reconnect">重新连接</string>
+<string name="cast_reconnecting">正在重新连接…</string>
+<string name="cast_disconnected">已断开连接</string>
+<string name="cast_resume_device">继续控制 %1$s</string>
+<string name="cast_connect_failed">无法连接到 %1$s。</string>
 </resources>

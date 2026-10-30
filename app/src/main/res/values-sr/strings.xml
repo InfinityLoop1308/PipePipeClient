@@ -15,8 +15,6 @@
     <string name="download_path_summary">Преузети видео записи се чувају овде</string>
     <string name="download_path_dialog_title">Избор фасцикле за преузимање видеа</string>
     <string name="default_resolution_title">Подразумевана резолуција</string>
-    <string name="play_with_kodi_title">Пусти помоћу Кодија</string>
-    <string name="kore_not_found">Инсталирати даљински за Коди\?</string>
     <string name="play_audio">Аудио</string>
     <string name="download_dialog_title">Преузимање</string>
     <string name="unsupported_url">УРЛ није подржан</string>

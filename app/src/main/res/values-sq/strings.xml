@@ -15,7 +15,6 @@
     <string name="fragment_feed_title">Të rejat</string>
     <string name="controls_add_to_playlist_title">Shto në</string>
     <string name="default_resolution_title">Rezolucioni i parazgjedhur</string>
-    <string name="play_with_kodi_title">Luaj me Kodi</string>
     <string name="play_audio">Audio</string>
     <string name="black_theme_title">E zezë</string>
     <string name="download_thumbnail_title">Ngarko pamjet miniaturë</string>
@@ -478,7 +477,6 @@
     <string name="dark_theme_title">E errët</string>
     <string name="light_theme_title">E bardhë</string>
     <string name="theme_title">Tema</string>
-    <string name="kore_not_found">Instaloni aplikacionin Kore që mungon\?</string>
     <string name="default_popup_resolution_title">Rezolucioni i parazgjedhur i popup</string>
     <string name="download_path_audio_dialog_title">Zgjidhni dosjen e shkarkimit për skedarët audio</string>
     <string name="download_path_audio_summary">Skedarët audio të shkarkuara ruhen lëtu</string>

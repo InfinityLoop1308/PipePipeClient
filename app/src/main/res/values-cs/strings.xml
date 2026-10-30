@@ -15,8 +15,6 @@
     <string name="download_path_audio_dialog_title">Zvolte adresář pro stažené audio soubory</string>
     <string name="download_path_audio_title">Adresář pro stažené audio</string>
     <string name="default_resolution_title">Výchozí rozlišení</string>
-    <string name="play_with_kodi_title">Přehrát pomocí Kodi</string>
-    <string name="kore_not_found">Nainstalovat chybějící aplikaci Kore\?</string>
     <string name="download_path_title">Adresář pro stažená videa</string>
     <string name="download_path_summary">Stažená videa jsou uložena tady</string>
     <string name="download_path_dialog_title">Zvolte adresář pro stažená videa</string>

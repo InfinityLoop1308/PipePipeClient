@@ -35,8 +35,6 @@
     <string name="download_path_audio_dialog_title">Одберете фолдер за зачувување на аудио</string>
     <string name="default_resolution_title">Стандардна резолуција</string>
     <string name="default_popup_resolution_title">Стандардна резолуција на малиот прозор</string>
-    <string name="play_with_kodi_title">Пушти на Kodi</string>
-    <string name="kore_not_found">Апликацијата Kore не е најдена. Сакате да ја инсталирате\?</string>
     <string name="play_audio">Звук</string>
     <string name="theme_title">Тема</string>
     <string name="light_theme_title">Светла</string>

@@ -19,8 +19,6 @@
     <string name="download_path_audio_summary">پرونده‌های صوتی بارگرفته این‌جا ذخیره می‌شوند</string>
     <string name="download_path_audio_dialog_title">گزینش شاخهٔ بارگیری برای پرونده‌های صوتی</string>
     <string name="default_resolution_title">وضوح پیش‌گزیده</string>
-    <string name="play_with_kodi_title">پخش با کودی</string>
-    <string name="kore_not_found">کارهٔ کُره (Kore) پیدا نشد. نصب شود؟</string>
     <string name="play_audio">صدا</string>
     <string name="theme_title">زمینه</string>
     <string name="dark_theme_title">تیره</string>

@@ -147,6 +147,8 @@ public class MainActivity extends AppCompatActivity {
 
         assureCorrectAppLanguage(this);
         super.onCreate(savedInstanceState);
+        org.schabi.newpipe.cast.CastReceiver.Companion.setEnabled(this,
+                org.schabi.newpipe.cast.CastReceiver.Companion.isEnabledByUser(this));
 
         mainBinding = ActivityMainBinding.inflate(getLayoutInflater());
         drawerLayoutBinding = mainBinding.drawerLayout;

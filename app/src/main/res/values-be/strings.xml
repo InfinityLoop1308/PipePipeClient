@@ -35,8 +35,6 @@
     <string name="download_path_audio_dialog_title">Увядзіце шлях да папкі для спампавання аўдыя</string>
     <string name="default_resolution_title">Разрознянне па змаўчанні</string>
     <string name="default_popup_resolution_title">Разрозненне усплываючага акна</string>
-    <string name="play_with_kodi_title">Прайграць у Kodi</string>
-    <string name="kore_not_found">Дадатак Kore не знойдзены. Усталяваць яго?</string>
     <string name="play_audio">Аўдыё</string>
     <string name="theme_title">Тэма</string>
     <string name="light_theme_title">Светлая</string>

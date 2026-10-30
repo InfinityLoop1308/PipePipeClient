@@ -30,6 +30,9 @@ public class AdvancedSettingsFragment extends BasePreferenceFragment implements 
     public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
         addPreferencesFromResourceRegistry();
         initializeAndroidAutoPreference();
+        ((androidx.preference.SwitchPreferenceCompat) requirePreference(
+                R.string.cast_receiver_enabled_key)).setChecked(
+                org.schabi.newpipe.cast.CastReceiver.Companion.isEnabledByUser(requireContext()));
         requirePreference(R.string.download_thumbnail_key).setOnPreferenceChangeListener(
                 (preference, newValue) -> {
                     PicassoHelper.setShouldLoadImages((Boolean) newValue);
@@ -100,6 +103,9 @@ public class AdvancedSettingsFragment extends BasePreferenceFragment implements 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(getString(R.string.loading_timeout_key))) {
             ServiceHelper.initServices(this.getContext());
+        } else if (key.equals(getString(R.string.cast_receiver_enabled_key))) {
+            org.schabi.newpipe.cast.CastReceiver.Companion.setEnabled(requireContext(),
+                    sharedPreferences.getBoolean(key, false));
         } else if (key.equals(getString(R.string.disable_android_auto_key))) {
             DeviceUtils.updateAndroidAutoComponentState(requireContext());
         } else if (key.equals(getString(R.string.fetch_full_playlist_key))) {

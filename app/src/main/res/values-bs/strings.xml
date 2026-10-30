@@ -25,7 +25,6 @@
     <string name="channel_unsubscribed">Otkazana pratnja kanala</string>
     <string name="subscription_change_failed">Nije moguće promijeniti pratnju</string>
     <string name="subscription_update_failed">Nije moguće ažurirati pratnju</string>
-    <string name="kore_not_found">Instalirajte nedostajeću Kore aplikaciju\?</string>
     <string name="tab_bookmarks">Obilježeni Popisi</string>
     <string name="controls_popup_title">Iskačni prozor</string>
     <string name="tab_choose">Izaberite Podprozor</string>
@@ -97,7 +96,6 @@
     <string name="download_path_title">Fascikla za preuzimanje videa</string>
     <string name="download_path_summary">Skinuti video zapisi su ovdje spremljeni</string>
     <string name="download_path_dialog_title">Odaberite fasciklu gdje se video datoteke skidaju</string>
-    <string name="play_with_kodi_title">Pokrenite s KODI-jem</string>
     <string name="seek_duration_title">Vrijeme premotavanja naprijed/nazad</string>
     <string name="download_thumbnail_title">Učitajte sličice</string>
 </resources>

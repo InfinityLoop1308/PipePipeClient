@@ -45,8 +45,6 @@
 <string name="download_path_audio_dialog_title">Chọn thư mục tải xuống cho tệp âm thanh</string>
 <string name="default_resolution_title">Độ phân giải mặc định</string>
 <string name="default_popup_resolution_title">Độ phân giải bật lên mặc định</string>
-<string name="play_with_kodi_title">Phát với Kodi</string>
-<string name="kore_not_found">Cài đặt ứng dụng Kore còn thiếu?</string>
 <string name="crash_the_player">Hỏng trình phát</string>
 <string name="notification_scale_to_square_image_title">Cắt hình thu nhỏ thành tỷ lệ khung hình 1:1</string>
 <string name="notification_scale_to_square_image_summary">Cắt hình thu nhỏ của băng hình hiển thị trong thông báo từ tỷ lệ khung hình 16:9 xuống 1:1</string>
@@ -1251,4 +1249,22 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="plugins_show_nsfw_title">Hiển thị các plugin NSFW</string>
 <string name="plugins_show_nsfw_summary">Liệt kê các plugin được đánh dấu là NSFW trong danh sách plugin có sẵn</string>
 <string name="plugin_installed_other_publisher">Được phát hành bởi người khác. Vui lòng gỡ cài đặt %1$s trước khi cài đặt plugin này.</string>
+<string name="cast_to_pipepipe">Truyền tới PipePipe</string>
+<string name="cast_searching">Đang tìm kiếm các thiết bị PipePipe trên mạng này…</string>
+<string name="cast_enter_pin">Nhập mã được hiển thị trên %1$s</string>
+<string name="cast_wrong_pin">Mã không đúng</string>
+<string name="cast_locked">Sai mã quá nhiều lần. Khởi động lại PipePipe trên thiết bị nhận để thử lại.</string>
+<string name="cast_disconnect">Ngắt kết nối</string>
+<string name="cast_pairing_code_toast">%1$s muốn truyền tới đây. Mã ghép nối: %2$s</string>
+<string name="cast_receiver_title">Nhận bản truyền từ các thiết bị PipePipe khác</string>
+<string name="cast_receiver_summary">Giữ trình nghe mạng cục bộ chạy trong khi PipePipe đang mở, điều này sẽ tiêu tốn một chút pin. Được bật theo mặc định trên TV.</string>
+<string name="cast_plugin_missing">%2$s chưa cài đặt plugin %1$s, vì vậy không thể phát video này.</string>
+<string name="cast_service_unsupported">%1$s không hỗ trợ dịch vụ của video này.</string>
+<string name="cast_play_failed">%1$s không thể tải video này.</string>
+<string name="cast_remote_menu">Điều khiển từ xa PipePipe</string>
+<string name="cast_reconnect">Kết nối lại</string>
+<string name="cast_reconnecting">Đang kết nối lại…</string>
+<string name="cast_disconnected">Đã ngắt kết nối</string>
+<string name="cast_resume_device">Tiếp tục điều khiển %1$s</string>
+<string name="cast_connect_failed">Không thể kết nối với %1$s.</string>
 </resources>

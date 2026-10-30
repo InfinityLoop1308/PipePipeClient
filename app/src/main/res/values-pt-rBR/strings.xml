@@ -43,8 +43,6 @@
     <string name="download_path_audio_dialog_title">Escolha uma pasta para áudios baixados</string>
     <string name="default_resolution_title">Resolução padrão</string>
     <string name="default_popup_resolution_title">Resolução padrão de pop-up</string>
-    <string name="play_with_kodi_title">Reproduzir com Kodi</string>
-    <string name="kore_not_found">Deseja instalar o aplicativo Kore?</string>
     <string name="crash_the_player">Parar o reprodutor</string>
     <string name="notification_scale_to_square_image_title">Cortar miniatura para a proporção 1:1</string>
     <string name="notification_scale_to_square_image_summary">Cortar a miniatura do vídeo mostrada na notificação da proporção 16:9 para 1:1</string>

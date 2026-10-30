@@ -101,6 +101,8 @@ public final class PlayQueueActivity extends AppCompatActivity
     // Allow to setup visibility of menuItems
     @Override
     public boolean onPrepareOptionsMenu(final Menu m) {
+        m.findItem(R.id.action_cast_pipepipe)
+                .setVisible(!org.schabi.newpipe.util.DeviceUtils.isTv(this));
         if (player != null) {
             menu.findItem(R.id.action_switch_popup)
                     .setVisible(player.audioPlayerSelected());
@@ -131,6 +133,9 @@ public final class PlayQueueActivity extends AppCompatActivity
             return true;
         } else if (item.getItemId() == R.id.action_system_audio) {
             startActivity(new Intent(Settings.ACTION_SOUND_SETTINGS));
+            return true;
+        } else if (item.getItemId() == R.id.action_cast_pipepipe) {
+            org.schabi.newpipe.cast.CastDialogs.INSTANCE.open(this);
             return true;
         } else if (item.getItemId() == R.id.action_switch_main) {
             this.player.setRecovery();
