@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import org.java_websocket.client.WebSocketClient
+import org.java_websocket.drafts.Draft_6455
 import org.java_websocket.handshake.ServerHandshake
 import org.json.JSONObject
 import org.schabi.newpipe.plugin.PluginManager
@@ -44,6 +45,9 @@ object CastController {
     private const val TAG = "CastController"
     private const val KEY_TOKENS = "cast_controller_tokens"
     private const val IDLE_CLOSE_MS = 20_000L
+    private const val KEY_LAST = "cast_controller_last_device"
+    private const val LOCATE_TIMEOUT_MS = 5_000L
+    private const val CONNECT_TIMEOUT_MS = 4_000
 
     private val main = Handler(Looper.getMainLooper())
     private val devices = LinkedHashMap<String, CastDevice>()
@@ -66,6 +70,7 @@ object CastController {
 
     fun startDiscovery(context: Context) {
         if (discovery != null) return
+        devices.clear() // a new session starts from what is on the network now, not from old addresses
         val manager = context.applicationContext.getSystemService(Context.NSD_SERVICE) as NsdManager
         nsd = manager
         val l = object : NsdManager.DiscoveryListener {
@@ -104,6 +109,57 @@ object CastController {
 
     fun devices(): List<CastDevice> = devices.values.toList()
 
+    private var locateId: String? = null
+    private var locateCallback: ((CastDevice?) -> Unit)? = null
+    private var locateStartedDiscovery = false
+    private val locateTimeout = Runnable { finishLocate(null) }
+
+    /**
+     * Finds a receiver's current address, since its port changes every time it restarts.
+     * Calls [callback] with null after a short timeout. Discovery is stopped again afterwards.
+     */
+    fun locate(context: Context, id: String, callback: (CastDevice?) -> Unit) {
+        cancelLocate()
+        locateStartedDiscovery = discovery == null
+        startDiscovery(context)
+        devices.remove(id)
+        locateId = id
+        locateCallback = callback
+        main.postDelayed(locateTimeout, LOCATE_TIMEOUT_MS)
+    }
+
+    fun cancelLocate() {
+        main.removeCallbacks(locateTimeout)
+        locateId = null
+        locateCallback = null
+        if (locateStartedDiscovery) {
+            locateStartedDiscovery = false
+            stopDiscovery()
+        }
+    }
+
+    private fun finishLocate(found: CastDevice?) {
+        val callback = locateCallback
+        cancelLocate()
+        callback?.invoke(found)
+    }
+
+    fun lastDevice(): CastDevice? {
+        val ctx = appContext ?: return null
+        val raw = PreferenceManager.getDefaultSharedPreferences(ctx).getString(KEY_LAST, null) ?: return null
+        return runCatching {
+            val o = JSONObject(raw)
+            CastDevice(o.getString("id"), o.getString("name"), o.getString("host"), o.getInt("port"))
+        }.getOrNull()
+    }
+
+    private fun saveLast(device: CastDevice) {
+        val ctx = appContext ?: return
+        val o = JSONObject().put("id", device.id).put("name", device.name)
+            .put("host", device.host).put("port", device.port)
+        PreferenceManager.getDefaultSharedPreferences(ctx).edit { putString(KEY_LAST, o.toString()) }
+    }
+
     // NsdManager.resolveService rejects concurrent calls, so resolve one at a time.
     private fun resolveNext() {
         if (resolving) return
@@ -122,8 +178,10 @@ object CastController {
                     @Suppress("DEPRECATION")
                     val host = i.host?.hostAddress
                     if (id != null && host != null && id != ownId) {
-                        devices[id] = CastDevice(id, name ?: i.serviceName, host, i.port)
+                        val found = CastDevice(id, name ?: i.serviceName, host, i.port)
+                        devices[id] = found
                         listener?.onDevicesChanged(devices.values.toList())
+                        if (id == locateId) finishLocate(found)
                     }
                     resolveNext()
                 }
@@ -150,7 +208,10 @@ object CastController {
         current = device
         pendingPin = pin
         pendingPlay = thenPlay
-        val c = object : WebSocketClient(URI("ws://${device.host}:${device.port}")) {
+        // The default connect timeout is infinite, which would leave a stale address hanging forever.
+        val c = object : WebSocketClient(
+            URI("ws://${device.host}:${device.port}"), Draft_6455(), null, CONNECT_TIMEOUT_MS
+        ) {
             override fun onOpen(h: ServerHandshake) {
                 val token = tokens().optString(device.id)
                 send(
@@ -184,6 +245,7 @@ object CastController {
                 val ok = json.optBoolean("ok")
                 authed = ok
                 if (ok) {
+                    current?.let { saveLast(it) }
                     json.optString("token").takeIf { it.isNotEmpty() }?.let { saveToken(current!!.id, it) }
                     pendingPlay?.let { client?.send(it) }
                     pendingPlay = null

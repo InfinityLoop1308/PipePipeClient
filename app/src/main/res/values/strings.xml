@@ -1259,4 +1259,10 @@ Only add repositories you trust.</string>
 <string name="cast_plugin_missing">%2$s does not have the %1$s plugin installed, so it cannot play this video.</string>
 <string name="cast_service_unsupported">%1$s does not support this video\'s service.</string>
 <string name="cast_play_failed">%1$s could not load this video.</string>
+<string name="cast_remote_menu">PipePipe remote control</string>
+<string name="cast_reconnect">Reconnect</string>
+<string name="cast_reconnecting">Reconnecting…</string>
+<string name="cast_disconnected">Disconnected</string>
+<string name="cast_resume_device">Continue controlling %1$s</string>
+<string name="cast_connect_failed">Could not connect to %1$s.</string>
 </resources>
