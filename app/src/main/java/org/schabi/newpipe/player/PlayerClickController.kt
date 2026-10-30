@@ -23,7 +23,7 @@ import org.schabi.newpipe.util.external_communication.ShareUtils
 
 /**
  * Owns everything that hangs off a player control button: the click/long-click routing, the
- * more-options drawer animation, the share / open-in-browser / sleep-timer actions, the
+ * more-options drawer animation, the share / sleep-timer actions, the
  * mute toggle and the "add to playlist" dialog.
  *
  * [Player] keeps only the public entry points that other components call
@@ -76,7 +76,6 @@ class PlayerClickController(private val player: Player) :
         binding.unlockButton.setOnClickListener(this)
         binding.switchCommentsVisibility.setOnClickListener(this)
         binding.castPipePipe.setOnClickListener(this)
-        binding.openInBrowser.setOnClickListener(this)
         binding.playerCloseButton.setOnClickListener(this)
         binding.switchMute.setOnClickListener(this)
         binding.sleepTimer.setOnClickListener(this)
@@ -119,8 +118,6 @@ class PlayerClickController(private val player: Player) :
             if (item != null && activity != null) {
                 CastDialogs.showPicker(activity, item.serviceId, item.url, player.currentPosition)
             }
-        } else if (v.id == binding.openInBrowser.id) {
-            onOpenInBrowserClicked()
         } else if (v.id == binding.sleepTimer.id) {
             onSleepTimerClicked()
         } else if (v.id == binding.fullScreenButton.id) {
@@ -231,14 +228,6 @@ class PlayerClickController(private val player: Player) :
             }
         }
         player.showControls(Player.DEFAULT_CONTROLS_DURATION.toLong())
-    }
-
-    private fun onOpenInBrowserClicked() {
-        player.currentStreamInfo
-            .map { info -> info.originalUrl }
-            .ifPresent { originalUrl ->
-                ShareUtils.openUrlInBrowser(player.parentActivity!!, originalUrl)
-            }
     }
 
     private fun onSleepTimerClicked() {

@@ -132,7 +132,6 @@ class PlayerLayoutController(private val player: Player) {
             binding.share.visibility = View.GONE
             binding.switchCommentsVisibility.visibility = View.GONE
             binding.castPipePipe.visibility = View.GONE
-            binding.openInBrowser.visibility = View.GONE
             binding.sleepTimer.visibility = View.GONE
             binding.switchMute.visibility = View.GONE
             binding.playerCloseButton.visibility = View.GONE
@@ -160,7 +159,6 @@ class PlayerLayoutController(private val player: Player) {
                 } else {
                     View.VISIBLE
                 }
-            binding.openInBrowser.visibility = View.VISIBLE
             binding.sleepTimer.visibility = View.VISIBLE
             binding.switchMute.visibility = View.VISIBLE
             binding.playerCloseButton.visibility =
