@@ -1247,4 +1247,13 @@ Only add repositories you trust.</string>
 <string name="plugins_show_nsfw_title">Show NSFW plugins</string>
 <string name="plugins_show_nsfw_summary">List plugins marked as NSFW in the available plugins</string>
 <string name="plugin_installed_other_publisher">Published by someone else. Uninstall %1$s first to install this one.</string>
+<string name="cast_to_pipepipe">Cast to PipePipe</string>
+<string name="cast_searching">Searching for PipePipe devices on this network…</string>
+<string name="cast_enter_pin">Enter the code shown on %1$s</string>
+<string name="cast_wrong_pin">Wrong code</string>
+<string name="cast_locked">Too many wrong codes. Restart PipePipe on the receiving device to try again.</string>
+<string name="cast_disconnect">Disconnect</string>
+<string name="cast_pairing_code_toast">%1$s wants to cast here. Pairing code: %2$s</string>
+<string name="cast_receiver_title">Receive casts from other PipePipe devices</string>
+<string name="cast_receiver_summary">Keeps a local network listener running while PipePipe is open, which uses some battery. Enabled by default on TVs.</string>
 </resources>

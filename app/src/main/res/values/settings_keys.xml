@@ -1887,4 +1887,5 @@
     <string name="plugins_enabled_key" translatable="false">plugins_enabled</string>
     <string name="plugins_settings_key" translatable="false">plugins_settings</string>
     <string name="plugins_show_nsfw_key" translatable="false">plugins_show_nsfw</string>
+    <string name="cast_receiver_enabled_key" translatable="false">cast_receiver_enabled</string>
 </resources>

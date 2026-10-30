@@ -86,6 +86,7 @@ import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.PlayerService.PlayerType;
+import org.schabi.newpipe.cast.CastDialogs;
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.PlayerError;
 import org.schabi.newpipe.player.VideoDetailPlayerCrasher;
@@ -589,6 +590,15 @@ public final class VideoDetailFragment
                     KoreUtils.showInstallKoreDialog(requireContext());
                 }
             }
+        } else if (id == R.id.detail_controls_cast_pipepipe) {
+            if (currentInfo != null) {
+                final Player holderPlayer = PlayerHolder.getInstance().getPlayer();
+                final boolean sameStream = holderPlayer != null
+                        && holderPlayer.getCurrentStreamInfo()
+                                .map(i -> currentInfo.getUrl().equals(i.getUrl())).orElse(false);
+                CastDialogs.INSTANCE.showPicker(activity, currentInfo.getServiceId(),
+                        currentInfo.getUrl(), sameStream ? holderPlayer.getCurrentPosition() : 0);
+            }
         } else if (id == R.id.detail_uploader_root_layout) {
             if (isEmpty(currentInfo.getSubChannelUrl())) {
                 if (!isEmpty(currentInfo.getUploaderUrl())) {
@@ -764,6 +774,8 @@ public final class VideoDetailFragment
                         ? View.VISIBLE
                         : View.GONE
         );
+        binding.detailControlsCastPipepipe.setVisibility(
+                DeviceUtils.isTv(requireContext()) ? View.GONE : View.VISIBLE);
         binding.detailControlsCrashThePlayer.setVisibility(
                 DEBUG && PreferenceManager.getDefaultSharedPreferences(getContext())
                         .getBoolean(getString(R.string.show_crash_the_player_key), false)
@@ -809,6 +821,7 @@ public final class VideoDetailFragment
         binding.detailControlsOpenInBrowser.setOnClickListener(this);
         binding.detailControlsStartSleepTimer.setOnClickListener(this);
         binding.detailControlsPlayWithKodi.setOnClickListener(this);
+        binding.detailControlsCastPipepipe.setOnClickListener(this);
         if (DEBUG) {
             binding.detailControlsCrashThePlayer.setOnClickListener(
                     v -> VideoDetailPlayerCrasher.onCrashThePlayer(
