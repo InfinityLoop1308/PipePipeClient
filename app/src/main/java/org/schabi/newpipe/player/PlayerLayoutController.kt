@@ -133,6 +133,7 @@ class PlayerLayoutController(private val player: Player) {
             binding.share.visibility = View.GONE
             binding.switchCommentsVisibility.visibility = View.GONE
             binding.playWithKodi.visibility = View.GONE
+            binding.castPipePipe.visibility = View.GONE
             binding.openInBrowser.visibility = View.GONE
             binding.sleepTimer.visibility = View.GONE
             binding.switchMute.visibility = View.GONE

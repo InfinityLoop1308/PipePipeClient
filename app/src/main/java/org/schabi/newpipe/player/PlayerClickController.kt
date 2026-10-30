@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
+import org.schabi.newpipe.cast.CastDialogs
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.FragmentManager
 import androidx.preference.PreferenceManager
@@ -77,6 +78,7 @@ class PlayerClickController(private val player: Player) :
         binding.unlockButton.setOnClickListener(this)
         binding.switchCommentsVisibility.setOnClickListener(this)
         binding.playWithKodi.setOnClickListener(this)
+        binding.castPipePipe.setOnClickListener(this)
         binding.openInBrowser.setOnClickListener(this)
         binding.playerCloseButton.setOnClickListener(this)
         binding.switchMute.setOnClickListener(this)
@@ -116,6 +118,12 @@ class PlayerClickController(private val player: Player) :
             player.bulletCommentsController.toggleVisibility()
         } else if (v.id == binding.playWithKodi.id) {
             onPlayWithKodiClicked()
+        } else if (v.id == binding.castPipePipe.id) {
+            val item = player.currentItem
+            val activity = player.parentActivity
+            if (item != null && activity != null) {
+                CastDialogs.showPicker(activity, item.serviceId, item.url, player.currentPosition)
+            }
         } else if (v.id == binding.openInBrowser.id) {
             onOpenInBrowserClicked()
         } else if (v.id == binding.sleepTimer.id) {

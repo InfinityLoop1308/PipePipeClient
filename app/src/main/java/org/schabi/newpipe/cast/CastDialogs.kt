@@ -6,18 +6,53 @@ import android.text.InputType
 import android.view.Gravity
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ListView
-import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FastForward
+import androidx.compose.material.icons.filled.FastRewind
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.SkipNext
+import androidx.compose.material.icons.filled.SkipPrevious
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.setViewTreeLifecycleOwner
+import androidx.preference.PreferenceManager
+import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import org.schabi.newpipe.R
+import org.schabi.newpipe.util.ThemeHelper
 
 /** Device picker and remote control panel for casting to another PipePipe. */
 object CastDialogs {
@@ -32,7 +67,28 @@ object CastDialogs {
     /** Lets the user pick a receiver, then plays [url] on it and opens the remote panel. */
     fun showPicker(activity: AppCompatActivity, serviceId: Int, url: String, posMs: Long) {
         CastController.init(activity)
-        pick(activity, CastController.playMessage(serviceId, url, posMs))
+        val play = CastController.playMessage(serviceId, url, posMs)
+        val paired = CastController.connectedDevice ?: CastController.lastDevice()
+        if (paired == null) {
+            pick(activity, play)
+            return
+        }
+        // A receiver is already paired: let the user choose between controlling it and casting anew.
+        val items = arrayOf(
+            activity.getString(R.string.cast_resume_device, paired.name),
+            activity.getString(R.string.cast_to_pipepipe)
+        )
+        AlertDialog.Builder(activity)
+            .setTitle(R.string.cast_to_pipepipe)
+            .setItems(items) { _, which ->
+                if (which == 0) {
+                    RemotePanel(activity, paired).show(connect = CastController.connectedDevice?.id != paired.id)
+                } else {
+                    pick(activity, play)
+                }
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     private fun pick(activity: AppCompatActivity, play: String?) {
@@ -138,41 +194,46 @@ object CastDialogs {
         private var busy = false
         private var attempt = 0
         private var dragging = false
-        private var playing = false
-
-        private val title = TextView(activity).apply { textSize = 16f; setPadding(0, 0, 0, 24) }
-        private val status = TextView(activity).apply { visibility = View.GONE; setPadding(0, 0, 0, 16) }
-        private val retry = Button(activity).apply {
-            setText(R.string.cast_reconnect)
-            visibility = View.GONE
-            setOnClickListener { startReconnect() }
-        }
-        private val time = TextView(activity).apply { gravity = Gravity.END }
-        private val seek = SeekBar(activity)
+        private var playing by mutableStateOf(false)
+        private var titleText by mutableStateOf("")
+        private var posMs by mutableStateOf(0L)
+        private var durMs by mutableStateOf(0L)
+        private var sliderValue by mutableFloatStateOf(0f)
+        private var statusRes by mutableStateOf<Int?>(null)
+        private var showRetry by mutableStateOf(false)
         private lateinit var dialog: AlertDialog
 
-        private fun button(label: String, onClick: () -> Unit) = Button(activity).apply {
-            text = label
-            setOnClickListener { onClick() }
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+        private fun seekStepMs(): Double {
+            val prefs = PreferenceManager.getDefaultSharedPreferences(activity)
+            val value = prefs.getString(
+                activity.getString(R.string.seek_duration_key),
+                activity.getString(R.string.seek_duration_default_value)
+            )
+            return (value?.toDoubleOrNull() ?: 10_000.0)
+        }
+
+        private fun seekBy(direction: Int) {
+            val target = posMs + direction * seekStepMs()
+            CastController.sendCommand("seek", target.coerceIn(0.0, durMs.toDouble().coerceAtLeast(0.0)))
         }
 
         private val listener = object : CastListener {
             override fun onState(state: CastState) {
-                title.text = state.title
+                titleText = state.title
                 playing = state.playing
-                val duration = state.dur.coerceAtLeast(0)
-                seek.max = duration.coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
-                if (!dragging) seek.progress = state.pos.coerceIn(0, seek.max.toLong()).toInt()
-                time.text = "${fmt(state.pos)} / ${fmt(duration)}"
+                durMs = state.dur.coerceAtLeast(0)
+                if (!dragging) {
+                    posMs = state.pos.coerceIn(0, durMs)
+                    sliderValue = posMs.toFloat()
+                }
             }
 
             override fun onAuth(ok: Boolean, reason: String?) {
                 if (closed) return
                 busy = false
                 if (ok) {
-                    status.visibility = View.GONE
-                    retry.visibility = View.GONE
+                    statusRes = null
+                    showRetry = false
                     return
                 }
                 closePanel()
@@ -218,32 +279,25 @@ object CastDialogs {
         }
 
         init {
-            val row = LinearLayout(activity).apply {
-                addView(button("⏮") { CastController.sendCommand("prev") })
-                addView(button("-10s") { CastController.sendCommand("seek", (seek.progress - 10_000.0).coerceAtLeast(0.0)) })
-                addView(button("▶/⏸") { CastController.sendCommand(if (playing) "pause" else "play") })
-                addView(button("+10s") { CastController.sendCommand("seek", seek.progress + 10_000.0) })
-                addView(button("⏭") { CastController.sendCommand("next") })
-            }
-            val root = LinearLayout(activity).apply {
-                orientation = LinearLayout.VERTICAL
-                setPadding(48, 32, 48, 0)
-                addView(title); addView(status); addView(retry); addView(seek); addView(time); addView(row)
-            }
-            seek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(s: SeekBar, p: Int, fromUser: Boolean) {}
-                override fun onStartTrackingTouch(s: SeekBar) { dragging = true }
-                override fun onStopTrackingTouch(s: SeekBar) {
-                    dragging = false
-                    CastController.sendCommand("seek", s.progress.toDouble())
+            val isLight = ThemeHelper.isLightThemeSelected(activity)
+            val root = ComposeView(activity).apply {
+                setContent {
+                    MaterialTheme(colorScheme = if (isLight) lightColorScheme() else darkColorScheme()) {
+                        PanelContent()
+                    }
                 }
-            })
+            }
             dialog = AlertDialog.Builder(activity)
                 .setTitle(device.name)
                 .setView(root)
                 .setNegativeButton(R.string.cast_disconnect) { _, _ -> CastController.disconnect() }
                 .setPositiveButton(R.string.close, null)
                 .create()
+            // The dialog window is not part of the activity's view tree, so Compose needs the owners.
+            dialog.window?.decorView?.let {
+                it.setViewTreeLifecycleOwner(activity)
+                it.setViewTreeSavedStateRegistryOwner(activity)
+            }
             dialog.setOnDismissListener {
                 closed = true
                 activity.lifecycle.removeObserver(this)
@@ -273,17 +327,83 @@ object CastDialogs {
             if (closed || busy) return
             busy = true
             attempt = 1
-            retry.visibility = View.GONE
-            status.setText(R.string.cast_reconnecting)
-            status.visibility = View.VISIBLE
+            showRetry = false
+            statusRes = R.string.cast_reconnecting
             CastController.connect(device)
         }
 
         private fun showDisconnected() {
             busy = false
-            status.setText(R.string.cast_disconnected)
-            status.visibility = View.VISIBLE
-            retry.visibility = View.VISIBLE
+            statusRes = R.string.cast_disconnected
+            showRetry = true
+        }
+
+        @androidx.compose.runtime.Composable
+        private fun PanelContent() {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    titleText,
+                    fontSize = 16.sp,
+                    maxLines = 2,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                )
+                statusRes?.let {
+                    Text(stringResource(it), color = MaterialTheme.colorScheme.onSurface)
+                }
+                if (showRetry) {
+                    TextButton(onClick = { startReconnect() }) { Text(stringResource(R.string.cast_reconnect)) }
+                }
+                Slider(
+                    value = sliderValue.coerceIn(0f, durMs.toFloat().coerceAtLeast(1f)),
+                    onValueChange = { dragging = true; sliderValue = it },
+                    onValueChangeFinished = {
+                        dragging = false
+                        posMs = sliderValue.toLong()
+                        CastController.sendCommand("seek", sliderValue.toDouble())
+                    },
+                    valueRange = 0f..durMs.toFloat().coerceAtLeast(1f)
+                )
+                Text(
+                    "${fmt(if (dragging) sliderValue.toLong() else posMs)} / ${fmt(durMs)}",
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.End,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ControlButton(Icons.Filled.SkipPrevious, R.string.previous) { CastController.sendCommand("prev") }
+                    ControlButton(Icons.Filled.FastRewind, null) { seekBy(-1) }
+                    IconButton(
+                        onClick = { CastController.sendCommand(if (playing) "pause" else "play") },
+                        modifier = Modifier.size(56.dp)
+                    ) {
+                        Crossfade(targetState = playing, label = "playPause") { isPlaying ->
+                            Icon(
+                                if (isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(40.dp)
+                            )
+                        }
+                    }
+                    ControlButton(Icons.Filled.FastForward, null) { seekBy(1) }
+                    ControlButton(Icons.Filled.SkipNext, null) { CastController.sendCommand("next") }
+                }
+            }
+        }
+
+        @androidx.compose.runtime.Composable
+        private fun ControlButton(icon: androidx.compose.ui.graphics.vector.ImageVector, desc: Int?, onClick: () -> Unit) {
+            IconButton(onClick = onClick) {
+                Icon(icon, contentDescription = desc?.let { stringResource(it) }, tint = MaterialTheme.colorScheme.onSurface)
+            }
         }
 
         private fun closePanel() {
