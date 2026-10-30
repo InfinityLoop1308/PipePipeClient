@@ -56,10 +56,11 @@ class CastReceiver private constructor(private val context: Context) :
     }
 
     override fun onStart() {
+        val serverPort = this.port
         val info = NsdServiceInfo().apply {
             serviceName = CastProtocol.SERVICE_NAME_PREFIX + id().take(8)
             serviceType = CastProtocol.SERVICE_TYPE
-            port = getPort()
+            port = serverPort
             setAttribute(CastProtocol.TXT_ID, id())
             setAttribute(CastProtocol.TXT_NAME, deviceName())
         }
