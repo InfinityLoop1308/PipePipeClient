@@ -609,7 +609,7 @@
                                 android:paddingVertical="@dimen/detail_control_padding"
                                 android:text="@string/cast_to_pipepipe"
                                 android:textSize="@dimen/detail_control_text_size"
-                                app:drawableTopCompat="@drawable/ic_tv" />
+                                app:drawableTopCompat="@drawable/ic_cast" />
 
                             <TextView
                                 android:id="@+id/detail_controls_crash_the_player"

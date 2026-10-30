@@ -397,7 +397,7 @@
                         android:focusable="true"
                         android:padding="@dimen/player_main_buttons_padding"
                         android:scaleType="fitXY"
-                        app:srcCompat="@drawable/ic_tv"
+                        app:srcCompat="@drawable/ic_cast"
                         app:tint="@color/white"
                         tools:ignore="RtlHardcoded" />
 
