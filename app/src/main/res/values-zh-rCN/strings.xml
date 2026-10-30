@@ -43,8 +43,6 @@
 <string name="download_path_audio_dialog_title">选择音频文件下载路径</string>
 <string name="default_resolution_title">默认分辨率</string>
 <string name="default_popup_resolution_title">默认悬浮窗分辨率</string>
-<string name="play_with_kodi_title">使用 Kodi 播放</string>
-<string name="kore_not_found">安装缺少的 Kore 应用？</string>
 <string name="crash_the_player">崩溃播放器</string>
 <string name="notification_scale_to_square_image_title">将缩略图裁剪为 1:1 比例</string>
 <string name="notification_scale_to_square_image_summary">将通知中显示的视频缩略图从 16:9 裁剪为 1:1 比例</string>

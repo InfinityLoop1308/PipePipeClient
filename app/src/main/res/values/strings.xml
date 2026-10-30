@@ -45,8 +45,6 @@
 <string name="download_path_audio_dialog_title">Choose download folder for audio files</string>
 <string name="default_resolution_title">Default resolution</string>
 <string name="default_popup_resolution_title">Default popup resolution</string>
-<string name="play_with_kodi_title">Play with Kodi</string>
-<string name="kore_not_found">Install missing Kore app?</string>
 <string name="crash_the_player">Crash the player</string>
 <string name="notification_scale_to_square_image_title">Crop thumbnail to 1:1 aspect ratio</string>
 <string name="notification_scale_to_square_image_summary">Crop the video thumbnail shown in the notification from 16:9 to 1:1 aspect ratio</string>

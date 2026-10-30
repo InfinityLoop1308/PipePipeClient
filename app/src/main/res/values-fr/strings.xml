@@ -45,8 +45,6 @@
 <string name="download_path_audio_dialog_title">Choisissez le dossier de téléchargement pour les fichiers audio</string>
 <string name="default_resolution_title">Résolution par défaut</string>
 <string name="default_popup_resolution_title">Résolution popup par défaut</string>
-<string name="play_with_kodi_title">Lire avec Kodi</string>
-<string name="kore_not_found">Installer l\'application Kore manquante ?</string>
 <string name="crash_the_player">Faire planter le lecteur</string>
 <string name="notification_scale_to_square_image_title">Recadrer la miniature au format 1:1</string>
 <string name="notification_scale_to_square_image_summary">Recadrer la miniature vidéo affichée dans la notification du format 16:9 au format 1:1</string>

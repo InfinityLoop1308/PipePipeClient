@@ -88,8 +88,6 @@
     <string name="light_theme_title">উজ্জ্বল</string>
     <string name="theme_title">থিম</string>
     <string name="play_audio">অডিও</string>
-    <string name="kore_not_found">হারানো কোর ইনস্টল করবেন\?</string>
-    <string name="play_with_kodi_title">Kodi এর মাধ্যমে চালান</string>
     <string name="default_popup_resolution_title">ডিফল্ট পপআপ রেজোল্যুশন</string>
     <string name="default_resolution_title">ডিফল্ট রেজোল্যুশন</string>
     <string name="download_path_audio_dialog_title">অডিও ফাইলগুলির জন্য ডাউনলোডের ফোল্ডার নির্বাচন করুন</string>

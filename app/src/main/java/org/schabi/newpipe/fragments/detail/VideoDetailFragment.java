@@ -13,7 +13,6 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -108,7 +107,6 @@ import org.schabi.newpipe.sleep.SleepTimerService;
 import org.schabi.newpipe.util.*;
 import org.schabi.newpipe.util.dearrow.DeArrowBinder;
 import org.schabi.newpipe.util.dearrow.DeArrowRow;
-import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
 import java.util.*;
@@ -578,18 +576,6 @@ public final class VideoDetailFragment
                 serviceIntent.putExtra("timeInMillis", time * 60000); // 60 seconds
                 activity.startService(serviceIntent);
             }
-        } else if (id == R.id.detail_controls_play_with_kodi) {
-            if (currentInfo != null) {
-                try {
-                    NavigationHelper.playWithKore(
-                            requireContext(), Uri.parse(currentInfo.getUrl()));
-                } catch (final Exception e) {
-                    if (DEBUG) {
-                        Log.i(TAG, "Failed to start kore", e);
-                    }
-                    KoreUtils.showInstallKoreDialog(requireContext());
-                }
-            }
         } else if (id == R.id.detail_controls_cast_pipepipe) {
             if (currentInfo != null) {
                 final Player holderPlayer = PlayerHolder.getInstance().getPlayer();
@@ -769,11 +755,6 @@ public final class VideoDetailFragment
 
         binding.detailThumbnailRootLayout.requestFocus();
 
-        binding.detailControlsPlayWithKodi.setVisibility(
-                KoreUtils.shouldShowPlayWithKodi(requireContext(), serviceId)
-                        ? View.VISIBLE
-                        : View.GONE
-        );
         binding.detailControlsCastPipepipe.setVisibility(
                 DeviceUtils.isTv(requireContext()) ? View.GONE : View.VISIBLE);
         binding.detailControlsCrashThePlayer.setVisibility(
@@ -793,7 +774,6 @@ public final class VideoDetailFragment
             binding.detailControlsDownload.setBackgroundColor(transparent);
             binding.detailControlsShare.setBackgroundColor(transparent);
             binding.detailControlsOpenInBrowser.setBackgroundColor(transparent);
-            binding.detailControlsPlayWithKodi.setBackgroundColor(transparent);
         }
     }
 
@@ -820,7 +800,6 @@ public final class VideoDetailFragment
         binding.detailControlsShare.setOnClickListener(this);
         binding.detailControlsOpenInBrowser.setOnClickListener(this);
         binding.detailControlsStartSleepTimer.setOnClickListener(this);
-        binding.detailControlsPlayWithKodi.setOnClickListener(this);
         binding.detailControlsCastPipepipe.setOnClickListener(this);
         if (DEBUG) {
             binding.detailControlsCrashThePlayer.setOnClickListener(

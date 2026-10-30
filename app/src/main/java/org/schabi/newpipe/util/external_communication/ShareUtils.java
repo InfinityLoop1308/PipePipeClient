@@ -22,32 +22,6 @@ public final class ShareUtils {
     }
 
     /**
-     * Open an Intent to install an app.
-     * <p>
-     * This method tries to open the default app market with the package id passed as the
-     * second param (a system chooser will be opened if there are multiple markets and no default)
-     * and falls back to Google Play Store web URL if no app to handle the market scheme was found.
-     * <p>
-     * It uses {@link #openIntentInApp(Context, Intent, boolean)} to open market scheme
-     * and {@link #openUrlInBrowser(Context, String, boolean)} to open Google Play Store
-     * web URL with false for the boolean param.
-     *
-     * @param context   the context to use
-     * @param packageId the package id of the app to be installed
-     */
-    public static void installApp(@NonNull final Context context, final String packageId) {
-        // Try market scheme
-        final boolean marketSchemeResult = openIntentInApp(context, new Intent(Intent.ACTION_VIEW,
-                Uri.parse("market://details?id=" + packageId))
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK), false);
-        if (!marketSchemeResult) {
-            // Fall back to Google Play Store Web URL (F-Droid can handle it)
-            openUrlInBrowser(context,
-                    "https://play.google.com/store/apps/details?id=" + packageId, false);
-        }
-    }
-
-    /**
      * Open the url with the system default browser.
      * <p>
      * If no browser is set as default, fallbacks to

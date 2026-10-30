@@ -15,8 +15,6 @@
     <string name="download_path_summary">Preneseni video so shranjeni tukaj</string>
     <string name="download_path_dialog_title">Izberite mapo za prenos video datotek</string>
     <string name="default_resolution_title">Privzeta ločljivost</string>
-    <string name="play_with_kodi_title">Predvajaj s Kodi</string>
-    <string name="kore_not_found">Ali želite namestiti manjkajoči program Kore\?</string>
     <string name="play_audio">Zvok</string>
     <string name="download_dialog_title">Prenesi</string>
     <string name="unsupported_url">Nepodprt URL</string>

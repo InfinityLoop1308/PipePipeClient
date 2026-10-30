@@ -254,8 +254,6 @@
     <string name="notification_action_0_title">Bişkoja çalakiya yekem</string>
     <string name="notification_scale_to_square_image_summary">Mîqneya vîdyoyê ya ku di agahdariyê de ji 16:9 ber 1:1 rêjeya aliyî ve hatî nîşankirin bipîve (dibe ku berevajîkirinan destnîşan bike)</string>
     <string name="notification_scale_to_square_image_title">Mîqneya pîvanê bi rêjeya aliyî ya 1:1 ve</string>
-    <string name="kore_not_found">Sepana Kore ya wenda saz dike\?</string>
-    <string name="play_with_kodi_title">Bi Kodî re bilîzin</string>
     <string name="msg_popup_permission">Vê destûr hewce ye ku
 \ndi moda popupê de vekin</string>
     <string name="default_popup_resolution_title">Çareseriya popupê ya jixweber</string>

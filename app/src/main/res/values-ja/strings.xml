@@ -15,8 +15,6 @@
 <string name="download_path_summary">ダウンロードした動画をここに保存します</string>
 <string name="download_path_dialog_title">動画ファイルをダウンロードするフォルダを選択して下さい</string>
 <string name="default_resolution_title">デフォルトの解像度</string>
-<string name="play_with_kodi_title">Kodi で再生</string>
-<string name="kore_not_found">Kore をインストールしますか？</string>
 <string name="play_audio">音声</string>
 <string name="download_dialog_title">ダウンロード</string>
 <string name="unsupported_url">対応していないURLです</string>

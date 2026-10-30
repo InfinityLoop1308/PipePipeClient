@@ -35,8 +35,6 @@
     <string name="download_path_audio_dialog_title">ஒலி கோப்புகளுக்கான பதிவிறக்கப் அடைவை தேர்வு செய்</string>
     <string name="default_resolution_title">இயல்பிருப்பு பிரிதிறன்</string>
     <string name="default_popup_resolution_title">இயல்பிருப்பு திரைமேல் நிலை பிரிதிறன்</string>
-    <string name="play_with_kodi_title">Kodiயுடன் இயக்கு</string>
-    <string name="kore_not_found">இல்லாத Kore செயலியை நிறுவவா\?</string>
     <string name="play_audio">ஒலி</string>
     <string name="theme_title">தோற்றம்</string>
     <string name="light_theme_title">வெளிர்ந்த</string>

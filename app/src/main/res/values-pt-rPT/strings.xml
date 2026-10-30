@@ -386,7 +386,6 @@
     <string name="detail_uploader_thumbnail_view_description">Miniatura do avatar do canal</string>
     <string name="error_http_no_content">O servidor não envia dados</string>
     <string name="enable_disposed_exceptions_title">Reportar erros \'out-of-lifecycle\'</string>
-    <string name="kore_not_found">Instalar Kore\?</string>
     <string name="name">Nome</string>
     <string name="msg_copied">Copiado para a área de transferência</string>
     <string name="settings_file_charset_title">Carateres permitidos no nome dos ficheiros</string>
@@ -497,7 +496,6 @@
     <string name="localization_changes_requires_app_restart">O idioma será alterado assim que reiniciar a app</string>
     <string name="peertube_instance_add_title">Adicionar instância</string>
     <string name="tracks">Faixas</string>
-    <string name="play_with_kodi_title">Reproduzir no Kodi</string>
     <string name="download_to_sdcard_error_title">Armazenamento externo indisponível</string>
     <string name="download_failed">Falha ao descarregar</string>
     <string name="error_snackbar_action">Relatório</string>

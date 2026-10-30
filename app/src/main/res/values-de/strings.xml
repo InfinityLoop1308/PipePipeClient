@@ -45,8 +45,6 @@
 <string name="download_path_audio_dialog_title">Download-Ordner für Audiodateien auswählen</string>
 <string name="default_resolution_title">Standardauflösung</string>
 <string name="default_popup_resolution_title">Standard-Popup-Auflösung</string>
-<string name="play_with_kodi_title">Mit Kodi abspielen</string>
-<string name="kore_not_found">Fehlende Kore App installieren?</string>
 <string name="crash_the_player">Den Player zum Absturz bringen</string>
 <string name="notification_scale_to_square_image_title">Miniaturbild auf 1:1-Seitenverhältnis zuschneiden</string>
 <string name="notification_scale_to_square_image_summary">Das im Benachrichtigungsbereich angezeigte Videominiaturbild von 16:9 auf ein Seitenverhältnis von 1:1 zuschneiden</string>

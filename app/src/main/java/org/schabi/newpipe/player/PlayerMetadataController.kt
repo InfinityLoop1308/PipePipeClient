@@ -115,7 +115,6 @@ class PlayerMetadataController(private val player: Player) {
         player.thumbnailController.initThumbnail(info.thumbnailUrl)
         player.historyController.registerStreamViewed()
         player.layoutController.updateStreamRelatedViews()
-        player.layoutController.showHideKodiButton()
         // TODO: bullet comments may be reset unexpectedly for round play streams
         player.bulletCommentsController.init()
         player.bulletCommentsController.start()

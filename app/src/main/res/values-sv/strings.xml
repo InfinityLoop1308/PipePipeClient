@@ -23,8 +23,6 @@
     <string name="download_path_audio_dialog_title">Välj hämtningsmapp för ljudfiler</string>
     <string name="default_resolution_title">Standardupplösning</string>
     <string name="default_popup_resolution_title">Standardupplösning för popupfönster</string>
-    <string name="play_with_kodi_title">Spela upp med Kodi</string>
-    <string name="kore_not_found">Kore-appen hittades inte. Installera den?</string>
     <string name="play_audio">Ljud</string>
     <string name="theme_title">Tema</string>
     <string name="light_theme_title">Ljust</string>

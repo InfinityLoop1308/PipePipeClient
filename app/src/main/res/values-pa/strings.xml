@@ -35,8 +35,6 @@
     <string name="download_path_audio_dialog_title">ਆਡੀਓ ਫ਼ਾਈਲਾਂ ਲਈ ਡਾਊਨਲੋਡ ਫ਼ੋਲਡਰ ਚੁਣੋ</string>
     <string name="default_resolution_title">ਡਿਫ਼ਾਲਟ ਰੈਜ਼ੋਲੂਸ਼ਨ</string>
     <string name="default_popup_resolution_title">ਤੈਰਦੀ-ਤਸਵੀਰ ਲਈ ਡਿਫ਼ਾਲਟ ਰੈਜ਼ੋਲੂਸ਼ਨ</string>
-    <string name="play_with_kodi_title">Kodi ਵਿੱਚ ਚਲਾਓ</string>
-    <string name="kore_not_found">Kore ਐਪ ਇੰਸਟਾਲ ਨਹੀਂ ਹੈ\?</string>
     <string name="play_audio">ਆਡੀਓ</string>
     <string name="theme_title">ਥੀਮ</string>
     <string name="light_theme_title">ਸਫੈਦ</string>
