@@ -40,7 +40,7 @@ object CastDialogs {
             .setNegativeButton(android.R.string.cancel, null)
             .create()
 
-        CastController.listener = object : CastListener {
+        val pickerListener = object : CastListener {
             override fun onDevicesChanged(devices: List<CastDevice>) {
                 shown = devices
                 adapter.clear()
@@ -48,9 +48,11 @@ object CastDialogs {
                 empty.visibility = if (devices.isEmpty()) View.VISIBLE else View.GONE
             }
         }
+        CastController.listener = pickerListener
         dialog.setOnDismissListener {
             CastController.stopDiscovery()
-            CastController.listener = null
+            // Dismiss is delivered asynchronously, after a picked device may have installed its own listener.
+            if (CastController.listener === pickerListener) CastController.listener = null
         }
         list.setOnItemClickListener { _, _, position, _ ->
             val device = shown.getOrNull(position) ?: return@setOnItemClickListener
