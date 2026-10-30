@@ -66,11 +66,11 @@ class DetailPlayerViewHost(
         if (fragment.view == null) {
             return
         }
-        // Fullscreen lives outside of the scrolling app bar, otherwise the detail page below
-        // could be scrolled/focused into view while the player is still in fullscreen
+        // The player view must stay in the same parent when entering or leaving fullscreen:
+        // moving it destroys and recreates its video surface, which makes the video stay black
+        // or buffer forever on devices with a slow decoder (TV boxes, Fire TV).
         val fullscreen = player.isFullscreen
-        val target: ViewGroup =
-            if (fullscreen) binding.fullscreenPlayerContainer else thumbnail.playerPlaceholder
+        val target: ViewGroup = thumbnail.playerPlaceholder
 
         if (player.rootView.parent !== target) {
             playerService.removeViewFromParent()
@@ -83,7 +83,7 @@ class DetailPlayerViewHost(
             host.currentInfo?.let(player::onMarkSeekbarRequested)
         }
 
-        binding.fullscreenPlayerContainer.visibility = if (fullscreen) View.VISIBLE else View.GONE
+        setPageScrollable(!fullscreen)
         // Keep the DPAD focus from wandering into the hidden detail page
         (binding.detailMainContent as ViewGroup).descendantFocusability =
             if (fullscreen) ViewGroup.FOCUS_BLOCK_DESCENDANTS
@@ -99,6 +99,23 @@ class DetailPlayerViewHost(
                     current.binding.playPauseButton.requestFocus()
                 }
             }
+        }
+    }
+
+    /**
+     * The fullscreen player fills the screen in the scrolling app bar. Lock the app bar so the
+     * page below cannot be scrolled into view while in fullscreen.
+     */
+    private fun setPageScrollable(scrollable: Boolean) {
+        val params = (binding.detailThumbnailContainer.parent as? View)?.layoutParams
+            as? AppBarLayout.LayoutParams ?: return
+        val flags = if (scrollable) AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL else 0
+        if (params.scrollFlags != flags) {
+            if (!scrollable) {
+                binding.appBarLayout.setExpanded(true, false)
+            }
+            params.scrollFlags = flags
+            binding.appBarLayout.requestLayout()
         }
     }
 
