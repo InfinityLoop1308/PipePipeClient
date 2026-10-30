@@ -12,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import org.schabi.newpipe.R
@@ -146,6 +147,16 @@ object CastDialogs {
                 seek.max = duration.coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
                 if (!dragging) seek.progress = state.pos.coerceIn(0, seek.max.toLong()).toInt()
                 time.text = "${fmt(state.pos)} / ${fmt(duration)}"
+            }
+            override fun onPlayResult(ok: Boolean, reason: String?, name: String?) {
+                if (ok) return
+                val message = when (reason) {
+                    CastProtocol.REASON_NO_PLUGIN ->
+                        activity.getString(R.string.cast_plugin_missing, name ?: "", device.name)
+                    CastProtocol.REASON_NO_SERVICE -> activity.getString(R.string.cast_service_unsupported, device.name)
+                    else -> activity.getString(R.string.cast_play_failed, device.name)
+                }
+                Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
             }
             override fun onDisconnected() { if (dialog.isShowing) dialog.dismiss() }
         }

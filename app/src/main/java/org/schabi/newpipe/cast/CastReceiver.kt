@@ -18,6 +18,8 @@ import org.java_websocket.handshake.ClientHandshake
 import org.java_websocket.server.WebSocketServer
 import org.json.JSONObject
 import org.schabi.newpipe.R
+import org.schabi.newpipe.extractor.ServiceList
+import org.schabi.newpipe.plugin.PluginManager
 import org.schabi.newpipe.player.helper.PlayerHolder
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue
 import org.schabi.newpipe.util.ExtractorHelper
@@ -156,7 +158,7 @@ class CastReceiver private constructor(private val context: Context) :
 
     private fun handle(conn: WebSocket, type: String, json: JSONObject) {
         when (type) {
-            CastProtocol.T_PLAY -> play(json.optInt("service"), json.optString("url"), json.optLong("pos"))
+            CastProtocol.T_PLAY -> play(conn, json)
             CastProtocol.T_CMD -> command(json.optString("a"), json.optDouble("v", 0.0))
             CastProtocol.T_WATCH -> {
                 if (json.optBoolean("on")) {
@@ -171,15 +173,48 @@ class CastReceiver private constructor(private val context: Context) :
         }
     }
 
-    private fun play(serviceId: Int, url: String, pos: Long) {
-        if (url.isEmpty()) return
+    private fun play(conn: WebSocket, json: JSONObject) {
+        val url = json.optString("url")
+        val pos = json.optLong("pos")
+        val pluginId = json.optString("plugin")
+        val pluginName = json.optString("pname").ifEmpty { pluginId }
+
+        fun reply(ok: Boolean, reason: String? = null) {
+            if (!conn.isOpen) return
+            conn.send(
+                CastProtocol.msg(CastProtocol.T_PLAY_RESULT) {
+                    put("ok", ok)
+                    reason?.let { put("reason", it) }
+                    if (pluginName.isNotEmpty()) put("name", pluginName)
+                }
+            )
+        }
+
+        // Plugin service ids are assigned per install, so look the plugin up by its stable id.
+        val serviceId = if (pluginId.isNotEmpty()) {
+            PluginManager.getServiceIdByPluginId(pluginId)
+        } else {
+            json.optInt("service").takeIf { id -> ServiceList.getById(id) != null }
+        }
+        if (url.isEmpty() || serviceId == null) {
+            reply(
+                false,
+                if (pluginId.isNotEmpty()) CastProtocol.REASON_NO_PLUGIN else CastProtocol.REASON_NO_SERVICE
+            )
+            return
+        }
+
         loading?.dispose()
         loading = ExtractorHelper.getStreamInfo(serviceId, url, false)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ info ->
                 NavigationHelper.playOnMainPlayer(context, SinglePlayQueue(info, pos), false)
-            }, { Log.w(TAG, "cast play failed", it) })
+                reply(true)
+            }, {
+                Log.w(TAG, "cast play failed", it)
+                reply(false, CastProtocol.REASON_FAILED)
+            })
     }
 
     private fun command(action: String, value: Double) {

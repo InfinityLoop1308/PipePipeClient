@@ -306,6 +306,10 @@ object PluginManager {
     @JvmStatic
     fun getLoadedManifest(serviceId: Int): PluginManifest? = loaded[serviceId]
 
+    /** Service ids of plugins are local to an install, so other devices must address them by plugin id. */
+    fun getServiceIdByPluginId(pluginId: String): Int? =
+        loaded.entries.firstOrNull { it.value.pluginId == pluginId }?.key
+
     /**
      * The selected PeerTube instance used to be an app preference. Copy it into the
      * PeerTube plugin's settings once, so that users keep their instance.

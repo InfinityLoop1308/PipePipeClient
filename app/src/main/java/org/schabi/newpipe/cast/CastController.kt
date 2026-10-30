@@ -11,6 +11,7 @@ import androidx.preference.PreferenceManager
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.handshake.ServerHandshake
 import org.json.JSONObject
+import org.schabi.newpipe.plugin.PluginManager
 import java.net.URI
 import java.util.ArrayDeque
 
@@ -30,6 +31,7 @@ interface CastListener {
     fun onDevicesChanged(devices: List<CastDevice>) {}
     fun onAuth(ok: Boolean, reason: String?) {}
     fun onState(state: CastState) {}
+    fun onPlayResult(ok: Boolean, reason: String?, name: String?) {}
     fun onDisconnected() {}
 }
 
@@ -192,6 +194,11 @@ object CastController {
                 }
                 listener?.onAuth(ok, json.optString("reason").takeIf { it.isNotEmpty() })
             }
+            CastProtocol.T_PLAY_RESULT -> listener?.onPlayResult(
+                json.optBoolean("ok"),
+                json.optString("reason").takeIf { it.isNotEmpty() },
+                json.optString("name").takeIf { it.isNotEmpty() }
+            )
             CastProtocol.T_STATE -> listener?.onState(
                 CastState(
                     json.optString("title"), json.optBoolean("playing"), json.optLong("pos"),
@@ -207,8 +214,18 @@ object CastController {
         client?.send(CastProtocol.msg(CastProtocol.T_CMD) { put("a", action); value?.let { put("v", it) } })
     }
 
-    fun playMessage(serviceId: Int, url: String, posMs: Long): String =
-        CastProtocol.msg(CastProtocol.T_PLAY) { put("service", serviceId); put("url", url); put("pos", posMs) }
+    fun playMessage(serviceId: Int, url: String, posMs: Long): String {
+        val plugin = PluginManager.getLoadedManifest(serviceId)
+        return CastProtocol.msg(CastProtocol.T_PLAY) {
+            put("service", serviceId)
+            put("url", url)
+            put("pos", posMs)
+            if (plugin != null) {
+                put("plugin", plugin.pluginId)
+                put("pname", plugin.name)
+            }
+        }
+    }
 
     /** Call with true when a remote panel becomes visible and false when it is hidden. */
     fun setWatching(on: Boolean) {
