@@ -1263,4 +1263,9 @@ Only add repositories you trust.</string>
 <string name="cast_disconnected">Disconnected</string>
 <string name="cast_resume_device">Continue controlling %1$s</string>
 <string name="cast_connect_failed">Could not connect to %1$s.</string>
+<string name="scheduled_backup_title">Scheduled backup</string>
+<string name="scheduled_backup_summary">Periodically write a full database export to the chosen folder. Old backups are never deleted.</string>
+<string name="scheduled_backup_path_title">Scheduled backup folder</string>
+<string name="scheduled_backup_interval_title">Scheduled backup interval</string>
+<string name="scheduled_backup_failed">Scheduled backup failed</string>
 </resources>

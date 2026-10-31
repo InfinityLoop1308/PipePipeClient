@@ -16,6 +16,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
+import androidx.preference.SwitchPreferenceCompat;
+
+import com.nononsenseapps.filepicker.Utils;
 import org.schabi.newpipe.NewPipeDatabase;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.error.ErrorUtil;
@@ -26,6 +29,8 @@ import org.schabi.newpipe.extractor.localization.Localization;
 import org.schabi.newpipe.local.subscription.SubscriptionManager;
 import org.schabi.newpipe.local.subscription.SubscriptionsImportExportHelper;
 import org.schabi.newpipe.streams.io.NoFileManagerSafeGuard;
+import org.schabi.newpipe.streams.io.StoredDirectoryHelper;
+import org.schabi.newpipe.util.FilePickerActivityHelper;
 import org.schabi.newpipe.streams.io.StoredFileHelper;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.PicassoHelper;
@@ -63,6 +68,10 @@ public class BackupSettingsFragment extends BasePreferenceFragment {
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), this::requestImportPathResult);
     private final ActivityResultLauncher<Intent> requestExportPathLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), this::requestExportPathResult);
+    private final ActivityResultLauncher<Intent> requestScheduledBackupPathLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), this::requestScheduledBackupPathResult);
+    private SwitchPreferenceCompat scheduledBackupPreference;
+    private Preference scheduledBackupPathPreference;
 
     @Override
     public void onAttach(@NonNull final Context context) {
@@ -109,6 +118,33 @@ public class BackupSettingsFragment extends BasePreferenceFragment {
             return true;
         });
 
+        scheduledBackupPreference = (SwitchPreferenceCompat) requirePreference(R.string.scheduled_backup_key);
+        scheduledBackupPathPreference = requirePreference(R.string.scheduled_backup_path_key);
+        updateScheduledBackupPathSummary();
+        scheduledBackupPreference.setOnPreferenceChangeListener((p, newValue) -> {
+            if ((Boolean) newValue && isBlank(defaultPreferences.getString(
+                    getString(R.string.scheduled_backup_path_key), null))) {
+                // turned on only after a folder is picked
+                launchScheduledBackupPathPicker();
+                return false;
+            }
+            // the new value is persisted after this listener returns
+            p.getPreferenceManager().getSharedPreferences().edit()
+                    .putBoolean(p.getKey(), (Boolean) newValue).apply();
+            ScheduledBackupWorker.schedule(requireContext());
+            return true;
+        });
+        scheduledBackupPathPreference.setOnPreferenceClickListener(p -> {
+            launchScheduledBackupPathPicker();
+            return true;
+        });
+        requirePreference(R.string.scheduled_backup_interval_key)
+                .setOnPreferenceChangeListener((p, newValue) -> {
+                    defaultPreferences.edit().putString(p.getKey(), (String) newValue).apply();
+                    ScheduledBackupWorker.schedule(requireContext());
+                    return true;
+                });
+
         final Preference importSubscriptionsPreference =
                 requirePreference(R.string.import_subscriptions_key);
         importSubscriptionsPreference.setOnPreferenceClickListener((final Preference p) -> {
@@ -145,6 +181,57 @@ public class BackupSettingsFragment extends BasePreferenceFragment {
             return true;
         });
 
+    }
+
+    private void launchScheduledBackupPathPicker() {
+        NoFileManagerSafeGuard.launchSafe(
+                requestScheduledBackupPathLauncher,
+                StoredDirectoryHelper.getPicker(requireContext()),
+                TAG,
+                getContext()
+        );
+    }
+
+    private void requestScheduledBackupPathResult(final ActivityResult result) {
+        assureCorrectAppLanguage(getContext());
+        if (result.getResultCode() != Activity.RESULT_OK || result.getData() == null
+                || result.getData().getData() == null) {
+            return;
+        }
+        final Context context = requireContext();
+        Uri uri = result.getData().getData();
+        try {
+            if (FilePickerActivityHelper.isOwnFileUri(context, uri)) {
+                final File target = Utils.getFileForUri(uri);
+                if (!target.canWrite()) {
+                    throw new IOException("No write permissions on " + target);
+                }
+                uri = Uri.fromFile(target);
+            } else {
+                context.grantUriPermission(context.getPackageName(), uri,
+                        StoredDirectoryHelper.PERMISSION_FLAGS);
+                if (!new StoredDirectoryHelper(context, uri, null).canWrite()) {
+                    throw new IOException("No write permissions on " + uri);
+                }
+            }
+        } catch (final IOException e) {
+            Log.e(TAG, "Cannot use scheduled backup folder " + uri, e);
+            Toast.makeText(context, R.string.no_available_dir, Toast.LENGTH_LONG).show();
+            return;
+        }
+        defaultPreferences.edit()
+                .putString(getString(R.string.scheduled_backup_path_key), uri.toString())
+                .apply();
+        scheduledBackupPreference.setChecked(true);
+        updateScheduledBackupPathSummary();
+        ScheduledBackupWorker.schedule(context);
+    }
+
+    private void updateScheduledBackupPathSummary() {
+        final String path = defaultPreferences.getString(
+                getString(R.string.scheduled_backup_path_key), null);
+        scheduledBackupPathPreference.setSummary(
+                isBlank(path) ? null : Uri.decode(path));
     }
 
     private void clearSubscriptions() {

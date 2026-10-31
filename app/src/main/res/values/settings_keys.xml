@@ -1887,4 +1887,20 @@
     <string name="plugins_settings_key" translatable="false">plugins_settings</string>
     <string name="plugins_show_nsfw_key" translatable="false">plugins_show_nsfw</string>
     <string name="cast_receiver_enabled_key" translatable="false">cast_receiver_enabled</string>
+    <string name="scheduled_backup_key" translatable="false">scheduled_backup</string>
+    <string name="scheduled_backup_path_key" translatable="false">scheduled_backup_path</string>
+    <string name="scheduled_backup_interval_key" translatable="false">scheduled_backup_interval</string>
+    <string name="scheduled_backup_interval_default" translatable="false">86400</string>
+    <string-array name="scheduled_backup_interval_description" translatable="false">
+        <item>12 hours</item>
+        <item>1 day</item>
+        <item>3 days</item>
+        <item>7 days</item>
+    </string-array>
+    <string-array name="scheduled_backup_interval_values" translatable="false">
+        <item>43200</item>
+        <item>86400</item>
+        <item>259200</item>
+        <item>604800</item>
+    </string-array>
 </resources>
