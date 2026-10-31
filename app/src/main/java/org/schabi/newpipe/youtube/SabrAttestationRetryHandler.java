@@ -34,6 +34,7 @@ public final class SabrAttestationRetryHandler {
 
         final int retryNumber = MAX_RETRIES - retriesRemaining + 1;
         retriesRemaining--;
+        session.resetProtocolState();
         final YoutubePoTokenResult tokenResult;
         try {
             tokenResult = LocalDomPoTokenProvider.INSTANCE.getPlayerPoToken(videoId);
