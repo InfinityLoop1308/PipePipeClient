@@ -1,6 +1,5 @@
 package org.schabi.newpipe.util;
 
-import static org.schabi.newpipe.util.external_communication.ShareUtils.installApp;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -672,34 +671,6 @@ public final class NavigationHelper {
                                           final int serviceId,
                                           final String url) {
         return getOpenIntent(context, url, serviceId, StreamingService.LinkType.CHANNEL);
-    }
-
-    /**
-     * Start an activity to install Kore.
-     *
-     * @param context the context
-     */
-    public static void installKore(final Context context) {
-        installApp(context, context.getString(R.string.kore_package));
-    }
-
-    /**
-     * Start Kore app to show a video on Kodi.
-     * <p>
-     * For a list of supported urls see the
-     * <a href="https://github.com/xbmc/Kore/blob/master/app/src/main/AndroidManifest.xml">
-     * Kore source code
-     * </a>.
-     *
-     * @param context  the context to use
-     * @param videoURL the url to the video
-     */
-    public static void playWithKore(final Context context, final Uri videoURL) {
-        final Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setPackage(context.getString(R.string.kore_package));
-        intent.setData(videoURL);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
     }
 
     /**

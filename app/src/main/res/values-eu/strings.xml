@@ -13,8 +13,6 @@
     <string name="download_path_summary">Deskargatutako bideoak hemen gordeko dira</string>
     <string name="download_path_dialog_title">Aukeratu bideoak deskargatzeko karpeta</string>
     <string name="default_resolution_title">Lehenetsitako bereizmena</string>
-    <string name="play_with_kodi_title">Jo Kodirekin</string>
-    <string name="kore_not_found">Kore aplikazioa instalatu\?</string>
     <string name="play_audio">Audioa</string>
     <string name="download_dialog_title">Deskargatu</string>
     <string name="unsupported_url">URLak ez du euskarririk</string>

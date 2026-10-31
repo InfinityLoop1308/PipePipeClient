@@ -45,8 +45,6 @@
 <string name="download_path_audio_dialog_title">Download-Ordner für Audiodateien auswählen</string>
 <string name="default_resolution_title">Standardauflösung</string>
 <string name="default_popup_resolution_title">Standard-Popup-Auflösung</string>
-<string name="play_with_kodi_title">Mit Kodi abspielen</string>
-<string name="kore_not_found">Fehlende Kore App installieren?</string>
 <string name="crash_the_player">Den Player zum Absturz bringen</string>
 <string name="notification_scale_to_square_image_title">Miniaturbild auf 1:1-Seitenverhältnis zuschneiden</string>
 <string name="notification_scale_to_square_image_summary">Das im Benachrichtigungsbereich angezeigte Videominiaturbild von 16:9 auf ein Seitenverhältnis von 1:1 zuschneiden</string>
@@ -1196,4 +1194,22 @@
 <string name="plugins_show_nsfw_title">NSFW-Plugins anzeigen</string>
 <string name="plugins_show_nsfw_summary">Als NSFW markierte Plugins in den verfügbaren Plugins auflisten</string>
 <string name="plugin_installed_other_publisher">Von einem anderen Herausgeber veröffentlicht. Deinstalliere zuerst %1$s, um dieses zu installieren.</string>
+<string name="cast_to_pipepipe">Auf PipePipe streamen</string>
+<string name="cast_searching">Suche nach PipePipe-Geräten in diesem Netzwerk…</string>
+<string name="cast_enter_pin">Gib den auf %1$s angezeigten Code ein</string>
+<string name="cast_wrong_pin">Falscher Code</string>
+<string name="cast_locked">Zu viele falsche Codes. Starte PipePipe auf dem empfangenden Gerät neu, um es erneut zu versuchen.</string>
+<string name="cast_disconnect">Trennen</string>
+<string name="cast_pairing_code_toast">%1$s möchte hierher streamen. Kopplungscode: %2$s</string>
+<string name="cast_receiver_title">Streams von anderen PipePipe-Geräten empfangen</string>
+<string name="cast_receiver_summary">Hält einen lokalen Netzwerk-Listener aktiv, während PipePipe geöffnet ist, was etwas Akku verbraucht. Auf Fernsehern standardmäßig aktiviert.</string>
+<string name="cast_plugin_missing">%2$s hat das %1$s-Plugin nicht installiert, daher kann dieses Video nicht abgespielt werden.</string>
+<string name="cast_service_unsupported">%1$s unterstützt den Dienst dieses Videos nicht.</string>
+<string name="cast_play_failed">%1$s konnte dieses Video nicht laden.</string>
+<string name="cast_remote_menu">PipePipe-Fernbedienung</string>
+<string name="cast_reconnect">Neu verbinden</string>
+<string name="cast_reconnecting">Verbinde neu…</string>
+<string name="cast_disconnected">Getrennt</string>
+<string name="cast_resume_device">Steuerung von %1$s fortsetzen</string>
+<string name="cast_connect_failed">Verbindung zu %1$s konnte nicht hergestellt werden.</string>
 </resources>

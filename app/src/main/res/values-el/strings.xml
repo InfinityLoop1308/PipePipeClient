@@ -18,8 +18,6 @@
     <string name="download_path_audio_summary">Τα ληφθέντα αρχεία ήχου αποθηκεύονται εδώ</string>
     <string name="download_path_audio_dialog_title">Επιλέξτε φάκελο λήψης για αρχεία ήχου</string>
     <string name="default_resolution_title">Προεπιλεγμένη ανάλυση</string>
-    <string name="play_with_kodi_title">Αναπαραγωγή με το Kodi</string>
-    <string name="kore_not_found">Εγκατάσταση της εφαρμογής Kore;</string>
     <string name="play_audio">Ήχος</string>
     <string name="theme_title">Θέμα</string>
     <string name="dark_theme_title">Σκοτεινό</string>

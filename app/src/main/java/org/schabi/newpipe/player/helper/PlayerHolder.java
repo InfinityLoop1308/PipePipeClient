@@ -63,6 +63,11 @@ public final class PlayerHolder {
         return player.getPlayerType();
     }
 
+    @Nullable
+    public Player getPlayer() {
+        return player;
+    }
+
     public boolean isPlaying() {
         if (player == null) {
             return false;

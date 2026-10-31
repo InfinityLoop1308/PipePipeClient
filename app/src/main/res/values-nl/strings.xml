@@ -15,8 +15,6 @@
     <string name="download_path_summary">Locatie om gedownloade video\'s in op te slaan</string>
     <string name="download_path_dialog_title">Voer de downloadlocatie in voor video\'s</string>
     <string name="default_resolution_title">Standaardresolutie</string>
-    <string name="play_with_kodi_title">Afspelen met Kodi</string>
-    <string name="kore_not_found">Kore-app niet gevonden. Deze installeren\?</string>
     <string name="play_audio">Audio</string>
     <string name="download_dialog_title">Downloaden</string>
     <string name="unsupported_url">URL wordt niet ondersteund</string>

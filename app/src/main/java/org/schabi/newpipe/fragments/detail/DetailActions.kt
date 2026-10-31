@@ -1,9 +1,9 @@
 package org.schabi.newpipe.fragments.detail
 
 import android.content.Intent
-import android.net.Uri
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
@@ -19,13 +19,13 @@ import org.schabi.newpipe.error.UserAction
 import org.schabi.newpipe.extractor.stream.StreamInfo
 import org.schabi.newpipe.extractor.stream.StreamInfoItem
 import org.schabi.newpipe.local.dialog.PlaylistDialog
+import org.schabi.newpipe.cast.CastDialogs
 import org.schabi.newpipe.player.Player
 import org.schabi.newpipe.player.VideoDetailPlayerCrasher
 import org.schabi.newpipe.sleep.SleepTimerService
 import org.schabi.newpipe.util.DeviceUtils
 import org.schabi.newpipe.util.NavigationHelper
 import org.schabi.newpipe.util.PermissionHelper
-import org.schabi.newpipe.util.external_communication.KoreUtils
 import org.schabi.newpipe.util.external_communication.ShareUtils
 
 /** The click handling of the detail page's header and controls. */
@@ -55,9 +55,8 @@ class DetailActions(
 
     fun setup() {
         val context = fragment.requireContext()
-        content.detailControlsPlayWithKodi.visibility =
-            if (KoreUtils.shouldShowPlayWithKodi(context, host.serviceId)) View.VISIBLE
-            else View.GONE
+        content.detailControlsCastPipepipe.visibility =
+            if (DeviceUtils.isTv(context)) View.GONE else View.VISIBLE
         val showCrashButton = MainActivity.DEBUG
             && PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(context.getString(R.string.show_crash_the_player_key), false)
@@ -68,8 +67,7 @@ class DetailActions(
             val transparent = ContextCompat.getColor(context, R.color.transparent_background_color)
             listOf(content.detailControlsPlaylistAppend, content.detailControlsBackground,
                 content.detailControlsPopup, content.detailControlsDownload,
-                content.detailControlsShare, content.detailControlsOpenInBrowser,
-                content.detailControlsPlayWithKodi)
+                content.detailControlsShare, content.detailControlsOpenInBrowser)
                 .forEach { it.setBackgroundColor(transparent) }
         }
 
@@ -129,8 +127,8 @@ class DetailActions(
                 startSleepTimer()
             }
         }
-        content.detailControlsPlayWithKodi.setOnClickListener {
-            host.currentInfo?.let { playWithKodi(it) }
+        content.detailControlsCastPipepipe.setOnClickListener {
+            host.currentInfo?.let { castToPipePipe(it) }
         }
         if (MainActivity.DEBUG) {
             content.detailControlsCrashThePlayer.setOnClickListener {
@@ -203,16 +201,12 @@ class DetailActions(
         activity.startService(intent)
     }
 
-    private fun playWithKodi(info: StreamInfo) {
-        val context = fragment.requireContext()
-        try {
-            NavigationHelper.playWithKore(context, Uri.parse(info.url))
-        } catch (e: Exception) {
-            if (MainActivity.DEBUG) {
-                Log.i(TAG, "Failed to start kore", e)
-            }
-            KoreUtils.showInstallKoreDialog(context)
-        }
+    private fun castToPipePipe(info: StreamInfo) {
+        val holderPlayer = host.player
+        val sameStream = holderPlayer?.currentStreamInfo
+            ?.map { info.url == it.url }?.orElse(false) == true
+        CastDialogs.showPicker(activity as AppCompatActivity, info.serviceId, info.url,
+            if (sameStream) holderPlayer!!.currentPosition else 0L)
     }
 
     private companion object {

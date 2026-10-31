@@ -42,4 +42,10 @@
         android:orderInCategory="3"
         android:title="@string/switch_to_main"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_cast_pipepipe"
+        android:orderInCategory="4"
+        android:title="@string/cast_remote_menu"
+        app:showAsAction="never" />
 </menu>
