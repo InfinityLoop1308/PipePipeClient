@@ -145,4 +145,8 @@
 
     <dimen name="search_suggestion_text_size">16sp</dimen>
     <dimen name="feed_group_grid_margin">8dp</dimen>
+
+    <dimen name="video_item_detail_thumbnail_min_height">200dp</dimen>
+    <dimen name="video_item_detail_uploader_text_margin">8dp</dimen>
+    <dimen name="mini_player_thumbnail_width">62dp</dimen>
 </resources>

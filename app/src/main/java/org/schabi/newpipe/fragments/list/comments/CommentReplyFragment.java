@@ -130,6 +130,10 @@ public class CommentReplyFragment extends StateSaverFragment implements BackPres
     public boolean onBackPressed() {
         // Pop the FragmentManager this reply lives in (its container's child FM), matching where it
         // was pushed, so back works and nothing is left referencing a destroyed container.
+        if (getParentFragment() instanceof CommentsFragmentContainer
+                && ((CommentsFragmentContainer) getParentFragment()).onBackPressed()) {
+            return true;
+        }
         getParentFragmentManager().popBackStack();
         return true;
     }

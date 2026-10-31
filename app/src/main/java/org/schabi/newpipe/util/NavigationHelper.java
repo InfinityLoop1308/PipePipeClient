@@ -55,6 +55,7 @@ import org.schabi.newpipe.player.PlayerService;
 import org.schabi.newpipe.player.PlayerService.PlayerType;
 import org.schabi.newpipe.player.PlayQueueActivity;
 import org.schabi.newpipe.player.Player;
+import org.schabi.newpipe.player.event.DetailPlayerEvents;
 import org.schabi.newpipe.player.helper.PlayerHelper;
 import org.schabi.newpipe.player.helper.PlayerHolder;
 import org.schabi.newpipe.player.mediaitem.PlayerMediaItem;
@@ -358,19 +359,19 @@ public final class NavigationHelper {
                 .commit();
     }
 
-    public static void expandMainPlayer(final Context context) {
-        context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_SHOW_MAIN_PLAYER));
+    public static void expandMainPlayer() {
+        DetailPlayerEvents.showMainPlayer();
     }
 
-    public static void sendPlayerStartedEvent(final Context context) {
-        context.sendBroadcast(new Intent(VideoDetailFragment.ACTION_PLAYER_STARTED));
+    public static void sendPlayerStartedEvent() {
+        DetailPlayerEvents.playerStarted();
     }
 
     public static void showMiniPlayer(final FragmentManager fragmentManager) {
         final VideoDetailFragment instance = VideoDetailFragment.getInstanceInCollapsedState();
         defaultTransaction(fragmentManager)
                 .replace(R.id.fragment_player_holder, instance)
-                .runOnCommit(() -> sendPlayerStartedEvent(instance.requireActivity()))
+                .runOnCommit(NavigationHelper::sendPlayerStartedEvent)
                 .commitAllowingStateLoss();
     }
 
@@ -404,7 +405,7 @@ public final class NavigationHelper {
 
         final RunnableWithVideoDetailFragment onVideoDetailFragmentReady = (detailFragment,
                                                                             loadVideo) -> {
-            expandMainPlayer(detailFragment.requireActivity());
+            expandMainPlayer();
             detailFragment.setAutoPlay(autoPlay);
             if (switchingPlayers) {
                 // Situation when user switches from players to main player. All needed data is

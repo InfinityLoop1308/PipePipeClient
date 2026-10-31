@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/overlay_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:alpha="0.9"
+    android:background="?attr/windowBackground"
+    android:descendantFocusability="blocksDescendants">
+
+    <ImageButton
+        android:id="@+id/overlay_thumbnail"
+        android:layout_width="@dimen/mini_player_thumbnail_width"
+        android:layout_height="60dp"
+        android:layout_alignParentStart="true"
+        android:background="@color/transparent_background_color"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/video_item_search_padding"
+        android:paddingRight="@dimen/video_item_search_padding"
+        android:scaleType="fitCenter"
+        android:src="@drawable/dummy_thumbnail" />
+
+    <LinearLayout
+        android:id="@+id/overlay_metadata_layout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_toStartOf="@+id/overlay_buttons_layout"
+        android:layout_toEndOf="@+id/overlay_thumbnail"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:theme="@style/ContrastTintTheme"
+        tools:ignore="RtlHardcoded">
+
+        <org.schabi.newpipe.views.NewPipeTextView
+            android:id="@+id/overlay_title_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="@dimen/video_item_search_title_text_size"
+            tools:ignore="RtlHardcoded"
+            tools:text="The Video Title LONG very LONVideo Title LONG very LONG" />
+
+        <org.schabi.newpipe.views.NewPipeTextView
+            android:id="@+id/overlay_channel_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="@dimen/video_item_search_uploader_text_size"
+            tools:text="The Video Artist  LONG very LONG very Long" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/overlay_buttons_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_alignParentEnd="true"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/video_item_search_padding"
+        android:paddingRight="@dimen/video_item_search_padding"
+        android:theme="@style/ContrastTintTheme"
+        tools:ignore="RtlHardcoded">
+
+        <ImageButton
+                android:id="@+id/overlay_play_queue_button"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="@string/title_activity_play_queue"
+                android:scaleType="center"
+                android:src="@drawable/ic_list"
+                tools:ignore="RtlHardcoded" />
+
+        <ImageButton
+            android:id="@+id/overlay_play_pause_button"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackground"
+            android:padding="10dp"
+            android:scaleType="center"
+            android:focusable="true"
+            android:focusedByDefault="true"
+            app:srcCompat="@drawable/ic_play_arrow"
+            tools:ignore="ContentDescription,RtlHardcoded" />
+
+        <ImageButton
+            android:id="@+id/overlay_close_button"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackground"
+            android:padding="10dp"
+            android:scaleType="center"
+            app:srcCompat="@drawable/ic_close"
+            tools:ignore="ContentDescription,RtlHardcoded" />
+
+    </LinearLayout>
+
+</RelativeLayout>

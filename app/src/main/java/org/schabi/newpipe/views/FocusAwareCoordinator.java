@@ -34,6 +34,7 @@ import org.schabi.newpipe.R;
 
 public final class FocusAwareCoordinator extends CoordinatorLayout {
     private final Rect childFocus = new Rect();
+    private boolean focusScrollSuppressed = false;
 
     public FocusAwareCoordinator(@NonNull final Context context) {
         super(context);
@@ -53,7 +54,7 @@ public final class FocusAwareCoordinator extends CoordinatorLayout {
     public void requestChildFocus(final View child, final View focused) {
         super.requestChildFocus(child, focused);
 
-        if (!isInTouchMode()) {
+        if (!isInTouchMode() && !focusScrollSuppressed) {
             if (focused.getHeight() >= getHeight()) {
                 focused.getFocusedRect(childFocus);
 
@@ -67,6 +68,17 @@ public final class FocusAwareCoordinator extends CoordinatorLayout {
 
             requestChildRectangleOnScreen(child, childFocus, false);
         }
+    }
+
+    /**
+     * Stops scrolling to the focused view, for focus which only passes through a view: ViewPager2
+     * clears the focus when it changes pages, and Android gives it to the first focusable view of
+     * the window until it is moved to the new page.
+     *
+     * @param suppressed whether moving the focus must not scroll
+     */
+    public void setFocusScrollSuppressed(final boolean suppressed) {
+        focusScrollSuppressed = suppressed;
     }
 
     /**

@@ -61,6 +61,11 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfoItem, Com
         // Push the reply onto the FragmentManager this fragment lives in (its container's child FM),
         // not the parent activity FM, so it's torn down with the container's view (avoids the
         // "No view found for fragment_container_view" crash on back when the player goes to pop-up).
+        if (getParentFragment() instanceof CommentsFragmentContainer) {
+            ((CommentsFragmentContainer) getParentFragment())
+                    .openReplies((CommentsInfoItem) selectedItem);
+            return;
+        }
         CommentsFragmentContainer.setFragment(getParentFragmentManager(),
                 (CommentsInfoItem) selectedItem);
     }

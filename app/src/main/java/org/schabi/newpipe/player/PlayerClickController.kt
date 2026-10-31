@@ -12,8 +12,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.preference.PreferenceManager
 import org.schabi.newpipe.R
 import org.schabi.newpipe.database.stream.model.StreamEntity
-import org.schabi.newpipe.fragments.detail.VideoDetailFragment
 import org.schabi.newpipe.ktx.AnimationType
+import org.schabi.newpipe.player.event.DetailPlayerEvents
 import org.schabi.newpipe.ktx.animate
 import org.schabi.newpipe.ktx.animateRotation
 import org.schabi.newpipe.local.dialog.PlaylistDialog
@@ -139,7 +139,7 @@ class PlayerClickController(private val player: Player) :
         } else if (v.id == binding.switchMute.id) {
             onMuteUnmuteButtonClicked()
         } else if (v.id == binding.playerCloseButton.id) {
-            player.context.sendBroadcast(Intent(VideoDetailFragment.ACTION_HIDE_MAIN_PLAYER))
+            DetailPlayerEvents.hideMainPlayer()
             player.service.stopService()
         } else if (v.id == binding.skipButton.id) {
             player.sponsorBlockController.onSkipClicked()

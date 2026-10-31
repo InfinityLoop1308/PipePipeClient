@@ -1,7 +1,6 @@
 package org.schabi.newpipe.util.external_communication;
 
 import android.content.Context;
-import android.content.Intent;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
@@ -15,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.text.HtmlCompat;
 
+import org.schabi.newpipe.player.event.DetailPlayerEvents;
 import org.schabi.newpipe.extractor.Info;
 import org.schabi.newpipe.extractor.stream.StreamInfo;
 import org.schabi.newpipe.util.NavigationHelper;
@@ -29,7 +29,6 @@ import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-import static org.schabi.newpipe.fragments.detail.VideoDetailFragment.ACTION_SEEK_TO;
 
 public final class TextLinkifier {
     public static final String TAG = TextLinkifier.class.getSimpleName();
@@ -193,9 +192,7 @@ public final class TextLinkifier {
                     new ClickableSpan() {
                         @Override
                         public void onClick(@NonNull final View view) {
-                            Intent intent = new Intent(ACTION_SEEK_TO);
-                            intent.putExtra("Timestamp", timestampMatchDTO.seconds());
-                            context.sendBroadcast(intent);
+                            DetailPlayerEvents.seekTo(timestampMatchDTO.seconds());
                         }
                     },
                     timestampMatchDTO.timestampStart(),
