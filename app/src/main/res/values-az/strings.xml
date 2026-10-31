@@ -29,6 +29,8 @@
     <string name="download_path_audio_summary">Yüklənmiş audio faylları burada saxlanılır</string>
     <string name="download_path_audio_dialog_title">Audio faylları üçün yükləmə qovluğunu seçin</string>
     <string name="default_resolution_title">Standard görüntü keyfiyyəti</string>
+    <string name="play_with_kodi_title">\"Kodi\" ilə oxut</string>
+    <string name="kore_not_found">Çatışmayan \"Kore\" tətbiqi yüklənilsin\?</string>
     <string name="play_audio">Audio</string>
     <string name="theme_title">Mövzu</string>
     <string name="light_theme_title">Açıq</string>

@@ -21,6 +21,7 @@ import org.schabi.newpipe.extractor.stream.StreamType
 import org.schabi.newpipe.ktx.animate
 import org.schabi.newpipe.ktx.animateRotation
 import org.schabi.newpipe.player.helper.PlayerHelper
+import org.schabi.newpipe.util.external_communication.KoreUtils
 
 /**
  * Owns how the shared player layout is arranged: popup and main players have a different look,
@@ -131,7 +132,8 @@ class PlayerLayoutController(private val player: Player) {
             binding.secondaryControls.translationY = 0f
             binding.share.visibility = View.GONE
             binding.switchCommentsVisibility.visibility = View.GONE
-            binding.castPipePipe.visibility = View.GONE
+            binding.playWithKodi.visibility = View.GONE
+            binding.openInBrowser.visibility = View.GONE
             binding.sleepTimer.visibility = View.GONE
             binding.switchMute.visibility = View.GONE
             binding.playerCloseButton.visibility = View.GONE
@@ -159,6 +161,7 @@ class PlayerLayoutController(private val player: Player) {
                 } else {
                     View.VISIBLE
                 }
+            binding.openInBrowser.visibility = View.VISIBLE
             binding.sleepTimer.visibility = View.VISIBLE
             binding.switchMute.visibility = View.VISIBLE
             binding.playerCloseButton.visibility =
@@ -168,6 +171,8 @@ class PlayerLayoutController(private val player: Player) {
             binding.topControls.isClickable = true
             binding.topControls.isFocusable = true
         }
+        showHideKodiButton()
+
         if (player.isFullscreen) {
             binding.titleTextView.visibility = View.VISIBLE
             binding.channelTextView.visibility = View.VISIBLE
@@ -224,6 +229,20 @@ class PlayerLayoutController(private val player: Player) {
     fun updateMetadataViews(info: StreamInfo) {
         player.binding.titleTextView.text = info.name
         player.binding.channelTextView.text = info.uploaderName
+    }
+
+    fun showHideKodiButton() {
+        // show kodi button if it supports the current service and it is enabled in settings
+        val queueItem = player.playQueue?.item
+        player.binding.playWithKodi.visibility =
+            if (player.videoPlayerSelected()
+                && queueItem != null
+                && KoreUtils.shouldShowPlayWithKodi(player.context, queueItem.serviceId)
+            ) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
     }
 
     /**

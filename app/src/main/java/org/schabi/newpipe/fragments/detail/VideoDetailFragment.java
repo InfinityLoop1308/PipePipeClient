@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -85,7 +86,6 @@ import org.schabi.newpipe.ktx.AnimationType;
 import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.player.PlayerService.PlayerType;
-import org.schabi.newpipe.cast.CastDialogs;
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.PlayerError;
 import org.schabi.newpipe.player.VideoDetailPlayerCrasher;
@@ -107,6 +107,7 @@ import org.schabi.newpipe.sleep.SleepTimerService;
 import org.schabi.newpipe.util.*;
 import org.schabi.newpipe.util.dearrow.DeArrowBinder;
 import org.schabi.newpipe.util.dearrow.DeArrowRow;
+import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
 import java.util.*;
@@ -576,14 +577,17 @@ public final class VideoDetailFragment
                 serviceIntent.putExtra("timeInMillis", time * 60000); // 60 seconds
                 activity.startService(serviceIntent);
             }
-        } else if (id == R.id.detail_controls_cast_pipepipe) {
+        } else if (id == R.id.detail_controls_play_with_kodi) {
             if (currentInfo != null) {
-                final Player holderPlayer = PlayerHolder.getInstance().getPlayer();
-                final boolean sameStream = holderPlayer != null
-                        && holderPlayer.getCurrentStreamInfo()
-                                .map(i -> currentInfo.getUrl().equals(i.getUrl())).orElse(false);
-                CastDialogs.INSTANCE.showPicker(activity, currentInfo.getServiceId(),
-                        currentInfo.getUrl(), sameStream ? holderPlayer.getCurrentPosition() : 0);
+                try {
+                    NavigationHelper.playWithKore(
+                            requireContext(), Uri.parse(currentInfo.getUrl()));
+                } catch (final Exception e) {
+                    if (DEBUG) {
+                        Log.i(TAG, "Failed to start kore", e);
+                    }
+                    KoreUtils.showInstallKoreDialog(requireContext());
+                }
             }
         } else if (id == R.id.detail_uploader_root_layout) {
             if (isEmpty(currentInfo.getSubChannelUrl())) {
@@ -755,8 +759,11 @@ public final class VideoDetailFragment
 
         binding.detailThumbnailRootLayout.requestFocus();
 
-        binding.detailControlsCastPipepipe.setVisibility(
-                DeviceUtils.isTv(requireContext()) ? View.GONE : View.VISIBLE);
+        binding.detailControlsPlayWithKodi.setVisibility(
+                KoreUtils.shouldShowPlayWithKodi(requireContext(), serviceId)
+                        ? View.VISIBLE
+                        : View.GONE
+        );
         binding.detailControlsCrashThePlayer.setVisibility(
                 DEBUG && PreferenceManager.getDefaultSharedPreferences(getContext())
                         .getBoolean(getString(R.string.show_crash_the_player_key), false)
@@ -774,6 +781,7 @@ public final class VideoDetailFragment
             binding.detailControlsDownload.setBackgroundColor(transparent);
             binding.detailControlsShare.setBackgroundColor(transparent);
             binding.detailControlsOpenInBrowser.setBackgroundColor(transparent);
+            binding.detailControlsPlayWithKodi.setBackgroundColor(transparent);
         }
     }
 
@@ -800,7 +808,7 @@ public final class VideoDetailFragment
         binding.detailControlsShare.setOnClickListener(this);
         binding.detailControlsOpenInBrowser.setOnClickListener(this);
         binding.detailControlsStartSleepTimer.setOnClickListener(this);
-        binding.detailControlsCastPipepipe.setOnClickListener(this);
+        binding.detailControlsPlayWithKodi.setOnClickListener(this);
         if (DEBUG) {
             binding.detailControlsCrashThePlayer.setOnClickListener(
                     v -> VideoDetailPlayerCrasher.onCrashThePlayer(

@@ -15,6 +15,8 @@
     <string name="download_path_summary">Сюда сохраняются скачанные видео</string>
     <string name="download_path_dialog_title">Введите путь к папке для скачивания видео</string>
     <string name="default_resolution_title">Разрешение по умолчанию</string>
+    <string name="play_with_kodi_title">Воспроизвести в Kodi</string>
+    <string name="kore_not_found">Установить недостающее приложение Kore?</string>
     <string name="play_audio">Аудио</string>
     <string name="download_dialog_title">Скачать</string>
     <string name="unsupported_url">URL не поддерживается</string>

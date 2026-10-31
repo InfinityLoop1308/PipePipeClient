@@ -9,6 +9,7 @@ import static org.schabi.newpipe.util.SparseItemUtil.fetchUploaderUrlIfSparse;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -30,6 +31,7 @@ import org.schabi.newpipe.local.dialog.PlaylistDialog;
 import org.schabi.newpipe.local.history.HistoryRecordManager;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.ServiceHelper;
+import org.schabi.newpipe.util.external_communication.KoreUtils;
 import org.schabi.newpipe.util.external_communication.ShareUtils;
 
 import java.util.Collections;
@@ -121,6 +123,15 @@ public enum StreamDialogDefaultEntry {
                 )
         )
     ),
+
+    PLAY_WITH_KODI(R.string.play_with_kodi_title, (fragment, item) -> {
+        final Uri videoUrl = Uri.parse(item.getUrl());
+        try {
+            NavigationHelper.playWithKore(fragment.requireContext(), videoUrl);
+        } catch (final Exception e) {
+            KoreUtils.showInstallKoreDialog(fragment.requireActivity());
+        }
+    }),
 
     SHARE(R.string.share, (fragment, item) ->
             ShareUtils.shareText(fragment.requireContext(), item.getName(), item.getUrl(),

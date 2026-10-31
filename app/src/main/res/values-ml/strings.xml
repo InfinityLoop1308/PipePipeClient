@@ -328,6 +328,8 @@
     <string name="light_theme_title">ലൈറ്റ് തീം</string>
     <string name="theme_title">തീം</string>
     <string name="play_audio">ഓഡിയോ</string>
+    <string name="kore_not_found">Kore ഇൻസ്റ്റാൾ ചെയ്യട്ടെയോ\?</string>
+    <string name="play_with_kodi_title">Kodi ഉപയോഗിച്ച് പ്ലേ ചെയ്യുക</string>
     <string name="default_popup_resolution_title">സ്ഥിര പോപ്പപ്പ് റിസല്യൂഷൻ</string>
     <string name="default_resolution_title">സ്ഥിര റിസല്യൂഷൻ</string>
     <string name="download_path_audio_dialog_title">ഓഡിയോ ഫയലുകളുടെ ഡൗൺലോഡ് സ്ഥാനം</string>

@@ -45,6 +45,8 @@
 <string name="download_path_audio_dialog_title">Ses dosyaları için indirme klasörünü seçin</string>
 <string name="default_resolution_title">Varsayılan çözünürlük</string>
 <string name="default_popup_resolution_title">Varsayılan açılır pencere çözünürlüğü</string>
+<string name="play_with_kodi_title">Kodi ile oynat</string>
+<string name="kore_not_found">Eksik Kore uygulaması yüklensin mi?</string>
 <string name="crash_the_player">Oynatıcıyı çökert</string>
 <string name="notification_scale_to_square_image_title">Küçük resmi 1:1 en boy oranına kırp</string>
 <string name="notification_scale_to_square_image_summary">Bildirimde gösterilen video küçük resmini 16:9\'dan 1:1 en boy oranına kırp</string>

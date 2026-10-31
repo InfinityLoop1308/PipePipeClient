@@ -2,11 +2,11 @@ package org.schabi.newpipe.player
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
-import org.schabi.newpipe.cast.CastDialogs
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.FragmentManager
 import androidx.preference.PreferenceManager
@@ -19,11 +19,12 @@ import org.schabi.newpipe.ktx.animateRotation
 import org.schabi.newpipe.local.dialog.PlaylistDialog
 import org.schabi.newpipe.sleep.SleepTimerService
 import org.schabi.newpipe.util.NavigationHelper
+import org.schabi.newpipe.util.external_communication.KoreUtils
 import org.schabi.newpipe.util.external_communication.ShareUtils
 
 /**
  * Owns everything that hangs off a player control button: the click/long-click routing, the
- * more-options drawer animation, the share / sleep-timer actions, the
+ * more-options drawer animation, the share / open-in-browser / Kodi / sleep-timer actions, the
  * mute toggle and the "add to playlist" dialog.
  *
  * [Player] keeps only the public entry points that other components call
@@ -75,7 +76,8 @@ class PlayerClickController(private val player: Player) :
         binding.lockButton.setOnClickListener(this)
         binding.unlockButton.setOnClickListener(this)
         binding.switchCommentsVisibility.setOnClickListener(this)
-        binding.castPipePipe.setOnClickListener(this)
+        binding.playWithKodi.setOnClickListener(this)
+        binding.openInBrowser.setOnClickListener(this)
         binding.playerCloseButton.setOnClickListener(this)
         binding.switchMute.setOnClickListener(this)
         binding.sleepTimer.setOnClickListener(this)
@@ -112,12 +114,10 @@ class PlayerClickController(private val player: Player) :
             )
         } else if (v.id == binding.switchCommentsVisibility.id) {
             player.bulletCommentsController.toggleVisibility()
-        } else if (v.id == binding.castPipePipe.id) {
-            val item = player.currentItem
-            val activity = player.parentActivity
-            if (item != null && activity != null) {
-                CastDialogs.showPicker(activity, item.serviceId, item.url, player.currentPosition)
-            }
+        } else if (v.id == binding.playWithKodi.id) {
+            onPlayWithKodiClicked()
+        } else if (v.id == binding.openInBrowser.id) {
+            onOpenInBrowserClicked()
         } else if (v.id == binding.sleepTimer.id) {
             onSleepTimerClicked()
         } else if (v.id == binding.fullScreenButton.id) {
@@ -228,6 +228,28 @@ class PlayerClickController(private val player: Player) :
             }
         }
         player.showControls(Player.DEFAULT_CONTROLS_DURATION.toLong())
+    }
+
+    private fun onPlayWithKodiClicked() {
+        if (player.currentMetadata != null) {
+            player.pause()
+            try {
+                NavigationHelper.playWithKore(player.context, Uri.parse(player.getVideoUrl()))
+            } catch (e: Exception) {
+                if (Player.DEBUG) {
+                    Log.i(Player.TAG, "Failed to start kore", e)
+                }
+                KoreUtils.showInstallKoreDialog(player.parentActivity!!)
+            }
+        }
+    }
+
+    private fun onOpenInBrowserClicked() {
+        player.currentStreamInfo
+            .map { info -> info.originalUrl }
+            .ifPresent { originalUrl ->
+                ShareUtils.openUrlInBrowser(player.parentActivity!!, originalUrl)
+            }
     }
 
     private fun onSleepTimerClicked() {

@@ -15,6 +15,8 @@
     <string name="download_path_summary">Os arquivos de vídeo baixados serão guardados aqui</string>
     <string name="download_path_dialog_title">Escolha a pasta para colocar os arquivos de vídeo</string>
     <string name="default_resolution_title">Resolução padrão</string>
+    <string name="play_with_kodi_title">Reproduzir no Kodi</string>
+    <string name="kore_not_found">Instalar Kore\?</string>
     <string name="play_audio">Áudio</string>
     <string name="download_dialog_title">Descarregar</string>
     <string name="unsupported_url">URL não suportado</string>

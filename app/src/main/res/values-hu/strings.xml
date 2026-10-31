@@ -15,6 +15,8 @@
     <string name="download_path_summary">A letöltött videófájlok itt lesznek tárolva</string>
     <string name="download_path_dialog_title">Válasszon letöltési mappát a videófájloknak</string>
     <string name="default_resolution_title">Alapértelmezett felbontás</string>
+    <string name="play_with_kodi_title">Lejátszás Kodival</string>
+    <string name="kore_not_found">Telepíti a hiányzó Kore alkalmazást\?</string>
     <string name="play_audio">Hang</string>
     <string name="download_dialog_title">Letöltés</string>
     <string name="unsupported_url">Nem támogatott webcím</string>

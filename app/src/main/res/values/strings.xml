@@ -45,6 +45,8 @@
 <string name="download_path_audio_dialog_title">Choose download folder for audio files</string>
 <string name="default_resolution_title">Default resolution</string>
 <string name="default_popup_resolution_title">Default popup resolution</string>
+<string name="play_with_kodi_title">Play with Kodi</string>
+<string name="kore_not_found">Install missing Kore app?</string>
 <string name="crash_the_player">Crash the player</string>
 <string name="notification_scale_to_square_image_title">Crop thumbnail to 1:1 aspect ratio</string>
 <string name="notification_scale_to_square_image_summary">Crop the video thumbnail shown in the notification from 16:9 to 1:1 aspect ratio</string>
@@ -1245,22 +1247,4 @@ Only add repositories you trust.</string>
 <string name="plugins_show_nsfw_title">Show NSFW plugins</string>
 <string name="plugins_show_nsfw_summary">List plugins marked as NSFW in the available plugins</string>
 <string name="plugin_installed_other_publisher">Published by someone else. Uninstall %1$s first to install this one.</string>
-<string name="cast_to_pipepipe">Cast to PipePipe</string>
-<string name="cast_searching">Searching for PipePipe devices on this network…</string>
-<string name="cast_enter_pin">Enter the code shown on %1$s</string>
-<string name="cast_wrong_pin">Wrong code</string>
-<string name="cast_locked">Too many wrong codes. Restart PipePipe on the receiving device to try again.</string>
-<string name="cast_disconnect">Disconnect</string>
-<string name="cast_pairing_code_toast">%1$s wants to cast here. Pairing code: %2$s</string>
-<string name="cast_receiver_title">Receive casts from other PipePipe devices</string>
-<string name="cast_receiver_summary">Keeps a local network listener running while PipePipe is open, which uses some battery. Enabled by default on TVs.</string>
-<string name="cast_plugin_missing">%2$s does not have the %1$s plugin installed, so it cannot play this video.</string>
-<string name="cast_service_unsupported">%1$s does not support this video\'s service.</string>
-<string name="cast_play_failed">%1$s could not load this video.</string>
-<string name="cast_remote_menu">PipePipe remote control</string>
-<string name="cast_reconnect">Reconnect</string>
-<string name="cast_reconnecting">Reconnecting…</string>
-<string name="cast_disconnected">Disconnected</string>
-<string name="cast_resume_device">Continue controlling %1$s</string>
-<string name="cast_connect_failed">Could not connect to %1$s.</string>
 </resources>

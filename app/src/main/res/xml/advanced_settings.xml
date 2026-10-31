@@ -268,11 +268,4 @@
                 app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
-    <SwitchPreferenceCompat
-            android:key="@string/cast_receiver_enabled_key"
-            android:summary="@string/cast_receiver_summary"
-            android:title="@string/cast_receiver_title"
-            app:singleLineTitle="false"
-            app:iconSpaceReserved="false" />
-
 </PreferenceScreen>

@@ -231,6 +231,8 @@
     <string name="notification_action_repeat">পুনরায়</string>
     <string name="notification_action_0_title">প্রথম ক্রিয়া বোতাম</string>
     <string name="notification_scale_to_square_image_title">থাম্বনেলে ১:১ অনুপাতে করো</string>
+    <string name="kore_not_found">হারানো কোর ইনস্টল করবেন\?</string>
+    <string name="play_with_kodi_title">Kodi দ্বারা চালাও</string>
     <string name="default_popup_resolution_title">ডিফল্ট পপ-আপ রেজোল্যুশন</string>
     <string name="default_resolution_title">ডিফল্ট রেজোল্যুশন</string>
     <string name="download_path_audio_dialog_title">অডিও ফাইলগুলির জন্য ডাউনলোডের ফোল্ডার নির্বাচন করুন</string>

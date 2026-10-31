@@ -34,6 +34,7 @@
     <string name="download_path_audio_summary">Ilalagay rito ang mga na-download na audio file</string>
     <string name="download_path_audio_dialog_title">Pumili ng download folder para sa mga audio file</string>
     <string name="light_theme_title">Maliwanag</string>
+    <string name="play_with_kodi_title">I-play gamit Kodi</string>
     <string name="dark_theme_title">Madilim</string>
     <string name="download_path_summary">Ilalagay rito ang mga na-download na video file</string>
     <string name="download_path_audio_title">Download folder ng mga audio</string>
@@ -85,6 +86,7 @@
     <string name="black_theme_title">Maitim</string>
     <string name="crash_the_player">I-crash ang player</string>
     <string name="default_popup_resolution_title">Panimulang linaw ng popup</string>
+    <string name="kore_not_found">I-install ang nawawalang Kore app\?</string>
     <string name="notification_scale_to_square_image_title">I-scale ang thumbnail sa 1:1 aspect ratio</string>
     <string name="notification_scale_to_square_image_summary">I-scale ang thumbnail ng video sa abiso mula 16:9 papuntang 1:1 aspect ratio (pwedeng magkaroon ng distortion)</string>
     <string name="notification_action_0_title">Unang action button</string>

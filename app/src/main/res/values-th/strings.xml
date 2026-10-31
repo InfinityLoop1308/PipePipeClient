@@ -37,6 +37,8 @@
     <string name="download_path_audio_dialog_title">ป้อนเส้นทางการดาวน์โหลดสำหรับไฟล์เสียง</string>
     <string name="default_resolution_title">ความละเอียดเริ่มต้น</string>
     <string name="default_popup_resolution_title">ความละเอียดเริ่มต้นในโหมดป๊อปอัพ</string>
+    <string name="play_with_kodi_title">เปิดด้วย Kodi</string>
+    <string name="kore_not_found">ไม่พบแอป Kore จะติดตั้งหรือไม่\?</string>
     <string name="play_audio">เสียง</string>
     <string name="theme_title">ธีม</string>
     <string name="light_theme_title">สว่าง</string>

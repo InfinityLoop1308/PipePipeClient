@@ -35,6 +35,8 @@
     <string name="download_path_audio_dialog_title">فۆڵدەری دابەزاندنی فایلە دەنگییەکان هەڵبژێرە</string>
     <string name="default_resolution_title">قەبارەی بنەڕەت</string>
     <string name="default_popup_resolution_title">قەبارەی بنەڕەتی په‌نجه‌ره‌</string>
+    <string name="play_with_kodi_title">لێدان لە Kodi</string>
+    <string name="kore_not_found">ئەپەکە نه‌دۆزرایه‌وه‌. دابمه‌زرێت؟</string>
     <string name="play_audio">ده‌نگ</string>
     <string name="theme_title">ڕووكار</string>
     <string name="light_theme_title">ڕۆشن</string>

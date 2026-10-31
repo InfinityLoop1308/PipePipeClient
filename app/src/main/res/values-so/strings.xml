@@ -17,6 +17,8 @@
     <string name="notification_action_0_title">Batoonka hawsha koowaad</string>
     <string name="notification_scale_to_square_image_summary">La ekaysii galka muuqaalka xaga ogaysiisyada ka muuqda cabirka 1:1 ayadoo laga soo baddalayo 16:9 (wuxuu keeni karaa shucaac)</string>
     <string name="notification_scale_to_square_image_title">Galka la ekaysii cabirka 1:1</string>
+    <string name="kore_not_found">Kushub appka maqan ee Kore\?</string>
+    <string name="play_with_kodi_title">Ku fur Kodi</string>
     <string name="default_popup_resolution_title">Tayada muuqaalka daaqada</string>
     <string name="default_resolution_title">Tayada muuqaalka</string>
     <string name="download_path_audio_dialog_title">Dooro khaanada dhagaysiga lasoo dajiyo</string>

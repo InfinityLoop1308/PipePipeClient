@@ -26,6 +26,8 @@
     <string name="download_path_audio_title">ఆడియో డౌన్లోడ్ మార్గం</string>
     <string name="download_path_audio_summary">ఆడియో కోసం డౌన్లోడ్ మార్గాన్ని నమోదు చేయండి</string>
     <string name="download_path_audio_dialog_title">ఆడియో ఫైల్లకు డౌన్లోడ్ మార్గాన్ని ఇవ్వండి</string>
+    <string name="play_with_kodi_title">కోడితో ప్లే చేయండి</string>
+    <string name="kore_not_found">కోరే ఆప్ కనుగొనబడలేదు. దీన్ని ఇన్స్టాల్ చెయ్యాలా\?</string>
     <string name="play_audio">ఆడియో</string>
     <string name="theme_title">థీమ్</string>
     <string name="light_theme_title">ప్రకాశం</string>

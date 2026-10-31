@@ -83,6 +83,7 @@
     <string name="pause_downloads_on_mobile_desc">بەسوودە بۆ کاتی گۆڕینی هێڵ بۆ ڕایەڵەی مۆبایل, لەگەڵ ئەوەشدا زۆربەی دابەزاندنەکان دواناخات</string>
     <string name="website_title">ماڵپەڕ</string>
     <string name="enqueue">نۆبه‌ت</string>
+    <string name="play_with_kodi_title">لێدان به‌ Kodi</string>
     <string name="error_unable_to_load_comments">ناتوانرێت لێدوانەکان باربکرێن</string>
     <string name="peertube_instance_add_help">بەستەری دۆخ دابنێ</string>
     <string name="download_path_audio_summary">فایلی دەنگە دابه‌زێنراوەکان لێرەدا هەڵدەگیرێن</string>
@@ -444,6 +445,7 @@
     </plurals>
     <string name="error_report_title">هەڵە لە سكاڵا</string>
     <string name="metadata_cache_wipe_summary">سڕینەوەی پاشماوەی هەموو ماڵپه‌ڕه‌كان</string>
+    <string name="kore_not_found">بەرنامەکە نه‌دۆزرایه‌وه‌. دابمه‌زرێت؟</string>
     <string name="peertube_instance_add_fail">ناتوانرێ پشتگیری دۆخەکە بکرێ</string>
     <string name="install">دامەزراندن</string>
     <string name="videos_string">ڤیدیۆکان</string>

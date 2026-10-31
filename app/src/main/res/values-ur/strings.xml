@@ -35,6 +35,8 @@
     <string name="download_path_audio_dialog_title">آڈیو فائلوں کے لئے ڈاؤن لوڈ فولڈر کا انتخاب کریں</string>
     <string name="default_resolution_title">طے شدہ ریزولوشن</string>
     <string name="default_popup_resolution_title">طے شدہ پوپ اپ ریزولوشن</string>
+    <string name="play_with_kodi_title">کوڈی کے ساتھ استعمال کریں</string>
+    <string name="kore_not_found">لاپتہ کوری ایپ کو انسٹال کریں؟</string>
     <string name="play_audio">آڈیو</string>
     <string name="theme_title">خیالیہ</string>
     <string name="light_theme_title">روشن</string>

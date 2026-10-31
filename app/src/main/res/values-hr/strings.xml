@@ -30,6 +30,8 @@
     <string name="download_path_audio_dialog_title">Odaberi mapu za preuzimanje audio-datoteka</string>
     <string name="default_resolution_title">Standardna rezolucija</string>
     <string name="default_popup_resolution_title">Standardna rezolucija skočnog prozora</string>
+    <string name="play_with_kodi_title">Reproduciraj s Kodijem</string>
+    <string name="kore_not_found">Instalirati nedostajući Kore program\?</string>
     <string name="play_audio">Zvuk</string>
     <string name="theme_title">Tema</string>
     <string name="light_theme_title">Svijetla</string>

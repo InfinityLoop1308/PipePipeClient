@@ -18,6 +18,8 @@
     <string name="download_path_audio_dialog_title">Vyberte adresár pre ukladanie audio súborov</string>
     <string name="download_path_audio_summary">Prevzaté zvukové súbory sú uložené tu</string>
     <string name="default_resolution_title">Štandardné rozlíšenie</string>
+    <string name="play_with_kodi_title">Prehrať cez Kodi</string>
+    <string name="kore_not_found">Nainštalovať chýbajúcu aplikáciu Kore\?</string>
     <string name="play_audio">Zvuk</string>
     <string name="theme_title">Téma</string>
     <string name="dark_theme_title">Tmavá</string>

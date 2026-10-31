@@ -50,6 +50,8 @@
     <string name="notification_action_0_title">Birinchi harakat tugmasi</string>
     <string name="notification_scale_to_square_image_summary">Bildirishnomada ko\'rsatilgan video eskizini 16: 9dan 1: 1 gacha tomonlarning nisbatiga qarab o\'lchamang (buzilishlarni keltirib chiqarishi mumkin)</string>
     <string name="notification_scale_to_square_image_title">Eskizini 1: 1 tomonlar nisbatiga o‘lchash</string>
+    <string name="kore_not_found">missing Kore dasturini o\'rnatasizmi\?</string>
+    <string name="play_with_kodi_title">Kodi bilan ijro etish</string>
     <string name="default_popup_resolution_title">"Standart  pop-up o\'lchamlari"</string>
     <string name="default_resolution_title">Standart o\'lchamlari</string>
     <string name="download_path_audio_dialog_title">Audio fayllar uchun yuklab olish papkasini tanlash</string>

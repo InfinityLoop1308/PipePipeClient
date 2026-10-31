@@ -27,6 +27,7 @@ import org.schabi.newpipe.extractor.InfoItem;
 import org.schabi.newpipe.extractor.stream.StreamInfoItem;
 import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.player.helper.PlayerHolder;
+import org.schabi.newpipe.util.external_communication.KoreUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,6 +137,7 @@ public final class InfoItemDialog {
          *     | APPEND_PLAYLIST                            |
          *     | SHARE                                      |
          *     | OPEN_IN_BROWSER                            |
+         *     | PLAY_WITH_KODI                             |
          *     | MARK_AS_WATCHED                            |
          *     | SHOW_CHANNEL_DETAILS                       |
          *     + - - - - - - - - - - - - - - - - - - - - - -+
@@ -176,6 +178,7 @@ public final class InfoItemDialog {
          *     | APPEND_PLAYLIST                            |
          *     | SHARE                                      |
          *     | OPEN_IN_BROWSER                            |
+         *     | PLAY_WITH_KODI                             |
          *     | MARK_AS_WATCHED                            |
          *     | SHOW_CHANNEL_DETAILS                       |
          *     + - - - - - - - - - - - - - - - - - - - - - -+
@@ -309,6 +312,20 @@ public final class InfoItemDialog {
         }
 
         /**
+         * Adds the {@link StreamDialogDefaultEntry#PLAY_WITH_KODI} entry if it is needed.
+         * @return the current {@link Builder} instance
+         */
+        public Builder addPlayWithKodiEntryIfNeeded() {
+            if (KoreUtils.shouldShowPlayWithKodi(context, infoItem.getServiceId())) {
+                addEntry(StreamDialogDefaultEntry.PLAY_WITH_KODI);
+            }
+            return this;
+        }
+
+
+
+
+        /**
          * Add the entries which are usually at the top of the action list.
          * <br/>
          * This method adds the "enqueue" (see {@link #addEnqueueEntriesIfNeeded()})
@@ -332,6 +349,7 @@ public final class InfoItemDialog {
                     StreamDialogDefaultEntry.SHARE,
                     StreamDialogDefaultEntry.OPEN_IN_BROWSER
             );
+            addPlayWithKodiEntryIfNeeded();
             addMarkAsWatchedEntryIfNeeded();
             addEntry(StreamDialogDefaultEntry.SHOW_CHANNEL_DETAILS);
             addEntry(StreamDialogDefaultEntry.ADD_TO_FILTER_LIST);

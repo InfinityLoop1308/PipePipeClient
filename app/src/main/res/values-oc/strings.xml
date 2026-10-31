@@ -37,6 +37,8 @@
     <string name="download_path_audio_dialog_title">Causissètz lo dorsièr de telecargament pels àudios</string>
     <string name="default_resolution_title">Resolucion per defaut</string>
     <string name="default_popup_resolution_title">Resolucion per defaut dels fenestrons</string>
+    <string name="play_with_kodi_title">Jogar amb Kodi</string>
+    <string name="kore_not_found">Trobam pas l\'aplicacion Kore. La volètz installar\?</string>
     <string name="play_audio">Àudio</string>
     <string name="theme_title">Tèma</string>
     <string name="light_theme_title">Clar</string>

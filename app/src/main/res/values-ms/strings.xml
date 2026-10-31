@@ -37,6 +37,8 @@
     <string name="download_path_audio_dialog_title">Pilih folder muat turun untuk fail audio</string>
     <string name="default_resolution_title">Resolusi utama</string>
     <string name="default_popup_resolution_title">Resolusi popup utama</string>
+    <string name="play_with_kodi_title">Main dengan Kodi</string>
+    <string name="kore_not_found">Pasangkan aplikasi Kore yang tidak dijumpai\?</string>
     <string name="play_audio">Audio</string>
     <string name="theme_title">Tema</string>
     <string name="light_theme_title">Cerah</string>

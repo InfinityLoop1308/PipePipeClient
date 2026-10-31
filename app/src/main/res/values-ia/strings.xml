@@ -33,6 +33,7 @@
     <string name="controls_download_desc">Discargar le file de fluxo</string>
     <string name="default_resolution_title">Resolution predefinite</string>
     <string name="default_popup_resolution_title">Resolution predefinite del fenestra emergente</string>
+    <string name="play_with_kodi_title">Reproducer con Kodi</string>
     <string name="play_audio">Audio</string>
     <string name="light_theme_title">Clar</string>
     <string name="dark_theme_title">Obscur</string>

@@ -48,6 +48,8 @@
     <string name="download_path_audio_dialog_title">ऑडियो फ़ाइलों के लिए डाउनलोड फ़ोल्डर चुनें</string>
     <string name="default_resolution_title">डिफ़ॉल्ट रिज़ॉल्यूशन</string>
     <string name="default_popup_resolution_title">पॉपअप का डिफ़ॉल्ट रिज़ॉल्यूशन</string>
+    <string name="play_with_kodi_title">Kodi से चलायें</string>
+    <string name="kore_not_found">Kore ऐप नहीं मिली, इसे इनस्टॉल करें\?</string>
     <string name="theme_title">ऐप थीम</string>
     <string name="dark_theme_title">डार्क</string>
     <string name="show_search_suggestions_title">खोज के सुझाव</string>

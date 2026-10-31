@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="main_bg_subtitle">Gusa kioo la kukuza ili kuanza.</string>
+    <string name="play_with_kodi_title">Cheza na Kodi</string>
     <string name="upload_date_text">iliyochapishwa kwa %1$s</string>
     <string name="no_player_found">Hakuna stream player kilichopatikana. Sakinisha VLC\?</string>
     <string name="no_player_found_toast">Hakuna stream player kilichopatikana(unaweza sakinisha VLC kuicheza).</string>

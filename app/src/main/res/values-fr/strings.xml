@@ -45,6 +45,8 @@
 <string name="download_path_audio_dialog_title">Choisissez le dossier de téléchargement pour les fichiers audio</string>
 <string name="default_resolution_title">Résolution par défaut</string>
 <string name="default_popup_resolution_title">Résolution popup par défaut</string>
+<string name="play_with_kodi_title">Lire avec Kodi</string>
+<string name="kore_not_found">Installer l\'application Kore manquante ?</string>
 <string name="crash_the_player">Faire planter le lecteur</string>
 <string name="notification_scale_to_square_image_title">Recadrer la miniature au format 1:1</string>
 <string name="notification_scale_to_square_image_summary">Recadrer la miniature vidéo affichée dans la notification du format 16:9 au format 1:1</string>
@@ -1211,22 +1213,4 @@ Voulez-vous continuer?</string>
 <string name="plugins_show_nsfw_title">Afficher les plugins NSFW</string>
 <string name="plugins_show_nsfw_summary">Lister les plugins marqués comme NSFW parmi les plugins disponibles</string>
 <string name="plugin_installed_other_publisher">Publié par quelqu\'un d\'autre. Désinstallez d\'abord %1$s pour installer celui-ci.</string>
-<string name="cast_to_pipepipe">Caster vers PipePipe</string>
-<string name="cast_searching">Recherche d\'appareils PipePipe sur ce réseau…</string>
-<string name="cast_enter_pin">Saisissez le code affiché sur %1$s</string>
-<string name="cast_wrong_pin">Code incorrect</string>
-<string name="cast_locked">Trop de codes incorrects. Redémarrez PipePipe sur l\'appareil de réception pour réessayer.</string>
-<string name="cast_disconnect">Se déconnecter</string>
-<string name="cast_pairing_code_toast">%1$s souhaite caster ici. Code d\'association : %2$s</string>
-<string name="cast_receiver_title">Recevoir des diffusions d\'autres appareils PipePipe</string>
-<string name="cast_receiver_summary">Maintient un écouteur de réseau local en cours d\'exécution tant que PipePipe est ouvert, ce qui consomme de la batterie. Activé par défaut sur les téléviseurs.</string>
-<string name="cast_plugin_missing">%2$s n\'a pas le plugin %1$s installé, il ne peut donc pas lire cette vidéo.</string>
-<string name="cast_service_unsupported">%1$s ne prend pas en charge le service de cette vidéo.</string>
-<string name="cast_play_failed">%1$s n\'a pas pu charger cette vidéo.</string>
-<string name="cast_remote_menu">Télécommande PipePipe</string>
-<string name="cast_reconnect">Se reconnecter</string>
-<string name="cast_reconnecting">Reconnexion…</string>
-<string name="cast_disconnected">Déconnecté</string>
-<string name="cast_resume_device">Continuer à contrôler %1$s</string>
-<string name="cast_connect_failed">Impossible de se connecter à %1$s.</string>
 </resources>

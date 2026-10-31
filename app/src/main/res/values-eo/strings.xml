@@ -11,6 +11,7 @@
     <string name="did_you_mean">Ĉu vi signifis \"%1$s\"\?</string>
     <string name="share_dialog_title">Konigi kun</string>
     <string name="default_resolution_title">Defaŭlta rezolucio</string>
+    <string name="play_with_kodi_title">Ludi per Kodi</string>
     <string name="play_audio">Sono</string>
     <string name="theme_title">Etoso</string>
     <string name="dark_theme_title">Malhela</string>
@@ -26,6 +27,7 @@
     <string name="detail_likes_img_view_description">Ŝatoj</string>
     <string name="detail_dislikes_img_view_description">Malŝatoj</string>
     <string name="no_player_found">Neniu elsendlflua ludilo trovita. Ĉu instali la aplikaĵon VLC\?</string>
+    <string name="kore_not_found">Ĉu instali la mankan aplikaĵon Kore\?</string>
     <string name="could_not_load_thumbnails">Ĉiuj bildetoj ne ŝargeblas</string>
     <string name="youtube_signature_deobfuscation_error">La subskribo de la ligilo de la filmeto ne malĉifreblas</string>
     <string name="parsing_error">La retejo ne analizeblas</string>

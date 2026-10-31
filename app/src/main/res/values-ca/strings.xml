@@ -102,6 +102,8 @@
     <string name="download_path_audio_summary">Els fitxers d\'àudio baixats es desen aquí</string>
     <string name="download_path_audio_dialog_title">Trieu la carpeta de baixades per als fitxers d\'àudio</string>
     <string name="default_popup_resolution_title">Resolució per defecte del mode emergent</string>
+    <string name="play_with_kodi_title">Reprodueix amb el Kodi</string>
+    <string name="kore_not_found">No s\'ha trobat l\'aplicació Kore. Voleu instal·lar-la\?</string>
     <string name="use_inexact_seek_title">Cerca ràpida poc precisa</string>
     <string name="use_inexact_seek_summary">"La cerca poc precisa permet que el reproductor cerqui una posició més ràpidament amb menys precisió. Cerques de 5, 15 o 25 segons no  funcionaran"</string>
     <string name="download_thumbnail_title">Carrega les miniatures</string>
