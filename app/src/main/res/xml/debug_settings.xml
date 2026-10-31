@@ -78,4 +78,10 @@
         android:title="@string/create_error_notification"
         app:singleLineTitle="false"
         app:iconSpaceReserved="false" />
+
+    <EditTextPreference
+        android:key="@string/debug_sync_server_key"
+        android:title="Debug sync server"
+        app:singleLineTitle="false"
+        app:iconSpaceReserved="false" />
 </PreferenceScreen>

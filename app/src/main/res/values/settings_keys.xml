@@ -1903,4 +1903,5 @@
         <item>259200</item>
         <item>604800</item>
     </string-array>
+    <string name="debug_sync_server_key" translatable="false">debug_sync_server</string>
 </resources>

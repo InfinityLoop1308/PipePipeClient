@@ -2,7 +2,9 @@ package org.schabi.newpipe.settings;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
+import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 
 import org.schabi.newpipe.R;
@@ -11,16 +13,71 @@ import org.schabi.newpipe.error.ErrorUtil;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.services.youtube.YoutubeParsingHelper;
 import org.schabi.newpipe.local.feed.notifications.NotificationWorker;
+import org.schabi.newpipe.sync.DebugSync;
 import org.schabi.newpipe.util.PicassoHelper;
 
 import java.util.Optional;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
 public class DebugSettingsFragment extends BasePreferenceFragment {
     private static final String DUMMY = "Dummy";
+    private final CompositeDisposable disposables = new CompositeDisposable();
+
+    @Override
+    public void onDestroy() {
+        disposables.clear();
+        super.onDestroy();
+    }
+
+    /**
+     * The server is saved only after /pipepipe/hello answers, so a typo can't silently disable
+     * sync. Clearing the field turns sync off. Only the entry point is debug-only.
+     */
+    private void setupSyncServerPreference() {
+        final EditTextPreference pref = (EditTextPreference) requirePreference(R.string.debug_sync_server_key);
+        final String clientName = DebugSync.clientName(requireContext());
+        pref.setSummaryProvider(p -> {
+            final String value = ((EditTextPreference) p).getText();
+            return (value == null || value.isEmpty() ? "" : value + "\n")
+                    + "Server URL, http allowed. Leave empty to disable. Client name: " + clientName;
+        });
+        pref.setOnPreferenceChangeListener((p, newValue) -> {
+            final String input = ((String) newValue).trim();
+            if (input.isEmpty()) {
+                pref.setText("");
+                DebugSync.schedule(requireContext(), false);
+                return false;
+            }
+            Toast.makeText(requireContext(),
+                    "Checking " + input + "…", Toast.LENGTH_SHORT).show();
+            disposables.add(Single.fromCallable(() -> {
+                        final String url = DebugSync.normalize(input);
+                        DebugSync.probe(url);
+                        return url;
+                    })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(url -> {
+                        pref.setText(url);
+                        DebugSync.schedule(requireContext(), true);
+                        Toast.makeText(requireContext(), "Sync server set",
+                                Toast.LENGTH_SHORT).show();
+                    }, e -> Toast.makeText(requireContext(),
+                            "No reply from " + input + "/pipepipe/hello: "
+                                    + e.getMessage(),
+                            Toast.LENGTH_LONG).show()));
+            return false;
+        });
+    }
 
     @Override
     public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
         addPreferencesFromResourceRegistry();
+        setupSyncServerPreference();
 
         final Preference allowHeapDumpingPreference =
                 findPreference(getString(R.string.allow_heap_dumping_key));
