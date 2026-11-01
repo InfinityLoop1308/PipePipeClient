@@ -29,6 +29,7 @@ import org.schabi.newpipe.extractor.plugin.PluginPreferences
 import org.schabi.newpipe.extractor.plugin.PluginRepository
 import java.io.File
 import java.io.IOException
+import java.security.MessageDigest
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -51,7 +52,6 @@ object PluginManager {
     private const val TAG = "PluginManager"
     private const val STATE_FILE = "plugins"
     private const val KEY_INSTALLED = "installed"
-    private const val KEY_ID_MAP = "id_map"
     private const val KEY_REPOSITORIES = "repositories"
     private const val MAX_PACKAGE_SIZE = 32L * 1024 * 1024
 
@@ -160,36 +160,26 @@ object PluginManager {
         state(context).edit(commit = true) { putString(KEY_INSTALLED, JsonWriter.string(array)) }
     }
 
-    @Synchronized
-    private fun idMap(context: Context): MutableMap<String, Int> {
-        val json = state(context).getString(KEY_ID_MAP, null) ?: return mutableMapOf()
-        return runCatching {
-            val o = JsonParser.`object`().from(json)
-            o.keys.associateWith { o.getInt(it) }.toMutableMap()
-        }.getOrElse { mutableMapOf() }
-    }
-
     /**
-     * Service ids are stable for the lifetime of the install: they are stored in the
-     * database (subscriptions, history, playlists), so they are never reassigned, even
-     * after uninstalling a plugin.
+     * Service ids are stored in the database (subscriptions, history, playlists), so they
+     * are derived from the plugin id alone and are the same on every device: ex built-in
+     * services keep their legacy id, the others get a hash of the plugin id above
+     * [ServiceList.FIRST_DYNAMIC_PLUGIN_ID].
      */
-    @Synchronized
-    fun serviceIdFor(context: Context, manifest: PluginManifest): Int {
-        val map = idMap(context)
-        map[manifest.pluginId]?.let { return it }
-
+    @JvmStatic
+    fun serviceIdFor(manifest: PluginManifest): Int {
         val legacy = LEGACY_IDS[manifest.pluginId]
-        val id = if (legacy != null && legacy == manifest.legacyServiceId) {
-            legacy
-        } else {
-            maxOf(ServiceList.FIRST_DYNAMIC_PLUGIN_ID, (map.values.maxOrNull() ?: 0) + 1)
+        if (legacy != null && legacy == manifest.legacyServiceId) {
+            return legacy
         }
-        map[manifest.pluginId] = id
-        state(context).edit(commit = true) {
-            putString(KEY_ID_MAP, JsonWriter.string(JsonObject(map.toMap())))
-        }
-        return id
+        val digest = MessageDigest.getInstance("SHA-256")
+            .digest(manifest.pluginId.toByteArray(Charsets.UTF_8))
+        val hash = ((digest[0].toInt() and 0x7F) shl 24) or
+            ((digest[1].toInt() and 0xFF) shl 16) or
+            ((digest[2].toInt() and 0xFF) shl 8) or
+            (digest[3].toInt() and 0xFF)
+        val range = Int.MAX_VALUE - ServiceList.FIRST_DYNAMIC_PLUGIN_ID
+        return ServiceList.FIRST_DYNAMIC_PLUGIN_ID + hash % range
     }
 
     /** The built-in repository followed by the ones added by the user. */
@@ -257,7 +247,10 @@ object PluginManager {
         if (manifest.pluginId != plugin.pluginId) {
             throw PluginException("Package does not match installed plugin")
         }
-        val serviceId = serviceIdFor(context, manifest)
+        val serviceId = serviceIdFor(manifest)
+        loaded[serviceId]?.let {
+            throw PluginException("Service id $serviceId is already used by ${it.pluginId}")
+        }
         val optimizedDir = codeCacheDir(context, plugin.pluginId).apply { mkdirs() }
         val classLoader = DexClassLoader(
             file.absolutePath, optimizedDir.absolutePath, null, PluginManager::class.java.classLoader
@@ -409,8 +402,6 @@ object PluginManager {
             if (!PluginPackage.hasDex(tmp)) {
                 throw PluginException("Package has no Android code")
             }
-            // a service id must be known before the first load
-            serviceIdFor(context, manifest)
             target.delete()
             if (!tmp.renameTo(target)) {
                 throw IOException("Cannot move plugin package")
