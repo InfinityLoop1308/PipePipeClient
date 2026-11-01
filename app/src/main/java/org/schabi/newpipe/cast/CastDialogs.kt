@@ -20,6 +20,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.FastRewind
 import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material.icons.filled.RepeatOn
+
+import androidx.compose.material.icons.filled.RepeatOneOn
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
@@ -43,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -300,6 +305,9 @@ object CastDialogs {
         private var sliderValue by mutableFloatStateOf(0f)
         private var statusRes by mutableStateOf<Int?>(null)
         private var showRetry by mutableStateOf(false)
+        private var speed by mutableFloatStateOf(1f)
+        private var repeat by mutableStateOf(0)
+        private var danmaku by mutableStateOf(-1)
 
         private fun seekStepMs(): Double {
             val prefs = PreferenceManager.getDefaultSharedPreferences(activity)
@@ -320,6 +328,9 @@ object CastDialogs {
                 titleText = state.title
                 playing = state.playing
                 durMs = state.dur.coerceAtLeast(0)
+                speed = state.speed
+                repeat = state.repeat
+                danmaku = state.danmaku
                 if (!dragging) {
                     posMs = state.pos.coerceIn(0, durMs)
                     sliderValue = posMs.toFloat()
@@ -478,6 +489,43 @@ object CastDialogs {
                         ControlButton(Icons.Filled.FastForward, null) { seekBy(1) }
                         ControlButton(Icons.Filled.SkipNext, null) { CastController.sendCommand("next") }
                     }
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        TextButton({
+                            val next = SPEEDS.firstOrNull { it > speed + 0.001f } ?: SPEEDS.first()
+                            speed = next
+                            CastController.sendCommand("speed", next.toDouble())
+                        }) { Text("${"%.2f".format(speed).trimEnd('0').trimEnd('.')}x") }
+                        ControlButton(
+                            when (repeat) {
+                                1 -> Icons.Filled.RepeatOneOn
+                                2 -> Icons.Filled.RepeatOn
+                                else -> Icons.Filled.Repeat
+                            },
+                            null
+                        ) {
+                            repeat = (repeat + 1) % 3
+                            CastController.sendCommand("repeat", repeat.toDouble())
+                        }
+                        if (danmaku >= 0) {
+                            IconButton({
+                                danmaku = 1 - danmaku
+                                CastController.sendCommand("danmaku", danmaku.toDouble())
+                            }) {
+                                Icon(
+                                    painterResource(
+                                        if (danmaku == 1) R.drawable.ic_bullet_comment_enabled
+                                        else R.drawable.ic_bullet_comment_disabled
+                                    ),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -489,6 +537,8 @@ object CastDialogs {
             }
         }
     }
+
+    private val SPEEDS = listOf(0.5f, 0.75f, 1f, 1.25f, 1.5f, 2f)
 
     private fun fmt(ms: Long): String {
         val s = (ms / 1000).coerceAtLeast(0)

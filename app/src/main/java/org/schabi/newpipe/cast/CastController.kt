@@ -25,7 +25,9 @@ data class CastState(
     val dur: Long,
     val speed: Float,
     val index: Int,
-    val size: Int
+    val size: Int,
+    val repeat: Int = 0,
+    val danmaku: Int = -1
 )
 
 interface CastListener {
@@ -265,7 +267,8 @@ object CastController {
                 CastState(
                     json.optString("title"), json.optBoolean("playing"), json.optLong("pos"),
                     json.optLong("dur"), json.optDouble("speed", 1.0).toFloat(),
-                    json.optInt("idx"), json.optInt("size")
+                    json.optInt("idx"), json.optInt("size"),
+                    json.optInt("repeat"), json.optInt("danmaku", -1)
                 )
             )
         }

@@ -10,12 +10,14 @@ import org.json.JSONObject
  *   play  {service, url, pos, plugin?, pname?}
  *         resolve and play a stream on the receiver. Plugin service ids differ between installs,
  *         so plugin streams are addressed by plugin id and `service` is ignored for them.
- *   cmd   {a, v?}                    a = play|pause|next|prev|seek|speed
+ *   cmd   {a, v?}                    a = play|pause|next|prev|seek|speed|repeat|danmaku
+ *         repeat v = 0 off|1 one|2 all, danmaku v = 0|1
  *   watch {on}                       ask for 1 Hz state pushes only while a UI is visible
  *
  * receiver -> controller
  *   auth  {ok, reason?, token?, name}  reason = need_pin|bad_pin|locked
- *   state {title, playing, pos, dur, speed, idx, size}
+ *   state {title, playing, pos, dur, speed, idx, size, repeat, danmaku}
+ *         danmaku = -1 unavailable|0 hidden|1 shown
  *   playres {ok, reason?, name?}       reason = no_plugin|no_service|failed; name = plugin name
  */
 object CastProtocol {

@@ -20,6 +20,7 @@ import org.json.JSONObject
 import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.plugin.PluginManager
+import org.schabi.newpipe.player.RepeatMode
 import org.schabi.newpipe.player.helper.PlayerHolder
 import org.schabi.newpipe.player.playqueue.SinglePlayQueue
 import org.schabi.newpipe.util.ExtractorHelper
@@ -226,6 +227,10 @@ class CastReceiver private constructor(private val context: Context) :
             "prev" -> player.playPrevious()
             "seek" -> player.seekTo(value.toLong())
             "speed" -> player.setPlaybackSpeed(value.toFloat())
+            "repeat" -> player.repeatMode = RepeatMode.values()[value.toInt().coerceIn(0, 2)]
+            "danmaku" -> player.bulletCommentsController.let {
+                if (it.isSwitchAvailable && it.isSwitchOn != (value != 0.0)) it.toggleVisibility()
+            }
         }
         pushState()
     }
@@ -240,6 +245,9 @@ class CastReceiver private constructor(private val context: Context) :
                 put("pos", player.currentPosition)
                 put("dur", player.duration)
                 put("speed", player.playbackSpeed.toDouble())
+                put("repeat", player.repeatMode.ordinal)
+                val danmaku = player.bulletCommentsController
+                put("danmaku", if (!danmaku.isSwitchAvailable) -1 else if (danmaku.isSwitchOn) 1 else 0)
                 put("idx", player.playQueue?.index ?: 0)
                 put("size", player.playQueue?.size() ?: 0)
             } else {

@@ -35,7 +35,11 @@ class ChatPanelController(private val player: Player) {
     private val pinnedObserver = Observer<List<PinnedSc>> { pinnedView?.submit(it) }
     private val availableObserver = Observer<Boolean?> { update() }
 
-    private fun canShow(): Boolean =
+    /** Whether the user wants the panel open (it is only shown while [canShow]). */
+    val isWanted: Boolean
+        get() = wanted
+
+    fun canShow(): Boolean =
         player.bulletCommentsController.isChatMode &&
             player.videoPlayerSelected() &&
             player.isFullscreen &&

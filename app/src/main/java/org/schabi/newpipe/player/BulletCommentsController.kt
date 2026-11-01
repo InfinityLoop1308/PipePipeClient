@@ -41,6 +41,14 @@ class BulletCommentsController(private val player: Player) {
     var isVisible = false
         private set
 
+    /** Whether the comments switch of the player controls is currently usable, in either mode. */
+    val isSwitchAvailable: Boolean
+        get() = if (isChatMode) chatPanel.canShow() else bcPlayer != null
+
+    /** State of the comments switch: the chat panel in chat mode, the floating overlay otherwise. */
+    val isSwitchOn: Boolean
+        get() = if (isChatMode) chatPanel.isWanted else isVisible
+
     private val chat = ChatController(player)
     val chatPanel = ChatPanelController(player)
 
