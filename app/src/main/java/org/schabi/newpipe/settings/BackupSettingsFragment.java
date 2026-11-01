@@ -184,8 +184,8 @@ public class BackupSettingsFragment extends BasePreferenceFragment {
                     exportSettingsOnlyLauncher,
                     StoredFileHelper.getNewPicker(requireContext(),
                             "PipePipeSettings-" + exportDateFormat.format(new Date())
-                                    + ".settings",
-                            "application/octet-stream", getImportExportDataUri()),
+                                    + ".json",
+                            "application/json", getImportExportDataUri()),
                     TAG, getContext());
             return true;
         });
@@ -290,7 +290,7 @@ public class BackupSettingsFragment extends BasePreferenceFragment {
         }
         final Uri uri = result.getData().getData();
         final StoredFileHelper file =
-                new StoredFileHelper(getContext(), uri, "application/octet-stream");
+                new StoredFileHelper(getContext(), uri, "application/json");
         disposables.add(Completable.fromAction(() ->
                 manager.exportSettingsOnly(defaultPreferences, file))
                 .subscribeOn(Schedulers.io())

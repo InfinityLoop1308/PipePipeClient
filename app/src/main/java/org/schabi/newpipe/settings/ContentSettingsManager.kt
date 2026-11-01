@@ -2,6 +2,9 @@ package org.schabi.newpipe.settings
 
 import android.content.SharedPreferences
 import android.util.Log
+import com.grack.nanojson.JsonArray
+import com.grack.nanojson.JsonParser
+import com.grack.nanojson.JsonWriter
 import org.schabi.newpipe.streams.io.SharpInputStream
 import org.schabi.newpipe.streams.io.SharpOutputStream
 import org.schabi.newpipe.streams.io.StoredFileHelper
@@ -11,8 +14,8 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.io.IOException
-import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
+import java.io.OutputStream
 import java.util.zip.ZipOutputStream
 
 class ContentSettingsManager(private val fileLocator: NewPipeFileLocator) {
@@ -40,24 +43,25 @@ class ContentSettingsManager(private val fileLocator: NewPipeFileLocator) {
                     Log.e(TAG, "Unable to exportDatabase", e)
                 }
 
+                // legacy format, kept so that older versions and NewPipe can still read it
                 ZipHelper.addFileToZip(outZip, fileLocator.settings.path, "newpipe.settings")
+
+                writePreferencesJson(preferences, FileOutputStream(fileLocator.settingsJson))
+                ZipHelper.addFileToZip(outZip, fileLocator.settingsJson.path, "preferences.json")
             }
     }
 
-    /** Exports only the given [SharedPreferences] (same serialized format as in the full backup). */
+    /** Exports only the given [SharedPreferences], as JSON (same as `preferences.json` in the full backup). */
     @Throws(Exception::class)
     fun exportSettingsOnly(preferences: SharedPreferences, file: StoredFileHelper) {
         file.create()
-        ObjectOutputStream(BufferedOutputStream(SharpOutputStream(file.stream))).use { output ->
-            output.writeObject(HashMap(preferences.all))
-            output.flush()
-        }
+        writePreferencesJson(preferences, SharpOutputStream(file.stream))
     }
 
-    /** Replaces all preferences by the ones read from [file]. Throws if the file is not valid. */
+    /** Replaces all preferences by the ones read from the JSON [file]. Throws if the file is not valid. */
     @Throws(Exception::class)
     fun importSettingsOnly(preferences: SharedPreferences, file: StoredFileHelper) {
-        SharpInputStream(file.stream).use { applyEntries(preferences, it) }
+        SharpInputStream(file.stream).use { applyJson(preferences, it) }
     }
 
     fun resetSettings(preferences: SharedPreferences) {
@@ -66,6 +70,7 @@ class ContentSettingsManager(private val fileLocator: NewPipeFileLocator) {
 
     fun deleteSettingsFile() {
         fileLocator.settings.delete()
+        fileLocator.settingsJson.delete()
     }
 
     /**
@@ -88,42 +93,80 @@ class ContentSettingsManager(private val fileLocator: NewPipeFileLocator) {
         return success
     }
 
+    /** Extracts the settings from the backup, preferring the JSON ones over the legacy ones. */
     fun extractSettings(file: StoredFileHelper): Boolean {
-        return ZipHelper.extractFileFromZip(file, fileLocator.settings.path, "newpipe.settings")
+        fileLocator.settings.delete()
+        fileLocator.settingsJson.delete()
+        val hasJson = ZipHelper.extractFileFromZip(
+            file, fileLocator.settingsJson.path, "preferences.json"
+        )
+        return hasJson ||
+            ZipHelper.extractFileFromZip(file, fileLocator.settings.path, "newpipe.settings")
     }
 
     fun loadSharedPreferences(preferences: SharedPreferences) {
         try {
-            FileInputStream(fileLocator.settings).use { applyEntries(preferences, it) }
-        } catch (e: IOException) {
-            Log.e(TAG, "Unable to loadSharedPreferences", e)
-        } catch (e: ClassNotFoundException) {
+            if (fileLocator.settingsJson.exists()) {
+                FileInputStream(fileLocator.settingsJson).use { applyJson(preferences, it) }
+            } else {
+                FileInputStream(fileLocator.settings).use { applyLegacy(preferences, it) }
+            }
+        } catch (e: Exception) {
             Log.e(TAG, "Unable to loadSharedPreferences", e)
         }
     }
 
+    private fun writePreferencesJson(preferences: SharedPreferences, out: OutputStream) {
+        out.buffered().use {
+            JsonWriter.indent("").on(it).`object`(preferences.all).done()
+        }
+    }
+
+    private fun applyJson(preferences: SharedPreferences, stream: InputStream) {
+        val json = JsonParser.`object`().from(stream)
+        val editor = preferences.edit()
+        editor.clear()
+        for ((key, value) in json) {
+            when (value) {
+                is Boolean -> editor.putBoolean(key, value)
+                is Int -> editor.putInt(key, value)
+                is Long -> editor.putLong(key, value)
+                is Float -> editor.putFloat(key, value)
+                is Double -> editor.putFloat(key, value.toFloat())
+                is String -> editor.putString(key, value)
+                is JsonArray -> editor.putStringSet(
+                    key, value.mapNotNull { it as? String }.toSet()
+                )
+            }
+        }
+        if (!editor.commit()) {
+            throw IOException("Unable to commit preferences")
+        }
+    }
+
+    /** Only for the `newpipe.settings` entry of old backups. */
     @Throws(IOException::class, ClassNotFoundException::class)
-    private fun applyEntries(preferences: SharedPreferences, stream: InputStream) {
-        ObjectInputStream(stream).use { input ->
+    private fun applyLegacy(preferences: SharedPreferences, stream: InputStream) {
+        PreferencesObjectInputStream(stream).use { input ->
             @Suppress("UNCHECKED_CAST")
             val entries = input.readObject() as Map<String, *>
-            val preferenceEditor = preferences.edit()
-            preferenceEditor.clear()
+            val editor = preferences.edit()
+            editor.clear()
             for ((key, value) in entries) {
                 when (value) {
-                    is Boolean -> preferenceEditor.putBoolean(key, value)
-                    is Float -> preferenceEditor.putFloat(key, value)
-                    is Int -> preferenceEditor.putInt(key, value)
-                    is Long -> preferenceEditor.putLong(key, value)
-                    is String -> preferenceEditor.putString(key, value)
+                    is Boolean -> editor.putBoolean(key, value)
+                    is Float -> editor.putFloat(key, value)
+                    is Int -> editor.putInt(key, value)
+                    is Long -> editor.putLong(key, value)
+                    is String -> editor.putString(key, value)
                     // There are currently only Sets with type String possible
                     is Set<*> -> {
                         @Suppress("UNCHECKED_CAST")
-                        preferenceEditor.putStringSet(key, value as Set<String>?)
+                        editor.putStringSet(key, value as Set<String>?)
                     }
                 }
             }
-            preferenceEditor.commit()
+            editor.commit()
         }
     }
 }
