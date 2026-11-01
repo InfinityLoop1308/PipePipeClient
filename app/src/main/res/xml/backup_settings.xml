@@ -76,4 +76,32 @@
                 app:singleLineTitle="false"
                 app:iconSpaceReserved="false" />
     </PreferenceCategory>
+
+    <PreferenceCategory
+            android:layout="@layout/settings_category_header_layout"
+            android:title="@string/settings_only_category_title"
+            app:singleLineTitle="false"
+            app:iconSpaceReserved="false">
+
+        <Preference
+                android:key="@string/import_settings_only_key"
+                android:summary="@string/import_settings_only_summary"
+                android:title="@string/import_settings_only_title"
+                app:singleLineTitle="false"
+                app:iconSpaceReserved="false" />
+
+        <Preference
+                android:key="@string/export_settings_only_key"
+                android:summary="@string/export_settings_only_summary"
+                android:title="@string/export_settings_only_title"
+                app:singleLineTitle="false"
+                app:iconSpaceReserved="false" />
+
+        <Preference
+                android:key="@string/reset_settings_key"
+                android:summary="@string/reset_settings_summary"
+                android:title="@string/reset_settings_title"
+                app:singleLineTitle="false"
+                app:iconSpaceReserved="false" />
+    </PreferenceCategory>
 </PreferenceScreen>

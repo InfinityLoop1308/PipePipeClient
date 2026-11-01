@@ -70,6 +70,10 @@ public class BackupSettingsFragment extends BasePreferenceFragment {
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), this::requestExportPathResult);
     private final ActivityResultLauncher<Intent> requestScheduledBackupPathLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), this::requestScheduledBackupPathResult);
+    private final ActivityResultLauncher<Intent> importSettingsOnlyLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), this::importSettingsOnlyResult);
+    private final ActivityResultLauncher<Intent> exportSettingsOnlyLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), this::exportSettingsOnlyResult);
     private SwitchPreferenceCompat scheduledBackupPreference;
     private Preference scheduledBackupPathPreference;
 
@@ -168,6 +172,36 @@ public class BackupSettingsFragment extends BasePreferenceFragment {
             return true;
         });
 
+        requirePreference(R.string.import_settings_only_key).setOnPreferenceClickListener(p -> {
+            NoFileManagerSafeGuard.launchSafe(
+                    importSettingsOnlyLauncher,
+                    StoredFileHelper.getPicker(requireContext(), "*/*", getImportExportDataUri()),
+                    TAG, getContext());
+            return true;
+        });
+        requirePreference(R.string.export_settings_only_key).setOnPreferenceClickListener(p -> {
+            NoFileManagerSafeGuard.launchSafe(
+                    exportSettingsOnlyLauncher,
+                    StoredFileHelper.getNewPicker(requireContext(),
+                            "PipePipeSettings-" + exportDateFormat.format(new Date())
+                                    + ".settings",
+                            "application/octet-stream", getImportExportDataUri()),
+                    TAG, getContext());
+            return true;
+        });
+        requirePreference(R.string.reset_settings_key).setOnPreferenceClickListener(p -> {
+            new AlertDialog.Builder(requireContext())
+                    .setTitle(R.string.reset_settings_title)
+                    .setMessage(R.string.reset_settings_confirmation)
+                    .setNegativeButton(R.string.cancel, null)
+                    .setPositiveButton(R.string.ok, (d, w) -> {
+                        manager.resetSettings(defaultPreferences);
+                        NavigationHelper.restartApp(requireActivity());
+                    })
+                    .show();
+            return true;
+        });
+
         final Preference clearSubscriptionsPreference =
                 requirePreference(R.string.clear_subscriptions_key);
         clearSubscriptionsPreference.setOnPreferenceClickListener((final Preference p) -> {
@@ -246,6 +280,50 @@ public class BackupSettingsFragment extends BasePreferenceFragment {
     public void onDestroy() {
         disposables.clear();
         super.onDestroy();
+    }
+
+    private void exportSettingsOnlyResult(final ActivityResult result) {
+        assureCorrectAppLanguage(getContext());
+        if (result.getResultCode() != Activity.RESULT_OK || result.getData() == null
+                || result.getData().getData() == null) {
+            return;
+        }
+        final Uri uri = result.getData().getData();
+        final StoredFileHelper file =
+                new StoredFileHelper(getContext(), uri, "application/octet-stream");
+        disposables.add(Completable.fromAction(() ->
+                manager.exportSettingsOnly(defaultPreferences, file))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                    saveLastImportExportDataUri(uri);
+                    Toast.makeText(getContext(), R.string.export_complete_toast,
+                            Toast.LENGTH_SHORT).show();
+                }, e -> ErrorUtil.showUiErrorSnackbar(this, "Exporting settings", e)));
+    }
+
+    private void importSettingsOnlyResult(final ActivityResult result) {
+        assureCorrectAppLanguage(getContext());
+        if (result.getResultCode() != Activity.RESULT_OK || result.getData() == null
+                || result.getData().getData() == null) {
+            return;
+        }
+        final Uri uri = result.getData().getData();
+        final StoredFileHelper file = new StoredFileHelper(getContext(), uri, "*/*");
+        new AlertDialog.Builder(requireActivity())
+                .setMessage(R.string.override_current_data)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.ok, (d, id) ->
+                        disposables.add(Completable.fromAction(() ->
+                                manager.importSettingsOnly(defaultPreferences, file))
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(() -> finishImport(uri), e -> {
+                                    Log.e(TAG, "Importing settings", e);
+                                    Toast.makeText(getContext(), R.string.invalid_settings_file,
+                                            Toast.LENGTH_SHORT).show();
+                                })))
+                .show();
     }
 
     private void requestExportPathResult(final ActivityResult result) {

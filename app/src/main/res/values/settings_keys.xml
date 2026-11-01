@@ -1904,4 +1904,7 @@
         <item>604800</item>
     </string-array>
     <string name="debug_sync_server_key" translatable="false">debug_sync_server</string>
+    <string name="import_settings_only_key" translatable="false">import_settings_only</string>
+    <string name="export_settings_only_key" translatable="false">export_settings_only</string>
+    <string name="reset_settings_key" translatable="false">reset_settings</string>
 </resources>
