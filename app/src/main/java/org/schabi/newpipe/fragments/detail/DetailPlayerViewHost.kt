@@ -49,6 +49,7 @@ class DetailPlayerViewHost(
     private val activity: AppCompatActivity get() = fragment.requireActivity() as AppCompatActivity
     private val thumbnail get() = binding.detailThumbnailRootLayout
     private var stickyPlayerEnabled = false
+    private val blockedFocus = HashMap<View, SavedFocus>()
 
     private val preDrawListener = object : ViewTreeObserver.OnPreDrawListener {
         override fun onPreDraw(): Boolean {
@@ -85,9 +86,7 @@ class DetailPlayerViewHost(
 
         setPageScrollable(!fullscreen)
         // Keep the DPAD focus from wandering into the hidden detail page
-        (binding.detailMainContent as ViewGroup).descendantFocusability =
-            if (fullscreen) ViewGroup.FOCUS_BLOCK_DESCENDANTS
-            else ViewGroup.FOCUS_AFTER_DESCENDANTS
+        setPageFocusBlocked(fullscreen, player.rootView)
 
         if (fullscreen && DeviceUtils.isTv(fragment.context)) {
             // The focus is still on the detail page's thumbnail (drawn as a white frame) or on
@@ -119,7 +118,82 @@ class DetailPlayerViewHost(
         }
     }
 
+    /**
+     * The fullscreen player stays inside the detail page (see [addVideoPlayerView]), so the page
+     * cannot be blocked as a whole. Instead make every view around the player unfocusable: the
+     * siblings along the path from [playerRoot] up to the page root, and the focusable ancestors
+     * on that path (the thumbnail, which draws a white frame when focused).
+     */
+    private fun setPageFocusBlocked(blocked: Boolean, playerRoot: View) {
+        // Always restore first: the page or the player view may have changed since last time
+        blockedFocus.forEach { (view, saved) -> saved.restore(view) }
+        blockedFocus.clear()
+        if (!blocked) {
+            return
+        }
+        val pageRoot = binding.root
+        var child: View = playerRoot
+        var parent = child.parent as? ViewGroup
+        while (parent != null) {
+            for (i in 0 until parent.childCount) {
+                val sibling = parent.getChildAt(i)
+                if (sibling !== child) {
+                    blockFocus(sibling)
+                }
+            }
+            if (parent === pageRoot) {
+                break
+            }
+            if (parent.isFocusable) {
+                blockedFocus[parent] = SavedFocus(parent)
+                parent.isFocusable = false
+            }
+            child = parent
+            parent = parent.parent as? ViewGroup
+        }
+    }
+
+    /** Makes [view] and all of its descendants unfocusable. */
+    private fun blockFocus(view: View) {
+        val group = view as? ViewGroup
+        val descendantsBlocked =
+            group == null || group.descendantFocusability == ViewGroup.FOCUS_BLOCK_DESCENDANTS
+        if (!view.isFocusable && descendantsBlocked) {
+            return
+        }
+        blockedFocus[view] = SavedFocus(view)
+        if (view.isFocusable) {
+            view.isFocusable = false
+        }
+        group?.descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS
+    }
+
+    /** Focus state of a view before it was blocked by [setPageFocusBlocked]. */
+    private class SavedFocus(view: View) {
+        private val wasFocusable = view.isFocusable
+        // keeps FOCUSABLE_AUTO instead of turning it into an explicit value on restore
+        private val focusable =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) view.focusable else 0
+        private val focusableInTouchMode = view.isFocusableInTouchMode
+        private val descendantFocusability = (view as? ViewGroup)?.descendantFocusability
+
+        fun restore(view: View) {
+            if (wasFocusable) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    view.focusable = focusable
+                } else {
+                    view.isFocusable = true
+                }
+                view.isFocusableInTouchMode = focusableInTouchMode
+            }
+            if (descendantFocusability != null) {
+                (view as ViewGroup).descendantFocusability = descendantFocusability
+            }
+        }
+    }
+
     fun removeVideoPlayerView() {
+        host.player?.let { setPageFocusBlocked(false, it.rootView) }
         if (fragment.view != null) {
             thumbnail.playerPlaceholder.layoutParams.height = FrameLayout.LayoutParams.MATCH_PARENT
             thumbnail.playerPlaceholder.requestLayout()
