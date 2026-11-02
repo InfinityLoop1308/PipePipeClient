@@ -59,6 +59,7 @@ class VideoDetailFragment : BaseStateFragment<StreamInfo>(), BackPressable,
 
     companion object {
         const val KEY_SWITCHING_PLAYERS = "switching_players"
+        const val KEY_FORCE_PLAY_FULLSCREEN = "force_play_fullscreen"
 
         private const val STATE_SERVICE_ID = "serviceId"
         private const val STATE_TITLE = "title"
@@ -138,6 +139,12 @@ class VideoDetailFragment : BaseStateFragment<StreamInfo>(), BackPressable,
         load(forceLoad = false, addToBackStack = true)
     }
 
+    private var forceFullscreen = false
+
+    fun setForceFullscreen(force: Boolean) {
+        forceFullscreen = force
+    }
+
     fun setAutoPlay(autoPlay: Boolean) {
         autoPlayEnabled = autoPlay
     }
@@ -159,7 +166,7 @@ class VideoDetailFragment : BaseStateFragment<StreamInfo>(), BackPressable,
     }
 
     fun openVideoPlayerAutoFullscreen() {
-        openVideoPlayer(PlayerHelper.isStartMainPlayerFullscreenEnabled(requireContext()))
+        openVideoPlayer(forceFullscreen || PlayerHelper.isStartMainPlayerFullscreenEnabled(requireContext()))
     }
 
     fun scrollToTop() {
@@ -607,7 +614,7 @@ class VideoDetailFragment : BaseStateFragment<StreamInfo>(), BackPressable,
         autoPlayEnabled
             && player?.videoPlayerSelected() != false
             && sheetStateToSave != BottomSheetBehavior.STATE_HIDDEN
-            && PlayerHelper.isAutoplayAllowedByUser(requireContext())
+            && (forceFullscreen || PlayerHelper.isAutoplayAllowedByUser(requireContext()))
 
     private fun beginStartupTrace() {
         vm.currentInfo?.let { pendingStartupTraceId = PlaybackStartupTrace.begin(it.id, it.url) }

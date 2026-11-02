@@ -212,7 +212,7 @@ class CastReceiver private constructor(private val context: Context) :
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ info ->
-                NavigationHelper.playOnMainPlayer(context, SinglePlayQueue(info, pos), false)
+                NavigationHelper.playOnMainPlayer(context, SinglePlayQueue(info, pos), false, true)
                 reply(true)
             }, {
                 Log.w(TAG, "cast play failed", it)

@@ -145,11 +145,18 @@ public final class NavigationHelper {
     public static void playOnMainPlayer(final Context context,
                                         @NonNull final PlayQueue playQueue,
                                         final boolean switchingPlayers) {
+        playOnMainPlayer(context, playQueue, switchingPlayers, false);
+    }
+
+    public static void playOnMainPlayer(final Context context,
+                                        @NonNull final PlayQueue playQueue,
+                                        final boolean switchingPlayers,
+                                        final boolean forcePlayFullscreen) {
         final PlayerMediaItem item = playQueue.getItem();
         if (item != null) {
             openVideoDetail(context,
                     item.getServiceId(), item.getUrl(), item.getTitle(), playQueue,
-                    switchingPlayers);
+                    switchingPlayers, forcePlayFullscreen);
         }
     }
 
@@ -385,6 +392,18 @@ public final class NavigationHelper {
                                                @NonNull final String title,
                                                @Nullable final PlayQueue playQueue,
                                                final boolean switchingPlayers) {
+        openVideoDetailFragment(context, fragmentManager, serviceId, url, title, playQueue,
+                switchingPlayers, false);
+    }
+
+    public static void openVideoDetailFragment(@NonNull final Context context,
+                                               @NonNull final FragmentManager fragmentManager,
+                                               final int serviceId,
+                                               @Nullable final String url,
+                                               @NonNull final String title,
+                                               @Nullable final PlayQueue playQueue,
+                                               final boolean switchingPlayers,
+                                               final boolean forcePlayFullscreen) {
 
         final boolean autoPlay;
         @Nullable final PlayerService.PlayerType playerType = PlayerHolder.getInstance().getType();
@@ -405,7 +424,8 @@ public final class NavigationHelper {
         final RunnableWithVideoDetailFragment onVideoDetailFragmentReady = (detailFragment,
                                                                             loadVideo) -> {
             expandMainPlayer();
-            detailFragment.setAutoPlay(autoPlay);
+            detailFragment.setAutoPlay(autoPlay || forcePlayFullscreen);
+            detailFragment.setForceFullscreen(forcePlayFullscreen);
             if (switchingPlayers) {
                 // Situation when user switches from players to main player. All needed data is
                 // here, we can start watching (assuming newQueue equals playQueue).
@@ -424,7 +444,8 @@ public final class NavigationHelper {
         } else {
             final VideoDetailFragment instance = VideoDetailFragment
                     .getInstance(serviceId, url, title, playQueue);
-            instance.setAutoPlay(autoPlay);
+            instance.setAutoPlay(autoPlay || forcePlayFullscreen);
+            instance.setForceFullscreen(forcePlayFullscreen);
 
             defaultTransaction(fragmentManager)
                     .replace(R.id.fragment_player_holder, instance)
@@ -560,12 +581,23 @@ public final class NavigationHelper {
                                        @NonNull final String title,
                                        @Nullable final PlayQueue playQueue,
                                        final boolean switchingPlayers) {
+        openVideoDetail(context, serviceId, url, title, playQueue, switchingPlayers, false);
+    }
+
+    public static void openVideoDetail(final Context context,
+                                       final int serviceId,
+                                       final String url,
+                                       @NonNull final String title,
+                                       @Nullable final PlayQueue playQueue,
+                                       final boolean switchingPlayers,
+                                       final boolean forcePlayFullscreen) {
 
         final Intent intent = getOpenIntent(context, url, serviceId,
                 StreamingService.LinkType.STREAM);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(Constants.KEY_TITLE, title);
         intent.putExtra(VideoDetailFragment.KEY_SWITCHING_PLAYERS, switchingPlayers);
+        intent.putExtra(VideoDetailFragment.KEY_FORCE_PLAY_FULLSCREEN, forcePlayFullscreen);
 
         if (playQueue != null) {
             final String cacheKey = SerializedCache.getInstance().put(playQueue, PlayQueue.class);
