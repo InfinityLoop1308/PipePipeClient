@@ -55,19 +55,38 @@ public final class FocusAwareCoordinator extends CoordinatorLayout {
         super.requestChildFocus(child, focused);
 
         if (!isInTouchMode() && !focusScrollSuppressed) {
+            final ViewGroup childGroup = (ViewGroup) child;
+            final View target;
             if (focused.getHeight() >= getHeight()) {
+                target = focused;
                 focused.getFocusedRect(childFocus);
-
-                ((ViewGroup) child).offsetDescendantRectToMyCoords(focused, childFocus);
             } else {
+                target = (View) focused.getParent();
                 focused.getHitRect(childFocus);
-
-                ((ViewGroup) child).offsetDescendantRectToMyCoords((View) focused.getParent(),
-                        childFocus);
+            }
+            // e.g. a Snackbar's own view gaining focus: the target can be the child itself
+            // or not a descendant of it, which makes offsetDescendantRectToMyCoords throw
+            if (target != childGroup) {
+                if (target == null || !isDescendantOf(target, childGroup)) {
+                    return;
+                }
+                childGroup.offsetDescendantRectToMyCoords(target, childFocus);
             }
 
             requestChildRectangleOnScreen(child, childFocus, false);
         }
+    }
+
+    private static boolean isDescendantOf(final View view, final View ancestor) {
+        View v = view;
+        while (v != null) {
+            if (v == ancestor) {
+                return true;
+            }
+            final android.view.ViewParent p = v.getParent();
+            v = p instanceof View ? (View) p : null;
+        }
+        return false;
     }
 
     /**
