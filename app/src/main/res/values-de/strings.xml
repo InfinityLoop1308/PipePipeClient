@@ -1212,4 +1212,18 @@
 <string name="cast_disconnected">Getrennt</string>
 <string name="cast_resume_device">Steuerung von %1$s fortsetzen</string>
 <string name="cast_connect_failed">Verbindung zu %1$s konnte nicht hergestellt werden.</string>
+<string name="scheduled_backup_title">Geplantes Backup</string>
+<string name="scheduled_backup_summary">Schreibt regelmäßig einen vollständigen Datenbankexport in den ausgewählten Ordner. Alte Backups werden nie gelöscht.</string>
+<string name="scheduled_backup_path_title">Ordner für geplante Backups</string>
+<string name="scheduled_backup_interval_title">Intervall für geplante Backups</string>
+<string name="scheduled_backup_failed">Geplantes Backup fehlgeschlagen</string>
+<string name="settings_only_category_title">Einstellungen</string>
+<string name="import_settings_only_title">Einstellungen importieren</string>
+<string name="import_settings_only_summary">Einstellungen aus einer Datei importieren. Aktuelle Einstellungen werden überschrieben; Verlauf und Abonnements bleiben unberührt.</string>
+<string name="export_settings_only_title">Einstellungen exportieren</string>
+<string name="export_settings_only_summary">Nur Einstellungen in eine Datei exportieren, ohne Verlauf und Abonnements</string>
+<string name="reset_settings_title">Einstellungen zurücksetzen</string>
+<string name="reset_settings_summary">Alle Einstellungen auf Standardwerte zurücksetzen. Verlauf und Abonnements bleiben unberührt.</string>
+<string name="reset_settings_confirmation">Alle Einstellungen werden auf die Standardwerte zurückgesetzt und die App wird neu gestartet. Fortfahren?</string>
+<string name="invalid_settings_file">Keine gültige Einstellungsdatei</string>
 </resources>

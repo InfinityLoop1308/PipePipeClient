@@ -1183,4 +1183,18 @@
 <string name="cast_disconnected">切断されました</string>
 <string name="cast_resume_device">%1$s の制御を続ける</string>
 <string name="cast_connect_failed">%1$s に接続できませんでした。</string>
+<string name="scheduled_backup_title">定期バックアップ</string>
+<string name="scheduled_backup_summary">選択したフォルダにデータベースの完全なエクスポートを定期的に書き込みます。古いバックアップは削除されません。</string>
+<string name="scheduled_backup_path_title">定期バックアップフォルダ</string>
+<string name="scheduled_backup_interval_title">定期バックアップの間隔</string>
+<string name="scheduled_backup_failed">定期バックアップに失敗しました</string>
+<string name="settings_only_category_title">設定</string>
+<string name="import_settings_only_title">設定をインポート</string>
+<string name="import_settings_only_summary">ファイルから設定をインポートします。現在の設定は上書きされますが、履歴とサブスクリプションは変更されません。</string>
+<string name="export_settings_only_title">設定をエクスポート</string>
+<string name="export_settings_only_summary">履歴とサブスクリプションを含めず、設定のみをファイルにエクスポートします</string>
+<string name="reset_settings_title">設定をリセット</string>
+<string name="reset_settings_summary">すべての設定をデフォルトに戻します。履歴とサブスクリプションは変更されません。</string>
+<string name="reset_settings_confirmation">すべての設定がデフォルトに復元され、アプリが再起動します。続行しますか？</string>
+<string name="invalid_settings_file">有効な設定ファイルではありません</string>
 </resources>

@@ -1240,4 +1240,18 @@
 <string name="cast_disconnected">Rozłączono</string>
 <string name="cast_resume_device">Kontynuuj sterowanie %1$s</string>
 <string name="cast_connect_failed">Nie udało się połączyć z %1$s.</string>
+<string name="scheduled_backup_title">Zaplanowana kopia zapasowa</string>
+<string name="scheduled_backup_summary">Okresowo zapisuj pełny eksport bazy danych do wybranego folderu. Stare kopie zapasowe nigdy nie są usuwane.</string>
+<string name="scheduled_backup_path_title">Folder zaplanowanej kopii zapasowej</string>
+<string name="scheduled_backup_interval_title">Interwał zaplanowanej kopii zapasowej</string>
+<string name="scheduled_backup_failed">Zaplanowana kopia zapasowa nie powiodła się</string>
+<string name="settings_only_category_title">Ustawienia</string>
+<string name="import_settings_only_title">Importuj ustawienia</string>
+<string name="import_settings_only_summary">Importuj ustawienia z pliku. Obecne ustawienia zostaną nadpisane; historia i subskrypcje pozostaną nienaruszone.</string>
+<string name="export_settings_only_title">Eksportuj ustawienia</string>
+<string name="export_settings_only_summary">Eksportuj tylko ustawienia do pliku, bez historii i subskrypcji</string>
+<string name="reset_settings_title">Resetuj ustawienia</string>
+<string name="reset_settings_summary">Przywróć wszystkie ustawienia do domyślnych. Historia i subskrypcje pozostaną nienaruszone.</string>
+<string name="reset_settings_confirmation">Wszystkie ustawienia zostaną przywrócone do domyślnych, a aplikacja zostanie uruchomiona ponownie. Kontynuować?</string>
+<string name="invalid_settings_file">Nieprawidłowy plik ustawień</string>
 </resources>

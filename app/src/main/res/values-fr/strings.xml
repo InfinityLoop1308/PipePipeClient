@@ -1229,4 +1229,18 @@ Voulez-vous continuer?</string>
 <string name="cast_disconnected">Déconnecté</string>
 <string name="cast_resume_device">Continuer à contrôler %1$s</string>
 <string name="cast_connect_failed">Impossible de se connecter à %1$s.</string>
+<string name="scheduled_backup_title">Sauvegarde planifiée</string>
+<string name="scheduled_backup_summary">Écrire périodiquement une exportation complète de la base de données dans le dossier choisi. Les anciennes sauvegardes ne sont jamais supprimées.</string>
+<string name="scheduled_backup_path_title">Dossier de sauvegarde planifiée</string>
+<string name="scheduled_backup_interval_title">Intervalle de sauvegarde planifiée</string>
+<string name="scheduled_backup_failed">Échec de la sauvegarde planifiée</string>
+<string name="settings_only_category_title">Paramètres</string>
+<string name="import_settings_only_title">Importer les paramètres</string>
+<string name="import_settings_only_summary">Importer les paramètres depuis un fichier. Les paramètres actuels seront écrasés ; l\'historique et les abonnements restent intacts.</string>
+<string name="export_settings_only_title">Exporter les paramètres</string>
+<string name="export_settings_only_summary">Exporter uniquement les paramètres dans un fichier, sans l\'historique et les abonnements</string>
+<string name="reset_settings_title">Réinitialiser les paramètres</string>
+<string name="reset_settings_summary">Restaurer tous les paramètres par défaut. L\'historique et les abonnements restent intacts.</string>
+<string name="reset_settings_confirmation">Tous les paramètres seront restaurés par défaut et l\'application va redémarrer. Continuer ?</string>
+<string name="invalid_settings_file">Fichier de paramètres non valide</string>
 </resources>

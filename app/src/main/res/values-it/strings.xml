@@ -1154,4 +1154,18 @@
 <string name="cast_disconnected">Disconnesso</string>
 <string name="cast_resume_device">Continua a controllare %1$s</string>
 <string name="cast_connect_failed">Impossibile connettersi a %1$s.</string>
+<string name="scheduled_backup_title">Backup programmato</string>
+<string name="scheduled_backup_summary">Scrive periodicamente un\'esportazione completa del database nella cartella scelta. I vecchi backup non vengono mai eliminati.</string>
+<string name="scheduled_backup_path_title">Cartella del backup programmato</string>
+<string name="scheduled_backup_interval_title">Intervallo del backup programmato</string>
+<string name="scheduled_backup_failed">Backup programmato non riuscito</string>
+<string name="settings_only_category_title">Impostazioni</string>
+<string name="import_settings_only_title">Importa impostazioni</string>
+<string name="import_settings_only_summary">Importa le impostazioni da un file. Le impostazioni attuali verranno sovrascritte; la cronologia e le iscrizioni rimarranno intatte.</string>
+<string name="export_settings_only_title">Esporta impostazioni</string>
+<string name="export_settings_only_summary">Esporta solo le impostazioni in un file, senza cronologia e iscrizioni</string>
+<string name="reset_settings_title">Ripristina impostazioni</string>
+<string name="reset_settings_summary">Ripristina tutte le impostazioni ai valori predefiniti. La cronologia e le iscrizioni rimarranno intatte.</string>
+<string name="reset_settings_confirmation">Tutte le impostazioni verranno ripristinate ai valori predefiniti e l\'app verrà riavviata. Continuare?</string>
+<string name="invalid_settings_file">File di impostazioni non valido</string>
 </resources>

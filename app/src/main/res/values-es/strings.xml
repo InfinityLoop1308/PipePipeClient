@@ -1216,4 +1216,18 @@
 <string name="cast_disconnected">Desconectado</string>
 <string name="cast_resume_device">Continuar controlando %1$s</string>
 <string name="cast_connect_failed">No se pudo conectar a %1$s.</string>
+<string name="scheduled_backup_title">Copia de seguridad programada</string>
+<string name="scheduled_backup_summary">Guarda periódicamente una exportación completa de la base de datos en la carpeta elegida. Las copias de seguridad antiguas nunca se eliminan.</string>
+<string name="scheduled_backup_path_title">Carpeta de la copia de seguridad programada</string>
+<string name="scheduled_backup_interval_title">Intervalo de la copia de seguridad programada</string>
+<string name="scheduled_backup_failed">La copia de seguridad programada falló</string>
+<string name="settings_only_category_title">Ajustes</string>
+<string name="import_settings_only_title">Importar ajustes</string>
+<string name="import_settings_only_summary">Importar ajustes desde un archivo. Los ajustes actuales serán sobrescritos; el historial y las suscripciones se mantendrán intactos.</string>
+<string name="export_settings_only_title">Exportar ajustes</string>
+<string name="export_settings_only_summary">Exportar solo los ajustes a un archivo, sin historial ni suscripciones</string>
+<string name="reset_settings_title">Restablecer ajustes</string>
+<string name="reset_settings_summary">Restaurar todos los ajustes a sus valores predeterminados. El historial y las suscripciones se mantendrán intactos.</string>
+<string name="reset_settings_confirmation">Todos los ajustes se restaurarán a sus valores predeterminados y la aplicación se reiniciará. ¿Continuar?</string>
+<string name="invalid_settings_file">No es un archivo de ajustes válido</string>
 </resources>

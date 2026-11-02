@@ -1267,4 +1267,18 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="cast_disconnected">Đã ngắt kết nối</string>
 <string name="cast_resume_device">Tiếp tục điều khiển %1$s</string>
 <string name="cast_connect_failed">Không thể kết nối với %1$s.</string>
+<string name="scheduled_backup_title">Sao lưu định kỳ</string>
+<string name="scheduled_backup_summary">Định kỳ xuất toàn bộ cơ sở dữ liệu vào thư mục đã chọn. Các bản sao lưu cũ sẽ không bao giờ bị xóa.</string>
+<string name="scheduled_backup_path_title">Thư mục sao lưu định kỳ</string>
+<string name="scheduled_backup_interval_title">Chu kỳ sao lưu định kỳ</string>
+<string name="scheduled_backup_failed">Sao lưu định kỳ thất bại</string>
+<string name="settings_only_category_title">Cài đặt</string>
+<string name="import_settings_only_title">Nhập cài đặt</string>
+<string name="import_settings_only_summary">Nhập cài đặt từ tệp. Cài đặt hiện tại sẽ bị ghi đè; lịch sử và các mục đăng ký được giữ nguyên.</string>
+<string name="export_settings_only_title">Xuất cài đặt</string>
+<string name="export_settings_only_summary">Chỉ xuất cài đặt ra tệp, không bao gồm lịch sử và các mục đăng ký</string>
+<string name="reset_settings_title">Đặt lại cài đặt</string>
+<string name="reset_settings_summary">Khôi phục tất cả cài đặt về mặc định. Lịch sử và các mục đăng ký được giữ nguyên.</string>
+<string name="reset_settings_confirmation">Tất cả cài đặt sẽ được khôi phục về mặc định và ứng dụng sẽ khởi động lại. Tiếp tục?</string>
+<string name="invalid_settings_file">Tệp cài đặt không hợp lệ</string>
 </resources>

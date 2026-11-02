@@ -1260,4 +1260,18 @@
 <string name="cast_disconnected">已断开连接</string>
 <string name="cast_resume_device">继续控制 %1$s</string>
 <string name="cast_connect_failed">无法连接到 %1$s。</string>
+<string name="scheduled_backup_title">定时备份</string>
+<string name="scheduled_backup_summary">定期将完整的数据库导出写入所选文件夹。旧备份永远不会被删除。</string>
+<string name="scheduled_backup_path_title">定时备份文件夹</string>
+<string name="scheduled_backup_interval_title">定时备份间隔</string>
+<string name="scheduled_backup_failed">定时备份失败</string>
+<string name="settings_only_category_title">设置</string>
+<string name="import_settings_only_title">导入设置</string>
+<string name="import_settings_only_summary">从文件导入设置。当前设置将被覆盖；历史记录和订阅不受影响。</string>
+<string name="export_settings_only_title">导出设置</string>
+<string name="export_settings_only_summary">仅将设置导出到文件，不包含历史记录和订阅</string>
+<string name="reset_settings_title">重置设置</string>
+<string name="reset_settings_summary">将所有设置恢复为默认值。历史记录和订阅不受影响。</string>
+<string name="reset_settings_confirmation">所有设置将恢复为默认值，应用将重新启动。是否继续？</string>
+<string name="invalid_settings_file">不是有效的设置文件</string>
 </resources>
