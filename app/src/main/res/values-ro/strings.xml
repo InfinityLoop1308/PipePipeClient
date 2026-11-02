@@ -45,8 +45,6 @@
     <string name="download_path_audio_dialog_title">Alege folderul de descărcare pentru fișierele audio</string>
     <string name="default_resolution_title">Rezoluție implicită</string>
     <string name="default_popup_resolution_title">Rezoluție implicită pentru pop-up</string>
-    <string name="play_with_kodi_title">Redă cu Kodi</string>
-    <string name="kore_not_found">Instalați aplicația Kore lipsă?</string>
     <string name="crash_the_player">Blochează playerul</string>
     <string name="notification_scale_to_square_image_title">Decupează miniatura la raportul de aspect 1:1</string>
     <string name="notification_scale_to_square_image_summary">Decupează miniatura video afișată în notificare de la raportul 16:9 la 1:1</string>
@@ -330,16 +328,11 @@
     <string name="charset_most_special_characters">Majoritatea caracterelor speciale</string>
     <string name="toast_no_player">Nu este instalată nicio aplicație pentru a reda acest fișier</string>
     <string name="title_activity_about_new">Despre PipePipe</string>
-    <string name="title_licenses">Licențe terțe</string>
-    <string name="copyright">© %1$s de %2$s sub %3$s</string>
     <string name="tab_about">Despre</string>
     <string name="app_description_new">O aplicație Android FLOSS care vă permite să navigați liber pe YouTube, NicoNico și BiliBili</string>
     <string name="contribution_title">Contribuiți</string>
     <string name="contribution_encouragement">Fie că aveți idei despre traduceri, modificări de design, curățarea codului sau modificări importante de cod, ajutorul este întotdeauna binevenit. Cu cât mai mult, Cu cât mai bine!</string>
     <string name="donation_title">Donați</string>
-    <string name="app_license_title_new">Licența NewPipe (proiectul amonte)</string>
-    <string name="app_license">NewPipe este software liber cu copyleft: îl puteți folosi, studia, distribui și îmbunătăți după bunul plac. Mai exact, îl puteți redistribui și/sau modifica în conformitate cu termenii Licenței Publice Generale GNU, publicată de Free Software Foundation, fie versiunea 3 a licenței, fie (la alegerea dvs.) orice versiune ulterioară.</string>
-    <string name="read_full_license">Citiți licența</string>
     <string name="title_activity_history">Istoric</string>
     <string name="action_history">Istoric</string>
     <string name="delete_item_search_history">Doriți să ștergeți acest element din istoricul căutărilor?</string>
@@ -798,7 +791,6 @@
     <string name="metadata_subscribers">Abonați</string>
     <string name="detail_pinned_comment_view_description">Comentariu fixat</string>
     <string name="detail_heart_img_view_description">Apreciat de creator</string>
-    <string name="open_website_license">Deschide site-ul web</string>
     <string name="tablet_mode_title">Mod tabletă</string>
     <string name="on">Pornit</string>
     <string name="off">Oprit</string>
