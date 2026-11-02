@@ -1,11 +1,13 @@
 package org.schabi.newpipe.cast
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.edit
@@ -273,17 +275,14 @@ class CastReceiver private constructor(private val context: Context) :
     companion object {
         private const val TAG = "CastReceiver"
         private const val KEY_TOKENS = "cast_receiver_tokens"
-        private const val KEY_ID = "cast_device_id"
         private const val MAX_FAILURES = 5
 
         private var instance: CastReceiver? = null
 
-        fun deviceId(context: Context): String {
-            val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-            return prefs.getString(KEY_ID, null) ?: UUID.randomUUID().toString().also {
-                prefs.edit { putString(KEY_ID, it) }
-            }
-        }
+        @SuppressLint("HardwareIds")
+        fun deviceId(context: Context): String =
+            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+                ?: Build.FINGERPRINT
 
         fun deviceName(): String = Build.MODEL ?: "Android"
 
