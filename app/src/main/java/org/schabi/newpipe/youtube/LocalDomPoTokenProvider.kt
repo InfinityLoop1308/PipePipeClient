@@ -19,7 +19,11 @@ import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executors
 import java.util.concurrent.FutureTask
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
+
+/** A player PO token together with the generation of the minter that produced it. */
+class MintedPlayerPoToken(val token: ByteArray, val generation: Long)
 
 object LocalDomPoTokenProvider {
     private lateinit var appContext: Context
@@ -29,6 +33,11 @@ object LocalDomPoTokenProvider {
     private val initializationLock = Any()
     @Volatile
     private var initializationTask: FutureTask<MintState>? = null
+    private val generationCounter = AtomicLong()
+    private val mintedTokenGenerations = object : LinkedHashMap<String, Long>() {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, Long>): Boolean =
+            size > MAX_TRACKED_TOKENS
+    }
 
     fun warmUp() {
         ensureInitializationTask()
@@ -36,6 +45,34 @@ object LocalDomPoTokenProvider {
 
     fun getPlayerPoToken(videoId: String): YoutubePoTokenResult {
         val state = getState()
+        return YoutubePoTokenResult(
+            state.bootstrap.visitorData,
+            state.bootstrap.clientVersion,
+            encodeToken(mint(state, videoId)),
+        )
+    }
+
+    fun mintPlayerPoToken(videoId: String): MintedPlayerPoToken {
+        val state = getState()
+        return MintedPlayerPoToken(mint(state, videoId), state.generation)
+    }
+
+    /** Generation of the minter that produced [token], or null when it was not minted recently. */
+    fun generationOf(token: ByteArray): Long? {
+        val key = encodeToken(token)
+        return synchronized(mintedTokenGenerations) { mintedTokenGenerations[key] }
+    }
+
+    fun invalidate() {
+        invalidateMatching(null)
+    }
+
+    /** Replaces the minter only if it is still the one of [generation]. */
+    fun invalidate(generation: Long) {
+        invalidateMatching(generation)
+    }
+
+    private fun mint(state: MintState, videoId: String): ByteArray {
         val token = when (state.bootstrap.binding) {
             YoutubePoTokenBinding.CONTENT -> state.session.mint(videoId)
             YoutubePoTokenBinding.SESSION -> requireNotNull(state.sessionPoToken).clone()
@@ -43,14 +80,17 @@ object LocalDomPoTokenProvider {
                 "YouTube home does not enable a supported PO token binding",
             )
         }
-        return YoutubePoTokenResult(
-            state.bootstrap.visitorData,
-            state.bootstrap.clientVersion,
-            Base64.getUrlEncoder().withoutPadding().encodeToString(token),
-        )
+        val key = encodeToken(token)
+        synchronized(mintedTokenGenerations) {
+            mintedTokenGenerations[key] = state.generation
+        }
+        return token
     }
 
-    fun invalidate() {
+    private fun encodeToken(token: ByteArray): String =
+        Base64.getUrlEncoder().withoutPadding().encodeToString(token)
+
+    private fun invalidateMatching(generation: Long?) {
         val sessionToClose: PersistentMintSession
         synchronized(initializationLock) {
             val task = initializationTask ?: return
@@ -60,6 +100,7 @@ object LocalDomPoTokenProvider {
             } catch (_: Exception) {
                 return
             }
+            if (generation != null && state.generation != generation) return
             initializationTask = null
             sessionToClose = state.session
         }
@@ -140,7 +181,12 @@ object LocalDomPoTokenProvider {
                             "version=${bootstrap.clientVersion} " +
                             "binding=${bootstrap.binding}",
                     )
-                    MintState(bootstrap, session, sessionPoToken)
+                    MintState(
+                        bootstrap,
+                        session,
+                        sessionPoToken,
+                        generationCounter.incrementAndGet(),
+                    )
                 } catch (error: Throwable) {
                     session.close()
                     throw error
@@ -175,6 +221,7 @@ object LocalDomPoTokenProvider {
         val bootstrap: YoutubePageAttestationBootstrap,
         val session: PersistentMintSession,
         val sessionPoToken: ByteArray?,
+        val generation: Long,
     )
 
     @JvmStatic
@@ -188,6 +235,7 @@ object LocalDomPoTokenProvider {
     }
 
     private const val TAG = "YoutubeGlobalPoToken"
+    private const val MAX_TRACKED_TOKENS = 64
     private const val YOUTUBE_HOME = "https://www.youtube.com"
     private const val ANONYMOUS_COOKIE = "PREF=hl=en&gl=US"
 }

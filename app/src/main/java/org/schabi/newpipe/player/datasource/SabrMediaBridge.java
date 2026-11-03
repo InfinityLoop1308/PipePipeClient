@@ -50,7 +50,8 @@ final class SabrMediaBridge {
         this.spec = spec;
         requestCoordinator = new SabrRequestCoordinator(
                 session,
-                new SabrAttestationRetryHandler(spec.getVideoId()),
+                new SabrAttestationRetryHandler(spec.getVideoId(),
+                        spec.getInfo().getPoToken()),
                 this::publishBackoff);
         selection = new Selection(spec.getBootstrapAudioFormat(),
                 spec.getBootstrapVideoFormat(), true, true);

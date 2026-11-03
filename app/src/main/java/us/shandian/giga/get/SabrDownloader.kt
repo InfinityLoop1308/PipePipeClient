@@ -37,7 +37,7 @@ internal class SabrDownloader(
                 ?.sumOf { it!!.contentLength }
                 ?: 0L
             prepareMission(expectedLength)
-            val attestationRetryHandler = SabrAttestationRetryHandler(info.videoId)
+            val attestationRetryHandler = SabrAttestationRetryHandler(info.videoId, info.poToken)
             runSessionAttempt(info, recoveries, attestationRetryHandler)
         } catch (error: InterruptedException) {
             Thread.currentThread().interrupt()
