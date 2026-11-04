@@ -55,7 +55,8 @@ public final class SabrAttestationRetryHandler {
             if (token.length == 0) {
                 throw new IllegalArgumentException("decoded token is empty");
             }
-            session.setPoToken(token);
+            session.refreshPoToken(token, tokenResult.getVisitorData(),
+                    tokenResult.getClientVersion());
         } catch (final Exception error) {
             throw new SabrAttestationException(
                     "SABR PO token recovery failed on retry " + retryNumber + " of "
