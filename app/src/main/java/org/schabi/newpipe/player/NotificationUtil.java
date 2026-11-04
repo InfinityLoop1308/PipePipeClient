@@ -209,11 +209,17 @@ public final class NotificationUtil {
         }
         updateNotification(player);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            service.startForeground(NOTIFICATION_ID, notificationBuilder.build(),
-                    ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
-        } else {
-            service.startForeground(NOTIFICATION_ID, notificationBuilder.build());
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                service.startForeground(NOTIFICATION_ID, notificationBuilder.build(),
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+            } else {
+                service.startForeground(NOTIFICATION_ID, notificationBuilder.build());
+            }
+        } catch (final Exception e) {
+            // on Android 12+ startForeground() throws ForegroundServiceStartNotAllowedException
+            // if the app is in the background without an exemption
+            Log.e(TAG, "Could not start the playback foreground service", e);
         }
     }
 
