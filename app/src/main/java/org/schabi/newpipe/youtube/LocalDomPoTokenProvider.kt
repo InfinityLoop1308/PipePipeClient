@@ -35,19 +35,20 @@ object LocalDomPoTokenProvider {
     }
 
     fun getPlayerPoToken(videoId: String): YoutubePoTokenResult {
-        val state = getState()
-        val token = when (state.bootstrap.binding) {
-            YoutubePoTokenBinding.CONTENT -> state.session.mint(videoId)
-            YoutubePoTokenBinding.SESSION -> requireNotNull(state.sessionPoToken).clone()
-            YoutubePoTokenBinding.NONE -> throw SabrProtocolException(
-                "YouTube home does not enable a supported PO token binding",
+        return mintFromCurrentState(::getState, { it.session.isClosed() }) { state ->
+            val token = when (state.bootstrap.binding) {
+                YoutubePoTokenBinding.CONTENT -> state.session.mint(videoId)
+                YoutubePoTokenBinding.SESSION -> requireNotNull(state.sessionPoToken).clone()
+                YoutubePoTokenBinding.NONE -> throw SabrProtocolException(
+                    "YouTube home does not enable a supported PO token binding",
+                )
+            }
+            YoutubePoTokenResult(
+                state.bootstrap.visitorData,
+                state.bootstrap.clientVersion,
+                Base64.getUrlEncoder().withoutPadding().encodeToString(token),
             )
         }
-        return YoutubePoTokenResult(
-            state.bootstrap.visitorData,
-            state.bootstrap.clientVersion,
-            Base64.getUrlEncoder().withoutPadding().encodeToString(token),
-        )
     }
 
     fun invalidate() {
@@ -192,6 +193,34 @@ object LocalDomPoTokenProvider {
     private const val ANONYMOUS_COOKIE = "PREF=hl=en&gl=US"
 }
 
+internal fun <T> mintFromCurrentState(
+    stateProvider: () -> T,
+    isRetired: (T) -> Boolean,
+    mint: (T) -> YoutubePoTokenResult,
+): YoutubePoTokenResult {
+    repeat(3) { attempt ->
+        if (Thread.currentThread().isInterrupted) {
+            throw SabrProtocolException("Local DOM PO token renewal interrupted")
+        }
+        val state = stateProvider()
+        val result = try {
+            mint(state)
+        } catch (error: Exception) {
+            if (!isRetired(state) || Thread.currentThread().isInterrupted || attempt == 2) {
+                throw error
+            }
+            return@repeat
+        }
+        if (!isRetired(state)) {
+            return result
+        }
+        if (Thread.currentThread().isInterrupted) {
+            throw SabrProtocolException("Local DOM PO token renewal interrupted")
+        }
+    }
+    throw SabrProtocolException("Local DOM PO token session retired during three mint attempts")
+}
+
 private class PersistentMintSession private constructor(
     context: Context,
     private val initialization: InitWaiter,
@@ -267,6 +296,8 @@ private class PersistentMintSession private constructor(
     fun isExpired(): Boolean {
         return closed || System.currentTimeMillis() >= expiresAtMs - EXPIRY_MARGIN_MS
     }
+
+    fun isClosed(): Boolean = closed
 
     override fun close() {
         closed = true

@@ -7,6 +7,7 @@ import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrAttestationException;
 
 import java.util.Base64;
+import java.util.function.Function;
 
 /** Maintains the PO-token recovery budget for one SABR media acquisition. */
 public final class SabrAttestationRetryHandler {
@@ -14,9 +15,20 @@ public final class SabrAttestationRetryHandler {
 
     @NonNull private final String videoId;
     private int retriesRemaining = MAX_RETRIES;
+    private final Function<String, YoutubePoTokenResult> tokenProvider;
+    private final Runnable invalidateProvider;
 
     public SabrAttestationRetryHandler(@NonNull final String videoId) {
+        this(videoId, LocalDomPoTokenProvider.INSTANCE::getPlayerPoToken,
+                LocalDomPoTokenProvider.INSTANCE::invalidate);
+    }
+
+    SabrAttestationRetryHandler(final String videoId,
+            final Function<String, YoutubePoTokenResult> tokenProvider,
+            final Runnable invalidateProvider) {
         this.videoId = videoId;
+        this.tokenProvider = tokenProvider;
+        this.invalidateProvider = invalidateProvider;
     }
 
     /** Mints and injects the token for the next retry, or fails after the retry budget is spent. */
@@ -25,7 +37,7 @@ public final class SabrAttestationRetryHandler {
             @NonNull final SabrAttestationException rejectedTokenError)
             throws SabrAttestationException {
         if (retriesRemaining == 0) {
-            LocalDomPoTokenProvider.INSTANCE.invalidate();
+            invalidateProvider.run();
             throw new SabrAttestationException(
                     "SABR PO token was rejected after " + MAX_RETRIES
                             + " attestation recovery retries for video=" + videoId,
@@ -37,7 +49,8 @@ public final class SabrAttestationRetryHandler {
         session.resetProtocolState();
         final YoutubePoTokenResult tokenResult;
         try {
-            tokenResult = LocalDomPoTokenProvider.INSTANCE.getPlayerPoToken(videoId);
+            invalidateProvider.run();
+            tokenResult = tokenProvider.apply(videoId);
             final byte[] token = Base64.getUrlDecoder().decode(tokenResult.getPlayerPoToken());
             if (token.length == 0) {
                 throw new IllegalArgumentException("decoded token is empty");
