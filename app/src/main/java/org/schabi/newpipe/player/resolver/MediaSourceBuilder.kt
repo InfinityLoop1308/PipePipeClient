@@ -265,6 +265,9 @@ object MediaSourceBuilder {
 
         private fun buildPostLive(request: Request): MediaSource {
             val stream = request.stream
+            if (stream.deliveryMethod == DeliveryMethod.SABR) {
+                return sabr(request)
+            }
             if (stream.deliveryMethod == DeliveryMethod.HLS) {
                 return buildGeneric(request)
             }
@@ -364,7 +367,8 @@ object MediaSourceBuilder {
             val sabrInfo = stream.deliveryMethodInfo as? YoutubeSabrInfo
             val spec = try {
                 SabrSessionHelper.createSourceSpec(
-                    videoId, preferredVideoItag, request.info.audioStreams, sabrInfo
+                    videoId, preferredVideoItag, request.info.audioStreams, sabrInfo,
+                    request.info.streamType
                 )
             } catch (e: ExtractionException) {
                 throw IOException("Could not describe SABR source for $videoId", e)

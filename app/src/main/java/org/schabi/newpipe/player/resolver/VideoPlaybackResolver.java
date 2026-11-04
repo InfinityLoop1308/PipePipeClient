@@ -90,11 +90,24 @@ public class VideoPlaybackResolver implements PlaybackResolver {
         removeTorrentStreams(videoStreams);
         removeTorrentStreams(videoOnlyStreams);
 
-        if (info.getStreamType() == StreamType.POST_LIVE_STREAM
-                && videoStreams.stream()
-                .anyMatch(stream -> stream.getDeliveryMethod() == DeliveryMethod.HLS)) {
-            videoStreams.removeIf(stream -> stream.getDeliveryMethod() != DeliveryMethod.HLS);
-            videoOnlyStreams.clear();
+        if (info.getStreamType() == StreamType.POST_LIVE_STREAM) {
+            final boolean hasSabr = videoStreams.stream()
+                    .anyMatch(stream -> stream.getDeliveryMethod() == DeliveryMethod.SABR)
+                    || videoOnlyStreams.stream()
+                    .anyMatch(stream -> stream.getDeliveryMethod() == DeliveryMethod.SABR);
+            if (hasSabr) {
+                // The SABR session exposes the exact DVR window, so it is preferable to the
+                // finite HLS manifest of an ended livestream.
+                videoStreams.removeIf(stream ->
+                        stream.getDeliveryMethod() != DeliveryMethod.SABR);
+                videoOnlyStreams.removeIf(stream ->
+                        stream.getDeliveryMethod() != DeliveryMethod.SABR);
+            } else if (videoStreams.stream()
+                    .anyMatch(stream -> stream.getDeliveryMethod() == DeliveryMethod.HLS)) {
+                videoStreams.removeIf(stream ->
+                        stream.getDeliveryMethod() != DeliveryMethod.HLS);
+                videoOnlyStreams.clear();
+            }
         }
 
         // Create video stream source

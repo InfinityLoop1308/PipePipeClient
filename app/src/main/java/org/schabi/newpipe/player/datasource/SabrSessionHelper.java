@@ -11,6 +11,7 @@ import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
 import org.schabi.newpipe.extractor.stream.AudioStream;
 import org.schabi.newpipe.extractor.stream.DeliveryMethod;
+import org.schabi.newpipe.extractor.stream.StreamType;
 import org.schabi.newpipe.player.PlaybackStartupTrace;
 import org.schabi.newpipe.util.AudioStreamSelector;
 import org.schabi.newpipe.youtube.SabrPlayerReloader;
@@ -50,6 +51,17 @@ public final class SabrSessionHelper {
                                                   @NonNull final List<AudioStream> audioStreams,
                                                   @Nullable final YoutubeSabrInfo extractorInfo)
             throws IOException, ExtractionException {
+        return createSourceSpec(videoId, preferredVideoItag, audioStreams, extractorInfo,
+                StreamType.VIDEO_STREAM);
+    }
+
+    @NonNull
+    public static SabrSourceSpec createSourceSpec(@NonNull final String videoId,
+                                                  final int preferredVideoItag,
+                                                  @NonNull final List<AudioStream> audioStreams,
+                                                  @Nullable final YoutubeSabrInfo extractorInfo,
+                                                  @NonNull final StreamType streamType)
+            throws IOException, ExtractionException {
         PlaybackStartupTrace.markForVideoId(videoId, "sabr_source_spec_started");
         if (!isUsableExtractorInfo(extractorInfo, videoId)) {
             throw new IOException("SABR extractor info is missing for " + videoId);
@@ -64,7 +76,7 @@ public final class SabrSessionHelper {
                 Collections.singletonList(preferredVideo);
         PlaybackStartupTrace.markForVideoId(videoId, "sabr_source_spec_ready");
         return new SabrSourceSpec(videoId, info,
-                audio.bootstrapFormat, audio.formats, videoFormats, preferredVideo,
+                audio.bootstrapFormat, audio.formats, videoFormats, preferredVideo, streamType,
                 null, null, null, null, Collections.emptyList());
     }
 

@@ -74,8 +74,6 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
         } catch (final ExtractionException e) {
             throw new IOException("Could not create SABR session for " + spec.getVideoId(), e);
         }
-        final long durationMs = spec.getDurationMs();
-        this.durationUs = durationMs > 0 ? durationMs * 1000L : C.TIME_UNSET;
         final SabrMediaBridge preparationBridge = getOrCreateBridge();
         if (!preparationBridge.hasTimelines()) {
             try {
@@ -87,6 +85,9 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
                 throw new IOException("SABR fragments did not provide initialization");
             }
         }
+        final long durationMs = spec.isPostLive()
+                ? preparationBridge.getPostLiveDurationMs() : spec.getDurationMs();
+        this.durationUs = durationMs > 0 ? durationMs * 1000L : C.TIME_UNSET;
         segmentDataSourceFactory = playerDataSource.getCacheDataSourceFactory(
                 this::createDataSource, this::buildCacheKey);
         this.manifest = buildManifest(spec, durationMs, preparationBridge);
@@ -309,21 +310,39 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
 
     private static String segmentTemplate(final YoutubeSabrInfo.Format format,
                                           final YoutubeSabrFormatTimeline timeline) {
-        final long endSegment = timeline.getEndSequence();
-        if (endSegment <= 0) {
-            throw new IllegalStateException("Invalid exact SABR segment count: itag="
-                    + format.getItag() + ", count=" + endSegment);
+        final int startSegment = timeline.getStartSequence();
+        final int endSegment = timeline.getEndSequence();
+        if (startSegment <= 0 || endSegment < startSegment) {
+            throw new IllegalStateException("Invalid SABR segment range: itag="
+                    + format.getItag() + ", range=" + startSegment + '-' + endSegment);
         }
+        final long presentationTimeOffsetMs = Math.max(0,
+                timeline.getPresentationTimeOffsetMs());
         final StringBuilder builder = new StringBuilder()
-                .append("<SegmentTemplate timescale=\"1000\" startNumber=\"1\" ")
+                .append("<SegmentTemplate timescale=\"1000\" startNumber=\"")
+                .append(startSegment).append("\" ")
+                .append("presentationTimeOffset=\"").append(presentationTimeOffsetMs)
+                .append("\" ")
                 .append("initialization=\"init\" media=\"$Number$\">")
                 .append("<SegmentTimeline>");
-        for (int sequence = 1; sequence <= endSegment; sequence++) {
-            final long startMs = timeline.getStartMs(sequence);
-            final long endMs = timeline.getEndMs(sequence);
-            final long durationMs = Math.max(1, endMs - startMs);
-            builder.append("<S t=\"").append(Math.max(0, startMs))
-                    .append("\" d=\"").append(durationMs).append("\"/>");
+        if (!timeline.hasIndex()) {
+            final long durationMs = Math.max(1, timeline.getSegmentDurationMs());
+            final long startMs = Math.max(0, timeline.getStartMs(startSegment));
+            final long count = (long) endSegment - startSegment + 1;
+            builder.append("<S t=\"").append(startMs).append("\" d=\"").append(durationMs)
+                    .append("\"");
+            if (count > 1) {
+                builder.append(" r=\"").append(count - 1).append("\"");
+            }
+            builder.append("/>");
+        } else {
+            for (int sequence = startSegment; sequence <= endSegment; sequence++) {
+                final long startMs = timeline.getStartMs(sequence);
+                final long endMs = timeline.getEndMs(sequence);
+                final long durationMs = Math.max(1, endMs - startMs);
+                builder.append("<S t=\"").append(Math.max(0, startMs))
+                        .append("\" d=\"").append(durationMs).append("\"/>");
+            }
         }
         return builder.append("</SegmentTimeline></SegmentTemplate>").toString();
     }
@@ -527,9 +546,10 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
             final long positionMs = Math.max(0, positionUs / 1000L);
             final YoutubeSabrFormatTimeline timeline = getOrCreateBridge().getTimeline(
                     spec.getBootstrapVideoFormat());
-            final int currentSequence = timeline.getSequenceAt(positionMs);
+            final long timelineOriginMs = timeline.getPresentationTimeOffsetMs();
+            final int currentSequence = timeline.getSequenceAt(timelineOriginMs + positionMs);
             final long nextStartMs = timeline.getStartMs(currentSequence + 1);
-            final long nextStartUs = nextStartMs * 1000L;
+            final long nextStartUs = Math.max(0, nextStartMs - timelineOriginMs) * 1000L;
             if (nextStartUs > positionUs
                     && nextStartUs - positionUs <= toleranceUs) {
                 return nextStartUs;
