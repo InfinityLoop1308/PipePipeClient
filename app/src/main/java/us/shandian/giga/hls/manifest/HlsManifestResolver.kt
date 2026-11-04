@@ -49,6 +49,6 @@ class HlsManifestResolver(
 
     private companion object {
         const val BUFFER_SIZE = 16 * 1024
-        const val MAX_MANIFEST_BYTES = 2 * 1024 * 1024
+        const val MAX_MANIFEST_BYTES = 32 * 1024 * 1024
     }
 }
