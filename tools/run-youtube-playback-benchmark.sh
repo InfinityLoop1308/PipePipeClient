@@ -28,13 +28,13 @@ fi
 case "${control_client,,}" in
   auto)
     if [[ -n "$cookie_file" && -s "$cookie_file" ]]; then
-      control_client=tv_downgraded
+      control_client=tv_samsung
     else
       control_client=visionos
     fi
     ;;
-  tv_downgraded|visionos) control_client="${control_client,,}" ;;
-  *) echo "CONTROL_CLIENT must be auto, tv_downgraded, or visionos" >&2; exit 2 ;;
+  tv_samsung|visionos) control_client="${control_client,,}" ;;
+  *) echo "CONTROL_CLIENT must be auto, tv_samsung, or visionos" >&2; exit 2 ;;
 esac
 if [[ -z "$paths" ]]; then
   paths="sabr,${control_client}_generated_dash"
