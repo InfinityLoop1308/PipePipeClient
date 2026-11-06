@@ -174,7 +174,7 @@ data class PlayerMediaItem(
                 .serviceId(item.serviceId)
                 .url(item.url)
                 .title(item.name)
-                .uploader(item.uploaderName)
+                .uploader(item.uploaderName.orEmpty())
                 .uploaderUrl(item.uploaderUrl)
                 .duration(item.duration)
                 .thumbnailUrl(item.thumbnailUrl)

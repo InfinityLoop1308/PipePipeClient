@@ -91,7 +91,7 @@ class ChatPanelController(private val player: Player) {
     fun release() {
         stopObserving()
         open = false
-        player.binding.chatPanel.visibility = View.GONE
+        player.binding?.chatPanel?.visibility = View.GONE
     }
 
     private fun setOpen(value: Boolean) {
