@@ -62,6 +62,7 @@ import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.linkhandler.LinkHandlerFactory;
 import org.schabi.newpipe.extractor.stream.StreamType;
+import org.schabi.newpipe.views.ItemDragTouchHelperCallback;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -81,7 +82,6 @@ import static org.schabi.newpipe.util.ThemeHelper.shouldUseGridLayout;
 public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistStreamEntry>, Void> implements BackPressable {
     // Save the list 10 seconds after the last change occurred
     private static final long SAVE_DEBOUNCE_MILLIS = 10000;
-    private static final int MINIMUM_INITIAL_DRAG_VELOCITY = 12;
     protected Long playlistId;
     protected String name;
     Parcelable itemsListState;
@@ -1255,28 +1255,7 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
             // In list layout, use RIGHT for swipe (like PlayQueue)
             swipeDirections = ItemTouchHelper.RIGHT;
         }
-        return new ItemTouchHelper.SimpleCallback(directions, swipeDirections) {
-            @Override
-            public int interpolateOutOfBoundsScroll(@NonNull final RecyclerView recyclerView,
-                                                    final int viewSize,
-                                                    final int viewSizeOutOfBounds,
-                                                    final int totalSize,
-                                                    final long msSinceStartScroll) {
-                final int standardSpeed = super.interpolateOutOfBoundsScroll(recyclerView,
-                        viewSize, viewSizeOutOfBounds, totalSize, msSinceStartScroll);
-                
-                // Allow slower speeds for precise positioning when dragging across pages
-                // Only apply minimum velocity for very slow drags to prevent stalling
-                final int absStandardSpeed = Math.abs(standardSpeed);
-                if (absStandardSpeed < 3) {
-                    // Use minimum velocity only for extremely slow drags to prevent stalling
-                    return 3 * (int) Math.signum(viewSizeOutOfBounds);
-                }
-                
-                // For normal speeds, use the standard speed to allow precise control
-                return standardSpeed;
-            }
-
+        return new ItemDragTouchHelperCallback(directions, swipeDirections) {
             @Override
             public boolean onMove(@NonNull final RecyclerView recyclerView,
                                   @NonNull final RecyclerView.ViewHolder source,
@@ -1288,6 +1267,12 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
 
                 final int sourceIndex = source.getBindingAdapterPosition();
                 final int targetIndex = target.getBindingAdapterPosition();
+                if (sourceIndex == RecyclerView.NO_POSITION
+                        || targetIndex == RecyclerView.NO_POSITION
+                        || sourceIndex == targetIndex) {
+                    return false;
+                }
+
                 final boolean isSwapped = itemListAdapter.swapItems(sourceIndex, targetIndex);
                 if (isSwapped) {
                     saveChanges();
