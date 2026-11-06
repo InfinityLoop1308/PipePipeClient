@@ -10,7 +10,9 @@ import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.processors.BehaviorProcessor
 import io.reactivex.rxjava3.schedulers.Schedulers
+import org.schabi.newpipe.database.feed.model.FeedContentSelection
 import org.schabi.newpipe.database.feed.model.FeedGroupEntity
+import org.schabi.newpipe.database.feed.model.FeedGroupSubscriptionEntity
 import org.schabi.newpipe.local.feed.FeedDatabaseManager
 import org.schabi.newpipe.local.subscription.FeedGroupIcon
 import org.schabi.newpipe.local.subscription.SubscriptionManager
@@ -29,7 +31,7 @@ class FeedGroupDialogViewModel(
     private var filterSubscriptions = BehaviorProcessor.create<String>()
     private var toggleShowOnlyUngrouped = BehaviorProcessor.create<Boolean>()
 
-    private var subscriptionsFlowable = Flowable
+    private var membershipSubscriptionsFlowable = Flowable
         .combineLatest(
             filterSubscriptions.startWithItem(initialQuery),
             toggleShowOnlyUngrouped.startWithItem(initialShowOnlyUngrouped)
@@ -39,11 +41,22 @@ class FeedGroupDialogViewModel(
             subscriptionManager.getSubscriptions(groupId, query, showOnlyUngrouped)
         }.map { list -> list.map { PickerSubscriptionItem(it) } }
 
+    private var contentRuleSubscriptionsFlowable = filterSubscriptions
+        .startWithItem(initialQuery)
+        .distinctUntilChanged()
+        .switchMap { query ->
+            subscriptionManager.getSubscriptions(
+                FeedGroupEntity.GROUP_ALL_ID,
+                query,
+                false
+            )
+        }.map { list -> list.map { PickerSubscriptionItem(it) } }
+
     private val mutableGroupLiveData = MutableLiveData<FeedGroupEntity>()
-    private val mutableSubscriptionsLiveData = MutableLiveData<Pair<List<PickerSubscriptionItem>, Set<Long>>>()
+    private val mutableSubscriptionsLiveData = MutableLiveData<SubscriptionsState>()
     private val mutableDialogEventLiveData = MutableLiveData<DialogEvent>()
     val groupLiveData: LiveData<FeedGroupEntity> = mutableGroupLiveData
-    val subscriptionsLiveData: LiveData<Pair<List<PickerSubscriptionItem>, Set<Long>>> = mutableSubscriptionsLiveData
+    val subscriptionsLiveData: LiveData<SubscriptionsState> = mutableSubscriptionsLiveData
     val dialogEventLiveData: LiveData<DialogEvent> = mutableDialogEventLiveData
 
     private var actionProcessingDisposable: Disposable? = null
@@ -54,8 +67,18 @@ class FeedGroupDialogViewModel(
 
     private var subscriptionsDisposable = Flowable
         .combineLatest(
-            subscriptionsFlowable, feedDatabaseManager.subscriptionIdsForGroup(groupId)
-        ) { t1: List<PickerSubscriptionItem>, t2: List<Long> -> t1 to t2.toSet() }
+            membershipSubscriptionsFlowable,
+            contentRuleSubscriptionsFlowable,
+            feedDatabaseManager.subscriptionsForGroup(groupId)
+        ) { membershipSubscriptions: List<PickerSubscriptionItem>,
+            contentRuleSubscriptions: List<PickerSubscriptionItem>,
+            memberships: List<FeedGroupSubscriptionEntity> ->
+            SubscriptionsState(
+                membershipSubscriptions,
+                contentRuleSubscriptions,
+                memberships
+            )
+        }
         .subscribeOn(Schedulers.io())
         .subscribe(mutableSubscriptionsLiveData::postValue)
 
@@ -66,19 +89,44 @@ class FeedGroupDialogViewModel(
         feedGroupDisposable.dispose()
     }
 
-    fun createGroup(name: String, selectedIcon: FeedGroupIcon, selectedSubscriptions: Set<Long>) {
+    fun createGroup(
+        name: String,
+        selectedIcon: FeedGroupIcon,
+        selectedSubscriptions: Set<Long>,
+        contentSelection: FeedContentSelection,
+        contentSelectionOverrides: Map<Long, FeedContentSelection>
+    ) {
         doAction(
-            feedDatabaseManager.createGroup(name, selectedIcon)
-                .flatMapCompletable {
-                    feedDatabaseManager.updateSubscriptionsForGroup(it, selectedSubscriptions.toList())
-                }
+            feedDatabaseManager.createGroupWithContentRules(
+                name,
+                selectedIcon,
+                contentSelection,
+                selectedSubscriptions,
+                contentSelectionOverrides
+            )
         )
     }
 
-    fun updateGroup(name: String, selectedIcon: FeedGroupIcon, selectedSubscriptions: Set<Long>, sortOrder: Long) {
+    fun updateGroup(
+        name: String,
+        selectedIcon: FeedGroupIcon,
+        selectedSubscriptions: Set<Long>,
+        sortOrder: Long,
+        contentSelection: FeedContentSelection,
+        contentSelectionOverrides: Map<Long, FeedContentSelection>
+    ) {
         doAction(
-            feedDatabaseManager.updateSubscriptionsForGroup(groupId, selectedSubscriptions.toList())
-                .andThen(feedDatabaseManager.updateGroup(FeedGroupEntity(groupId, name, selectedIcon, sortOrder)))
+            feedDatabaseManager.updateGroupWithContentRules(
+                FeedGroupEntity(
+                    groupId,
+                    name,
+                    selectedIcon,
+                    sortOrder,
+                    contentSelection
+                ),
+                selectedSubscriptions,
+                contentSelectionOverrides
+            )
         )
     }
 
@@ -114,6 +162,12 @@ class FeedGroupDialogViewModel(
     }
 
     data class Filter(val query: String, val showOnlyUngrouped: Boolean)
+
+    data class SubscriptionsState(
+        val membershipSubscriptions: List<PickerSubscriptionItem>,
+        val contentRuleSubscriptions: List<PickerSubscriptionItem>,
+        val memberships: List<FeedGroupSubscriptionEntity>
+    )
 
     class Factory(
         private val context: Context,

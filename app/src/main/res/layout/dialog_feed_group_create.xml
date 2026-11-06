@@ -14,7 +14,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/options_root"
             android:layout_width="match_parent"
-            android:layout_height="180dp"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="8dp"
             android:visibility="gone"
@@ -69,6 +69,21 @@
                 tools:text="15 selected" />
 
             <Button
+                android:id="@+id/content_rules_button"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:drawablePadding="8dp"
+                android:textAllCaps="false"
+                app:drawableEndCompat="@drawable/ic_chevron_right"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/selected_subscription_count_view"
+                tools:text="Configure content: Videos, Shorts, Live" />
+
+            <Button
                 android:id="@+id/select_channel_button"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="match_parent"
@@ -81,8 +96,73 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/selected_subscription_count_view" />
+                app:layout_constraintTop_toBottomOf="@+id/content_rules_button" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ScrollView
+            android:id="@+id/content_rules_selector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <org.schabi.newpipe.views.NewPipeTextView
+                    style="@style/TextAppearance.AppCompat.Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/feed_group_content_rules" />
+
+                <org.schabi.newpipe.views.NewPipeTextView
+                    style="@style/TextAppearance.AppCompat.Subhead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/feed_group_content_default" />
+
+                <CheckBox
+                    android:id="@+id/default_content_videos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/channel_tab_videos" />
+
+                <CheckBox
+                    android:id="@+id/default_content_shorts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/channel_tab_shorts" />
+
+                <CheckBox
+                    android:id="@+id/default_content_live"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/channel_tab_livestreams" />
+
+                <org.schabi.newpipe.views.NewPipeTextView
+                    style="@style/TextAppearance.AppCompat.Subhead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/feed_group_content_exceptions" />
+
+                <LinearLayout
+                    android:id="@+id/content_exception_rows"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <Button
+                    android:id="@+id/add_content_exception_button"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/feed_group_content_add_exception" />
+            </LinearLayout>
+        </ScrollView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/icon_selector"
@@ -118,6 +198,7 @@
                     android:orientation="vertical">
 
                     <org.schabi.newpipe.views.NewPipeTextView
+                        android:id="@+id/subscriptions_header_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="start|center_vertical"

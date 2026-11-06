@@ -34,7 +34,10 @@ data class FeedEntity(
     var streamId: Long,
 
     @ColumnInfo(name = SUBSCRIPTION_ID)
-    var subscriptionId: Long
+    var subscriptionId: Long,
+
+    @ColumnInfo(name = CONTENT_SELECTION, defaultValue = "1")
+    var contentSelection: FeedContentSelection = FeedContentSelection.VIDEOS
 ) {
 
     companion object {
@@ -42,5 +45,6 @@ data class FeedEntity(
 
         const val STREAM_ID = "stream_id"
         const val SUBSCRIPTION_ID = "subscription_id"
+        const val CONTENT_SELECTION = "content_selection"
     }
 }

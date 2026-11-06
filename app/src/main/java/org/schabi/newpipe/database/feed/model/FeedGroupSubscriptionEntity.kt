@@ -34,7 +34,10 @@ data class FeedGroupSubscriptionEntity(
     var feedGroupId: Long,
 
     @ColumnInfo(name = SUBSCRIPTION_ID)
-    var subscriptionId: Long
+    var subscriptionId: Long,
+
+    @ColumnInfo(name = CONTENT_SELECTION_OVERRIDE)
+    var contentSelectionOverride: FeedContentSelection? = null
 ) {
 
     companion object {
@@ -42,5 +45,6 @@ data class FeedGroupSubscriptionEntity(
 
         const val GROUP_ID = "group_id"
         const val SUBSCRIPTION_ID = "subscription_id"
+        const val CONTENT_SELECTION_OVERRIDE = "content_selection_override"
     }
 }
