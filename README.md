@@ -11,8 +11,10 @@ You need:
 - the [PipePipe](https://codeberg.org/NullPointerException/PipePipe) repository checked out with its submodules, because the build includes `../PipePipeExtractor`
 
 ```
-git clone --recurse-submodules https://codeberg.org/NullPointerException/PipePipe.git
-cd PipePipe/PipePipeClient
+git clone https://codeberg.org/NullPointerException/PipePipe.git
+cd PipePipe
+git submodule update --init PipePipeClient PipePipeExtractor
+cd PipePipeClient
 ```
 
 Then, from `PipePipeClient`:
