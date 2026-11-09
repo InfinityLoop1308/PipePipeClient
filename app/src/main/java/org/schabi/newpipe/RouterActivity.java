@@ -208,6 +208,11 @@ public class RouterActivity extends AppCompatActivity {
             final Intent intent = new Intent(context, ReCaptchaActivity.class);
             intent.putExtra(ReCaptchaActivity.RECAPTCHA_URL_EXTRA,
                     ((ReCaptchaException) throwable).getUrl());
+            if (context instanceof RouterActivity) {
+                // open what was shared once the challenge is solved
+                intent.putExtra(ReCaptchaActivity.OPEN_AFTER_SOLVE_EXTRA,
+                        ((RouterActivity) context).currentUrl);
+            }
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         } else if (throwable != null

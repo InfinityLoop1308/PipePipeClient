@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.android.exoplayer2.Player.Events
 import org.schabi.newpipe.R
 import org.schabi.newpipe.error.ErrorInfo
+import org.schabi.newpipe.error.ChallengeRequest
 import org.schabi.newpipe.error.ErrorUtil
 import org.schabi.newpipe.error.UserAction
 import org.schabi.newpipe.extractor.ServiceList
@@ -64,7 +65,10 @@ class PlayerMetadataController(private val player: Player) {
                 .flatMap { item: PlayerMediaItem -> item.maybeStreamInfo }.orElse(null)
             currentMetadata = tag
 
-            if (tag.errors.isNotEmpty()) {
+            val challenge = ChallengeRequest.find(tag.errors)
+            if (challenge != null && player.onChallengeRequired(challenge, tag.title)) {
+                // playback is paused and ChallengeAlert notifies the user instead
+            } else if (tag.errors.isNotEmpty()) {
                 // new errors might have been added even if previousInfo == tag.getMaybeStreamInfo()
                 val errorInfo = ErrorInfo(
                     tag.errors,

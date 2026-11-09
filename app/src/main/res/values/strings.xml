@@ -1074,6 +1074,12 @@
 <string name="webview_unavailable_youtube_hint">WebView error. Please try again.\n\nIf the problem persists, please report it on our GitHub.</string>
 <string name="sabr_backoff_notification_channel_name">YouTube playback waiting</string>
 <string name="sabr_backoff_notification_channel_description">Notifications when YouTube requires a playback request to wait</string>
+<string name="challenge_stop_playback_title">Stop on verification challenge</string>
+<string name="challenge_stop_playback_summary">When a site asks to verify you are human during playback, pause and keep alerting until you respond, instead of skipping the item</string>
+<string name="challenge_notification_channel_name">Verification required</string>
+<string name="challenge_notification_channel_description">Alerts when playback is paused until you pass a site\'s verification challenge</string>
+<string name="challenge_notification_title">Verification required</string>
+<string name="challenge_notification_text">Playback paused. Tap to verify and continue playing %s</string>
 <string name="sabr_backoff_notification_title">Waiting for YouTube</string>
 <string name="sabr_backoff_notification_content">YouTube forces us to wait %1$d seconds before continuing playback</string>
 <string name="remember_search_filters_title">Remember search filters</string>

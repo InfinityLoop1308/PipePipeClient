@@ -459,6 +459,8 @@ public final class Player {
         
         destroyPlayer();
         broadcastReceiverController.unregister();
+        // nothing is left to resume, so stop alerting about a challenge for this player
+        ChallengeAlert.cancel();
         sponsorBlockController.destroy();
 
         historyController.clear();
@@ -1099,6 +1101,7 @@ public final class Player {
     //region Player actions (play, pause, previous, fast-forward, ...)
 
     public void play() {
+        silenceChallengeAlert();
         transportController.play();
     }
 
@@ -1107,7 +1110,45 @@ public final class Player {
     }
 
     public void playPause() {
+        silenceChallengeAlert();
         transportController.playPause();
+    }
+
+    /** Pressing play counts as responding to a pending challenge alert. */
+    private void silenceChallengeAlert() {
+        if (ChallengeAlert.isActive()) {
+            ChallengeAlert.silence();
+        }
+    }
+
+    /**
+     * Called when the item ExoPlayer moved to could not be loaded because a site asks the user
+     * to pass a verification challenge.
+     *
+     * <p>If the user enabled stopping on challenges, playback is paused on the failed item and
+     * {@link ChallengeAlert} alerts until the user responds. Once the challenge is passed, the
+     * play queue is reloaded, which retries the item with the new cookies, and playback resumes.
+     * Otherwise nothing is done and the item is skipped like any other failed item.</p>
+     *
+     * @param challenge the error carrying the url of the challenge page
+     * @param title     the title of the item that could not be loaded
+     * @return whether playback was stopped; if false, the caller reports the error as usual
+     */
+    boolean onChallengeRequired(
+            @NonNull final org.schabi.newpipe.extractor.exceptions.ReCaptchaException challenge,
+            @Nullable final String title) {
+        if (!ChallengeAlert.isStopOnChallengeEnabled(context)) {
+            return false;
+        }
+        pause();
+        ChallengeAlert.start(context, challenge.getUrl(), title, () -> {
+            if (exoPlayerIsNull() || playQueue == null) {
+                return;
+            }
+            reloadPlayQueueManager();
+            play();
+        });
+        return true;
     }
 
     public void playPrevious() {

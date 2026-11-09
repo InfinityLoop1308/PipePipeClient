@@ -1,5 +1,7 @@
 package org.schabi.newpipe.error;
 
+import org.schabi.newpipe.player.ChallengeAlert;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
@@ -26,6 +28,12 @@ import org.schabi.newpipe.DownloaderImpl;
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.util.ThemeHelper;
+import android.text.TextUtils;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import org.schabi.newpipe.util.NavigationHelper;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -54,6 +62,10 @@ import java.util.Map;
 public class ReCaptchaActivity extends AppCompatActivity {
     public static final int RECAPTCHA_REQUEST = 10;
     public static final String RECAPTCHA_URL_EXTRA = "recaptcha_url_extra";
+    /** Finish back to whatever is below instead of navigating up to the main screen. */
+    public static final String RETURN_TO_CALLER_EXTRA = "recaptcha_return_to_caller_extra";
+    /** Link to open in the app once the challenge is solved, e.g. a link shared to the app. */
+    public static final String OPEN_AFTER_SOLVE_EXTRA = "recaptcha_open_after_solve_extra";
     public static final String TAG = ReCaptchaActivity.class.toString();
     public static final String YT_URL = "https://www.youtube.com";
 
@@ -70,6 +82,8 @@ public class ReCaptchaActivity extends AppCompatActivity {
     // registrable domain -> cookie name -> cookie value
     private final Map<String, Map<String, String>> foundCookies = new LinkedHashMap<>();
     private CookieManager cookieManager;
+    @Nullable
+    private Disposable openLinkDisposable;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -79,6 +93,8 @@ public class ReCaptchaActivity extends AppCompatActivity {
 
         recaptchaBinding = ActivityRecaptchaBinding.inflate(getLayoutInflater());
         setContentView(recaptchaBinding.getRoot());
+        // the user responded to a challenge alert, if there is one
+        ChallengeAlert.silence();
         setSupportActionBar(recaptchaBinding.toolbar);
 
         final String url = sanitizeRecaptchaUrl(getIntent().getStringExtra(RECAPTCHA_URL_EXTRA));
@@ -165,22 +181,74 @@ public class ReCaptchaActivity extends AppCompatActivity {
             Log.d(TAG, "saveCookiesAndFinish: foundCookies=" + foundCookies);
         }
 
-        if (!foundCookies.isEmpty()) {
+        final boolean solved = !foundCookies.isEmpty();
+        if (solved) {
             // each domain only gets back its own cookies
             for (final Map.Entry<String, Map<String, String>> entry : foundCookies.entrySet()) {
                 ChallengeCookies.put(entry.getKey(), joinCookies(entry.getValue()));
             }
             setResult(RESULT_OK);
         }
+        // a player paused on this challenge retries once cookies are stored
+        ChallengeAlert.onChallengeScreenClosed(solved);
 
         // Navigate to blank page (unloads youtube to prevent background playback)
         recaptchaBinding.reCaptchaWebView.loadUrl("about:blank");
 
+        if (getCallingActivity() != null
+                || getIntent().getBooleanExtra(RETURN_TO_CALLER_EXTRA, false)) {
+            // Go back to the screen that needed the challenge (e.g. an album page), which is
+            // kept in the back stack and reloads on RESULT_OK. Navigating up to MainActivity
+            // would reset it to the main screen.
+            finish();
+            return;
+        }
+
+        // Started from a shared link (RouterActivity, already finished)
+        final String linkToOpen = getIntent().getStringExtra(OPEN_AFTER_SOLVE_EXTRA);
+        if (solved && !TextUtils.isEmpty(linkToOpen)) {
+            openLinkAndFinish(linkToOpen);
+            return;
+        }
+
+        // nothing to go back to: open the app
         final Intent intent = new Intent(this, org.schabi.newpipe.MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         NavUtils.navigateUpTo(this, intent);
     }
 
+
+    /**
+     * Open the link the challenge interrupted, e.g. the album shared to the app, then finish.
+     * Resolving the link may need the network (custom domains), so it runs in the background
+     * while this activity stays visible, and starting the next screen from a visible activity
+     * is always allowed. Falls back to the main screen if the link cannot be resolved.
+     */
+    private void openLinkAndFinish(@NonNull final String link) {
+        if (openLinkDisposable != null) {
+            return; // already opening, e.g. Done pressed twice
+        }
+        openLinkDisposable = Single.fromCallable(() -> NavigationHelper.getIntentByLink(this, link))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(intent -> {
+                    startActivity(intent);
+                    finish();
+                }, throwable -> {
+                    Log.e(TAG, "Cannot open " + link + " after the challenge", throwable);
+                    final Intent intent = new Intent(this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    NavUtils.navigateUpTo(this, intent);
+                });
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (openLinkDisposable != null) {
+            openLinkDisposable.dispose();
+        }
+        super.onDestroy();
+    }
 
     private void handleCookiesFromUrl(@Nullable final String url) {
         if (MainActivity.DEBUG) {

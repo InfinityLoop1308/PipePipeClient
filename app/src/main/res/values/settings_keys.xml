@@ -1534,6 +1534,8 @@
     </string-array>
     <string name="playlist_sorting_key">playlist_sorting_key</string>
     <string name="dont_auto_queue_long_key">dont_auto_queue_long_key</string>
+    <string name="challenge_stop_playback_key" translatable="false">challenge_stop_playback_key</string>
+    <string name="challenge_notification_channel_id" translatable="false">challenge</string>
     <string name="random_music_play_mode_key">random_music_play_mode_key</string>
     <string name="speeding_playback_key">speeding_playback_key</string>
     <string-array name="speeding_playback_description">

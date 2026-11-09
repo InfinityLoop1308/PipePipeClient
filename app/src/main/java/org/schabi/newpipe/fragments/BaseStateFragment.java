@@ -1,5 +1,7 @@
 package org.schabi.newpipe.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +16,7 @@ import org.schabi.newpipe.R;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorPanelHelper;
 import org.schabi.newpipe.error.ErrorUtil;
+import org.schabi.newpipe.error.ReCaptchaActivity;
 import org.schabi.newpipe.util.InfoCache;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -89,6 +92,21 @@ public abstract class BaseStateFragment<I> extends BaseFragment implements ViewC
 
     protected void onRetryButtonClicked() {
         reloadContent();
+    }
+
+    /**
+     * The error panel opens {@link ReCaptchaActivity} for result; once the challenge is solved,
+     * load the content again so the user lands on what they were trying to open.
+     */
+    @Override
+    @SuppressWarnings("deprecation")
+    public void onActivityResult(final int requestCode, final int resultCode,
+                                 @Nullable final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ReCaptchaActivity.RECAPTCHA_REQUEST
+                && resultCode == Activity.RESULT_OK) {
+            reloadContent();
+        }
     }
 
     public void reloadContent() {

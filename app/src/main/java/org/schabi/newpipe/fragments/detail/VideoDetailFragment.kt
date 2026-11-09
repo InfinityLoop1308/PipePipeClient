@@ -335,9 +335,10 @@ class VideoDetailFragment : BaseStateFragment<StreamInfo>(), BackPressable,
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        @Suppress("DEPRECATION")
-        super.onActivityResult(requestCode, resultCode, data)
         if (requestCode != ReCaptchaActivity.RECAPTCHA_REQUEST) {
+            // challenge results are handled below, without the reload of BaseStateFragment
+            @Suppress("DEPRECATION")
+            super.onActivityResult(requestCode, resultCode, data)
             Log.e(TAG, "Request code from activity not supported [$requestCode]")
         } else if (resultCode == Activity.RESULT_OK) {
             NavigationHelper.openVideoDetailFragment(requireContext(), parentFragmentManager,
