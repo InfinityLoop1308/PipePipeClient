@@ -43,4 +43,19 @@ object ChallengeRequest {
     @JvmStatic
     fun find(errors: Collection<Throwable>): ReCaptchaException? =
         errors.firstNotNullOfOrNull { find(it) }
+
+    /**
+     * @param challengeDomain the registrable domain of the pending challenge's page (see
+     *                        [ChallengeCookies.domainOf]), or null if it is unknown
+     * @param solvedDomains   the registrable domains a challenge screen stored cookies for
+     * @return whether those cookies can have passed the pending challenge: they must include
+     * the challenge's domain. With an unknown domain, any stored cookie counts.
+     */
+    @JvmStatic
+    fun isSolvedBy(challengeDomain: String?, solvedDomains: Collection<String>): Boolean {
+        if (solvedDomains.isEmpty()) {
+            return false
+        }
+        return challengeDomain == null || challengeDomain in solvedDomains
+    }
 }

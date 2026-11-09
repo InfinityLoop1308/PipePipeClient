@@ -1114,6 +1114,13 @@ public final class Player {
         transportController.playPause();
     }
 
+    /** Drop a pending challenge alert, e.g. because another item is playing now. */
+    void cancelChallengeAlert() {
+        if (ChallengeAlert.isActive()) {
+            ChallengeAlert.cancel();
+        }
+    }
+
     /** Pressing play counts as responding to a pending challenge alert. */
     private void silenceChallengeAlert() {
         if (ChallengeAlert.isActive()) {

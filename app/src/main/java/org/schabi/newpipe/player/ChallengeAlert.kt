@@ -18,6 +18,8 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import org.schabi.newpipe.R
+import org.schabi.newpipe.error.ChallengeCookies
+import org.schabi.newpipe.error.ChallengeRequest
 import org.schabi.newpipe.error.ReCaptchaActivity
 
 /**
@@ -35,12 +37,19 @@ object ChallengeAlert {
     private const val NOTIFICATION_ID = 0x0C4A11E
     private const val REPEAT_INTERVAL_MS = 3_000L
     private const val ACTION_DISMISSED = "org.schabi.newpipe.player.CHALLENGE_ALERT_DISMISSED"
+    private val SOUND_TYPES = intArrayOf(
+        RingtoneManager.TYPE_NOTIFICATION,
+        RingtoneManager.TYPE_ALARM,
+        RingtoneManager.TYPE_RINGTONE,
+    )
 
     private val handler = Handler(Looper.getMainLooper())
     private var appContext: Context? = null
     private var ringtone: Ringtone? = null
     private var dismissReceiver: BroadcastReceiver? = null
     private var onSolved: Runnable? = null
+    private var pendingUrl: String? = null
+    private var pendingTitle: String = ""
 
     private val repeatSound = object : Runnable {
         override fun run() {
@@ -77,8 +86,10 @@ object ChallengeAlert {
         val app = context.applicationContext
         appContext = app
         this.onSolved = onSolved
+        pendingUrl = url
+        pendingTitle = title.orEmpty()
         registerDismissReceiver(app)
-        showNotification(app, url, title.orEmpty())
+        showNotification(app, url, pendingTitle)
         startSound(app)
     }
 
@@ -97,6 +108,8 @@ object ChallengeAlert {
     fun cancel() {
         silence()
         onSolved = null
+        pendingUrl = null
+        pendingTitle = ""
         val app = appContext ?: return
         NotificationManagerCompat.from(app).cancel(NOTIFICATION_ID)
         dismissReceiver?.let {
@@ -108,24 +121,33 @@ object ChallengeAlert {
     /**
      * Called by [ReCaptchaActivity] when it closes.
      *
-     * @param solved whether the challenge produced cookies. If not, the alert stays pending
-     *               (silenced) so the user can try again from the notification.
+     * The pending alert counts as passed only if the screen stored cookies for the domain of
+     * the pending challenge; a challenge solved for another site does not retry this one. If it
+     * was not passed, the alert stays pending and its notification is shown again, silently,
+     * because tapping the notification removed it and it is the way back to the challenge.
+     *
+     * @param solvedDomains the registrable domains the screen stored cookies for
      */
     @JvmStatic
     @MainThread
-    fun onChallengeScreenClosed(solved: Boolean) {
+    fun onChallengeScreenClosed(solvedDomains: Collection<String>) {
         silence()
-        if (!solved) {
+        val callback = onSolved ?: return
+        if (ChallengeRequest.isSolvedBy(ChallengeCookies.domainOf(pendingUrl), solvedDomains)) {
+            cancel()
+            callback.run()
             return
         }
-        val callback = onSolved ?: return
-        cancel()
-        callback.run()
+        appContext?.let { showNotification(it, pendingUrl, pendingTitle) }
     }
 
     private fun startSound(context: Context) {
-        val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION) ?: return
-        val tone = RingtoneManager.getRingtone(context, uri) ?: return
+        // The channel is silent, so without a sound here the alert would make no noise at all:
+        // fall back to the alarm and ringtone sounds when no notification sound is set.
+        val tone = SOUND_TYPES.asSequence()
+            .mapNotNull { RingtoneManager.getDefaultUri(it) }
+            .mapNotNull { RingtoneManager.getRingtone(context, it) }
+            .firstOrNull() ?: return
         // Notification usage, so silent mode and Do Not Disturb are respected
         tone.audioAttributes = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)

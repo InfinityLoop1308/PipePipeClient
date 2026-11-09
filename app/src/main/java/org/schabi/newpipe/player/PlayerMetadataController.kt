@@ -66,6 +66,11 @@ class PlayerMetadataController(private val player: Player) {
             currentMetadata = tag
 
             val challenge = ChallengeRequest.find(tag.errors)
+            if (challenge == null) {
+                // playback moved on from the challenged item (e.g. play skipped it): solving
+                // that challenge later must not reload the queue and resume this one
+                player.cancelChallengeAlert()
+            }
             if (challenge != null && player.onChallengeRequired(challenge, tag.title)) {
                 // playback is paused and ChallengeAlert notifies the user instead
             } else if (tag.errors.isNotEmpty()) {

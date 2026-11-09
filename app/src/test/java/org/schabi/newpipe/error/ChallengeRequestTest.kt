@@ -1,8 +1,10 @@
 package org.schabi.newpipe.error
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.schabi.newpipe.extractor.exceptions.ExtractionException
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException
@@ -59,5 +61,21 @@ class ChallengeRequestTest {
         var error: Throwable = challenge
         repeat(32) { error = Exception("level $it", error) }
         assertNull(ChallengeRequest.find(error))
+    }
+
+    @Test
+    fun solvedOnlyByCookiesOfTheChallengeDomain() {
+        assertTrue(ChallengeRequest.isSolvedBy("bandcamp.com", setOf("bandcamp.com")))
+        assertTrue(ChallengeRequest.isSolvedBy("bandcamp.com", setOf("youtube.com", "bandcamp.com")))
+        // a challenge passed for another site does not count
+        assertFalse(ChallengeRequest.isSolvedBy("bandcamp.com", setOf("youtube.com")))
+        // closing the screen without any cookie never counts
+        assertFalse(ChallengeRequest.isSolvedBy("bandcamp.com", emptySet()))
+    }
+
+    @Test
+    fun unknownChallengeDomainIsSolvedByAnyCookie() {
+        assertTrue(ChallengeRequest.isSolvedBy(null, setOf("youtube.com")))
+        assertFalse(ChallengeRequest.isSolvedBy(null, emptySet()))
     }
 }

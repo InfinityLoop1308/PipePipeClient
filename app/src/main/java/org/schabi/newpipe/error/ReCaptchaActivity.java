@@ -190,7 +190,7 @@ public class ReCaptchaActivity extends AppCompatActivity {
             setResult(RESULT_OK);
         }
         // a player paused on this challenge retries once cookies are stored
-        ChallengeAlert.onChallengeScreenClosed(solved);
+        ChallengeAlert.onChallengeScreenClosed(foundCookies.keySet());
 
         // Navigate to blank page (unloads youtube to prevent background playback)
         recaptchaBinding.reCaptchaWebView.loadUrl("about:blank");
