@@ -23,3 +23,4 @@ bin/
 *.code-workspace
 /config.py
 __pycache__
+.claude/settings.local.json
