@@ -1075,7 +1075,9 @@
 <string name="sabr_backoff_notification_channel_name">YouTube playback waiting</string>
 <string name="sabr_backoff_notification_channel_description">Notifications when YouTube requires a playback request to wait</string>
 <string name="challenge_stop_playback_title">Stop on verification challenge</string>
-<string name="challenge_stop_playback_summary">When a site asks to verify you are human during playback, pause and keep alerting until you respond, instead of skipping the item</string>
+<string name="challenge_stop_playback_summary">When a site asks to verify you are human during playback, pause and show a notification instead of skipping the item</string>
+<string name="challenge_repeat_alert_title">Repeat verification alert</string>
+<string name="challenge_repeat_alert_summary">Keep playing the notification sound until you open the verification, dismiss the notification or press play</string>
 <string name="challenge_notification_channel_name">Verification required</string>
 <string name="challenge_notification_channel_description">Alerts when playback is paused until you pass a site\'s verification challenge</string>
 <string name="challenge_notification_title">Verification required</string>

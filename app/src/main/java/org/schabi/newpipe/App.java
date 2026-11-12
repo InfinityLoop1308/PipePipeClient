@@ -412,15 +412,6 @@ public class App extends MultiDexApplication {
                 .setShowBadge(false)
                 .build());
 
-        // Silent channel: ChallengeAlert repeats the alert sound itself until the user responds
-        notificationChannelCompats.add(new NotificationChannelCompat
-                .Builder(getString(R.string.challenge_notification_channel_id),
-                        NotificationManagerCompat.IMPORTANCE_HIGH)
-                .setName(getString(R.string.challenge_notification_channel_name))
-                .setDescription(getString(R.string.challenge_notification_channel_description))
-                .setSound(null, null)
-                .build());
-
         final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.createNotificationChannelsCompat(notificationChannelCompats);
     }

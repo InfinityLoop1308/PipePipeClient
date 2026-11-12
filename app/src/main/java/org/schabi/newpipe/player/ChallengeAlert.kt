@@ -13,6 +13,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.annotation.MainThread
+import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -25,17 +26,19 @@ import org.schabi.newpipe.error.ReCaptchaActivity
 /**
  * Alerts the user that playback is paused until they pass a site's verification challenge.
  *
- * While active it shows a notification that opens [ReCaptchaActivity] and repeats the default
- * notification sound every [REPEAT_INTERVAL_MS] until the user responds: opening the challenge,
- * dismissing the notification or pressing play all silence it. Passing the challenge runs the
- * callback given to [start], which the player uses to retry the item.
+ * While active it shows a notification that opens [ReCaptchaActivity]. By default the notification
+ * goes to the error report channel, like other playback errors. If the user enabled the repeating
+ * alert, it goes to its own high-importance channel instead and the default notification sound
+ * repeats every [REPEAT_INTERVAL_MS] until the user responds: opening the challenge, dismissing
+ * the notification or pressing play all silence it. Passing the challenge runs the callback given
+ * to [start], which the player uses to retry the item.
  *
  * All methods must be called on the main thread.
  */
 object ChallengeAlert {
     private const val TAG = "ChallengeAlert"
     private const val NOTIFICATION_ID = 0x0C4A11E
-    private const val REPEAT_INTERVAL_MS = 3_000L
+    private const val REPEAT_INTERVAL_MS = 5_000L
     private const val ACTION_DISMISSED = "org.schabi.newpipe.player.CHALLENGE_ALERT_DISMISSED"
     private val SOUND_TYPES = intArrayOf(
         RingtoneManager.TYPE_NOTIFICATION,
@@ -50,6 +53,7 @@ object ChallengeAlert {
     private var onSolved: Runnable? = null
     private var pendingUrl: String? = null
     private var pendingTitle: String = ""
+    private var repeating = false
 
     private val repeatSound = object : Runnable {
         override fun run() {
@@ -67,13 +71,19 @@ object ChallengeAlert {
         PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(context.getString(R.string.challenge_stop_playback_key), true)
 
+    /** Whether the user wants the alert sound to repeat until they respond to the challenge. */
+    private fun isRepeatAlertEnabled(context: Context): Boolean =
+        PreferenceManager.getDefaultSharedPreferences(context)
+            .getBoolean(context.getString(R.string.challenge_repeat_alert_key), false)
+
     /** Whether an alert is pending, i.e. a challenge has not been passed or cancelled yet. */
     @JvmStatic
     val isActive: Boolean
         get() = onSolved != null
 
     /**
-     * Show the notification and start repeating the alert sound. Replaces any pending alert.
+     * Show the notification and, if the user enabled it, start repeating the alert sound.
+     * Replaces any pending alert.
      *
      * @param url      the page to open in [ReCaptchaActivity]
      * @param title    the title of the item that is waiting, shown in the notification
@@ -88,9 +98,15 @@ object ChallengeAlert {
         this.onSolved = onSolved
         pendingUrl = url
         pendingTitle = title.orEmpty()
-        registerDismissReceiver(app)
+        repeating = isRepeatAlertEnabled(app)
+        if (repeating) {
+            createRepeatingChannel(app)
+            registerDismissReceiver(app)
+        }
         showNotification(app, url, pendingTitle)
-        startSound(app)
+        if (repeating) {
+            startSound(app)
+        }
     }
 
     /** Stop the sound, keep the notification and the pending callback. */
@@ -110,6 +126,7 @@ object ChallengeAlert {
         onSolved = null
         pendingUrl = null
         pendingTitle = ""
+        repeating = false
         val app = appContext ?: return
         NotificationManagerCompat.from(app).cancel(NOTIFICATION_ID)
         dismissReceiver?.let {
@@ -141,10 +158,33 @@ object ChallengeAlert {
         appContext?.let { showNotification(it, pendingUrl, pendingTitle) }
     }
 
+    /**
+     * Create the channel of the repeating alert. It is silent because [startSound] plays the
+     * sound itself, and it is created only once the user enabled the repeating alert.
+     */
+    private fun createRepeatingChannel(context: Context) {
+        NotificationManagerCompat.from(context).createNotificationChannel(
+            NotificationChannelCompat.Builder(
+                context.getString(R.string.challenge_notification_channel_id),
+                NotificationManagerCompat.IMPORTANCE_HIGH
+            )
+                .setName(context.getString(R.string.challenge_notification_channel_name))
+                .setDescription(
+                    context.getString(R.string.challenge_notification_channel_description)
+                )
+                .setSound(null, null)
+                .build()
+        )
+    }
+
     private fun startSound(context: Context) {
         // The channel is silent, so without a sound here the alert would make no noise at all:
         // fall back to the alarm and ringtone sounds when no notification sound is set.
+        // getDefaultUri() is never null, even when the user set a type to "None"; the actual
+        // URI is null then, so it tells which types have a sound. Still play the default URI,
+        // which the system resolves, since the actual one may point to a file we cannot read.
         val tone = SOUND_TYPES.asSequence()
+            .filter { RingtoneManager.getActualDefaultRingtoneUri(context, it) != null }
             .mapNotNull { RingtoneManager.getDefaultUri(it) }
             .mapNotNull { RingtoneManager.getRingtone(context, it) }
             .firstOrNull() ?: return
@@ -157,7 +197,7 @@ object ChallengeAlert {
         handler.post(repeatSound)
     }
 
-    @SuppressLint("MissingPermission") // without the permission, the sound alone still alerts
+    @SuppressLint("MissingPermission") // without the permission, the player still stops
     private fun showNotification(context: Context, url: String?, title: String) {
         val immutable = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         val openChallenge = Intent(context, ReCaptchaActivity::class.java)
@@ -166,9 +206,11 @@ object ChallengeAlert {
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         val dismissed = Intent(ACTION_DISMISSED).setPackage(context.packageName)
 
-        val notification = NotificationCompat.Builder(
-            context, context.getString(R.string.challenge_notification_channel_id)
+        val channelId = context.getString(
+            if (repeating) R.string.challenge_notification_channel_id
+            else R.string.error_report_channel_id
         )
+        val notification = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_pipepipe)
             .setContentTitle(context.getString(R.string.challenge_notification_title))
             .setContentText(context.getString(R.string.challenge_notification_text, title))
@@ -181,8 +223,14 @@ object ChallengeAlert {
             .setDeleteIntent(PendingIntent.getBroadcast(context, NOTIFICATION_ID, dismissed,
                 immutable))
             .setAutoCancel(true)
-            .setCategory(NotificationCompat.CATEGORY_ALARM)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(
+                if (repeating) NotificationCompat.CATEGORY_ALARM
+                else NotificationCompat.CATEGORY_ERROR
+            )
+            .setPriority(
+                if (repeating) NotificationCompat.PRIORITY_HIGH
+                else NotificationCompat.PRIORITY_DEFAULT
+            )
             .build()
         try {
             NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, notification)
