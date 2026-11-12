@@ -101,9 +101,9 @@ class FeedDatabaseManager(context: Context) {
         feedTable.unlinkOldLivestreams(subscriptionId)
 
         if (itemsToInsert.isNotEmpty()) {
-                // if item.uploaderName is null, write it as "Unknown"
+                // write an empty uploader name as "Unknown", the extractor never returns null
                 for (item in itemsToInsert) {
-                    if (item.uploaderName == null) {
+                    if (item.uploaderName.isNullOrEmpty()) {
                         item.uploaderName = "Unknown"
                     }
                 }
