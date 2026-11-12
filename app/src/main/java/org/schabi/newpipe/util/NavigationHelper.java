@@ -51,7 +51,6 @@ import org.schabi.newpipe.local.subscription.SubscriptionListFragment;
 import org.schabi.newpipe.local.subscription.SubscriptionsImportFragment;
 import org.schabi.newpipe.player.PlayerIntentConstants;
 import org.schabi.newpipe.player.PlayerService;
-import org.schabi.newpipe.player.PlayerService.PlayerType;
 import org.schabi.newpipe.player.PlayQueueActivity;
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.event.DetailPlayerEvents;
@@ -200,43 +199,42 @@ public final class NavigationHelper {
     }
 
     /* ENQUEUE */
-    public static void enqueueOnPlayer(final Context context,
-                                       final PlayQueue queue,
-                                       final PlayerType playerType) {
-        if ((playerType == PlayerType.POPUP) && !PermissionHelper.isPopupEnabled(context)) {
-            PermissionHelper.showPopupEnablementToast(context);
-            return;
-        }
-
-        Toast.makeText(context, R.string.enqueued, Toast.LENGTH_SHORT).show();
-        final Intent intent = getPlayerEnqueueIntent(context, DeviceUtils.getPlayerServiceClass(), queue);
-
-        intent.putExtra(PlayerIntentConstants.PLAYER_TYPE, playerType.ordinal());
-        ContextCompat.startForegroundService(context, intent);
-    }
-
     public static void enqueueOnPlayer(final Context context, final PlayQueue queue) {
-        PlayerType playerType = PlayerHolder.getInstance().getType();
-        if (!PlayerHolder.getInstance().isPlayerOpen()) {
-            Log.e(TAG, "Enqueueing but no player is open; defaulting to background player");
-            playerType = PlayerService.PlayerType.AUDIO;
-        }
-
-        enqueueOnPlayer(context, queue, playerType);
+        Toast.makeText(context, R.string.enqueued, Toast.LENGTH_SHORT).show();
+        startEnqueueIntent(context,
+                getPlayerEnqueueIntent(context, DeviceUtils.getPlayerServiceClass(), queue));
     }
 
     /* ENQUEUE NEXT */
     public static void enqueueNextOnPlayer(final Context context, final PlayQueue queue) {
-        PlayerType playerType = PlayerHolder.getInstance().getType();
-        if (!PlayerHolder.getInstance().isPlayerOpen()) {
-            Log.e(TAG, "Enqueueing next but no player is open; defaulting to background player");
-            playerType = PlayerService.PlayerType.AUDIO;
-        }
         Toast.makeText(context, R.string.enqueued_next, Toast.LENGTH_SHORT).show();
-        final Intent intent = getPlayerEnqueueNextIntent(context, DeviceUtils.getPlayerServiceClass(), queue);
+        startEnqueueIntent(context,
+                getPlayerEnqueueNextIntent(context, DeviceUtils.getPlayerServiceClass(), queue));
+    }
 
-        intent.putExtra(PlayerIntentConstants.PLAYER_TYPE, playerType.ordinal());
+    private static void startEnqueueIntent(@NonNull final Context context,
+                                           @NonNull final Intent intent) {
+        intent.putExtra(PlayerIntentConstants.PLAYER_TYPE, playerTypeForEnqueue().ordinal());
         ContextCompat.startForegroundService(context, intent);
+    }
+
+    /**
+     * The player type an enqueue intent carries.
+     *
+     * <p>Enqueueing nothing but appends to the queue of the player which is already running, so
+     * its own player type is used and the player stays in the mode it is in. When nothing is
+     * running, an enqueue intent starts a session: start that session in the background player,
+     * since the user is not looking at a player.</p>
+     */
+    @NonNull
+    private static PlayerService.PlayerType playerTypeForEnqueue() {
+        final PlayerService.PlayerType playerType = PlayerHolder.getInstance().getType();
+        if (playerType != null) {
+            return playerType;
+        }
+
+        Log.e(TAG, "Enqueueing but no player is open; defaulting to background player");
+        return PlayerService.PlayerType.AUDIO;
     }
 
     /*//////////////////////////////////////////////////////////////////////////

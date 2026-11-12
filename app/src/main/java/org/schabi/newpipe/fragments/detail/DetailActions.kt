@@ -41,9 +41,9 @@ class DetailActions(
         val isLoading: Boolean
         val player: Player?
 
-        fun openBackgroundPlayer(append: Boolean)
+        fun openBackgroundPlayer()
 
-        fun openPopupPlayer(append: Boolean)
+        fun openPopupPlayer()
 
         /** The thumbnail was clicked: play in the main player. */
         fun playInMainPlayer()
@@ -91,12 +91,8 @@ class DetailActions(
         })
         binding.detailThumbnailRootLayout.root.setOnClickListener { host.playInMainPlayer() }
 
-        content.detailControlsBackground.setOnClickListener { host.openBackgroundPlayer(false) }
-        content.detailControlsBackground.setOnLongClickListener(
-            longClick { host.openBackgroundPlayer(true) })
-        content.detailControlsPopup.setOnClickListener { host.openPopupPlayer(false) }
-        content.detailControlsPopup.setOnLongClickListener(
-            longClick { host.openPopupPlayer(true) })
+        content.detailControlsBackground.setOnClickListener { host.openBackgroundPlayer() }
+        content.detailControlsPopup.setOnClickListener { host.openPopupPlayer() }
         content.detailControlsPlaylistAppend.setOnClickListener {
             host.currentInfo?.let { showPlaylistDialog(listOf(StreamEntity(it))) }
         }

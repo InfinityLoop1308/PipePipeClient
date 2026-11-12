@@ -33,7 +33,6 @@ import org.schabi.newpipe.player.Player
 import org.schabi.newpipe.player.PlayerError
 import org.schabi.newpipe.player.PlayerPlaybackParameters
 import org.schabi.newpipe.player.PlayerPlaybackState
-import org.schabi.newpipe.player.PlayerService.PlayerType
 import org.schabi.newpipe.player.PlayerUiModeController
 import org.schabi.newpipe.player.RepeatMode
 import org.schabi.newpipe.player.event.DetailPlayerEvents
@@ -522,22 +521,18 @@ class VideoDetailFragment : BaseStateFragment<StreamInfo>(), BackPressable,
 
     // Players
 
-    private fun openBackgroundPlayer(append: Boolean) {
+    private fun openBackgroundPlayer() {
         player?.changeFullscreen(false)
         // FIXME Workaround #7427
         player?.setRecovery()
         if (player == null) {
             playerHolder.startService(false, this)
         }
-        val queue = playQueueForIntent(append) ?: return
-        if (append) {
-            NavigationHelper.enqueueOnPlayer(requireActivity(), queue, PlayerType.AUDIO)
-        } else {
-            NavigationHelper.playOnBackgroundPlayer(requireActivity(), queue, true)
-        }
+        val queue = playQueueForIntent() ?: return
+        NavigationHelper.playOnBackgroundPlayer(requireActivity(), queue, true)
     }
 
-    private fun openPopupPlayer(append: Boolean) {
+    private fun openPopupPlayer() {
         val activity = requireActivity()
         if (!PermissionHelper.isPopupEnabled(activity)) {
             PermissionHelper.showPopupEnablementToast(activity)
@@ -552,12 +547,8 @@ class VideoDetailFragment : BaseStateFragment<StreamInfo>(), BackPressable,
             player.setRecovery()
             player.changeFullscreen(false)
         }
-        val queue = playQueueForIntent(append) ?: return
-        if (append) {
-            NavigationHelper.enqueueOnPlayer(activity, queue, PlayerType.POPUP)
-        } else {
-            NavigationHelper.playOnPopupPlayer(activity, queue, true)
-        }
+        val queue = playQueueForIntent() ?: return
+        NavigationHelper.playOnPopupPlayer(activity, queue, true)
     }
 
     private fun openMainPlayer() {
@@ -567,7 +558,7 @@ class VideoDetailFragment : BaseStateFragment<StreamInfo>(), BackPressable,
             playerHolder.startService(autoPlayEnabled, this)
             return
         }
-        val queue = playQueueForIntent(false) ?: return
+        val queue = playQueueForIntent() ?: return
         PlaybackStartupTrace.mark(pendingStartupTraceId, "play_queue_ready")
         // The video view can still show parts of the popup. It is hidden until the player
         // shows it again once ready.
@@ -580,10 +571,10 @@ class VideoDetailFragment : BaseStateFragment<StreamInfo>(), BackPressable,
         ContextCompat.startForegroundService(context, intent)
     }
 
-    /** The queue to play: the current queue, or the current stream alone if [append]. */
-    private fun playQueueForIntent(append: Boolean): PlayQueue? {
+    /** The queue to play: the current queue, or the current stream alone if there is none. */
+    private fun playQueueForIntent(): PlayQueue? {
         val queue = vm.playQueue
-        if (!append && queue != null && !queue.isEmpty) {
+        if (queue != null && !queue.isEmpty) {
             return queue
         }
         // the queue may be empty, as it removes failing streams by itself
@@ -836,11 +827,11 @@ class VideoDetailFragment : BaseStateFragment<StreamInfo>(), BackPressable,
             vm.currentInfo?.let { actions?.openChannel(it.uploaderUrl, it.uploaderName) }
         }
 
-        override fun openBackgroundPlayer(append: Boolean) =
-            this@VideoDetailFragment.openBackgroundPlayer(append)
+        override fun openBackgroundPlayer() =
+            this@VideoDetailFragment.openBackgroundPlayer()
 
-        override fun openPopupPlayer(append: Boolean) =
-            this@VideoDetailFragment.openPopupPlayer(append)
+        override fun openPopupPlayer() =
+            this@VideoDetailFragment.openPopupPlayer()
 
         override fun playInMainPlayer() {
             beginStartupTrace()
