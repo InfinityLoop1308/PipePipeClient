@@ -312,7 +312,7 @@ public final class SabrDashMediaSource extends CompositeMediaSource<Integer> {
                                           final YoutubeSabrFormatTimeline timeline) {
         final int startSegment = timeline.getStartSequence();
         final int endSegment = timeline.getEndSequence();
-        if (startSegment <= 0 || endSegment < startSegment) {
+        if (startSegment < 0 || endSegment < startSegment) {
             throw new IllegalStateException("Invalid SABR segment range: itag="
                     + format.getItag() + ", range=" + startSegment + '-' + endSegment);
         }

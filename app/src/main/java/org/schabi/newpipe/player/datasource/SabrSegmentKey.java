@@ -26,8 +26,8 @@ final class SabrSegmentKey {
 
     static SabrSegmentKey media(@NonNull final YoutubeSabrInfo.Format format,
                                 final int sequenceNumber) {
-        if (sequenceNumber <= 0) {
-            throw new IllegalArgumentException("SABR media sequence number must be positive");
+        if (sequenceNumber < 0) {
+            throw new IllegalArgumentException("SABR media sequence number must not be negative");
         }
         return new SabrSegmentKey(format, false, sequenceNumber);
     }
