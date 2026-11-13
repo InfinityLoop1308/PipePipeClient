@@ -378,13 +378,12 @@ class VideoDetailFragment : BaseStateFragment<StreamInfo>(), BackPressable,
         when {
             // the result is delivered to this view once loaded
             vm.isLoading || vm.hasPendingResult -> showLoading()
-            // the views were recreated, e.g. on rotation: show the stream again, as is
+            // the views were recreated, e.g. on rotation: show the stream again, as is.
+            // Don't reopen the player: it is already playing this stream, and requesting
+            // fullscreen here would re-enter fullscreen right after the user left it.
             info != null -> {
                 render(info, rebuildTabs = tabs?.isShowing(info) != true)
                 header?.showContent()
-                if (isAutoplayEnabled()) {
-                    openVideoPlayerAutoFullscreen()
-                }
             }
             else -> {
                 scrollToTop()
