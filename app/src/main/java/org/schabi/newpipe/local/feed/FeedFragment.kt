@@ -895,7 +895,10 @@ class FeedFragment : BaseStateFragment<FeedState>(), BackPressable {
                                 errors.subList(i + 1, errors.size)
                             )
                         },
-                        { throwable -> Log.e(TAG, "Unable to process", throwable) }
+                        { throwable ->
+                            Log.e(TAG, "Unable to process", throwable)
+                            handleItemsErrors(errors.subList(i + 1, errors.size))
+                        }
                     )
                 return // this will be called on the remaining errors by handleFeedNotAvailable()
             }
