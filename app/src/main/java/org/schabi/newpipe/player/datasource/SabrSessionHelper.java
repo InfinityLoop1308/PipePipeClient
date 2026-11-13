@@ -49,16 +49,6 @@ public final class SabrSessionHelper {
     public static SabrSourceSpec createSourceSpec(@NonNull final String videoId,
                                                   final int preferredVideoItag,
                                                   @NonNull final List<AudioStream> audioStreams,
-                                                  @Nullable final YoutubeSabrInfo extractorInfo)
-            throws IOException, ExtractionException {
-        return createSourceSpec(videoId, preferredVideoItag, audioStreams, extractorInfo,
-                StreamType.VIDEO_STREAM);
-    }
-
-    @NonNull
-    public static SabrSourceSpec createSourceSpec(@NonNull final String videoId,
-                                                  final int preferredVideoItag,
-                                                  @NonNull final List<AudioStream> audioStreams,
                                                   @Nullable final YoutubeSabrInfo extractorInfo,
                                                   @NonNull final StreamType streamType)
             throws IOException, ExtractionException {
