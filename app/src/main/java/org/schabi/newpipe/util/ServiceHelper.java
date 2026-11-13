@@ -306,8 +306,6 @@ public final class ServiceHelper {
             ServiceList.YouTube.setAudioLanguage(audioLanguage);
             ServiceList.YouTube.setShowAutoTranslatedSubtitles(showAutoTranslatedSubtitles);
             ServiceList.YouTube.setAutoTranslatedSubtitlesLanguage(autoTranslatedSubtitlesLanguage);
-            final String pot = sharedPreferences.getString(context.getString(R.string.youtube_po_token_key), null);
-            ServiceList.YouTube.setAdditionalTokens(pot);
 //            if(sharedPreferences.getBoolean(context.getString(R.string.override_cookies_youtube_key), false)) {
 //                ServiceList.YouTube.setTokens(sharedPreferences.getString(context.getString(R.string.override_cookies_youtube_value_key), null));
 //            }

@@ -1,7 +1,6 @@
 package org.schabi.newpipe.views;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -55,12 +54,9 @@ public class YouTubeLoginWebViewActivity extends BaseLoginWebViewActivity {
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
             String url = request.getUrl().toString();
             if (url.contains("googlevideo.com/videoplayback")) {
-                Uri uri = Uri.parse(url);
-                String pot = uri.getQueryParameter("pot");
                 Intent intent = new Intent();
                 String cookies = CookieManager.getInstance().getCookie("https://music.youtube.com/watch");
                 intent.putExtra("cookies", cookies);
-                intent.putExtra("pot", pot);
                 finishWithResult(intent);
             }
             return null;

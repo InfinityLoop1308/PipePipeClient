@@ -56,13 +56,11 @@ public class YouTubeAccountSettingsFragment extends BaseAccountSettingsFragment 
     @Override
     protected void handleLoginResult(Intent data) {
         String cookies = data.getStringExtra("cookies");
-        String pot = data.getStringExtra("pot");
 
         try {
             YoutubeParsingHelper.getAuthorizationHeader(cookies);
             defaultPreferences.edit()
                     .putString(getCookiesKey(), cookies)
-                    .putString(getString(R.string.youtube_po_token_key), pot)
                     .apply();
             LocalDomPoTokenProvider.INSTANCE.invalidate();
             onLoginSuccess();
@@ -75,7 +73,6 @@ public class YouTubeAccountSettingsFragment extends BaseAccountSettingsFragment 
     protected void performLogout() {
         defaultPreferences.edit()
                 .putString(getCookiesKey(), "")
-                .putString(getString(R.string.youtube_po_token_key), "")
                 .apply();
         LocalDomPoTokenProvider.INSTANCE.invalidate();
         LoginSessions.onLogout(requireContext(), LoginSessions.youtube(requireContext()));

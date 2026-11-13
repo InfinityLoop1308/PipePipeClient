@@ -79,7 +79,6 @@ object LoginSessions {
         ),
         YOUTUBE_UA,
     ) { ctx ->
-        defaultPrefs(ctx).edit { putString(ctx.getString(R.string.youtube_po_token_key), "") }
         LocalDomPoTokenProvider.invalidate()
         App.reconcileYoutubePlayerClient(ctx)
     }
@@ -133,7 +132,6 @@ object LoginSessions {
     fun logoutAll(context: Context) {
         state(context).edit { clear() }
         all(context).forEach { it.prefs.edit { putString(it.cookiesKey, "") } }
-        defaultPrefs(context).edit { putString(context.getString(R.string.youtube_po_token_key), "") }
         LocalDomPoTokenProvider.invalidate()
         ServiceHelper.initServices(context)
         InfoCache.getInstance().clearCache()
