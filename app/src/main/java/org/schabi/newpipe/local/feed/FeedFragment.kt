@@ -20,6 +20,7 @@
 package org.schabi.newpipe.local.feed
 
 import android.annotation.SuppressLint
+import org.schabi.newpipe.plugin.MissingPluginHelper
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -932,6 +933,9 @@ class FeedFragment : BaseStateFragment<FeedState>(), BackPressable {
                                 subscriptions.map { it.name ?: it.url.orEmpty() }.toTypedArray()
                             ) { _, index ->
                                 val subscription = subscriptions[index]
+                                if (MissingPluginHelper.interceptIfMissing(requireActivity(), subscription.serviceId)) {
+                                    return@setItems
+                                }
                                 subscription.url?.let { url ->
                                     NavigationHelper.openChannelFragment(
                                         fm,

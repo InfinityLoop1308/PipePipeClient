@@ -72,6 +72,7 @@ import org.schabi.newpipe.fragments.MainFragment;
 import org.schabi.newpipe.fragments.detail.VideoDetailFragment;
 import org.schabi.newpipe.fragments.list.search.SearchFragment;
 import org.schabi.newpipe.local.feed.notifications.NotificationWorker;
+import org.schabi.newpipe.plugin.MissingPluginHelper;
 import org.schabi.newpipe.player.Player;
 import org.schabi.newpipe.player.PlayerIntentConstants;
 import org.schabi.newpipe.player.event.DetailPlayerEvents;
@@ -229,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
             dialog1.show();
             prefs.edit().putInt("version_code", currentVersionCode).apply();
         }
+        MissingPluginHelper.checkOnStart(this);
         String lastAnnouncementId = prefs.getString("last_announcement_id", null);
         try {
             NewPipe.getDownloader().getAsync("https://github.com/InfinityLoop1308/PipePipe/wiki/Announcement", resp -> {

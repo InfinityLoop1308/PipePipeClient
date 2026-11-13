@@ -1,6 +1,7 @@
 package org.schabi.newpipe.local.subscription
 
 import android.content.*
+import org.schabi.newpipe.plugin.MissingPluginHelper
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.*
@@ -342,10 +343,15 @@ class SubscriptionFragment : BaseStateFragment<SubscriptionState>() {
     }
 
     private val listenerChannelItem = object : OnClickGesture<ChannelInfoItem>() {
-        override fun selected(selectedItem: ChannelInfoItem) = NavigationHelper.openChannelFragment(
-            fm,
-            selectedItem.serviceId, selectedItem.url, selectedItem.name
-        )
+        override fun selected(selectedItem: ChannelInfoItem) {
+            if (MissingPluginHelper.interceptIfMissing(requireActivity(), selectedItem.serviceId)) {
+                return
+            }
+            NavigationHelper.openChannelFragment(
+                fm,
+                selectedItem.serviceId, selectedItem.url, selectedItem.name
+            )
+        }
 
         override fun held(selectedItem: ChannelInfoItem) = showLongTapDialog(selectedItem)
     }

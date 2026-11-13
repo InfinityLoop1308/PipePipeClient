@@ -1,6 +1,7 @@
 package org.schabi.newpipe.local.subscription
 
 import android.content.Context
+import org.schabi.newpipe.plugin.MissingPluginHelper
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
@@ -217,7 +218,9 @@ class SubscriptionListFragment : BaseStateFragment<FeedState>() {
 
     private val channelClickListener = object : OnClickGesture<ChannelInfoItem>() {
         override fun selected(selectedItem: ChannelInfoItem) {
-            // Open channel fragment
+            if (MissingPluginHelper.interceptIfMissing(requireActivity(), selectedItem.serviceId)) {
+                return
+            }
             NavigationHelper.openChannelFragment(
                 parentFragmentManager,
                 selectedItem.serviceId,

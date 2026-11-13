@@ -1,6 +1,7 @@
 package org.schabi.newpipe.local.bookmark;
 
 import static org.schabi.newpipe.util.ThemeHelper.shouldUseGridLayout;
+import org.schabi.newpipe.plugin.MissingPluginHelper;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -163,6 +164,10 @@ public final class BookmarkFragment extends BaseLocalListFragment<List<PlaylistL
 
                 } else if (selectedItem instanceof PlaylistRemoteEntity) {
                     final PlaylistRemoteEntity entry = ((PlaylistRemoteEntity) selectedItem);
+                    if (MissingPluginHelper.interceptIfMissing(requireActivity(),
+                            entry.getServiceId())) {
+                        return;
+                    }
                     NavigationHelper.openPlaylistFragment(
                             fragmentManager,
                             entry.getServiceId(),

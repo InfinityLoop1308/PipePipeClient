@@ -1277,4 +1277,18 @@ Only add repositories you trust.</string>
 <string name="reset_settings_summary">Restore all settings to default. History and subscriptions are untouched.</string>
 <string name="reset_settings_confirmation">All settings will be restored to default and the app will restart. Continue?</string>
 <string name="invalid_settings_file">Not a valid settings file</string>
+<string name="missing_plugin_title">Plugins needed</string>
+<string name="missing_plugin_message">Some of your data belongs to services that are now provided by plugins, which are not installed or not loaded:</string>
+<string name="missing_plugin_unknown">Unknown plugin (service %d)</string>
+<string name="missing_plugin_manual">Some of them cannot be installed automatically. Check the plugin settings.</string>
+<string name="missing_plugin_ignore">Don\'t show again</string>
+<string name="missing_plugin_not_found">Not found in its repository</string>
+<plurals name="missing_plugin_subscriptions">
+    <item quantity="one">%d subscription</item>
+    <item quantity="other">%d subscriptions</item>
+</plurals>
+<plurals name="missing_plugin_playlists">
+    <item quantity="one">%d playlist</item>
+    <item quantity="other">%d playlists</item>
+</plurals>
 </resources>

@@ -1,7 +1,7 @@
 package org.schabi.newpipe.database;
 
 import static org.schabi.newpipe.database.Migrations.DB_VER_6;
-import static org.schabi.newpipe.database.Migrations.DB_VER_901;
+import static org.schabi.newpipe.database.Migrations.DB_VER_902;
 
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
@@ -18,6 +18,8 @@ import org.schabi.newpipe.database.history.dao.StreamHistoryDAO;
 import org.schabi.newpipe.database.history.model.SearchHistoryEntry;
 import org.schabi.newpipe.database.history.model.StreamHistoryEntity;
 import org.schabi.newpipe.database.playlist.dao.PlaylistDAO;
+import org.schabi.newpipe.database.plugin.PluginServiceDAO;
+import org.schabi.newpipe.database.plugin.PluginServiceEntity;
 import org.schabi.newpipe.database.playlist.dao.PlaylistRemoteDAO;
 import org.schabi.newpipe.database.playlist.dao.PlaylistStreamDAO;
 import org.schabi.newpipe.database.playlist.model.PlaylistEntity;
@@ -37,9 +39,9 @@ import org.schabi.newpipe.database.subscription.SubscriptionEntity;
                 StreamEntity.class, StreamHistoryEntity.class, StreamStateEntity.class,
                 PlaylistEntity.class, PlaylistStreamEntity.class, PlaylistRemoteEntity.class,
                 FeedEntity.class, FeedGroupEntity.class, FeedGroupSubscriptionEntity.class,
-                FeedLastUpdatedEntity.class
+                FeedLastUpdatedEntity.class, PluginServiceEntity.class
         },
-        version = DB_VER_901
+        version = DB_VER_902
 )
 public abstract class AppDatabase extends RoomDatabase {
     public static final String DATABASE_NAME = "newpipe.db";
@@ -63,4 +65,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract FeedGroupDAO feedGroupDAO();
 
     public abstract SubscriptionDAO subscriptionDAO();
+
+    public abstract PluginServiceDAO pluginServiceDAO();
 }
