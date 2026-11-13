@@ -938,9 +938,9 @@
 <item quantity="one">%s 則回覆</item>
 <item quantity="other">%s 則回覆</item>
 </plurals>
-<string name="clear_webview_cookies">清除 WebView Cookie</string>
-<string name="clear_webview_cookies_summary">清除 WebView 元件儲存的所有 Cookie，以便您可以使用新帳戶</string>
-<string name="webview_cookies_cleared">已清除 WebView Cookie</string>
+<string name="clear_webview_cookies">清除 WebView Cookie 並登出</string>
+<string name="clear_webview_cookies_summary">登出所有帳戶並清除 WebView 元件儲存的所有 Cookie，以便您可以使用新帳戶</string>
+<string name="webview_cookies_cleared">已登出並清除 WebView Cookie</string>
 <string name="import_urls_from_file">從檔案匯入網址</string>
 <string name="import_urls_error">匯入網址時發生錯誤：%s</string>
 <string name="import_urls_no_valid_urls">在選擇的檔案中未找到有效的網址</string>
@@ -1228,4 +1228,7 @@
 <string name="reset_settings_summary">將所有設定還原為預設值。歷史紀錄與訂閱將不受影響。</string>
 <string name="reset_settings_confirmation">所有設定將還原為預設值，且應用程式將會重新啟動。是否繼續？</string>
 <string name="invalid_settings_file">不是有效的設定檔</string>
+<string name="logout_keep_webview_session_title">登出時保留網頁工作階段</string>
+<string name="logout_keep_webview_session_summary">登出只在 PipePipe 中移除帳戶，保留網站的登入工作階段，便於快速重新登入</string>
+<string name="login_expired_toast">%1$s 登入已過期，請在設定中重新登入</string>
 </resources>

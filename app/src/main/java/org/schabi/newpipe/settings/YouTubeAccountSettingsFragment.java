@@ -6,6 +6,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import org.schabi.newpipe.App;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.util.LoginSessions;
 import org.schabi.newpipe.extractor.services.youtube.YoutubeParsingHelper;
 import org.schabi.newpipe.views.YouTubeLoginWebViewActivity;
 import org.schabi.newpipe.youtube.LocalDomPoTokenProvider;
@@ -77,6 +78,7 @@ public class YouTubeAccountSettingsFragment extends BaseAccountSettingsFragment 
                 .putString(getString(R.string.youtube_po_token_key), "")
                 .apply();
         LocalDomPoTokenProvider.INSTANCE.invalidate();
+        LoginSessions.onLogout(requireContext(), LoginSessions.youtube(requireContext()));
         onLogoutSuccess();
     }
 

@@ -1907,4 +1907,6 @@
     <string name="import_settings_only_key" translatable="false">import_settings_only</string>
     <string name="export_settings_only_key" translatable="false">export_settings_only</string>
     <string name="reset_settings_key" translatable="false">reset_settings</string>
+    <string name="logout_keep_webview_session_key">logout_keep_webview_session</string>
+    <string name="login_session_refresh_time_key">login_session_refresh_time</string>
 </resources>

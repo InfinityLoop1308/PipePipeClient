@@ -948,9 +948,9 @@
 <string name="pull_to_refresh_title">下拉刷新</string>
 <string name="pull_to_refresh_summary">在动态中启用下拉刷新手势</string>
 <string name="select_groups">选择群组</string>
-<string name="clear_webview_cookies">清除 WebView Cookie</string>
-<string name="clear_webview_cookies_summary">清除 WebView 组件存储的所有 Cookie，以便您可以使用新账户</string>
-<string name="webview_cookies_cleared">WebView Cookie 已清除</string>
+<string name="clear_webview_cookies">清除 WebView Cookie 并退出登录</string>
+<string name="clear_webview_cookies_summary">退出所有账户并清除 WebView 组件存储的所有 Cookie，以便您可以使用新账户</string>
+<string name="webview_cookies_cleared">已退出登录并清除 WebView Cookie</string>
 <string name="import_urls_from_file">从文件导入URL</string>
 <string name="import_urls_error">导入URL时出错：%s</string>
 <string name="import_urls_no_valid_urls">在所选文件中未找到有效的URL</string>
@@ -1274,4 +1274,7 @@
 <string name="reset_settings_summary">将所有设置恢复为默认值。历史记录和订阅不受影响。</string>
 <string name="reset_settings_confirmation">所有设置将恢复为默认值，应用将重新启动。是否继续？</string>
 <string name="invalid_settings_file">不是有效的设置文件</string>
+<string name="logout_keep_webview_session_title">退出登录时保留网页会话</string>
+<string name="logout_keep_webview_session_summary">退出登录只在 PipePipe 中移除账户，保留网站的登录会话，便于快速重新登录</string>
+<string name="login_expired_toast">%1$s 登录已过期，请在设置中重新登录</string>
 </resources>

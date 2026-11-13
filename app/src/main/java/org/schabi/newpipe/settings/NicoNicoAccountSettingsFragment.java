@@ -2,6 +2,7 @@ package org.schabi.newpipe.settings;
 
 import android.content.Intent;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.util.LoginSessions;
 import org.schabi.newpipe.views.NicoNicoLoginWebViewActivity;
 
 public class NicoNicoAccountSettingsFragment extends BaseAccountSettingsFragment {
@@ -46,6 +47,7 @@ public class NicoNicoAccountSettingsFragment extends BaseAccountSettingsFragment
     @Override
     protected void performLogout() {
         defaultPreferences.edit().putString(getCookiesKey(), "").apply();
+        LoginSessions.onLogout(requireContext(), LoginSessions.niconico(requireContext()));
         onLogoutSuccess();
     }
 }

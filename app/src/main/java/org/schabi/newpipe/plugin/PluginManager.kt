@@ -299,6 +299,8 @@ object PluginManager {
     @JvmStatic
     fun getLoadedManifest(serviceId: Int): PluginManifest? = loaded[serviceId]
 
+    fun getLoadedManifests(): List<PluginManifest> = loaded.values.toList()
+
     /** Service ids of plugins are local to an install, so other devices must address them by plugin id. */
     fun getServiceIdByPluginId(pluginId: String): Int? =
         loaded.entries.firstOrNull { it.value.pluginId == pluginId }?.key

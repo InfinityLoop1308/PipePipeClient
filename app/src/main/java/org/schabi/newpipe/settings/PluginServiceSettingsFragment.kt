@@ -11,6 +11,7 @@ import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.plugin.PluginSetting
 import org.schabi.newpipe.plugin.AndroidPluginPreferences
 import org.schabi.newpipe.plugin.PluginManager
+import org.schabi.newpipe.util.LoginSessions
 import org.schabi.newpipe.util.ServiceHelper
 import org.schabi.newpipe.util.ThemeHelper
 import org.schabi.newpipe.views.PluginLoginWebViewActivity
@@ -89,6 +90,9 @@ class PluginServiceSettingsFragment : PreferenceFragmentCompat() {
             setOnPreferenceClickListener {
                 context.getSharedPreferences(AndroidPluginPreferences.fileName(pluginId), android.content.Context.MODE_PRIVATE)
                     .edit { putString(key, "") }
+                PluginManager.getLoadedManifest(serviceId)
+                    ?.let { LoginSessions.plugin(context, it) }
+                    ?.let { LoginSessions.onLogout(context, it) }
                 ServiceHelper.initServices(context)
                 updateLoginState()
                 true

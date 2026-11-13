@@ -6,6 +6,7 @@ import android.webkit.CookieSyncManager;
 import android.widget.Toast;
 import androidx.preference.Preference;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.util.LoginSessions;
 
 public class AccountSettingsFragment extends BasePreferenceFragment {
 
@@ -24,6 +25,7 @@ public class AccountSettingsFragment extends BasePreferenceFragment {
 
     private void clearWebViewCookies() {
         CookieSyncManager.createInstance(requireContext());
+        LoginSessions.logoutAll(requireContext());
         final CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.removeAllCookies(success -> {
             if (getContext() != null) {

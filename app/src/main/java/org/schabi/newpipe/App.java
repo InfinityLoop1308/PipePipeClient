@@ -166,6 +166,7 @@ public class App extends MultiDexApplication {
         configureRxJavaErrorHandler();
 
         ScheduledBackupWorker.schedule(this);
+        LoginSessions.scheduleRefresh(this);
         // not gated on DEBUG: only the settings entry is debug-only
         DebugSync.schedule(this, false);
     }
