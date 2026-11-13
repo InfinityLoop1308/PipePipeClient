@@ -729,7 +729,7 @@
 
         </RelativeLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
+        <org.schabi.newpipe.views.ItemDragRecyclerView
             android:id="@+id/itemsList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -737,6 +737,7 @@
             android:scrollbars="vertical"
             android:theme="@style/PlayQueueItemTextTheme"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:viewBindingType="org.schabi.newpipe.views.ItemDragRecyclerView"
             tools:listitem="@layout/play_queue_item" />
 
     </RelativeLayout>
