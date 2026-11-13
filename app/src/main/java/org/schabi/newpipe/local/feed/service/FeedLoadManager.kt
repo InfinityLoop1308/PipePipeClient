@@ -16,6 +16,7 @@ import org.schabi.newpipe.database.feed.model.FeedGroupEntity
 import org.schabi.newpipe.database.subscription.NotificationMode
 import org.schabi.newpipe.extractor.Info
 import org.schabi.newpipe.extractor.NewPipe
+import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.feed.FeedInfo
 import org.schabi.newpipe.extractor.ListInfo
 import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException
@@ -110,6 +111,8 @@ class FeedLoadManager(private val context: Context) {
 
         return outdatedSubscriptions
             .take(1)
+            // services whose plugin is missing cannot be fetched, the user is guided elsewhere
+            .map { list -> list.filter { ServiceList.getById(it.serviceId) != null } }
             .doOnNext {
                 currentProgress.set(0)
                 maxProgress.set(it.size)
