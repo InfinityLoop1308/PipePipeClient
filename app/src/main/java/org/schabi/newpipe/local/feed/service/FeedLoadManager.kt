@@ -323,10 +323,12 @@ class FeedLoadManager(private val context: Context) {
                                 it is ContentNotSupportedException
                             }
 
+                            // skip channels unsubscribed while the feed was updating
+                            if (!subscriptionManager.updateFromInfo(info)) continue
+
                             notification.value!!.newStreams = filterNewStreams(info.streams)
 
                             feedDatabaseManager.upsertAll(info.uid, info.streams)
-                            subscriptionManager.updateFromInfo(info)
 
                             if (reportableErrors.isNotEmpty()) {
                                 // Log errors for this specific channel

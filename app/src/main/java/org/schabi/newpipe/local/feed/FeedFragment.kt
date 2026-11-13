@@ -884,6 +884,7 @@ class FeedFragment : BaseStateFragment<FeedState>(), BackPressable {
                 Single.fromCallable {
                     NewPipeDatabase.getInstance(requireContext()).subscriptionDAO()
                         .getSubscription(t.subscriptionId)
+                        ?: throw IllegalStateException("Subscription not found: ${t.subscriptionId}")
                 }.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(

@@ -112,7 +112,7 @@ abstract class SubscriptionDAO : BasicDAO<SubscriptionEntity> {
     abstract fun getSubscription(serviceId: Int, url: String): Maybe<SubscriptionEntity>
 
     @Query("SELECT * FROM subscriptions WHERE uid = :subscriptionId")
-    abstract fun getSubscription(subscriptionId: Long): SubscriptionEntity
+    abstract fun getSubscription(subscriptionId: Long): SubscriptionEntity?
 
     @Query("DELETE FROM subscriptions")
     abstract override fun deleteAll(): Int

@@ -72,7 +72,7 @@ class SubscriptionManager(context: Context) {
         )
 
     fun updateChannelInfo(subscriptionId: Long, info: ChannelInfo) {
-        val subscriptionEntity = subscriptionTable.getSubscription(subscriptionId)
+        val subscriptionEntity = subscriptionTable.getSubscription(subscriptionId) ?: return
         if (info.name == null) return
 
         subscriptionEntity.setData(
@@ -110,8 +110,11 @@ class SubscriptionManager(context: Context) {
             }
     }
 
-    fun updateFromInfo(info: FeedUpdateInfo) {
-        val subscriptionEntity = subscriptionTable.getSubscription(info.uid)
+    /**
+     * @return false if the subscription no longer exists (e.g. removed while the feed was updating)
+     */
+    fun updateFromInfo(info: FeedUpdateInfo): Boolean {
+        val subscriptionEntity = subscriptionTable.getSubscription(info.uid) ?: return false
 
         subscriptionEntity.name = info.name
 
@@ -123,6 +126,7 @@ class SubscriptionManager(context: Context) {
         info.subscriberCount?.let { subscriptionEntity.subscriberCount = it }
 
         subscriptionTable.update(subscriptionEntity)
+        return true
     }
 
     fun deleteSubscription(serviceId: Int, url: String): Completable {
