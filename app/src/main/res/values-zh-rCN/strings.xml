@@ -1276,5 +1276,5 @@
 <string name="invalid_settings_file">不是有效的设置文件</string>
 <string name="logout_keep_webview_session_title">退出登录时保留网页会话</string>
 <string name="logout_keep_webview_session_summary">退出登录只在 PipePipe 中移除账户，保留网站的登录会话，便于快速重新登录</string>
-<string name="login_expired_toast">%1$s 登录已过期，请在设置中重新登录</string>
+<string name="login_expired_toast">%1$s 登录已过期，已退出登录</string>
 </resources>

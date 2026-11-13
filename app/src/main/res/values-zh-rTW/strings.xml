@@ -1230,5 +1230,5 @@
 <string name="invalid_settings_file">不是有效的設定檔</string>
 <string name="logout_keep_webview_session_title">登出時保留網頁工作階段</string>
 <string name="logout_keep_webview_session_summary">登出只在 PipePipe 中移除帳戶，保留網站的登入工作階段，便於快速重新登入</string>
-<string name="login_expired_toast">%1$s 登入已過期，請在設定中重新登入</string>
+<string name="login_expired_toast">%1$s 登入已過期，已登出</string>
 </resources>

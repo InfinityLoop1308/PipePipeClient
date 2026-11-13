@@ -1293,5 +1293,5 @@ Only add repositories you trust.</string>
 </plurals>
 <string name="logout_keep_webview_session_title">Keep web session on logout</string>
 <string name="logout_keep_webview_session_summary">Logging out only removes the account from PipePipe and keeps the website session, so logging in again is faster</string>
-<string name="login_expired_toast">%1$s login has expired, log in again in settings</string>
+<string name="login_expired_toast">%1$s login has expired, you have been logged out</string>
 </resources>
