@@ -1,6 +1,7 @@
 package us.shandian.giga.get
 
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrProtocolException
+import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormatTimeline
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrRequest
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession
@@ -21,6 +22,9 @@ import java.util.function.BooleanSupplier
 internal class SabrDownloader(
     private val mission: DownloadMission,
 ) : Runnable {
+    private var session: YoutubeSabrSession? = null
+    private var targets: List<SabrDownloadTarget>? = null
+
     override fun run() {
         try {
             ensureRunning()
@@ -57,6 +61,7 @@ internal class SabrDownloader(
         attestationRetryHandler: SabrAttestationRetryHandler,
     ) {
         val session = YoutubeSabrSession(info)
+        this.session = session
         val poToken = info.poToken
             ?: throw SabrProtocolException("SABR info has no player PO token")
         session.setPoToken(poToken)
@@ -88,7 +93,7 @@ internal class SabrDownloader(
             downloadSegments(
                 requestCoordinator,
                 targets,
-                SabrSegmentWriter(targets, outputs, ::reportBytesWritten),
+                SabrSegmentWriter(targets, outputs, ::reportBytesWritten, ::isPostLive),
             )
         } finally {
             outputs.values.forEach { output ->
@@ -144,7 +149,9 @@ internal class SabrDownloader(
             return
         }
         updateCheckpoint(target)
-        if (mission.nearLength > 0) {
+        if (isPostLive()) {
+            updatePostLiveLength(delta)
+        } else if (mission.nearLength > 0) {
             mission.length = mission.length
                 .coerceAtLeast(mission.nearLength)
                 .coerceAtLeast(mission.done + delta)
@@ -194,6 +201,7 @@ internal class SabrDownloader(
                     }
                 }
                 target.nextWriteSequence = checkpoint.nextWriteSequence
+                target.resumed = true
             }
         } catch (error: IOException) {
             throw storageException("could not restore temporary media", error)
@@ -230,7 +238,10 @@ internal class SabrDownloader(
                 previousInitializationBytes
             },
         )
-        mission.sabrCheckpoint = current.copy(resources = resources.sortedBy { it.resourceIndex })
+        mission.sabrCheckpoint = current.copy(
+            resources = resources.sortedBy { it.resourceIndex },
+            postLive = isPostLive(),
+        )
     }
 
     private fun restoredProgress(): Long {
@@ -314,8 +325,8 @@ internal class SabrDownloader(
         targets: List<SabrDownloadTarget>,
         writer: SabrSegmentWriter,
     ) {
-        val pendingTargets = targets.filterNot { it.initializationWritten }
-        if (pendingTargets.isEmpty()) {
+        // A resumed post-live download still needs the live metadata to rebuild its timelines.
+        if (mission.sabrCheckpoint?.postLive != true && targets.all { it.initializationWritten }) {
             return
         }
 
@@ -324,9 +335,99 @@ internal class SabrDownloader(
             requestCoordinator,
             YoutubeSabrRequest.preparation(0L, targets.map { it.format }),
             writer,
-            { pendingTargets.all { it.initializationWritten } },
+            {
+                if (isPostLive()) {
+                    installPostLiveTimelines(targets, writer) &&
+                        targets.all { it.initializationWritten }
+                } else {
+                    targets.all { it.initializationWritten }
+                }
+            },
         )
         writer.observeWrittenInitializations()
+        if (isPostLive()) {
+            if (targets.any { it.timeline == null }) {
+                throw SabrDownloadException(
+                    SabrDownloadException.Reason.STALLED,
+                    "SABR download stalled: post-live window was not returned",
+                )
+            }
+            this.targets = targets
+            updatePostLiveLength(0)
+            mission.writeThisToFile()
+        }
+    }
+
+    /**
+     * Post-live formats have no content length. The DVR timeline gives the segment count, so the
+     * size is the average written segment size times the remaining segments, or the bitrate times
+     * the window duration until enough segments are written.
+     */
+    private fun updatePostLiveLength(nextDelta: Long) {
+        val targets = targets ?: return
+        var estimate = 0L
+        for (target in targets) {
+            val timeline = target.timeline ?: return
+            val segments = timeline.endSequence - timeline.startSequence + 1L
+            val written = (target.nextWriteSequence - timeline.startSequence).toLong()
+            val fileBytes = target.file.length()
+            val mediaBytes = fileBytes - (target.initializationData?.size ?: 0)
+            estimate += if (written >= MIN_ESTIMATE_SEGMENTS && mediaBytes > 0) {
+                fileBytes + mediaBytes / written * (segments - written).coerceAtLeast(0)
+            } else {
+                val itag = target.format.toItagItem()
+                val bitrate = itag.averageBitrate.takeIf { it > 0 } ?: itag.bitrate
+                if (bitrate <= 0) {
+                    return
+                }
+                fileBytes + bitrate / 8L * timeline.segmentDurationMs *
+                    (segments - written).coerceAtLeast(0) / 1000L
+            }
+        }
+        mission.nearLength = estimate
+        mission.length = estimate.coerceAtLeast(mission.done + nextDelta)
+        mission.unknownLength = false
+    }
+
+    /**
+     * An ended livestream reports itself as live in the SABR response. The checkpoint keeps the
+     * flag so a resumed download does not treat its initialization as a VOD segment index.
+     */
+    private fun isPostLive(): Boolean {
+        return mission.sabrCheckpoint?.postLive == true || session?.isLive == true
+    }
+
+    /**
+     * Post-live SABR has no `sidx`/`Cues`: the finite DVR timeline comes from the live metadata
+     * and the format initialization metadata, numbered from the broadcast's sequence 0.
+     */
+    private fun installPostLiveTimelines(
+        targets: List<SabrDownloadTarget>,
+        writer: SabrSegmentWriter,
+    ): Boolean {
+        val session = session ?: return false
+        if (!session.isLive) {
+            return false
+        }
+        val windowStart = session.liveSeekableStartTimeMs.coerceAtLeast(0)
+        val timelines = targets.map { target ->
+            val start = session.getLiveStartSegmentNumber(target.format)
+            val end = session.getLiveEndSegmentNumber(target.format)
+            val duration = session.getLiveSegmentDurationMs(target.format)
+            if (start < 0 || end < start || duration <= 0) {
+                return false
+            }
+            try {
+                YoutubeSabrFormatTimeline.live(start.toInt(), end.toInt(), windowStart, duration)
+            } catch (error: SabrProtocolException) {
+                session.addDiagnosticEvent("post_live_timeline_invalid message=${error.message}")
+                return false
+            }
+        }
+        targets.forEachIndexed { index, target ->
+            writer.installPostLiveTimeline(target, timelines[index])
+        }
+        return true
     }
 
     @Throws(IOException::class, InterruptedException::class)
@@ -370,10 +471,18 @@ internal class SabrDownloader(
     }
 
     private fun downloadPlayerTimeMs(targets: List<SabrDownloadTarget>): Long {
-        return targets.minOf { target ->
-            if (target.nextWriteSequence <= 1) 0L
-            else target.timeline?.getEndMs(target.nextWriteSequence - 1) ?: 0L
+        val timeMs = targets.minOf { target ->
+            val timeline = target.timeline
+            when {
+                timeline == null -> 0L
+                target.nextWriteSequence <= timeline.startSequence ->
+                    timeline.getStartMs(timeline.startSequence)
+                else -> timeline.getEndMs(target.nextWriteSequence - 1)
+            }
         }
+        // A zero player time makes a post-live request look like the initial preparation
+        // request, which does not select tracks.
+        return if (isPostLive()) timeMs.coerceAtLeast(1) else timeMs
     }
 
     private fun isDownloadComplete(targets: List<SabrDownloadTarget>): Boolean {
@@ -432,6 +541,7 @@ internal class SabrDownloader(
 
     companion object {
         private const val IDLE_POLL_MS = 250L
+        private const val MIN_ESTIMATE_SEGMENTS = 3L
         private const val MAX_NO_PROGRESS_RESPONSES = 60
         private const val MAX_REQUEST_NETWORK_RETRIES = 2
         private const val REQUEST_NETWORK_RETRY_DELAY_MS = 1_000L

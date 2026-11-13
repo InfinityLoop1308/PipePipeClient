@@ -990,6 +990,7 @@ public class MissionAdapter extends Adapter<ViewHolder> implements Handler.Callb
                     }
                 } else {
                     if (mission.running) {
+                        pause.setTitle(mission.unknownLength ? R.string.stop : R.string.pause);
                         pause.setVisible(true);
                     } else {
                         if (mission.errCode != ERROR_NOTHING) {

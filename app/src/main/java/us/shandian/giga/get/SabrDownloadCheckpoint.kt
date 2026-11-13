@@ -5,6 +5,8 @@ import java.io.Serializable
 data class SabrDownloadCheckpoint(
     val version: Int = VERSION,
     val resources: List<SabrResourceCheckpoint> = emptyList(),
+    /** Temporary media is post-live: its initialization has no segment index. */
+    val postLive: Boolean = false,
 ) : Serializable {
     companion object {
         private const val serialVersionUID = 1L

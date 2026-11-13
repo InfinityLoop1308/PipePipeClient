@@ -9,6 +9,7 @@ internal class SabrSegmentWriter(
     private val targets: List<SabrDownloadTarget>,
     private val outputs: Map<Int, OutputStream>,
     private val onBytesWritten: (SabrDownloadTarget, Long) -> Unit,
+    private val isPostLive: () -> Boolean,
 ) {
     @Throws(IOException::class)
     fun acceptSegment(segment: SabrMediaSegment) {
@@ -38,7 +39,7 @@ internal class SabrSegmentWriter(
     fun observeWrittenInitializations() {
         for (target in targets) {
             val data = target.initializationData ?: continue
-            if (target.timeline == null) {
+            if (target.timeline == null && !isPostLive()) {
                 target.timeline = YoutubeSabrFormatTimeline.parse(target.format, data)
             }
         }
@@ -61,10 +62,38 @@ internal class SabrSegmentWriter(
         writeToStorage(output, data)
         target.initializationWritten = true
         target.initializationData = data
-        target.timeline = YoutubeSabrFormatTimeline.parse(target.format, data)
+        // A post-live initialization describes the live encoder state, not the DVR window.
+        if (!isPostLive()) {
+            target.timeline = YoutubeSabrFormatTimeline.parse(target.format, data)
+        }
         onBytesWritten(target, data.size.toLong())
-        flushPendingMedia(target, output)
+        if (target.timeline != null) {
+            flushPendingMedia(target, output)
+        }
         return true
+    }
+
+    /**
+     * Installs the post-live DVR timeline built from the live metadata, then writes the media
+     * that arrived before it was known.
+     */
+    fun installPostLiveTimeline(target: SabrDownloadTarget, timeline: YoutubeSabrFormatTimeline) {
+        if (target.timeline != null) {
+            return
+        }
+        target.timeline = timeline
+        target.nextWriteSequence = if (target.resumed) {
+            target.nextWriteSequence.coerceAtLeast(timeline.startSequence)
+        } else {
+            timeline.startSequence
+        }
+        while (target.pending.isNotEmpty() && target.pending.firstKey() < target.nextWriteSequence) {
+            val dropped = target.pending.pollFirstEntry()!!.value
+            target.pendingBytes = (target.pendingBytes - dropped.size).coerceAtLeast(0)
+        }
+        if (target.initializationWritten) {
+            flushPendingMedia(target, outputs.getValue(target.resourceIndex))
+        }
     }
 
     @Throws(IOException::class)
@@ -73,6 +102,10 @@ internal class SabrSegmentWriter(
         output: OutputStream,
         segment: SabrMediaSegment,
     ) {
+        if (isPostLive()) {
+            writePostLiveMediaSegment(target, output, segment)
+            return
+        }
         val sequence = segment.header.sequenceNumber
         if (sequence < target.nextWriteSequence) {
             return
@@ -86,6 +119,46 @@ internal class SabrSegmentWriter(
             return
         }
         writeMediaSegmentBytes(target, output, segment)
+        flushPendingMedia(target, output)
+    }
+
+    /**
+     * Post-live SABR has no separate initialization: every media segment starts with its own
+     * `ftyp`+`moov`. The first copy becomes the track initialization and is dropped from every
+     * segment, so the temporary file is one initialization followed by plain fragments.
+     */
+    private fun writePostLiveMediaSegment(
+        target: SabrDownloadTarget,
+        output: OutputStream,
+        segment: SabrMediaSegment,
+    ) {
+        val data = segment.data
+        val initializationEnd = initializationEnd(data)
+        val media = if (initializationEnd > 0) {
+            if (!target.initializationWritten) {
+                writeInitializationSegment(target, output, data.copyOfRange(0, initializationEnd))
+            }
+            data.copyOfRange(initializationEnd, data.size)
+        } else {
+            data
+        }
+        val sequence = segment.header.sequenceNumber
+        if (target.timeline == null) {
+            cachePendingMedia(target, sequence, media, "waiting for post-live timeline")
+            return
+        }
+        if (sequence < target.nextWriteSequence) {
+            return
+        }
+        if (!target.initializationWritten) {
+            cachePendingMedia(target, sequence, media, "waiting for initialization")
+            return
+        }
+        if (sequence > target.nextWriteSequence) {
+            cachePendingMedia(target, sequence, media, "waiting for sequence ${target.nextWriteSequence}")
+            return
+        }
+        writeMediaBytes(target, output, media)
         flushPendingMedia(target, output)
     }
 
@@ -158,6 +231,26 @@ internal class SabrSegmentWriter(
     }
 
     private companion object {
+        /** End offset of a leading `ftyp`+`moov` pair, or -1 when there is none. */
+        private fun initializationEnd(data: ByteArray): Int {
+            var offset = 0
+            while (offset + 8 <= data.size) {
+                val size = (data[offset].toLong() and 0xffL shl 24) or
+                    (data[offset + 1].toLong() and 0xffL shl 16) or
+                    (data[offset + 2].toLong() and 0xffL shl 8) or
+                    (data[offset + 3].toLong() and 0xffL)
+                val type = String(data, offset + 4, 4, Charsets.US_ASCII)
+                if (size < 8 || size > data.size - offset || (offset == 0 && type != "ftyp")) {
+                    return -1
+                }
+                offset += size.toInt()
+                if (type == "moov") {
+                    return offset
+                }
+            }
+            return -1
+        }
+
         private const val MAX_PENDING_SEGMENTS = 64
         private const val MAX_PENDING_BYTES = 24L * 1024L * 1024L
     }

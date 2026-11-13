@@ -11,6 +11,7 @@ internal data class SabrDownloadTarget(
     val format: YoutubeSabrInfo.Format,
     val file: File,
     var nextWriteSequence: Int = 1,
+    var resumed: Boolean = false,
     var initializationWritten: Boolean = false,
     var initializationData: ByteArray? = null,
     var timeline: YoutubeSabrFormatTimeline? = null,
