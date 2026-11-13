@@ -976,9 +976,9 @@
 <string name="pull_to_refresh_title">Przeciągnięcie w dół aby odświeżyć</string>
 <string name="pull_to_refresh_summary">Włącz gest przciągnięcia w dół aby odświeżyć kanał</string>
 <string name="select_groups">Wybierz grupy</string>
-<string name="clear_webview_cookies">Wyczyść ciasteczka WebView</string>
-<string name="clear_webview_cookies_summary">Wyczyść wszystkie ciasteczka przetrzymywane przez komponenty WebView aby można było użyć nowe konto</string>
-<string name="webview_cookies_cleared">Ciasteczka WebView zostały wyczyszczone</string>
+<string name="clear_webview_cookies">Wyczyść pliki cookie WebView i wyloguj się</string>
+<string name="clear_webview_cookies_summary">Wyloguj się ze wszystkich kont i wyczyść wszystkie pliki cookie zapisane przez komponenty WebView, aby móc użyć nowego konta</string>
+<string name="webview_cookies_cleared">Wylogowano i wyczyszczono pliki cookie WebView</string>
 <string name="remove_from_playlist_confirmation">Usunąć ten element z playlisty?</string>
 <string name="local_playlist_swipe_action_title">Akcja prawego przesunięcia w lokalnych playlistach</string>
 <string name="youtube_login_warning_title">Zaloguj się tylko w razie potrzeby</string>
@@ -1254,4 +1254,13 @@
 <string name="reset_settings_summary">Przywróć wszystkie ustawienia do domyślnych. Historia i subskrypcje pozostaną nienaruszone.</string>
 <string name="reset_settings_confirmation">Wszystkie ustawienia zostaną przywrócone do domyślnych, a aplikacja zostanie uruchomiona ponownie. Kontynuować?</string>
 <string name="invalid_settings_file">Nieprawidłowy plik ustawień</string>
+<string name="missing_plugin_title">Wymagane wtyczki</string>
+<string name="missing_plugin_message">Niektóre z Twoich danych należą do serwisów, które są teraz obsługiwane przez wtyczki, które nie są zainstalowane lub załadowane:</string>
+<string name="missing_plugin_unknown">Nieznana wtyczka (serwis %d)</string>
+<string name="missing_plugin_manual">Niektóre z nich nie mogą zostać zainstalowane automatycznie. Sprawdź ustawienia wtyczek.</string>
+<string name="missing_plugin_ignore">Nie pokazuj ponownie</string>
+<string name="missing_plugin_not_found">Nie znaleziono w repozytorium</string>
+<string name="logout_keep_webview_session_title">Zachowaj sesję internetową po wylogowaniu</string>
+<string name="logout_keep_webview_session_summary">Wylogowanie usuwa jedynie konto z PipePipe i zachowuje sesję strony internetowej, dzięki czemu ponowne logowanie jest szybsze</string>
+<string name="login_expired_toast">Logowanie %1$s wygasło, wylogowano Cię</string>
 </resources>

@@ -907,8 +907,8 @@
 <item quantity="one">%s 件の返信</item>
 <item quantity="other">%s 件の返信</item>
 </plurals>
-<string name="clear_webview_cookies">WebViewのCookieをクリア</string>
-<string name="clear_webview_cookies_summary">新しいアカウントを使用できるように、WebViewコンポーネントに保存されているすべてのCookieをクリアします</string>
+<string name="clear_webview_cookies">WebViewのCookieを消去してログアウト</string>
+<string name="clear_webview_cookies_summary">すべてのアカウントからログアウトし、WebViewコンポーネントに保存されているすべてのCookieを消去して、新しいアカウントを使用できるようにします</string>
 <string name="webview_cookies_cleared">WebViewのCookieはクリアされました</string>
 <string name="import_urls_from_file">ファイルからURLをインポート</string>
 <string name="import_urls_error">URLのインポート中にエラーが発生しました: %s</string>
@@ -1197,4 +1197,13 @@
 <string name="reset_settings_summary">すべての設定をデフォルトに戻します。履歴とサブスクリプションは変更されません。</string>
 <string name="reset_settings_confirmation">すべての設定がデフォルトに復元され、アプリが再起動します。続行しますか？</string>
 <string name="invalid_settings_file">有効な設定ファイルではありません</string>
+<string name="missing_plugin_title">プラグインが必要です</string>
+<string name="missing_plugin_message">一部のデータは現在プラグインによって提供されるサービスに属していますが、それらのプラグインがインストールされていないか、読み込まれていません:</string>
+<string name="missing_plugin_unknown">不明なプラグイン (サービス %d)</string>
+<string name="missing_plugin_manual">一部は自動的にインストールできません。プラグインの設定を確認してください。</string>
+<string name="missing_plugin_ignore">次回から表示しない</string>
+<string name="missing_plugin_not_found">リポジトリに見つかりません</string>
+<string name="logout_keep_webview_session_title">ログアウト時にWebセッションを保持する</string>
+<string name="logout_keep_webview_session_summary">ログアウトするとPipePipeからアカウントが削除されるだけで、Webサイトのセッションは保持されるため、再ログインが速くなります</string>
+<string name="login_expired_toast">%1$s のログインの有効期限が切れました。ログアウトされました</string>
 </resources>

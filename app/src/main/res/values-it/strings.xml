@@ -878,9 +878,9 @@
 <item quantity="one">%s risposta</item>
 <item quantity="other">%s risposte</item>
 </plurals>
-<string name="clear_webview_cookies">Cancella i cookie di WebView</string>
-<string name="clear_webview_cookies_summary">Cancella tutti i cookie memorizzati dai componenti WebView in modo da poter utilizzare un nuovo account</string>
-<string name="webview_cookies_cleared">I cookie di WebView sono stati cancellati</string>
+<string name="clear_webview_cookies">Cancella i cookie di WebView ed esci</string>
+<string name="clear_webview_cookies_summary">Esci da tutti gli account e cancella tutti i cookie memorizzati dai componenti WebView, in modo da poter utilizzare un nuovo account</string>
+<string name="webview_cookies_cleared">Disconnesso e cookie di WebView cancellati</string>
 <string name="import_urls_from_file">Importa URL da file</string>
 <string name="import_urls_error">Errore durante l\'importazione delle URL: %s</string>
 <string name="import_urls_no_valid_urls">Nessuna URL valida trovata nel file selezionato</string>
@@ -1168,4 +1168,13 @@
 <string name="reset_settings_summary">Ripristina tutte le impostazioni ai valori predefiniti. La cronologia e le iscrizioni rimarranno intatte.</string>
 <string name="reset_settings_confirmation">Tutte le impostazioni verranno ripristinate ai valori predefiniti e l\'app verrà riavviata. Continuare?</string>
 <string name="invalid_settings_file">File di impostazioni non valido</string>
+<string name="missing_plugin_title">Plugin necessari</string>
+<string name="missing_plugin_message">Alcuni dei tuoi dati appartengono a servizi che ora sono forniti da plugin, i quali non sono installati o non sono caricati:</string>
+<string name="missing_plugin_unknown">Plugin sconosciuto (servizio %d)</string>
+<string name="missing_plugin_manual">Alcuni di essi non possono essere installati automaticamente. Controlla le impostazioni dei plugin.</string>
+<string name="missing_plugin_ignore">Non mostrare più</string>
+<string name="missing_plugin_not_found">Non trovato nel suo repository</string>
+<string name="logout_keep_webview_session_title">Mantieni la sessione web alla disconnessione</string>
+<string name="logout_keep_webview_session_summary">La disconnessione rimuove solo l\'account da PipePipe e mantiene la sessione del sito web, così l\'accesso successivo sarà più veloce</string>
+<string name="login_expired_toast">L\'accesso a %1$s è scaduto, sei stato disconnesso</string>
 </resources>

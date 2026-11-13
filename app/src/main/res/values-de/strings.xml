@@ -883,9 +883,9 @@
 <item quantity="one">%s Antwort</item>
 <item quantity="other">%s Antworten</item>
 </plurals>
-<string name="clear_webview_cookies">WebView-Cookies löschen</string>
-<string name="clear_webview_cookies_summary">Alle von WebView-Komponenten gespeicherten Cookies löschen, damit Sie ein neues Konto verwenden können</string>
-<string name="webview_cookies_cleared">WebView-Cookies wurden gelöscht</string>
+<string name="clear_webview_cookies">WebView-Cookies löschen und abmelden</string>
+<string name="clear_webview_cookies_summary">Von allen Konten abmelden und alle von WebView-Komponenten gespeicherten Cookies löschen, damit Sie ein neues Konto verwenden können</string>
+<string name="webview_cookies_cleared">Abgemeldet und WebView-Cookies gelöscht</string>
 <string name="import_urls_from_file">URLs aus Datei importieren</string>
 <string name="import_urls_error">Fehler beim Importieren von URLs: %s</string>
 <string name="import_urls_no_valid_urls">Keine gültigen URLs in der ausgewählten Datei gefunden</string>
@@ -1226,4 +1226,13 @@
 <string name="reset_settings_summary">Alle Einstellungen auf Standardwerte zurücksetzen. Verlauf und Abonnements bleiben unberührt.</string>
 <string name="reset_settings_confirmation">Alle Einstellungen werden auf die Standardwerte zurückgesetzt und die App wird neu gestartet. Fortfahren?</string>
 <string name="invalid_settings_file">Keine gültige Einstellungsdatei</string>
+<string name="missing_plugin_title">Plugins benötigt</string>
+<string name="missing_plugin_message">Einige deiner Daten gehören zu Diensten, die jetzt von Plugins bereitgestellt werden, welche nicht installiert oder nicht geladen sind:</string>
+<string name="missing_plugin_unknown">Unbekanntes Plugin (Dienst %d)</string>
+<string name="missing_plugin_manual">Einige davon können nicht automatisch installiert werden. Überprüfe die Plugin-Einstellungen.</string>
+<string name="missing_plugin_ignore">Nicht mehr anzeigen</string>
+<string name="missing_plugin_not_found">Nicht im Repository gefunden</string>
+<string name="logout_keep_webview_session_title">Web-Sitzung beim Abmelden behalten</string>
+<string name="logout_keep_webview_session_summary">Das Abmelden entfernt nur das Konto aus PipePipe und behält die Website-Sitzung bei, sodass eine erneute Anmeldung schneller ist</string>
+<string name="login_expired_toast">%1$s-Anmeldung ist abgelaufen, du wurdest abgemeldet</string>
 </resources>

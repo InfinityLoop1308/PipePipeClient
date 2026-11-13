@@ -901,9 +901,9 @@ Voulez-vous continuer?</string>
 <item quantity="one">%s réponse</item>
 <item quantity="other">%s réponses</item>
 </plurals>
-<string name="clear_webview_cookies">Effacer les cookies WebView</string>
-<string name="clear_webview_cookies_summary">Effacer tous les cookies stockés par les composants WebView afin de pouvoir utiliser un nouveau compte</string>
-<string name="webview_cookies_cleared">Les cookies WebView ont été effacés</string>
+<string name="clear_webview_cookies">Effacer les cookies WebView et se déconnecter</string>
+<string name="clear_webview_cookies_summary">Se déconnecter de tous les comptes et effacer tous les cookies stockés par les composants WebView, afin de pouvoir utiliser un nouveau compte</string>
+<string name="webview_cookies_cleared">Déconnecté et cookies WebView effacés</string>
 <string name="import_urls_from_file">Importer des URL depuis un fichier</string>
 <string name="import_urls_error">Erreur lors de l\'importation des URL : %s</string>
 <string name="import_urls_no_valid_urls">Aucune URL valide trouvée dans le fichier sélectionné</string>
@@ -1243,4 +1243,13 @@ Voulez-vous continuer?</string>
 <string name="reset_settings_summary">Restaurer tous les paramètres par défaut. L\'historique et les abonnements restent intacts.</string>
 <string name="reset_settings_confirmation">Tous les paramètres seront restaurés par défaut et l\'application va redémarrer. Continuer ?</string>
 <string name="invalid_settings_file">Fichier de paramètres non valide</string>
+<string name="missing_plugin_title">Plugins nécessaires</string>
+<string name="missing_plugin_message">Certaines de vos données appartiennent à des services qui sont désormais fournis par des plugins, qui ne sont pas installés ou non chargés :</string>
+<string name="missing_plugin_unknown">Plugin inconnu (service %d)</string>
+<string name="missing_plugin_manual">Certains d\'entre eux ne peuvent pas être installés automatiquement. Vérifiez les paramètres des plugins.</string>
+<string name="missing_plugin_ignore">Ne plus afficher</string>
+<string name="missing_plugin_not_found">Introuvable dans son dépôt</string>
+<string name="logout_keep_webview_session_title">Conserver la session web lors de la déconnexion</string>
+<string name="logout_keep_webview_session_summary">La déconnexion supprime uniquement le compte de PipePipe et conserve la session du site web, la reconnexion est donc plus rapide</string>
+<string name="login_expired_toast">La connexion %1$s a expiré, vous avez été déconnecté</string>
 </resources>

@@ -991,9 +991,9 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="pull_to_refresh_title">Kéo để làm mới</string>
 <string name="pull_to_refresh_summary">Bật cử chỉ kéo để làm mới trong nguồn cấp dữ liệu</string>
 <string name="select_groups">Chọn Nhóm</string>
-<string name="clear_webview_cookies">Xóa cookie WebView</string>
-<string name="clear_webview_cookies_summary">Xóa tất cả cookie được lưu trữ bởi các thành phần WebView để bạn có thể sử dụng tài khoản mới</string>
-<string name="webview_cookies_cleared">Cookie WebView đã được xóa</string>
+<string name="clear_webview_cookies">Xóa cookie WebView và đăng xuất</string>
+<string name="clear_webview_cookies_summary">Đăng xuất khỏi tất cả các tài khoản và xóa tất cả cookie được lưu trữ bởi các thành phần WebView, để bạn có thể sử dụng tài khoản mới</string>
+<string name="webview_cookies_cleared">Đã đăng xuất và xóa cookie WebView</string>
 <string name="import_urls_from_file">Nhập URL từ tệp</string>
 <string name="import_urls_error">Lỗi nhập URL: %s</string>
 <string name="import_urls_no_valid_urls">Không tìm thấy URL hợp lệ trong tệp đã chọn</string>
@@ -1281,4 +1281,13 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="reset_settings_summary">Khôi phục tất cả cài đặt về mặc định. Lịch sử và các mục đăng ký được giữ nguyên.</string>
 <string name="reset_settings_confirmation">Tất cả cài đặt sẽ được khôi phục về mặc định và ứng dụng sẽ khởi động lại. Tiếp tục?</string>
 <string name="invalid_settings_file">Tệp cài đặt không hợp lệ</string>
+<string name="missing_plugin_title">Cần có plugin</string>
+<string name="missing_plugin_message">Một số dữ liệu của bạn thuộc về các dịch vụ hiện được cung cấp bởi các plugin, nhưng chúng chưa được cài đặt hoặc chưa được tải:</string>
+<string name="missing_plugin_unknown">Plugin không xác định (dịch vụ %d)</string>
+<string name="missing_plugin_manual">Một số plugin không thể được cài đặt tự động. Hãy kiểm tra cài đặt plugin.</string>
+<string name="missing_plugin_ignore">Không hiển thị lại</string>
+<string name="missing_plugin_not_found">Không tìm thấy trong kho lưu trữ</string>
+<string name="logout_keep_webview_session_title">Giữ phiên web khi đăng xuất</string>
+<string name="logout_keep_webview_session_summary">Đăng xuất chỉ xóa tài khoản khỏi PipePipe và giữ lại phiên trang web, do đó đăng nhập lại sẽ nhanh hơn</string>
+<string name="login_expired_toast">Phiên đăng nhập %1$s đã hết hạn, bạn đã bị đăng xuất</string>
 </resources>

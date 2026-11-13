@@ -1277,4 +1277,10 @@
 <string name="logout_keep_webview_session_title">退出登录时保留网页会话</string>
 <string name="logout_keep_webview_session_summary">退出登录只在 PipePipe 中移除账户，保留网站的登录会话，便于快速重新登录</string>
 <string name="login_expired_toast">%1$s 登录已过期，已退出登录</string>
+<string name="missing_plugin_title">需要插件</string>
+<string name="missing_plugin_message">您的一些数据属于现在由插件提供的服务，这些插件未安装或未加载：</string>
+<string name="missing_plugin_unknown">未知插件（服务 %d）</string>
+<string name="missing_plugin_manual">其中一些无法自动安装。请检查插件设置。</string>
+<string name="missing_plugin_ignore">不再显示</string>
+<string name="missing_plugin_not_found">在其存储库中未找到</string>
 </resources>

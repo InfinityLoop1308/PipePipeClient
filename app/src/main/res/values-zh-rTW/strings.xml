@@ -940,7 +940,7 @@
 </plurals>
 <string name="clear_webview_cookies">清除 WebView Cookie 並登出</string>
 <string name="clear_webview_cookies_summary">登出所有帳戶並清除 WebView 元件儲存的所有 Cookie，以便您可以使用新帳戶</string>
-<string name="webview_cookies_cleared">已登出並清除 WebView Cookie</string>
+<string name="webview_cookies_cleared">已登出並清除 WebView cookie</string>
 <string name="import_urls_from_file">從檔案匯入網址</string>
 <string name="import_urls_error">匯入網址時發生錯誤：%s</string>
 <string name="import_urls_no_valid_urls">在選擇的檔案中未找到有效的網址</string>
@@ -1231,4 +1231,10 @@
 <string name="logout_keep_webview_session_title">登出時保留網頁工作階段</string>
 <string name="logout_keep_webview_session_summary">登出只在 PipePipe 中移除帳戶，保留網站的登入工作階段，便於快速重新登入</string>
 <string name="login_expired_toast">%1$s 登入已過期，已登出</string>
+<string name="missing_plugin_title">需要外掛程式</string>
+<string name="missing_plugin_message">您的部分資料屬於現在由外掛程式提供的服務，而這些外掛程式尚未安裝或載入：</string>
+<string name="missing_plugin_unknown">未知的外掛程式 (服務 %d)</string>
+<string name="missing_plugin_manual">其中部分無法自動安裝。請檢查外掛程式設定。</string>
+<string name="missing_plugin_ignore">不再顯示</string>
+<string name="missing_plugin_not_found">在其套件庫中找不到</string>
 </resources>

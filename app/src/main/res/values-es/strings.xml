@@ -940,9 +940,9 @@
 <string name="pull_to_refresh_title">Tirar para actualizar</string>
 <string name="pull_to_refresh_summary">Habilitar gesto de deslizar para actualizar en el feed</string>
 <string name="select_groups">Seleccionar Grupos</string>
-<string name="clear_webview_cookies">Clear_WebView_cookies-es</string>
-<string name="clear_webview_cookies_summary">Clear_all_cookies_stored_by_WebView_components_so_you_can_use_a_new_account-es</string>
-<string name="webview_cookies_cleared">WebView_cookies_have_been_cleared-es</string>
+<string name="clear_webview_cookies">Borrar cookies de WebView y cerrar sesión</string>
+<string name="clear_webview_cookies_summary">Cerrar sesión en todas las cuentas y borrar todas las cookies almacenadas por los componentes de WebView, para que puedas usar una cuenta nueva</string>
+<string name="webview_cookies_cleared">Sesión cerrada y cookies de WebView borradas</string>
 <string name="import_urls_from_file">Importar URLs desde archivo</string>
 <string name="import_urls_error">Error al importar URLs: %s</string>
 <string name="import_urls_no_valid_urls">No se encontraron URLs válidas en el archivo seleccionado</string>
@@ -1230,4 +1230,13 @@
 <string name="reset_settings_summary">Restaurar todos los ajustes a sus valores predeterminados. El historial y las suscripciones se mantendrán intactos.</string>
 <string name="reset_settings_confirmation">Todos los ajustes se restaurarán a sus valores predeterminados y la aplicación se reiniciará. ¿Continuar?</string>
 <string name="invalid_settings_file">No es un archivo de ajustes válido</string>
+<string name="missing_plugin_title">Plugins necesarios</string>
+<string name="missing_plugin_message">Algunos de tus datos pertenecen a servicios que ahora son proporcionados por plugins, que no están instalados o no están cargados:</string>
+<string name="missing_plugin_unknown">Plugin desconocido (servicio %d)</string>
+<string name="missing_plugin_manual">Algunos de ellos no se pueden instalar automáticamente. Revisa la configuración de los plugins.</string>
+<string name="missing_plugin_ignore">No volver a mostrar</string>
+<string name="missing_plugin_not_found">No se encuentra en su repositorio</string>
+<string name="logout_keep_webview_session_title">Mantener sesión web al cerrar sesión</string>
+<string name="logout_keep_webview_session_summary">Cerrar sesión solo elimina la cuenta de PipePipe y mantiene la sesión del sitio web, por lo que volver a iniciar sesión es más rápido</string>
+<string name="login_expired_toast">La sesión de %1$s ha expirado, se ha cerrado tu sesión</string>
 </resources>
