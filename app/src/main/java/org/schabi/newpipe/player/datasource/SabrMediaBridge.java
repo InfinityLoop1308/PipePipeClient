@@ -17,6 +17,7 @@ import org.schabi.newpipe.youtube.SabrAttestationRetryHandler;
 import org.schabi.newpipe.youtube.SabrRequestCoordinator;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -126,12 +127,31 @@ final class SabrMediaBridge {
                 Math.max(0, initialPositionMs), formats);
         // Post-live SABR has no sidx/Cues: the timeline comes from LIVE_METADATA and
         // FORMAT_INITIALIZATION_METADATA, so it can be ready before the initialization data.
-        requestOnce(request, spec.getBootstrapAudioFormat(), postLive
-                ? () -> (installPostLiveTimelines()
-                        && spec.getInitializationData(spec.getBootstrapAudioFormat()) != null
-                        && spec.getInitializationData(spec.getBootstrapVideoFormat()) != null)
-                        || stopped
-                : () -> hasTimelines() || stopped);
+        try {
+            requestOnce(request, spec.getBootstrapAudioFormat(), postLive
+                    ? () -> (installPostLiveTimelines()
+                            && spec.getInitializationData(spec.getBootstrapAudioFormat()) != null
+                            && spec.getInitializationData(spec.getBootstrapVideoFormat()) != null)
+                            || stopped
+                    : () -> hasTimelines() || stopped);
+        } catch (final InterruptedIOException cancellation) {
+            throw cancellation;
+        } catch (final IOException error) {
+            if (stopped) {
+                throw error;
+            }
+            throw new IOException("SABR preparation failed: video=" + spec.getVideoId()
+                    + ", postLive=" + postLive
+                    + ", playerMs=" + initialPositionMs
+                    + ", audioTimeline=" + (audioTimeline != null)
+                    + ", videoTimeline=" + (videoTimeline != null)
+                    + ", audioInit=" + (spec.getInitializationData(
+                            spec.getBootstrapAudioFormat()) != null)
+                    + ", videoInit=" + (spec.getInitializationData(
+                            spec.getBootstrapVideoFormat()) != null)
+                    + ", live=" + session.isLive()
+                    + ", trace=" + session.getDiagnosticTrace(), error);
+        }
     }
 
     private boolean installPostLiveTimelines() {
@@ -321,7 +341,9 @@ final class SabrMediaBridge {
     private SabrMediaSegment stripPostLiveInitialization(
             @NonNull final YoutubeSabrInfo.Format format,
             @NonNull final SabrMediaSegment segment) {
-        if (segment.isDiskBacked()) {
+        // Player sessions spool media to disk, so complete disk-backed segments are read back.
+        // Only a progressive segment that is still being written cannot be split.
+        if (!segment.isComplete()) {
             return segment;
         }
         final byte[] data = segment.getData();
