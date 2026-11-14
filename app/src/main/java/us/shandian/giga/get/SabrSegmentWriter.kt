@@ -10,7 +10,7 @@ internal class SabrSegmentWriter(
     private val targets: List<SabrDownloadTarget>,
     private val outputs: Map<Int, OutputStream>,
     private val onBytesWritten: (SabrDownloadTarget, Long) -> Unit,
-    private val isPostLive: () -> Boolean,
+    private val postLive: Boolean,
 ) {
     @Throws(IOException::class)
     fun acceptSegment(segment: SabrMediaSegment) {
@@ -40,7 +40,7 @@ internal class SabrSegmentWriter(
     fun observeWrittenInitializations() {
         for (target in targets) {
             val data = target.initializationData ?: continue
-            if (target.timeline == null && !isPostLive()) {
+            if (target.timeline == null && !postLive) {
                 target.timeline = YoutubeSabrFormatTimeline.parse(target.format, data)
             }
         }
@@ -64,7 +64,7 @@ internal class SabrSegmentWriter(
         target.initializationWritten = true
         target.initializationData = data
         // A post-live initialization describes the live encoder state, not the DVR window.
-        if (!isPostLive()) {
+        if (!postLive) {
             target.timeline = YoutubeSabrFormatTimeline.parse(target.format, data)
         }
         onBytesWritten(target, data.size.toLong())
@@ -103,7 +103,7 @@ internal class SabrSegmentWriter(
         output: OutputStream,
         segment: SabrMediaSegment,
     ) {
-        if (isPostLive()) {
+        if (postLive) {
             writePostLiveMediaSegment(target, output, segment)
             return
         }

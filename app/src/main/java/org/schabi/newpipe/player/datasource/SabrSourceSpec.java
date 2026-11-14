@@ -6,7 +6,6 @@ import androidx.annotation.Nullable;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormatTimeline;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrMediaSegment;
-import org.schabi.newpipe.extractor.stream.StreamType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,7 +30,6 @@ public final class SabrSourceSpec {
     @NonNull private final AtomicReference<byte[]> videoInitializationData =
             new AtomicReference<>();
     @NonNull private final AtomicReference<List<SabrMediaSegment>> bootstrapMediaSegments;
-    @NonNull private final StreamType streamType;
 
     SabrSourceSpec(@NonNull final String videoId,
                    @NonNull final YoutubeSabrInfo info,
@@ -39,7 +37,6 @@ public final class SabrSourceSpec {
                    @NonNull final List<YoutubeSabrInfo.Format> audioFormats,
                    @NonNull final List<YoutubeSabrInfo.Format> videoFormats,
                    @NonNull final YoutubeSabrInfo.Format bootstrapVideoFormat,
-                   @NonNull final StreamType streamType,
                    @Nullable final byte[] audioInitializationData,
                    @Nullable final byte[] videoInitializationData,
                    @Nullable final YoutubeSabrFormatTimeline audioTimeline,
@@ -57,7 +54,6 @@ public final class SabrSourceSpec {
         }
         this.videoFormats = Collections.unmodifiableList(new ArrayList<>(videoFormats));
         this.bootstrapVideoFormat = bootstrapVideoFormat;
-        this.streamType = streamType;
         final Map<String, YoutubeSabrInfo.Format> byKey = new LinkedHashMap<>();
         final Map<YoutubeSabrInfo.Format, String> byFormat = new ConcurrentHashMap<>();
         for (int i = 0; i < videoFormats.size(); i++) {
@@ -88,7 +84,6 @@ public final class SabrSourceSpec {
                    @Nullable final YoutubeSabrFormatTimeline videoTimeline,
                    @NonNull final List<SabrMediaSegment> segments) {
         this(videoId, info, audio, audios, Collections.singletonList(video), video,
-                StreamType.VIDEO_STREAM,
                 audioInit, videoInit, audioTimeline, videoTimeline, segments);
     }
 
@@ -103,7 +98,7 @@ public final class SabrSourceSpec {
     @NonNull public YoutubeSabrInfo.Format getBootstrapVideoFormat() { return bootstrapVideoFormat; }
     /** Compatibility accessor; callers needing a group must use getVideoFormats(). */
     @NonNull public YoutubeSabrInfo.Format getVideoFormat() { return bootstrapVideoFormat; }
-    public boolean isPostLive() { return streamType == StreamType.POST_LIVE_STREAM; }
+    public boolean isPostLive() { return info.isPostLive(); }
 
     @Nullable YoutubeSabrInfo.Format getFormat(@NonNull final String key) {
         return formatsByKey.get(key);

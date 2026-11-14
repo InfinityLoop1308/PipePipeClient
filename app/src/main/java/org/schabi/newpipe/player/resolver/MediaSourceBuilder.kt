@@ -367,8 +367,7 @@ object MediaSourceBuilder {
             val sabrInfo = stream.deliveryMethodInfo as? YoutubeSabrInfo
             val spec = try {
                 SabrSessionHelper.createSourceSpec(
-                    videoId, preferredVideoItag, request.info.audioStreams, sabrInfo,
-                    request.info.streamType
+                    videoId, preferredVideoItag, request.info.audioStreams, sabrInfo
                 )
             } catch (e: ExtractionException) {
                 throw IOException("Could not describe SABR source for $videoId", e)

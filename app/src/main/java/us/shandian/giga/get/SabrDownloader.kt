@@ -23,6 +23,7 @@ internal class SabrDownloader(
     private val mission: DownloadMission,
 ) : Runnable {
     private var session: YoutubeSabrSession? = null
+    private var postLive = false
     private var targets: List<SabrDownloadTarget>? = null
 
     override fun run() {
@@ -62,6 +63,7 @@ internal class SabrDownloader(
     ) {
         val session = YoutubeSabrSession(info)
         this.session = session
+        postLive = info.isPostLive
         val poToken = info.poToken
             ?: throw SabrProtocolException("SABR info has no player PO token")
         session.setPoToken(poToken)
@@ -93,7 +95,7 @@ internal class SabrDownloader(
             downloadSegments(
                 requestCoordinator,
                 targets,
-                SabrSegmentWriter(targets, outputs, ::reportBytesWritten, ::isPostLive),
+                SabrSegmentWriter(targets, outputs, ::reportBytesWritten, postLive),
             )
         } finally {
             outputs.values.forEach { output ->
@@ -149,7 +151,7 @@ internal class SabrDownloader(
             return
         }
         updateCheckpoint(target)
-        if (isPostLive()) {
+        if (postLive) {
             updatePostLiveLength(delta)
         } else if (mission.nearLength > 0) {
             mission.length = mission.length
@@ -238,10 +240,7 @@ internal class SabrDownloader(
                 previousInitializationBytes
             },
         )
-        mission.sabrCheckpoint = current.copy(
-            resources = resources.sortedBy { it.resourceIndex },
-            postLive = isPostLive(),
-        )
+        mission.sabrCheckpoint = current.copy(resources = resources.sortedBy { it.resourceIndex })
     }
 
     private fun restoredProgress(): Long {
@@ -326,7 +325,7 @@ internal class SabrDownloader(
         writer: SabrSegmentWriter,
     ) {
         // A resumed post-live download still needs the live metadata to rebuild its timelines.
-        if (mission.sabrCheckpoint?.postLive != true && targets.all { it.initializationWritten }) {
+        if (!postLive && targets.all { it.initializationWritten }) {
             return
         }
 
@@ -336,7 +335,7 @@ internal class SabrDownloader(
             YoutubeSabrRequest.preparation(0L, targets.map { it.format }),
             writer,
             {
-                if (isPostLive()) {
+                if (postLive) {
                     installPostLiveTimelines(targets, writer) &&
                         targets.all { it.initializationWritten }
                 } else {
@@ -345,7 +344,7 @@ internal class SabrDownloader(
             },
         )
         writer.observeWrittenInitializations()
-        if (isPostLive()) {
+        if (postLive) {
             if (targets.any { it.timeline == null }) {
                 throw SabrDownloadException(
                     SabrDownloadException.Reason.STALLED,
@@ -387,14 +386,6 @@ internal class SabrDownloader(
         mission.nearLength = estimate
         mission.length = estimate.coerceAtLeast(mission.done + nextDelta)
         mission.unknownLength = false
-    }
-
-    /**
-     * An ended livestream reports itself as live in the SABR response. The checkpoint keeps the
-     * flag so a resumed download does not treat its initialization as a VOD segment index.
-     */
-    private fun isPostLive(): Boolean {
-        return mission.sabrCheckpoint?.postLive == true || session?.isLive == true
     }
 
     /**
