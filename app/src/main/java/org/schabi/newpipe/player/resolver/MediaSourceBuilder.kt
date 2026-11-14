@@ -265,6 +265,9 @@ object MediaSourceBuilder {
 
         private fun buildPostLive(request: Request): MediaSource {
             val stream = request.stream
+            if (stream.deliveryMethod == DeliveryMethod.SABR) {
+                return sabr(request)
+            }
             if (stream.deliveryMethod == DeliveryMethod.HLS) {
                 return buildGeneric(request)
             }

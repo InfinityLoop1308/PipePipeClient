@@ -11,12 +11,15 @@ import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrRequest;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
 import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrMediaSegment;
+import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrSelfInitializingSegment;
 import org.schabi.newpipe.player.SabrBackoffCoordinator;
 import org.schabi.newpipe.youtube.SabrAttestationRetryHandler;
 import org.schabi.newpipe.youtube.SabrRequestCoordinator;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,6 +35,9 @@ final class SabrMediaBridge {
 
     private final Context appContext;
     private final SabrSourceSpec spec;
+    private final YoutubeSabrSession session;
+    private final boolean postLive;
+    private volatile long postLiveDurationMs = -1;
     private final SabrRequestCoordinator requestCoordinator;
     private final ReentrantLock transactionLock = new ReentrantLock(true);
     private final Map<SabrSegmentKey, SabrMediaSegment> ahead = new LinkedHashMap<>();
@@ -48,6 +54,8 @@ final class SabrMediaBridge {
                     @NonNull final SabrSourceSpec spec) {
         appContext = context.getApplicationContext();
         this.spec = spec;
+        this.session = session;
+        postLive = spec.isPostLive();
         requestCoordinator = new SabrRequestCoordinator(
                 session,
                 new SabrAttestationRetryHandler(spec.getVideoId(),
@@ -116,8 +124,67 @@ final class SabrMediaBridge {
         formats.add(spec.getBootstrapVideoFormat());
         final YoutubeSabrRequest request = YoutubeSabrRequest.preparation(
                 Math.max(0, initialPositionMs), formats);
-        requestOnce(request, spec.getBootstrapAudioFormat(),
-                () -> hasTimelines() || stopped);
+        // Post-live SABR has no sidx/Cues: the timeline comes from LIVE_METADATA and
+        // FORMAT_INITIALIZATION_METADATA, so it can be ready before the initialization data.
+        try {
+            requestOnce(request, spec.getBootstrapAudioFormat(), postLive
+                    ? () -> (installPostLiveTimelines()
+                            && spec.getInitializationData(spec.getBootstrapAudioFormat()) != null
+                            && spec.getInitializationData(spec.getBootstrapVideoFormat()) != null)
+                            || stopped
+                    : () -> hasTimelines() || stopped);
+        } catch (final InterruptedIOException cancellation) {
+            throw cancellation;
+        } catch (final IOException error) {
+            if (stopped) {
+                throw error;
+            }
+            throw new IOException("SABR preparation failed: "
+                    + describePreparation(initialPositionMs), error);
+        }
+    }
+
+    @NonNull
+    private String describePreparation(final long initialPositionMs) {
+        return "video=" + spec.getVideoId()
+                + ", postLive=" + postLive
+                + ", playerMs=" + initialPositionMs
+                + ", audioTimeline=" + (audioTimeline != null)
+                + ", videoTimeline=" + (videoTimeline != null)
+                + ", audioInit=" + (spec.getInitializationData(
+                        spec.getBootstrapAudioFormat()) != null)
+                + ", videoInit=" + (spec.getInitializationData(
+                        spec.getBootstrapVideoFormat()) != null)
+                + ", live=" + session.isLive()
+                + ", trace=" + session.getDiagnosticTrace();
+    }
+
+    private boolean installPostLiveTimelines() {
+        final YoutubeSabrFormatTimeline audio = YoutubeSabrFormatTimeline.fromLiveMetadata(
+                session, spec.getBootstrapAudioFormat());
+        final YoutubeSabrFormatTimeline video = YoutubeSabrFormatTimeline.fromLiveMetadata(
+                session, spec.getBootstrapVideoFormat());
+        if (audio == null || video == null) {
+            return false;
+        }
+        audioTimeline = audio;
+        videoTimeline = video;
+        final long windowStart = Math.max(0, session.getLiveSeekableStartTimeMs());
+        final long windowEnd = Math.max(session.getLiveSeekableEndTimeMs(),
+                Math.max(session.getLiveHeadTimeMs(), windowStart));
+        postLiveDurationMs = Math.max(1, windowEnd - windowStart);
+        session.addDiagnosticEvent("post_live_timeline"
+                + " startMs=" + windowStart
+                + " endMs=" + windowEnd
+                + " audio=" + audio.getStartSequence() + '-' + audio.getEndSequence()
+                + '/' + audio.getSegmentDurationMs()
+                + " video=" + video.getStartSequence() + '-' + video.getEndSequence()
+                + '/' + video.getSegmentDurationMs());
+        return true;
+    }
+
+    long getPostLiveDurationMs() {
+        return postLiveDurationMs;
     }
 
     void seedSegments(@NonNull final List<SabrMediaSegment> segments) {
@@ -171,8 +238,10 @@ final class SabrMediaBridge {
     @NonNull
     private YoutubeSabrRequest.Track track(@NonNull final YoutubeSabrInfo.Format format) {
         final Integer next = nextSequences.get(format);
-        final int bufferedThrough = next == null ? 0 : Math.max(0, next - 1);
-        return YoutubeSabrRequest.Track.of(format, getTimeline(format), bufferedThrough);
+        final YoutubeSabrFormatTimeline timeline = getTimeline(format);
+        // Anything below the timeline start means nothing is buffered yet.
+        final int bufferedThrough = (next == null ? timeline.getStartSequence() : next) - 1;
+        return YoutubeSabrRequest.Track.of(format, timeline, bufferedThrough);
     }
 
     private void requestOnce(@NonNull final YoutubeSabrRequest request,
@@ -222,8 +291,9 @@ final class SabrMediaBridge {
         if (stopped) throw new IOException("SABR bridge is stopped");
     }
 
-    private void acceptSegment(@NonNull final SabrMediaSegment segment,
+    private void acceptSegment(@NonNull final SabrMediaSegment received,
                                @Nullable final YoutubeSabrInfo.Format requestedAudio) {
+        SabrMediaSegment segment = received;
         if (stopped) {
             segment.delete();
             return;
@@ -235,15 +305,57 @@ final class SabrMediaBridge {
         }
         if (segment.getHeader().isInitSegment()) {
             acceptInitialization(format, segment);
-        } else {
-            cacheMedia(format, segment);
+            return;
         }
+        if (postLive) {
+            segment = stripPostLiveInitialization(format, segment);
+        }
+        // Post-live sequences start at 0; VOD sequences start at 1.
+        if (segment.getHeader().getSequenceNumber() < (postLive ? 0 : 1)) {
+            segment.delete();
+            return;
+        }
+        cacheMedia(format, segment);
+    }
+
+    /**
+     * Post-live SABR has no separate initialization segment: each self-initializing media segment
+     * starts with {@code ftyp}+{@code moov}. Keeps the first copy as the track initialization and
+     * returns the segment without it, so cached media starts at its {@code emsg}/{@code moof}.
+     */
+    @NonNull
+    private SabrMediaSegment stripPostLiveInitialization(
+            @NonNull final YoutubeSabrInfo.Format format,
+            @NonNull final SabrMediaSegment segment) {
+        // Player sessions spool media to disk, so complete disk-backed segments are read back.
+        // Only a progressive segment that is still being written cannot be split.
+        if (!segment.isComplete()) {
+            return segment;
+        }
+        final byte[] data = segment.getData();
+        final int initializationEnd = SabrSelfInitializingSegment.initializationEnd(data);
+        if (initializationEnd <= 0) {
+            return segment;
+        }
+        if (spec.getInitializationData(format) == null) {
+            spec.putInitializationData(format, Arrays.copyOfRange(data, 0, initializationEnd));
+        }
+        final SabrMediaSegment media = SabrMediaSegment.InternalAccess.fromBytes(
+                segment.getHeader(), Arrays.copyOfRange(data, initializationEnd, data.length));
+        segment.delete();
+        return media;
     }
 
     private void acceptInitialization(@NonNull final YoutubeSabrInfo.Format format,
                                       @NonNull final SabrMediaSegment segment) {
         final byte[] data = segment.getData();
         spec.putInitializationData(format, data);
+        if (postLive) {
+            // A post-live initialization segment describes the live encoder state, not the DVR
+            // segment index. The finite timeline is built from LIVE_METADATA instead.
+            segment.delete();
+            return;
+        }
         try {
             final YoutubeSabrFormatTimeline timeline =
                     YoutubeSabrFormatTimeline.parse(format, data);

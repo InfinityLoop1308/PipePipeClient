@@ -83,7 +83,7 @@ public final class YoutubePlaybackBenchmarkTest {
     private static final String DEFAULT_ANONYMOUS_PATHS =
             "sabr,visionos_generated_dash";
     private static final String DEFAULT_LOGGED_IN_PATHS =
-            "sabr,tv_downgraded_generated_dash";
+            "sabr,tv_samsung_generated_dash";
     private static final String PRODUCTION_LOAD_CONTROLLER = LoadController.class.getName();
     private static final int DEFAULT_PLAY_SECONDS = 60;
     private static final long DEFAULT_START_POSITION_MS = 2_995_000;
@@ -140,7 +140,7 @@ public final class YoutubePlaybackBenchmarkTest {
 
         final List<Path> paths = filterPaths(Arrays.asList(
                 new Path("sabr", "mweb", DeliveryMethod.SABR),
-                new Path("tv_downgraded_generated_dash", "tv_downgraded",
+                new Path("tv_samsung_generated_dash", "tv_samsung",
                         DeliveryMethod.PROGRESSIVE_HTTP),
                 new Path("visionos_generated_dash", "visionos",
                         DeliveryMethod.PROGRESSIVE_HTTP)), pathFilter);

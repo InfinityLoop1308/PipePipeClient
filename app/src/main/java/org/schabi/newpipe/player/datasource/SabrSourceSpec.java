@@ -98,6 +98,7 @@ public final class SabrSourceSpec {
     @NonNull public YoutubeSabrInfo.Format getBootstrapVideoFormat() { return bootstrapVideoFormat; }
     /** Compatibility accessor; callers needing a group must use getVideoFormats(). */
     @NonNull public YoutubeSabrInfo.Format getVideoFormat() { return bootstrapVideoFormat; }
+    public boolean isPostLive() { return info.isPostLive(); }
 
     @Nullable YoutubeSabrInfo.Format getFormat(@NonNull final String key) {
         return formatsByKey.get(key);
