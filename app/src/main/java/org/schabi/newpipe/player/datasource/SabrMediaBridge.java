@@ -10,15 +10,14 @@ import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormatTimel
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrInfo;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrRequest;
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrSession;
-import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrProtocolException;
 import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrMediaSegment;
+import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrSelfInitializingSegment;
 import org.schabi.newpipe.player.SabrBackoffCoordinator;
 import org.schabi.newpipe.youtube.SabrAttestationRetryHandler;
 import org.schabi.newpipe.youtube.SabrRequestCoordinator;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -140,56 +139,47 @@ final class SabrMediaBridge {
             if (stopped) {
                 throw error;
             }
-            throw new IOException("SABR preparation failed: video=" + spec.getVideoId()
-                    + ", postLive=" + postLive
-                    + ", playerMs=" + initialPositionMs
-                    + ", audioTimeline=" + (audioTimeline != null)
-                    + ", videoTimeline=" + (videoTimeline != null)
-                    + ", audioInit=" + (spec.getInitializationData(
-                            spec.getBootstrapAudioFormat()) != null)
-                    + ", videoInit=" + (spec.getInitializationData(
-                            spec.getBootstrapVideoFormat()) != null)
-                    + ", live=" + session.isLive()
-                    + ", trace=" + session.getDiagnosticTrace(), error);
+            throw new IOException("SABR preparation failed: "
+                    + describePreparation(initialPositionMs), error);
         }
     }
 
+    @NonNull
+    private String describePreparation(final long initialPositionMs) {
+        return "video=" + spec.getVideoId()
+                + ", postLive=" + postLive
+                + ", playerMs=" + initialPositionMs
+                + ", audioTimeline=" + (audioTimeline != null)
+                + ", videoTimeline=" + (videoTimeline != null)
+                + ", audioInit=" + (spec.getInitializationData(
+                        spec.getBootstrapAudioFormat()) != null)
+                + ", videoInit=" + (spec.getInitializationData(
+                        spec.getBootstrapVideoFormat()) != null)
+                + ", live=" + session.isLive()
+                + ", trace=" + session.getDiagnosticTrace();
+    }
+
     private boolean installPostLiveTimelines() {
-        // The LIVE_METADATA post-live flag is not repeated in every response. The extractor has
-        // already classified the video as POST_LIVE_STREAM, so the live window itself is enough.
-        if (!session.isLive()) {
+        final YoutubeSabrFormatTimeline audio = YoutubeSabrFormatTimeline.fromLiveMetadata(
+                session, spec.getBootstrapAudioFormat());
+        final YoutubeSabrFormatTimeline video = YoutubeSabrFormatTimeline.fromLiveMetadata(
+                session, spec.getBootstrapVideoFormat());
+        if (audio == null || video == null) {
             return false;
         }
-        final YoutubeSabrInfo.Format audio = spec.getBootstrapAudioFormat();
-        final YoutubeSabrInfo.Format video = spec.getBootstrapVideoFormat();
-        final long audioStart = session.getLiveStartSegmentNumber(audio);
-        final long videoStart = session.getLiveStartSegmentNumber(video);
-        final long audioEnd = session.getLiveEndSegmentNumber(audio);
-        final long videoEnd = session.getLiveEndSegmentNumber(video);
-        final long audioDuration = session.getLiveSegmentDurationMs(audio);
-        final long videoDuration = session.getLiveSegmentDurationMs(video);
-        if (audioStart < 0 || videoStart < 0 || audioEnd < audioStart || videoEnd < videoStart
-                || audioDuration <= 0 || videoDuration <= 0) {
-            return false;
-        }
+        audioTimeline = audio;
+        videoTimeline = video;
         final long windowStart = Math.max(0, session.getLiveSeekableStartTimeMs());
         final long windowEnd = Math.max(session.getLiveSeekableEndTimeMs(),
                 Math.max(session.getLiveHeadTimeMs(), windowStart));
-        try {
-            audioTimeline = YoutubeSabrFormatTimeline.live((int) audioStart, (int) audioEnd,
-                    windowStart, audioDuration);
-            videoTimeline = YoutubeSabrFormatTimeline.live((int) videoStart, (int) videoEnd,
-                    windowStart, videoDuration);
-        } catch (final SabrProtocolException error) {
-            session.addDiagnosticEvent("post_live_timeline_invalid message=" + error.getMessage());
-            return false;
-        }
         postLiveDurationMs = Math.max(1, windowEnd - windowStart);
         session.addDiagnosticEvent("post_live_timeline"
                 + " startMs=" + windowStart
                 + " endMs=" + windowEnd
-                + " audio=" + audioStart + '-' + audioEnd + '/' + audioDuration
-                + " video=" + videoStart + '-' + videoEnd + '/' + videoDuration);
+                + " audio=" + audio.getStartSequence() + '-' + audio.getEndSequence()
+                + '/' + audio.getSegmentDurationMs()
+                + " video=" + video.getStartSequence() + '-' + video.getEndSequence()
+                + '/' + video.getSegmentDurationMs());
         return true;
     }
 
@@ -233,12 +223,8 @@ final class SabrMediaBridge {
         final YoutubeSabrInfo.Format audio = key.getFormat().isAudio()
                 ? key.getFormat() : current.audio == null
                 ? spec.getBootstrapAudioFormat() : current.audio;
-        final long segmentStartMs = getTimeline(key.getFormat())
-                .getStartMs(key.getSequenceNumber());
-        // A zero player time makes the request look like the initial preparation request, which
-        // does not select tracks. Use 1 ms so live/DVR requests carry the selected formats.
-        final long playerTimeMs = postLive ? Math.max(1, segmentStartMs)
-                : Math.max(0, segmentStartMs);
+        final long playerTimeMs = Math.max(0,
+                getTimeline(key.getFormat()).getStartMs(key.getSequenceNumber()));
         final List<YoutubeSabrRequest.Track> tracks = new ArrayList<>(2);
         if (current.audioActive || key.getFormat().isAudio()) {
             tracks.add(track(audio));
@@ -347,7 +333,7 @@ final class SabrMediaBridge {
             return segment;
         }
         final byte[] data = segment.getData();
-        final int initializationEnd = initializationEnd(data);
+        final int initializationEnd = SabrSelfInitializingSegment.initializationEnd(data);
         if (initializationEnd <= 0) {
             return segment;
         }
@@ -358,25 +344,6 @@ final class SabrMediaBridge {
                 segment.getHeader(), Arrays.copyOfRange(data, initializationEnd, data.length));
         segment.delete();
         return media;
-    }
-
-    /** End offset of a leading {@code ftyp}+{@code moov} pair, or -1 when there is none. */
-    private static int initializationEnd(@NonNull final byte[] data) {
-        int offset = 0;
-        while (offset + 8 <= data.length) {
-            final long size = (data[offset] & 0xffL) << 24 | (data[offset + 1] & 0xff) << 16
-                    | (data[offset + 2] & 0xff) << 8 | data[offset + 3] & 0xff;
-            final String type = new String(data, offset + 4, 4, StandardCharsets.US_ASCII);
-            if (size < 8 || size > data.length - offset
-                    || (offset == 0 && !"ftyp".equals(type))) {
-                return -1;
-            }
-            offset += (int) size;
-            if ("moov".equals(type)) {
-                return offset;
-            }
-        }
-        return -1;
     }
 
     private void acceptInitialization(@NonNull final YoutubeSabrInfo.Format format,

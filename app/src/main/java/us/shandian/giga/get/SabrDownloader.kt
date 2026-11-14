@@ -406,23 +406,8 @@ internal class SabrDownloader(
         writer: SabrSegmentWriter,
     ): Boolean {
         val session = session ?: return false
-        if (!session.isLive) {
-            return false
-        }
-        val windowStart = session.liveSeekableStartTimeMs.coerceAtLeast(0)
         val timelines = targets.map { target ->
-            val start = session.getLiveStartSegmentNumber(target.format)
-            val end = session.getLiveEndSegmentNumber(target.format)
-            val duration = session.getLiveSegmentDurationMs(target.format)
-            if (start < 0 || end < start || duration <= 0) {
-                return false
-            }
-            try {
-                YoutubeSabrFormatTimeline.live(start.toInt(), end.toInt(), windowStart, duration)
-            } catch (error: SabrProtocolException) {
-                session.addDiagnosticEvent("post_live_timeline_invalid message=${error.message}")
-                return false
-            }
+            YoutubeSabrFormatTimeline.fromLiveMetadata(session, target.format) ?: return false
         }
         targets.forEachIndexed { index, target ->
             writer.installPostLiveTimeline(target, timelines[index])
@@ -471,7 +456,7 @@ internal class SabrDownloader(
     }
 
     private fun downloadPlayerTimeMs(targets: List<SabrDownloadTarget>): Long {
-        val timeMs = targets.minOf { target ->
+        return targets.minOf { target ->
             val timeline = target.timeline
             when {
                 timeline == null -> 0L
@@ -480,9 +465,6 @@ internal class SabrDownloader(
                 else -> timeline.getEndMs(target.nextWriteSequence - 1)
             }
         }
-        // A zero player time makes a post-live request look like the initial preparation
-        // request, which does not select tracks.
-        return if (isPostLive()) timeMs.coerceAtLeast(1) else timeMs
     }
 
     private fun isDownloadComplete(targets: List<SabrDownloadTarget>): Boolean {

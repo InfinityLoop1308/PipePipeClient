@@ -1,6 +1,7 @@
 package us.shandian.giga.get
 
 import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrMediaSegment
+import org.schabi.newpipe.extractor.services.youtube.sabr.media.SabrSelfInitializingSegment
 import org.schabi.newpipe.extractor.services.youtube.sabr.YoutubeSabrFormatTimeline
 import java.io.IOException
 import java.io.OutputStream
@@ -133,7 +134,7 @@ internal class SabrSegmentWriter(
         segment: SabrMediaSegment,
     ) {
         val data = segment.data
-        val initializationEnd = initializationEnd(data)
+        val initializationEnd = SabrSelfInitializingSegment.initializationEnd(data)
         val media = if (initializationEnd > 0) {
             if (!target.initializationWritten) {
                 writeInitializationSegment(target, output, data.copyOfRange(0, initializationEnd))
@@ -231,26 +232,6 @@ internal class SabrSegmentWriter(
     }
 
     private companion object {
-        /** End offset of a leading `ftyp`+`moov` pair, or -1 when there is none. */
-        private fun initializationEnd(data: ByteArray): Int {
-            var offset = 0
-            while (offset + 8 <= data.size) {
-                val size = (data[offset].toLong() and 0xffL shl 24) or
-                    (data[offset + 1].toLong() and 0xffL shl 16) or
-                    (data[offset + 2].toLong() and 0xffL shl 8) or
-                    (data[offset + 3].toLong() and 0xffL)
-                val type = String(data, offset + 4, 4, Charsets.US_ASCII)
-                if (size < 8 || size > data.size - offset || (offset == 0 && type != "ftyp")) {
-                    return -1
-                }
-                offset += size.toInt()
-                if (type == "moov") {
-                    return offset
-                }
-            }
-            return -1
-        }
-
         private const val MAX_PENDING_SEGMENTS = 64
         private const val MAX_PENDING_BYTES = 24L * 1024L * 1024L
     }
