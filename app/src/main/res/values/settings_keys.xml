@@ -271,6 +271,7 @@
         <item>@string/show_channel_tabs_channels</item>
         <item>@string/show_channel_tabs_albums</item>
         <item>@string/show_channel_tabs_podcasts</item>
+        <item>@string/show_channel_tabs_courses</item>
         <item>@string/show_channel_tabs_info</item>
     </string-array>
     <string-array name="show_channel_tabs_description_list">
@@ -280,6 +281,7 @@
         <item>@string/channel_tab_channels</item>
         <item>@string/channel_tab_albums</item>
         <item>@string/channel_tab_podcasts</item>
+        <item>@string/channel_tab_courses</item>
         <item>@string/channel_tab_info</item>
     </string-array>
     <string name="show_search_suggestions_key">show_search_suggestions</string>
@@ -1712,6 +1714,7 @@
     </string-array>
 
     <string name="show_channel_tabs_podcasts">show_channel_tabs_podcasts</string>
+    <string name="show_channel_tabs_courses">show_channel_tabs_courses</string>
     <string name="last_used_pipepipe_preferences_version">last_used_pipepipe_preferences_version</string>
     <string name="video_tabs_key">video_tabs_key</string>
     <string-array name="video_tabs_value_list">
