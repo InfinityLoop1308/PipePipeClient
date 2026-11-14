@@ -50,11 +50,11 @@
         </LinearLayout>
 
         <include
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/playlist_control"
-                layout="@layout/playlist_control"
-                android:layout_below="@id/refresh_info_container" />
+            android:id="@+id/playlist_control"
+            layout="@layout/playlist_control"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/refresh_info_container" />
 
         <ImageView
             android:id="@+id/refreshIcon"
@@ -77,11 +77,20 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_below="@+id/refresh_info_container"
+            android:layout_below="@+id/playlist_control"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
             android:layout_marginRight="8dp"
             android:background="?attr/separator_color" />
+
+        <ProgressBar
+            android:id="@+id/refresh_progress_bar"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@+id/playlist_control"
+            android:indeterminate="true"
+            android:visibility="gone"
+            tools:visibility="visible" />
     </RelativeLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
