@@ -26,12 +26,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.BooleanSupplier;
 
 /** Bridges Media3's segment demand to serialized SABR requests. */
 final class SabrMediaBridge {
     private static final int MAX_AHEAD_SEGMENTS = 64;
+    // a response covers about 20 s from the position it was asked for
+    private static final long MAX_RESPONSE_SPAN_MS = 60_000L;
+    private static final long MAX_SEGMENT_DURATION_MS = 20_000L;
 
     private final Context appContext;
     private final SabrSourceSpec spec;
@@ -39,7 +43,15 @@ final class SabrMediaBridge {
     private final boolean postLive;
     private volatile long postLiveDurationMs = -1;
     private final SabrRequestCoordinator requestCoordinator;
-    private final ReentrantLock transactionLock = new ReentrantLock(true);
+    private final ExecutorService requestExecutor = Executors.newSingleThreadExecutor(runnable -> {
+        final Thread thread = new Thread(runnable, "SabrRequest");
+        thread.setDaemon(true);
+        return thread;
+    });
+    // guarded by ahead, which is notified when a segment, a timeline or the end of a request arrives
+    @Nullable private RequestTask inFlight;
+    @Nullable private Throwable requestError;
+    private int waiters;
     private final Map<SabrSegmentKey, SabrMediaSegment> ahead = new LinkedHashMap<>();
     private final Map<YoutubeSabrInfo.Format, Integer> nextSequences =
             new ConcurrentHashMap<>();
@@ -126,13 +138,17 @@ final class SabrMediaBridge {
                 Math.max(0, initialPositionMs), formats);
         // Post-live SABR has no sidx/Cues: the timeline comes from LIVE_METADATA and
         // FORMAT_INITIALIZATION_METADATA, so it can be ready before the initialization data.
+        final BooleanSupplier prepared = postLive
+                ? () -> (installPostLiveTimelines()
+                        && spec.getInitializationData(spec.getBootstrapAudioFormat()) != null
+                        && spec.getInitializationData(spec.getBootstrapVideoFormat()) != null)
+                        || stopped
+                : () -> hasTimelines() || stopped;
         try {
-            requestOnce(request, spec.getBootstrapAudioFormat(), postLive
-                    ? () -> (installPostLiveTimelines()
-                            && spec.getInitializationData(spec.getBootstrapAudioFormat()) != null
-                            && spec.getInitializationData(spec.getBootstrapVideoFormat()) != null)
-                            || stopped
-                    : () -> hasTimelines() || stopped);
+            // the timelines come first, no need to wait for the media behind them
+            await(() -> prepared.getAsBoolean() ? Boolean.TRUE : null,
+                    Math.max(0, initialPositionMs),
+                    () -> requestOnce(request, spec.getBootstrapAudioFormat(), prepared));
         } catch (final InterruptedIOException cancellation) {
             throw cancellation;
         } catch (final IOException error) {
@@ -197,22 +213,116 @@ final class SabrMediaBridge {
     SabrMediaSegment awaitSegment(@NonNull final SabrSegmentKey key)
             throws IOException, ExtractionException {
         nextSequences.put(key.getFormat(), key.getSequenceNumber());
-        while (true) {
-            final SabrMediaSegment cached = cachedSegment(key);
-            if (cached != null) return cached;
+        final long startMs = Math.max(0,
+                getTimeline(key.getFormat()).getStartMs(key.getSequenceNumber()));
+        return await(() -> ahead.get(key), startMs, () -> requestFor(key));
+    }
 
-            if (!transactionLock.tryLock()) {
-                final SabrMediaSegment arrived = cachedSegment(key);
-                if (arrived != null) return arrived;
-                throw new SabrSegmentPendingException("SABR request in progress: itag="
-                        + key.getFormat().getItag() + ", seq=" + key.getSequenceNumber());
-            }
+    private interface Awaited<T> {
+        @Nullable T get();
+    }
+
+    private interface RequestAction {
+        void run() throws IOException, ExtractionException;
+    }
+
+    // waits for awaited only, the response that carries it may still be streaming
+    @NonNull
+    private <T> T await(@NonNull final Awaited<T> awaited, final long positionMs,
+                        @NonNull final RequestAction action)
+            throws IOException, ExtractionException {
+        synchronized (ahead) {
+            waiters++;
             try {
-                final SabrMediaSegment delivered = cachedSegment(key);
-                if (delivered != null) return delivered;
-                requestFor(key);
+                while (true) {
+                    final T value = awaited.get();
+                    if (value != null) return value;
+                    throwIfStopped();
+                    if (inFlight != null && !inFlight.mayCarry(positionMs)) {
+                        // asked for another position (seek), drop it
+                        inFlight.cancel();
+                    }
+                    if (inFlight == null) {
+                        final Throwable error = requestError;
+                        requestError = null;
+                        if (error != null) rethrow(error);
+                        final RequestTask task = new RequestTask(action, positionMs);
+                        inFlight = task;
+                        task.future = requestExecutor.submit(task);
+                    }
+                    ahead.wait();
+                }
+            } catch (final InterruptedException interruption) {
+                Thread.currentThread().interrupt();
+                // load cancelled and nobody else waits for this response
+                if (waiters == 1 && inFlight != null) {
+                    inFlight.cancel();
+                }
+                final InterruptedIOException cancelled =
+                        new InterruptedIOException("Interrupted while waiting for SABR media");
+                cancelled.initCause(interruption);
+                throw cancelled;
             } finally {
-                transactionLock.unlock();
+                waiters--;
+            }
+        }
+    }
+
+    private static void rethrow(@NonNull final Throwable error)
+            throws IOException, ExtractionException {
+        if (error instanceof IOException) throw (IOException) error;
+        if (error instanceof ExtractionException) throw (ExtractionException) error;
+        if (error instanceof RuntimeException) throw (RuntimeException) error;
+        if (error instanceof Error) throw (Error) error;
+        throw new IOException(error);
+    }
+
+    private final class RequestTask implements Runnable {
+        private final RequestAction action;
+        private final long positionMs;
+        @Nullable private volatile java.util.concurrent.Future<?> future;
+        private volatile boolean cancelled;
+        private volatile boolean started;
+
+        RequestTask(@NonNull final RequestAction action, final long positionMs) {
+            this.action = action;
+            this.positionMs = positionMs;
+        }
+
+        boolean mayCarry(final long otherPositionMs) {
+            // audio and video segments of one position do not start at the same time
+            return otherPositionMs >= positionMs - MAX_SEGMENT_DURATION_MS
+                    && otherPositionMs <= positionMs + MAX_RESPONSE_SPAN_MS;
+        }
+
+        // called with ahead held
+        void cancel() {
+            cancelled = true;
+            final java.util.concurrent.Future<?> running = future;
+            if (running != null) running.cancel(true);
+            if (!started && inFlight == this) {
+                // cancelled while queued: run() will never be called
+                inFlight = null;
+                ahead.notifyAll();
+            }
+        }
+
+        @Override
+        public void run() {
+            started = true;
+            Throwable failure = null;
+            try {
+                if (!cancelled) action.run();
+            } catch (final Throwable error) {
+                failure = error;
+            } finally {
+                // drop the interrupt flag of a cancellation
+                Thread.interrupted();
+                synchronized (ahead) {
+                    if (inFlight == this) inFlight = null;
+                    if (failure != null && !cancelled && !stopped) requestError = failure;
+                    ahead.notifyAll();
+                }
             }
         }
     }
@@ -274,9 +384,12 @@ final class SabrMediaBridge {
         stopped = true;
         SabrBackoffCoordinator.getInstance().clear(appContext, this);
         synchronized (ahead) {
+            if (inFlight != null) inFlight.cancel();
             for (final SabrMediaSegment segment : ahead.values()) segment.delete();
             ahead.clear();
+            ahead.notifyAll();
         }
+        requestExecutor.shutdown();
     }
 
     private void publishBackoff(final long remainingMs) {
@@ -361,6 +474,9 @@ final class SabrMediaBridge {
                     YoutubeSabrFormatTimeline.parse(format, data);
             if (format.isAudio()) audioTimeline = timeline;
             else videoTimeline = timeline;
+            synchronized (ahead) {
+                ahead.notifyAll();
+            }
         } catch (final ExtractionException error) {
             throw new IllegalStateException("Invalid SABR initialization: itag="
                     + format.getItag(), error);
@@ -384,6 +500,7 @@ final class SabrMediaBridge {
                 return;
             }
             ahead.put(key, segment);
+            ahead.notifyAll();
             if (ahead.size() > MAX_AHEAD_SEGMENTS) {
                 final Iterator<SabrMediaSegment> iterator = ahead.values().iterator();
                 final SabrMediaSegment oldest = iterator.next();
