@@ -29,6 +29,7 @@ import org.schabi.newpipe.extractor.plugin.PluginPreferences
 import org.schabi.newpipe.extractor.plugin.PluginRepository
 import java.io.File
 import java.io.IOException
+import java.net.URI
 import java.security.MessageDigest
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
@@ -54,6 +55,19 @@ object PluginManager {
     private const val KEY_INSTALLED = "installed"
     private const val KEY_REPOSITORIES = "repositories"
     private const val MAX_PACKAGE_SIZE = 32L * 1024 * 1024
+
+    /** Classes looked up while blaming a plugin for a failure, a crash log can be long. */
+    private const val MAX_BLAME_CANDIDATES = 200
+
+    /** `at some.package.Class.method(...)` in a stack trace. */
+    private val FRAME_CLASS =
+        Regex("""(?m)^\s*at ([A-Za-z0-9_.$]+)\.[A-Za-z0-9_$<>]+\(""")
+
+    /** The exception type of a stack trace header, which a plugin may define itself. */
+    private val THROWN_CLASS =
+        Regex("""(?m)^(?:Caused by: |Suppressed: )?([A-Za-z][A-Za-z0-9_.$]*\.[A-Za-z0-9_$]+)(?::|\s*$)""")
+
+    private val GITHUB_HOSTS = setOf("github.com", "raw.githubusercontent.com")
 
     /** Official repository, always listed while plugins are enabled and not removable. */
     const val BUILTIN_REPOSITORY =
@@ -89,8 +103,8 @@ object PluginManager {
     /** Decoded icons of the loaded plugins, by service id. */
     private val icons = ConcurrentHashMap<Int, Bitmap>()
 
-    /** Class loaders of the plugins loaded in this process. */
-    private val classLoaders = CopyOnWriteArrayList<ClassLoader>()
+    /** Class loaders of the plugins loaded in this process, with the plugin they belong to. */
+    private val classLoaders = CopyOnWriteArrayList<Pair<PluginManifest, ClassLoader>>()
 
     /** Load errors of this process, by plugin id. */
     private val loadErrors = ConcurrentHashMap<String, String>()
@@ -266,7 +280,7 @@ object PluginManager {
         ServiceList.register(service)
         loaded[serviceId] = manifest
         loadIcon(file, manifest, serviceId)
-        classLoaders.add(classLoader)
+        classLoaders.add(manifest to classLoader)
         Log.i(TAG, "Loaded plugin ${manifest.pluginId} ${manifest.versionName} as $serviceId")
     }
 
@@ -336,7 +350,7 @@ object PluginManager {
      */
     @JvmStatic
     fun findPluginClass(name: String): Class<*>? {
-        for (loader in classLoaders) {
+        for ((_, loader) in classLoaders) {
             try {
                 return Class.forName(name, false, loader)
             } catch (_: ClassNotFoundException) {
@@ -344,6 +358,101 @@ object PluginManager {
             }
         }
         return null
+    }
+
+    /**
+     * The plugin that defines the given class, or null for host classes. A plugin class
+     * loader delegates to the host first, so a class is only the plugin's own when the
+     * loaded class reports that loader.
+     */
+    private fun pluginOf(className: String): PluginManifest? {
+        for ((manifest, loader) in classLoaders) {
+            val defined = runCatching { Class.forName(className, false, loader) }.getOrNull()
+            if (defined != null && defined.classLoader === loader) {
+                return manifest
+            }
+        }
+        return null
+    }
+
+    /**
+     * The plugin a failure comes from, or null when no plugin code appears in it. Used to
+     * send bug reports to the plugin's author instead of the PipePipe tracker.
+     *
+     * A plugin is blamed as soon as one of its classes appears in the stack traces, not
+     * only at the top: a plugin bug usually surfaces inside a host or library frame it
+     * called into.
+     */
+    private fun findPluginInStackTraces(stackTraces: Array<String>): PluginManifest? {
+        if (classLoaders.isEmpty()) {
+            return null
+        }
+        val seen = HashSet<String>()
+        for (trace in stackTraces) {
+            val candidates = FRAME_CLASS.findAll(trace) + THROWN_CLASS.findAll(trace)
+            for (match in candidates) {
+                val className = match.groupValues[1]
+                if (seen.size >= MAX_BLAME_CANDIDATES) {
+                    return null
+                }
+                if (seen.add(className)) {
+                    pluginOf(className)?.let { return it }
+                }
+            }
+        }
+        return null
+    }
+
+    /**
+     * Who owns a failure, so that a report is filed where it can be fixed.
+     *
+     * @param plugin the third party plugin at fault, or null for a PipePipe failure
+     * @param issueUrl the plugin's tracker, null when the plugin declares none and none
+     * can be derived from where it was installed from
+     */
+    data class IssueTarget(val plugin: PluginManifest?, val issueUrl: String?)
+
+    /**
+     * Decide where a failure should be reported. Plugins shipped by PipePipe itself are not
+     * third party, so their failures stay with the app.
+     */
+    @JvmStatic
+    @JvmOverloads
+    fun issueTargetFor(
+        stackTraces: Array<String>,
+        context: Context = appContext(),
+    ): IssueTarget {
+        val manifest = findPluginInStackTraces(stackTraces) ?: return IssueTarget(null, null)
+        val repository = getInstalled(context)
+            .firstOrNull { it.pluginId == manifest.pluginId }
+            ?.repositoryUrl
+        if (repository == BUILTIN_REPOSITORY) {
+            return IssueTarget(null, null)
+        }
+        val declared = manifest.issueUrl
+        if (declared != null) {
+            return IssueTarget(manifest, declared)
+        }
+        // the community index lists plugins hosted elsewhere, so it is not their tracker
+        val derived = if (repository == null || repository == AWESOME_REPOSITORY) {
+            null
+        } else {
+            gitHubIssuesUrlOf(repository)
+        }
+        return IssueTarget(manifest, derived)
+    }
+
+    /** The issue tracker of the GitHub repository hosting a file, or null for other hosts. */
+    private fun gitHubIssuesUrlOf(fileUrl: String): String? {
+        val uri = runCatching { URI(fileUrl) }.getOrNull() ?: return null
+        if (uri.host !in GITHUB_HOSTS) {
+            return null
+        }
+        val segments = uri.path.orEmpty().split('/').filter { it.isNotEmpty() }
+        if (segments.size < 2) {
+            return null
+        }
+        return "https://github.com/${segments[0]}/${segments[1]}/issues"
     }
 
     /**

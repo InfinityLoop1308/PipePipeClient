@@ -24,6 +24,8 @@ import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.databinding.ActivityErrorBinding;
 import org.schabi.newpipe.extractor.downloader.Downloader;
+import org.schabi.newpipe.extractor.plugin.PluginManifest;
+import org.schabi.newpipe.plugin.PluginManager;
 import org.schabi.newpipe.util.ErrorMatcher;
 import org.schabi.newpipe.util.Localization;
 import org.schabi.newpipe.util.ThemeHelper;
@@ -82,6 +84,15 @@ public class ErrorActivity extends AppCompatActivity {
     private ErrorInfo errorInfo;
     private String currentTimeStamp;
 
+    /**
+     * The plugin this failure comes from, or null when it is the app's own. Bug reports of
+     * a plugin belong to its author, not to the PipePipe tracker.
+     */
+    @Nullable
+    private PluginManifest blamedPlugin;
+    @Nullable
+    private String blamedPluginIssueUrl;
+
     private ActivityErrorBinding activityErrorBinding;
 
 
@@ -112,6 +123,10 @@ public class ErrorActivity extends AppCompatActivity {
         }
 
         errorInfo = intent.getParcelableExtra(ERROR_INFO);
+        final PluginManager.IssueTarget target =
+                PluginManager.issueTargetFor(errorInfo.getStackTraces(), this);
+        blamedPlugin = target.getPlugin();
+        blamedPluginIssueUrl = target.getIssueUrl();
 
         // important add guru meditation
         addGuruMeditation();
@@ -125,6 +140,16 @@ public class ErrorActivity extends AppCompatActivity {
 
         activityErrorBinding.errorReportGitHubButton.setOnClickListener(v ->
                 openPrivacyPolicyDialog(this, "GITHUB"));
+
+        // a plugin failure is not PipePipe's to fix, so neither channel reaches the app
+        if (blamedPlugin != null) {
+            activityErrorBinding.errorReportGitHubButton
+                    .setText(R.string.error_report_plugin_button);
+            activityErrorBinding.errorReportGitHubButton
+                    .setOnClickListener(v -> openPluginIssueDialog());
+            activityErrorBinding.errorReportEmailButton
+                    .setOnClickListener(v -> openPluginIssueDialog());
+        }
 
         // normal bugreport
         buildInfo(errorInfo);
@@ -218,9 +243,34 @@ public class ErrorActivity extends AppCompatActivity {
                             + BuildConfig.VERSION_NAME)
                     .putExtra(Intent.EXTRA_TEXT, buildJson());
             ShareUtils.openIntentInApp(context, i, true);
-        } else if (action.equals("GITHUB")) { // open the NewPipe issue page on GitHub
+        } else if (action.equals("GITHUB")) { // open the issue page of whoever owns the failure
             ShareUtils.openUrlInBrowser(this, ERROR_GITHUB_ISSUE_URL, false);
         }
+    }
+
+    /**
+     * Plugins are third party code, so their failures are not PipePipe issues. Send the
+     * user to the plugin's tracker, or tell them who to reach when it declares none.
+     */
+    private void openPluginIssueDialog() {
+        final String plugin = blamedPlugin.getName() + " " + blamedPlugin.getVersionName();
+        if (blamedPluginIssueUrl == null) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.error_report_plugin_title)
+                    .setMessage(getString(R.string.error_report_plugin_no_tracker,
+                            plugin, blamedPlugin.getAuthor()))
+                    .setPositiveButton(R.string.ok, null)
+                    .show();
+            return;
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.error_report_plugin_title)
+                .setMessage(getString(R.string.error_report_plugin_message, plugin,
+                        blamedPluginIssueUrl))
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.error_report_plugin_open, (d, which) ->
+                        ShareUtils.openUrlInBrowser(this, blamedPluginIssueUrl, false))
+                .show();
     }
 
     private String formErrorText(final String[] el) {
@@ -273,6 +323,16 @@ public class ErrorActivity extends AppCompatActivity {
         activityErrorBinding.errorInfosView.setText(text);
     }
 
+    /**
+     * @return the plugin to blame, its author and tracker, so that a report filed in the
+     * wrong place can still be sent on
+     */
+    private String pluginReportLine() {
+        return blamedPlugin.getName() + " " + blamedPlugin.getVersionName()
+                + " (" + blamedPlugin.getPluginId() + ") by " + blamedPlugin.getAuthor()
+                + (blamedPluginIssueUrl == null ? "" : ", " + blamedPluginIssueUrl);
+    }
+
     private String buildJson() {
         try {
             return JsonWriter.string()
@@ -283,6 +343,7 @@ public class ErrorActivity extends AppCompatActivity {
                     .value("content_country", getContentCountryString())
                     .value("app_language", getAppLanguage())
                     .value("service", errorInfo.getServiceName())
+                    .value("plugin", blamedPlugin == null ? "none" : pluginReportLine())
                     .value("endpoint", getEndpoint())
                     .value("package", getPackageName())
                     .value("version", BuildConfig.VERSION_NAME)
@@ -324,6 +385,9 @@ public class ErrorActivity extends AppCompatActivity {
                     .append("\n* __Version:__ ").append(BuildConfig.VERSION_NAME)
                     .append("\n* __OS:__ ").append(getOsString()).append("\n");
 
+            if (blamedPlugin != null) {
+                htmlErrorReport.append("* __Plugin:__ ").append(pluginReportLine()).append("\n");
+            }
 
             // Collapse all logs to a single paragraph when there are more than one
             // to keep the GitHub issue clean.

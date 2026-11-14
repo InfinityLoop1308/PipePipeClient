@@ -1301,4 +1301,9 @@ Only add repositories you trust.</string>
 <string name="logout_keep_webview_session_title">Keep web session on logout</string>
 <string name="logout_keep_webview_session_summary">Logging out only removes the account from PipePipe and keeps the website session, so logging in again is faster</string>
 <string name="login_expired_toast">%1$s login has expired, you have been logged out</string>
+<string name="error_report_plugin_button">Report to plugin author</string>
+<string name="error_report_plugin_title">Plugin failure</string>
+<string name="error_report_plugin_message">This failure comes from the %1$s plugin, so it is not a PipePipe issue. Report it at %2$s</string>
+<string name="error_report_plugin_no_tracker">This failure comes from the %1$s plugin, so it is not a PipePipe issue. The plugin declares no issue tracker, so copy the report and send it to its author, %2$s.</string>
+<string name="error_report_plugin_open">Open tracker</string>
 </resources>
