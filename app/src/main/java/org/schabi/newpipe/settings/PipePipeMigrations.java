@@ -73,6 +73,13 @@ public final class PipePipeMigrations {
         }
     };
 
+    public static final Migration MIGRATION_7_8 = new Migration(7, 8) {
+        @Override
+        protected void migrate(final Context context, final SharedPreferences preferences) {
+            migrateChannelTabsAddCourses(context, preferences);
+        }
+    };
+
     private static final Migration[] PIPEPIPE_MIGRATIONS = {
             MIGRATION_0_1,
             MIGRATION_1_2,
@@ -81,9 +88,10 @@ public final class PipePipeMigrations {
             MIGRATION_4_5,
             MIGRATION_5_6,
             MIGRATION_6_7,
+            MIGRATION_7_8,
     };
 
-    public static final int VERSION = 7;
+    public static final int VERSION = 8;
 
     public static void initMigrations(final Context context, final boolean isFirstRun) {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -297,6 +305,21 @@ public final class PipePipeMigrations {
 
         final Set<String> newSet = new HashSet<>(tabs);
         newSet.add("chat");
+        preferences.edit().putStringSet(key, newSet).apply();
+    }
+
+    private static void migrateChannelTabsAddCourses(
+            final Context context,
+            final SharedPreferences preferences) {
+        final String key = context.getString(R.string.show_channel_tabs_key);
+        final String courses = context.getString(R.string.show_channel_tabs_courses);
+        final Set<String> tabs = preferences.getStringSet(key, null);
+        if (tabs == null || tabs.contains(courses)) {
+            return;
+        }
+
+        final Set<String> newSet = new HashSet<>(tabs);
+        newSet.add(courses);
         preferences.edit().putStringSet(key, newSet).apply();
     }
 

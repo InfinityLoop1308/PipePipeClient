@@ -1029,6 +1029,7 @@
 <string name="grid_columns_title">Grid columns</string>
 <string name="grid_columns_landscape_title">Grid columns (landscape)</string>
 <string name="channel_tab_podcasts">Podcasts</string>
+<string name="channel_tab_courses">Courses</string>
 <string name="video_tabs_title">Video Tabs</string>
 <string name="video_tabs_summary">Configure which tabs to show on video detail screen</string>
 <string name="filter_future_items_title">Filter upcoming items</string>
