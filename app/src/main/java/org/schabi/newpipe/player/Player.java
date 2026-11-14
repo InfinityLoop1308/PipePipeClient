@@ -268,7 +268,7 @@ public final class Player {
         trackSelector = createTrackSelector();
         dataSource = new PlayerDataSource(context, DownloaderImpl.USER_AGENT,
                 new DefaultBandwidthMeter.Builder(context).build());
-        loadController = new LoadController();
+        loadController = new LoadController(PlayerHelper.getEarlyBufferUs(context));
 
         renderFactory = prefs.getBoolean(
                 context.getString(

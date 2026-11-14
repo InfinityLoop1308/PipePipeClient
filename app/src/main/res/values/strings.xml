@@ -803,6 +803,12 @@
 <string name="off">Off</string>
 <!-- Progressive Load Interval -->
 <string name="progressive_load_interval_exoplayer_default">ExoPlayer default</string>
+<string name="early_buffer_title">Buffer after starting or seeking</string>
+<string name="early_buffer_summary">How far ahead to load until 30 seconds have been played in a row (currently %s). A lower value saves data when you seek or leave a video early, the whole buffer protects more against a bad connection. Changes require a player restart</string>
+<string name="early_buffer_full">Whole buffer</string>
+<string name="early_buffer_10_seconds">10 seconds</string>
+<string name="early_buffer_20_seconds">20 seconds</string>
+<string name="early_buffer_30_seconds">30 seconds</string>
 <!-- New streams notifications -->
 <string name="notifications_disabled">Notifications are disabled</string>
 <string name="get_notified">Get notified</string>

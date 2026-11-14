@@ -84,6 +84,21 @@
         <item>@string/progressive_load_interval_exoplayer_default_value</item>
     </string-array>
 
+    <string name="early_buffer_key">early_buffer</string>
+    <string name="early_buffer_default_value">full</string>
+    <string-array name="early_buffer_descriptions">
+        <item>@string/early_buffer_full</item>
+        <item>@string/early_buffer_10_seconds</item>
+        <item>@string/early_buffer_20_seconds</item>
+        <item>@string/early_buffer_30_seconds</item>
+    </string-array>
+    <string-array name="early_buffer_values">
+        <item>@string/early_buffer_default_value</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+    </string-array>
+
     <string name="minimize_on_exit_key">minimize_on_exit_key</string>
     <string name="minimize_on_exit_value">@string/minimize_on_exit_background_key</string>
     <string name="minimize_on_exit_none_key">minimize_on_exit_none_key</string>

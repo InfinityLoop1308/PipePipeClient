@@ -33,6 +33,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.SeekParameters;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
@@ -537,6 +538,17 @@ public final class PlayerHelper {
             @NonNull final Context context) {
         return getPreferences(context).getBoolean(context.getString(
                 R.string.rotate_fullscreen_to_video_orientation_key), true);
+    }
+
+    public static long getEarlyBufferUs(@NonNull final Context context) {
+        final String earlyBuffer = getPreferences(context).getString(
+                context.getString(R.string.early_buffer_key),
+                context.getString(R.string.early_buffer_default_value));
+        try {
+            return Long.parseLong(earlyBuffer) * 1_000_000L;
+        } catch (final NumberFormatException wholeBuffer) {
+            return C.TIME_UNSET;
+        }
     }
 
     public static int getProgressiveLoadIntervalBytes(@NonNull final Context context) {
