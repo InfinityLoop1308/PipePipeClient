@@ -13,6 +13,16 @@
         app:singleLineTitle="false"
         app:iconSpaceReserved="false" />
 
+    <ListPreference
+        android:defaultValue="@string/early_buffer_default_value"
+        android:entries="@array/early_buffer_descriptions"
+        android:entryValues="@array/early_buffer_values"
+        android:key="@string/early_buffer_key"
+        android:summary="@string/early_buffer_summary"
+        android:title="@string/early_buffer_title"
+        app:singleLineTitle="false"
+        app:iconSpaceReserved="false" />
+
     <SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="@string/disable_media_tunneling_key"
