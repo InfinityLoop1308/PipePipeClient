@@ -94,11 +94,11 @@ public final class FocusOverlayView extends Drawable implements
         final int t = focusRect.top;
         final int b = focusRect.bottom;
 
-        if (focusedView != null && isShown(focusedView)) {
-            focusedView.getGlobalVisibleRect(focusRect);
-        }
-
-        if (shouldClearFocusRect(focusedView, focusRect)) {
+        // A hidden focused view (e.g. a button in auto-hidden player controls) would otherwise
+        // keep its last, possibly stale, frame drawn on screen
+        if (focusedView == null || !isShown(focusedView)
+                || !focusedView.getGlobalVisibleRect(focusRect)
+                || shouldClearFocusRect(focusedView, focusRect)) {
             focusRect.setEmpty();
         }
 
