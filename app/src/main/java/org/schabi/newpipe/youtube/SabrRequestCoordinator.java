@@ -74,9 +74,6 @@ public final class SabrRequestCoordinator {
 
             final boolean progress = progressChecker != null
                     ? progressChecker.getAsBoolean() : result.getSegmentCount() > 0;
-            if (result.isAttestationPending() && result.getSegmentCount() > 0) {
-                attestationRetryHandler.onAttestationPending(session);
-            }
             final long backoffMs = result.getBackoffMs();
             backoffObserver.accept(backoffMs);
             updateBackoffEpisode(progress, backoffMs);

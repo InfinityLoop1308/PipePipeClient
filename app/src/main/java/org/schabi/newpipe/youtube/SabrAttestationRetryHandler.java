@@ -9,14 +9,11 @@ import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrAttestat
 /** Maintains the PO-token recovery budget for one SABR media acquisition. */
 public final class SabrAttestationRetryHandler {
     private static final int MAX_RETRIES = 3;
-    private static final int MAX_PENDING_REPLACEMENTS = 4;
 
     @NonNull private final String videoId;
     private int retriesRemaining = MAX_RETRIES;
     /** Generation of the minter behind the session's current token, or null when unknown. */
     @Nullable private Long tokenGeneration;
-    private int pendingReplacements;
-    private boolean pendingReplacementRunning;
 
     public SabrAttestationRetryHandler(@NonNull final String videoId,
                                        @Nullable final byte[] initialPoToken) {
@@ -63,47 +60,6 @@ public final class SabrAttestationRetryHandler {
                     "SABR PO token recovery failed on retry " + retryNumber + " of "
                             + MAX_RETRIES + " for video=" + videoId + ": "
                             + error.getMessage(), error);
-        }
-    }
-
-    // status 2: mint another token now, the server refuses this one after the first minute
-    public synchronized void onAttestationPending(@NonNull final YoutubeSabrSession session) {
-        if (pendingReplacementRunning || pendingReplacements >= MAX_PENDING_REPLACEMENTS) {
-            return;
-        }
-        pendingReplacementRunning = true;
-        pendingReplacements++;
-        final Thread worker = new Thread(() -> replacePendingToken(session),
-                "SabrPendingTokenReplacement");
-        worker.setDaemon(true);
-        worker.start();
-    }
-
-    private void replacePendingToken(@NonNull final YoutubeSabrSession session) {
-        try {
-            final Long rejectedGeneration;
-            synchronized (this) {
-                rejectedGeneration = tokenGeneration;
-            }
-            if (rejectedGeneration != null) {
-                LocalDomPoTokenProvider.INSTANCE.invalidate(rejectedGeneration);
-            }
-            final MintedPlayerPoToken minted =
-                    LocalDomPoTokenProvider.INSTANCE.mintPlayerPoToken(videoId);
-            if (minted.getToken().length == 0) {
-                return;
-            }
-            // not under this lock: a running request holds the session and calls back here
-            session.setPoToken(minted.getToken());
-            synchronized (this) {
-                tokenGeneration = minted.getGeneration();
-            }
-        } catch (final Exception ignored) {
-            // the normal recovery will run
-        } finally {
-            synchronized (this) {
-                pendingReplacementRunning = false;
-            }
         }
     }
 
