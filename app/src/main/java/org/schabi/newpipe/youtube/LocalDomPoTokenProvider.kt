@@ -343,29 +343,38 @@ private class PersistentMintSession private constructor(
     ) {
         Thread({
             try {
-                val downloader = DownloaderImpl.getInstance()
-                    ?: throw SabrProtocolException("DownloaderImpl is not initialized")
-                val response = downloader.post(
-                    url,
-                    mapOf(
-                        "User-Agent" to listOf(SharedWebViewRuntime.USER_AGENT),
-                        "Accept" to listOf("application/json"),
-                        "Content-Type" to listOf(contentType),
-                        "x-goog-api-key" to listOf(LOCAL_DOM_GOOGLE_API_KEY),
-                        "x-user-agent" to listOf("grpc-web-javascript/0.1"),
-                    ) + extraHeaders,
-                    data.toByteArray(),
-                )
-                if (response.responseCode() != 200) {
-                    throw SabrProtocolException(
-                        "Local DOM BotGuard request failed: ${response.responseCode()}",
-                    )
-                }
-                onSuccess(response.responseBody())
+                onSuccess(postBotguardService(url, data, contentType, extraHeaders))
             } catch (error: Throwable) {
                 onError(error)
             }
         }, "SabrLocalDomPoTokenJnn").start()
+    }
+
+    private fun postBotguardService(
+        url: String,
+        data: String,
+        contentType: String = "application/json+protobuf",
+        extraHeaders: Map<String, List<String>> = emptyMap(),
+    ): String {
+        val downloader = DownloaderImpl.getInstance()
+            ?: throw SabrProtocolException("DownloaderImpl is not initialized")
+        val response = downloader.post(
+            url,
+            mapOf(
+                "User-Agent" to listOf(SharedWebViewRuntime.USER_AGENT),
+                "Accept" to listOf("application/json"),
+                "Content-Type" to listOf(contentType),
+                "x-goog-api-key" to listOf(LOCAL_DOM_GOOGLE_API_KEY),
+                "x-user-agent" to listOf("grpc-web-javascript/0.1"),
+            ) + extraHeaders,
+            data.toByteArray(),
+        )
+        if (response.responseCode() != 200) {
+            throw SabrProtocolException(
+                "Local DOM BotGuard request failed: ${response.responseCode()}",
+            )
+        }
+        return response.responseBody()
     }
 
     private fun makeBotguardGetRequest(
@@ -455,12 +464,14 @@ private class PersistentMintSession private constructor(
     }
 
     private fun onRunBotguardResult(botguardResponse: String) {
+        val request = "[ \"$REQUEST_KEY\", \"$botguardResponse\" ]"
         makeBotguardServiceRequest(
-            "https://jnn-pa.googleapis.com/\$rpc/google.internal.waa.v1.Waa/GenerateIT",
-            "[ \"$REQUEST_KEY\", \"$botguardResponse\" ]",
+            GENERATE_IT_URL,
+            request,
             onSuccess = { body ->
                 try {
-                    val integrityTokenData = parseSabrIntegrityTokenData(body)
+                    val integrityTokenData =
+                        parseSabrIntegrityTokenData(shortestIntegrityToken(body, request))
                     val integrityToken = integrityTokenData.first
                     expiresAtMs = System.currentTimeMillis() +
                         TimeUnit.SECONDS.toMillis(integrityTokenData.second)
@@ -475,6 +486,29 @@ private class PersistentMintSession private constructor(
             },
             onError = ::failInitialization,
         )
+    }
+
+    // GenerateIT answers the same request with a short or a long token, only the short one is accepted
+    private fun shortestIntegrityToken(first: String, request: String): String {
+        val size = integrityTokenSize(first) ?: return first
+        repeat(EXTRA_INTEGRITY_REQUESTS) {
+            val other = try {
+                postBotguardService(GENERATE_IT_URL, request)
+            } catch (_: Exception) {
+                return first
+            }
+            val otherSize = integrityTokenSize(other) ?: return first
+            if (otherSize != size) {
+                return if (otherSize < size) other else first
+            }
+        }
+        return first
+    }
+
+    private fun integrityTokenSize(body: String): Int? = try {
+        base64ToByteArray(JsonParser.array().from(body).getString(0)).size
+    } catch (_: Exception) {
+        null
     }
 
     private inner class Callbacks : SharedWebViewRuntime.SabrLocalDomCallbacks {
@@ -517,6 +551,9 @@ private class PersistentMintSession private constructor(
         private const val INIT_TIMEOUT_MS = 60_000L
         private const val EXPIRY_MARGIN_MS = 60_000L
         private const val REQUEST_KEY = "O43z0dpjhgX20SCx4KAo"
+        private const val EXTRA_INTEGRITY_REQUESTS = 3
+        private const val GENERATE_IT_URL =
+            "https://jnn-pa.googleapis.com/\$rpc/google.internal.waa.v1.Waa/GenerateIT"
 
         @Throws(SabrProtocolException::class)
         fun create(
