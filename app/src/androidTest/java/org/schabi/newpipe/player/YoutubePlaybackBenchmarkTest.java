@@ -300,7 +300,7 @@ public final class YoutubePlaybackBenchmarkTest {
             renderers.setEnableDecoderFallback(true);
             final ExoPlayer player = new ExoPlayer.Builder(context, renderers)
                     .setTrackSelector(new DefaultTrackSelector(context))
-                    .setLoadControl(new LoadController())
+                    .setLoadControl(new LoadController(C.TIME_UNSET))
                     .build();
             player.addListener(new Player.Listener() {
                 @Override

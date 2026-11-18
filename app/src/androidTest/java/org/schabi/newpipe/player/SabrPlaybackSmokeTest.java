@@ -1290,7 +1290,7 @@ public final class SabrPlaybackSmokeTest {
             renderersFactory.setEnableDecoderFallback(true);
             final ExoPlayer player = new ExoPlayer.Builder(context, renderersFactory)
                     .setTrackSelector(new DefaultTrackSelector(context))
-                    .setLoadControl(new LoadController())
+                    .setLoadControl(new LoadController(C.TIME_UNSET))
                     .build();
             player.addListener(new Player.Listener() {
                 @Override
@@ -1446,7 +1446,7 @@ public final class SabrPlaybackSmokeTest {
         final CountDownLatch ready = new CountDownLatch(1);
         InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
             final ExoPlayer player = new ExoPlayer.Builder(context)
-                    .setLoadControl(new LoadController())
+                    .setLoadControl(new LoadController(C.TIME_UNSET))
                     .build();
             player.addListener(new Player.Listener() {
                 @Override
