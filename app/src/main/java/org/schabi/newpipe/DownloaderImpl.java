@@ -76,6 +76,31 @@ public final class DownloaderImpl extends Downloader {
                 .build();
     };
 
+    /**
+     * Name of a synthetic header added to failed responses. It describes the connection a
+     * request was sent over so that error reports show the address family, protocol and
+     * proxy use without containing any address.
+     */
+    public static final String NETWORK_INFO_HEADER = "X-PipePipe-Net";
+
+    private static final Interceptor NETWORK_INFO_INTERCEPTOR = chain -> {
+        final okhttp3.Response response = chain.proceed(chain.request());
+        if (response.code() < 400) {
+            return response;
+        }
+        final Connection connection = chain.connection();
+        final StringBuilder info = new StringBuilder();
+        if (connection != null) {
+            final Route route = connection.route();
+            info.append(route.socketAddress().getAddress() instanceof java.net.Inet6Address
+                    ? "ipv6" : "ipv4");
+            info.append("; ").append(connection.protocol());
+            info.append("; proxy=").append(route.proxy().type());
+        }
+        info.append("; cookie=").append(chain.request().header("Cookie") != null);
+        return response.newBuilder().header(NETWORK_INFO_HEADER, info.toString()).build();
+    };
+
     private static DownloaderImpl instance;
     private final Map<String, String> mCookies;
     private final OkHttpClient client;
@@ -86,6 +111,7 @@ public final class DownloaderImpl extends Downloader {
     private DownloaderImpl(final OkHttpClient.Builder builder) {
         this.client = builder
                 .addNetworkInterceptor(BOT_CHECK_INTERCEPTOR)
+                .addNetworkInterceptor(NETWORK_INFO_INTERCEPTOR)
                 .readTimeout(30, TimeUnit.SECONDS)
 //                .cache(new Cache(new File(context.getExternalCacheDir(), "okhttp"),
 //                        16 * 1024 * 1024))
