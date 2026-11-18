@@ -413,8 +413,8 @@ object PluginManager {
     data class IssueTarget(val plugin: PluginManifest?, val issueUrl: String?)
 
     /**
-     * Decide where a failure should be reported. Plugins shipped by PipePipe itself are not
-     * third party, so their failures stay with the app.
+     * Decide where a failure should be reported. Plugins from the builtin repository are
+     * reported to the builtin plugins repository, derived from its URL.
      */
     @JvmStatic
     @JvmOverloads
@@ -426,9 +426,6 @@ object PluginManager {
         val repository = getInstalled(context)
             .firstOrNull { it.pluginId == manifest.pluginId }
             ?.repositoryUrl
-        if (repository == BUILTIN_REPOSITORY) {
-            return IssueTarget(null, null)
-        }
         val declared = manifest.issueUrl
         if (declared != null) {
             return IssueTarget(manifest, declared)
