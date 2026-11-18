@@ -176,8 +176,7 @@ public final class SabrPlaybackSmokeTest {
         final AtomicBoolean found = new AtomicBoolean();
         final AtomicReference<String> observed = new AtomicReference<>("");
         final List<String> responseSeq = new ArrayList<>();
-        int backoffCount = 0;
-        long backoffSleptMs = 0;
+        final List<String> backoffWaits = new ArrayList<>();
         try {
             for (int attempt = 1; attempt <= 8 && !found.get(); attempt++) {
                 final YoutubeSabrSession.RequestResult result = session.requestOnce(
@@ -206,26 +205,26 @@ public final class SabrPlaybackSmokeTest {
                         session.getBackoffRemainingMs());
                 long sleptMs = 0;
                 if (!found.get() && backoffMs > 0) {
-                    sleptMs = Math.min(backoffMs + 10, 30_000);
-                    SystemClock.sleep(sleptMs);
-                    backoffCount++;
-                    backoffSleptMs += sleptMs;
+                    final long sleepStartMs = SystemClock.elapsedRealtime();
+                    SystemClock.sleep(Math.min(backoffMs + 10, 30_000));
+                    sleptMs = SystemClock.elapsedRealtime() - sleepStartMs;
+                    backoffWaits.add(attempt + ":" + backoffMs + "->" + sleptMs + "ms");
                 }
                 responseSeq.add(attempt + ":" + (result.isDeferred() ? "deferred"
                         : String.valueOf(result.getProtectionStatus()))
                         + (found.get() ? "+media" : "")
-                        + (sleptMs > 0 ? " backoff=" + backoffMs + "ms" : ""));
+                        + (sleptMs > 0 ? " backoff=" + backoffMs + "->" + sleptMs + "ms" : ""));
             }
         } catch (final Exception error) {
             responseSeq.add("error:" + error.getClass().getSimpleName());
             printSabrAudioProbeResult(streamInfo.getId(), false, responseSeq,
-                    backoffCount, backoffSleptMs);
+                    backoffWaits);
             printSabrAudioProbeTrace("failure", session);
             throw error;
         }
 
         printSabrAudioProbeResult(streamInfo.getId(), found.get(), responseSeq,
-                backoffCount, backoffSleptMs);
+                backoffWaits);
         printSabrAudioProbeTrace("complete", session);
         System.out.println("SABR_AUDIO_PROBE url=" + url
                 + " videoId=" + streamInfo.getId()
@@ -233,7 +232,7 @@ public final class SabrPlaybackSmokeTest {
                 + " observed={" + observed.get() + '}');
         assertTrue("Did not receive more than 2 seconds of SABR audio at/after 65 seconds; "
                         + "lastSegment={" + observed.get() + "} seq=" + responseSeq
-                        + " backoffs=" + backoffCount + "/" + backoffSleptMs + "ms trace="
+                        + " backoffWaits=" + backoffWaits + " trace="
                         + session.getDiagnosticTrace(),
                 found.get());
     }
@@ -241,9 +240,9 @@ public final class SabrPlaybackSmokeTest {
     private static void printSabrAudioProbeResult(
             @Nonnull final String videoId, final boolean pass,
             @Nonnull final List<String> responseSeq,
-            final int backoffCount, final long backoffSleptMs) {
+            @Nonnull final List<String> backoffWaits) {
         System.out.println("SABR_AUDIO_PROBE_RESULT videoId=" + videoId + " pass=" + pass
-                + " backoffs=" + backoffCount + " backoffTotalMs=" + backoffSleptMs
+                + " backoffs=" + backoffWaits.size() + " backoffWaits=" + backoffWaits
                 + " seq=" + responseSeq);
     }
 
