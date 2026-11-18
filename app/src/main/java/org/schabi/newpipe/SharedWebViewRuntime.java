@@ -58,8 +58,11 @@ public final class SharedWebViewRuntime {
     private static final long DEFAULT_TIMEOUT_MS = 30_000L;
     private static final long READY_CALLBACK_ATTEMPT_TIMEOUT_MS = 5_000L;
     private static final int MAX_READY_CALLBACK_ATTEMPTS = 2;
-    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            + "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.3";
+    /** Used only if the WebView default user agent cannot be read. */
+    private static final String FALLBACK_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            + "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36";
+    @Nullable
+    private static volatile String userAgent;
     private static volatile SharedWebViewRuntime instance;
 
     private final Context appContext;
@@ -81,6 +84,27 @@ public final class SharedWebViewRuntime {
 
     private SharedWebViewRuntime(final Context context) {
         appContext = context.getApplicationContext();
+    }
+
+    /**
+     * The user agent of the WebView engine itself, without the {@code wv} marker. BotGuard checks
+     * that the declared browser matches the engine it runs in, so the attestation requests and the
+     * runtime must not claim a different platform.
+     */
+    @NonNull
+    public static String getUserAgent(@NonNull final Context context) {
+        String value = userAgent;
+        if (value == null) {
+            try {
+                value = WebSettings.getDefaultUserAgent(context.getApplicationContext())
+                        .replace("; wv", "");
+            } catch (final Throwable throwable) {
+                Log.w(TAG, "Could not read the WebView user agent", throwable);
+                value = FALLBACK_USER_AGENT;
+            }
+            userAgent = value;
+        }
+        return value;
     }
 
     @NonNull
@@ -298,7 +322,7 @@ public final class SharedWebViewRuntime {
             final WebSettings settings = view.getSettings();
             settings.setJavaScriptEnabled(true);
             settings.setDomStorageEnabled(false);
-            settings.setUserAgentString(USER_AGENT);
+            settings.setUserAgentString(getUserAgent(appContext));
             settings.setBlockNetworkLoads(true);
             if (WebViewFeature.isFeatureSupported(WebViewFeature.SAFE_BROWSING_ENABLE)) {
                 WebSettingsCompat.setSafeBrowsingEnabled(settings, false);
