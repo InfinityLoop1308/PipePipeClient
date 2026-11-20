@@ -64,6 +64,8 @@ class ErrorPanelHelper(
         errorPanelRoot.findViewById(R.id.error_action_button)
     private val errorRetryButton: Button =
         errorPanelRoot.findViewById(R.id.error_retry_button)
+    private val errorReportButton: Button =
+        errorPanelRoot.findViewById(R.id.error_report_button)
 
     private var errorDisposable: Disposable? = null
 
@@ -81,6 +83,7 @@ class ErrorPanelHelper(
         errorServiceExplanationTextView.isVisible = false
         errorActionButton.isVisible = false
         errorRetryButton.isVisible = false
+        errorReportButton.isVisible = false
     }
 
     fun showError(errorInfo: ErrorInfo) {
@@ -109,6 +112,7 @@ class ErrorPanelHelper(
             }
 
             errorRetryButton.isVisible = true
+            showAndSetErrorReportButton(errorInfo)
         } else if (antiBot is AntiBotLoginRequiredException) {
             errorTextView.text = AntiBotHints.message(context, antiBot)
 
@@ -119,7 +123,9 @@ class ErrorPanelHelper(
             }
 
             errorRetryButton.isVisible = true
+            showAndSetErrorReportButton(errorInfo)
         } else if (errorInfo.throwable is AccountTerminatedException) {
+
             errorTextView.setText(R.string.account_terminated)
 
             if (!isNullOrEmpty((errorInfo.throwable as AccountTerminatedException).message)) {
@@ -167,6 +173,15 @@ class ErrorPanelHelper(
         errorActionButton.setOnClickListener(listener)
     }
 
+    /**
+     * Shows the report button, used alongside an anti-bot resolve action so the user can still
+     * report the block.
+     */
+    private fun showAndSetErrorReportButton(errorInfo: ErrorInfo) {
+        errorReportButton.isVisible = true
+        errorReportButton.setOnClickListener { ErrorUtil.openActivity(context, errorInfo) }
+    }
+
     fun showTextError(errorString: String) {
         ensureDefaultVisibility()
 
@@ -194,11 +209,13 @@ class ErrorPanelHelper(
     private fun firstVisibleErrorButton(): Button? = when {
         errorActionButton.isVisible -> errorActionButton
         errorRetryButton.isVisible -> errorRetryButton
+        errorReportButton.isVisible -> errorReportButton
         else -> null
     }
 
     fun hide() {
         errorActionButton.setOnClickListener(null)
+        errorReportButton.setOnClickListener(null)
         itemsList?.isFocusable = listWasFocusable
         errorPanelRoot.animate(false, 150)
     }
@@ -210,6 +227,7 @@ class ErrorPanelHelper(
     fun dispose() {
         errorActionButton.setOnClickListener(null)
         errorRetryButton.setOnClickListener(null)
+        errorReportButton.setOnClickListener(null)
         itemsList?.isFocusable = listWasFocusable
         errorDisposable?.dispose()
     }
