@@ -3,6 +3,7 @@ package org.schabi.newpipe.util.selection;
 import android.app.Activity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.MenuRes;
 import androidx.annotation.NonNull;
@@ -82,9 +83,13 @@ public final class SelectionToolbar {
     public void update(@NonNull final SelectionController<?> controller) {
         if (!controller.isActive()) {
             toolbar.setVisibility(View.GONE);
+            setMainToolbarFocusable(true);
             return;
         }
+        final boolean wasHidden = toolbar.getVisibility() != View.VISIBLE;
         toolbar.setVisibility(View.VISIBLE);
+        // the main toolbar stays below this one, don't let the TV focus reach it
+        setMainToolbarFocusable(false);
         final int count = controller.getSelectedCount();
         toolbar.setTitle(toolbar.getResources()
                 .getString(R.string.selection_count, count));
@@ -96,6 +101,24 @@ public final class SelectionToolbar {
                     || id == R.id.action_selection_select_all
                     || id == R.id.action_selection_invert);
         }
+        if (wasHidden) {
+            toolbar.post(() -> {
+                for (int i = 0; i < toolbar.getMenu().size(); i++) {
+                    final View view = toolbar.findViewById(toolbar.getMenu().getItem(i).getItemId());
+                    if (view != null && view.isEnabled() && view.requestFocus()) {
+                        return;
+                    }
+                }
+            });
+        }
+    }
+
+    private void setMainToolbarFocusable(final boolean focusable) {
+        final View main = toolbar.getRootView().findViewById(R.id.toolbar_layout);
+        if (main instanceof ViewGroup) {
+            ((ViewGroup) main).setDescendantFocusability(focusable
+                    ? ViewGroup.FOCUS_AFTER_DESCENDANTS : ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        }
     }
 
     /** Hides the toolbar and detaches it from the owner; selection state is kept. */
@@ -104,6 +127,7 @@ public final class SelectionToolbar {
             current = null;
         }
         toolbar.setVisibility(View.GONE);
+        setMainToolbarFocusable(true);
         toolbar.setNavigationOnClickListener(null);
         toolbar.setOnMenuItemClickListener(null);
         toolbar.getMenu().clear();
