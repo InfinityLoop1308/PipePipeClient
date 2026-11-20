@@ -116,7 +116,7 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
         }
         if (localFilterActive) {
             installFilterFooter();
-        } else if (hiddenItemCount == 0 && !manualFilterContinuation && infoListAdapter != null) {
+        } else if (!hasContentFilterNote() && infoListAdapter != null) {
             infoListAdapter.setFooterSupplier(null);
         }
         showListFooter(hasMoreItems());
@@ -142,7 +142,7 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
                                       final boolean reset) {
         hiddenItemCount = reset ? count : hiddenItemCount + count;
         manualFilterContinuation = emptyBatch && hasMoreItems();
-        if (hiddenItemCount == 0 && !manualFilterContinuation) {
+        if (!hasContentFilterNote()) {
             if (!localFilterActive) {
                 infoListAdapter.setFooterSupplier(null);
             }
@@ -158,7 +158,12 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
     }
 
     private boolean hasContentFilterNote() {
-        return hiddenItemCount > 0 || manualFilterContinuation;
+        return showHiddenCount() || manualFilterContinuation;
+    }
+
+    /** The hidden-count note is only shown once there is no next page. */
+    private boolean showHiddenCount() {
+        return hiddenItemCount > 0 && !hasMoreItems();
     }
 
     private void installFilterFooter() {
@@ -167,7 +172,7 @@ public abstract class BaseListFragment<I, N> extends BaseStateFragment<I>
                     R.layout.filter_list_footer, itemsList, false);
             final StringBuilder text = new StringBuilder();
             if (hasContentFilterNote()) {
-                text.append(hiddenItemCount > 0
+                text.append(showHiddenCount()
                         ? getString(infoListAdapter.getItemsList().isEmpty()
                                 ? R.string.filter_all_items_hidden : R.string.filter_items_hidden,
                                 hiddenItemCount)
