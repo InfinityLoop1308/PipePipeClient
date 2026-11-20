@@ -1016,6 +1016,7 @@ public class SearchFragment extends BaseListFragment<SearchInfo, ListExtractor.I
         lastSearchedString = this.searchString;
         this.searchString = theSearchString;
         infoListAdapter.clearStreamItemList();
+        itemsList.scrollToPosition(0);
         hideSuggestionsPanel();
         showMetaInfoInTextView(null, searchBinding.searchMetaInfoTextView,
                 searchBinding.searchMetaInfoSeparator, disposables);
