@@ -913,7 +913,6 @@
     <string name="settings_category_gestures_summary">الإيماءات</string>
     <string name="settings_category_backup_title">النسخ الاحتياطي</string>
     <string name="settings_category_advanced_title">خيارات أخرى</string>
-    <string name="anti_bot_youtube_hint">عنوان IP الخاص بك محظور من يوتيوب. جرّب استخدام VPN أو تسجيل الدخول من الإعدادات للاستمرار.</string>
     <string name="advanced_formats_summary">إذا كان جهازك يدعم ذلك، فإن تفعيل التنسيقات المتقدمة يمكن أن يقلل استهلاك البيانات ويوفر دقة أعلى.\nيجب تفعيل WEBM أو AV1 لعرض محتوى 2k/4k على يوتيوب.\nاستخدام تنسيق لا يدعمه جهازك سيؤدي إلى شاشة سوداء أو تعطل.</string>
     <string name="advanced_formats_title">تفعيل التنسيقات المتقدمة</string>
     <string name="preferred_audio_language_title">لغة الصوت المفضلة</string>

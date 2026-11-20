@@ -13,6 +13,8 @@ import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException
 import org.schabi.newpipe.extractor.exceptions.ExtractionException
 import org.schabi.newpipe.extractor.exceptions.AntiBotException
+import org.schabi.newpipe.extractor.exceptions.AntiBotLoginRequiredException
+import org.schabi.newpipe.extractor.exceptions.ReCaptchaException
 import org.schabi.newpipe.extractor.exceptions.NeedLoginException
 import org.schabi.newpipe.extractor.exceptions.WebViewUnavailableException
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor.DeobfuscateException
@@ -120,7 +122,9 @@ class ErrorInfo(
                 throwable != null && throwable.isNetworkRelated -> R.string.network_error
                 throwable is ContentNotSupportedException -> R.string.content_not_supported_new
                 throwable is DeobfuscateException -> R.string.youtube_signature_deobfuscation_error
-                throwable is AntiBotException -> R.string.anti_bot_youtube_hint
+                throwable is ReCaptchaException -> R.string.recaptcha_request_toast
+                throwable is AntiBotLoginRequiredException -> R.string.anti_bot_login_hint
+                throwable is AntiBotException -> R.string.anti_bot_hint
                 throwable is NeedLoginException -> R.string.need_login_hint
                 throwable is WebViewUnavailableException -> R.string.webview_unavailable_youtube_hint
                 throwable is ExtractionException -> R.string.parsing_error

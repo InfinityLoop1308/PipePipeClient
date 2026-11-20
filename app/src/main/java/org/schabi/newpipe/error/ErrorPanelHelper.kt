@@ -23,6 +23,7 @@ import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException
 import org.schabi.newpipe.extractor.exceptions.GeographicRestrictionException
 import org.schabi.newpipe.extractor.exceptions.LiveNotStartException
 import org.schabi.newpipe.extractor.exceptions.AntiBotException
+import org.schabi.newpipe.extractor.exceptions.AntiBotLoginRequiredException
 import org.schabi.newpipe.extractor.exceptions.NeedLoginException
 import org.schabi.newpipe.extractor.exceptions.PaidContentException
 import org.schabi.newpipe.extractor.exceptions.PrivateContentException
@@ -34,6 +35,7 @@ import org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty
 import org.schabi.newpipe.ktx.animate
 import org.schabi.newpipe.ktx.isInterruptedCaused
 import org.schabi.newpipe.ktx.isNetworkRelated
+import org.schabi.newpipe.util.NavigationHelper
 import org.schabi.newpipe.util.ServiceHelper
 import java.util.concurrent.TimeUnit
 
@@ -109,6 +111,16 @@ class ErrorPanelHelper(
                 )
                 fragment.startActivityForResult(intent, ReCaptchaActivity.RECAPTCHA_REQUEST)
                 errorActionButton.setOnClickListener(null)
+            }
+
+            errorRetryButton.isVisible = true
+        } else if (errorInfo.throwable is AntiBotLoginRequiredException) {
+            errorTextView.setText(R.string.anti_bot_login_hint)
+
+            showAndSetErrorButtonAction(
+                R.string.anti_bot_login_action
+            ) {
+                NavigationHelper.openSettings(context)
             }
 
             errorRetryButton.isVisible = true
@@ -214,7 +226,9 @@ class ErrorPanelHelper(
         @StringRes
         fun getExceptionDescription(throwable: Throwable?): Int {
             return when (throwable) {
-                is AntiBotException -> R.string.anti_bot_youtube_hint
+                is ReCaptchaException -> R.string.recaptcha_request_toast
+                is AntiBotLoginRequiredException -> R.string.anti_bot_login_hint
+                is AntiBotException -> R.string.anti_bot_hint
                 is NeedLoginException -> R.string.need_login_hint
                 is LiveNotStartException -> R.string.live_not_started
                 is AgeRestrictedContentException -> R.string.restricted_video_no_stream_new

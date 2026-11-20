@@ -908,7 +908,6 @@
 <string name="settings_category_gestures_summary">Jest Ayarları</string>
 <string name="settings_category_backup_title">Yedekleme</string>
 <string name="settings_category_advanced_title">Gelişmiş</string>
-<string name="anti_bot_youtube_hint">IP adresiniz YouTube tarafından engellendi. Devam etmek için bir VPN kullanmayı veya Ayarlar üzerinden giriş yapmayı deneyin.</string>
 <string name="advanced_formats_summary">Cihazınız destekliyorsa, gelişmiş formatları etkinleştirmek veri tüketimini azaltabilir ve daha yüksek çözünürlükler sağlayabilir. \nYouTube\'da 2k/4k içerikleri göstermek için WEBM veya AV1 etkinleştirilmelidir. \nCihazınızın desteklemediği bir format kullanmak siyah ekrana veya çökmeye neden olur.</string>
 <string name="advanced_formats_title">Gelişmiş formatları etkinleştir</string>
 <string name="preferred_audio_language_title">Tercih edilen ses dili</string>

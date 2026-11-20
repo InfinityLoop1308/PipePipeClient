@@ -912,7 +912,6 @@
     <string name="settings_category_bullet_comments_summary">Inställningar för danmaku</string>
     <string name="settings_category_backup_title">Säkerhetskopiering</string>
     <string name="settings_category_advanced_title">Avancerat</string>
-    <string name="anti_bot_youtube_hint">Din IP-adress är blockerad av YouTube. Prova att använda en VPN eller logga in via inställningarna för att fortsätta.</string>
     <string name="advanced_formats_summary">Om enheten stöder avancerade format kan de minska dataförbrukningen och ge högre upplösning.\nWEBM eller AV1 måste aktiveras för att visa 2k/4k-innehåll på YouTube.\nEtt format som enheten inte stöder leder till svart skärm eller en krasch.</string>
     <string name="advanced_formats_title">Aktivera avancerade format</string>
     <string name="preferred_audio_language_title">Föredraget ljudspråk</string>

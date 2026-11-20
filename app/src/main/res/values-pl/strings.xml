@@ -901,7 +901,6 @@
 <string name="settings_category_bullet_comments_summary">Ustawienia danmaku</string>
 <string name="settings_category_backup_title">Kopia zapasowa</string>
 <string name="settings_category_advanced_title">Zaawansowane</string>
-<string name="anti_bot_youtube_hint">Twoje IP jest zablokowane przez YouTube, Spróbuj użyć VPN-a lub zaloguj się przez Ustawienia aby kontynuować.</string>
 <string name="advanced_formats_summary">Jeżeli twoje urządzenie je wspiera, włączenie zaawansowanych formatów może zmniejszyć zużycie danych i dodać wyższe rozdzielczości. WEBM lub AV1 musi być włączone aby pokazywać treści 2k/4k na YouTube. Używanie formatu niewspieranego przez twoje urządzenie spowoduje czarny ekran lub crash.</string>
 <string name="advanced_formats_title">Włącz zaawansowane formaty</string>
 <string name="preferred_audio_language_title">Preferowany język dźwięku</string>

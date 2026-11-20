@@ -319,8 +319,8 @@
 <!-- reCAPTCHA -->
 <string name="title_activity_recaptcha">reCAPTCHA challenge</string>
 <string name="subtitle_activity_recaptcha">Press \"Done\" when solved</string>
-<string name="recaptcha_request_toast">reCAPTCHA challenge requested</string>
-<string name="recaptcha_solve">Solve</string>
+<string name="recaptcha_request_toast">The service wants to verify you are not a bot.</string>
+<string name="recaptcha_solve">Verify</string>
 <string name="recaptcha_done_button">Done</string>
 <!-- Downloads -->
 <string name="settings_category_downloads_title">Download</string>
@@ -941,7 +941,6 @@
 <string name="settings_category_bullet_comments_summary">Danmaku Settings</string>
 <string name="settings_category_backup_title">Backup</string>
 <string name="settings_category_advanced_title">Advanced</string>
-<string name="anti_bot_youtube_hint">Your IP is blocked by YouTube. Try using a VPN or logging in through Settings to continue.</string>
 <string name="advanced_formats_summary">If your device has support, enabling advanced formats can reduce data consumption and provide higher resolutions. \nWEBM or AV1 must be enabled to show 2k/4k contents on YouTube. \nUse a format that your device doesn\'t support will result in a black screen or crash.</string>
 <string name="advanced_formats_title">Enable advanced formats</string>
 <string name="preferred_audio_language_title">Preferred audio language</string>
@@ -1306,4 +1305,7 @@ Only add repositories you trust.</string>
 <string name="error_report_plugin_message">This failure comes from the %1$s plugin, so it is not a PipePipe issue. Report it at %2$s</string>
 <string name="error_report_plugin_no_tracker">This failure comes from the %1$s plugin, so it is not a PipePipe issue. The plugin declares no issue tracker, so copy the report and send it to its author, %2$s.</string>
 <string name="error_report_plugin_open">Open tracker</string>
+<string name="anti_bot_hint">This service is limiting requests from your network. Try again later or switch to a different network.</string>
+<string name="anti_bot_login_hint">This service flagged requests from your network as unusual and requires you to log in to continue.</string>
+<string name="anti_bot_login_action">Log in</string>
 </resources>

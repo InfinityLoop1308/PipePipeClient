@@ -971,7 +971,6 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="settings_category_gestures_summary">Настройки жестов</string>
     <string name="settings_category_backup_title">Резервная копия</string>
     <string name="settings_category_advanced_title">Дополнительно</string>
-    <string name="anti_bot_youtube_hint">Ваш IP-адрес заблокирован YouTube. Попробуйте использовать VPN или войдите в аккаунт через Настройки.</string>
     <string name="advanced_formats_summary">Если устройство поддерживает эти форматы, их включение снизит расход трафика и откроет доступ к высокому разрешению.
 Для просмотра 2K/4K на YouTube необходимо включить WEBM или AV1.
 Внимание: выбор формата, который не поддерживается вашим железом, приведет к черному экрану или вылету приложения.</string>
