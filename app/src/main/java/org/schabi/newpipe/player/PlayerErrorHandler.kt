@@ -125,18 +125,6 @@ class PlayerErrorHandler(private val player: Player) {
                 ERROR_CODE_IO_UNSPECIFIED -> {
                     val causeMessage = error.cause?.message
                     if (causeMessage != null && causeMessage.contains("Response code: 403")) {
-                        try {
-                            AlertDialog.Builder(player.getParentActivity())
-                                .setTitle(R.string.network_error)
-                                .setMessage(R.string.ip_blocked_summary)
-                                .setPositiveButton(R.string.ok) { _, _ ->
-                                    // Handle "Yes" click
-                                }
-                                .show()
-                        } catch (e: Exception) {
-                            // when there is no context, e.g. background playing
-                            e.printStackTrace()
-                        }
                         player.onPlaybackShutdown()
                     } else {
                         recoverFromNetworkError()
