@@ -44,14 +44,7 @@ class NotificationWorker(
             groupId = FeedLoadManager.GROUP_NOTIFICATION_ENABLED
         )
             .doOnSubscribe { showLoadingFeedForegroundNotification() }
-            .map { feed ->
-                // filter out feedUpdateInfo items (i.e. channels) with nothing new
-                feed.mapNotNull {
-                    it.value?.takeIf { feedUpdateInfo ->
-                        feedUpdateInfo.newStreams.isNotEmpty()
-                    }
-                }
-            }
+            // only channels with new streams are returned
             .observeOn(AndroidSchedulers.mainThread()) // Picasso requires calls from main thread
             .map { feedUpdateInfoList ->
                 // display notifications for each feedUpdateInfo (i.e. channel)

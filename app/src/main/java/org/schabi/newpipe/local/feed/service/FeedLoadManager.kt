@@ -72,7 +72,7 @@ class FeedLoadManager(private val context: Context) {
     fun startLoading(
         groupId: Long = FeedGroupEntity.GROUP_ALL_ID,
         ignoreOutdatedThreshold: Boolean = false,
-    ): Single<List<Notification<FeedUpdateInfo>>> {
+    ): Single<List<FeedUpdateInfo>> {
         val defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val useFeedExtractor = defaultSharedPreferences.getBoolean(
             context.getString(R.string.feed_use_dedicated_fetch_method_key),
@@ -264,6 +264,13 @@ class FeedLoadManager(private val context: Context) {
             .observeOn(Schedulers.io())
             .buffer(BUFFER_COUNT_BEFORE_INSERT)
             .doOnNext(DatabaseConsumer())
+            // the full results are in the database now, only keep what the new streams
+            // notifications need, so that memory doesn't grow with the number of subscriptions
+            .map { list ->
+                list.mapNotNull { notification ->
+                    notification.value?.takeIf { it.hasNewStreams }?.forNotification()
+                }
+            }
             .subscribeOn(Schedulers.io())
             .toList()
             .flatMap { x -> postProcessFeed().toSingleDefault(x.flatten()) }

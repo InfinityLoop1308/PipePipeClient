@@ -57,4 +57,19 @@ data class FeedUpdateInfo(
         get() = url.hashCode()
 
     lateinit var newStreams: List<StreamInfoItem>
+
+    /**
+     * `newStreams` is not set for channels which were unsubscribed while the feed was updating.
+     */
+    val hasNewStreams: Boolean
+        get() = this::newStreams.isInitialized && newStreams.isNotEmpty()
+
+    /**
+     * A copy that only keeps what is needed to show the new streams notification.
+     */
+    fun forNotification(): FeedUpdateInfo {
+        val result = copy(description = null, streams = emptyList(), errors = emptyList())
+        result.newStreams = newStreams
+        return result
+    }
 }
