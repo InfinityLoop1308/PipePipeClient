@@ -95,7 +95,7 @@ object AntiBotHints {
     @JvmStatic
     fun actionIntent(context: Context, exception: AntiBotException): Intent? = when (exception) {
         is ReCaptchaException -> Intent(context, ReCaptchaActivity::class.java)
-            .putExtra(ReCaptchaActivity.RECAPTCHA_URL_EXTRA, exception.url)
+            .putExtra(ReCaptchaActivity.RECAPTCHA_URL_EXTRA, exception.challengeUrl)
         is AntiBotLoginRequiredException -> Intent(context, SettingsActivity::class.java)
             .putExtra(SettingsActivity.EXTRA_ACCOUNT_SERVICE_ID, exception.serviceId)
         else -> null

@@ -21,7 +21,7 @@ import com.grack.nanojson.JsonObject
 import com.grack.nanojson.JsonParser
 import com.grack.nanojson.JsonParserException
 import org.schabi.newpipe.extractor.downloader.Response
-import org.schabi.newpipe.extractor.exceptions.ReCaptchaException
+import org.schabi.newpipe.extractor.exceptions.AntiBotException
 import org.schabi.newpipe.util.ReleaseVersionUtil.coerceUpdateCheckExpiry
 import org.schabi.newpipe.util.ReleaseVersionUtil.isLastUpdateCheckExpired
 import java.io.IOException
@@ -87,7 +87,7 @@ class NewVersionWorker(
         notificationManager.notify(2000, notificationBuilder.build())
     }
 
-    @Throws(IOException::class, ReCaptchaException::class)
+    @Throws(IOException::class, AntiBotException::class)
     private fun checkNewVersion() {
         // Check if the current apk is a github one or not.
 //        if (!isReleaseApk()) {
@@ -183,8 +183,8 @@ class NewVersionWorker(
         } catch (e: IOException) {
             Log.w(TAG, "Could not fetch NewPipe API: probably network problem", e)
             Result.failure()
-        } catch (e: ReCaptchaException) {
-            Log.e(TAG, "ReCaptchaException should never happen here.", e)
+        } catch (e: AntiBotException) {
+            Log.e(TAG, "Update check was blocked as automated traffic", e)
             Result.failure()
         }
     }

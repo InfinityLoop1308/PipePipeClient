@@ -9,7 +9,7 @@ import com.grack.nanojson.JsonWriter
 import org.schabi.newpipe.DownloaderImpl
 import org.schabi.newpipe.R
 import org.schabi.newpipe.SharedWebViewRuntime
-import org.schabi.newpipe.extractor.exceptions.ReCaptchaException
+import org.schabi.newpipe.extractor.exceptions.AntiBotException
 import org.schabi.newpipe.extractor.services.youtube.YoutubePoTokenResult
 import org.schabi.newpipe.extractor.services.youtube.sabr.exception.SabrProtocolException
 import java.io.Closeable
@@ -124,8 +124,8 @@ object LocalDomPoTokenProvider {
                     }
                 }
                 val cause = error.cause ?: error
-                // keep the captcha error unwrapped so the error panel offers to solve it
-                if (cause is ReCaptchaException) throw cause
+                // keep anti-bot blocks unwrapped so the error panel shows the matching hint/action
+                if (cause is AntiBotException) throw cause
                 throw SabrProtocolException(
                     "Global PO token initialization failed: ${cause.message}",
                     cause,

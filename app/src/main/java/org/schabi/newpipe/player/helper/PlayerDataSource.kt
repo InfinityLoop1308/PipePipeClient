@@ -24,7 +24,7 @@ import com.grack.nanojson.JsonParserException
 import org.jsoup.Jsoup
 import org.schabi.newpipe.DownloaderImpl
 import org.schabi.newpipe.extractor.exceptions.ParsingException
-import org.schabi.newpipe.extractor.exceptions.ReCaptchaException
+import org.schabi.newpipe.extractor.exceptions.AntiBotException
 import org.schabi.newpipe.extractor.services.niconico.NicoWebSocketClient
 import org.schabi.newpipe.extractor.services.niconico.NiconicoService
 import org.schabi.newpipe.extractor.services.youtube.dashmanifestcreators.YoutubeOtfDashManifestCreator
@@ -201,7 +201,7 @@ class PlayerDataSource(
                     dataSpec.withUri(Uri.parse(streamData.url))
                 } catch (e: ParsingException) {
                     throw RuntimeException(e)
-                } catch (e: ReCaptchaException) {
+                } catch (e: AntiBotException) {
                     throw RuntimeException(e)
                 } catch (e: JsonParserException) {
                     throw RuntimeException(e)
@@ -221,7 +221,7 @@ class PlayerDataSource(
     @Throws(
         ParsingException::class,
         IOException::class,
-        ReCaptchaException::class,
+        AntiBotException::class,
         JsonParserException::class,
     )
     private fun fetchNicoLiveStreamData(url: String): NicoLiveStreamData {
