@@ -29,7 +29,7 @@ class ErrorInfo @JvmOverloads constructor(
     val serviceName: String,
     val request: String,
     val messageStringId: Int,
-    /** Service named by [messageStringId] when it is an anti-bot hint, null if unknown */
+    /** Service or site named by [messageStringId] when it is an anti-bot hint, null if unknown */
     val messageServiceName: String? = null
 ) : Parcelable {
 

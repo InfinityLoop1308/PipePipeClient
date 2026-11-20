@@ -12,7 +12,7 @@ import org.schabi.newpipe.settings.SettingsActivity
 
 /**
  * Builds the user-facing hints for [AntiBotException] and its subclasses, which name the
- * service that blocked the request.
+ * service or site that blocked the request.
  */
 object AntiBotHints {
 
@@ -58,11 +58,18 @@ object AntiBotHints {
     }
 
     /**
-     * @return the name of the service that blocked the request, or null if it is unknown
+     * @return who blocked the request: the service named by the thrower, else the service
+     * whose site the blocked url belongs to, else the site itself (requests to e.g. SponsorBlock
+     * belong to no service), or null if it is unknown
      */
     @JvmStatic
-    fun serviceName(exception: AntiBotException): String? =
-        ServiceList.getById(exception.serviceId)?.serviceInfo?.name
+    fun serviceName(exception: AntiBotException): String? {
+        ServiceList.getById(exception.serviceId)?.let { return it.serviceInfo.name }
+        val domain = ChallengeCookies.domainOf(exception.url) ?: return null
+        return ServiceList.all().firstOrNull { service ->
+            runCatching { ChallengeCookies.domainOf(service.baseUrl) }.getOrNull() == domain
+        }?.serviceInfo?.name ?: domain
+    }
 
     /**
      * Formats [hintRes] with [serviceName], falling back to a generic subject when the service
