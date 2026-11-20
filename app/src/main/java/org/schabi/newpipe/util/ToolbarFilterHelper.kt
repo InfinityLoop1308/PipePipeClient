@@ -49,9 +49,7 @@ class ToolbarFilterHelper(
                 editText.setText("")
             }
         }
-        editText.requestFocus()
-        val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
+        editText.post { KeyboardUtil.showKeyboard(activity, editText) }
     }
 
     fun close() {

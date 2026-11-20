@@ -35,6 +35,7 @@ import org.reactivestreams.Subscription;
 import org.schabi.newpipe.NewPipeDatabase;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.database.LocalItem;
+import org.schabi.newpipe.util.KeyboardUtil;
 import org.schabi.newpipe.util.PicassoHelper;
 import org.schabi.newpipe.database.history.model.StreamHistoryEntry;
 import org.schabi.newpipe.database.playlist.PlaylistStreamEntry;
@@ -576,9 +577,8 @@ public class LocalPlaylistFragment extends BaseLocalListFragment<List<PlaylistSt
                     ViewGroup.LayoutParams.MATCH_PARENT));
             actionBar.setDisplayShowCustomEnabled(true);
             editText = activity.findViewById(R.id.toolbar_search_edit_text_local);
-            editText.requestFocus();
-            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+            final EditText searchEditText = editText;
+            searchEditText.post(() -> KeyboardUtil.showKeyboard(activity, searchEditText));
             try {
                 activity.findViewById(R.id.action_search_local).setVisibility(View.GONE);
             } catch (Exception e) {
