@@ -71,7 +71,6 @@
     <string name="settings_file_charset_title">Atļautās rakstzīmes failu nosaukumos</string>
     <string name="settings_category_downloads_title">Lejupielādēt</string>
     <string name="recaptcha_done_button">Pabeigts</string>
-    <string name="recaptcha_request_toast">reCAPTCHA izaicinājums dots</string>
     <string name="subtitle_activity_recaptcha">Nospiediet \"Pabeigts\", kad to atrisinat</string>
     <string name="title_activity_recaptcha">reCAPTCHA izaicinājums</string>
     <string name="one_item_deleted">1 lieta izdzēsta.</string>
@@ -567,7 +566,6 @@
     <string name="georestricted_content">Šis saturs nav pieejams jūsu valstī.</string>
     <string name="crash_the_app">Avarēt aplikāciju</string>
     <string name="show_channel_details">Rādīt kanāla informāciju</string>
-    <string name="recaptcha_solve">Atrisināt</string>
     <string name="restricted_video_no_stream">Šis video ir ierobežots ar vecumu.
 \nŅemot vērā jauno YouTube politiku ar vecuma ierobežotiem videoklipiem, Newpipe nevar piekļūt šim videoklipam.</string>
     <string name="night_theme_title">Nakts Motīvs</string>

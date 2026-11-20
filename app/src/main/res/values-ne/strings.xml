@@ -196,7 +196,6 @@
     <string name="msg_popup_permission">पपअप मोडमा खोल्न
 \nयो अनुमति आवश्यक छ</string>
     <string name="one_item_deleted">1 वस्तु हटाइयो।</string>
-    <string name="recaptcha_request_toast">reCAPTCHA चुनौती अनुरोध</string>
     <string name="settings_category_downloads_title">डाउनलोड</string>
     <string name="settings_file_charset_title">फाइलहरुका नाममा वर्ण प्रयोग अनुमति</string>
     <string name="charset_letters_and_digits">अक्षर र अंक</string>

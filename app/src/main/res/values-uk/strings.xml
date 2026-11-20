@@ -180,7 +180,6 @@
         <item quantity="many">%s переглядів</item>
     </plurals>
     <string name="title_activity_recaptcha">Перевірка reCAPTCHA</string>
-    <string name="recaptcha_request_toast">Запит перевірки reCAPTCHA</string>
     <string name="donation_encouragement">NewPipe розроблений добровольцями, які витрачають власний час заради вашого задоволення. Допоможіть розробникам зробити NewPipe ще ліпшим, насолоджуючись філіжанкою кави.</string>
     <string name="website_encouragement">Завітайте на офіційний сайт NewPipe, щоб отримати більше інформації та новин.</string>
     <string name="app_license_title">Ліцензія NewPipe</string>
@@ -558,7 +557,6 @@
     <string name="show_original_time_ago_title">Початковий час оприлюднення</string>
     <string name="enqueued">Додано у чергу</string>
     <string name="enqueue_stream">Додати у чергу</string>
-    <string name="recaptcha_solve">Розв\'язати</string>
     <string name="msg_calculating_hash">Обчислення гешу</string>
     <string name="clear_cookie_summary">Очистити збережені під час вирішення reCAPTCHA реп\'яшки (cookies)</string>
     <string name="recaptcha_cookies_cleared">Реп\'яшки (cookies) reCAPTCHA видалено</string>

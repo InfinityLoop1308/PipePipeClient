@@ -119,7 +119,6 @@
     <string name="msg_popup_permission">Tämä käyttöoikeus tarvitaan
 \nponnahdusikkunatilan käyttämiseksi</string>
     <string name="title_activity_recaptcha">reCAPTCHA Haaste</string>
-    <string name="recaptcha_request_toast">reCAPTCHA-haaste pyydetty</string>
     <string name="settings_category_downloads_title">Lataus</string>
     <string name="settings_file_charset_title">Sallitut merkit tiedostonimissä</string>
     <string name="charset_letters_and_digits">Kirjaimet ja numerot</string>
@@ -554,7 +553,6 @@
     <string name="soundcloud_go_plus_content">Tämä on SoundCloud Go+ -raita maassasi, joten NewPipe ei voi suoratoistaa tai ladata sitä.</string>
     <string name="georestricted_content">Tämä sisältö ei ole saatavilla maassasi.</string>
     <string name="crash_the_app">Kaada sovellus</string>
-    <string name="recaptcha_solve">Ratkaise</string>
     <string name="hash_channel_description">Ilmoitukset videon hajautuksen etenemisestä</string>
     <string name="hash_channel_name">Videon hajautusilmoitus</string>
     <string name="restricted_video_no_stream">Tämä video on ikärajoitettu.

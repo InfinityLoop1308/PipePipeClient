@@ -244,7 +244,6 @@
     <string name="settings_file_charset_title">Karakteret e lejuara në emrat e skedarëve</string>
     <string name="settings_category_downloads_title">Shkarko</string>
     <string name="recaptcha_done_button">U bë</string>
-    <string name="recaptcha_request_toast">sfida reCAPTCHA u kërkua</string>
     <string name="subtitle_activity_recaptcha">Shtyp \"U bë\" kur ta zgjidhni</string>
     <string name="title_activity_recaptcha">sfida reCAPTCHA</string>
     <string name="one_item_deleted">1 objekt u fshi.</string>
@@ -588,7 +587,6 @@
     <string name="enqueued">E futur në radhë</string>
     <string name="enqueue_stream">Fute në radhë</string>
     <string name="show_channel_details">Shfaq detajet e kanalit</string>
-    <string name="recaptcha_solve">Zgjidh</string>
     <string name="no_dir_yet">Nuk ka ende një skedar të zgjedhur të shkarkimeve, zgjidheni skedarin e paravendosur tani</string>
     <string name="restricted_video_no_stream">Kjo video është e kufizuar në moshë.
 \nPër shkak të politikave të reja të YouTube në lidhje me videot e kufizuara në moshë, NewPipe nuk mund të aksesojë asnjë nga videot dhe nuk mund t\'i luajë ato.</string>

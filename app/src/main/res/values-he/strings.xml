@@ -133,7 +133,6 @@
     <string name="msg_popup_permission">הרשאה זו נדרשת לטובת
 \nפתיחה בחלון צף</string>
     <string name="title_activity_recaptcha">אתגר reCAPTCHA</string>
-    <string name="recaptcha_request_toast">התקבלה בקשה לאתגר reCAPTCHA</string>
     <string name="settings_category_downloads_title">הורדה</string>
     <string name="settings_file_charset_title">רשימת תווים אפשרית בשמות קבצים</string>
     <string name="charset_letters_and_digits">אותיות וספרות</string>
@@ -578,7 +577,6 @@
     <string name="auto_device_theme_title">אוטומטי (לפי ערכת העיצוב של המכשיר)</string>
     <string name="radio">ברירה</string>
     <string name="featured">מובילים</string>
-    <string name="recaptcha_solve">לפתור</string>
     <string name="night_theme_title">ערכת עיצוב לילית</string>
     <string name="show_channel_details">להציג את פרטי הערוץ</string>
     <string name="disable_media_tunneling_summary">כדאי להשבית תיעול מדיה אם הופיעה תופעה של מסך שחור או גמגום בנגינת וידאו</string>

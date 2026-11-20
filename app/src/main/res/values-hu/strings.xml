@@ -175,7 +175,6 @@
 \na felugró ablakban történő megnyitáshoz</string>
     <string name="one_item_deleted">1 elem törölve.</string>
     <string name="title_activity_recaptcha">reCAPTCHA rejtvény</string>
-    <string name="recaptcha_request_toast">reCAPTCHA rejtvény kérve</string>
     <string name="settings_category_downloads_title">Letöltés</string>
     <string name="settings_file_charset_title">Fájlnevekben engedélyezett karakterek</string>
     <string name="charset_letters_and_digits">Betűk és számok</string>
@@ -516,7 +515,6 @@
     <string name="show_channel_details">Csatorna részleteinek megjelenítése</string>
     <string name="hold_to_append">Tartsa nyomva a sorba állításhoz</string>
     <string name="default_kiosk_page_summary">Alapértelmezett újságárus</string>
-    <string name="recaptcha_solve">Megoldás</string>
     <string name="subtitle_activity_recaptcha">Nyomja meg a „Kész” gombot, ha megoldotta</string>
     <string name="msg_calculating_hash">Ujjlenyomat számítása</string>
     <string name="related_items_tab_description">Kapcsolódó elemek</string>

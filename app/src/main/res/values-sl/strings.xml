@@ -69,7 +69,6 @@
     <string name="error_report_title">Poročilo o napaki</string>
     <string name="app_ui_crash">Program se je sesul!</string>
     <string name="title_activity_recaptcha">Izziv reCAPTCHA</string>
-    <string name="recaptcha_request_toast">Zahtevan izziv reCAPTCHA</string>
     <string name="info_labels">Predmet:\\nZahteva:\\nJezik vsebine:\\nStoritev:\\nČas v GMT:\\nPaket:\\nRazličica:\\nRazličica OS:</string>
     <string name="black_theme_title">Črna</string>
     <string name="all">Vse</string>
@@ -417,7 +416,6 @@
     <string name="import_soundcloud_instructions_hint">yourID, soundcloud.com/yourid</string>
     <string name="kiosk_page_summary">Stran kiosk</string>
     <string name="main_page_content_summary">Kateri zavihki so prikazani na domači strani</string>
-    <string name="recaptcha_solve">Rešiti</string>
     <string name="metadata_cache_wipe_summary">Izbrišite vse predpomnjene podatke spletnih strani</string>
     <string name="open_with">Odpiranje z</string>
     <string name="show_memory_leaks">Prikaži puščanje pomnilnika</string>

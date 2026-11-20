@@ -67,7 +67,6 @@
     <string name="your_comment">Vaše poznámky (anglicky):</string>
     <string name="ok">OK</string>
     <string name="title_activity_recaptcha">Výzva reCAPTCHA</string>
-    <string name="recaptcha_request_toast">Požadována výzva reCAPTCHA</string>
     <string name="black_theme_title">Černé</string>
     <string name="checksum">Kontrolní součet</string>
     <string name="no_available_dir">Určete prosím složku pro stahování později v nastavení</string>
@@ -567,7 +566,6 @@
     <string name="soundcloud_go_plus_content">Toto je stopa SoundCloud Go+, přinejmenším ve Vaší zemi, a tak ji NewPipe nemůže stáhnout ani přehrát.</string>
     <string name="georestricted_content">Tento obsah není ve vaší zemi dostupný.</string>
     <string name="show_channel_details">Zobrazit podrobnosti kanálu</string>
-    <string name="recaptcha_solve">Vyřešit</string>
     <string name="restricted_video_no_stream">Toto video je věkově omezeno.
 \nKvůli novým pravidlům YouTube ohledně věkově omezených videí nemůže NewPipe získat přístup na streamy videa, a tak je nemůže přehrát.</string>
     <string name="night_theme_title">Noční motiv</string>

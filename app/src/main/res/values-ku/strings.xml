@@ -157,7 +157,6 @@
     <string name="msg_popup_permission">ئەم دەسەڵاتە پێویستە بۆ
 \nکردنەوەی دۆخی پەنجەرە</string>
     <string name="title_activity_recaptcha">reCAPTCHA داواکاری</string>
-    <string name="recaptcha_request_toast">reCAPTCHA داواکراوە</string>
     <string name="settings_category_downloads_title">دابەزاندن</string>
     <string name="charset_letters_and_digits">پیت و ژمارەکان</string>
     <string name="charset_most_special_characters">هێما تایبەتییەکان</string>

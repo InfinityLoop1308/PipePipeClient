@@ -69,7 +69,6 @@
     <string name="info_labels">Apa:\\nPermintaan:\\nBahasa Konten:\\nNegara Konten:\\nBahasa Apl:\\nLayanan:\\nWaktu GMT:\\nPaket:\\nVersi:\\nVersi OS:</string>
     <string name="msg_threads">Thread</string>
     <string name="title_activity_recaptcha">Tantangan reCAPTCHA</string>
-    <string name="recaptcha_request_toast">Meminta kode reCAPTCHA</string>
     <string name="black_theme_title">Hitam</string>
     <string name="all">Semua</string>
     <string name="short_thousand">r</string>
@@ -547,7 +546,6 @@
     <string name="auto_device_theme_title">Otomatis (tema perangkat)</string>
     <string name="radio">Radio</string>
     <string name="featured">Unggulan</string>
-    <string name="recaptcha_solve">Selesaikan</string>
     <string name="night_theme_title">Tema malam</string>
     <string name="download_has_started">Pengunduhan dimulai</string>
     <string name="show_channel_details">Tampilkan detail channel</string>

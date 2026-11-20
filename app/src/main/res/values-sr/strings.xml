@@ -70,7 +70,6 @@
     <string name="app_ui_crash">Програм се срушио</string>
     <string name="info_labels">Шта:\\nЗахтев:\\nЈезик садржаја:\\nЗемља садржаја:\\nЈезик апликације:\\nУслуга:\\nГМТ време:\\nПакет:\\nИздање:\\nИздање ОС-а:</string>
     <string name="title_activity_recaptcha">„reCAPTCHA“ задатак</string>
-    <string name="recaptcha_request_toast">Решите „reCAPTCHA“ задатак</string>
     <string name="black_theme_title">црна</string>
     <string name="all">Све</string>
     <string name="short_thousand">хиљ</string>
@@ -358,7 +357,6 @@
     <string name="privacy_policy_title">Политика приватности ЊуПајпа</string>
     <string name="toast_no_player">Нема апликације за пуштање овог фајла</string>
     <string name="recaptcha_done_button">Готово</string>
-    <string name="recaptcha_solve">Реши</string>
     <string name="subtitle_activity_recaptcha">Притисните „Готово“ кад решите</string>
     <string name="one_item_deleted">Обрисана је 1 ставка.</string>
     <string name="msg_calculating_hash">Израчунавање хеша</string>

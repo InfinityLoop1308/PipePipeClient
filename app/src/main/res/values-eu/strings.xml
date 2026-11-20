@@ -87,7 +87,6 @@
     <string name="msg_popup_permission">Baimen hau beharrezkoa da
 \nlaster-leiho moduan irekitzeko</string>
     <string name="title_activity_recaptcha">reCAPTCHA erronka</string>
-    <string name="recaptcha_request_toast">reCAPTCHA erronka eskatu da</string>
     <string name="title_activity_about">NewPipe aplikazioari buruz</string>
     <string name="tab_about">Honi buruz</string>
     <string name="app_description">Androiderako streaming libre eta arina.</string>
@@ -552,7 +551,6 @@
     <string name="soundcloud_go_plus_content">Hau SoundCloud Go+ pista bat da, zure herrialdean gutxienez, eta NewPipe-k ezin du transmititu edo deskargatu.</string>
     <string name="georestricted_content">Eduki hau ez dago eskuragarri zure herrialdean.</string>
     <string name="crash_the_app">Aplikazioa kraskatu</string>
-    <string name="recaptcha_solve">Ebatzi</string>
     <string name="restricted_video_no_stream">Bideo hau adinez mugatua dago.
 \nAdinez mugatutako bideoekiko YouTube-ren politika berriengatik, NewPipe-k ezin ditu bideo hauek atzitu eta ezin ditu erreproduzitu.</string>
     <string name="download_has_started">Deskarga hasi da</string>

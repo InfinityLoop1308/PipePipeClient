@@ -108,7 +108,6 @@
     <string name="settings_file_charset_title">Caràteres permìtidos in sos nùmenes de sos documentos</string>
     <string name="settings_category_downloads_title">Iscàrriga</string>
     <string name="recaptcha_done_button">Fatu</string>
-    <string name="recaptcha_request_toast">B\'at bisòngiu de risòlvere unu reCAPTCHA</string>
     <string name="subtitle_activity_recaptcha">Incarca \"Fatu\" cando est risoltu</string>
     <string name="title_activity_recaptcha">Disafiu reCAPTCHA</string>
     <string name="one_item_deleted">1 elementu iscantzelladu.</string>
@@ -554,7 +553,6 @@
 \nPro neghe de sas polìticas noas de YouTube in subra de sos vìdeos limitados pro edade, NewPipe non podet atzèdere a perunu flussu vìdeu de custa genia e duncas non los podet riproduire.</string>
     <string name="radio">Ràdiu</string>
     <string name="featured">In evidèntzia</string>
-    <string name="recaptcha_solve">Risolve</string>
     <string name="download_has_started">S\'iscarrigamentu est incumintzadu</string>
     <string name="select_night_theme_toast">Podes ischertare su tema pro sa note preferidu tuo inoghe in suta</string>
     <string name="night_theme_summary">Ischerta su tema pro sa note preferidu tuo — %s</string>

@@ -835,8 +835,6 @@ Voulez-vous continuer?</string>
 <string name="filter_by_channel_title">Chaînes bloquées</string>
 <string name="filter_by_channel_summary">Masquer les vidéos, playlists et chaînes de ces chaînes</string>
 <string name="channel_group_tab_summary">Groupe de chaînes</string>
-<string name="recaptcha_request_toast">Défi reCAPTCHA demandé</string>
-<string name="recaptcha_solve">Résoudre</string>
 <string name="recaptcha_done_button">Terminé</string>
 <string name="settings_category_downloads_title">Télécharger</string>
 <string name="settings_file_charset_title">Caractères autorisés dans les noms de fichiers</string>

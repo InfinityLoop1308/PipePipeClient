@@ -167,7 +167,6 @@
     <string name="msg_popup_permission">Deze toestemming is vereist om
 \nte openen in pop-up modus</string>
     <string name="title_activity_recaptcha">reCAPTCHA-uitdaging</string>
-    <string name="recaptcha_request_toast">reCAPTCHA-uitdaging gevraagd</string>
     <string name="settings_category_downloads_title">Download</string>
     <string name="settings_file_charset_title">Toegelaten tekens in bestandsnamen</string>
     <string name="charset_letters_and_digits">Letters en cijfers</string>
@@ -540,7 +539,6 @@
     <string name="show_meta_info_title">Toon metadata</string>
     <string name="disable_media_tunneling_title">Media vertunneling uitschakelen</string>
     <string name="show_channel_details">Toon kanaal details</string>
-    <string name="recaptcha_solve">Los op</string>
     <string name="description_tab_description">Beschrijving</string>
     <string name="related_items_tab_description">Gerelateerde items</string>
     <string name="comments_tab_description">Reacties</string>

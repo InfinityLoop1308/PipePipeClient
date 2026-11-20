@@ -126,7 +126,6 @@
     <string name="no_available_dir">Ange en hämtningsmapp senare i inställningarna</string>
     <string name="msg_popup_permission">Den här behörigheten krävs för att\nöppna i popupläge</string>
     <string name="title_activity_recaptcha">reCAPTCHA-utmaning</string>
-    <string name="recaptcha_request_toast">reCAPTCHA-utmaning begärd</string>
     <string name="settings_category_downloads_title">Hämtningar</string>
     <string name="settings_file_charset_title">Tillåtna tecken i filnamn</string>
     <string name="charset_letters_and_digits">Bokstäver och siffror</string>
@@ -519,7 +518,6 @@
     <string name="notification_colorize_summary">Låt Android färglägga varje avisering individuellt utifrån miniatyrbildens huvudsakliga färg (notera att detta inte är tillgängligt på alla enheter)</string>
     <string name="notification_colorize_title">Färglägg avisering</string>
     <string name="notification_actions_at_most_three">Du kan som mest välja tre åtgärder att visa i den kompakta aviseringen!</string>
-    <string name="recaptcha_solve">Lös</string>
     <string name="metadata_support">Support</string>
     <string name="metadata_privacy">Synlighet</string>
     <string name="off">Av</string>

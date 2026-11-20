@@ -809,8 +809,6 @@
 <string name="filter_by_channel_title">Canali bloccati</string>
 <string name="filter_by_channel_summary">Nascondi video, playlist e canali da questi canali</string>
 <string name="channel_group_tab_summary">Gruppo di canali</string>
-<string name="recaptcha_request_toast">Sfida reCAPTCHA richiesta</string>
-<string name="recaptcha_solve">Risolvi</string>
 <string name="recaptcha_done_button">Fatto</string>
 <string name="settings_category_downloads_title">Download</string>
 <string name="settings_file_charset_title">Caratteri consentiti nei nomi dei file</string>

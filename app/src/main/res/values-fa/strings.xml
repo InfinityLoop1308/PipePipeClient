@@ -258,7 +258,6 @@
     <string name="undo">بازگردانی</string>
     <string name="info_labels">چه:\\nدرخواست:\\nزبان محتوا:\\nکشور محتوا:\\nزبان کاره:\\nخدمت:\\nزمان GMT\\nبسته:T:\\nنگارش:\\nنگارش س.ع:</string>
     <string name="title_activity_recaptcha">چالش ری‌کپچا</string>
-    <string name="recaptcha_request_toast">نیاز به چالش ری‌کپچا است</string>
     <string name="msg_popup_permission">این اجازه برای گشودن در حالت
 \nتصویر در تصویر لازم است</string>
     <string name="popup_playing_toast">نمایش در حالت تصویر در تصویر</string>
@@ -556,7 +555,6 @@
     <string name="metadata_category">دسته</string>
     <string name="radio">رادیو</string>
     <string name="featured">معرفی‌شده</string>
-    <string name="recaptcha_solve">حل</string>
     <string name="chapters">بخش‌ها</string>
     <string name="description_tab_description">شرح</string>
     <string name="comments_tab_description">نظرها</string>

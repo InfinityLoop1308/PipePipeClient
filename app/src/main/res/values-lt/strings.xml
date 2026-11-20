@@ -94,7 +94,6 @@
     <string name="msg_popup_permission">Šis leidimas reikalingas
 \natidarymui iššokančio lango rėžime</string>
     <string name="title_activity_recaptcha">reCAPTCHA iššūkis</string>
-    <string name="recaptcha_request_toast">prašomas reCAPTCHA iššūkis</string>
     <string name="subscribe_button_title">Prenumeruoti</string>
     <string name="subscribed_button_title">Užprenumeruota</string>
     <string name="channel_unsubscribed">Kanalas Nebeprenumeruojamas</string>
@@ -472,7 +471,6 @@
     <string name="privacy_policy_title">NewPipe privatumo politika</string>
     <string name="toast_no_player">Šio failo atkūrimui nėra įdiegtos programos</string>
     <string name="recaptcha_done_button">Atlikta</string>
-    <string name="recaptcha_solve">Išspręsta</string>
     <string name="subtitle_activity_recaptcha">Paspauskite \"atlikta\" kai išspręsta</string>
     <string name="error_report_open_github_notice">Patikrinkite ar apie problemą su kuria susidūrėte dar nėra pranešta. Sukurdami kelis pranešimus apie tą pačią problemą atimate iš mūsų laiką kurį galėtume skirti klaidų taisymui.</string>
     <string name="feed_use_dedicated_fetch_method_help_text">Ar manote, kad kanalas kraunamas per lėtai\? Jei taip, pabandykite įjungti greitąjį įkrovimą (tai galite pakeisti nustatymuose arba paspaudę toliau esantį mygtuką).

@@ -317,8 +317,6 @@
 <string name="one_item_deleted">1 elemento eliminado.</string>
 <string name="title_activity_recaptcha">Desafío reCAPTCHA</string>
 <string name="subtitle_activity_recaptcha">Presiona \"Listo\" cuando lo hayas resuelto</string>
-<string name="recaptcha_request_toast">Desafío reCAPTCHA solicitado</string>
-<string name="recaptcha_solve">Resolver</string>
 <string name="recaptcha_done_button">Listo</string>
 <!-- Downloads -->
 <string name="settings_category_downloads_title">Descargar</string>

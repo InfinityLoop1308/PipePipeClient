@@ -288,8 +288,6 @@
 <string name="one_item_deleted">1 Element gelöscht.</string>
 <string name="title_activity_recaptcha">reCAPTCHA Herausforderung</string>
 <string name="subtitle_activity_recaptcha">Drücken Sie \</string>
-<string name="recaptcha_request_toast">reCAPTCHA Herausforderung angefordert</string>
-<string name="recaptcha_solve">Lösen</string>
 <string name="recaptcha_done_button">Fertig</string>
 <string name="settings_category_downloads_title">Download</string>
 <string name="settings_file_charset_title">Erlaubte Zeichen in Dateinamen</string>

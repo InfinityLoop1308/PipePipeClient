@@ -183,7 +183,6 @@
 \nпрайгравання ў акне</string>
     <string name="one_item_deleted">1 элемент выдалены.</string>
     <string name="title_activity_recaptcha">Запыт reCAPTCHA</string>
-    <string name="recaptcha_request_toast">Запытаны ўвод reCAPTCHA</string>
     <string name="settings_category_downloads_title">Загрузкі</string>
     <string name="settings_file_charset_title">Дапушчальныя сімвалы назвы файлаў</string>
     <string name="charset_letters_and_digits">Літары і лічбы</string>

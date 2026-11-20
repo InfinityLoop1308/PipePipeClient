@@ -287,8 +287,6 @@
 <!-- reCAPTCHA -->
 <string name="title_activity_recaptcha">reCAPTCHA 验证</string>
 <string name="subtitle_activity_recaptcha">通过后点击“完成”</string>
-<string name="recaptcha_request_toast">reCAPTCHA 验证已请求</string>
-<string name="recaptcha_solve">通过</string>
 <string name="recaptcha_done_button">完成</string>
 <!-- Downloads -->
 <string name="settings_category_downloads_title">下载</string>

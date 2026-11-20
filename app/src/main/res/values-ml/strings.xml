@@ -124,7 +124,6 @@
     <string name="settings_file_charset_title">ഫയൽനാമങ്ങളിൽ അനുവദിച്ചിട്ടുള്ള അടയാളങ്ങൾ</string>
     <string name="settings_category_downloads_title">ഡൗൺലോഡ്</string>
     <string name="recaptcha_done_button">ഓകെ</string>
-    <string name="recaptcha_request_toast">reCAPTCHA ചാലഞ്ചിനായി അഭ്യർത്ഥിച്ചു</string>
     <string name="subtitle_activity_recaptcha">തീർന്നാൽ \"Done\" അമർത്തുക</string>
     <string name="title_activity_recaptcha">reCAPTCHA ചാലഞ്ച്</string>
     <string name="one_item_deleted">ഒരെണ്ണം നീക്കംചെയ്തു.</string>
@@ -536,7 +535,6 @@
     <string name="enqueue_stream">എൻക്യൂ</string>
     <string name="show_channel_details">ചാനൽ വിശദാംശങ്ങൾ കാണിക്കുക</string>
     <string name="title_activity_play_queue">ക്യൂ പ്ലേ ചെയ്യുക</string>
-    <string name="recaptcha_solve">പരിഹരിക്കുക</string>
     <string name="msg_calculating_hash">ഹാഷ് കണക്കാക്കുന്നു</string>
     <string name="description_tab_description">വിവരണം</string>
     <string name="related_items_tab_description">അനുബന്ധ ഇനങ്ങൾ</string>
