@@ -202,15 +202,8 @@ public class RouterActivity extends AppCompatActivity {
             throwable.printStackTrace();
         }
 
-        final AntiBotException antiBot = AntiBotHints.find(throwable);
-        if (antiBot != null) {
-            Toast.makeText(context, AntiBotHints.message(context, antiBot),
-                    Toast.LENGTH_LONG).show();
-            final Intent intent = AntiBotHints.actionIntent(context, antiBot);
-            if (intent != null) {
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
-            }
+        if (AntiBotHints.find(throwable) != null) {
+            ErrorUtil.createNotification(context, errorInfo);
         } else if (throwable != null
                 && ExceptionUtils.isNetworkRelated(throwable)) {
             Toast.makeText(context, R.string.network_error, Toast.LENGTH_LONG).show();
