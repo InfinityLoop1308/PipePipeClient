@@ -122,7 +122,7 @@ class ErrorUtil {
                         R.drawable.ic_bug_report
                     )
                     .setContentTitle(context.getString(R.string.error_report_notification_title_new))
-                    .setContentText(context.getString(errorInfo.messageStringId))
+                    .setContentText(errorInfo.getMessage(context))
                     .setAutoCancel(true)
                     .setContentIntent(
                         PendingIntent.getActivity(

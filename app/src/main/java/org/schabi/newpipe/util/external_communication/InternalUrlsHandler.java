@@ -191,7 +191,7 @@ public final class InternalUrlsHandler {
                     new AlertDialog.Builder(context)
                             .setTitle(R.string.player_stream_failure)
                             .setMessage(
-                                    ErrorPanelHelper.Companion.getExceptionDescription(throwable))
+                                    ErrorPanelHelper.getExceptionMessage(context, throwable))
                             .setPositiveButton(R.string.ok, (v, b) -> { })
                             .show();
                 }));
@@ -227,7 +227,7 @@ public final class InternalUrlsHandler {
                     new AlertDialog.Builder(context)
                             .setTitle(R.string.player_stream_failure)
                             .setMessage(
-                                    ErrorPanelHelper.Companion.getExceptionDescription(throwable))
+                                    ErrorPanelHelper.getExceptionMessage(context, throwable))
                             .setPositiveButton(R.string.ok, (v, b) -> { })
                             .show();
                 }));

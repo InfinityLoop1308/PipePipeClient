@@ -22,7 +22,6 @@ import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException
 import org.schabi.newpipe.extractor.exceptions.GeographicRestrictionException
 import org.schabi.newpipe.extractor.exceptions.LiveNotStartException
-import org.schabi.newpipe.extractor.exceptions.AntiBotException
 import org.schabi.newpipe.extractor.exceptions.AntiBotLoginRequiredException
 import org.schabi.newpipe.extractor.exceptions.NeedLoginException
 import org.schabi.newpipe.extractor.exceptions.PaidContentException
@@ -97,25 +96,26 @@ class ErrorPanelHelper(
 
         ensureDefaultVisibility()
 
-        if (errorInfo.throwable is ReCaptchaException) {
-            errorTextView.setText(R.string.recaptcha_request_toast)
+        val antiBot = AntiBotHints.find(errorInfo.throwable)
+        if (antiBot is ReCaptchaException) {
+            errorTextView.text = AntiBotHints.message(context, antiBot)
 
             showAndSetErrorButtonAction(
-                R.string.recaptcha_solve
+                R.string.anti_bot_captcha_action
             ) {
                 // Starting ReCaptcha Challenge Activity
                 val intent = Intent(context, ReCaptchaActivity::class.java)
                 intent.putExtra(
                     ReCaptchaActivity.RECAPTCHA_URL_EXTRA,
-                    (errorInfo.throwable as ReCaptchaException).url
+                    antiBot.url
                 )
                 fragment.startActivityForResult(intent, ReCaptchaActivity.RECAPTCHA_REQUEST)
                 errorActionButton.setOnClickListener(null)
             }
 
             errorRetryButton.isVisible = true
-        } else if (errorInfo.throwable is AntiBotLoginRequiredException) {
-            errorTextView.setText(R.string.anti_bot_login_hint)
+        } else if (antiBot is AntiBotLoginRequiredException) {
+            errorTextView.text = AntiBotHints.message(context, antiBot)
 
             showAndSetErrorButtonAction(
                 R.string.anti_bot_login_action
@@ -145,7 +145,7 @@ class ErrorPanelHelper(
                 ErrorUtil.openActivity(context, errorInfo)
             }
 
-            errorTextView.setText(getExceptionDescription(errorInfo.throwable))
+            errorTextView.text = getExceptionMessage(context, errorInfo.throwable)
 
             val throwable = errorInfo.throwable
             if (throwable !is ContentNotAvailableException &&
@@ -223,12 +223,16 @@ class ErrorPanelHelper(
         val TAG: String = ErrorPanelHelper::class.simpleName!!
         val DEBUG: Boolean = MainActivity.DEBUG
 
+        /** @return the description of [throwable], with the service named for anti-bot blocks */
+        @JvmStatic
+        fun getExceptionMessage(context: Context, throwable: Throwable?): String {
+            AntiBotHints.find(throwable)?.let { return AntiBotHints.message(context, it) }
+            return context.getString(getExceptionDescription(throwable))
+        }
+
         @StringRes
-        fun getExceptionDescription(throwable: Throwable?): Int {
+        private fun getExceptionDescription(throwable: Throwable?): Int {
             return when (throwable) {
-                is ReCaptchaException -> R.string.recaptcha_request_toast
-                is AntiBotLoginRequiredException -> R.string.anti_bot_login_hint
-                is AntiBotException -> R.string.anti_bot_hint
                 is NeedLoginException -> R.string.need_login_hint
                 is LiveNotStartException -> R.string.live_not_started
                 is AgeRestrictedContentException -> R.string.restricted_video_no_stream_new
