@@ -1280,4 +1280,22 @@
 <string name="missing_plugin_manual">其中一些无法自动安装。请检查插件设置。</string>
 <string name="missing_plugin_ignore">不再显示</string>
 <string name="missing_plugin_not_found">在其存储库中未找到</string>
+<string name="early_buffer_title">开始或跳转后的缓冲</string>
+<string name="early_buffer_summary">在连续播放30秒之前要提前加载多少内容（当前为 %s）。较低的值可以在您跳转或提前离开视频时节省流量，而完整缓冲则能更好地防止网络连接不佳导致的卡顿。更改需要重启播放器才能生效</string>
+<string name="early_buffer_full">完整缓冲</string>
+<string name="early_buffer_10_seconds">10秒</string>
+<string name="early_buffer_20_seconds">20秒</string>
+<string name="early_buffer_30_seconds">30秒</string>
+<string name="channel_tab_courses">课程</string>
+<string name="error_report_plugin_button">向插件作者报告</string>
+<string name="error_report_plugin_title">插件故障</string>
+<string name="error_report_plugin_message">此故障来自 %1$s 插件，因此不是 PipePipe 的问题。请在 %2$s 报告此问题</string>
+<string name="error_report_plugin_no_tracker">此故障来自 %1$s 插件，因此不是 PipePipe 的问题。该插件未声明问题追踪器，请复制报告并发送给其作者 %2$s。</string>
+<string name="error_report_plugin_open">打开问题追踪器</string>
+<string name="anti_bot_hint">%1$s 正在限制来自您网络的请求。请稍后再试或切换到其他网络。</string>
+<string name="anti_bot_login_hint">%1$s 将来自您网络的请求标记为异常。请登录以继续，或稍后再试。</string>
+<string name="anti_bot_login_action">登录</string>
+<string name="anti_bot_captcha_hint">%1$s 需要验证您不是机器人。</string>
+<string name="anti_bot_captcha_action">验证</string>
+<string name="anti_bot_unknown_service">此服务</string>
 </resources>

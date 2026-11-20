@@ -1203,4 +1203,22 @@
 <string name="logout_keep_webview_session_title">ログアウト時にWebセッションを保持する</string>
 <string name="logout_keep_webview_session_summary">ログアウトするとPipePipeからアカウントが削除されるだけで、Webサイトのセッションは保持されるため、再ログインが速くなります</string>
 <string name="login_expired_toast">%1$s のログインの有効期限が切れました。ログアウトされました</string>
+<string name="early_buffer_title">開始またはシーク後のバッファ</string>
+<string name="early_buffer_summary">連続して30秒再生されるまで、どれくらい先まで読み込むか（現在 %s）。低い値にすると、シークしたり動画を早く離れたりする際のデータ通信量を節約できます。バッファ全体を読み込むと、接続不良に対する保護が強化されます。変更を適用するにはプレイヤーの再起動が必要です。</string>
+<string name="early_buffer_full">バッファ全体</string>
+<string name="early_buffer_10_seconds">10秒</string>
+<string name="early_buffer_20_seconds">20秒</string>
+<string name="early_buffer_30_seconds">30秒</string>
+<string name="channel_tab_courses">コース</string>
+<string name="error_report_plugin_button">プラグインの作者に報告</string>
+<string name="error_report_plugin_title">プラグインのエラー</string>
+<string name="error_report_plugin_message">このエラーは %1$s プラグインによるものであり、PipePipe の問題ではありません。%2$s で報告してください。</string>
+<string name="error_report_plugin_no_tracker">このエラーは %1$s プラグインによるものであり、PipePipe の問題ではありません。このプラグインには課題トラッカーが設定されていないため、レポートをコピーして作者の %2$s に送信してください。</string>
+<string name="error_report_plugin_open">トラッカーを開く</string>
+<string name="anti_bot_hint">%1$s はあなたのネットワークからのリクエストを制限しています。後でもう一度試すか、別のネットワークに切り替えてください。</string>
+<string name="anti_bot_login_hint">%1$s はあなたのネットワークからのリクエストを異常としてフラグ付けしました。続行するにはログインするか、後でもう一度試してください。</string>
+<string name="anti_bot_login_action">ログイン</string>
+<string name="anti_bot_captcha_hint">%1$s はあなたがボットでないことを確認しようとしています。</string>
+<string name="anti_bot_captcha_action">確認</string>
+<string name="anti_bot_unknown_service">このサービス</string>
 </resources>

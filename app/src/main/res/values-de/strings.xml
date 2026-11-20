@@ -1232,4 +1232,22 @@
 <string name="logout_keep_webview_session_title">Web-Sitzung beim Abmelden behalten</string>
 <string name="logout_keep_webview_session_summary">Das Abmelden entfernt nur das Konto aus PipePipe und behält die Website-Sitzung bei, sodass eine erneute Anmeldung schneller ist</string>
 <string name="login_expired_toast">%1$s-Anmeldung ist abgelaufen, du wurdest abgemeldet</string>
+<string name="early_buffer_title">Puffer nach dem Starten oder Spulen</string>
+<string name="early_buffer_summary">Wie weit im Voraus geladen werden soll, bis 30 Sekunden am Stück abgespielt wurden (aktuell %s). Ein niedrigerer Wert spart Daten, wenn du spulst oder ein Video frühzeitig verlässt, der gesamte Puffer schützt besser vor einer schlechten Verbindung. Änderungen erfordern einen Neustart des Players.</string>
+<string name="early_buffer_full">Gesamter Puffer</string>
+<string name="early_buffer_10_seconds">10 Sekunden</string>
+<string name="early_buffer_20_seconds">20 Sekunden</string>
+<string name="early_buffer_30_seconds">30 Sekunden</string>
+<string name="channel_tab_courses">Kurse</string>
+<string name="error_report_plugin_button">An Plugin-Autor melden</string>
+<string name="error_report_plugin_title">Plugin-Fehler</string>
+<string name="error_report_plugin_message">Dieser Fehler stammt vom %1$s-Plugin und ist daher kein Problem von PipePipe. Melde ihn unter %2$s</string>
+<string name="error_report_plugin_no_tracker">Dieser Fehler stammt vom %1$s-Plugin und ist daher kein Problem von PipePipe. Das Plugin gibt keinen Issue-Tracker an, kopiere also den Bericht und sende ihn an den Autor, %2$s.</string>
+<string name="error_report_plugin_open">Tracker öffnen</string>
+<string name="anti_bot_hint">%1$s limitiert Anfragen aus deinem Netzwerk. Versuche es später erneut oder wechsle zu einem anderen Netzwerk.</string>
+<string name="anti_bot_login_hint">%1$s hat Anfragen aus deinem Netzwerk als ungewöhnlich markiert. Melde dich an, um fortzufahren, oder versuche es später erneut.</string>
+<string name="anti_bot_login_action">Anmelden</string>
+<string name="anti_bot_captcha_hint">%1$s möchte überprüfen, dass du kein Bot bist.</string>
+<string name="anti_bot_captcha_action">Verifizieren</string>
+<string name="anti_bot_unknown_service">Dieser Dienst</string>
 </resources>

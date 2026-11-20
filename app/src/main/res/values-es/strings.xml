@@ -1236,4 +1236,22 @@
 <string name="logout_keep_webview_session_title">Mantener sesión web al cerrar sesión</string>
 <string name="logout_keep_webview_session_summary">Cerrar sesión solo elimina la cuenta de PipePipe y mantiene la sesión del sitio web, por lo que volver a iniciar sesión es más rápido</string>
 <string name="login_expired_toast">La sesión de %1$s ha expirado, se ha cerrado tu sesión</string>
+<string name="early_buffer_title">Búfer tras iniciar o buscar</string>
+<string name="early_buffer_summary">Cuánto cargar por adelantado hasta que se hayan reproducido 30 segundos seguidos (actualmente %s). Un valor más bajo ahorra datos cuando buscas o sales de un video antes de tiempo, el búfer completo protege más contra una mala conexión. Los cambios requieren reiniciar el reproductor</string>
+<string name="early_buffer_full">Búfer completo</string>
+<string name="early_buffer_10_seconds">10 segundos</string>
+<string name="early_buffer_20_seconds">20 segundos</string>
+<string name="early_buffer_30_seconds">30 segundos</string>
+<string name="channel_tab_courses">Cursos</string>
+<string name="error_report_plugin_button">Reportar al autor del plugin</string>
+<string name="error_report_plugin_title">Error del plugin</string>
+<string name="error_report_plugin_message">Este error proviene del plugin %1$s, por lo que no es un problema de PipePipe. Repórtalo en %2$s</string>
+<string name="error_report_plugin_no_tracker">Este error proviene del plugin %1$s, por lo que no es un problema de PipePipe. El plugin no declara un rastreador de problemas, así que copia el reporte y envíalo a su autor, %2$s.</string>
+<string name="error_report_plugin_open">Abrir rastreador</string>
+<string name="anti_bot_hint">%1$s está limitando las peticiones desde tu red. Inténtalo de nuevo más tarde o cambia a una red diferente.</string>
+<string name="anti_bot_login_hint">%1$s marcó las peticiones desde tu red como inusuales. Inicia sesión para continuar, o inténtalo de nuevo más tarde.</string>
+<string name="anti_bot_login_action">Iniciar sesión</string>
+<string name="anti_bot_captcha_hint">%1$s quiere verificar que no eres un bot.</string>
+<string name="anti_bot_captcha_action">Verificar</string>
+<string name="anti_bot_unknown_service">Este servicio</string>
 </resources>

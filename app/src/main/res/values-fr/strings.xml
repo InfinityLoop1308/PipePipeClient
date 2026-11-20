@@ -1249,4 +1249,22 @@ Voulez-vous continuer?</string>
 <string name="logout_keep_webview_session_title">Conserver la session web lors de la déconnexion</string>
 <string name="logout_keep_webview_session_summary">La déconnexion supprime uniquement le compte de PipePipe et conserve la session du site web, la reconnexion est donc plus rapide</string>
 <string name="login_expired_toast">La connexion %1$s a expiré, vous avez été déconnecté</string>
+<string name="early_buffer_title">Mise en mémoire tampon après le démarrage ou la recherche</string>
+<string name="early_buffer_summary">Jusqu\'où charger à l\'avance jusqu\'à ce que 30 secondes aient été lues d\'affilée (actuellement %s). Une valeur plus faible économise des données lorsque vous avancez ou quittez une vidéo tôt, le tampon complet protège davantage contre une mauvaise connexion. Les modifications nécessitent un redémarrage du lecteur.</string>
+<string name="early_buffer_full">Tampon complet</string>
+<string name="early_buffer_10_seconds">10 secondes</string>
+<string name="early_buffer_20_seconds">20 secondes</string>
+<string name="early_buffer_30_seconds">30 secondes</string>
+<string name="channel_tab_courses">Cours</string>
+<string name="error_report_plugin_button">Signaler à l\'auteur du plugin</string>
+<string name="error_report_plugin_title">Erreur du plugin</string>
+<string name="error_report_plugin_message">Cette erreur provient du plugin %1$s, ce n\'est donc pas un problème de PipePipe. Signalez-le sur %2$s</string>
+<string name="error_report_plugin_no_tracker">Cette erreur provient du plugin %1$s, ce n\'est donc pas un problème de PipePipe. Le plugin ne déclare aucun outil de suivi des problèmes, veuillez donc copier le rapport et l\'envoyer à son auteur, %2$s.</string>
+<string name="error_report_plugin_open">Ouvrir l\'outil de suivi</string>
+<string name="anti_bot_hint">%1$s limite les requêtes provenant de votre réseau. Réessayez plus tard ou changez de réseau.</string>
+<string name="anti_bot_login_hint">%1$s a signalé les requêtes de votre réseau comme inhabituelles. Connectez-vous pour continuer, ou réessayez plus tard.</string>
+<string name="anti_bot_login_action">Se connecter</string>
+<string name="anti_bot_captcha_hint">%1$s souhaite vérifier que vous n\'êtes pas un robot.</string>
+<string name="anti_bot_captcha_action">Vérifier</string>
+<string name="anti_bot_unknown_service">Ce service</string>
 </resources>

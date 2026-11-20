@@ -1174,4 +1174,22 @@
 <string name="logout_keep_webview_session_title">Mantieni la sessione web alla disconnessione</string>
 <string name="logout_keep_webview_session_summary">La disconnessione rimuove solo l\'account da PipePipe e mantiene la sessione del sito web, così l\'accesso successivo sarà più veloce</string>
 <string name="login_expired_toast">L\'accesso a %1$s è scaduto, sei stato disconnesso</string>
+<string name="early_buffer_title">Buffer dopo l\'avvio o la ricerca</string>
+<string name="early_buffer_summary">Quanto caricare in anticipo finché non vengono riprodotti 30 secondi consecutivi (attualmente %s). Un valore più basso fa risparmiare dati quando si scorre o si abbandona un video in anticipo, il buffer completo protegge maggiormente da una cattiva connessione. Le modifiche richiedono il riavvio del lettore</string>
+<string name="early_buffer_full">Buffer completo</string>
+<string name="early_buffer_10_seconds">10 secondi</string>
+<string name="early_buffer_20_seconds">20 secondi</string>
+<string name="early_buffer_30_seconds">30 secondi</string>
+<string name="channel_tab_courses">Corsi</string>
+<string name="error_report_plugin_button">Segnala all\'autore del plugin</string>
+<string name="error_report_plugin_title">Errore del plugin</string>
+<string name="error_report_plugin_message">Questo errore proviene dal plugin %1$s, quindi non è un problema di PipePipe. Segnalalo su %2$s</string>
+<string name="error_report_plugin_no_tracker">Questo errore proviene dal plugin %1$s, quindi non è un problema di PipePipe. Il plugin non dichiara alcun tracker dei problemi, quindi copia il report e invialo al suo autore, %2$s.</string>
+<string name="error_report_plugin_open">Apri il tracker</string>
+<string name="anti_bot_hint">%1$s sta limitando le richieste dalla tua rete. Riprova più tardi o passa a una rete diversa.</string>
+<string name="anti_bot_login_hint">%1$s ha segnalato le richieste dalla tua rete come insolite. Accedi per continuare o riprova più tardi.</string>
+<string name="anti_bot_login_action">Accedi</string>
+<string name="anti_bot_captcha_hint">%1$s vuole verificare che tu non sia un bot.</string>
+<string name="anti_bot_captcha_action">Verifica</string>
+<string name="anti_bot_unknown_service">Questo servizio</string>
 </resources>

@@ -1260,4 +1260,22 @@
 <string name="logout_keep_webview_session_title">Zachowaj sesję internetową po wylogowaniu</string>
 <string name="logout_keep_webview_session_summary">Wylogowanie usuwa jedynie konto z PipePipe i zachowuje sesję strony internetowej, dzięki czemu ponowne logowanie jest szybsze</string>
 <string name="login_expired_toast">Logowanie %1$s wygasło, wylogowano Cię</string>
+<string name="early_buffer_title">Bufor po rozpoczęciu lub przewijaniu</string>
+<string name="early_buffer_summary">Jak daleko w przód ładować, dopóki nie zostanie odtworzone 30 sekund z rzędu (obecnie %s). Niższa wartość oszczędza dane, gdy przewijasz lub wcześnie opuszczasz film, cały bufor lepiej chroni przed słabym połączeniem. Zmiany wymagają ponownego uruchomienia odtwarzacza.</string>
+<string name="early_buffer_full">Cały bufor</string>
+<string name="early_buffer_10_seconds">10 sekund</string>
+<string name="early_buffer_20_seconds">20 sekund</string>
+<string name="early_buffer_30_seconds">30 sekund</string>
+<string name="channel_tab_courses">Kursy</string>
+<string name="error_report_plugin_button">Zgłoś autorowi wtyczki</string>
+<string name="error_report_plugin_title">Błąd wtyczki</string>
+<string name="error_report_plugin_message">Ten błąd pochodzi z wtyczki %1$s, więc nie jest to problem PipePipe. Zgłoś go na %2$s</string>
+<string name="error_report_plugin_no_tracker">Ten błąd pochodzi z wtyczki %1$s, więc nie jest to problem PipePipe. Wtyczka nie deklaruje systemu zgłaszania błędów, więc skopiuj raport i wyślij go do jej autora, %2$s.</string>
+<string name="error_report_plugin_open">Otwórz system zgłoszeń</string>
+<string name="anti_bot_hint">%1$s ogranicza żądania z Twojej sieci. Spróbuj ponownie później lub przełącz się na inną sieć.</string>
+<string name="anti_bot_login_hint">%1$s uznał żądania z Twojej sieci za nietypowe. Zaloguj się, aby kontynuować, lub spróbuj ponownie później.</string>
+<string name="anti_bot_login_action">Zaloguj się</string>
+<string name="anti_bot_captcha_hint">%1$s chce zweryfikować, czy nie jesteś botem.</string>
+<string name="anti_bot_captcha_action">Zweryfikuj</string>
+<string name="anti_bot_unknown_service">Ta usługa</string>
 </resources>

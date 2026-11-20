@@ -1234,4 +1234,22 @@
 <string name="missing_plugin_manual">其中部分無法自動安裝。請檢查外掛程式設定。</string>
 <string name="missing_plugin_ignore">不再顯示</string>
 <string name="missing_plugin_not_found">在其套件庫中找不到</string>
+<string name="early_buffer_title">開始或跳轉後的緩衝</string>
+<string name="early_buffer_summary">在連續播放 30 秒之前要預先載入多少內容（目前為 %s）。較低的值可以在您跳轉或提早離開影片時節省數據，完整緩衝則能更好地防止連線不佳。變更需要重新啟動播放器</string>
+<string name="early_buffer_full">完整緩衝</string>
+<string name="early_buffer_10_seconds">10 秒</string>
+<string name="early_buffer_20_seconds">20 秒</string>
+<string name="early_buffer_30_seconds">30 秒</string>
+<string name="channel_tab_courses">課程</string>
+<string name="error_report_plugin_button">向外掛程式作者回報</string>
+<string name="error_report_plugin_title">外掛程式失敗</string>
+<string name="error_report_plugin_message">此失敗來自 %1$s 外掛程式，因此這不是 PipePipe 的問題。請在 %2$s 回報</string>
+<string name="error_report_plugin_no_tracker">此失敗來自 %1$s 外掛程式，因此這不是 PipePipe 的問題。該外掛程式未宣告問題追蹤器，請複製回報內容並傳送給其作者 %2$s。</string>
+<string name="error_report_plugin_open">開啟追蹤器</string>
+<string name="anti_bot_hint">%1$s 正在限制來自您網路的請求。請稍後再試或切換至其他網路。</string>
+<string name="anti_bot_login_hint">%1$s 將來自您網路的請求標記為異常。請登入以繼續，或稍後再試。</string>
+<string name="anti_bot_login_action">登入</string>
+<string name="anti_bot_captcha_hint">%1$s 想要驗證您不是機器人。</string>
+<string name="anti_bot_captcha_action">驗證</string>
+<string name="anti_bot_unknown_service">此服務</string>
 </resources>

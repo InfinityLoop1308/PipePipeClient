@@ -1287,4 +1287,22 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="logout_keep_webview_session_title">Giữ phiên web khi đăng xuất</string>
 <string name="logout_keep_webview_session_summary">Đăng xuất chỉ xóa tài khoản khỏi PipePipe và giữ lại phiên trang web, do đó đăng nhập lại sẽ nhanh hơn</string>
 <string name="login_expired_toast">Phiên đăng nhập %1$s đã hết hạn, bạn đã bị đăng xuất</string>
+<string name="early_buffer_title">Bộ đệm sau khi bắt đầu hoặc tua</string>
+<string name="early_buffer_summary">Tải trước bao xa cho đến khi 30 giây được phát liên tục (hiện tại là %s). Giá trị thấp hơn giúp tiết kiệm dữ liệu khi bạn tua hoặc thoát video sớm, toàn bộ bộ đệm bảo vệ tốt hơn trước kết nối kém. Các thay đổi yêu cầu khởi động lại trình phát</string>
+<string name="early_buffer_full">Toàn bộ bộ đệm</string>
+<string name="early_buffer_10_seconds">10 giây</string>
+<string name="early_buffer_20_seconds">20 giây</string>
+<string name="early_buffer_30_seconds">30 giây</string>
+<string name="channel_tab_courses">Khóa học</string>
+<string name="error_report_plugin_button">Báo cáo cho tác giả plugin</string>
+<string name="error_report_plugin_title">Lỗi plugin</string>
+<string name="error_report_plugin_message">Lỗi này xuất phát từ plugin %1$s, vì vậy đây không phải là sự cố của PipePipe. Hãy báo cáo tại %2$s</string>
+<string name="error_report_plugin_no_tracker">Lỗi này xuất phát từ plugin %1$s, vì vậy đây không phải là sự cố của PipePipe. Plugin không khai báo trình theo dõi sự cố nào, vì vậy hãy sao chép báo cáo và gửi cho tác giả của nó, %2$s.</string>
+<string name="error_report_plugin_open">Mở trình theo dõi</string>
+<string name="anti_bot_hint">%1$s đang giới hạn các yêu cầu từ mạng của bạn. Vui lòng thử lại sau hoặc chuyển sang một mạng khác.</string>
+<string name="anti_bot_login_hint">%1$s đã đánh dấu các yêu cầu từ mạng của bạn là bất thường. Đăng nhập để tiếp tục hoặc thử lại sau.</string>
+<string name="anti_bot_login_action">Đăng nhập</string>
+<string name="anti_bot_captcha_hint">%1$s muốn xác minh bạn không phải là bot.</string>
+<string name="anti_bot_captcha_action">Xác minh</string>
+<string name="anti_bot_unknown_service">Dịch vụ này</string>
 </resources>
