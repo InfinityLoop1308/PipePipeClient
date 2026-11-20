@@ -1,12 +1,14 @@
 package org.schabi.newpipe.error
 
 import android.content.Context
+import android.content.Intent
 import androidx.annotation.StringRes
 import org.schabi.newpipe.R
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.exceptions.AntiBotException
 import org.schabi.newpipe.extractor.exceptions.AntiBotLoginRequiredException
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException
+import org.schabi.newpipe.settings.SettingsActivity
 
 /**
  * Builds the user-facing hints for [AntiBotException] and its subclasses, which name the
@@ -76,4 +78,26 @@ object AntiBotHints {
     @JvmStatic
     fun message(context: Context, exception: AntiBotException): String =
         format(context, hintRes(exception), serviceName(exception))
+
+    /** @return the label of the button that resolves [exception], or null if none can */
+    @StringRes
+    @JvmStatic
+    fun actionRes(exception: AntiBotException): Int? = when (exception) {
+        is ReCaptchaException -> R.string.anti_bot_captcha_action
+        is AntiBotLoginRequiredException -> R.string.anti_bot_login_action
+        else -> null
+    }
+
+    /**
+     * @return the intent of the screen that resolves [exception]: the challenge for captchas,
+     * the blocking service's account settings for login, or null if nothing can resolve it
+     */
+    @JvmStatic
+    fun actionIntent(context: Context, exception: AntiBotException): Intent? = when (exception) {
+        is ReCaptchaException -> Intent(context, ReCaptchaActivity::class.java)
+            .putExtra(ReCaptchaActivity.RECAPTCHA_URL_EXTRA, exception.url)
+        is AntiBotLoginRequiredException -> Intent(context, SettingsActivity::class.java)
+            .putExtra(SettingsActivity.EXTRA_ACCOUNT_SERVICE_ID, exception.serviceId)
+        else -> null
+    }
 }

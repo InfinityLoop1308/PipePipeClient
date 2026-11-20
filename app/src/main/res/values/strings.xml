@@ -1304,7 +1304,7 @@ Only add repositories you trust.</string>
 <string name="error_report_plugin_no_tracker">This failure comes from the %1$s plugin, so it is not a PipePipe issue. The plugin declares no issue tracker, so copy the report and send it to its author, %2$s.</string>
 <string name="error_report_plugin_open">Open tracker</string>
 <string name="anti_bot_hint">%1$s is limiting requests from your network. Try again later or switch to a different network.</string>
-<string name="anti_bot_login_hint">%1$s flagged requests from your network as unusual and requires you to log in to continue.</string>
+<string name="anti_bot_login_hint">%1$s flagged requests from your network as unusual. Log in to continue, or try again later.</string>
 <string name="anti_bot_login_action">Log in</string>
 <string name="anti_bot_captcha_hint">%1$s wants to verify you are not a bot.</string>
 <string name="anti_bot_captcha_action">Verify</string>

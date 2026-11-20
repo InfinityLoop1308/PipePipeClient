@@ -1,7 +1,6 @@
 package org.schabi.newpipe.error
 
 import android.content.Context
-import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -34,7 +33,6 @@ import org.schabi.newpipe.extractor.utils.Utils.isNullOrEmpty
 import org.schabi.newpipe.ktx.animate
 import org.schabi.newpipe.ktx.isInterruptedCaused
 import org.schabi.newpipe.ktx.isNetworkRelated
-import org.schabi.newpipe.util.NavigationHelper
 import org.schabi.newpipe.util.ServiceHelper
 import java.util.concurrent.TimeUnit
 
@@ -101,15 +99,12 @@ class ErrorPanelHelper(
             errorTextView.text = AntiBotHints.message(context, antiBot)
 
             showAndSetErrorButtonAction(
-                R.string.anti_bot_captcha_action
+                AntiBotHints.actionRes(antiBot)!!
             ) {
-                // Starting ReCaptcha Challenge Activity
-                val intent = Intent(context, ReCaptchaActivity::class.java)
-                intent.putExtra(
-                    ReCaptchaActivity.RECAPTCHA_URL_EXTRA,
-                    antiBot.url
+                fragment.startActivityForResult(
+                    AntiBotHints.actionIntent(context, antiBot)!!,
+                    ReCaptchaActivity.RECAPTCHA_REQUEST
                 )
-                fragment.startActivityForResult(intent, ReCaptchaActivity.RECAPTCHA_REQUEST)
                 errorActionButton.setOnClickListener(null)
             }
 
@@ -118,9 +113,9 @@ class ErrorPanelHelper(
             errorTextView.text = AntiBotHints.message(context, antiBot)
 
             showAndSetErrorButtonAction(
-                R.string.anti_bot_login_action
+                AntiBotHints.actionRes(antiBot)!!
             ) {
-                NavigationHelper.openSettings(context)
+                context.startActivity(AntiBotHints.actionIntent(context, antiBot))
             }
 
             errorRetryButton.isVisible = true
