@@ -39,9 +39,9 @@ import org.schabi.newpipe.databinding.SingleChoiceDialogViewBinding;
 import org.schabi.newpipe.download.DownloadDialog;
 import org.schabi.newpipe.error.ErrorInfo;
 import org.schabi.newpipe.error.ErrorUtil;
-import org.schabi.newpipe.error.ReCaptchaActivity;
 import org.schabi.newpipe.error.UserAction;
 import org.schabi.newpipe.extractor.Info;
+import org.schabi.newpipe.error.AntiBotHints;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.StreamingService.LinkType;
@@ -202,14 +202,8 @@ public class RouterActivity extends AppCompatActivity {
             throwable.printStackTrace();
         }
 
-        if (throwable instanceof ReCaptchaException) {
-            Toast.makeText(context, R.string.recaptcha_request_toast, Toast.LENGTH_LONG).show();
-            // Starting ReCaptcha Challenge Activity
-            final Intent intent = new Intent(context, ReCaptchaActivity.class);
-            intent.putExtra(ReCaptchaActivity.RECAPTCHA_URL_EXTRA,
-                    ((ReCaptchaException) throwable).getUrl());
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
+        if (AntiBotHints.find(throwable) != null) {
+            ErrorUtil.createNotification(context, errorInfo);
         } else if (throwable != null
                 && ExceptionUtils.isNetworkRelated(throwable)) {
             Toast.makeText(context, R.string.network_error, Toast.LENGTH_LONG).show();

@@ -319,8 +319,6 @@
     <string name="one_item_deleted">1 element șters.</string>
     <string name="title_activity_recaptcha">Provocare reCAPTCHA</string>
     <string name="subtitle_activity_recaptcha">Apăsați „Gata” după ce ați rezolvat provocarea</string>
-    <string name="recaptcha_request_toast">A fost solicitată o provocare reCAPTCHA</string>
-    <string name="recaptcha_solve">Rezolvă</string>
     <string name="recaptcha_done_button">Gata</string>
     <string name="settings_category_downloads_title">Descărcare</string>
     <string name="settings_file_charset_title">Caractere permise în numele fișierelor</string>
@@ -966,7 +964,6 @@
     <string name="settings_category_bullet_comments_summary">Setări danmaku</string>
     <string name="settings_category_backup_title">Copie de siguranță</string>
     <string name="settings_category_advanced_title">Avansat</string>
-    <string name="anti_bot_youtube_hint">IP-ul dvs. este blocat de YouTube. Încercați să folosiți un VPN sau să vă autentificați prin Setări pentru a continua.</string>
     <string name="advanced_formats_summary">Dacă dispozitivul dvs. acceptă, activarea formatelor avansate poate reduce consumul de date și poate oferi rezoluții mai mari.
         \nWEBM sau AV1 trebuie activate pentru a afișa conținut 2K/4K pe YouTube.
         \nFolosirea unui format pe care dispozitivul nu îl acceptă va duce la ecran negru sau blocare.</string>

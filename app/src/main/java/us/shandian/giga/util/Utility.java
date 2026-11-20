@@ -19,7 +19,6 @@ import androidx.documentfile.provider.DocumentFile;
 import com.grack.nanojson.JsonParserException;
 import org.schabi.newpipe.R;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
-import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
 import org.schabi.newpipe.extractor.services.bilibili.BilibiliService;
 import org.schabi.newpipe.streams.io.SharpStream;
 

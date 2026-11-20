@@ -715,7 +715,6 @@ Voulez-vous continuer?</string>
 <string name="settings_category_bullet_comments_summary">Paramètres des danmaku</string>
 <string name="settings_category_backup_title">Sauvegarde</string>
 <string name="settings_category_advanced_title">Avancé</string>
-<string name="anti_bot_youtube_hint">Votre IP est bloquée par YouTube. Essayez d\'utiliser un VPN ou de vous connecter via les paramètres pour continuer.</string>
 <string name="advanced_formats_summary">Si votre appareil est compatible, l\'activation des formats avancés peut réduire la consommation de données et offrir des résolutions plus élevées. \nWEBM ou AV1 doivent être activés pour afficher des contenus en 2k/4k sur YouTube. \nUtiliser un format que votre appareil ne prend pas en charge entraînera un écran noir ou un plantage.</string>
 <string name="advanced_formats_title">Activer les formats avancés</string>
 <string name="preferred_audio_language_title">Langue audio préférée</string>
@@ -836,8 +835,6 @@ Voulez-vous continuer?</string>
 <string name="filter_by_channel_title">Chaînes bloquées</string>
 <string name="filter_by_channel_summary">Masquer les vidéos, playlists et chaînes de ces chaînes</string>
 <string name="channel_group_tab_summary">Groupe de chaînes</string>
-<string name="recaptcha_request_toast">Défi reCAPTCHA demandé</string>
-<string name="recaptcha_solve">Résoudre</string>
 <string name="recaptcha_done_button">Terminé</string>
 <string name="settings_category_downloads_title">Télécharger</string>
 <string name="settings_file_charset_title">Caractères autorisés dans les noms de fichiers</string>

@@ -174,7 +174,6 @@
     <string name="msg_popup_permission">ਪੌਪ-ਅਪ ਮੋਡ ਵਿੱਚ ਖੋਲ੍ਹਣ ਵਾਸਤੇ ਇਸ ਇਜਾਜ਼ਤ ਦੀ ਲੋੜ ਹੈ</string>
     <string name="one_item_deleted">1 ਆਈਟਮ ਮਿਟਾਈ ਗਈ.</string>
     <string name="title_activity_recaptcha">ReCaptcha ਚੁਣੌਤੀ</string>
-    <string name="recaptcha_request_toast">ReCaptcha ਚੁਣੌਤੀ ਲਈ ਬੇਨਤੀ</string>
     <string name="settings_category_downloads_title">ਡਾਊਨਲੋਡ</string>
     <string name="settings_file_charset_title">ਫਾਈਲ ਨਾਮ ਵਿੱਚ ਪ੍ਰਵਾਨਿਤ ਅੱਖਰ</string>
     <string name="charset_letters_and_digits">ਅੱਖਰ ਅਤੇ ਅੰਕ</string>
@@ -511,7 +510,6 @@
     <string name="localization_changes_requires_app_restart">ਭਾਸ਼ਾ, ਐਪ ਨੂੰ ਦੋਬਾਰਾ ਚਲਾਉਣ \'ਤੇ ਬਦਲੇਗੀ।</string>
     <string name="select_a_playlist">ਪਲੇ-ਸੂਚੀ ਚੁਣੋ</string>
     <string name="recaptcha_done_button">ਹੋ ਗਿਆ</string>
-    <string name="recaptcha_solve">ਹੱਲ ਕਰੋ</string>
     <string name="subtitle_activity_recaptcha">ਹੱਲ ਹੋਣ \'ਤੇ \"ਹੋ ਗਿਆ\" ਨੱਪੋ</string>
     <string name="no_dir_yet">ਹਾਲੇ ਕੋਈ ਡਾਊਨਲੋਡ ਫੋਲਡਰ ਸੈੱਟ ਨਹੀਂ ਕੀਤਾ ਹੋਇਆ, ਹੁਣੇ ਡਿਫ਼ਾਲਟ ਡਾਊਨਲੋਡ ਫ਼ੋਲਡਰ ਚੁਣੋ</string>
     <string name="infinite_videos">ਅਣਗਿਣਤ ਵੀਡੀਓਜ਼</string>

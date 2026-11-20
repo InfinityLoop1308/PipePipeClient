@@ -275,7 +275,6 @@
     <string name="users">Kasutajad</string>
     <string name="switch_to_main">Lülitu peamisele</string>
     <string name="title_activity_recaptcha">reCAPTCHA nõue</string>
-    <string name="recaptcha_request_toast">reCAPTCHA nõude taotlus</string>
     <string name="app_description">Vaba kergekaaluline Androidi voogesitus.</string>
     <string name="contribution_encouragement">Kui sul on ideid kujunduse muutmisest, koodi puhastamisest või suurtest koodi muudatustest - abi on alati teretulnud. Mida rohkem tehtud, seda paremaks läheb!</string>
     <string name="donation_encouragement">NewPipe arendajad on vabatahtlikud, kes kulutavad oma vaba aega, toomaks sulle parimat kasutamise kogemust. On aeg anda tagasi aidates arendajaid ja muuta NewPipe veel paremaks, nautides ise tassi kohvi.</string>
@@ -399,7 +398,6 @@
     <string name="private_content">See sisu on privaatne, seega ei saa seda NewPipe\'i kaudu voogedastada ega alla laadida.</string>
     <string name="youtube_music_premium_content">See video on saadaval ainult YouTube Music Premium teenuse tellijatele, seega ei saa seda NewPipe\'i kaudu voogedastada ega alla laadida.</string>
     <string name="paid_content">See sisu on kättesaadav ainult tasulise teenuse kasutajatele, seega ei saa seda NewPipe\'i kaudu voogedastada ega alla laadida.</string>
-    <string name="recaptcha_solve">Lahenda</string>
     <string name="featured">Esiletõstetud</string>
     <string name="radio">Raadio</string>
     <string name="auto_device_theme_title">Automaatne (seadme teema)</string>

@@ -307,8 +307,6 @@
     <!-- reCAPTCHA -->
     <string name="title_activity_recaptcha">Desafio reCAPTCHA</string>
     <string name="subtitle_activity_recaptcha">Aperte &quot;Enviar&quot; quando resolvido</string>
-    <string name="recaptcha_request_toast">Desafio reCAPTCHA pedido</string>
-    <string name="recaptcha_solve">Resolva</string>
     <string name="recaptcha_done_button">Enviar</string>
     <!-- Downloads -->
     <string name="settings_category_downloads_title">Baixar</string>
@@ -914,7 +912,6 @@
     <string name="settings_category_gestures_summary">Gestos</string>
     <string name="settings_category_backup_title">Backup</string>
     <string name="settings_category_advanced_title">Avançado</string>
-    <string name="anti_bot_youtube_hint">Seu IP está bloqueado pelo YouTube. Tente usar uma VPN ou fazer login nas Configurações para continuar.</string>
     <string name="advanced_formats_summary">Se o seu dispositivo tiver suporte, ativar os formatos avançados pode reduzir o consumo de dados e fornecer resoluções maiores. \nWEBM ou AV1 devem estar ativados para exibir conteúdo 2K/4K no YouTube. \nUsar um formato que seu dispositivo não suporta resultará em tela preta ou travamento.</string>
     <string name="advanced_formats_title">Ativar formatos avançados</string>
     <string name="preferred_audio_language_title">Idioma de áudio preferido</string>

@@ -180,7 +180,6 @@
 \npara abrir o vídeo no modo «popup»</string>
     <string name="one_item_deleted">1 elemento foi eliminado.</string>
     <string name="title_activity_recaptcha">Desafío reCAPTCHA</string>
-    <string name="recaptcha_request_toast">ReCAPTCHA reto solicitado</string>
     <string name="settings_category_downloads_title">Descarregar</string>
     <string name="settings_file_charset_title">Caracteres permitidos nos nomes de ficheiros</string>
     <string name="charset_letters_and_digits">Letras e díxitos</string>
@@ -546,7 +545,6 @@
     <string name="enqueue_stream">Pór na cola</string>
     <string name="show_channel_details">Mostrar detalles da canle</string>
     <string name="title_activity_play_queue">Reproducir cola</string>
-    <string name="recaptcha_solve">Resolver</string>
     <string name="description_tab_description">Descrición</string>
     <string name="comments_tab_description">Comentarios</string>
     <string name="clear_cookie_summary">Borrar as cookies que NewPipe garda cando resolve un reCAPTCHA</string>

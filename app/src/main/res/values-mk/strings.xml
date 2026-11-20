@@ -166,7 +166,6 @@
     <string name="msg_popup_permission">Оваа привилегија е потребна за
 \nотворање во подпрозорче</string>
     <string name="title_activity_recaptcha">reCAPTCHA Предизвик</string>
-    <string name="recaptcha_request_toast">Потребен е reCAPTCHA предизвик</string>
     <string name="settings_category_downloads_title">Превземања</string>
     <string name="settings_file_charset_title">Дозволени знаци во имињата на датотеките</string>
     <string name="charset_letters_and_digits">Букви и броеви</string>

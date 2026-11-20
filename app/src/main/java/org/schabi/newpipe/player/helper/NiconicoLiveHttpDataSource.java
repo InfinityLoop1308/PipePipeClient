@@ -12,7 +12,6 @@ import com.google.common.base.Predicate;
 import com.grack.nanojson.JsonParserException;
 
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
-import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -218,7 +217,7 @@ public class NiconicoLiveHttpDataSource extends PurifiedHttpDataSource {
 ////                    fetchHistory.put(String.valueOf(currentKey), currentTime);
 ////                    isFetching = false;
 //////                    System.out.println("End fetching new key: " + new Date().toString());
-////                } catch (ParsingException | IOException | ReCaptchaException | JsonParserException e) {
+////                } catch (ParsingException | IOException | AntiBotException | JsonParserException e) {
 ////                    throw new RuntimeException(e);
 ////                }
 ////            }).start();

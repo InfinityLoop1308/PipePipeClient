@@ -74,7 +74,6 @@
 <string name="app_ui_crash">Awaria aplikacji/interfejsu</string>
 <string name="start">Rozpocznij</string>
 <string name="title_activity_recaptcha">Zadanie reCAPTCHA</string>
-<string name="recaptcha_request_toast">Zażądano rozwiązania reCAPTCHA</string>
 <string name="replies">Odpowiedzi</string>
 <string name="controls_background_title">W tle</string>
 <string name="default_popup_resolution_title">Domyślna rozdzielczość trybu okienkowego</string>
@@ -593,7 +592,6 @@
 <string name="radio">Radio</string>
 <string name="paid_content_new">Ta treść jest tylko dostępna dla użytkowników którz zapłacili, więc nie może być odtwarzany i pobierany przez PipePipe.</string>
 <string name="featured">Polecane</string>
-<string name="recaptcha_solve">Rozwiąż</string>
 <string name="select_night_theme_toast">Możesz wybrać swój ulubiony motyw nocny poniżej</string>
 <string name="download_has_started">Rozpoczęto pobieranie</string>
 <string name="night_theme_summary">Wybierz swój ulubiony motyw nocny — %s</string>
@@ -901,7 +899,6 @@
 <string name="settings_category_bullet_comments_summary">Ustawienia danmaku</string>
 <string name="settings_category_backup_title">Kopia zapasowa</string>
 <string name="settings_category_advanced_title">Zaawansowane</string>
-<string name="anti_bot_youtube_hint">Twoje IP jest zablokowane przez YouTube, Spróbuj użyć VPN-a lub zaloguj się przez Ustawienia aby kontynuować.</string>
 <string name="advanced_formats_summary">Jeżeli twoje urządzenie je wspiera, włączenie zaawansowanych formatów może zmniejszyć zużycie danych i dodać wyższe rozdzielczości. WEBM lub AV1 musi być włączone aby pokazywać treści 2k/4k na YouTube. Używanie formatu niewspieranego przez twoje urządzenie spowoduje czarny ekran lub crash.</string>
 <string name="advanced_formats_title">Włącz zaawansowane formaty</string>
 <string name="preferred_audio_language_title">Preferowany język dźwięku</string>

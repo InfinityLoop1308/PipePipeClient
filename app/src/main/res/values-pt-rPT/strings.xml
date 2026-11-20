@@ -162,7 +162,6 @@
 \n6. Clique em IMPORT FILE abaixo e selecione o ficheiro .zip descarregado
 \n7. [Se a importação do .zip falhar] Extraia o ficheiro .csv (geralmente em \"YouTube e YouTube Music/subscriptions/subscriptions.csv\"), clique em IMPORT FILE abaixo e selecione o ficheiro csv extraído</string>
     <string name="minimize_on_exit_background_description">Ativar reprodutor em segundo plano</string>
-    <string name="recaptcha_request_toast">Desafio reCAPTCHA solicitado</string>
     <string name="autoplay_title">Reprodução automática</string>
     <string name="peertube_instance_add_exists">Instância já existe</string>
     <string name="donation_encouragement">NewPipe é desenvolvido por voluntários que utilizam o seu tempo livre para nos proporcionar a melhor experiência. Retribua para ajudar os programadores a tornarem NewPipe ainda melhor.</string>
@@ -554,7 +553,6 @@
 \nDevido às novas políticas do YouTube com vídeos com restrição de idade, o NewPipe não pode acessar nenhum dos seus fluxos de vídeo, portanto, é incapaz de reproduzi-lo.</string>
     <string name="radio">Rádio</string>
     <string name="featured">Destaques</string>
-    <string name="recaptcha_solve">Resolver</string>
     <string name="download_has_started">Descarga iniciada</string>
     <string name="select_night_theme_toast">Pode escolher o seu tema escuro favorito abaixo</string>
     <string name="night_theme_summary">Escolha o seu tema escuro favorito — %s</string>

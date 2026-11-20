@@ -1,5 +1,6 @@
 package org.schabi.newpipe.error
 
+import android.content.Context
 import android.os.Parcelable
 import androidx.annotation.StringRes
 import kotlinx.parcelize.IgnoredOnParcel
@@ -12,7 +13,6 @@ import org.schabi.newpipe.extractor.exceptions.AccountTerminatedException
 import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException
 import org.schabi.newpipe.extractor.exceptions.ExtractionException
-import org.schabi.newpipe.extractor.exceptions.AntiBotException
 import org.schabi.newpipe.extractor.exceptions.NeedLoginException
 import org.schabi.newpipe.extractor.exceptions.WebViewUnavailableException
 import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor.DeobfuscateException
@@ -23,13 +23,23 @@ import java.io.StringWriter
 import kotlin.math.min
 
 @Parcelize
-class ErrorInfo(
+class ErrorInfo @JvmOverloads constructor(
     val stackTraces: Array<String>,
     val userAction: UserAction,
     val serviceName: String,
     val request: String,
-    val messageStringId: Int
+    val messageStringId: Int,
+    /** Service or site named by [messageStringId] when it is an anti-bot hint, null if unknown */
+    val messageServiceName: String? = null
 ) : Parcelable {
+
+    /** @return the user-facing message, with any placeholder filled in */
+    fun getMessage(context: Context): String =
+        if (messageStringId in AntiBotHints.HINT_RES) {
+            AntiBotHints.format(context, messageStringId, messageServiceName)
+        } else {
+            context.getString(messageStringId)
+        }
 
     // no need to store throwable, all data for report is in other variables
     // also, the throwable might not be serializable, see TeamNewPipe/NewPipe#7302
@@ -46,7 +56,8 @@ class ErrorInfo(
         userAction,
         serviceName,
         request,
-        getMessageStringId(throwable, userAction)
+        getMessageStringId(throwable, userAction),
+        AntiBotHints.find(throwable)?.let(AntiBotHints::serviceName)
     ) {
         this.throwable = throwable
     }
@@ -61,7 +72,8 @@ class ErrorInfo(
         userAction,
         serviceName,
         request,
-        getMessageStringId(throwable.firstOrNull(), userAction)
+        getMessageStringId(throwable.firstOrNull(), userAction),
+        AntiBotHints.find(throwable.firstOrNull())?.let(AntiBotHints::serviceName)
     ) {
         this.throwable = throwable.firstOrNull()
     }
@@ -114,13 +126,13 @@ class ErrorInfo(
             throwable: Throwable?,
             action: UserAction
         ): Int {
+            AntiBotHints.find(throwable)?.let { return AntiBotHints.hintRes(it) }
             return when {
                 throwable is AccountTerminatedException -> R.string.account_terminated
                 throwable is ContentNotAvailableException -> R.string.content_not_available
                 throwable != null && throwable.isNetworkRelated -> R.string.network_error
                 throwable is ContentNotSupportedException -> R.string.content_not_supported_new
                 throwable is DeobfuscateException -> R.string.youtube_signature_deobfuscation_error
-                throwable is AntiBotException -> R.string.anti_bot_youtube_hint
                 throwable is NeedLoginException -> R.string.need_login_hint
                 throwable is WebViewUnavailableException -> R.string.webview_unavailable_youtube_hint
                 throwable is ExtractionException -> R.string.parsing_error

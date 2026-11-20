@@ -170,7 +170,6 @@
     <string name="settings_file_charset_title">Xarafyada magaca shayga loo ogol yahay</string>
     <string name="settings_category_downloads_title">Dajinta</string>
     <string name="recaptcha_done_button">Dhameeyay</string>
-    <string name="recaptcha_request_toast">Tijaabada reCAPTCHA ayaa la codsaday</string>
     <string name="subtitle_activity_recaptcha">Taabo \"Dhameeyay\" ✅ markaad xaliso</string>
     <string name="title_activity_recaptcha">Tijaabada reCAPTCHA</string>
     <string name="one_item_deleted">1 shay ayaa la saaray.</string>
@@ -550,7 +549,6 @@
     <string name="soundcloud_go_plus_content">Shaygan waa SoundCloud Go+, ama ugu yaraan wadankaaga ayuu ka yahay, sidaa darteed NewPipe laguma daawan/dagsan karo.</string>
     <string name="georestricted_content">Shaygan wadanka aad joogto looma heli karo.</string>
     <string name="crash_the_app">Khalkhali appka</string>
-    <string name="recaptcha_solve">Xalli</string>
     <string name="restricted_video_no_stream">Muuqaalkan da\'da qofka ayuu ku xidhan yahay.
 \nAyadooy ugu wacantahay talaabooyin cusub oo YouTube uu ku qaaday muuqaalada da\'da ku xidhan, NewPipe ma furi karo muuqaalkan.</string>
     <string name="download_has_started">Dajintii way bilaabatay</string>

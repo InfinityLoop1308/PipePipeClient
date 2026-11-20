@@ -317,8 +317,6 @@
 <string name="one_item_deleted">1 elemento eliminado.</string>
 <string name="title_activity_recaptcha">Desafío reCAPTCHA</string>
 <string name="subtitle_activity_recaptcha">Presiona \"Listo\" cuando lo hayas resuelto</string>
-<string name="recaptcha_request_toast">Desafío reCAPTCHA solicitado</string>
-<string name="recaptcha_solve">Resolver</string>
 <string name="recaptcha_done_button">Listo</string>
 <!-- Downloads -->
 <string name="settings_category_downloads_title">Descargar</string>
@@ -816,7 +814,6 @@
 <string name="settings_category_bullet_comments_summary">Configuración de danmaku</string>
 <string name="settings_category_backup_title">Respaldar</string>
 <string name="settings_category_advanced_title">Avanzado</string>
-<string name="anti_bot_youtube_hint">Tu IP está bloqueada por YouTube. Intenta usar una VPN o iniciar sesión a través de Configuración para continuar.</string>
 <string name="advanced_formats_summary">Si su dispositivo tiene soporte, habilitar formatos avanzados puede reducir el consumo de datos y proporcionar resoluciones más altas. \nWEBM o AV1 deben estar habilitados para mostrar contenidos en 2k/4k en YouTube. \nUsar un formato que su dispositivo no soporte resultará en una pantalla negra o un bloqueo.</string>
 <string name="advanced_formats_title">Habilitar formatos avanzados</string>
 <string name="preferred_audio_language_title">Idioma de audio preferido</string>

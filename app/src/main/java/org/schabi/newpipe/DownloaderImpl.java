@@ -1,6 +1,7 @@
 package org.schabi.newpipe;
 
 import android.content.Context;
+import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
@@ -13,6 +14,7 @@ import org.schabi.newpipe.extractor.downloader.Request;
 import org.schabi.newpipe.extractor.downloader.Response;
 import org.schabi.newpipe.extractor.downloader.StreamingResponse;
 import org.schabi.newpipe.extractor.localization.Localization;
+import org.schabi.newpipe.extractor.exceptions.AntiBotException;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
 import org.schabi.newpipe.extractor.services.bilibili.BilibiliService;
@@ -52,18 +54,30 @@ public final class DownloaderImpl extends Downloader {
     private static final long DNS_RETRY_DELAY_MS = 500L;
 
     /**
+     * Name of a synthetic header carrying the page where the user can solve the challenge that
+     * blocked a request, see {@link #BOT_CHECK_INTERCEPTOR}.
+     */
+    private static final String CHALLENGE_URL_HEADER = "X-PipePipe-Challenge";
+
+    /**
      * YouTube answers an address it considers to be too busy with a redirect to its bot check page
      * instead of the requested document. Following that redirect chain ends in a failure about
      * too many follow-up requests after more than twenty requests which make the rate limit worse,
-     * so the redirect is turned into a rate limit answer here instead, which is reported as a
-     * captcha challenge for the requested URL.
+     * so the redirect is turned into a rate limit answer here instead. The bot check page is kept
+     * in {@link #CHALLENGE_URL_HEADER}, as it is where the captcha can be solved: the requested
+     * URL is often an API endpoint which shows no captcha when opened in a WebView.
      */
     private static final Interceptor BOT_CHECK_INTERCEPTOR = chain -> {
         final okhttp3.Response response = chain.proceed(chain.request());
         final String location = response.header("Location");
         final HttpUrl redirect = location == null ? null
                 : response.request().url().resolve(location);
-        if (!isBotCheckUrl(redirect) && !isBotCheckUrl(response.request().url())) {
+        final HttpUrl challengeUrl;
+        if (isBotCheckUrl(redirect)) {
+            challengeUrl = redirect;
+        } else if (isBotCheckUrl(response.request().url())) {
+            challengeUrl = response.request().url();
+        } else {
             return response;
         }
         response.close();
@@ -72,6 +86,7 @@ public final class DownloaderImpl extends Downloader {
                 .protocol(Protocol.HTTP_1_1)
                 .code(429)
                 .message("YouTube bot check")
+                .header(CHALLENGE_URL_HEADER, challengeUrl.toString())
                 .body(ResponseBody.create(null, new byte[0]))
                 .build();
     };
@@ -238,12 +253,98 @@ public final class DownloaderImpl extends Downloader {
     }
 
     /**
-     * @return whether the response is a challenge the user can solve in the WebView:
-     * a rate limit (YouTube/Google reCAPTCHA) or a Cloudflare challenge page
+     * @return the anti-bot block reported by {@code response}, or null if it was not blocked.
+     * Only blocks with a page where the user can solve the challenge are reported as
+     * {@link ReCaptchaException}: Google's bot check and Cloudflare challenges. Any other rate
+     * limit can only be waited out or avoided by switching networks.
      */
-    private static boolean isChallenge(final okhttp3.Response response) {
-        return response.code() == 429
-                || "challenge".equalsIgnoreCase(response.header("cf-mitigated"));
+    @Nullable
+    private static AntiBotException getBlock(@NonNull final okhttp3.Response response,
+                                             @NonNull final String url) {
+        final String challengeUrl = response.header(CHALLENGE_URL_HEADER);
+        if (challengeUrl != null) {
+            return new ReCaptchaException(-1, "Bot check requested", url, challengeUrl);
+        }
+        if ("challenge".equalsIgnoreCase(response.header("cf-mitigated"))) {
+            // a WebView can only GET, and the clearance cookie is valid for the whole site
+            final HttpUrl requestUrl = response.request().url();
+            return new ReCaptchaException(-1, "Cloudflare challenge requested", url,
+                    "GET".equals(response.request().method())
+                            ? requestUrl.toString() : requestUrl.resolve("/").toString());
+        }
+        if (response.code() == 429) {
+            return new AntiBotException(-1, "Rate limited (HTTP 429)", url, null);
+        }
+        return null;
+    }
+
+    /**
+     * Sets the default User-Agent and cookies and then the request specific {@code headers},
+     * which override the defaults. Cookies of a solved challenge are added to a Cookie header
+     * given by the extractor as well, as the challenge stays unsolved for requests without them.
+     */
+    private void applyHeaders(@NonNull final okhttp3.Request.Builder requestBuilder,
+                              @NonNull final String url,
+                              @NonNull final Map<String, List<String>> headers) {
+        boolean hasUserAgent = false;
+        String requestCookies = null;
+        for (final Map.Entry<String, List<String>> pair : headers.entrySet()) {
+            final String headerName = pair.getKey();
+            final List<String> headerValueList = pair.getValue();
+            if ("Cookie".equalsIgnoreCase(headerName)) {
+                if (!headerValueList.isEmpty()) {
+                    requestCookies = TextUtils.join("; ", headerValueList);
+                }
+                continue;
+            }
+            if ("User-Agent".equalsIgnoreCase(headerName)) {
+                hasUserAgent = true;
+            }
+            if (headerValueList.size() > 1) {
+                requestBuilder.removeHeader(headerName);
+                for (final String headerValue : headerValueList) {
+                    requestBuilder.addHeader(headerName, headerValue);
+                }
+            } else if (headerValueList.size() == 1) {
+                requestBuilder.header(headerName, headerValueList.get(0));
+            }
+        }
+        if (!hasUserAgent) {
+            requestBuilder.header("User-Agent", USER_AGENT);
+        }
+
+        final String cookies = requestCookies == null
+                ? getCookies(url) : addChallengeCookies(url, requestCookies);
+        if (!cookies.isEmpty()) {
+            requestBuilder.header("Cookie", cookies);
+        }
+    }
+
+    /**
+     * @return {@code requestCookies} followed by the cookies of a solved challenge for
+     * {@code url} which they do not set themselves
+     */
+    @NonNull
+    private static String addChallengeCookies(@NonNull final String url,
+                                              @NonNull final String requestCookies) {
+        final String challengeCookies = ChallengeCookies.get(url);
+        if (challengeCookies == null) {
+            return requestCookies;
+        }
+        final Set<String> names = CookieUtils.parseCookieHeader(requestCookies).keySet();
+        final StringBuilder builder = new StringBuilder(requestCookies.trim());
+        for (final String pair : challengeCookies.split(";")) {
+            final String trimmed = pair.trim();
+            final int separator = trimmed.indexOf('=');
+            if (separator <= 0 || names.contains(trimmed.substring(0, separator).trim())) {
+                continue;
+            }
+            if (builder.length() > 0) {
+                builder.append("; ");
+            }
+            builder.append(trimmed);
+        }
+        return builder.toString();
     }
 
     public String getCookie(final String key) {
@@ -292,14 +393,14 @@ public final class DownloaderImpl extends Downloader {
             return Long.parseLong(response.getHeader("Content-Length"));
         } catch (final NumberFormatException e) {
             throw new IOException("Invalid content length", e);
-        } catch (final ReCaptchaException e) {
+        } catch (final AntiBotException e) {
             throw new IOException(e);
         }
     }
 
     private long getContentLengthViaRangeProbe(final String url,
                                                @Nullable final Map<String, List<String>> headers)
-            throws IOException, ReCaptchaException {
+            throws IOException, AntiBotException {
         final Map<String, List<String>> probeHeaders = new LinkedHashMap<>(headers);
         probeHeaders.put("Range", Collections.singletonList("bytes=0-0"));
         final Response response = get(url, probeHeaders);
@@ -312,7 +413,7 @@ public final class DownloaderImpl extends Downloader {
 
     @Override
     public Response execute(@NonNull final Request request)
-            throws IOException, ReCaptchaException {
+            throws IOException, AntiBotException {
         final String httpMethod = request.httpMethod();
         final String url = request.url();
         final Map<String, List<String>> headers = request.headers();
@@ -325,38 +426,9 @@ public final class DownloaderImpl extends Downloader {
             requestBody = RequestBody.create(null, "");
         }
 
-        // Check if extractor headers already contain User-Agent or Cookie
-        final boolean hasUserAgent = headers.containsKey("User-Agent");
-        final boolean hasCookie = headers.containsKey("Cookie");
-
         final okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder()
                 .method(httpMethod, requestBody).url(url);
-
-        // Add default User-Agent only if extractor didn't provide one
-        if (!hasUserAgent) {
-            requestBuilder.header("User-Agent", USER_AGENT);
-        }
-
-        final String cookies = getCookies(url);
-        // Add app-level Cookie only if extractor didn't provide one
-        if (!hasCookie && !cookies.isEmpty()) {
-            requestBuilder.header("Cookie", cookies);
-        }
-
-        // Add extractor headers (these override any defaults)
-        for (final Map.Entry<String, List<String>> pair : headers.entrySet()) {
-            final String headerName = pair.getKey();
-            final List<String> headerValueList = pair.getValue();
-
-            if (headerValueList.size() > 1) {
-                requestBuilder.removeHeader(headerName);
-                for (final String headerValue : headerValueList) {
-                    requestBuilder.addHeader(headerName, headerValue);
-                }
-            } else if (headerValueList.size() == 1) {
-                requestBuilder.header(headerName, headerValueList.get(0));
-            }
-        }
+        applyHeaders(requestBuilder, url, headers);
 
         OkHttpClient tmpClient = client;
         okhttp3.Response response = null;
@@ -401,10 +473,10 @@ public final class DownloaderImpl extends Downloader {
         }
 
 
-        if (isChallenge(response)) {
+        final AntiBotException block = getBlock(response, url);
+        if (block != null) {
             response.close();
-
-            throw new ReCaptchaException("reCaptcha Challenge requested", url);
+            throw block;
         }
 
         final ResponseBody body = response.body();
@@ -437,7 +509,7 @@ public final class DownloaderImpl extends Downloader {
     public StreamingResponse getStreaming(final String url,
                                           @Nullable final Map<String, List<String>> headers,
                                           @Nullable final Localization localization)
-            throws IOException, ReCaptchaException {
+            throws IOException, AntiBotException {
         return executeStreaming(Request.newBuilder().get(url).headers(headers)
                 .localization(localization).build());
     }
@@ -447,7 +519,7 @@ public final class DownloaderImpl extends Downloader {
                                           @Nullable final Map<String, List<String>> headers,
                                           @Nullable final Localization localization,
                                           final long timeoutMs)
-            throws IOException, ReCaptchaException {
+            throws IOException, AntiBotException {
         final long boundedTimeoutMs = Math.max(1, timeoutMs);
         final OkHttpClient boundedClient = client.newBuilder()
                 .callTimeout(boundedTimeoutMs, TimeUnit.MILLISECONDS)
@@ -463,19 +535,19 @@ public final class DownloaderImpl extends Downloader {
                                            @Nullable final Map<String, List<String>> headers,
                                            @Nullable final byte[] dataToSend,
                                            @Nullable final Localization localization)
-            throws IOException, ReCaptchaException {
+            throws IOException, AntiBotException {
         return executeStreaming(Request.newBuilder().post(url, dataToSend).headers(headers)
                 .localization(localization).build());
     }
 
     private StreamingResponse executeStreaming(@NonNull final Request request)
-            throws IOException, ReCaptchaException {
+            throws IOException, AntiBotException {
         return executeStreaming(request, client);
     }
 
     private StreamingResponse executeStreaming(@NonNull final Request request,
                                                 @NonNull final OkHttpClient requestClient)
-            throws IOException, ReCaptchaException {
+            throws IOException, AntiBotException {
         final String url = request.url();
         final Map<String, List<String>> headers = request.headers();
         final byte[] data = request.dataToSend();
@@ -484,24 +556,7 @@ public final class DownloaderImpl extends Downloader {
                 : RequestBody.create(null, data);
         final okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder()
                 .method(request.httpMethod(), requestBody).url(url);
-        if (!headers.containsKey("User-Agent")) {
-            requestBuilder.header("User-Agent", USER_AGENT);
-        }
-        final String cookies = getCookies(url);
-        if (!headers.containsKey("Cookie") && !cookies.isEmpty()) {
-            requestBuilder.header("Cookie", cookies);
-        }
-        for (final Map.Entry<String, List<String>> pair : headers.entrySet()) {
-            final List<String> values = pair.getValue();
-            if (values.size() > 1) {
-                requestBuilder.removeHeader(pair.getKey());
-                for (final String value : values) {
-                    requestBuilder.addHeader(pair.getKey(), value);
-                }
-            } else if (values.size() == 1) {
-                requestBuilder.header(pair.getKey(), values.get(0));
-            }
-        }
+        applyHeaders(requestBuilder, url, headers);
         okhttp3.Response response = null;
         int dnsRetryCount = 0;
         while (response == null) {
@@ -520,9 +575,10 @@ public final class DownloaderImpl extends Downloader {
                 }
             }
         }
-        if (isChallenge(response)) {
+        final AntiBotException block = getBlock(response, url);
+        if (block != null) {
             response.close();
-            throw new ReCaptchaException("reCaptcha Challenge requested", url);
+            throw block;
         }
         final ResponseBody body = response.body();
         final InputStream stream = body == null
@@ -543,28 +599,8 @@ public final class DownloaderImpl extends Downloader {
         }
 
         final okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder()
-                .method(httpMethod, requestBody).url(url)
-                .addHeader("User-Agent", USER_AGENT);
-
-        final String cookies = getCookies(url);
-        if (!cookies.isEmpty()) {
-            requestBuilder.addHeader("Cookie", cookies);
-        }
-
-        for (final Map.Entry<String, List<String>> pair : headers.entrySet()) {
-            final String headerName = pair.getKey();
-            final List<String> headerValueList = pair.getValue();
-
-            if (headerValueList.size() > 1) {
-                requestBuilder.removeHeader(headerName);
-                for (final String headerValue : headerValueList) {
-                    requestBuilder.addHeader(headerName, headerValue);
-                }
-            } else if (headerValueList.size() == 1) {
-                requestBuilder.header(headerName, headerValueList.get(0));
-            }
-
-        }
+                .method(httpMethod, requestBody).url(url);
+        applyHeaders(requestBuilder, url, headers);
 
         OkHttpClient tmpClient = client;
         if (customTimeout != null || !request.followRedirects()) {
@@ -607,8 +643,9 @@ public final class DownloaderImpl extends Downloader {
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
                 try {
-                    if (isChallenge(response)) {
-                        callback.onError(new ReCaptchaException("reCaptcha Challenge requested", url));
+                    final AntiBotException block = getBlock(response, url);
+                    if (block != null) {
+                        callback.onError(block);
                         return;
                     }
 

@@ -184,7 +184,6 @@
 \nτο άνοιγμα αναδυόμενων παραθύρων</string>
     <string name="one_item_deleted">1 αντικείμενο διαγράφηκε.</string>
     <string name="title_activity_recaptcha">Δοκιμασία reCAPTCHA</string>
-    <string name="recaptcha_request_toast">Ζητήθηκε δοκιμασία reCAPTCHA</string>
     <string name="settings_file_charset_title">Επιτρεπόμενοι χαρακτήρες σε ονόματα αρχείων</string>
     <string name="charset_most_special_characters">Οι περισσότεροι ειδικοί χαρακτήρες</string>
     <string name="toast_no_player">Δεν υπάρχει εγκατεστημένη εφαρμογή για την αναπαραγωγή αυτού του αρχείου</string>
@@ -554,7 +553,6 @@
 \nΛόγω της νέας πολιτικής του YouTube για αυτά τα βίντεο, το NewPipe δεν μπορεί να το αναπαράγει.</string>
     <string name="featured">Επιλεγμένα</string>
     <string name="radio">Ράδιο</string>
-    <string name="recaptcha_solve">Λύση</string>
     <string name="download_has_started">Η λήψη ξεκίνησε</string>
     <string name="select_night_theme_toast">Μπορείτε να επιλέξετε το αγαπημένο σας νυχτερινό θέμα παρακάτω</string>
     <string name="night_theme_summary">Επιλέξτε το αγαπημένο σας νυχτερινό θέμα — %s</string>

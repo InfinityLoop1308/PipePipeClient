@@ -84,7 +84,6 @@
 <string name="msg_popup_permission">使用懸浮視窗模式
 \n需要此權限</string>
 <string name="title_activity_recaptcha">reCAPTCHA 驗證</string>
-<string name="recaptcha_request_toast">已請求 reCAPTCHA 驗證</string>
 <string name="controls_popup_title">懸浮視窗</string>
 <string name="duration_live">直播</string>
 <string name="subscribe_button_title">訂閱</string>
@@ -522,7 +521,6 @@
 <string name="restricted_video_no_stream_new">這部影片受到年齡限制。\n如要觀看，請前往設定登入。</string>
 <string name="radio">廣播</string>
 <string name="featured">精選</string>
-<string name="recaptcha_solve">解決</string>
 <string name="download_has_started">下載已經開始</string>
 <string name="select_night_theme_toast">您可以在下方選取您最愛的夜間佈景主題</string>
 <string name="night_theme_summary">選取您最愛的夜間佈景主題 — %s</string>
@@ -808,7 +806,6 @@
 <string name="settings_category_bullet_comments_summary">彈幕設定</string>
 <string name="settings_category_backup_title">備份</string>
 <string name="settings_category_advanced_title">進階</string>
-<string name="anti_bot_youtube_hint">您的 IP 已被 YouTube 封鎖。請試著前往設定登入或透過 VPN 以繼續。</string>
 <string name="advanced_formats_summary">如果您的設備支持，啟用高級格式可以減少數據消耗並提供更高的分辨率。\n必須啟用 WEBM 或 AV1 才能在 YouTube 上顯示 2k/4k 內容。\n使用您的設備不支持的格式將導致黑屏或崩潰。</string>
 <string name="advanced_formats_title">啟用進階格式</string>
 <string name="preferred_audio_language_title">預設音訊語言</string>

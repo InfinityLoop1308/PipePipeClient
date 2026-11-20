@@ -75,7 +75,6 @@
     <string name="short_thousand">k</string>
     <string name="short_million">M</string>
     <string name="short_billion">B</string>
-    <string name="recaptcha_request_toast">Požiadavka reCAPTCHA</string>
     <string name="open_in_popup_mode">Spustiť v okne</string>
     <string name="msg_popup_permission">Tieto práva sú potrebné pre
 \nprehrávanie v mini okne</string>
@@ -569,7 +568,6 @@
     <string name="radio">Rádio</string>
     <string name="featured">Najlepšie</string>
     <string name="show_channel_details">Zobraziť podrobnosti kanála</string>
-    <string name="recaptcha_solve">Vyrieš</string>
     <string name="night_theme_title">Nočná Téma</string>
     <string name="disable_media_tunneling_summary">Ak vám video pri prehrávaní seká alebo sa zobrazuje čierna obrazovka zakážte tunelovanie médií</string>
     <string name="disable_media_tunneling_title">Zakázať tunelovanie médií</string>

@@ -185,7 +185,6 @@
     <string name="settings_file_charset_title">Fayl nomidagi ruxsat berilgan belgilar</string>
     <string name="settings_category_downloads_title">Yuklab olish</string>
     <string name="recaptcha_done_button">Bajarildi</string>
-    <string name="recaptcha_request_toast">reCAPTCHA muammosi so\'raldi</string>
     <string name="subtitle_activity_recaptcha">Hal etilganda \"Bajarildi\" tugmasini bosing</string>
     <string name="title_activity_recaptcha">reCAPTCHA muammosi</string>
     <string name="one_item_deleted">1 ta element o\'chirildi.</string>

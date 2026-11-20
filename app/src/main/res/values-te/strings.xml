@@ -313,7 +313,6 @@
     <string name="no_dir_yet">ఇంకా డౌన్‌లోడ్ ఫోల్డర్ సెట్ చేయబడలేదు, ఇప్పుడే డిఫాల్ట్ డౌన్‌లోడ్ ఫోల్డర్‌ను ఎంచుకోండి</string>
     <string name="one_item_deleted">1 అంశం తొలగించబడింది.</string>
     <string name="subtitle_activity_recaptcha">పరిష్కరించబడినప్పుడు \"పూర్తయింది\" నొక్కండి</string>
-    <string name="recaptcha_solve">పరిష్కరించండి</string>
     <string name="recaptcha_done_button">పూర్తి</string>
     <string name="charset_most_special_characters">చాలా ప్రత్యేక పాత్రలు</string>
     <string name="app_description">ఆండ్రాయిడ్‌లో లిబ్రే తేలికపాటి స్ట్రీమింగ్.</string>
@@ -328,7 +327,6 @@
     <string name="import_complete_toast">దిగుమతి చేయబడింది</string>
     <string name="no_valid_zip_file">చెల్లుబాటు అయ్యే జిప్ ఫైల్ లేదు</string>
     <string name="title_activity_recaptcha">reCAPTCHA సవాలు</string>
-    <string name="recaptcha_request_toast">reCAPTCHA సవాలు అభ్యర్థించబడింది</string>
     <string name="select_a_playlist">ప్లేజాబితాను ఎంచుకోండి</string>
     <string name="export_data_title">డాటాబేసుని ఎగుమతిచేయుము</string>
     <string name="localization_changes_requires_app_restart">యాప్ పునఃప్రారంభించబడిన తర్వాత భాష మారుతుంది</string>

@@ -7,7 +7,6 @@
     <string name="list">তালিকা</string>
     <string name="title_activity_history">ইতিহাস</string>
     <string name="website_title">ওয়েব সাইট</string>
-    <string name="recaptcha_request_toast">reCAPTCHA চ্যালেঞ্জ অনুরোধ করা হয়েছে</string>
     <string name="title_activity_recaptcha">reCAPTCHA চ্যালেঞ্জ</string>
     <string name="msg_popup_permission">এই অনুমতিটি
 \nপপআপ মোডে খুলতে প্রয়োজন</string>

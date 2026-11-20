@@ -25,6 +25,9 @@ import com.jakewharton.rxbinding4.widget.RxTextView;
 
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.extractor.ServiceList;
+import org.schabi.newpipe.extractor.plugin.PluginManifest;
+import org.schabi.newpipe.plugin.PluginManager;
 import org.schabi.newpipe.databinding.SettingsLayoutBinding;
 import org.schabi.newpipe.settings.preferencesearch.PreferenceParser;
 import org.schabi.newpipe.settings.preferencesearch.PreferenceSearchConfiguration;
@@ -66,6 +69,8 @@ public class SettingsActivity extends AppCompatActivity implements
         PreferenceSearchResultListener {
     public static final String EXTRA_CONTENT_FILTER = "content_filter";
     public static final String EXTRA_PLUGINS = "plugins";
+    /** Opens the account settings of the service with this id. */
+    public static final String EXTRA_ACCOUNT_SERVICE_ID = "account_service_id";
     private static final String TAG = "SettingsActivity";
     private static final boolean DEBUG = MainActivity.DEBUG;
 
@@ -112,12 +117,19 @@ public class SettingsActivity extends AppCompatActivity implements
                 }
             }
         } else {
+            final Fragment initialFragment;
+            if (getIntent().hasExtra(EXTRA_ACCOUNT_SERVICE_ID)) {
+                initialFragment = createAccountSettingsFragment(
+                        getIntent().getIntExtra(EXTRA_ACCOUNT_SERVICE_ID, -1));
+            } else if (getIntent().getBooleanExtra(EXTRA_PLUGINS, false)) {
+                initialFragment = new PluginSettingsFragment();
+            } else if (getIntent().getBooleanExtra(EXTRA_CONTENT_FILTER, false)) {
+                initialFragment = new FilterSettingsFragment();
+            } else {
+                initialFragment = new MainSettingsFragment();
+            }
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.settings_fragment_holder,
-                            getIntent().getBooleanExtra(EXTRA_PLUGINS, false)
-                                    ? new PluginSettingsFragment()
-                                    : getIntent().getBooleanExtra(EXTRA_CONTENT_FILTER, false)
-                                    ? new FilterSettingsFragment() : new MainSettingsFragment())
+                    .replace(R.id.settings_fragment_holder, initialFragment)
                     .commit();
         }
 
@@ -181,6 +193,25 @@ public class SettingsActivity extends AppCompatActivity implements
         fragment.setArguments(preference.getExtras());
         showSettingsFragment(fragment);
         return true;
+    }
+
+    /**
+     * @return the fragment where the user logs in to the service, or the account overview when
+     * the service has no login screen
+     */
+    private static Fragment createAccountSettingsFragment(final int serviceId) {
+        if (serviceId == ServiceList.YouTube.getServiceId()) {
+            return new YouTubeAccountSettingsFragment();
+        } else if (serviceId == ServiceList.BiliBili.getServiceId()) {
+            return new BiliBiliAccountSettingsFragment();
+        } else if (serviceId == ServiceList.NicoNico.getServiceId()) {
+            return new NicoNicoAccountSettingsFragment();
+        }
+        final PluginManifest manifest = PluginManager.INSTANCE.getLoadedManifest(serviceId);
+        if (manifest != null && manifest.getLogin() != null) {
+            return PluginServiceSettingsFragment.Companion.newInstance(serviceId);
+        }
+        return new AccountSettingsFragment();
     }
 
     private Fragment instantiateFragment(@NonNull final String className) {

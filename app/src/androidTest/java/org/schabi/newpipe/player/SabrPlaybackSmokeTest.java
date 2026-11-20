@@ -41,7 +41,7 @@ import org.schabi.newpipe.extractor.downloader.Downloader;
 import org.schabi.newpipe.extractor.downloader.Request;
 import org.schabi.newpipe.extractor.downloader.Response;
 import org.schabi.newpipe.extractor.downloader.StreamingResponse;
-import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
+import org.schabi.newpipe.extractor.exceptions.AntiBotException;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.ServiceList;
 import org.schabi.newpipe.extractor.localization.ContentCountry;
@@ -2564,7 +2564,7 @@ public final class SabrPlaybackSmokeTest {
                                               final Map<String, List<String>> headers,
                                               final Localization localization,
                                               final long timeoutMs)
-                throws IOException, ReCaptchaException {
+                throws IOException, AntiBotException {
             streamingTimeoutsMs.add(timeoutMs);
             requestedUrls.add(url);
             final byte[] body = streamingGetBodies.get(url);
@@ -2598,7 +2598,7 @@ public final class SabrPlaybackSmokeTest {
         @Override
         public CancellableCall executeAsync(final Request request,
                                             final AsyncCallback callback)
-                throws IOException, ReCaptchaException {
+                throws IOException, AntiBotException {
             throw new IOException("Unexpected async request in SABR smoke: "
                     + request.httpMethod() + " " + request.url());
         }

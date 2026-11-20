@@ -1,7 +1,6 @@
 package org.schabi.newpipe.error
 
 import android.content.Context
-import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -22,7 +21,7 @@ import org.schabi.newpipe.extractor.exceptions.ContentNotAvailableException
 import org.schabi.newpipe.extractor.exceptions.ContentNotSupportedException
 import org.schabi.newpipe.extractor.exceptions.GeographicRestrictionException
 import org.schabi.newpipe.extractor.exceptions.LiveNotStartException
-import org.schabi.newpipe.extractor.exceptions.AntiBotException
+import org.schabi.newpipe.extractor.exceptions.AntiBotLoginRequiredException
 import org.schabi.newpipe.extractor.exceptions.NeedLoginException
 import org.schabi.newpipe.extractor.exceptions.PaidContentException
 import org.schabi.newpipe.extractor.exceptions.PrivateContentException
@@ -65,6 +64,8 @@ class ErrorPanelHelper(
         errorPanelRoot.findViewById(R.id.error_action_button)
     private val errorRetryButton: Button =
         errorPanelRoot.findViewById(R.id.error_retry_button)
+    private val errorReportButton: Button =
+        errorPanelRoot.findViewById(R.id.error_report_button)
 
     private var errorDisposable: Disposable? = null
 
@@ -82,6 +83,7 @@ class ErrorPanelHelper(
         errorServiceExplanationTextView.isVisible = false
         errorActionButton.isVisible = false
         errorRetryButton.isVisible = false
+        errorReportButton.isVisible = false
     }
 
     fun showError(errorInfo: ErrorInfo) {
@@ -95,24 +97,35 @@ class ErrorPanelHelper(
 
         ensureDefaultVisibility()
 
-        if (errorInfo.throwable is ReCaptchaException) {
-            errorTextView.setText(R.string.recaptcha_request_toast)
+        val antiBot = AntiBotHints.find(errorInfo.throwable)
+        if (antiBot is ReCaptchaException) {
+            errorTextView.text = AntiBotHints.message(context, antiBot)
 
             showAndSetErrorButtonAction(
-                R.string.recaptcha_solve
+                AntiBotHints.actionRes(antiBot)!!
             ) {
-                // Starting ReCaptcha Challenge Activity
-                val intent = Intent(context, ReCaptchaActivity::class.java)
-                intent.putExtra(
-                    ReCaptchaActivity.RECAPTCHA_URL_EXTRA,
-                    (errorInfo.throwable as ReCaptchaException).url
+                fragment.startActivityForResult(
+                    AntiBotHints.actionIntent(context, antiBot)!!,
+                    ReCaptchaActivity.RECAPTCHA_REQUEST
                 )
-                fragment.startActivityForResult(intent, ReCaptchaActivity.RECAPTCHA_REQUEST)
                 errorActionButton.setOnClickListener(null)
             }
 
             errorRetryButton.isVisible = true
+            showAndSetErrorReportButton(errorInfo)
+        } else if (antiBot is AntiBotLoginRequiredException) {
+            errorTextView.text = AntiBotHints.message(context, antiBot)
+
+            showAndSetErrorButtonAction(
+                AntiBotHints.actionRes(antiBot)!!
+            ) {
+                context.startActivity(AntiBotHints.actionIntent(context, antiBot))
+            }
+
+            errorRetryButton.isVisible = true
+            showAndSetErrorReportButton(errorInfo)
         } else if (errorInfo.throwable is AccountTerminatedException) {
+
             errorTextView.setText(R.string.account_terminated)
 
             if (!isNullOrEmpty((errorInfo.throwable as AccountTerminatedException).message)) {
@@ -133,7 +146,7 @@ class ErrorPanelHelper(
                 ErrorUtil.openActivity(context, errorInfo)
             }
 
-            errorTextView.setText(getExceptionDescription(errorInfo.throwable))
+            errorTextView.text = getExceptionMessage(context, errorInfo.throwable)
 
             val throwable = errorInfo.throwable
             if (throwable !is ContentNotAvailableException &&
@@ -158,6 +171,15 @@ class ErrorPanelHelper(
         errorActionButton.isVisible = true
         errorActionButton.setText(resid)
         errorActionButton.setOnClickListener(listener)
+    }
+
+    /**
+     * Shows the report button, used alongside an anti-bot resolve action so the user can still
+     * report the block.
+     */
+    private fun showAndSetErrorReportButton(errorInfo: ErrorInfo) {
+        errorReportButton.isVisible = true
+        errorReportButton.setOnClickListener { ErrorUtil.openActivity(context, errorInfo) }
     }
 
     fun showTextError(errorString: String) {
@@ -187,11 +209,13 @@ class ErrorPanelHelper(
     private fun firstVisibleErrorButton(): Button? = when {
         errorActionButton.isVisible -> errorActionButton
         errorRetryButton.isVisible -> errorRetryButton
+        errorReportButton.isVisible -> errorReportButton
         else -> null
     }
 
     fun hide() {
         errorActionButton.setOnClickListener(null)
+        errorReportButton.setOnClickListener(null)
         itemsList?.isFocusable = listWasFocusable
         errorPanelRoot.animate(false, 150)
     }
@@ -203,6 +227,7 @@ class ErrorPanelHelper(
     fun dispose() {
         errorActionButton.setOnClickListener(null)
         errorRetryButton.setOnClickListener(null)
+        errorReportButton.setOnClickListener(null)
         itemsList?.isFocusable = listWasFocusable
         errorDisposable?.dispose()
     }
@@ -211,10 +236,16 @@ class ErrorPanelHelper(
         val TAG: String = ErrorPanelHelper::class.simpleName!!
         val DEBUG: Boolean = MainActivity.DEBUG
 
+        /** @return the description of [throwable], with the service named for anti-bot blocks */
+        @JvmStatic
+        fun getExceptionMessage(context: Context, throwable: Throwable?): String {
+            AntiBotHints.find(throwable)?.let { return AntiBotHints.message(context, it) }
+            return context.getString(getExceptionDescription(throwable))
+        }
+
         @StringRes
-        fun getExceptionDescription(throwable: Throwable?): Int {
+        private fun getExceptionDescription(throwable: Throwable?): Int {
             return when (throwable) {
-                is AntiBotException -> R.string.anti_bot_youtube_hint
                 is NeedLoginException -> R.string.need_login_hint
                 is LiveNotStartException -> R.string.live_not_started
                 is AgeRestrictedContentException -> R.string.restricted_video_no_stream_new

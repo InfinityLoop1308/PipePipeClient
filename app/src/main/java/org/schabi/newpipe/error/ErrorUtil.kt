@@ -122,7 +122,7 @@ class ErrorUtil {
                         R.drawable.ic_bug_report
                     )
                     .setContentTitle(context.getString(R.string.error_report_notification_title_new))
-                    .setContentText(context.getString(errorInfo.messageStringId))
+                    .setContentText(errorInfo.getMessage(context))
                     .setAutoCancel(true)
                     .setContentIntent(
                         PendingIntent.getActivity(
@@ -152,13 +152,39 @@ class ErrorUtil {
             if (rootView == null || findSuitableParent(rootView) == null) {
                 // fallback to showing a notification if no root view is available
                 createNotification(context, errorInfo)
-            } else {
+            } else if (!showAntiBotSnackbar(context, rootView, errorInfo)) {
                 Snackbar.make(rootView, R.string.error_snackbar_message, Snackbar.LENGTH_LONG)
                     .setActionTextColor(Color.YELLOW)
                     .setAction(context.getString(R.string.error_snackbar_action).uppercase()) {
                         openActivity(context, errorInfo)
                     }.show()
             }
+        }
+
+        /**
+         * Shows the anti-bot hint with the action that resolves it, as reporting such a block
+         * as a bug does not help the user.
+         *
+         * @return whether [errorInfo] is an anti-bot block and the snackbar was shown
+         */
+        private fun showAntiBotSnackbar(
+            context: Context,
+            rootView: View,
+            errorInfo: ErrorInfo
+        ): Boolean {
+            val antiBot = AntiBotHints.find(errorInfo.throwable) ?: return false
+            val snackbar = Snackbar.make(
+                rootView, AntiBotHints.message(context, antiBot), Snackbar.LENGTH_LONG
+            ).setActionTextColor(Color.YELLOW)
+            val actionRes = AntiBotHints.actionRes(antiBot)
+            val actionIntent = AntiBotHints.actionIntent(context, antiBot)
+            if (actionRes != null && actionIntent != null) {
+                snackbar.setAction(context.getString(actionRes).uppercase()) {
+                    context.startActivity(actionIntent)
+                }
+            }
+            snackbar.show()
+            return true
         }
 
         private fun findSuitableParent(passedView: View): ViewGroup? {

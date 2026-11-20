@@ -325,8 +325,6 @@ của YouTube
 <!-- reCAPTCHA -->
 <string name="title_activity_recaptcha">thử thách reCAPTCHA</string>
 <string name="subtitle_activity_recaptcha">Nhấn \"Xong\" khi giải được</string>
-<string name="recaptcha_request_toast">yêu cầu thử thách reCAPTCHA</string>
-<string name="recaptcha_solve">Đã giải</string>
 <string name="recaptcha_done_button">Xong</string>
 <!-- Downloads -->
 <string name="settings_category_downloads_title">Tải xuống</string>
@@ -863,7 +861,6 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="settings_category_bullet_comments_summary">Cài đặt Danmaku</string>
 <string name="settings_category_backup_title">Sao lưu</string>
 <string name="settings_category_advanced_title">Nâng cao</string>
-<string name="anti_bot_youtube_hint">IP của bạn đã bị YouTube chặn. Hãy thử sử dụng VPN hoặc đăng nhập qua Cài đặt để tiếp tục.</string>
 <string name="advanced_formats_summary">Nếu thiết bị của bạn có hỗ trợ, việc bật các định dạng nâng cao có thể giảm tiêu thụ dữ liệu và cung cấp độ phân giải cao hơn. \nWEBM hoặc AV1 phải được bật để hiển thị nội dung 2k/4k trên YouTube. \nSử dụng định dạng mà thiết bị của bạn không hỗ trợ sẽ dẫn đến màn hình đen hoặc sự cố.</string>
 <string name="advanced_formats_title">Kích hoạt định dạng nâng cao</string>
 <string name="preferred_audio_language_title">Ngôn ngữ âm thanh ưu tiên</string>

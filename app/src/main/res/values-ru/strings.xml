@@ -86,7 +86,6 @@
     <string name="show_search_suggestions_title">Предложения поиска</string>
     <string name="best_resolution">Лучшее разрешение</string>
     <string name="title_activity_recaptcha">Запрос reCAPTCHAe</string>
-    <string name="recaptcha_request_toast">Запрошен ввод reCAPTCHA</string>
     <string name="title_activity_about">О NewPipe</string>
     <string name="app_license_title">Лицензия NewPipe</string>
     <string name="tab_about">О приложении</string>
@@ -579,7 +578,6 @@
 \nСогласно новой политике YouTube в отношении видео с возрастными ограничениями NewPipe не может иметь доступ ни к одному потоку этого видео и, таким образом, не может воспроизвести его.</string>
     <string name="night_theme_title">Ночная тема</string>
     <string name="featured">Рекомендуемое</string>
-    <string name="recaptcha_solve">Решить</string>
     <string name="show_channel_details">Подробно о канале</string>
     <string name="disable_media_tunneling_summary">Отключите туннелирование медиа, если видите чёрный экран или видео воспроизводится рывками</string>
     <string name="disable_media_tunneling_title">Отключить туннелирование медиа</string>
@@ -971,7 +969,6 @@ PipePipe предлагает две стратегии загрузки лен�
     <string name="settings_category_gestures_summary">Настройки жестов</string>
     <string name="settings_category_backup_title">Резервная копия</string>
     <string name="settings_category_advanced_title">Дополнительно</string>
-    <string name="anti_bot_youtube_hint">Ваш IP-адрес заблокирован YouTube. Попробуйте использовать VPN или войдите в аккаунт через Настройки.</string>
     <string name="advanced_formats_summary">Если устройство поддерживает эти форматы, их включение снизит расход трафика и откроет доступ к высокому разрешению.
 Для просмотра 2K/4K на YouTube необходимо включить WEBM или AV1.
 Внимание: выбор формата, который не поддерживается вашим железом, приведет к черному экрану или вылету приложения.</string>

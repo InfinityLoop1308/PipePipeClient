@@ -100,7 +100,6 @@
     <string name="msg_popup_permission">Ova dozvola je potrebna za
 \notvaranje skočnog prozora</string>
     <string name="title_activity_recaptcha">reCAPTCHA zadatak</string>
-    <string name="recaptcha_request_toast">Traži se reCAPTCHA zadatak</string>
     <string name="settings_category_downloads_title">Preuzimanja</string>
     <string name="settings_file_charset_title">Dozvoljeni znakovi u nazivima datoteka</string>
     <string name="charset_letters_and_digits">Slova i brojevi</string>
@@ -568,7 +567,6 @@
     <string name="private_content">Ovaj sadržaj je privatan, stoga ga NewPipe ne može emitirati ili preuzeti.</string>
     <string name="georestricted_content">Ovaj sadržaj nije dostupan u tvojoj zemlji.</string>
     <string name="crash_the_app">Prekini program</string>
-    <string name="recaptcha_solve">Riješi</string>
     <string name="night_theme_title">Noćna tema</string>
     <string name="show_channel_details">Prikaži detalje kanala</string>
     <string name="disable_media_tunneling_summary">Isključi tuneliranje medija ako doživiš crni ekran ili isprekidanu reprodukciju videa</string>

@@ -382,7 +382,6 @@
     <string name="missing_file">فایل نێردراوه‌ یان سڕاوەتەوە</string>
     <string name="search">گه‌ڕان</string>
     <string name="restore_defaults">گێڕانەوە بۆ بنەڕەتی</string>
-    <string name="recaptcha_request_toast">reCAPTCHA داواکراوە</string>
     <string name="switch_to_popup">گۆڕین بۆ پەنجەرە</string>
     <string name="preferred_open_action_settings_title">کرداری ’کردنەوە’ی پێشنیارکراو</string>
     <plurals name="minutes">
@@ -588,7 +587,6 @@
     <string name="enqueued">له‌نۆبه‌ت دانرا</string>
     <string name="enqueue_stream">له‌نۆبه‌ت دانان</string>
     <string name="show_channel_details">پیشاندانی ورده‌كارییه‌كانی كه‌ناڵ</string>
-    <string name="recaptcha_solve">چاره‌سه‌ر كردن</string>
     <string name="no_dir_yet">هێشتا فۆڵده‌ری دابه‌زاندن دانه‌نراوه‌، ئێستا فۆڵده‌ری بنه‌ڕه‌تی دابه‌زاندن هه‌ڵبژێره‌</string>
     <string name="private_content">ئه‌م بابه‌ته‌ تایبه‌ته‌، بۆیه‌ ناتوانرێت له‌ نیوپایپه‌وه‌ داببه‌زێنرێت.</string>
     <string name="off">ناکارا</string>

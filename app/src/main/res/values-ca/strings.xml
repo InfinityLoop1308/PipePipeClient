@@ -218,7 +218,6 @@
     <string name="msg_popup_permission">Es necessita aquest permís
 \nper a obrir el mode emergent</string>
     <string name="title_activity_recaptcha">Camp reCAPTCHA</string>
-    <string name="recaptcha_request_toast">S\'ha sol·licitat l\'emplenament d\'un camp reCAPTCHA</string>
     <string name="charset_most_special_characters">Principals caràcters especials</string>
     <string name="contribution_encouragement">Idees, traduccions, canvis en el disseny, neteja del codi, canvis importants de programació… La vostra ajuda sempre és benvinguda. Com més feina feta hi hagi, millor!</string>
     <string name="donation_encouragement">El NewPipe està desenvolupat per voluntaris que fan servir el seu temps lliure per oferir-vos la millor experiència possible. Feu una aportació per assegurar que els nostres desenvolupadors puguin millorar encara més el NewPipe mentre fan un cafè.</string>
@@ -551,7 +550,6 @@
     <string name="georestricted_content">Aquest contingut no és disponible al vostre territori.</string>
     <string name="no_app_to_open_intent">El vostre dispositiu no té cap aplicació capaç d\'obrir aquest tipus de contingut</string>
     <string name="crash_the_app">Força l\'aturada de l\'aplicació</string>
-    <string name="recaptcha_solve">Resol</string>
     <string name="related_items_tab_description">Reproduccions en directe relacionades</string>
     <string name="restricted_video_no_stream">Aquest vídeo té restriccions d\'edat.
 \nDegut a la nova política d\'edat de YouTube, el NewPipe no pot accedir a aquest contingut i per tant no pot reproduir-lo.</string>

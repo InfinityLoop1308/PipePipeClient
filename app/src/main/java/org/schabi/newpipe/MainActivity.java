@@ -66,7 +66,6 @@ import org.schabi.newpipe.extractor.ServiceInstance;
 import org.schabi.newpipe.extractor.ServiceInstances;
 import org.schabi.newpipe.extractor.StreamingService;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
-import org.schabi.newpipe.extractor.exceptions.ReCaptchaException;
 import org.schabi.newpipe.fragments.BackPressable;
 import org.schabi.newpipe.fragments.MainFragment;
 import org.schabi.newpipe.fragments.detail.VideoDetailFragment;

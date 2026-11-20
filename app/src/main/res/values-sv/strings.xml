@@ -126,7 +126,6 @@
     <string name="no_available_dir">Ange en hämtningsmapp senare i inställningarna</string>
     <string name="msg_popup_permission">Den här behörigheten krävs för att\nöppna i popupläge</string>
     <string name="title_activity_recaptcha">reCAPTCHA-utmaning</string>
-    <string name="recaptcha_request_toast">reCAPTCHA-utmaning begärd</string>
     <string name="settings_category_downloads_title">Hämtningar</string>
     <string name="settings_file_charset_title">Tillåtna tecken i filnamn</string>
     <string name="charset_letters_and_digits">Bokstäver och siffror</string>
@@ -519,7 +518,6 @@
     <string name="notification_colorize_summary">Låt Android färglägga varje avisering individuellt utifrån miniatyrbildens huvudsakliga färg (notera att detta inte är tillgängligt på alla enheter)</string>
     <string name="notification_colorize_title">Färglägg avisering</string>
     <string name="notification_actions_at_most_three">Du kan som mest välja tre åtgärder att visa i den kompakta aviseringen!</string>
-    <string name="recaptcha_solve">Lös</string>
     <string name="metadata_support">Support</string>
     <string name="metadata_privacy">Synlighet</string>
     <string name="off">Av</string>
@@ -912,7 +910,6 @@
     <string name="settings_category_bullet_comments_summary">Inställningar för danmaku</string>
     <string name="settings_category_backup_title">Säkerhetskopiering</string>
     <string name="settings_category_advanced_title">Avancerat</string>
-    <string name="anti_bot_youtube_hint">Din IP-adress är blockerad av YouTube. Prova att använda en VPN eller logga in via inställningarna för att fortsätta.</string>
     <string name="advanced_formats_summary">Om enheten stöder avancerade format kan de minska dataförbrukningen och ge högre upplösning.\nWEBM eller AV1 måste aktiveras för att visa 2k/4k-innehåll på YouTube.\nEtt format som enheten inte stöder leder till svart skärm eller en krasch.</string>
     <string name="advanced_formats_title">Aktivera avancerade format</string>
     <string name="preferred_audio_language_title">Föredraget ljudspråk</string>

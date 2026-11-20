@@ -1,6 +1,7 @@
 package org.schabi.newpipe.util.external_communication;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -8,9 +9,11 @@ import androidx.appcompat.app.AlertDialog;
 
 import org.schabi.newpipe.MainActivity;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.error.AntiBotHints;
 import org.schabi.newpipe.error.ErrorPanelHelper;
 import org.schabi.newpipe.extractor.NewPipe;
 import org.schabi.newpipe.extractor.StreamingService;
+import org.schabi.newpipe.extractor.exceptions.AntiBotException;
 import org.schabi.newpipe.extractor.exceptions.ExtractionException;
 import org.schabi.newpipe.extractor.exceptions.ParsingException;
 import org.schabi.newpipe.extractor.linkhandler.LinkHandlerFactory;
@@ -188,12 +191,7 @@ public final class InternalUrlsHandler {
                     if (DEBUG) {
                         Log.e(TAG, "Could not play on popup: " + url, throwable);
                     }
-                    new AlertDialog.Builder(context)
-                            .setTitle(R.string.player_stream_failure)
-                            .setMessage(
-                                    ErrorPanelHelper.Companion.getExceptionDescription(throwable))
-                            .setPositiveButton(R.string.ok, (v, b) -> { })
-                            .show();
+                    showPlayFailureDialog(context, throwable);
                 }));
         return true;
     }
@@ -224,13 +222,25 @@ public final class InternalUrlsHandler {
                     if (DEBUG) {
                         Log.e(TAG, "Could not play on popup: " + url, throwable);
                     }
-                    new AlertDialog.Builder(context)
-                            .setTitle(R.string.player_stream_failure)
-                            .setMessage(
-                                    ErrorPanelHelper.Companion.getExceptionDescription(throwable))
-                            .setPositiveButton(R.string.ok, (v, b) -> { })
-                            .show();
+                    showPlayFailureDialog(context, throwable);
                 }));
         return true;
+    }
+
+    private static void showPlayFailureDialog(final Context context, final Throwable throwable) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                .setTitle(R.string.player_stream_failure)
+                .setMessage(ErrorPanelHelper.getExceptionMessage(context, throwable));
+        final AntiBotException antiBot = AntiBotHints.find(throwable);
+        final Intent actionIntent = antiBot == null
+                ? null : AntiBotHints.actionIntent(context, antiBot);
+        if (actionIntent != null) {
+            builder.setPositiveButton(AntiBotHints.actionRes(antiBot),
+                            (v, b) -> context.startActivity(actionIntent))
+                    .setNegativeButton(R.string.cancel, (v, b) -> { });
+        } else {
+            builder.setPositiveButton(R.string.ok, (v, b) -> { });
+        }
+        builder.show();
     }
 }

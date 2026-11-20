@@ -193,7 +193,6 @@
 \nвъзпроизвеждане в отделен прозорец</string>
     <string name="one_item_deleted">1 елемент е изтрит.</string>
     <string name="title_activity_recaptcha">reCAPTCHA заявка</string>
-    <string name="recaptcha_request_toast">Изисква се въвеждане на reCAPTCHA</string>
     <string name="settings_category_downloads_title">Изтегляне</string>
     <string name="charset_most_special_characters">Повечето специални символи</string>
     <string name="title_activity_history">История</string>
