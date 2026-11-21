@@ -149,6 +149,21 @@ public class DownloadMission extends Mission {
     public SabrDownloadCheckpoint sabrCheckpoint;
     public boolean sabrStarted;
 
+    /**
+     * Temporary file with the chapters added, kept while it overwrites the download
+     */
+    public String chapterOutputPath;
+
+    /**
+     * Indicates if {@link SponsorBlockChapterWriter} is running
+     */
+    public transient volatile boolean writingChapters;
+
+    /**
+     * Indicates if {@link SponsorBlockChapterWriter} has finished its work
+     */
+    transient boolean chaptersHandled;
+
     private transient int finishCount;
     public transient volatile boolean running;
     public boolean enqueued;
@@ -427,6 +442,14 @@ public class DownloadMission extends Mission {
             return;
         }
 
+        if (!chaptersHandled && SponsorBlockChapterWriter.isNeeded(this)) {
+            writingChapters = true;
+            threads = new Thread[]{
+                    runAsync(1, new SponsorBlockChapterWriter(this))
+            };
+            return;
+        }
+
 
         // this mission is fully finished
 
@@ -641,7 +664,8 @@ public class DownloadMission extends Mission {
      * @return true, otherwise, false
      */
     public boolean isFinished() {
-        return current >= urls.length && (psAlgorithm == null || psState == 2);
+        return current >= urls.length && (psAlgorithm == null || psState == 2)
+                && !writingChapters && chapterOutputPath == null;
     }
 
     /**
@@ -665,7 +689,7 @@ public class DownloadMission extends Mission {
      * @return true, otherwise, false
      */
     public boolean isPsRunning() {
-        return psAlgorithm != null && (psState == 1 || psState == 3);
+        return writingChapters || psAlgorithm != null && (psState == 1 || psState == 3);
     }
 
     /**

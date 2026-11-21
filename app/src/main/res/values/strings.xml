@@ -749,6 +749,8 @@
 <string name="sponsor_block_manual_skip_button">Skip</string>
 <string name="sponsor_block_show_manual_skip_title">Show manual buttons</string>
 <string name="sponsor_block_show_manual_skip_summary">Show buttons on-screen to manually skip/unskip segments. Enabling this is recommended when configuring SponsorBlock Categories to be skipped manually.</string>
+<string name="sponsor_block_download_chapters_title">Add chapters to downloads</string>
+<string name="sponsor_block_download_chapters_summary">Mark SponsorBlock segments as chapters in downloaded YouTube videos (MP4 and WebM)</string>
 <string name="content_not_supported_new">This content is not yet supported by PipePipe.\n\nIt will hopefully be supported in a future version.</string>
 <string name="detail_sub_channel_thumbnail_view_description">Channel\'s avatar thumbnail</string>
 <string name="channel_created_by">Created by %s</string>
