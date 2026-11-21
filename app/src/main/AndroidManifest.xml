@@ -3,6 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
           android:installLocation="auto">
 
+    <permission
+        android:name="${applicationId}.permission.READ_DOWNLOAD_PROGRESS"
+        android:description="@string/permission_read_download_progress_description"
+        android:label="@string/permission_read_download_progress_label"
+        android:protectionLevel="dangerous" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -201,6 +207,12 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/nnf_provider_paths" />
         </provider>
+
+        <provider
+            android:name="us.shandian.giga.service.DownloadProgressProvider"
+            android:authorities="${applicationId}.downloadprogress"
+            android:exported="true"
+            android:readPermission="${applicationId}.permission.READ_DOWNLOAD_PROGRESS" />
 
         <activity
                 android:name=".local.playlist.PlayPlaylistShortcutActivity"

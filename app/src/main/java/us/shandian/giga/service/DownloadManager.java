@@ -410,6 +410,12 @@ public class DownloadManager {
         return count;
     }
 
+    ArrayList<DownloadMission> getPendingMissions() {
+        synchronized (this) {
+            return new ArrayList<>(mMissionsPending);
+        }
+    }
+
     public void pauseAllMissions(boolean force) {
         synchronized (this) {
             for (DownloadMission mission : mMissionsPending) {
