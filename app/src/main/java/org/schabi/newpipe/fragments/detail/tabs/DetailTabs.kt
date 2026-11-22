@@ -42,7 +42,10 @@ enum class DetailTab(
     }
 }
 
-/** One page of the pager. [create] is called whenever the page's fragment has to be built. */
+/**
+ * One page of the pager. [create] is retained across view recreation, so it must not
+ * capture a fragment or view from the old host.
+ */
 class TabSpec(
     val tab: DetailTab,
     val itemId: Long,

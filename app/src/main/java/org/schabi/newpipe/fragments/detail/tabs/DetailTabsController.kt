@@ -130,6 +130,7 @@ class DetailTabsController(
         // also covers SponsorBlock fragments restored by the fragment manager
         if (child is SponsorBlockFragment) {
             child.setListener(host.sponsorBlockListener)
+            child.setSponsorBlockMode(SponsorBlockHelper.getSkippingMode(child.requireContext()))
         }
     }
 
@@ -508,12 +509,7 @@ class DetailTabsController(
         if (DetailTab.SPONSOR_BLOCK.prefValue in enabled
             && MediaCapability.SPONSORBLOCK in capabilities
             && (info == null || supportsSponsorBlock(info))) {
-            add(DetailTab.SPONSOR_BLOCK) { streamInfo ->
-                SponsorBlockFragment(streamInfo).also {
-                    it.setListener(host.sponsorBlockListener)
-                    it.setSponsorBlockMode(SponsorBlockHelper.getSkippingMode(context))
-                }
-            }
+            add(DetailTab.SPONSOR_BLOCK, ::SponsorBlockFragment)
         }
         return tabs
     }
