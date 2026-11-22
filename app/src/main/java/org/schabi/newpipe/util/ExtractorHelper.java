@@ -236,10 +236,17 @@ public final class ExtractorHelper {
 
     public static Single<CommentsInfo> getCommentsInfo(final int serviceId, final String url,
                                                        final boolean forceLoad) {
+        return getCommentsInfo(serviceId, url, forceLoad, -1);
+    }
+
+    public static Single<CommentsInfo> getCommentsInfo(final int serviceId, final String url,
+                                                       final boolean forceLoad,
+                                                       final int sortOrder) {
         checkServiceId(serviceId);
-        return checkCache(forceLoad, serviceId, url, InfoItem.InfoType.COMMENT,
+        final String cacheKey = sortOrder < 0 ? url : url + "#comment-sort=" + sortOrder;
+        return checkCache(forceLoad, serviceId, cacheKey, InfoItem.InfoType.COMMENT,
                 Single.fromCallable(() ->
-                        CommentsInfo.getInfo(NewPipe.getService(serviceId), url)));
+                        CommentsInfo.getInfo(NewPipe.getService(serviceId), url, sortOrder)));
     }
 
     public static Single<BulletCommentsInfo> getBulletCommentsInfo(final int serviceId,

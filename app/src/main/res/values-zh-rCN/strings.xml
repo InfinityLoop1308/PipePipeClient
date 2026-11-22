@@ -1298,4 +1298,5 @@
 <string name="anti_bot_captcha_hint">%1$s 需要验证您不是机器人。</string>
 <string name="anti_bot_captcha_action">验证</string>
 <string name="anti_bot_unknown_service">此服务</string>
+<string name="comments_sort_top">热门评论</string>
 </resources>

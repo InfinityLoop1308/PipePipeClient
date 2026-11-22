@@ -31,6 +31,8 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfoItem, Com
     public CommentsInfoItem preComment;
 
     private TextView emptyStateDesc;
+    private CommentsSortChips sortChips;
+    private int sortOrder = -1;
 
     public static CommentsFragment getInstance(final int serviceId, final String url,
                                                final String name) {
@@ -86,6 +88,23 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfoItem, Com
         super.initViews(rootView, savedInstanceState);
 
         emptyStateDesc = rootView.findViewById(R.id.empty_state_desc);
+        sortChips = new CommentsSortChips(rootView.findViewById(R.id.comment_sort), order -> {
+            sortOrder = order;
+            startLoading(false);
+            itemsList.scrollToPosition(0);
+        });
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("commentSortOrder", sortOrder);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        sortOrder = savedInstanceState.getInt("commentSortOrder", -1);
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -110,6 +129,12 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfoItem, Com
     //////////////////////////////////////////////////////////////////////////*/
 
     @Override
+    public void startLoading(final boolean forceLoad) {
+        currentNextPage = null;
+        super.startLoading(forceLoad);
+    }
+
+    @Override
     protected Single<ListExtractor.InfoItemsPage<CommentsInfoItem>> loadMoreItemsLogic() {
         return ExtractorHelper.getMoreCommentItems(serviceId, currentInfo, currentNextPage);
     }
@@ -118,7 +143,7 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfoItem, Com
     protected Single<CommentsInfo> loadResult(final boolean forceLoad) {
         if (replies == null) {
             if (preComment == null) {
-                return ExtractorHelper.getCommentsInfo(serviceId, url, forceLoad);
+                return ExtractorHelper.getCommentsInfo(serviceId, url, forceLoad, sortOrder);
             } else {
                 return Single.fromCallable(() -> {
                     // get a info template
@@ -144,6 +169,11 @@ public class CommentsFragment extends BaseListInfoFragment<CommentsInfoItem, Com
     @Override
     public void handleResult(@NonNull final CommentsInfo result) {
         super.handleResult(result);
+
+        if (replies == null && preComment == null) {
+            sortOrder = result.getSortOrder();
+            sortChips.update(result);
+        }
 
         emptyStateDesc.setText(
                 result.isCommentsDisabled()

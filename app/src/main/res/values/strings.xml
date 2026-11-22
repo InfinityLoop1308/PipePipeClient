@@ -1309,4 +1309,5 @@ Only add repositories you trust.</string>
 <string name="anti_bot_captcha_hint">%1$s wants to verify you are not a bot.</string>
 <string name="anti_bot_captcha_action">Verify</string>
 <string name="anti_bot_unknown_service">This service</string>
+<string name="comments_sort_top">Top comments</string>
 </resources>

@@ -4,8 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/comment_sort"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
     <org.schabi.newpipe.views.NewPipeRecyclerView
         android:id="@+id/items_list"
+        android:layout_below="@id/comment_sort"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="vertical"

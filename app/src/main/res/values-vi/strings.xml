@@ -1305,4 +1305,5 @@ nSự khác biệt giữa hai loại này là cái nào nhanh thường thiếu 
 <string name="anti_bot_captcha_hint">%1$s muốn xác minh bạn không phải là bot.</string>
 <string name="anti_bot_captcha_action">Xác minh</string>
 <string name="anti_bot_unknown_service">Dịch vụ này</string>
+<string name="comments_sort_top">Bình luận hàng đầu</string>
 </resources>

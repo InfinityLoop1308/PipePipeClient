@@ -1254,4 +1254,5 @@
 <string name="anti_bot_captcha_hint">%1$s quiere verificar que no eres un bot.</string>
 <string name="anti_bot_captcha_action">Verificar</string>
 <string name="anti_bot_unknown_service">Este servicio</string>
+<string name="comments_sort_top">Mejores comentarios</string>
 </resources>

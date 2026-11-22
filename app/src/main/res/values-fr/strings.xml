@@ -1267,4 +1267,5 @@ Voulez-vous continuer?</string>
 <string name="anti_bot_captcha_hint">%1$s souhaite vérifier que vous n\'êtes pas un robot.</string>
 <string name="anti_bot_captcha_action">Vérifier</string>
 <string name="anti_bot_unknown_service">Ce service</string>
+<string name="comments_sort_top">Meilleurs commentaires</string>
 </resources>

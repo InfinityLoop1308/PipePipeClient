@@ -1252,4 +1252,5 @@
 <string name="anti_bot_captcha_hint">%1$s 想要驗證您不是機器人。</string>
 <string name="anti_bot_captcha_action">驗證</string>
 <string name="anti_bot_unknown_service">此服務</string>
+<string name="comments_sort_top">熱門留言</string>
 </resources>
