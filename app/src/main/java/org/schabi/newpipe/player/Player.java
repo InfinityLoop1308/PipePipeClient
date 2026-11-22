@@ -270,10 +270,9 @@ public final class Player {
                 new DefaultBandwidthMeter.Builder(context).build());
         loadController = new LoadController(PlayerHelper.getEarlyBufferUs(context));
 
-        renderFactory = prefs.getBoolean(
+        renderFactory = new CustomRenderersFactory(context, prefs.getBoolean(
                 context.getString(
-                        R.string.always_use_exoplayer_set_output_surface_workaround_key), false)
-                ? new CustomRenderersFactory(context) : new DefaultRenderersFactory(context);
+                        R.string.always_use_exoplayer_set_output_surface_workaround_key), false));
 
         if (prefs.getBoolean(context.getString(
                 R.string.disable_exoplayer_media_codec_async_queueing_key), false)) {
