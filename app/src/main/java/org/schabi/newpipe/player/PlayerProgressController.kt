@@ -34,6 +34,7 @@ class PlayerProgressController(private val player: Player) : SeekBar.OnSeekBarCh
     private val progressUpdateDisposable = SerialDisposable()
 
     private val seekbarPreviewThumbnailHolder = SeekbarPreviewThumbnailHolder()
+    private var pendingPreviewFrames: List<Frameset>? = null
 
     /** Whether playback was running before the user started dragging the seekbar. */
     var wasPlaying = false
@@ -41,7 +42,9 @@ class PlayerProgressController(private val player: Player) : SeekBar.OnSeekBarCh
     private var wasAtLiveEdge = false
 
     fun resetPreviewThumbnails(frames: List<Frameset>) {
-        seekbarPreviewThumbnailHolder.resetFrom(player.context, frames)
+        seekbarPreviewThumbnailHolder.clear()
+        player.binding.currentSeekbarPreviewThumbnail.setImageDrawable(null)
+        pendingPreviewFrames = frames.takeIf { it.isNotEmpty() }
     }
 
     fun startProgressLoop() {
@@ -253,6 +256,12 @@ class PlayerProgressController(private val player: Player) : SeekBar.OnSeekBarCh
         if (Player.DEBUG) {
             Log.d(Player.TAG, "onStartTrackingTouch() called with: seekBar = [$seekBar]")
         }
+        // Load previews once per video, when the user first starts seeking.
+        pendingPreviewFrames?.let { frames ->
+            pendingPreviewFrames = null
+            seekbarPreviewThumbnailHolder.resetFrom(player.context, frames)
+        }
+
         if (!player.currentState.isPausedSeek) {
             player.changeState(PlayerPlaybackState.PAUSED_SEEK)
         }

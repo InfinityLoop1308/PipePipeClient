@@ -40,13 +40,20 @@ public class SeekbarPreviewThumbnailHolder {
 
     // This ensures that if the reset is still undergoing
     // and another reset starts, only the last reset is processed
-    private UUID currentUpdateRequestIdentifier = UUID.randomUUID();
+    private volatile UUID currentUpdateRequestIdentifier = UUID.randomUUID();
+
+    public void clear() {
+        synchronized (seekbarPreviewData) {
+            currentUpdateRequestIdentifier = UUID.randomUUID();
+            seekbarPreviewData.clear();
+        }
+    }
 
     public void resetFrom(@NonNull final Context context, final List<Frameset> framesets) {
         final int seekbarPreviewType = getSeekbarPreviewThumbnailType(context);
 
-        final UUID updateRequestIdentifier = UUID.randomUUID();
-        this.currentUpdateRequestIdentifier = updateRequestIdentifier;
+        clear();
+        final UUID updateRequestIdentifier = currentUpdateRequestIdentifier;
 
         final ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(() -> {
@@ -63,11 +70,6 @@ public class SeekbarPreviewThumbnailHolder {
 
     private void resetFromAsync(final int seekbarPreviewType, final List<Frameset> framesets,
                                 final UUID updateRequestIdentifier) {
-        Log.d(TAG, "Clearing seekbarPreviewData");
-        synchronized (seekbarPreviewData) {
-            seekbarPreviewData.clear();
-        }
-
         if (seekbarPreviewType == SeekbarPreviewThumbnailType.NONE) {
             Log.d(TAG, "Not processing seekbarPreviewData due to settings");
             return;
@@ -121,6 +123,9 @@ public class SeekbarPreviewThumbnailHolder {
 
         // Process each url in the frameset
         for (int pageIndex = 0; pageIndex < urls.size(); pageIndex += pageStep) {
+            if (!isRequestIdentifierCurrent(updateRequestIdentifier)) {
+                break;
+            }
             final String url = urls.get(pageIndex);
             // get the bitmap
             final Bitmap srcBitMap = getBitMapFrom(url);
@@ -151,13 +156,13 @@ public class SeekbarPreviewThumbnailHolder {
 
             // Check if we are still the latest request
             // If not abort method execution
-            if (isRequestIdentifierCurrent(updateRequestIdentifier)) {
-                synchronized (seekbarPreviewData) {
+            synchronized (seekbarPreviewData) {
+                if (isRequestIdentifierCurrent(updateRequestIdentifier)) {
                     seekbarPreviewData.putAll(generatedDataForUrl);
+                } else {
+                    Log.d(TAG, "Aborted of generation of seekbarPreviewData");
+                    break;
                 }
-            } else {
-                Log.d(TAG, "Aborted of generation of seekbarPreviewData");
-                break;
             }
         }
 
