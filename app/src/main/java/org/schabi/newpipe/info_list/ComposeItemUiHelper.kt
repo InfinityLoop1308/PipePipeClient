@@ -176,6 +176,8 @@ private fun rememberPicassoBitmap(
         }
         request().into(target)
         onDispose {
+            // Picasso holds targets weakly. Keep this one alive until the request is disposed.
+            PicassoHelper.cancelRequest(target)
         }
     }
 
