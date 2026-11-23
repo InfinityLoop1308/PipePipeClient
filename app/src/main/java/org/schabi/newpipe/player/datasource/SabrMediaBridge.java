@@ -232,7 +232,7 @@ final class SabrMediaBridge {
         if (current.videoActive || key.getFormat().isVideo()) {
             tracks.add(track(current.video));
         }
-        requestOnce(YoutubeSabrRequest.playback(playerTimeMs, 1.0f, tracks), audio);
+        requestOnce(YoutubeSabrRequest.playback(playerTimeMs, 1.0f, tracks, 1L), audio);
     }
 
     @NonNull
