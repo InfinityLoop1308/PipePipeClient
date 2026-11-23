@@ -67,7 +67,7 @@ class CastReceiver private constructor(private val context: Context) :
             serviceType = CastProtocol.SERVICE_TYPE
             port = serverPort
             setAttribute(CastProtocol.TXT_ID, id())
-            setAttribute(CastProtocol.TXT_NAME, deviceName())
+            setAttribute(CastProtocol.TXT_NAME, deviceName(context))
         }
         val listener = object : NsdManager.RegistrationListener {
             override fun onServiceRegistered(i: NsdServiceInfo) {}
@@ -116,7 +116,7 @@ class CastReceiver private constructor(private val context: Context) :
             conn.send(
                 CastProtocol.msg(CastProtocol.T_AUTH) {
                     put("ok", ok)
-                    put("name", deviceName())
+                    put("name", deviceName(context))
                     reason?.let { put("reason", it) }
                     newToken?.let { put("token", it) }
                 }
@@ -284,7 +284,25 @@ class CastReceiver private constructor(private val context: Context) :
             Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
                 ?: Build.FINGERPRINT
 
-        fun deviceName(): String = Build.MODEL ?: "Android"
+        /**
+         * Resolves the user-visible name to advertise. Uses the name the user set in Android
+         * Settings (Settings.Global.DEVICE_NAME, readable without permission, matches what
+         * Google Cast/Bluetooth show), and falls back to Build.MODEL, then "Android".
+         */
+        fun deviceName(context: Context): String =
+            resolveDeviceName(
+                Settings.Global.getString(context.contentResolver, Settings.Global.DEVICE_NAME),
+                Build.MODEL
+            )
+
+        /**
+         * Pure fallback logic extracted for unit testing: user name wins if non-blank,
+         * otherwise the model, otherwise "Android".
+         */
+        internal fun resolveDeviceName(userDeviceName: String?, model: String?): String =
+            userDeviceName?.takeIf { it.isNotBlank() }
+                ?: model
+                ?: "Android"
 
         @Synchronized
         fun setEnabled(context: Context, enabled: Boolean) {
