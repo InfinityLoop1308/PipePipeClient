@@ -1075,6 +1075,10 @@
 <string name="export_data_to_newpipe_summary">Export backup in a NewPipe-compatible format</string>
 <string name="settings_category_other_platforms_title">Other platforms</string>
 <string name="youtube_player_client_title">YouTube extraction endpoint</string>
+<string name="youtube_decoder_server_title">YouTube decoder server</string>
+<string name="youtube_decoder_server_default">Default server</string>
+<string name="youtube_decoder_server_description">Set a custom server base URL, for example http://127.0.0.1:4009. Leave blank to use the default server. Changing this setting restarts the app.</string>
+<string name="youtube_decoder_server_invalid">Enter an HTTPS base URL or an HTTP URL for localhost or 127.0.0.1. The URL must have no credentials, query, or fragment.</string>
 <string name="webview_unavailable_youtube_hint">WebView error. Please try again.\n\nIf the problem persists, please report it on our GitHub.</string>
 <string name="sabr_backoff_notification_channel_name">YouTube playback waiting</string>
 <string name="sabr_backoff_notification_channel_description">Notifications when YouTube requires a playback request to wait</string>

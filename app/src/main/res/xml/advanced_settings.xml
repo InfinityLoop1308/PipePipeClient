@@ -75,6 +75,14 @@
                 app:singleLineTitle="false"
                 app:iconSpaceReserved="false" />
 
+        <EditTextPreference
+                android:defaultValue=""
+                android:dialogMessage="@string/youtube_decoder_server_description"
+                android:key="@string/youtube_decoder_server_key"
+                android:title="@string/youtube_decoder_server_title"
+                app:singleLineTitle="false"
+                app:iconSpaceReserved="false" />
+
         <PreferenceScreen
                 android:fragment="org.schabi.newpipe.settings.ExoPlayerSettingsFragment"
                 android:key="@string/exoplayer_settings_key"

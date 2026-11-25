@@ -129,7 +129,13 @@ public class App extends MultiDexApplication {
         // Initialize Android Auto component state based on preference
         DeviceUtils.updateAndroidAutoComponentState(this);
 
-        NewPipe.init(getDownloader(),
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final Downloader downloader = getDownloader();
+        if (downloader instanceof DownloaderImpl downloaderImpl) {
+            downloaderImpl.setYoutubeDecoderBaseUrl(prefs.getString(
+                    getString(R.string.youtube_decoder_server_key), ""));
+        }
+        NewPipe.init(downloader,
             Localization.getPreferredLocalization(this),
             Localization.getPreferredContentCountry(this));
         final AndroidWebViewAvailabilityChecker webViewAvailabilityChecker =
@@ -152,7 +158,6 @@ public class App extends MultiDexApplication {
         NewPipe.setYoutubePoTokenResolver(LocalDomPoTokenProvider.INSTANCE::getPlayerPoToken);
 
         // Initialize image loader
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         reconcileYoutubePlayerClient(this);
         PicassoHelper.init(this);
         // Lets the system reclaim DeArrow's decoded images under pressure; without it they are

@@ -7,4 +7,8 @@
             <certificates src="@raw/isrg_root_x1" />
         </trust-anchors>
     </base-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain>localhost</domain>
+        <domain>127.0.0.1</domain>
+    </domain-config>
 </network-security-config>

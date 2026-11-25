@@ -4,16 +4,19 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreferenceCompat;
 
 import org.schabi.newpipe.App;
 import org.schabi.newpipe.R;
+import org.schabi.newpipe.YoutubeDecoderEndpoint;
 import org.schabi.newpipe.util.DeviceUtils;
 import org.schabi.newpipe.util.NavigationHelper;
 import org.schabi.newpipe.util.PicassoHelper;
@@ -72,6 +75,7 @@ public class AdvancedSettingsFragment extends BasePreferenceFragment implements 
                     }
                     return true;
                 });
+        setupYoutubeDecoderServerPreference();
 
         if (DeviceUtils.isTv(getContext())) {
             findPreference(getString(R.string.use_old_search_filter_key)).setVisible(false);
@@ -79,6 +83,37 @@ public class AdvancedSettingsFragment extends BasePreferenceFragment implements 
 
         updateAutoTranslatedSubtitlesPreferences();
         updateYoutubePlayerClientPreference();
+    }
+
+    private void setupYoutubeDecoderServerPreference() {
+        final EditTextPreference preference = (EditTextPreference) requirePreference(
+                R.string.youtube_decoder_server_key);
+        preference.setSummaryProvider(pref -> {
+            final String value = ((EditTextPreference) pref).getText();
+            return TextUtils.isEmpty(value) ? getString(R.string.youtube_decoder_server_default)
+                    : value;
+        });
+        preference.setOnBindEditTextListener(editText -> {
+            editText.setSingleLine(true);
+            editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+        });
+        preference.setOnPreferenceChangeListener((pref, newValue) -> {
+            final String value = ((String) newValue).trim();
+            if (!YoutubeDecoderEndpoint.isValid(value)) {
+                Toast.makeText(requireContext(), R.string.youtube_decoder_server_invalid,
+                        Toast.LENGTH_LONG).show();
+                return false;
+            }
+            if (value.equals(preference.getText())) {
+                return false;
+            }
+            if (defaultPreferences.edit().putString(pref.getKey(), value).commit()) {
+                NavigationHelper.restartApp(requireActivity());
+            } else {
+                Toast.makeText(requireContext(), R.string.msg_error, Toast.LENGTH_SHORT).show();
+            }
+            return false;
+        });
     }
     
     private void initializeAndroidAutoPreference() {

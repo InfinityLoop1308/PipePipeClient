@@ -1791,6 +1791,7 @@
     </string-array>
     <string name="export_data_to_newpipe_key">export_data_to_newpipe</string>
     <string name="youtube_player_client_key">youtube_player_client</string>
+    <string name="youtube_decoder_server_key">youtube_decoder_server</string>
     <string-array name="youtube_player_client_entries">
         <item>VisionOS</item>
         <item>MWEB (SABR)</item>

@@ -120,6 +120,7 @@ public final class DownloaderImpl extends Downloader {
     private final Map<String, String> mCookies;
     private final OkHttpClient client;
     private Integer customTimeout;
+    private String youtubeDecoderBaseUrl = "";
     @Nullable
     private volatile YoutubePlayerResponseCache youtubePlayerResponseCache;
 
@@ -161,6 +162,10 @@ public final class DownloaderImpl extends Downloader {
 
     public OkHttpClient getClient() {
         return client;
+    }
+
+    void setYoutubeDecoderBaseUrl(@NonNull final String value) {
+        youtubeDecoderBaseUrl = value;
     }
 
     /**
@@ -415,7 +420,11 @@ public final class DownloaderImpl extends Downloader {
     public Response execute(@NonNull final Request request)
             throws IOException, AntiBotException {
         final String httpMethod = request.httpMethod();
-        final String url = request.url();
+        final String originalUrl = request.url();
+        final String customDecoderUrl = YoutubeDecoderEndpoint.overrideUrl(
+                youtubeDecoderBaseUrl, httpMethod, originalUrl);
+        final boolean usesCustomDecoder = customDecoderUrl != null;
+        final String url = usesCustomDecoder ? customDecoderUrl : originalUrl;
         final Map<String, List<String>> headers = request.headers();
         final byte[] dataToSend = request.dataToSend();
 
@@ -428,16 +437,21 @@ public final class DownloaderImpl extends Downloader {
 
         final okhttp3.Request.Builder requestBuilder = new okhttp3.Request.Builder()
                 .method(httpMethod, requestBody).url(url);
-        applyHeaders(requestBuilder, url, headers);
+        applyHeaders(requestBuilder, originalUrl, headers);
+        if (usesCustomDecoder) {
+            requestBuilder.removeHeader("Cookie").removeHeader("Authorization");
+        }
 
         OkHttpClient tmpClient = client;
         okhttp3.Response response = null;
 
-        if (url.contains("pipepipe.dev") || customTimeout != null || !request.followRedirects()) {
+        final boolean pipePipeRequest = originalUrl.contains("pipepipe.dev");
+        final boolean followRedirects = !usesCustomDecoder && request.followRedirects();
+        if (pipePipeRequest || customTimeout != null || !followRedirects) {
             final OkHttpClient.Builder builder = client.newBuilder()
-                    .followRedirects(request.followRedirects())
-                    .followSslRedirects(request.followRedirects());
-            if (url.contains("pipepipe.dev")) {
+                    .followRedirects(followRedirects)
+                    .followSslRedirects(followRedirects);
+            if (pipePipeRequest) {
                 builder.readTimeout(30, TimeUnit.SECONDS);
             } else if (customTimeout != null) {
                 builder.readTimeout(customTimeout, TimeUnit.SECONDS);
@@ -472,6 +486,12 @@ public final class DownloaderImpl extends Downloader {
             throw new IOException("Failed to execute request. We retried " + retryCount + " times.");
         }
 
+
+        if (usesCustomDecoder && !response.isSuccessful()) {
+            final int status = response.code();
+            response.close();
+            throw new IOException("Custom YouTube decoder returned HTTP " + status);
+        }
 
         final AntiBotException block = getBlock(response, url);
         if (block != null) {
