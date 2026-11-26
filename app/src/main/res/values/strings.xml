@@ -535,6 +535,8 @@
 <string name="recovering">recovering</string>
 <string name="enqueue">Enqueue</string>
 <string name="permission_denied">Action denied by the system</string>
+<string name="permission_read_download_progress_label">read PipePipe downloads</string>
+<string name="permission_read_download_progress_description">Read the name, location and progress of the downloads in PipePipe</string>
 <string name="checking_updates_toast">Checking for updates…</string>
 <!-- download notifications -->
 <string name="download_failed">Download failed</string>

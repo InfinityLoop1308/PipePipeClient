@@ -72,6 +72,8 @@ public class DownloadManagerService extends Service {
     public static final int MESSAGE_ERROR = 3;
     public static final int MESSAGE_DELETED = 4;
 
+    private static final long PROGRESS_PUBLISH_INTERVAL_MS = 500;
+
     private static final int FOREGROUND_NOTIFICATION_ID = 1000;
     private static final int DOWNLOADS_NOTIFICATION_ID = 1001;
 
@@ -128,6 +130,16 @@ public class DownloadManagerService extends Service {
 
     private PendingIntent mOpenDownloadList;
 
+    private final Runnable mProgressPublisher = new Runnable() {
+        @Override
+        public void run() {
+            DownloadProgressRegistry.publish(DownloadManagerService.this);
+            if (mManager.getRunningMissionsCount() > 0) {
+                mHandler.postDelayed(this, PROGRESS_PUBLISH_INTERVAL_MS);
+            }
+        }
+    };
+
     /**
      * notify media scanner on downloaded media file ...
      *
@@ -151,6 +163,7 @@ public class DownloadManagerService extends Service {
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         mManager = new DownloadManager(this, mHandler, loadMainVideoStorage(), loadMainAudioStorage());
+        DownloadProgressRegistry.attach(mManager);
 
         Intent openDownloadListIntent = new Intent(this, DownloadActivity.class)
                 .setAction(Intent.ACTION_MAIN);
@@ -253,8 +266,12 @@ public class DownloadManagerService extends Service {
         if (icDownloadFailed != null) icDownloadFailed.recycle();
         if (icLauncher != null) icLauncher.recycle();
 
+        mHandler.removeCallbacks(mProgressPublisher);
         mHandler = null;
         mManager.pauseAllMissions(true);
+
+        DownloadProgressRegistry.detach();
+        DownloadProgressRegistry.publish(this);
     }
 
     @Override
@@ -277,6 +294,16 @@ public class DownloadManagerService extends Service {
         return mBinder;
     }
 
+    /**
+     * Publishes the state of the downloads now, and from then on regularly while any of them runs
+     */
+    private void publishDownloadProgress() {
+        if (mHandler == null) return;
+
+        mHandler.removeCallbacks(mProgressPublisher);
+        mProgressPublisher.run();
+    }
+
     private boolean handleMessage(@NonNull Message msg) {
         if (mHandler == null) return true;
 
@@ -286,6 +313,7 @@ public class DownloadManagerService extends Service {
             case MESSAGE_FINISHED:
                 notifyMediaScanner(mission.storage.getUri());
                 notifyFinishedDownload(mission.storage.getName());
+                DownloadProgressRegistry.markFinished(mission);
                 mManager.setFinished(mission);
                 handleConnectivityState(false);
                 updateForegroundState(mManager.runMissions());
@@ -301,7 +329,12 @@ public class DownloadManagerService extends Service {
             case MESSAGE_PAUSED:
                 updateForegroundState(mManager.getRunningMissionsCount() > 0);
                 break;
+            case MESSAGE_DELETED:
+                DownloadProgressRegistry.markDeleted(mission);
+                break;
         }
+
+        publishDownloadProgress();
 
         if (msg.what != MESSAGE_ERROR)
             mFailedDownloads.delete(mFailedDownloads.indexOfValue(mission));
@@ -470,6 +503,7 @@ public class DownloadManagerService extends Service {
         handleConnectivityState(true);// first check the actual network status
 
         mManager.startMission(mission);
+        publishDownloadProgress();
     }
 
     private String[] normalizeResourceMetadata(String[] metadata, String[] urls) {
