@@ -123,7 +123,7 @@ final class SabrMediaBridge {
         formats.add(spec.getBootstrapAudioFormat());
         formats.add(spec.getBootstrapVideoFormat());
         final YoutubeSabrRequest request = YoutubeSabrRequest.preparation(
-                Math.max(0, initialPositionMs), formats);
+                Math.max(0, initialPositionMs), formats, 1L);
         // Post-live SABR has no sidx/Cues: the timeline comes from LIVE_METADATA and
         // FORMAT_INITIALIZATION_METADATA, so it can be ready before the initialization data.
         try {
@@ -232,7 +232,7 @@ final class SabrMediaBridge {
         if (current.videoActive || key.getFormat().isVideo()) {
             tracks.add(track(current.video));
         }
-        requestOnce(YoutubeSabrRequest.playback(playerTimeMs, 1.0f, tracks), audio);
+        requestOnce(YoutubeSabrRequest.playback(playerTimeMs, 1.0f, tracks, 1L), audio);
     }
 
     @NonNull
