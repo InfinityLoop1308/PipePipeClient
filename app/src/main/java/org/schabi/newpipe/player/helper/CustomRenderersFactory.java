@@ -3,11 +3,20 @@ package org.schabi.newpipe.player.helper;
 import android.content.Context;
 import android.os.Handler;
 
+import androidx.annotation.Nullable;
+
 import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Renderer;
+import com.google.android.exoplayer2.audio.AudioRendererEventListener;
+import com.google.android.exoplayer2.audio.AudioSink;
+import com.google.android.exoplayer2.audio.MediaCodecAudioRenderer;
+import com.google.android.exoplayer2.mediacodec.MediaCodecAdapter;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 /**
@@ -22,8 +31,11 @@ import java.util.ArrayList;
  */
 public final class CustomRenderersFactory extends DefaultRenderersFactory {
 
-    public CustomRenderersFactory(final Context context) {
+    private final boolean useCustomVideoRenderer;
+
+    public CustomRenderersFactory(final Context context, final boolean useCustomVideoRenderer) {
         super(context);
+        this.useCustomVideoRenderer = useCustomVideoRenderer;
     }
 
     @Override
@@ -35,8 +47,40 @@ public final class CustomRenderersFactory extends DefaultRenderersFactory {
                                        final VideoRendererEventListener eventListener,
                                        final long allowedVideoJoiningTimeMs,
                                        final ArrayList<Renderer> out) {
-        out.add(new CustomMediaCodecVideoRenderer(context, getCodecAdapterFactory(),
-                mediaCodecSelector, allowedVideoJoiningTimeMs, enableDecoderFallback, eventHandler,
-                eventListener, MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY));
+        if (useCustomVideoRenderer) {
+            out.add(new CustomMediaCodecVideoRenderer(context, getCodecAdapterFactory(),
+                    mediaCodecSelector, allowedVideoJoiningTimeMs, enableDecoderFallback,
+                    eventHandler, eventListener, MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY));
+        } else {
+            super.buildVideoRenderers(context, extensionRendererMode, mediaCodecSelector,
+                    enableDecoderFallback, eventHandler, eventListener, allowedVideoJoiningTimeMs,
+                    out);
+        }
+    }
+
+    @Override
+    protected void buildAudioRenderers(final Context context,
+                                       @ExtensionRendererMode final int extensionRendererMode,
+                                       final MediaCodecSelector mediaCodecSelector,
+                                       final boolean enableDecoderFallback,
+                                       final AudioSink audioSink,
+                                       final Handler eventHandler,
+                                       final AudioRendererEventListener eventListener,
+                                       final ArrayList<Renderer> out) {
+        out.add(new MediaCodecAudioRenderer(context, getCodecAdapterFactory(), mediaCodecSelector,
+                enableDecoderFallback, eventHandler, eventListener, audioSink) {
+            @Override
+            protected boolean processOutputBuffer(final long positionUs,
+                    final long elapsedRealtimeUs, @Nullable final MediaCodecAdapter codec,
+                    @Nullable final ByteBuffer buffer, final int bufferIndex,
+                    final int bufferFlags, final int sampleCount,
+                    final long bufferPresentationTimeUs, final boolean isDecodeOnlyBuffer,
+                    final boolean isLastBuffer, final Format format) throws ExoPlaybackException {
+                return super.processOutputBuffer(positionUs, elapsedRealtimeUs, codec, buffer,
+                        bufferIndex, bufferFlags, sampleCount, bufferPresentationTimeUs,
+                        isDecodeOnlyBuffer || bufferPresentationTimeUs < getLastResetPositionUs(),
+                        isLastBuffer, format);
+            }
+        });
     }
 }
