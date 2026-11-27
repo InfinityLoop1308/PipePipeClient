@@ -30,7 +30,7 @@ class PlayerHistoryController(private val player: Player) {
         }
     }
 
-    private fun saveStreamProgressState(progressMillis: Long) {
+    fun saveStreamProgressState(progressMillis: Long) {
         val info = player.currentStreamInfo.orElse(null) ?: return
         if (!prefs.getBoolean(context.getString(R.string.enable_watch_history_key), true)) {
             return

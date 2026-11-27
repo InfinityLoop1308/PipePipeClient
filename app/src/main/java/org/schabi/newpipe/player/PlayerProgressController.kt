@@ -126,7 +126,14 @@ class PlayerProgressController(private val player: Player) : SeekBar.OnSeekBarCh
         )
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { triggerProgressUpdate(false) },
+                {
+                    triggerProgressUpdate(false)
+                    if (player.isPlaying) {
+                        player.historyController.saveStreamProgressState(
+                            player.simpleExoPlayer.currentPosition
+                        )
+                    }
+                },
                 { error -> Log.e(Player.TAG, "Progress update failure: ", error) }
             )
 
