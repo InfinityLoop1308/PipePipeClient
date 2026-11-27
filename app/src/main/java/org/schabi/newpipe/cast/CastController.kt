@@ -216,10 +216,12 @@ object CastController {
         ) {
             override fun onOpen(h: ServerHandshake) {
                 val token = tokens().optString(device.id)
+                val ctx = appContext
+                val selfName = if (ctx != null) CastReceiver.deviceName(ctx) else "Android"
                 send(
                     CastProtocol.msg(CastProtocol.T_HELLO) {
                         put("id", ownId)
-                        put("name", CastReceiver.deviceName())
+                        put("name", selfName)
                         if (token.isNotEmpty()) put("token", token)
                         pendingPin?.let { put("pin", it) }
                     }
